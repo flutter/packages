@@ -12,7 +12,6 @@ import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
-import 'route.dart';
 import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
@@ -105,7 +104,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
       assert(() {
         if (matchList.isNotEmpty) {
-          assert(!(matchList.last.route as GoRoute).redirectOnly,
+          assert(!matchList.last.route.redirectOnly,
               'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
         }
         return true;

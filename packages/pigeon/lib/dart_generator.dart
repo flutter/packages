@@ -418,9 +418,9 @@ $resultAt != null
                     }
                   });
                   final Iterable<String> argNames =
-                      indexMap(func.parameters, (int index, NamedType field) {
+                      indexMap(func.parameters, (int index, Parameter field) {
                     final String name = _getSafeArgumentName(index, field);
-                    return '$name${field.type.isNullable ? '' : '!'}';
+                    return '${field.isNamed ? '${field.name}: ' : ''}$name${field.type.isNullable ? '' : '!'}';
                   });
                   call = 'api.${func.name}(${argNames.join(', ')})';
                 }

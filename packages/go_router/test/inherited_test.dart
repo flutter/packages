@@ -81,6 +81,33 @@ void main() {
     await tester.tap(find.text('My Page'));
     expect(router.latestPushedName, 'my_page');
   });
+
+  testWidgets('builder can access GoRouter', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/110512.
+    late final GoRouter buildContextRouter;
+    final GoRouter router = GoRouter(
+      initialLocation: '/',
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, __) {
+            buildContextRouter = GoRouter.of(context);
+            return const DummyScreen();
+          },
+        )
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate),
+    );
+
+    expect(buildContextRouter, isNotNull);
+    expect(buildContextRouter, equals(router));
+  });
 }
 
 bool setupInheritedGoRouterChange({
