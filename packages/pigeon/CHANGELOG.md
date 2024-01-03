@@ -1,3 +1,7 @@
+## 15.0.3
+
+* [java] Fixes `Void` result type bug.
+
 ## 15.0.2
 
 * Prevents optional and non-positional parameters in Flutter APIs.
