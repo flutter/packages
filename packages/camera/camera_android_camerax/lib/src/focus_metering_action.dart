@@ -8,10 +8,12 @@ import 'package:meta/meta.dart' show immutable;
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
-import 'metering_point.dart';
 import 'java_object.dart';
+import 'metering_point.dart';
 
-/// somethin
+/// A configuration used to trigger a focus and/or metering action.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/FocusMeteringAction.
 @immutable
 class FocusMeteringAction extends JavaObject {
   /// Creates a [FocusMeteringAction].
@@ -45,18 +47,22 @@ class FocusMeteringAction extends JavaObject {
 
   late final _FocusMeteringActionHostApiImpl _api;
 
-  /// Flag for metering mode that indicates the AF (Auto Focus) region is
-  /// enabled.
+  /// Flag for metering mode that indicates the auto focus region is enabled.
   ///
-  /// An autofocus scan is also triggered when FLAG_AF is assigned.
+  /// An autofocus scan is also triggered when [flagAf] is assigned.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/FocusMeteringAction#FLAG_AF().
   static const int flagAf = 1;
 
-  /// Flag for metering mode that indicates the AE (Auto Exposure)
-  /// region is enabled.
+  /// Flag for metering mode that indicates the auto exposure region is enabled.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/FocusMeteringAction#FLAG_AE().
   static const int flagAe = 2;
 
-  /// Flag for metering mode that indicates the AWB (Auto White Balance) region
-  /// is enabled.
+  /// Flag for metering mode that indicates the auto white balance region is
+  /// enabled.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/FocusMeteringAction#FLAG_AWB().
   static const int flagAwb = 4;
 }
 

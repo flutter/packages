@@ -77,6 +77,11 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           ContextCompat.getMainExecutor(context));
     }
 
+    /**
+     * Starts a focus and metering action configured by the {@code FocusMeteringAction}.
+     * 
+     * Will trigger an auto focus action and enable auto focus/auto exposure/auto white balance metering regions.
+     */
     public void startFocusAndMetering(
         @NonNull CameraControl cameraControl,
         @NonNull FocusMeteringAction focusMeteringAction,
@@ -101,6 +106,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           ContextCompat.getMainExecutor(context));
     }
 
+   /** Cancels current {@code FocusMeteringAction} and clears AF/AE/AWB regions. */
    public void cancelFocusAndMetering(@NonNull CameraControl cameraControl, @NonNull Result<Void> result) {
       ListenableFuture<Void> cancelFocusAndMeteringFuture = cameraControl.cancelFocusAndMetering();
 
@@ -118,6 +124,14 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
         ContextCompat.getMainExecutor(context));
     }
 
+    /**
+     * Sets the exposure compensation index for the specified {@CameraControl} instance and returns
+     * the new target exposure value.
+     * 
+     * The exposure compensation value to set on the camera which must be within the range of the
+     * {@code ExposureState#getExposureCompensationRange()} for the current {@code ExposureState}
+     * for the call to succeed.
+     */
     public void setExposureCompensationIndex(@NonNull CameraControl cameraControl, @NonNull Long index, @NonNull Result<Long> result) {
       ListenableFuture<Integer> setExposureCompensationIndexFuture = cameraControl.setExposureCompensationIndex(index.intValue());
 

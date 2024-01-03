@@ -53,18 +53,23 @@ class CameraControl extends JavaObject {
 
   /// Starts a focus and metering action configured by the [FocusMeteringAction].
   ///
-  /// will trigger an auto focus action and enable auto focus (AF)/auto exposure
-  /// (AE)/auto white balance (AWB) metering regions.
+  /// Will trigger an auto focus action and enable auto focus/auto exposure
+  /// /auto white balance metering regions.
   Future<FocusMeteringResult?> startFocusAndMetering(
       FocusMeteringAction action) {
     return _api.startFocusAndMeteringFromInstance(this, action);
   }
 
-  /// Cancels current FocusMeteringAction and clears AF/AE/AWB regions.
+  /// Cancels current [FocusMeteringAction] and clears AF/AE/AWB regions.
   Future<void> cancelFocusAndMetering() =>
       _api.cancelFocusAndMeteringFromInstance(this);
 
-  /// Set the exposure compensation value for related [Camera].
+  /// Sets the exposure compensation value for related [Camera] and returns the
+  /// new target exposure value.
+  ///
+  /// The exposure compensation value to set on the camera which must be
+  /// within the range of the [ExposureState]'s `exposureCompensationRange` for
+  /// the call to succeed.
   ///
   /// Returns null if the exposure compensation index failed to be set.
   Future<int?> setExposureCompensationIndex(int index) async {
@@ -136,7 +141,7 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
     }
   }
 
-  /// Cancels current FocusMeteringAction and clears AF/AE/AWB regions for the
+  /// Cancels current [FocusMeteringAction] and clears AF/AE/AWB regions for the
   /// specified [CameraControl] instance.
   Future<void> cancelFocusAndMeteringFromInstance(
       CameraControl instance) async {
@@ -144,7 +149,8 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
     await cancelFocusAndMetering(identifier);
   }
 
-  /// Sets exposure compensation index for specified [CameraControl] instance.
+  /// Sets exposure compensation index for specified [CameraControl] instance
+  /// and returns the new target exposure value.
   Future<int?> setExposureCompensationIndexFromInstance(
       CameraControl instance, int index) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
