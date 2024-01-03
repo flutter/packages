@@ -4,7 +4,7 @@
 
 // ignore_for_file: library_private_types_in_public_api
 
-part of google_maps_flutter;
+part of '../google_maps_flutter.dart';
 
 /// Controller for a single GoogleMap instance running on the host platform.
 class GoogleMapController {
