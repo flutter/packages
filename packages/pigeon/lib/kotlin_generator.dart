@@ -1011,10 +1011,11 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
               associatedProxyApi: api,
             ),
             documentationComments: constructor.documentationComments,
-            requiresApi: _typeWithHighestApiRequirement(<NamedType>[
-              NamedType(name: '', type: apiAsTypeDeclaration),
-              ...constructor.parameters,
-            ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+              apiAsTypeDeclaration,
+              ...constructor.parameters
+                  .map((Parameter parameter) => parameter.type),
+            ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
             isAbstract: true,
             parameters: <Parameter>[
               ...api.unattachedFields.map((Field field) {
@@ -1036,10 +1037,10 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             documentationComments: field.documentationComments,
             returnType: field.type,
             isAbstract: true,
-            requiresApi: _typeWithHighestApiRequirement(<NamedType>[
-              NamedType(name: '', type: apiAsTypeDeclaration),
-              field
-            ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+              apiAsTypeDeclaration,
+              field.type,
+            ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
             parameters: <Parameter>[
               if (!field.isStatic)
                 Parameter(
@@ -1063,18 +1064,14 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
               documentationComments: field.documentationComments,
               returnType: field.type,
               isAbstract: true,
-              requiresApi: _typeWithHighestApiRequirement(<NamedType>[
-                NamedType(name: '', type: apiAsTypeDeclaration),
-                field,
-              ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
+              requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+                apiAsTypeDeclaration,
+                field.type,
+              ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
               parameters: <Parameter>[
                 Parameter(
                   name: '${classMemberNamePrefix}instance',
-                  type: TypeDeclaration(
-                    baseName: api.name,
-                    isNullable: false,
-                    associatedProxyApi: api,
-                  ),
+                  type: apiAsTypeDeclaration,
                 ),
               ],
             );
@@ -1082,7 +1079,6 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
           }
         }
 
-        // TODO: consider using list of typedeclarations as requirement method
         // TODO: use apiAsTypeDeclaration to params list
 
         for (final Method method in api.hostMethods) {
@@ -1094,13 +1090,12 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             isAsynchronous: method.isAsynchronous,
             isAbstract: true,
             requiresApi: _typeWithHighestApiRequirement(
-              <NamedType>[
-                if (!method.isStatic)
-                  NamedType(name: '', type: apiAsTypeDeclaration),
-                NamedType(name: '', type: method.returnType),
-                ...method.parameters,
+              <TypeDeclaration>[
+                if (!method.isStatic) apiAsTypeDeclaration,
+                method.returnType,
+                ...method.parameters.map((Parameter p) => p.type),
               ],
-            )?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            )?.associatedProxyApi?.versionRequirements?.minAndroidApi,
             parameters: <Parameter>[
               if (!method.isStatic)
                 Parameter(
@@ -1130,15 +1125,14 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                   'val codec = api?.codec ?: StandardMessageCodec()',
                 );
                 void writeWithApiCheckIfNecessary(
-                  List<NamedType> types, {
+                  List<TypeDeclaration> types, {
                   required String channelName,
                   required void Function() onWrite,
                 }) {
-                  final NamedType? typeWithRequirement =
+                  final TypeDeclaration? typeWithRequirement =
                       _typeWithHighestApiRequirement(types);
                   if (typeWithRequirement != null) {
                     final int apiRequirement = typeWithRequirement
-                        .type
                         .associatedProxyApi!
                         .versionRequirements!
                         .minAndroidApi!;
@@ -1155,11 +1149,15 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                         '  "$channelName",\n'
                         '  codec\n'
                         ')\n'
-                        'channel.setMessageHandler { _, reply ->\n'
-                        '  reply.reply(wrapError(\n'
-                        '    IllegalArgumentException(\n'
-                        '      "Member references class `${typeWithRequirement.type.baseName}`, which requires api version $apiRequirement.")))\n'
-                        '}\n',
+                        'if (api != null) {\n'
+                        '  channel.setMessageHandler { _, reply ->\n'
+                        '    reply.reply(wrapError(\n'
+                        '      UnsupportedOperationException(\n'
+                        '        "Member references class `${typeWithRequirement.baseName}`, which requires api version $apiRequirement.")))\n'
+                        '  }\n'
+                        '} else {\n'
+                        '  channel.setMessageHandler(null)\n'
+                        '}',
                       );
                     });
                   } else {
@@ -1177,10 +1175,10 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                     dartPackageName: dartPackageName,
                   );
                   writeWithApiCheckIfNecessary(
-                    <NamedType>[
-                      NamedType(name: '', type: apiAsTypeDeclaration),
-                      ...api.unattachedFields,
-                      ...constructor.parameters,
+                    <TypeDeclaration>[
+                      apiAsTypeDeclaration,
+                      ...api.unattachedFields.map((Field f) => f.type),
+                      ...constructor.parameters.map((Parameter p) => p.type),
                     ],
                     channelName: channelName,
                     onWrite: () {
@@ -1226,10 +1224,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                     dartPackageName: dartPackageName,
                   );
                   writeWithApiCheckIfNecessary(
-                    <NamedType>[
-                      NamedType(name: '', type: apiAsTypeDeclaration),
-                      field,
-                    ],
+                    <TypeDeclaration>[apiAsTypeDeclaration, field.type],
                     channelName: channelName,
                     onWrite: () {
                       _writeHostMethod(
@@ -1276,11 +1271,10 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                   final String channelName =
                       makeChannelName(api, method, dartPackageName);
                   writeWithApiCheckIfNecessary(
-                    <NamedType>[
-                      if (!method.isStatic)
-                        NamedType(name: '', type: apiAsTypeDeclaration),
-                      NamedType(name: '', type: method.returnType),
-                      ...method.parameters,
+                    <TypeDeclaration>[
+                      if (!method.isStatic) apiAsTypeDeclaration,
+                      method.returnType,
+                      ...method.parameters.map((Parameter p) => p.type),
                     ],
                     channelName: channelName,
                     onWrite: () {
@@ -1332,10 +1326,10 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             methodName: newInstanceMethodName,
             dartPackageName: dartPackageName,
           ),
-          requiresApi: _typeWithHighestApiRequirement(<NamedType>[
-            NamedType(name: '', type: apiAsTypeDeclaration),
-            ...api.unattachedFields,
-          ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
+          requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+            apiAsTypeDeclaration,
+            ...api.unattachedFields.map((Field f) => f.type),
+          ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
           errorClassName: errorClassName,
           dartPackageName: dartPackageName,
           parameters: <Parameter>[
@@ -1405,44 +1399,47 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
         indent.newln();
 
         for (final Method method in api.flutterMethods) {
-          _writeFlutterMethod(indent,
-              name: method.name,
-              returnType: method.returnType,
-              channelName: makeChannelName(api, method, dartPackageName),
-              errorClassName: errorClassName,
-              dartPackageName: dartPackageName,
-              documentationComments: method.documentationComments,
-              requiresApi: _typeWithHighestApiRequirement(<NamedType>[
-                NamedType(name: '', type: apiAsTypeDeclaration),
-                NamedType(name: '', type: method.returnType),
-                ...method.parameters,
-              ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
-              parameters: <Parameter>[
-                Parameter(
-                  name: '${classMemberNamePrefix}instance',
-                  type: TypeDeclaration(
-                    baseName: api.name,
-                    isNullable: false,
-                    associatedProxyApi: api,
-                  ),
+          _writeFlutterMethod(
+            indent,
+            name: method.name,
+            returnType: method.returnType,
+            channelName: makeChannelName(api, method, dartPackageName),
+            errorClassName: errorClassName,
+            dartPackageName: dartPackageName,
+            documentationComments: method.documentationComments,
+            requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+              apiAsTypeDeclaration,
+              method.returnType,
+              ...method.parameters.map((Parameter p) => p.type),
+            ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            parameters: <Parameter>[
+              Parameter(
+                name: '${classMemberNamePrefix}instance',
+                type: TypeDeclaration(
+                  baseName: api.name,
+                  isNullable: false,
+                  associatedProxyApi: api,
                 ),
-                ...method.parameters,
-              ], onWriteBody: (
-            Indent indent, {
-            required List<Parameter> parameters,
-            required TypeDeclaration returnType,
-            required String channelName,
-            required String errorClassName,
-          }) {
-            indent.writeln('val binaryMessenger = codec.binaryMessenger');
-            _writeFlutterMethodMessageCall(
-              indent,
-              returnType: returnType,
-              channelName: channelName,
-              errorClassName: errorClassName,
-              parameters: parameters,
-            );
-          });
+              ),
+              ...method.parameters,
+            ],
+            onWriteBody: (
+              Indent indent, {
+              required List<Parameter> parameters,
+              required TypeDeclaration returnType,
+              required String channelName,
+              required String errorClassName,
+            }) {
+              indent.writeln('val binaryMessenger = codec.binaryMessenger');
+              _writeFlutterMethodMessageCall(
+                indent,
+                returnType: returnType,
+                channelName: channelName,
+                errorClassName: errorClassName,
+                parameters: parameters,
+              );
+            },
+          );
           indent.newln();
         }
 
@@ -1872,21 +1869,21 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
   }
 }
 
-NamedType? _typeWithHighestApiRequirement(Iterable<NamedType> types) {
+TypeDeclaration? _typeWithHighestApiRequirement(
+  Iterable<TypeDeclaration> types,
+) {
   int highestMin = 1;
-  NamedType? highestNamedType;
+  TypeDeclaration? highestNamedType;
 
-  for (final NamedType type in types) {
+  for (final TypeDeclaration type in types) {
+    final int? typeMin =
+        type.associatedProxyApi?.versionRequirements?.minAndroidApi;
+    final int? typeArgumentMin = _typeWithHighestApiRequirement(
+      type.typeArguments,
+    )?.associatedProxyApi?.versionRequirements?.minAndroidApi;
     final int newMin = max(
-      type.type.associatedProxyApi?.versionRequirements?.minAndroidApi ?? 1,
-      _typeWithHighestApiRequirement(
-            type.type.typeArguments.map(
-              (TypeDeclaration declaration) {
-                return NamedType(name: '', type: declaration);
-              },
-            ),
-          )?.type.associatedProxyApi?.versionRequirements?.minAndroidApi ??
-          1,
+      typeMin ?? 1,
+      typeArgumentMin ?? 1,
     );
 
     if (newMin > highestMin) {
@@ -1895,7 +1892,7 @@ NamedType? _typeWithHighestApiRequirement(Iterable<NamedType> types) {
     }
   }
 
-  return highestMin == 0 ? null : highestNamedType;
+  return highestMin == 1 ? null : highestNamedType;
 }
 
 HostDatatype _getHostDatatype(Root root, NamedType field) {
