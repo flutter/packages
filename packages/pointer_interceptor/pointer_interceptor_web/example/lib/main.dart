@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   HtmlElement(
-                    key: const ValueKey<String>('background-widget'),
+                    key: const Key('background-widget'),
                     onClick: () {
                       _clickedOn('html-element');
                     },

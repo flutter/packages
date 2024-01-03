@@ -19,7 +19,7 @@ final Finder clickableWrappedButtonFinder =
     find.byKey(const Key('wrapped-transparent-button'));
 final Finder clickableButtonFinder = find.byKey(const Key('clickable-button'));
 final Finder backgroundFinder =
-    find.byKey(const ValueKey<String>('background-widget'));
+    find.byKey(const Key('background-widget'));
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -148,7 +148,11 @@ web.Element _getHtmlElementAt(Offset point) {
   // the contents of <flt-glass-name> as an implementation detail.
   final web.ShadowRoot glassPaneShadow =
       web.document.querySelector('flt-glass-pane')!.shadowRoot!;
-  return glassPaneShadow.elementFromPoint(point.dx.toInt(), point.dy.toInt());
+  // Use `round` below to ensure clicks always fall *inside* the located
+  // element, rather than truncating the decimals.
+  // Truncating decimals makes some tests fail when a centered element (in high
+  // DPI) is not exactly aligned to the pixel grid (because the browser *rounds*)
+  return glassPaneShadow.elementFromPoint(point.dx.round(), point.dy.round());
 }
 
 /// Shady API: https://github.com/w3c/csswg-drafts/issues/556
