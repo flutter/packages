@@ -14,7 +14,7 @@ dependencies:
   collection: ^1.15.0
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.1.0
+  plugin_platform_interface: ^2.1.7
   stream_transform: ^2.0.0
 
 dev_dependencies:
