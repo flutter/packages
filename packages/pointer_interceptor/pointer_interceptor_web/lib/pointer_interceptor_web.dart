@@ -4,9 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
-
 import 'package:web/web.dart' as web;
 
 /// The web implementation of the `PointerInterceptor` widget.
@@ -16,6 +14,11 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
   /// Register the plugin
   static void registerWith(Registrar? registrar) {
     PointerInterceptorPlatform.instance = PointerInterceptorWeb();
+  }
+
+  // Slightly modify the created `element` (for `debug` mode).
+  void _onElementCreated(Object element) {
+    (element as web.HTMLElement).style.backgroundColor = 'rgba(255, 0, 0, .5)';
   }
 
   @override
@@ -35,12 +38,7 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
           child: HtmlElementView.fromTagName(
             tagName: 'div',
             isVisible: false,
-            onElementCreated: debug
-                ? (Object element) {
-                    element as web.HTMLElement;
-                    element.style.backgroundColor = 'rgba(255, 0, 0, .5)';
-                  }
-                : null,
+            onElementCreated: debug ? _onElementCreated : null,
           ),
         ),
         child,

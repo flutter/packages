@@ -8,7 +8,6 @@ import 'dart:ui_web' as ui_web;
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 import 'package:pointer_interceptor_web/pointer_interceptor_web.dart';
-
 import 'package:web/web.dart' as web;
 
 const String _htmlElementViewType = '_htmlElementViewType';
