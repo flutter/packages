@@ -18,8 +18,7 @@ final Finder nonClickableButtonFinder =
 final Finder clickableWrappedButtonFinder =
     find.byKey(const Key('wrapped-transparent-button'));
 final Finder clickableButtonFinder = find.byKey(const Key('clickable-button'));
-final Finder backgroundFinder =
-    find.byKey(const Key('background-widget'));
+final Finder backgroundFinder = find.byKey(const Key('background-widget'));
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
