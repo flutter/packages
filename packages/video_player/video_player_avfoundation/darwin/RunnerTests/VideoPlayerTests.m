@@ -375,7 +375,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"SeekToWhilePausedStartsDisplayLinkTemporarily"];
+      [GetPluginRegistry() registrarForPlugin:@"PauseWhileWaitingForFrameDoesNotStopDisplayLink"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPDisplayLink *mockDisplayLink =
