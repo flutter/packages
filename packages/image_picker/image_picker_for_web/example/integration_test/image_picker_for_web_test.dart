@@ -259,7 +259,7 @@ void main() {
           plugin.createInputElement('any', 'something', multiple: true);
 
       expect(input.getAttribute('accept'), 'any');
-      expect(input.getAttribute('capture'), 'somethinng');
+      expect(input.getAttribute('capture'), 'something');
       expect(input.hasAttribute('multiple'), false);
     });
   });
