@@ -4,7 +4,6 @@
 
 package dev.flutter.packages.file_selector_android_example;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget;
 import static androidx.test.espresso.flutter.action.FlutterActions.click;
 import static androidx.test.espresso.flutter.assertion.FlutterAssertions.matches;
@@ -15,19 +14,18 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static org.hamcrest.Matchers.anything;
 
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.rule.IntentsRule;
-import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+
 
 public class FileSelectorAndroidTest {
   @Rule
@@ -36,20 +34,28 @@ public class FileSelectorAndroidTest {
 
   @Rule public IntentsRule intentsRule = new IntentsRule();
 
-  @BeforeClass
-  public static void clearAnySystemDialog() {
-    onData(anything())
-        .inRoot(RootMatchers.isPlatformPopup())
-        .atPosition(1)
-        .perform(androidx.test.espresso.action.ViewActions.click());
+  public void clearAnySystemDialog() {
+    myActivityTestRule
+        .getScenario()
+        .onActivity(
+            new ActivityScenario.ActivityAction<DriverExtensionActivity>() {
+              @Override
+              public void perform(DriverExtensionActivity activity) {
+                Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                activity.sendBroadcast(closeDialog);
+              }
+            });
   }
 
   @Test
   public void openImageFile() {
+    clearAnySystemDialog();
+
     final Instrumentation.ActivityResult result =
         new Instrumentation.ActivityResult(
             Activity.RESULT_OK,
             new Intent().setData(Uri.parse("content://file_selector_android_test/dummy.png")));
+
     intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(result);
     onFlutterWidget(withText("Open an image")).perform(click());
     onFlutterWidget(withText("Press to open an image file(png, jpg)")).perform(click());
@@ -60,6 +66,8 @@ public class FileSelectorAndroidTest {
 
   @Test
   public void openImageFiles() {
+    clearAnySystemDialog();
+
     final ClipData.Item clipDataItem =
         new ClipData.Item(Uri.parse("content://file_selector_android_test/dummy.png"));
     final ClipData clipData = new ClipData("", new String[0], clipDataItem);
