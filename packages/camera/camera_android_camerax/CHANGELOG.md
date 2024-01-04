@@ -1,3 +1,7 @@
+## 0.5.0+25
+
+* Implements `lockCaptureOrientation` and `unlockCaptureOrientation`.
+
 ## 0.5.0+24
 
 * Updates example app to use non-deprecated video_player method.
