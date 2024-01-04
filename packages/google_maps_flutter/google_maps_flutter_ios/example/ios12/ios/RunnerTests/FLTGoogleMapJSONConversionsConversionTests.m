@@ -287,19 +287,18 @@
   [classMockCameraUpdate stopMocking];
 }
 
-
 - (void)testLengthsFromPatterns {
-    NSArray* patterns = @ [@[@"gap", @10], @[@"dash", @10]];
-    
-    NSArray<NSNumber *> *spanLengths = [FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns];
-    
-    XCTAssertEqual([spanLengths count], 2);
-    
-    NSNumber * firstSpanLength = spanLengths[0];
-    NSNumber * secondSpanLength = spanLengths[1];
-    
-    XCTAssertEqual(firstSpanLength.intValue, 10);
-    XCTAssertEqual(secondSpanLength.intValue, 10);
+  NSArray *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @10 ] ];
+
+  NSArray<NSNumber *> *spanLengths = [FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns];
+
+  XCTAssertEqual([spanLengths count], 2);
+
+  NSNumber *firstSpanLength = spanLengths[0];
+  NSNumber *secondSpanLength = spanLengths[1];
+
+  XCTAssertEqual(firstSpanLength.intValue, 10);
+  XCTAssertEqual(secondSpanLength.intValue, 10);
 }
 
 @end
