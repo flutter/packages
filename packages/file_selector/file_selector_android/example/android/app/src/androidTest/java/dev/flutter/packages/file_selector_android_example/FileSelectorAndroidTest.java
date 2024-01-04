@@ -4,6 +4,7 @@
 
 package dev.flutter.packages.file_selector_android_example;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget;
 import static androidx.test.espresso.flutter.action.FlutterActions.click;
 import static androidx.test.espresso.flutter.assertion.FlutterAssertions.matches;
@@ -14,6 +15,7 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
+import static org.hamcrest.Matchers.anything;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -21,7 +23,9 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import androidx.test.espresso.intent.rule.IntentsRule;
+import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -31,6 +35,14 @@ public class FileSelectorAndroidTest {
       new ActivityScenarioRule<>(DriverExtensionActivity.class);
 
   @Rule public IntentsRule intentsRule = new IntentsRule();
+
+  @BeforeClass
+  public static void clearAnySystemDialog() {
+    onData(anything())
+        .inRoot(RootMatchers.isPlatformPopup())
+        .atPosition(1)
+        .perform(androidx.test.espresso.action.ViewActions.click());
+  }
 
   @Test
   public void openImageFile() {
