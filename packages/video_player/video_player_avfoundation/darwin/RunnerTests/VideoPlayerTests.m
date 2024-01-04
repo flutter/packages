@@ -271,7 +271,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
+                                                           output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
                registrar:partialRegistrar];
 
