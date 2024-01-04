@@ -313,8 +313,9 @@ class _MyHomePageState extends State<MyHomePage>
                   selectedIndex: _navigationIndex,
                   trailing: trailingNavRail,
                   extended: true,
-                  destinations: destinations.map((_) {
-                    return AdaptiveScaffold.toRailDestination(_);
+                  destinations:
+                      destinations.map((NavigationDestination destination) {
+                    return AdaptiveScaffold.toRailDestination(destination);
                   }).toList(),
                 ),
               ),

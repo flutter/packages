@@ -1,6 +1,10 @@
-## 15.0.3
+## 15.0.4
 
 * Adds support for `ProxyApi` generation only for Dart.
+
+## 15.0.3
+
+* Fixes new lint warnings.
 
 ## 15.0.2
 
