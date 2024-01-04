@@ -1,6 +1,8 @@
-## 15.0.3
+## 16.0.0
 
-* [java] Fixes `Void` result type bug.
+* [java] Adds `VoidResult` type for `Void` returns.
+* **Breaking Change** [java] Updates all `Void` return types to use new `VoidResult`.
+
 
 ## 15.0.2
 
