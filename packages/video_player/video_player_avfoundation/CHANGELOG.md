@@ -1,3 +1,7 @@
+## 2.5.4
+
+* Fixes new lint warnings.
+
 ## 2.5.3
 
 * Publishes an instance of the plugin to the registrar on macOS, as on iOS.

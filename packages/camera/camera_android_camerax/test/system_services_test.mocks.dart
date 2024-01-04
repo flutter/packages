@@ -64,31 +64,6 @@ class MockTestSystemServicesHostApi extends _i1.Mock
       ) as _i3.Future<_i4.CameraPermissionsErrorData?>);
 
   @override
-  void startListeningForDeviceOrientationChange(
-    bool? isFrontFacing,
-    int? sensorOrientation,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #startListeningForDeviceOrientationChange,
-          [
-            isFrontFacing,
-            sensorOrientation,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void stopListeningForDeviceOrientationChange() => super.noSuchMethod(
-        Invocation.method(
-          #stopListeningForDeviceOrientationChange,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
   String getTempFilePath(
     String? prefix,
     String? suffix,

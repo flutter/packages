@@ -79,7 +79,6 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
       case PreferredLaunchMode.inAppWebView:
       case PreferredLaunchMode.inAppBrowserView:
         inApp = true;
-        break;
       case PreferredLaunchMode.externalApplication:
       case PreferredLaunchMode.externalNonBrowserApplication:
         // TODO(stuartmorgan): Add full support for
@@ -87,7 +86,6 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
         // https://github.com/flutter/flutter/issues/66721.
         // Currently it's treated the same as externalApplication.
         inApp = false;
-        break;
       case PreferredLaunchMode.platformDefault:
       // Intentionally treat any new values as platformDefault; see comment in
       // supportsMode.
