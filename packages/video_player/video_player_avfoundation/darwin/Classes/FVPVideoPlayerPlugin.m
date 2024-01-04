@@ -420,6 +420,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [_player pause];
   }
+  // If the texture is still waiting for an expected frame, the display link needs to keep
+  // running until it arrives regardless of the play/pause state.
   _displayLink.running = _isPlaying || self.waitingForFrame;
 }
 
