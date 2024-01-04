@@ -420,6 +420,45 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> setOnJavaScriptAlertDialog(
+          _i7.Future<void> Function(_i2.JavaScriptAlertDialogRequest)?
+              onJavaScriptAlertDialog) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnJavaScriptAlertDialog,
+          [onJavaScriptAlertDialog],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> setOnJavaScriptConfirmDialog(
+          _i7.Future<bool> Function(_i2.JavaScriptConfirmDialogRequest)?
+              onJavaScriptConfirmDialog) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnJavaScriptConfirmDialog,
+          [onJavaScriptConfirmDialog],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> setOnJavaScriptTextInputDialog(
+          _i7.Future<String> Function(_i2.JavaScriptTextInputDialogRequest)?
+              onJavaScriptTextInputDialog) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnJavaScriptTextInputDialog,
+          [onJavaScriptTextInputDialog],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 }
 
 /// A class which mocks [PlatformWebViewWidget].
