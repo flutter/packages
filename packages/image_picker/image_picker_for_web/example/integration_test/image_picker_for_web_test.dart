@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
@@ -13,24 +14,16 @@ import 'package:web/web.dart' as web;
 
 const String expectedStringContents = 'Hello, world!';
 const String otherStringContents = 'Hello again, world!';
-// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-// ignore: always_specify_types
-final JSArray bytes =
-// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-// ignore: always_specify_types
-    const Utf8Encoder().convert(expectedStringContents).toJS as JSArray;
-// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-// ignore: always_specify_types
-final JSArray otherBytes =
-// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-// ignore: always_specify_types
-    const Utf8Encoder().convert(otherStringContents).toJS as JSArray;
+final Uint8List bytes = const Utf8Encoder().convert(expectedStringContents);
+final Uint8List otherBytes = const Utf8Encoder().convert(otherStringContents);
 final web.FilePropertyBag options = web.FilePropertyBag(
     lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch)
   ..type = 'text/plain';
 
-final web.File textFile = web.File(bytes, 'hello.txt', options);
-final web.File secondTextFile = web.File(otherBytes, 'secondFile.txt');
+final web.File textFile =
+    web.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt', options);
+final web.File secondTextFile =
+    web.File(<JSUint8Array>[otherBytes.toJS].toJS, 'secondFile.txt');
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
