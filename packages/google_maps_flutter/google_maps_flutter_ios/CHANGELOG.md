@@ -31,7 +31,7 @@
 
 ## 2.3.4
 
-* Adds support for patterns in polylines on iOS.
+* Fixes new lint warnings.
 
 ## 2.3.3
 
