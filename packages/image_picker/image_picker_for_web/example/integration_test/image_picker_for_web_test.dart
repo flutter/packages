@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 import 'dart:js_interop';
-import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
@@ -14,15 +13,15 @@ import 'package:web/web.dart' as web;
 
 const String expectedStringContents = 'Hello, world!';
 const String otherStringContents = 'Hello again, world!';
-final Uint8List bytes = const Utf8Encoder().convert(expectedStringContents);
-final Uint8List otherBytes = const Utf8Encoder().convert(otherStringContents);
+final JSArray bytes = const Utf8Encoder().convert(expectedStringContents).toJS as JSArray;
+final JSArray otherBytes = const Utf8Encoder().convert(otherStringContents).toJS as JSArray;
 final web.FilePropertyBag options = web.FilePropertyBag(
     lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch)
   ..type = 'text/plain';
 
-final web.File textFile = web.File(bytes.toJS as JSArray, 'hello.txt', options);
+final web.File textFile = web.File(bytes, 'hello.txt', options);
 final web.File secondTextFile =
-    web.File(otherBytes.toJS as JSArray, 'secondFile.txt');
+    web.File(otherBytes, 'secondFile.txt');
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

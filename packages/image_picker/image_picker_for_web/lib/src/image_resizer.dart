@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js';
 import 'dart:js_interop';
 import 'dart:math';
 import 'dart:ui';
@@ -70,10 +71,10 @@ class ImageResizer {
     canvas.height = newImageSize.height.toInt();
     final web.CanvasRenderingContext2D context = canvas.context2D;
     if (maxHeight == null && maxWidth == null) {
-      context.drawImage(source.jsify(), 0, 0);
+      context.drawImage(source.jsify()! as JSObject, 0, 0);
     } else {
       context.drawImageScaled(
-          source.jsify(), 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
+          source.jsify()! as JSObject, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
     }
     return canvas;
   }
