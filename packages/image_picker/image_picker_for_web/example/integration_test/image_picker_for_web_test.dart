@@ -1,6 +1,8 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+// ignore_for_file: always_specify_types
+
 
 import 'dart:convert';
 import 'dart:js_interop';
@@ -14,10 +16,8 @@ import 'package:web/web.dart' as web;
 const String expectedStringContents = 'Hello, world!';
 const String otherStringContents = 'Hello again, world!';
 final JSArray bytes =
-// ignore: always_specify_types
     const Utf8Encoder().convert(expectedStringContents).toJS as JSArray;
 final JSArray otherBytes =
-// ignore: always_specify_types
     const Utf8Encoder().convert(otherStringContents).toJS as JSArray;
 final web.FilePropertyBag options = web.FilePropertyBag(
     lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch)
