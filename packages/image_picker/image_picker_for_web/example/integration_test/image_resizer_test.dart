@@ -26,8 +26,7 @@ void main() {
   late XFile pngFile;
   setUp(() {
     imageResizer = ImageResizer();
-    final web.Blob pngHtmlFile =
-        _base64ToBlob(pngFileBase64Contents);
+    final web.Blob pngHtmlFile = _base64ToBlob(pngFileBase64Contents);
     pngFile = XFile(web.URL.createObjectURL(pngHtmlFile),
         name: 'pngImage.png', mimeType: 'image/png');
   });
@@ -114,7 +113,8 @@ void main() {
 
 Future<Size> _getImageSize(XFile file) async {
   final Completer<Size> completer = Completer<Size>();
-  final web.HTMLImageElement image = web.document.createElement('img') as web.HTMLImageElement;
+  final web.HTMLImageElement image =
+      web.document.createElement('img') as web.HTMLImageElement;
   image.src = file.path;
   image.onLoad.listen((web.Event event) {
     completer.complete(Size(image.width.toDouble(), image.height.toDouble()));

@@ -233,7 +233,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     }
     final web.FileList? fileList = input.files;
     final List<web.File> files = <web.File>[];
-    for(int i = 0; i < (fileList?.length ?? 0); i++){
+    for (int i = 0; i < (fileList?.length ?? 0); i++) {
       files.add(input.files!.item(i)!);
     }
     return files;
@@ -242,8 +242,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   /// Handles the OnChange event from a FileUploadInputElement object
   /// Returns a list of selected files.
   List<web.File>? _handleOnChangeEvent(web.Event event) {
-    final web.HTMLInputElement? input =
-        event.target as web.HTMLInputElement?;
+    final web.HTMLInputElement? input = event.target as web.HTMLInputElement?;
     return input == null ? null : _getFilesFromInput(input);
   }
 
@@ -306,9 +305,10 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       return _overrides!.createInputElement(accept, capture);
     }
 
-    final web.HTMLInputElement element = (web.document.createElement('input') as web.HTMLInputElement)
-      ..type = 'file'
-      ..multiple = multiple;
+    final web.HTMLInputElement element =
+        (web.document.createElement('input') as web.HTMLInputElement)
+          ..type = 'file'
+          ..multiple = multiple;
 
     if (accept != null) {
       element.accept = accept;
@@ -340,8 +340,8 @@ typedef OverrideCreateInputFunction = web.Element Function(
 
 /// A function that extracts list of files from the file `input` passed in.
 @visibleForTesting
-typedef OverrideExtractMultipleFilesFromInputFunction = List<web.File>
-    Function(web.Element? input);
+typedef OverrideExtractMultipleFilesFromInputFunction = List<web.File> Function(
+    web.Element? input);
 
 /// Overrides for some of the functionality above.
 @visibleForTesting

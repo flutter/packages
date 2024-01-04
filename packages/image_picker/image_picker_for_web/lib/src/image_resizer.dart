@@ -72,26 +72,28 @@ class ImageResizer {
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);
     } else {
-      context.drawImageScaled(source, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
+      context.drawImageScaled(
+          source, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
     }
     return canvas;
   }
 
   /// function that converts a canvas element to Xfile
   /// [imageQuality] is only supported for jpeg and webp images.
-  Future<XFile> writeCanvasToFile(
-      XFile originalFile, web.HTMLCanvasElement canvas, int? imageQuality) async {
+  Future<XFile> writeCanvasToFile(XFile originalFile,
+      web.HTMLCanvasElement canvas, int? imageQuality) async {
     final double calculatedImageQuality =
         (min(imageQuality ?? 100, 100)) / 100.0;
     final Completer<XFile> completer = Completer<XFile>();
-    final web.BlobCallback blobCallback = (web.Blob blob){
+    final web.BlobCallback blobCallback = (web.Blob blob) {
       completer.complete(XFile(web.URL.createObjectURL(blob),
           mimeType: originalFile.mimeType,
           name: 'scaled_${originalFile.name}',
           lastModified: DateTime.now(),
           length: blob.size));
     }.toJS;
-    canvas.toBlob(blobCallback, originalFile.mimeType ?? '', calculatedImageQuality.toJS);
+    canvas.toBlob(
+        blobCallback, originalFile.mimeType ?? '', calculatedImageQuality.toJS);
     return completer.future;
   }
 }

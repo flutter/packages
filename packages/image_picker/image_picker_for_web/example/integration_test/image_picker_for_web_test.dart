@@ -17,8 +17,8 @@ const String otherStringContents = 'Hello again, world!';
 final Uint8List bytes = const Utf8Encoder().convert(expectedStringContents);
 final Uint8List otherBytes = const Utf8Encoder().convert(otherStringContents);
 final web.FilePropertyBag options = web.FilePropertyBag(
-  lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch
-)..type = 'text/plain';
+    lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch)
+  ..type = 'text/plain';
 
 final web.File textFile = web.File(bytes.toJS as JSArray, 'hello.txt', options);
 final web.File secondTextFile =
@@ -76,7 +76,7 @@ void main() {
     WidgetTester _,
   ) async {
     final web.HTMLInputElement mockInput = (web.document.createElement('input')
-    as web.HTMLInputElement)
+        as web.HTMLInputElement)
       ..type = 'file';
 
     final ImagePickerPluginTestOverrides overrides =
@@ -108,7 +108,7 @@ void main() {
 
   testWidgets('getMedia can select multiple files', (WidgetTester _) async {
     final web.HTMLInputElement mockInput = (web.document.createElement('input')
-    as web.HTMLInputElement)
+        as web.HTMLInputElement)
       ..type = 'file';
 
     final ImagePickerPluginTestOverrides overrides =
@@ -145,8 +145,7 @@ void main() {
     late ImagePickerPlugin plugin;
 
     setUp(() {
-      mockInput = (web.document.createElement('input')
-      as web.HTMLInputElement)
+      mockInput = (web.document.createElement('input') as web.HTMLInputElement)
         ..type = 'file';
       overrides = ImagePickerPluginTestOverrides()
         ..createInputElement = ((_, __) => mockInput)
@@ -271,8 +270,7 @@ void main() {
     late ImagePickerPlugin plugin;
 
     setUp(() {
-      mockInput = (web.document.createElement('input')
-      as web.HTMLInputElement)
+      mockInput = (web.document.createElement('input') as web.HTMLInputElement)
         ..type = 'file';
       overrides = ImagePickerPluginTestOverrides()
         ..createInputElement = ((_, __) => mockInput)
