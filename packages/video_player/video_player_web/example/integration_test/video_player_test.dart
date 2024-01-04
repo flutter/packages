@@ -23,7 +23,7 @@ void main() {
       // Never set "src" on the video, so this test doesn't hit the network!
       video = (web.document.createElement('video') as web.HTMLVideoElement)
         ..controls = true
-        ..setAttribute('playsinline', 'false');
+        ..playsInline = false;
     });
 
     testWidgets('fixes critical video element config', (WidgetTester _) async {
@@ -36,8 +36,7 @@ void main() {
       // see: https://developer.mozilla.org/en-US/docs/Glossary/Boolean/HTML
       expect(video.getAttribute('autoplay'), isNull,
           reason: 'autoplay attribute on video tag must NOT be set');
-      expect(video.getAttribute('playsinline'), 'true',
-          reason: 'Needed by safari iOS');
+      expect(video.playsInline, true, reason: 'Needed by safari iOS');
     });
 
     testWidgets('setVolume', (WidgetTester tester) async {
@@ -271,7 +270,7 @@ void main() {
             expect(video.controlsList?.contains('nodownload'), isFalse);
             expect(video.controlsList?.contains('nofullscreen'), isFalse);
             expect(video.controlsList?.contains('noplaybackrate'), isFalse);
-            expect(video.getAttribute('disablePictureInPicture'), isNull);
+            expect(video.disablePictureInPicture, isFalse);
           });
 
           testWidgets('and no download expect correct controls',
@@ -290,7 +289,7 @@ void main() {
             expect(video.controlsList?.contains('nodownload'), isTrue);
             expect(video.controlsList?.contains('nofullscreen'), isFalse);
             expect(video.controlsList?.contains('noplaybackrate'), isFalse);
-            expect(video.getAttribute('disablePictureInPicture'), isNull);
+            expect(video.disablePictureInPicture, isFalse);
           });
 
           testWidgets('and no fullscreen expect correct controls',
@@ -309,7 +308,7 @@ void main() {
             expect(video.controlsList?.contains('nodownload'), isFalse);
             expect(video.controlsList?.contains('nofullscreen'), isTrue);
             expect(video.controlsList?.contains('noplaybackrate'), isFalse);
-            expect(video.getAttribute('disablePictureInPicture'), isNull);
+            expect(video.disablePictureInPicture, isFalse);
           });
 
           testWidgets('and no playback rate expect correct controls',
@@ -328,7 +327,7 @@ void main() {
             expect(video.controlsList?.contains('nodownload'), isFalse);
             expect(video.controlsList?.contains('nofullscreen'), isFalse);
             expect(video.controlsList?.contains('noplaybackrate'), isTrue);
-            expect(video.getAttribute('disablePictureInPicture'), isNull);
+            expect(video.disablePictureInPicture, isFalse);
           });
 
           testWidgets('and no picture in picture expect correct controls',
@@ -347,7 +346,7 @@ void main() {
             expect(video.controlsList?.contains('nodownload'), isFalse);
             expect(video.controlsList?.contains('nofullscreen'), isFalse);
             expect(video.controlsList?.contains('noplaybackrate'), isFalse);
-            expect(video.getAttribute('disablePictureInPicture'), 'true');
+            expect(video.disablePictureInPicture, isTrue);
           });
         });
       });
@@ -362,7 +361,7 @@ void main() {
             ),
           );
 
-          expect(video.getAttribute('disableRemotePlayback'), isNull);
+          expect(video.disableRemotePlayback, isFalse);
         });
 
         testWidgets('when disabled expect attribute',
@@ -373,7 +372,7 @@ void main() {
             ),
           );
 
-          expect(video.getAttribute('disableRemotePlayback'), 'true');
+          expect(video.disableRemotePlayback, isTrue);
         });
       });
 
@@ -398,8 +397,8 @@ void main() {
           expect(video.controlsList?.contains('nodownload'), isTrue);
           expect(video.controlsList?.contains('nofullscreen'), isTrue);
           expect(video.controlsList?.contains('noplaybackrate'), isTrue);
-          expect(video.getAttribute('disablePictureInPicture'), 'true');
-          expect(video.getAttribute('disableRemotePlayback'), 'true');
+          expect(video.disablePictureInPicture, isTrue);
+          expect(video.disableRemotePlayback, isTrue);
         });
 
         group('when called once more', () {
@@ -421,8 +420,8 @@ void main() {
             expect(video.controlsList?.contains('nodownload'), isFalse);
             expect(video.controlsList?.contains('nofullscreen'), isFalse);
             expect(video.controlsList?.contains('noplaybackrate'), isFalse);
-            expect(video.getAttribute('disablePictureInPicture'), isNull);
-            expect(video.getAttribute('disableRemotePlayback'), isNull);
+            expect(video.disablePictureInPicture, isFalse);
+            expect(video.disableRemotePlayback, isFalse);
           });
         });
       });
