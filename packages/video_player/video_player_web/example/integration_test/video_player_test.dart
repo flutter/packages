@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 import 'package:video_player_web/src/duration_utils.dart';
 import 'package:video_player_web/src/video_player.dart';
+import 'package:web/web.dart' as web;
 
 import 'utils.dart';
 
@@ -17,11 +17,11 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('VideoPlayer', () {
-    late html.VideoElement video;
+    late web.HTMLVideoElement video;
 
     setUp(() {
       // Never set "src" on the video, so this test doesn't hit the network!
-      video = html.VideoElement()
+      video = (web.document.createElement('video') as web.HTMLVideoElement)
         ..controls = true
         ..setAttribute('playsinline', 'false');
     });
@@ -145,7 +145,7 @@ void main() {
         player.setBuffering(true);
 
         // Simulate "canplay" event...
-        video.dispatchEvent(html.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
 
         final List<bool> events = await stream;
 
@@ -166,7 +166,7 @@ void main() {
         player.setBuffering(true);
 
         // Simulate "canplaythrough" event...
-        video.dispatchEvent(html.Event('canplaythrough'));
+        video.dispatchEvent(web.Event('canplaythrough'));
 
         final List<bool> events = await stream;
 
@@ -177,9 +177,9 @@ void main() {
       testWidgets('initialized dispatches only once',
           (WidgetTester tester) async {
         // Dispatch some bogus "canplay" events from the video object
-        video.dispatchEvent(html.Event('canplay'));
-        video.dispatchEvent(html.Event('canplay'));
-        video.dispatchEvent(html.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
 
         // Take all the "initialized" events that we see during the next few seconds
         final Future<List<VideoEvent>> stream = timedStream
@@ -187,9 +187,9 @@ void main() {
                 event.eventType == VideoEventType.initialized)
             .toList();
 
-        video.dispatchEvent(html.Event('canplay'));
-        video.dispatchEvent(html.Event('canplay'));
-        video.dispatchEvent(html.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
 
         final List<VideoEvent> events = await stream;
 
@@ -200,8 +200,8 @@ void main() {
       // Issue: https://github.com/flutter/flutter/issues/137023
       testWidgets('loadedmetadata dispatches initialized',
           (WidgetTester tester) async {
-        video.dispatchEvent(html.Event('loadedmetadata'));
-        video.dispatchEvent(html.Event('loadedmetadata'));
+        video.dispatchEvent(web.Event('loadedmetadata'));
+        video.dispatchEvent(web.Event('loadedmetadata'));
 
         final Future<List<VideoEvent>> stream = timedStream
             .where((VideoEvent event) =>
@@ -224,7 +224,7 @@ void main() {
                 event.eventType == VideoEventType.initialized)
             .toList();
 
-        video.dispatchEvent(html.Event('canplay'));
+        video.dispatchEvent(web.Event('canplay'));
 
         final List<VideoEvent> events = await stream;
 
@@ -238,7 +238,7 @@ void main() {
       late VideoPlayer player;
 
       setUp(() {
-        video = html.VideoElement();
+        video = web.document.createElement('video') as web.HTMLVideoElement;
         player = VideoPlayer(videoElement: video)..initialize();
       });
 
@@ -428,4 +428,8 @@ void main() {
       });
     });
   });
+}
+
+extension ControlsListInVideoElement on web.HTMLVideoElement {
+  external web.DOMTokenList? get controlsList;
 }

@@ -5,9 +5,8 @@
 @JS()
 library integration_test_utils;
 
-import 'dart:html';
-
 import 'package:js/js.dart';
+import 'package:web/web.dart' as web;
 
 // Returns the URL to load an asset from this example app as a network source.
 //
@@ -45,7 +44,7 @@ external void _defineProperty(
 /// Forces a VideoElement to report "Infinity" duration.
 ///
 /// Uses JS Object.defineProperty to set the value of a readonly property.
-void setInfinityDuration(VideoElement element) {
+void setInfinityDuration(web.HTMLVideoElement element) {
   _defineProperty(
       element,
       'duration',

@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:web/web.dart' as web;
 
 import 'src/video_player.dart';
 
@@ -71,11 +71,12 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
             'web implementation of video_player cannot play content uri'));
     }
 
-    final VideoElement videoElement = VideoElement()
-      ..id = 'videoElement-$textureId'
-      ..style.border = 'none'
-      ..style.height = '100%'
-      ..style.width = '100%';
+    final web.HTMLVideoElement videoElement =
+        (web.document.createElement('video') as web.HTMLVideoElement)
+          ..id = 'videoElement-$textureId'
+          ..style.border = 'none'
+          ..style.height = '100%'
+          ..style.width = '100%';
 
     // TODO(hterkelsen): Use initialization parameters once they are available
     ui_web.platformViewRegistry.registerViewFactory(

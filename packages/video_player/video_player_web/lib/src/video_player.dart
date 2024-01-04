@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:web/helpers.dart';
+import 'package:web/web.dart' as web;
 
 import 'duration_utils.dart';
 
@@ -34,29 +36,29 @@ const Map<int, String> _kErrorValueToErrorDescription = <int, String>{
 const String _kDefaultErrorMessage =
     'No further diagnostic information can be determined or provided.';
 
-/// Wraps a [html.VideoElement] so its API complies with what is expected by the plugin.
+/// Wraps a [web.HTMLVideoElement] so its API complies with what is expected by the plugin.
 class VideoPlayer {
-  /// Create a [VideoPlayer] from a [html.VideoElement] instance.
+  /// Create a [VideoPlayer] from a [web.HTMLVideoElement] instance.
   VideoPlayer({
-    required html.VideoElement videoElement,
+    required web.HTMLVideoElement videoElement,
     @visibleForTesting StreamController<VideoEvent>? eventController,
   })  : _videoElement = videoElement,
         _eventController = eventController ?? StreamController<VideoEvent>();
 
   final StreamController<VideoEvent> _eventController;
-  final html.VideoElement _videoElement;
-  void Function(html.Event)? _onContextMenu;
+  final web.HTMLVideoElement _videoElement;
+  void Function(web.Event)? _onContextMenu;
 
   bool _isInitialized = false;
   bool _isBuffering = false;
 
-  /// Returns the [Stream] of [VideoEvent]s from the inner [html.VideoElement].
+  /// Returns the [Stream] of [VideoEvent]s from the inner [web.HTMLVideoElement].
   Stream<VideoEvent> get events => _eventController.stream;
 
-  /// Initializes the wrapped [html.VideoElement].
+  /// Initializes the wrapped [web.HTMLVideoElement].
   ///
   /// This method sets the required DOM attributes so videos can [play] programmatically,
-  /// and attaches listeners to the internal events from the [html.VideoElement]
+  /// and attaches listeners to the internal events from the [web.HTMLVideoElement]
   /// to react to them / expose them through the [VideoPlayer.events] stream.
   ///
   /// The [src] parameter is the URL of the video. It is passed in from the plugin
@@ -71,14 +73,8 @@ class VideoPlayer {
   }) {
     _videoElement
       ..autoplay = false
-      ..controls = false;
-
-    // Allows Safari iOS to play the video inline.
-    //
-    // This property is not exposed through dart:html so we use the
-    // HTML Boolean attribute form (when present with any value => true)
-    // See: https://developer.mozilla.org/en-US/docs/Glossary/Boolean/HTML
-    _videoElement.setAttribute('playsinline', true);
+      ..controls = false
+      ..playsInline = true;
 
     _videoElement.onCanPlay.listen(_onVideoElementInitialization);
     // Needed for Safari iOS 17, which may not send `canplay`.
@@ -98,12 +94,12 @@ class VideoPlayer {
     });
 
     // The error event fires when some form of error occurs while attempting to load or perform the media.
-    _videoElement.onError.listen((html.Event _) {
+    _videoElement.onError.listen((web.Event _) {
       setBuffering(false);
       // The Event itself (_) doesn't contain info about the actual error.
       // We need to look at the HTMLMediaElement.error.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/error
-      final html.MediaError error = _videoElement.error!;
+      final web.MediaError error = _videoElement.error!;
       _eventController.addError(PlatformException(
         code: _kErrorValueToErrorName[error.code]!,
         message: error.message != '' ? error.message : _kDefaultErrorMessage,
@@ -145,18 +141,19 @@ class VideoPlayer {
   /// When called from some user interaction (a tap on a button), the above
   /// limitation should disappear.
   Future<void> play() {
-    return _videoElement.play().catchError((Object e) {
+    return _videoElement.play().toDart.catchError((Object e) {
       // play() attempts to begin playback of the media. It returns
       // a Promise which can get rejected in case of failure to begin
       // playback for any reason, such as permission issues.
-      // The rejection handler is called with a DomException.
+      // The rejection handler is called with a DOMException.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play
-      final html.DomException exception = e as html.DomException;
+      final web.DOMException exception = e as web.DOMException;
       _eventController.addError(PlatformException(
         code: exception.name,
         message: exception.message,
       ));
-    }, test: (Object e) => e is html.DomException);
+      return exception.jsify();
+    }, test: (Object e) => e is web.DOMException);
   }
 
   /// Pauses the video in the current position.
@@ -175,7 +172,7 @@ class VideoPlayer {
   /// Values must fall between 0 and 1, where 0 is muted and 1 is the loudest.
   ///
   /// When volume is set to 0, the `muted` property is also applied to the
-  /// [html.VideoElement]. This is required for auto-play on the web.
+  /// [web.HTMLVideoElement]. This is required for auto-play on the web.
   void setVolume(double volume) {
     assert(volume >= 0 && volume <= 1);
 
@@ -230,17 +227,17 @@ class VideoPlayer {
       }
 
       if (!options.controls.allowPictureInPicture) {
-        _videoElement.setAttribute('disablePictureInPicture', true);
+        _videoElement.disablePictureInPicture = true;
       }
     }
 
     if (!options.allowContextMenu) {
-      _onContextMenu = (html.Event event) => event.preventDefault();
-      _videoElement.addEventListener('contextmenu', _onContextMenu);
+      _onContextMenu = (web.Event event) => event.preventDefault();
+      _videoElement.addEventListener('contextmenu', _onContextMenu!.toJS);
     }
 
     if (!options.allowRemotePlayback) {
-      _videoElement.setAttribute('disableRemotePlayback', true);
+      _videoElement.disableRemotePlayback = true;
     }
   }
 
@@ -249,17 +246,17 @@ class VideoPlayer {
     _videoElement.removeAttribute('controlsList');
     _videoElement.removeAttribute('disablePictureInPicture');
     if (_onContextMenu != null) {
-      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _videoElement.removeEventListener('contextmenu', _onContextMenu!.toJS);
       _onContextMenu = null;
     }
     _videoElement.removeAttribute('disableRemotePlayback');
   }
 
-  /// Disposes of the current [html.VideoElement].
+  /// Disposes of the current [web.HTMLVideoElement].
   void dispose() {
     _videoElement.removeAttribute('src');
     if (_onContextMenu != null) {
-      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _videoElement.removeEventListener('contextmenu', _onContextMenu!.toJS);
       _onContextMenu = null;
     }
     _videoElement.load();
@@ -316,7 +313,7 @@ class VideoPlayer {
     }
   }
 
-  // Broadcasts the [html.VideoElement.buffered] status through the [events] stream.
+  // Broadcasts the [web.HTMLVideoElement.buffered] status through the [events] stream.
   void _sendBufferingRangesUpdate() {
     _eventController.add(VideoEvent(
       buffered: _toDurationRange(_videoElement.buffered),
@@ -325,7 +322,7 @@ class VideoPlayer {
   }
 
   // Converts from [html.TimeRanges] to our own List<DurationRange>.
-  List<DurationRange> _toDurationRange(html.TimeRanges buffered) {
+  List<DurationRange> _toDurationRange(web.TimeRanges buffered) {
     final List<DurationRange> durationRange = <DurationRange>[];
     for (int i = 0; i < buffered.length; i++) {
       durationRange.add(DurationRange(
