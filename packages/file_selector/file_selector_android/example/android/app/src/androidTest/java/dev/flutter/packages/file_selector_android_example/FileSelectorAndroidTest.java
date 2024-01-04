@@ -26,7 +26,6 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-
 public class FileSelectorAndroidTest {
   @Rule
   public ActivityScenarioRule<DriverExtensionActivity> myActivityTestRule =
