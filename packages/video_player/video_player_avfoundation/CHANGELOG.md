@@ -1,6 +1,10 @@
-## 2.5.4
+## 2.5.5
 
 * Fixes display of initial frame when paused.
+
+## 2.5.4
+
+* Fixes new lint warnings.
 
 ## 2.5.3
 
