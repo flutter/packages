@@ -1,7 +1,15 @@
+## 3.11.0
+
+* Adds support for `setOnScrollPositionChange` method to the `WebKitWebViewController`.
+
+## 3.10.1
+
+* Fixes new lint warnings.
+
 ## 3.10.0
 
+* Adds support for `PlatformNavigationDelegate.setOnHttpAuthRequest`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Adds support for `setOnScrollPositionChange` method to the `WebKitWebViewController`.
 
 ## 3.9.4
 

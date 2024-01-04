@@ -1402,6 +1402,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
     super.didFailProvisionalNavigation,
     super.decidePolicyForNavigationAction,
     super.webViewWebContentProcessDidTerminate,
+    super.didReceiveAuthenticationChallenge,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }

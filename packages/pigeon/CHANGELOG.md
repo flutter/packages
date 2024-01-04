@@ -1,3 +1,7 @@
+## 15.0.3
+
+* Fixes new lint warnings.
+
 ## 15.0.2
 
 * Prevents optional and non-positional parameters in Flutter APIs.

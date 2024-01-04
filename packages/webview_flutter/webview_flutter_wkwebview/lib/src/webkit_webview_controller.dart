@@ -193,18 +193,15 @@ class WebKitWebViewController extends PlatformWebViewController {
               types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.camera
               };
-              break;
             case WKMediaCaptureType.cameraAndMicrophone:
               types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.camera,
                 WebViewPermissionResourceType.microphone
               };
-              break;
             case WKMediaCaptureType.microphone:
               types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.microphone
               };
-              break;
             case WKMediaCaptureType.unknown:
               // The default response for iOS is to prompt. See
               // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
@@ -254,7 +251,6 @@ class WebKitWebViewController extends PlatformWebViewController {
                   change[NSKeyValueChangeKey.newValue]! as double;
               progressCallback((progress * 100).round());
             }
-            break;
           case 'URL':
             final UrlChangeCallback? urlChangeCallback =
                 controller._currentNavigationDelegate?._onUrlChange;
@@ -262,7 +258,6 @@ class WebKitWebViewController extends PlatformWebViewController {
               final NSUrl? url = change[NSKeyValueChangeKey.newValue] as NSUrl?;
               urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
-            break;
         }
       };
     }),
@@ -556,16 +551,12 @@ class WebKitWebViewController extends PlatformWebViewController {
           switch (consoleLog['level']) {
             case 'error':
               level = JavaScriptLogLevel.error;
-              break;
             case 'warning':
               level = JavaScriptLogLevel.warning;
-              break;
             case 'debug':
               level = JavaScriptLogLevel.debug;
-              break;
             case 'info':
               level = JavaScriptLogLevel.info;
-              break;
             case 'log':
             default:
               level = JavaScriptLogLevel.log;
@@ -978,6 +969,54 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
       },
+      didReceiveAuthenticationChallenge: (
+        WKWebView webView,
+        NSUrlAuthenticationChallenge challenge,
+        void Function(
+          NSUrlSessionAuthChallengeDisposition disposition,
+          NSUrlCredential? credential,
+        ) completionHandler,
+      ) {
+        if (challenge.protectionSpace.authenticationMethod ==
+            NSUrlAuthenticationMethod.httpBasic) {
+          final void Function(HttpAuthRequest)? callback =
+              weakThis.target?._onHttpAuthRequest;
+          final String? host = challenge.protectionSpace.host;
+          final String? realm = challenge.protectionSpace.realm;
+
+          if (callback != null && host != null) {
+            callback(
+              HttpAuthRequest(
+                onProceed: (WebViewCredential credential) {
+                  completionHandler(
+                    NSUrlSessionAuthChallengeDisposition.useCredential,
+                    NSUrlCredential.withUser(
+                      user: credential.user,
+                      password: credential.password,
+                      persistence: NSUrlCredentialPersistence.session,
+                    ),
+                  );
+                },
+                onCancel: () {
+                  completionHandler(
+                    NSUrlSessionAuthChallengeDisposition
+                        .cancelAuthenticationChallenge,
+                    null,
+                  );
+                },
+                host: host,
+                realm: realm,
+              ),
+            );
+            return;
+          }
+        }
+
+        completionHandler(
+          NSUrlSessionAuthChallengeDisposition.performDefaultHandling,
+          null,
+        );
+      },
     );
   }
 
@@ -990,6 +1029,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
   UrlChangeCallback? _onUrlChange;
+  HttpAuthRequestCallback? _onHttpAuthRequest;
 
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {
@@ -1023,6 +1063,13 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
     _onUrlChange = onUrlChange;
+  }
+
+  @override
+  Future<void> setOnHttpAuthRequest(
+    HttpAuthRequestCallback onHttpAuthRequest,
+  ) async {
+    _onHttpAuthRequest = onHttpAuthRequest;
   }
 }
 

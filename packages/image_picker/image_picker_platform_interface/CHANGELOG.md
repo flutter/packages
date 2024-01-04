@@ -1,6 +1,7 @@
-## NEXT
+## 2.9.2
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
 
 ## 2.9.1
 
