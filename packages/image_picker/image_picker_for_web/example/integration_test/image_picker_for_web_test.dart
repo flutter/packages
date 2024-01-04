@@ -13,11 +13,11 @@ import 'package:web/web.dart' as web;
 
 const String expectedStringContents = 'Hello, world!';
 const String otherStringContents = 'Hello again, world!';
-// ignore: always_specify_types
 final JSArray bytes =
-    const Utf8Encoder().convert(expectedStringContents).toJS as JSArray;
 // ignore: always_specify_types
+    const Utf8Encoder().convert(expectedStringContents).toJS as JSArray;
 final JSArray otherBytes =
+// ignore: always_specify_types
     const Utf8Encoder().convert(otherStringContents).toJS as JSArray;
 final web.FilePropertyBag options = web.FilePropertyBag(
     lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch)
