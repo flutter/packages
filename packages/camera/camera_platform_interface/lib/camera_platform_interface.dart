@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Expose XFile
+// Expose XFile
 export 'package:cross_file/cross_file.dart';
 
 export 'src/events/camera_event.dart';

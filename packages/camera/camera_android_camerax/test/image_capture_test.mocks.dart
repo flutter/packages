@@ -36,6 +36,7 @@ class MockTestImageCaptureHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
+    int? targetRotation,
     int? flashMode,
     int? resolutionSelectorId,
   ) =>
@@ -44,6 +45,7 @@ class MockTestImageCaptureHostApi extends _i1.Mock
           #create,
           [
             identifier,
+            targetRotation,
             flashMode,
             resolutionSelectorId,
           ],
@@ -81,6 +83,22 @@ class MockTestImageCaptureHostApi extends _i1.Mock
           ),
         )),
       ) as _i3.Future<String>);
+
+  @override
+  void setTargetRotation(
+    int? identifier,
+    int? rotation,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [
+            identifier,
+            rotation,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].

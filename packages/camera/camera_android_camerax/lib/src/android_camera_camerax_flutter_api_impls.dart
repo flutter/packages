@@ -10,6 +10,7 @@ import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camera_state_error.dart';
 import 'camerax_library.g.dart';
+import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'image_proxy.dart';
 import 'java_object.dart';
@@ -34,6 +35,8 @@ class AndroidCameraXCameraFlutterApis {
       CameraSelectorFlutterApiImpl? cameraSelectorFlutterApiImpl,
       ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApiImpl,
       SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
+      DeviceOrientationManagerFlutterApiImpl?
+          deviceOrientationManagerFlutterApiImpl,
       CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
       CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
       PendingRecordingFlutterApiImpl? pendingRecordingFlutterApiImpl,
@@ -60,6 +63,9 @@ class AndroidCameraXCameraFlutterApis {
     this.cameraFlutterApiImpl = cameraFlutterApiImpl ?? CameraFlutterApiImpl();
     this.systemServicesFlutterApiImpl =
         systemServicesFlutterApiImpl ?? SystemServicesFlutterApiImpl();
+    this.deviceOrientationManagerFlutterApiImpl =
+        deviceOrientationManagerFlutterApiImpl ??
+            DeviceOrientationManagerFlutterApiImpl();
     this.cameraStateErrorFlutterApiImpl =
         cameraStateErrorFlutterApiImpl ?? CameraStateErrorFlutterApiImpl();
     this.cameraStateFlutterApiImpl =
@@ -117,6 +123,10 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api implementation for [SystemServices].
   late final SystemServicesFlutterApiImpl systemServicesFlutterApiImpl;
 
+  /// Flutter Api implementation for [DeviceOrientationManager].
+  late final DeviceOrientationManagerFlutterApiImpl
+      deviceOrientationManagerFlutterApiImpl;
+
   /// Flutter Api implementation for [CameraStateError].
   late final CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl;
 
@@ -169,6 +179,8 @@ class AndroidCameraXCameraFlutterApis {
           processCameraProviderFlutterApiImpl);
       CameraFlutterApi.setup(cameraFlutterApiImpl);
       SystemServicesFlutterApi.setup(systemServicesFlutterApiImpl);
+      DeviceOrientationManagerFlutterApi.setup(
+          deviceOrientationManagerFlutterApiImpl);
       CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
       CameraStateFlutterApi.setup(cameraStateFlutterApiImpl);
       PendingRecordingFlutterApi.setup(pendingRecordingFlutterApiImpl);

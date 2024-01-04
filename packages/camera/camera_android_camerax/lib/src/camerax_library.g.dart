@@ -894,53 +894,6 @@ class SystemServicesHostApi {
     }
   }
 
-  Future<void> startListeningForDeviceOrientationChange(
-      bool arg_isFrontFacing, int arg_sensorOrientation) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.SystemServicesHostApi.startListeningForDeviceOrientationChange',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_isFrontFacing, arg_sensorOrientation])
-            as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> stopListeningForDeviceOrientationChange() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.SystemServicesHostApi.stopListeningForDeviceOrientationChange',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
   Future<String> getTempFilePath(String arg_prefix, String arg_suffix) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SystemServicesHostApi.getTempFilePath', codec,
@@ -972,32 +925,10 @@ class SystemServicesHostApi {
 abstract class SystemServicesFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void onDeviceOrientationChanged(String orientation);
-
   void onCameraError(String errorDescription);
 
   static void setup(SystemServicesFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.SystemServicesFlutterApi.onDeviceOrientationChanged',
-          codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.SystemServicesFlutterApi.onDeviceOrientationChanged was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_orientation = (args[0] as String?);
-          assert(arg_orientation != null,
-              'Argument for dev.flutter.pigeon.SystemServicesFlutterApi.onDeviceOrientationChanged was null, expected non-null String.');
-          api.onDeviceOrientationChanged(arg_orientation!);
-          return;
-        });
-      }
-    }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.SystemServicesFlutterApi.onCameraError', codec,
@@ -1013,6 +944,121 @@ abstract class SystemServicesFlutterApi {
           assert(arg_errorDescription != null,
               'Argument for dev.flutter.pigeon.SystemServicesFlutterApi.onCameraError was null, expected non-null String.');
           api.onCameraError(arg_errorDescription!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+class DeviceOrientationManagerHostApi {
+  /// Constructor for [DeviceOrientationManagerHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  DeviceOrientationManagerHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<void> startListeningForDeviceOrientationChange(
+      bool arg_isFrontFacing, int arg_sensorOrientation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DeviceOrientationManagerHostApi.startListeningForDeviceOrientationChange',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_isFrontFacing, arg_sensorOrientation])
+            as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> stopListeningForDeviceOrientationChange() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DeviceOrientationManagerHostApi.stopListeningForDeviceOrientationChange',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<int> getDefaultDisplayRotation() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultDisplayRotation',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+}
+
+abstract class DeviceOrientationManagerFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void onDeviceOrientationChanged(String orientation);
+
+  static void setup(DeviceOrientationManagerFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_orientation = (args[0] as String?);
+          assert(arg_orientation != null,
+              'Argument for dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged was null, expected non-null String.');
+          api.onDeviceOrientationChanged(arg_orientation!);
           return;
         });
       }
@@ -1151,6 +1197,28 @@ class PreviewHostApi {
       return (replyList[0] as ResolutionInfo?)!;
     }
   }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PreviewHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 class VideoCaptureHostApi {
@@ -1214,6 +1282,28 @@ class VideoCaptureHostApi {
       );
     } else {
       return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }
@@ -1603,14 +1693,17 @@ class ImageCaptureHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, int? arg_flashMode,
-      int? arg_resolutionSelectorId) async {
+  Future<void> create(int arg_identifier, int? arg_targetRotation,
+      int? arg_flashMode, int? arg_resolutionSelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImageCaptureHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(
-            <Object?>[arg_identifier, arg_flashMode, arg_resolutionSelectorId])
-        as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_targetRotation,
+      arg_flashMode,
+      arg_resolutionSelectorId
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1673,6 +1766,28 @@ class ImageCaptureHostApi {
       );
     } else {
       return (replyList[0] as String?)!;
+    }
+  }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }
@@ -1974,13 +2089,16 @@ class ImageAnalysisHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, int? arg_resolutionSelectorId) async {
+  Future<void> create(int arg_identifier, int? arg_targetRotation,
+      int? arg_resolutionSelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImageAnalysisHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_resolutionSelectorId])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_targetRotation,
+      arg_resolutionSelectorId
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -2027,6 +2145,28 @@ class ImageAnalysisHostApi {
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

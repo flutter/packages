@@ -1,3 +1,7 @@
+## 2.2.3
+
+* Fixes new lint warnings.
+
 ## 2.2.2
 
 * Adds documentation that a launch in a new window/tab needs to be triggered by
