@@ -1,6 +1,7 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
 import 'dart:ffi';
 import 'dart:io';
 
@@ -8,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
 import 'package:path_provider_windows/src/path_provider_windows_real.dart'
-    show languageEn, encodingCP1252, encodingUnicode;
+    show encodingCP1252, encodingUnicode, languageEn;
 
 // A fake VersionInfoQuerier that just returns preset responses.
 class FakeVersionInfoQuerier implements VersionInfoQuerier {
@@ -22,6 +23,7 @@ class FakeVersionInfoQuerier implements VersionInfoQuerier {
   final String encoding;
   final Map<String, String> responses;
 
+  // ignore: unreachable_from_main
   String? getStringValue(
     Pointer<Uint8>? versionInfo,
     String key, {

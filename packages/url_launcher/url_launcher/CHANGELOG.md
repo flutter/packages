@@ -1,3 +1,8 @@
+## 6.2.2
+
+* Adds a link about web limitations to the `url_launcher_web` package in the
+  `url_launcher` `README.md` and `launchUrl` method.
+
 ## 6.2.1
 
 * Fixes incorrect types in `supportsLaunchMode` and

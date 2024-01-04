@@ -1,6 +1,11 @@
-## NEXT
+## 2.4.4
+
+* Updates `clearAuthCache` override to match base class declaration.
+
+## 2.4.3
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Drop dependency on `package:quiver`.
 
 ## 2.4.2
 

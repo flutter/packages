@@ -1791,13 +1791,10 @@ void _writeAccessBlock(
   switch (access) {
     case _ClassAccess.public:
       accessLabel = 'public';
-      break;
     case _ClassAccess.protected:
       accessLabel = 'protected';
-      break;
     case _ClassAccess.private:
       accessLabel = 'private';
-      break;
   }
   indent.addScoped(' $accessLabel:', '', body);
 }

@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.3+1
 
+* Improves example code in README.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.2.3

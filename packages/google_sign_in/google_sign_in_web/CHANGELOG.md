@@ -1,3 +1,17 @@
+## 0.12.3+2
+
+* Fixes new lint warnings.
+
+## 0.12.3+1
+
+* Updates `FlexHtmlElementView` (the widget backing `renderButton`) to not
+  rely on web engine knowledge (a platform view CSS selector) to operate.
+
+## 0.12.3
+
+* Migrates to `package:web`.
+* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
 ## 0.12.2+1
 
 * Re-publishes `0.12.2` with a small fix to the CodeClient initialization.

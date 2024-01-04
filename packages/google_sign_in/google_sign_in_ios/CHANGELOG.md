@@ -1,6 +1,15 @@
-## NEXT
+## 5.7.2
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates `clearAuthCache` override to match base class declaration.
+
+## 5.7.1
+
+* Changes `pigeon` to a dev dependency.
+
+## 5.7.0
+
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 5.6.5
 

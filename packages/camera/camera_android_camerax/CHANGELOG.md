@@ -1,3 +1,15 @@
+## 0.5.0+26
+
+* Fixes new lint warnings.
+
+## 0.5.0+25
+
+* Implements `lockCaptureOrientation` and `unlockCaptureOrientation`.
+
+## 0.5.0+24
+
+* Updates example app to use non-deprecated video_player method.
+
 ## 0.5.0+23
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
