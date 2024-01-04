@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:web/helpers.dart';
+import 'package:web/web.dart' as web;
 
 import 'image_resizer_utils.dart';
 
@@ -23,12 +25,12 @@ class ImageResizer {
       return file;
     }
     try {
-      final html.ImageElement imageElement = await loadImage(file.path);
-      final html.CanvasElement canvas =
+      final web.HTMLImageElement imageElement = await loadImage(file.path);
+      final web.HTMLCanvasElement canvas =
           resizeImageElement(imageElement, maxWidth, maxHeight);
       final XFile resizedImage =
           await writeCanvasToFile(file, canvas, imageQuality);
-      html.Url.revokeObjectUrl(file.path);
+      web.URL.revokeObjectURL(file.path);
       return resizedImage;
     } catch (e) {
       return file;
@@ -36,39 +38,41 @@ class ImageResizer {
   }
 
   /// function that loads the blobUrl into an imageElement
-  Future<html.ImageElement> loadImage(String blobUrl) {
-    final Completer<html.ImageElement> imageLoadCompleter =
-        Completer<html.ImageElement>();
-    final html.ImageElement imageElement = html.ImageElement();
+  Future<web.HTMLImageElement> loadImage(String blobUrl) {
+    final Completer<web.HTMLImageElement> imageLoadCompleter =
+        Completer<web.HTMLImageElement>();
+    final web.HTMLImageElement imageElement =
+        web.document.createElement('img') as web.HTMLImageElement;
     // ignore: unsafe_html
     imageElement.src = blobUrl;
 
-    imageElement.onLoad.listen((html.Event event) {
+    imageElement.onload = (web.Event event) {
       imageLoadCompleter.complete(imageElement);
-    });
-    imageElement.onError.listen((html.Event event) {
+    }.toJS;
+    imageElement.onerror = (web.Event event) {
       const String exception = 'Error while loading image.';
       imageElement.remove();
       imageLoadCompleter.completeError(exception);
-    });
+    }.toJS;
     return imageLoadCompleter.future;
   }
 
   /// Draws image to a canvas while resizing the image to fit the [maxWidth],[maxHeight] constraints
-  html.CanvasElement resizeImageElement(
-      html.ImageElement source, double? maxWidth, double? maxHeight) {
+  web.HTMLCanvasElement resizeImageElement(
+      web.HTMLImageElement source, double? maxWidth, double? maxHeight) {
     final Size newImageSize = calculateSizeOfDownScaledImage(
-        Size(source.width!.toDouble(), source.height!.toDouble()),
+        Size(source.width.toDouble(), source.height.toDouble()),
         maxWidth,
         maxHeight);
-    final html.CanvasElement canvas = html.CanvasElement();
+    final web.HTMLCanvasElement canvas =
+        web.document.createElement('canvas') as web.HTMLCanvasElement;
     canvas.width = newImageSize.width.toInt();
     canvas.height = newImageSize.height.toInt();
-    final html.CanvasRenderingContext2D context = canvas.context2D;
+    final web.CanvasRenderingContext2D context = canvas.context2D;
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);
     } else {
-      context.drawImageScaled(source, 0, 0, canvas.width!, canvas.height!);
+      context.drawImageScaled(source, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
     }
     return canvas;
   }
@@ -76,15 +80,18 @@ class ImageResizer {
   /// function that converts a canvas element to Xfile
   /// [imageQuality] is only supported for jpeg and webp images.
   Future<XFile> writeCanvasToFile(
-      XFile originalFile, html.CanvasElement canvas, int? imageQuality) async {
+      XFile originalFile, web.HTMLCanvasElement canvas, int? imageQuality) async {
     final double calculatedImageQuality =
         (min(imageQuality ?? 100, 100)) / 100.0;
-    final html.Blob blob =
-        await canvas.toBlob(originalFile.mimeType, calculatedImageQuality);
-    return XFile(html.Url.createObjectUrlFromBlob(blob),
-        mimeType: originalFile.mimeType,
-        name: 'scaled_${originalFile.name}',
-        lastModified: DateTime.now(),
-        length: blob.size);
+    final Completer<XFile> completer = Completer<XFile>();
+    final web.BlobCallback blobCallback = (web.Blob blob){
+      completer.complete(XFile(web.URL.createObjectURL(blob),
+          mimeType: originalFile.mimeType,
+          name: 'scaled_${originalFile.name}',
+          lastModified: DateTime.now(),
+          length: blob.size));
+    }.toJS;
+    canvas.toBlob(blobCallback, originalFile.mimeType ?? '', calculatedImageQuality.toJS);
+    return completer.future;
   }
 }

@@ -3,12 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:mime/mime.dart' as mime;
+import 'package:web/web.dart' as web;
 
 import 'src/image_resizer.dart';
 
@@ -33,7 +34,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
 
   bool get _hasOverrides => _overrides != null;
 
-  late html.Element _target;
+  late web.Element _target;
 
   late ImageResizer _imageResizer;
 
@@ -151,11 +152,11 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     String? capture,
     bool multiple = false,
   }) {
-    final html.FileUploadInputElement input = createInputElement(
+    final web.HTMLInputElement input = createInputElement(
       accept,
       capture,
       multiple: multiple,
-    ) as html.FileUploadInputElement;
+    ) as web.HTMLInputElement;
     _injectAndActivate(input);
 
     return _getSelectedXFiles(input);
@@ -226,51 +227,55 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     return null;
   }
 
-  List<html.File>? _getFilesFromInput(html.FileUploadInputElement input) {
+  List<web.File>? _getFilesFromInput(web.HTMLInputElement input) {
     if (_hasOverrides) {
       return _overrides!.getMultipleFilesFromInput(input);
     }
-    return input.files;
+    final web.FileList? fileList = input.files;
+    final List<web.File> files = <web.File>[];
+    for(int i = 0; i < (fileList?.length ?? 0); i++){
+      files.add(input.files!.item(i)!);
+    }
+    return files;
   }
 
   /// Handles the OnChange event from a FileUploadInputElement object
   /// Returns a list of selected files.
-  List<html.File>? _handleOnChangeEvent(html.Event event) {
-    final html.FileUploadInputElement? input =
-        event.target as html.FileUploadInputElement?;
+  List<web.File>? _handleOnChangeEvent(web.Event event) {
+    final web.HTMLInputElement? input =
+        event.target as web.HTMLInputElement?;
     return input == null ? null : _getFilesFromInput(input);
   }
 
   /// Monitors an <input type="file"> and returns the selected file(s).
-  Future<List<XFile>> _getSelectedXFiles(html.FileUploadInputElement input) {
+  Future<List<XFile>> _getSelectedXFiles(web.HTMLInputElement input) {
     final Completer<List<XFile>> completer = Completer<List<XFile>>();
     // Observe the input until we can return something
-    input.onChange.first.then((html.Event event) {
-      final List<html.File>? files = _handleOnChangeEvent(event);
+    input.onchange = (web.Event event) {
+      final List<web.File>? files = _handleOnChangeEvent(event);
       if (!completer.isCompleted && files != null) {
-        completer.complete(files.map((html.File file) {
+        completer.complete(files.map((web.File file) {
           return XFile(
-            html.Url.createObjectUrl(file),
+            web.URL.createObjectURL(file),
             name: file.name,
             length: file.size,
             lastModified: DateTime.fromMillisecondsSinceEpoch(
-              file.lastModified ?? DateTime.now().millisecondsSinceEpoch,
+              file.lastModified,
             ),
             mimeType: file.type,
           );
         }).toList());
       }
-    });
-
-    input.addEventListener('cancel', (html.Event _) {
+    }.toJS;
+    input.oncancel = (web.Event _) {
       completer.complete(<XFile>[]);
-    });
+    }.toJS;
 
-    input.onError.first.then((html.Event event) {
+    input.onerror = (web.Event event) {
       if (!completer.isCompleted) {
         completer.completeError(event);
       }
-    });
+    }.toJS;
     // Note that we don't bother detaching from these streams, since the
     // "input" gets re-created in the DOM every time the user needs to
     // pick a file.
@@ -278,13 +283,12 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   }
 
   /// Initializes a DOM container where we can host input elements.
-  html.Element _ensureInitialized(String id) {
-    html.Element? target = html.querySelector('#$id');
+  web.Element _ensureInitialized(String id) {
+    web.Element? target = web.document.querySelector('#$id');
     if (target == null) {
-      final html.Element targetElement =
-          html.Element.tag('flt-image-picker-inputs')..id = id;
-
-      html.querySelector('body')!.children.add(targetElement);
+      final web.Element targetElement =
+          web.document.createElement('flt-image-picker-inputs')..id = id;
+      web.document.querySelector('body')!.append(targetElement);
       target = targetElement;
     }
     return target;
@@ -293,7 +297,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   /// Creates an input element that accepts certain file types, and
   /// allows to `capture` from the device's cameras (where supported)
   @visibleForTesting
-  html.Element createInputElement(
+  web.Element createInputElement(
     String? accept,
     String? capture, {
     bool multiple = false,
@@ -302,9 +306,13 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       return _overrides!.createInputElement(accept, capture);
     }
 
-    final html.Element element = html.FileUploadInputElement()
-      ..accept = accept
+    final web.HTMLInputElement element = (web.document.createElement('input') as web.HTMLInputElement)
+      ..type = 'file'
       ..multiple = multiple;
+
+    if (accept != null) {
+      element.accept = accept;
+    }
 
     if (capture != null) {
       element.setAttribute('capture', capture);
@@ -314,9 +322,9 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   }
 
   /// Injects the file input element, and clicks on it
-  void _injectAndActivate(html.Element element) {
-    _target.children.clear();
-    _target.children.add(element);
+  void _injectAndActivate(web.HTMLElement element) {
+    _target.replaceChildren(<JSAny>[].jsify());
+    _target.append(element);
     // TODO(dit): Reimplement this with the showPicker() API, https://github.com/flutter/flutter/issues/130365
     element.click();
   }
@@ -325,15 +333,15 @@ class ImagePickerPlugin extends ImagePickerPlatform {
 // Some tools to override behavior for unit-testing
 /// A function that creates a file input with the passed in `accept` and `capture` attributes.
 @visibleForTesting
-typedef OverrideCreateInputFunction = html.Element Function(
+typedef OverrideCreateInputFunction = web.Element Function(
   String? accept,
   String? capture,
 );
 
 /// A function that extracts list of files from the file `input` passed in.
 @visibleForTesting
-typedef OverrideExtractMultipleFilesFromInputFunction = List<html.File>
-    Function(html.Element? input);
+typedef OverrideExtractMultipleFilesFromInputFunction = List<web.File>
+    Function(web.Element? input);
 
 /// Overrides for some of the functionality above.
 @visibleForTesting
