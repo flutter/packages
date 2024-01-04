@@ -1,3 +1,7 @@
+## 1.0.6
+
+* Fixes new lint warnings.
+
 ## 1.0.5
 
 * Updates example app to use non-deprecated video_player method.
