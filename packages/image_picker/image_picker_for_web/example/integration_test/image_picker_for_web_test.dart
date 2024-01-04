@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 // ignore_for_file: always_specify_types
 
-
 import 'dart:convert';
 import 'dart:js_interop';
 
