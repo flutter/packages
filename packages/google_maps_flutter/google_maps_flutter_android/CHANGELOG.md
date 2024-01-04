@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Fixes new lint warnings.
+
 ## 2.6.0
 
 * Fixes missing updates in TLHC mode.

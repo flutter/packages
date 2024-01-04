@@ -487,23 +487,17 @@ void main() {
       switch (resolutionPreset) {
         case ResolutionPreset.low:
           expectedBoundSize = const Size(320, 240);
-          break;
         case ResolutionPreset.medium:
           expectedBoundSize = const Size(720, 480);
-          break;
         case ResolutionPreset.high:
           expectedBoundSize = const Size(1280, 720);
-          break;
         case ResolutionPreset.veryHigh:
           expectedBoundSize = const Size(1920, 1080);
-          break;
         case ResolutionPreset.ultraHigh:
           expectedBoundSize = const Size(3840, 2160);
-          break;
         case ResolutionPreset.max:
           expectedResolutionStrategy =
               ResolutionStrategy.detachedHighestAvailableStrategy();
-          break;
       }
 
       // We expect the strategy to be the highest available or correspond to the
@@ -629,19 +623,14 @@ void main() {
         // 240p is not supported by CameraX.
         case ResolutionPreset.medium:
           expectedVideoQuality = VideoQuality.SD;
-          break;
         case ResolutionPreset.high:
           expectedVideoQuality = VideoQuality.HD;
-          break;
         case ResolutionPreset.veryHigh:
           expectedVideoQuality = VideoQuality.FHD;
-          break;
         case ResolutionPreset.ultraHigh:
           expectedVideoQuality = VideoQuality.UHD;
-          break;
         case ResolutionPreset.max:
           expectedVideoQuality = VideoQuality.highest;
-          break;
       }
 
       const VideoResolutionFallbackRule expectedFallbackRule =
@@ -1494,16 +1483,12 @@ void main() {
       switch (flashMode) {
         case FlashMode.off:
           expectedFlashMode = ImageCapture.flashModeOff;
-          break;
         case FlashMode.auto:
           expectedFlashMode = ImageCapture.flashModeAuto;
-          break;
         case FlashMode.always:
           expectedFlashMode = ImageCapture.flashModeOn;
-          break;
         case FlashMode.torch:
           expectedFlashMode = null;
-          break;
       }
 
       if (expectedFlashMode == null) {
@@ -1557,11 +1542,9 @@ void main() {
         case FlashMode.always:
           verify(mockCameraControl.enableTorch(false));
           expect(camera.torchEnabled, isFalse);
-          break;
         case FlashMode.torch:
           verifyNever(mockCameraControl.enableTorch(true));
           expect(camera.torchEnabled, true);
-          break;
       }
     }
   });

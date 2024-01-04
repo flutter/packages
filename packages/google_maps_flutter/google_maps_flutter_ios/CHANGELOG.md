@@ -1,3 +1,7 @@
+## 2.3.4
+
+* Fixes new lint warnings.
+
 ## 2.3.3
 
 * Adds support for version 8 of the Google Maps SDK in apps targeting iOS 14+.

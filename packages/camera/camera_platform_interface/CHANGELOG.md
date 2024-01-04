@@ -1,3 +1,7 @@
+## 2.7.1
+
+* Fixes new lint warnings.
+
 ## 2.7.0
 
 * Adds support for setting the image file format. See `CameraPlatform.setImageFileFormat`.
