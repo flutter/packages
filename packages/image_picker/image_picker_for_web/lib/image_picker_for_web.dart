@@ -255,7 +255,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       if (!completer.isCompleted && files != null) {
         completer.complete(files.map((web.File file) {
           return XFile(
-            web.URL.createObjectURL(file.toJSBox),
+            web.URL.createObjectURL(file.jsify()),
             name: file.name,
             length: file.size,
             lastModified: DateTime.fromMillisecondsSinceEpoch(
@@ -287,7 +287,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     if (target == null) {
       final web.Element targetElement =
           web.document.createElement('flt-image-picker-inputs')..id = id;
-      web.document.querySelector('body')!.append(targetElement.toJSBox);
+      web.document.querySelector('body')!.append(targetElement.jsify());
       target = targetElement;
     }
     return target;
