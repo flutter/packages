@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Fixes new lint warnings.
+
 ## 2.5.0
 
 * Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.

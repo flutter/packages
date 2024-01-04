@@ -2,6 +2,10 @@
 
 * Adds support to HEIF format.
 
+## 0.9.13+9
+
+* Fixes new lint warnings.
+
 ## 0.9.13+8
 
 * Updates example app to use non-deprecated video_player method.

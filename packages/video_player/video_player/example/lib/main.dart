@@ -6,6 +6,7 @@
 
 /// An example of using the plugin, controlling lifecycle and playback of the
 /// video.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -306,9 +307,9 @@ class _ControlsOverlay extends StatelessWidget {
           reverseDuration: const Duration(milliseconds: 200),
           child: controller.value.isPlaying
               ? const SizedBox.shrink()
-              : Container(
+              : const ColoredBox(
                   color: Colors.black26,
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.play_arrow,
                       color: Colors.white,
