@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js';
 import 'dart:js_interop';
 import 'dart:math';
 import 'dart:ui';
@@ -87,7 +86,7 @@ class ImageResizer {
         (min(imageQuality ?? 100, 100)) / 100.0;
     final Completer<XFile> completer = Completer<XFile>();
     final web.BlobCallback blobCallback = (web.Blob blob) {
-      completer.complete(XFile(web.URL.createObjectURL(blob.jsify()),
+      completer.complete(XFile(web.URL.createObjectURL(blob.jsify()! as JSObject),
           mimeType: originalFile.mimeType,
           name: 'scaled_${originalFile.name}',
           lastModified: DateTime.now(),
