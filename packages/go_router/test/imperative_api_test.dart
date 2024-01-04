@@ -39,7 +39,7 @@ void main() {
     expect(find.text('shell'), findsOneWidget);
     expect(find.byKey(a), findsOneWidget);
 
-    router.replace('/b');
+    router.replace<void>('/b');
     await tester.pumpAndSettle();
     expect(find.text('shell'), findsOneWidget);
     expect(find.byKey(a), findsNothing);

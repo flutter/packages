@@ -3,6 +3,9 @@
 * [java] Adds `VoidResult` type for `Void` returns.
 * **Breaking Change** [java] Updates all `Void` return types to use new `VoidResult`.
 
+## 15.0.3
+
+* Fixes new lint warnings.
 
 ## 15.0.2
 

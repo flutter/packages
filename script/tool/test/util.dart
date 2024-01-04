@@ -329,8 +329,8 @@ String _pluginPlatformSection(
 Future<List<String>> runCapturingPrint(
   CommandRunner<void> runner,
   List<String> args, {
-  Function(Error error)? errorHandler,
-  Function(Exception error)? exceptionHandler,
+  void Function(Error error)? errorHandler,
+  void Function(Exception error)? exceptionHandler,
 }) async {
   final List<String> prints = <String>[];
   final ZoneSpecification spec = ZoneSpecification(
