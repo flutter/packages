@@ -18,7 +18,7 @@ final Uint8List bytes = const Utf8Encoder().convert(expectedStringContents);
 final Uint8List otherBytes = const Utf8Encoder().convert(otherStringContents);
 final web.FilePropertyBag options = web.FilePropertyBag(
     lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch)
-  ..type = 'text/plain';
+  ..type = 'text/plaina';
 
 final web.File textFile = web.File(bytes.toJS as JSArray, 'hello.txt', options);
 final web.File secondTextFile =
