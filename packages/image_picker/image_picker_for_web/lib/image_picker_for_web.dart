@@ -255,7 +255,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       if (!completer.isCompleted && files != null) {
         completer.complete(files.map((web.File file) {
           return XFile(
-            web.URL.createObjectURL(file),
+            web.URL.createObjectURL(file.toJSBox),
             name: file.name,
             length: file.size,
             lastModified: DateTime.fromMillisecondsSinceEpoch(
@@ -287,7 +287,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     if (target == null) {
       final web.Element targetElement =
           web.document.createElement('flt-image-picker-inputs')..id = id;
-      web.document.querySelector('body')!.append(targetElement);
+      web.document.querySelector('body')!.append(targetElement.toJSBox);
       target = targetElement;
     }
     return target;
@@ -323,7 +323,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
 
   /// Injects the file input element, and clicks on it
   void _injectAndActivate(web.HTMLElement element) {
-    _target.replaceChildren(<JSAny>[].jsify());
+    _target.replaceChildren(<JSAny>[].toJS);
     _target.append(element);
     // TODO(dit): Reimplement this with the showPicker() API, https://github.com/flutter/flutter/issues/130365
     element.click();
