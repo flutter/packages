@@ -14,11 +14,15 @@ import 'package:web/web.dart' as web;
 const String expectedStringContents = 'Hello, world!';
 const String otherStringContents = 'Hello again, world!';
 // ignore: always_specify_types
+// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
 final JSArray bytes =
 // ignore: always_specify_types
+// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
     const Utf8Encoder().convert(expectedStringContents).toJS as JSArray;
 // ignore: always_specify_types
+// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
 final JSArray otherBytes =
+// TODO(ditman): Remove once typed JSArrays (JSArray<T>) get to `stable`.
 // ignore: always_specify_types
     const Utf8Encoder().convert(otherStringContents).toJS as JSArray;
 final web.FilePropertyBag options = web.FilePropertyBag(
