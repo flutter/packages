@@ -260,7 +260,7 @@ void main() {
 
       expect(input.getAttribute('accept'), 'any');
       expect(input.getAttribute('capture'), 'something');
-      expect(input.hasAttribute('multiple'), false);
+      expect(input.hasAttribute('multiple'), true);
     });
   });
 
