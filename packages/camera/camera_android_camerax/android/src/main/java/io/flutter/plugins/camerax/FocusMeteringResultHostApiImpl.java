@@ -30,8 +30,14 @@ public class FocusMeteringResultHostApiImpl implements FocusMeteringResultHostAp
   /** Proxy for constructors and static method of {@link FocusMeteringResult}. */
   @VisibleForTesting
   public static class FocusMeteringResultProxy {
-    /** Returns whether or not the {@link FocusMeteringResult} was successful. */
-    public @NonNull
+  
+  /**
+   * Returns whether or not auto focus was successful.
+   * 
+   * If the current camera does not support auto focus, it will return true. If auto focus is not requested,
+   * it will return false.
+  */
+  @NonNull
   public Boolean isFocusSuccessful(@NonNull FocusMeteringResult focusMeteringResult) {
     return focusMeteringResult.isFocusSuccessful();
   }

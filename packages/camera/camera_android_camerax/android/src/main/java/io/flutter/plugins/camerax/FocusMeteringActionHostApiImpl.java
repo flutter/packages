@@ -44,9 +44,9 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
         if (i == 0) {
           // On the first iteration, create the builder to add points to.
           if (meteringMode == null) {
-            focusMeteringActionBuilder = new FocusMeteringAction.Builder(meteringPoint);
+            focusMeteringActionBuilder = getFocusMeteringActionBuilder(meteringPoint);
           } else {
-            focusMeteringActionBuilder = new FocusMeteringAction.Builder(meteringPoint, meteringMode);
+            focusMeteringActionBuilder = getFocusMeteringActionBuilder(meteringPoint, meteringMode);
           }
           continue;
         }
@@ -61,6 +61,18 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
 
       return focusMeteringActionBuilder.build();
     }
+  }
+
+  @VisibleForTesting
+  @NonNull
+  public FocusMeteringAction.Builder getFocusMeteringActionBuilder(MeteringPoint meteringPoint) {
+    return new FocusMeteringAction.Builder(meteringPoint);
+  }
+
+  @VisibleForTesting
+  @NonNull
+  public FocusMeteringAction.Builder getFocusMeteringActionBuilder(MeteringPoint meteringPoint, int meteringMode) {
+    return new new FocusMeteringAction.Builder(meteringPoint, meteringMode);
   }
 
   /**

@@ -5,13 +5,14 @@
 import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:meta/meta.dart' show immutable;
 
-// TODO(camsim99): add new flutter apis
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// somethin
+/// The result of [CameraControl.startFocusAndMetering].
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringResult.
 @immutable
 class FocusMeteringResult extends JavaObject {
   /// Creates a [FocusMeteringResult] that is not automatically attached to a
@@ -30,7 +31,10 @@ class FocusMeteringResult extends JavaObject {
 
   late final _FocusMeteringResultHostApiImpl _api;
 
-  /// somethin
+  /// Returns whether or not auto focus is successful.
+  ///
+  /// If the current camera does not support auto focus, it will return true. If
+  /// auto focus is not requested, it will return false.
   Future<bool> isFocusSuccessful() => _api.isFocusSuccessfulFromInstance(this);
 }
 
@@ -58,7 +62,8 @@ class _FocusMeteringResultHostApiImpl extends FocusMeteringResultHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// somethin
+  /// Returns whether or not the [instance] indicates that auto focus was
+  /// successful.
   Future<bool> isFocusSuccessfulFromInstance(FocusMeteringResult instance) {
     final int identifier = instanceManager.getIdentifier(instance)!;
     return isFocusSuccessful(identifier);

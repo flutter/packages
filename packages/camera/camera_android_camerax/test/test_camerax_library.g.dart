@@ -1804,6 +1804,35 @@ abstract class TestFocusMeteringActionHostApi {
   }
 }
 
+abstract class TestFocusMeteringResultHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  bool isFocusSuccessful(int identifier);
+
+  static void setup(TestFocusMeteringResultHostApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FocusMeteringResultHostApi.isFocusSuccessful', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.FocusMeteringResultHostApi.isFocusSuccessful was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.FocusMeteringResultHostApi.isFocusSuccessful was null, expected non-null int.');
+          final bool output = api.isFocusSuccessful(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
 abstract class TestMeteringPointHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();

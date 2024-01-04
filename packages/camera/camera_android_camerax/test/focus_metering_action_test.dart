@@ -94,22 +94,5 @@ void main() {
           equals(mockMeteringPoint2Id));
       expect(captureMeteringPointInfos[0].meteringMode, mockMeteringPoint2Mode);
     });
-
-    test('flutterApiCreate makes call to add instance to instance manager', () {
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      final FocusMeteringActionFlutterApiImpl flutterApi =
-          FocusMeteringActionFlutterApiImpl(
-        instanceManager: instanceManager,
-      );
-      const int foucsMeteringActionId = 7;
-
-      flutterApi.create(foucsMeteringActionId);
-
-      expect(
-          instanceManager.getInstanceWithWeakReference(foucsMeteringActionId),
-          isA<FocusMeteringAction>());
-    });
   });
 }

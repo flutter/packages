@@ -481,12 +481,7 @@ abstract class FocusMeteringActionHostApi {
   void create(int identifier, List<MeteringPointInfo> meteringPointInfos);
 }
 
-@FlutterApi()
-abstract class FocusMeteringActionFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi()
+@HostApi(dartHostTestHandler: 'TestFocusMeteringResultHostApi')
 abstract class FocusMeteringResultHostApi {
   bool isFocusSuccessful(int identifier);
 }

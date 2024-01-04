@@ -3483,32 +3483,6 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
-  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
-  public static class FocusMeteringActionFlutterApi {
-    private final @NonNull BinaryMessenger binaryMessenger;
-
-    public FocusMeteringActionFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
-      this.binaryMessenger = argBinaryMessenger;
-    }
-
-    /** Public interface for sending reply. */ 
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
-    /** The codec used by FocusMeteringActionFlutterApi. */
-    static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
-    }
-    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.FocusMeteringActionFlutterApi.create", getCodec());
-      channel.send(
-          new ArrayList<Object>(Collections.singletonList(identifierArg)),
-          channelReply -> callback.reply(null));
-    }
-  }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface FocusMeteringResultHostApi {
 

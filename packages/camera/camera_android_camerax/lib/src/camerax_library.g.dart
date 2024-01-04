@@ -2960,34 +2960,6 @@ class FocusMeteringActionHostApi {
   }
 }
 
-abstract class FocusMeteringActionFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
-
-  void create(int identifier);
-
-  static void setup(FocusMeteringActionFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FocusMeteringActionFlutterApi.create', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.FocusMeteringActionFlutterApi.create was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
-          assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.FocusMeteringActionFlutterApi.create was null, expected non-null int.');
-          api.create(arg_identifier!);
-          return;
-        });
-      }
-    }
-  }
-}
-
 class FocusMeteringResultHostApi {
   /// Constructor for [FocusMeteringResultHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default

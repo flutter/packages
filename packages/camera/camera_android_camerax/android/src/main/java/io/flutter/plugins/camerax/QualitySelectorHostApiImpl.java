@@ -62,7 +62,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
     public @NonNull ResolutionInfo getResolution(
         @NonNull CameraInfo cameraInfo, @NonNull VideoQuality quality) {
       final Size result =
-          FocusMeteringAction.getResolution(cameraInfo, getQualityFromVideoQuality(quality));
+          QualitySelector.getResolution(cameraInfo, getQualityFromVideoQuality(quality));
       return new ResolutionInfo.Builder()
           .setWidth(Long.valueOf(result.getWidth()))
           .setHeight(Long.valueOf(result.getHeight()))
