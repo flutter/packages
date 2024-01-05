@@ -90,7 +90,7 @@ class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates an [FocusMeteringAction] instance with the flash mode and target resolution
+  /// Creates a [FocusMeteringAction] instance with the flash mode and target resolution
   /// if specified.
   void createFromInstance(
       FocusMeteringAction instance,

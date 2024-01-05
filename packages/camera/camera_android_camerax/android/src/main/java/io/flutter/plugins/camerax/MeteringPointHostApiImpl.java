@@ -28,7 +28,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   public static class MeteringPointProxy {
 
     public void create(@NonNull Double x, @NonNull Double y, @Nullable Double size) {
-        SurfaceOrientedMeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(1f, 1f); // TODO(camsim99): get feedback on using this default instead of exposing
+        SurfaceOrientedMeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(1f, 1f);
         if (size == null) {
             return factory.createPoint(x, y);
         } else {

@@ -10,7 +10,8 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// somethin
+/// Representation for a region which can be converted to sensor coordinate
+/// system for focus and metering purpose.
 @immutable
 class MeteringPoint extends JavaObject {
   /// Creates a [MeteringPoint].
@@ -19,7 +20,7 @@ class MeteringPoint extends JavaObject {
     InstanceManager? instanceManager,
     required this.x,
     required this.y,
-    required this.size,
+    this.size,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -37,7 +38,7 @@ class MeteringPoint extends JavaObject {
     InstanceManager? instanceManager,
     required this.x,
     required this.y,
-    required this.size,
+    this.size,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -49,16 +50,20 @@ class MeteringPoint extends JavaObject {
 
   late final _MeteringPointHostApiImpl _api;
 
-  /// somethin
+  /// X coordinate.
   final double x;
 
-  /// somethin
+  /// Y coordinate.
   final double y;
 
-  /// somethin
+  /// The size of the MeteringPoint width and height (ranging from 0 to 1),
+  /// which is a (normalized) percentage of the sensor width/height
+  /// (or crop region width/height if crop region is set).
   final double? size;
 
-  /// something
+  /// The default size of the MeteringPoint width and height
+  /// (ranging from 0 to 1) which is a (normalized) percentage of the sensor
+  /// width/height (or crop region width/height if crop region is set).
   static Future<double> getDefaultPointSize(
       {BinaryMessenger? binaryMessenger}) {
     final MeteringPointHostApi hostApi =
@@ -69,7 +74,7 @@ class MeteringPoint extends JavaObject {
 
 /// Host API implementation of [MeteringPoint].
 class _MeteringPointHostApiImpl extends MeteringPointHostApi {
-  /// Constructs a [FocusMeteringActionHostApiImpl].
+  /// Constructs a [_MeteringPointHostApiImpl].
   ///
   /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
   /// which routes to the host platform.
@@ -91,6 +96,8 @@ class _MeteringPointHostApiImpl extends MeteringPointHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
+  /// Creates a [MeteringPoint] instance with the specified [x] and [y]
+  /// coordinates as well as [size] if non-null.
   Future<void> createFromInstance(
       MeteringPoint instance, double x, double y, double? size) {
     int? identifier = instanceManager.getIdentifier(instance);

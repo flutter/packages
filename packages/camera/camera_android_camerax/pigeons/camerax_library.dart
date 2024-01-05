@@ -497,12 +497,3 @@ abstract class MeteringPointHostApi {
 
   double getDefaultPointSize();
 }
-
-@HostApi(dartHostTestHandler: 'TestDisplayOrientedMeteringPointFactoryHostApi')
-abstract class DisplayOrientedMeteringPointFactoryHostApi {
-  void create(int identifier, int cameraInfoId, int width, int height);
-
-  int createPoint(int x, int y, int? size);
-
-  int getDefaultPointSize();
-}
