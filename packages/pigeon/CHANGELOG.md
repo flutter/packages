@@ -1,6 +1,11 @@
-## 15.0.4
+## 16.0.1
 
 * Adds support for `ProxyApi` generation only for Dart.
+
+## 16.0.0
+
+* [java] Adds `VoidResult` type for `Void` returns.
+* **Breaking Change** [java] Updates all `Void` return types to use new `VoidResult`.
 
 ## 15.0.3
 
