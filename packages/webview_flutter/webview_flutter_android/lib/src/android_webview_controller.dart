@@ -103,7 +103,7 @@ class AndroidWebViewController extends PlatformWebViewController {
           onScrollChanged: withWeakReferenceTo(this,
               (WeakReference<AndroidWebViewController> weakReference) {
     return (int left, int top, int oldLeft, int oldTop) async {
-      final Function(ScrollPositionChange)? callback =
+      final void Function(ScrollPositionChange)? callback =
           weakReference.target?._onScrollPositionChangedCallback;
       callback?.call(ScrollPositionChange(left.toDouble(), top.toDouble()));
     };

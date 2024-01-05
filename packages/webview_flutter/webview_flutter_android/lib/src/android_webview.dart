@@ -163,7 +163,7 @@ class WebView extends View {
   ///
   /// This is typically as a result of [scrollBy] or [scrollTo]
   /// having been called.
-  final Function(
+  final void Function(
     int left,
     int top,
     int oldLeft,
