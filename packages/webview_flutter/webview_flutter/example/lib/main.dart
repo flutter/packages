@@ -262,46 +262,32 @@ class SampleMenu extends StatelessWidget {
         switch (value) {
           case MenuOptions.showUserAgent:
             _onShowUserAgent();
-            break;
           case MenuOptions.listCookies:
             _onListCookies(context);
-            break;
           case MenuOptions.clearCookies:
             _onClearCookies(context);
-            break;
           case MenuOptions.addToCache:
             _onAddToCache(context);
-            break;
           case MenuOptions.listCache:
             _onListCache();
-            break;
           case MenuOptions.clearCache:
             _onClearCache(context);
-            break;
           case MenuOptions.navigationDelegate:
             _onNavigationDelegateExample();
-            break;
           case MenuOptions.doPostRequest:
             _onDoPostRequest();
-            break;
           case MenuOptions.loadLocalFile:
             _onLoadLocalFileExample();
-            break;
           case MenuOptions.loadFlutterAsset:
             _onLoadFlutterAssetExample();
-            break;
           case MenuOptions.loadHtmlString:
             _onLoadHtmlStringExample();
-            break;
           case MenuOptions.transparentBackground:
             _onTransparentBackground();
-            break;
           case MenuOptions.setCookie:
             _onSetCookie();
-            break;
           case MenuOptions.logExample:
             _onLogExample();
-            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[

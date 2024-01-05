@@ -175,7 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               leading: const Icon(Icons.menu),
               destinations: destinations
-                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .map((NavigationDestination destination) =>
+                      AdaptiveScaffold.toRailDestination(destination))
                   .toList(),
               backgroundColor: navRailTheme.backgroundColor,
               selectedIconTheme: navRailTheme.selectedIconTheme,
@@ -206,7 +207,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
               destinations: destinations
-                  .map((_) => AdaptiveScaffold.toRailDestination(_))
+                  .map((NavigationDestination destination) =>
+                      AdaptiveScaffold.toRailDestination(destination))
                   .toList(),
               trailing: trailingNavRail,
               backgroundColor: navRailTheme.backgroundColor,
