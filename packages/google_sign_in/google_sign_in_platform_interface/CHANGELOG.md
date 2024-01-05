@@ -1,3 +1,7 @@
+## 2.4.5
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 2.4.4
 
 * Updates `clearAuthCache` override to match base class declaration.
