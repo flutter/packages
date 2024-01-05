@@ -141,6 +141,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
             final RegExp gitHubPRLink = RegExp(
                 '^https://github.com/flutter/packages/labels/$encodedPRTag\$');
             if (!(target == './packages/$packageName/' ||
+                target == './third_party/packages/$packageName/' ||
                 pubDevLink.hasMatch(target) ||
                 gitHubIssueLink.hasMatch(target) ||
                 gitHubPRLink.hasMatch(target))) {
