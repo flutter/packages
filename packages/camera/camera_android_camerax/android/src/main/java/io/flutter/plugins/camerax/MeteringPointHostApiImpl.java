@@ -4,13 +4,11 @@
 
 package io.flutter.plugins.camerax;
 
-import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
-import androidx.camera.core.SurfaceMeteringPointFactory;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.MeteringPointHostApi;
 
 /**
@@ -28,23 +26,24 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   public static class MeteringPointProxy {
 
     public void create(@NonNull Double x, @NonNull Double y, @Nullable Double size) {
-        SurfaceOrientedMeteringPointFactory factory = getSurfaceOrientedMeteringPointFactory(1f, 1f);
-        if (size == null) {
-            return factory.createPoint(x.floatValue(), y.floatValue());
-        } else {
-            return factory.createPoint(x.floatValue(), y.floatValue(), size.floatValue());
-        }
+      SurfaceOrientedMeteringPointFactory factory = getSurfaceOrientedMeteringPointFactory(1f, 1f);
+      if (size == null) {
+        return factory.createPoint(x.floatValue(), y.floatValue());
+      } else {
+        return factory.createPoint(x.floatValue(), y.floatValue(), size.floatValue());
+      }
     }
 
-  @VisibleForTesting
-  @NonNull
-  public FocusMeteringAction.Builder getSurfaceOrientedMeteringPointFactory(float width, float height) {
-    return new SurfaceOrientedMeteringPointFactory(width, height);
-  }
+    @VisibleForTesting
+    @NonNull
+    public FocusMeteringAction.Builder getSurfaceOrientedMeteringPointFactory(
+        float width, float height) {
+      return new SurfaceOrientedMeteringPointFactory(width, height);
+    }
 
-    @NonNull 
+    @NonNull
     public float getDefaultPointSize() {
-        return MeteringPointFactory.getDefaultPointSize();
+      return MeteringPointFactory.getDefaultPointSize();
     }
   }
   /**
@@ -70,13 +69,14 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   }
 
   @Override
-  public void create(@NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size) {
+  public void create(
+      @NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size) {
     MeteringPoint meteringPoint = proxy.create(x, y, size);
     instanceManager.addDartCreatedInstance(meteringPoint, identifier);
   }
 
   @Override
-  @NonNull 
+  @NonNull
   public Double getDefaultPointSize() {
     return (Double) proxy.getDefaultPointSize;
   }

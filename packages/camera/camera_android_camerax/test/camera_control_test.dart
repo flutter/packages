@@ -119,7 +119,7 @@ void main() {
           .thenAnswer((_) => Future<int>.value(resultId));
 
       expect(await cameraControl.startFocusAndMetering(action), equals(result));
-      verify(mockApi.startFocusAndMetering(resultId, actionId));
+      verify(mockApi.startFocusAndMetering(cameraControlIdentifier, actionId));
     });
 
     test(

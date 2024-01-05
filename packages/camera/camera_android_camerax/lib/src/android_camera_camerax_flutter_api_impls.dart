@@ -52,7 +52,7 @@ class AndroidCameraXCameraFlutterApis {
       PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
       AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
       CameraControlFlutterApiImpl? cameraControlFlutterApiImpl,
-      FocusMeteringResultFlutterApi? focusMeteringResultFlutterApi}) {
+      FocusMeteringResultFlutterApiImpl? focusMeteringResultFlutterApiImpl}) {
     this.javaObjectFlutterApiImpl =
         javaObjectFlutterApiImpl ?? JavaObjectFlutterApiImpl();
     this.cameraInfoFlutterApiImpl =
@@ -97,7 +97,8 @@ class AndroidCameraXCameraFlutterApis {
     this.cameraControlFlutterApiImpl =
         cameraControlFlutterApiImpl ?? CameraControlFlutterApiImpl();
     this.focusMeteringResultFlutterApiImpl =
-        focusMeteringResultFlutterApiImpl ?? FocusMeteringFlutterApiImpl();
+        focusMeteringResultFlutterApiImpl ??
+            FocusMeteringResultFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;

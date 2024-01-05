@@ -4,17 +4,11 @@
 
 package io.flutter.plugins.camerax;
 
-import android.util.Size;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringActionHostApi;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQuality;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityData;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Host API implementation for {@link FocusMeteringAction}.
@@ -34,7 +28,8 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
     public @NonNull FocusMeteringAction create(
         @NonNull List<MeteringPoint> meteringPoints, @NonNull List<Integer> meteringPointModes) {
       if (meteringPoints.size() != meteringPointModes.size()) {
-        throw new IllegalArgumentException("The number of specified metering points must match the number of specified metering point modes.");
+        throw new IllegalArgumentException(
+            "The number of specified metering points must match the number of specified metering point modes.");
       }
       FocusMeteringAction.Builder focusMeteringActionBuilder;
 
@@ -61,18 +56,19 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
 
       return focusMeteringActionBuilder.build();
     }
-  }
 
-  @VisibleForTesting
-  @NonNull
-  public FocusMeteringAction.Builder getFocusMeteringActionBuilder(MeteringPoint meteringPoint) {
-    return new FocusMeteringAction.Builder(meteringPoint);
-  }
+    @VisibleForTesting
+    @NonNull
+    public FocusMeteringAction.Builder getFocusMeteringActionBuilder(MeteringPoint meteringPoint) {
+      return new FocusMeteringAction.Builder(meteringPoint);
+    }
 
-  @VisibleForTesting
-  @NonNull
-  public FocusMeteringAction.Builder getFocusMeteringActionBuilder(MeteringPoint meteringPoint, int meteringMode) {
-    return new new FocusMeteringAction.Builder(meteringPoint, meteringMode);
+    @VisibleForTesting
+    @NonNull
+    public FocusMeteringAction.Builder getFocusMeteringActionBuilder(
+        MeteringPoint meteringPoint, int meteringMode) {
+      return new FocusMeteringAction.Builder(meteringPoint, meteringMode);
+    }
   }
 
   /**
@@ -96,9 +92,9 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
     this.proxy = proxy;
   }
 
-
   @Override
-  public void create(@NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos) {
+  public void create(
+      @NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos) {
     final List<MeteringPoint> meteringPoints = new ArrayList<MeteringPoint>();
     final List<Integer> meteringPointModes = new ArrayList<int>();
     for (MeteringPointInfo meteringPointInfo : meteringPointInfos) {

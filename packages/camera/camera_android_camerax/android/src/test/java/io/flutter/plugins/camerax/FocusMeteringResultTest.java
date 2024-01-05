@@ -13,19 +13,13 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import androidx.camera.core.FocusMeteringResult;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
@@ -59,7 +53,7 @@ public class FocusMeteringResultTest {
     when(focusMeteringResult.isFocusSuccessful()).thenReturn(result);
 
     assertTrue(focusMeteringResultHostApiImpl.isFocusSuccessful(focusMeteringResultIdentifier));
-    verify(focusMeteringResult).isFocusSuccessful()l
+    verify(focusMeteringResult).isFocusSuccessful();
   }
 
   @Test
@@ -70,7 +64,8 @@ public class FocusMeteringResultTest {
     spyFlutterApi.create(focusMeteringResult, reply -> {});
 
     final long focusMeteringResultIdentifier =
-        Objects.requireNonNull(testInstanceManager.getIdentifierForStrongReference(focusMeteringResult));
+        Objects.requireNonNull(
+            testInstanceManager.getIdentifierForStrongReference(focusMeteringResult));
     verify(spyFlutterApi).create(eq(focusMeteringResultIdentifier), any());
   }
 }

@@ -160,7 +160,8 @@ public class CameraControlTest {
       final Long mockResultId = 33L;
 
       @SuppressWarnings("unchecked")
-      final ListenableFuture<FocusMeteringResult> startFocusAndMeteringFuture = mock(ListenableFuture.class);
+      final ListenableFuture<FocusMeteringResult> startFocusAndMeteringFuture =
+          mock(ListenableFuture.class);
 
       testInstanceManager.addDartCreatedInstance(cameraControl, cameraControlIdentifier);
       testInstanceManager.addDartCreatedInstance(mockResult, mockResultId);
@@ -179,7 +180,9 @@ public class CameraControlTest {
       cameraControlHostApiImpl.startFocusAndMetering(
           cameraControlIdentifier, mockActionId, successfulMockResult);
       mockedFutures.verify(
-          () -> Futures.addCallback(eq(startFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(
+                  eq(startFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       FutureCallback<FocusMeteringResult> successfulCallback = futureCallbackCaptor.getValue();
@@ -192,9 +195,12 @@ public class CameraControlTest {
       final GeneratedCameraXLibrary.Result<Void> failedMockResult =
           mock(GeneratedCameraXLibrary.Result.class);
       final Throwable testThrowable = new Throwable();
-      cameraControlHostApiImpl.startFocusAndMetering(cameraControlIdentifier, mockActionId, failedMockResult);
+      cameraControlHostApiImpl.startFocusAndMetering(
+          cameraControlIdentifier, mockActionId, failedMockResult);
       mockedFutures.verify(
-          () -> Futures.addCallback(eq(startFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(
+                  eq(startFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       FutureCallback<FocusMeteringResult> failedCallback = futureCallbackCaptor.getValue();
@@ -205,7 +211,7 @@ public class CameraControlTest {
   }
 
   @Test
-    public void cancelFocusAndMetering_cancelFocusAndMeteringAsExpected() {
+  public void cancelFocusAndMetering_cancelFocusAndMeteringAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
           new CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
@@ -229,7 +235,9 @@ public class CameraControlTest {
       cameraControlHostApiImpl.cancelFocusAndMetering(
           cameraControlIdentifier, successfulMockResult);
       mockedFutures.verify(
-          () -> Futures.addCallback(eq(cancelFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(
+                  eq(cancelFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       FutureCallback<Void> successfulCallback = futureCallbackCaptor.getValue();
@@ -244,7 +252,9 @@ public class CameraControlTest {
       final Throwable testThrowable = new Throwable();
       cameraControlHostApiImpl.cancelFocusAndMetering(cameraControlIdentifier, failedMockResult);
       mockedFutures.verify(
-          () -> Futures.addCallback(eq(cancelFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(
+                  eq(cancelFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
 
       FutureCallback<Void> failedCallback = futureCallbackCaptor.getValue();
 
@@ -262,11 +272,13 @@ public class CameraControlTest {
       final Long index = 2L;
 
       @SuppressWarnings("unchecked")
-      final ListenableFuture<Integer> setExposureCompensationIndexFuture = mock(ListenableFuture.class);
+      final ListenableFuture<Integer> setExposureCompensationIndexFuture =
+          mock(ListenableFuture.class);
 
       testInstanceManager.addDartCreatedInstance(cameraControl, cameraControlIdentifier);
 
-      when(cameraControl.setExposureCompensationIndex(index.intValue())).thenReturn(setExposureCompensationIndexFuture);
+      when(cameraControl.setExposureCompensationIndex(index.intValue()))
+          .thenReturn(setExposureCompensationIndexFuture);
 
       @SuppressWarnings("unchecked")
       final ArgumentCaptor<FutureCallback<Integer>> futureCallbackCaptor =
@@ -279,7 +291,9 @@ public class CameraControlTest {
       cameraControlHostApiImpl.setExposureCompensationIndex(
           cameraControlIdentifier, index, successfulMockResult);
       mockedFutures.verify(
-          () -> Futures.addCallback(eq(setExposureCompensationIndexFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(
+                  eq(setExposureCompensationIndexFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       FutureCallback<Integer> successfulCallback = futureCallbackCaptor.getValue();
@@ -293,9 +307,12 @@ public class CameraControlTest {
       final GeneratedCameraXLibrary.Result<Long> failedMockResult =
           mock(GeneratedCameraXLibrary.Result.class);
       final Throwable testThrowable = new Throwable();
-      cameraControlHostApiImpl.setExposureCompensationIndex(cameraControlIdentifier, index, failedMockResult);
+      cameraControlHostApiImpl.setExposureCompensationIndex(
+          cameraControlIdentifier, index, failedMockResult);
       mockedFutures.verify(
-          () -> Futures.addCallback(eq(setExposureCompensationIndexFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(
+                  eq(setExposureCompensationIndexFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       FutureCallback<Integer> failedCallback = futureCallbackCaptor.getValue();

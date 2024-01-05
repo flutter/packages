@@ -84,15 +84,17 @@ void main() {
       final VerificationResult verificationResult = verify(mockApi.create(
           argThat(equals(instanceManager.getIdentifier(instance))),
           captureAny));
-      final List<MeteringPointInfo> captureMeteringPointInfos =
-          verificationResult.captured.single as List<MeteringPointInfo>;
+      final List<MeteringPointInfo?> captureMeteringPointInfos =
+          verificationResult.captured.single as List<MeteringPointInfo?>;
       expect(captureMeteringPointInfos.length, equals(2));
-      expect(captureMeteringPointInfos[0].meteringPointId,
+      expect(captureMeteringPointInfos[0]!.meteringPointId,
           equals(mockMeteringPoint1Id));
-      expect(captureMeteringPointInfos[0].meteringMode, mockMeteringPoint1Mode);
-      expect(captureMeteringPointInfos[1].meteringPointId,
+      expect(
+          captureMeteringPointInfos[0]!.meteringMode, mockMeteringPoint1Mode);
+      expect(captureMeteringPointInfos[1]!.meteringPointId,
           equals(mockMeteringPoint2Id));
-      expect(captureMeteringPointInfos[0].meteringMode, mockMeteringPoint2Mode);
+      expect(
+          captureMeteringPointInfos[1]!.meteringMode, mockMeteringPoint2Mode);
     });
   });
 }

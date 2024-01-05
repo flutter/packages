@@ -4,17 +4,9 @@
 
 package io.flutter.plugins.camerax;
 
-import android.util.Size;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringResultHostApi;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQuality;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityData;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Host API implementation for {@link FocusMeteringResult}.
@@ -30,17 +22,17 @@ public class FocusMeteringResultHostApiImpl implements FocusMeteringResultHostAp
   /** Proxy for constructors and static method of {@link FocusMeteringResult}. */
   @VisibleForTesting
   public static class FocusMeteringResultProxy {
-  
-  /**
-   * Returns whether or not auto focus was successful.
-   * 
-   * If the current camera does not support auto focus, it will return true. If auto focus is not requested,
-   * it will return false.
-  */
-  @NonNull
-  public Boolean isFocusSuccessful(@NonNull FocusMeteringResult focusMeteringResult) {
-    return focusMeteringResult.isFocusSuccessful();
-  }
+
+    /**
+     * Returns whether or not auto focus was successful.
+     *
+     * <p>If the current camera does not support auto focus, it will return true. If auto focus is
+     * not requested, it will return false.
+     */
+    @NonNull
+    public Boolean isFocusSuccessful(@NonNull FocusMeteringResult focusMeteringResult) {
+      return focusMeteringResult.isFocusSuccessful();
+    }
   }
 
   /**
@@ -63,7 +55,6 @@ public class FocusMeteringResultHostApiImpl implements FocusMeteringResultHostAp
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
-
 
   @Override
   @NonNull

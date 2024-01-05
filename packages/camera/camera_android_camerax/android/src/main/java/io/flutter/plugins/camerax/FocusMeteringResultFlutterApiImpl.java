@@ -38,9 +38,7 @@ public class FocusMeteringResultFlutterApiImpl {
    * {@link FocusMeteringResult} instance that is attached to this one. If {@code instance} has
    * already been added, this method does nothing.
    */
-  public void create(
-      @NonNull FocusMeteringResult instance,
-      @NonNull Reply<Void> callback) {
+  public void create(@NonNull FocusMeteringResult instance, @NonNull Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
       FocusMeteringResultFlutterApi.create(
           instanceManager.addHostCreatedInstance(instance), callback);

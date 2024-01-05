@@ -36,8 +36,8 @@ void main() {
         instanceManager: instanceManager,
       );
 
-      verifyNever(mockApi.create(
-          argThat(isA<int>()), argThat(isA<int>()), argThat(isA<int>())));
+      verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
+          argThat(isA<int>()), argThat(isA<int>())));
     });
 
     test('create calls create on the Java side', () async {
@@ -52,20 +52,14 @@ void main() {
       const double x = 0.5;
       const double y = 0.6;
       const double size = 3;
-      const int meteringPointIdentifier = 55;
-      final MeteringPoint meteringPoint = MeteringPoint.detached(
+      MeteringPoint(
         x: x,
         y: y,
         size: size,
         instanceManager: instanceManager,
       );
-      instanceManager.addHostCreatedInstance(
-        meteringPoint,
-        meteringPointIdentifier,
-        onCopy: (_) => MeteringPoint.detached(x: x, y: y, size: size),
-      );
 
-      verify(mockApi.create(meteringPointIdentifier, x, y, size));
+      verify(mockApi.create(argThat(isA<int>()), x, y, size));
     });
 
     test('getDefaultPointSize returns expected size', () async {
