@@ -7,7 +7,7 @@ import 'dart:js_interop';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:image_pickwer_platform_interface/image_picker_platform_interface.dart';
 import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 

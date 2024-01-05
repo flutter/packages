@@ -159,7 +159,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     ) as web.HTMLInputElement;
     _injectAndActivate(input);
 
-    return _getSelectedXFiles(input);
+    return _getSelectedXFiles(input).whenComplete(input.remove);
   }
 
   // Deprecated methods follow...
