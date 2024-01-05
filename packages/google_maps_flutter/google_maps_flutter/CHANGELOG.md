@@ -1,3 +1,7 @@
+## 2.5.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 2.5.1
 
 * Fixes new lint warnings.
