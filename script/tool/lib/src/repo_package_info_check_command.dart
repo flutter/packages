@@ -88,7 +88,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         errors.add('Missing repo root README.md table entry');
       } else {
         // Extract the two parts of a "[label](link)" .md link.
-        final RegExp mdLinkPattern = RegExp(r'\[().*\]\((.*)\)');
+        final RegExp mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
         // Possible link targets.
         for (final String cell in cells) {
           final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
@@ -98,12 +98,34 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
             errors.add('Invalid root README.md table entry');
           } else {
             final String encodedTag = Uri.encodeComponent('p: $packageName');
-            final String text = match.group(1)!;
+            final String anchor = match.group(1)!;
             final String target = match.group(2)!;
-            // A link should be one of:
+
+            // The anchor should be one of:
+            // - The package name (optionally with any underscores escaped)
+            // - An image with a name-based link
+            // - An image with a tag-based link
+            final RegExp packageLink =
+                RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
+                    '$packageName'
+                    r'(?:\.svg)?\)$');
+            final RegExp tagLink =
+                RegExp(r'^!\[.*\]\(https://img.shields.io/github/.*/'
+                    '$encodedTag'
+                    r'\?label=\)$');
+            if (!(anchor == packageName ||
+                anchor == packageName.replaceAll('_', r'\_') ||
+                packageLink.hasMatch(anchor) ||
+                tagLink.hasMatch(anchor))) {
+              printError(
+                  '${indentation}Incorrect anchor in root README.md table: "$anchor"');
+              errors.add('Incorrect anchor in root README.md table');
+            }
+
+            // The link should be one of:
             // - a relative link to the in-repo package
             // - a pub.dev link to the package
-            // - a github label link to the package's label.
+            // - a github label link to the package's label
             final RegExp pubDevLink =
                 RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
             final RegExp gitHubLink = RegExp(
