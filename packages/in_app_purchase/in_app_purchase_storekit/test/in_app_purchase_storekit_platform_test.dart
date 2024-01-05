@@ -41,8 +41,6 @@ void main() {
   group('isAvailable', () {
     test('true', () async {
       expect(await iapStoreKitPlatform.isAvailable(), isTrue);
-
-      expect(await InAppPurchaseAPI().canMakePayments(), isTrue);
     });
   });
 

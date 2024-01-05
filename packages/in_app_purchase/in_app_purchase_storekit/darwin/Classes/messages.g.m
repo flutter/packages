@@ -319,10 +319,10 @@ void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
         binaryMessenger:binaryMessenger
         codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(canMakePayments:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(canMakePayments:)", api);
+      NSCAssert([api respondsToSelector:@selector(canMakePaymentsWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(canMakePaymentsWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        NSNumber *output = [api canMakePayments:&error];
+        NSNumber *output = [api canMakePaymentsWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -336,10 +336,10 @@ void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
         binaryMessenger:binaryMessenger
         codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(transactions:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(transactions:)", api);
+      NSCAssert([api respondsToSelector:@selector(transactionsWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(transactionsWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        NSArray<PaymentTransactionWrapper *> *output = [api transactions:&error];
+        NSArray<PaymentTransactionWrapper *> *output = [api transactionsWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -353,10 +353,10 @@ void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
         binaryMessenger:binaryMessenger
         codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(storefront:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(storefront:)", api);
+      NSCAssert([api respondsToSelector:@selector(storefrontWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(storefrontWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        NSArray<StorefrontWrapper *> *output = [api storefront:&error];
+        NSArray<StorefrontWrapper *> *output = [api storefrontWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {

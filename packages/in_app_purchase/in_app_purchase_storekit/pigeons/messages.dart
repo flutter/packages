@@ -135,13 +135,13 @@ class StorefrontWrapper {
 @HostApi()
 abstract class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
-  @ObjCSelector('canMakePayments')
+  // @ObjCSelector('canMakePayments')
   bool canMakePayments();
 
-  @ObjCSelector('transactions')
+  // @ObjCSelector('transactions')
   List<PaymentTransactionWrapper> transactions();
 
-  @ObjCSelector('storefront')
+  // @ObjCSelector('storefront')
   List<StorefrontWrapper> storefront();
 }
 

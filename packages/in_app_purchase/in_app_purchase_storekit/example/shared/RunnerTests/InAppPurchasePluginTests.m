@@ -41,7 +41,7 @@
 }
 
 - (void)testCanMakePayments {
-  id result = [self.plugin canMakePayments:NULL];
+  id result = [self.plugin canMakePaymentsWithError:NULL];
   XCTAssertEqual(result, @YES);
 }
 

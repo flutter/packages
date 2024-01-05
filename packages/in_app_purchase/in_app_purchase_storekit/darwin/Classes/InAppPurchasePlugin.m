@@ -41,8 +41,13 @@
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/in_app_purchase"
                                   binaryMessenger:[registrar messenger]];
-  InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
+//  InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
+//  SetUpInAppPurchaseAPI([registrar messenger], instance);
+
+  InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
+  [registrar addApplicationDelegate:instance];
+  SetUpInAppPurchaseAPI([registrar messenger], instance);
 }
 
 - (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager {
@@ -126,15 +131,13 @@
   }
 }
 
-//- (void)canMakePayments:(FlutterResult)result {
-//  result(@([SKPaymentQueue canMakePayments]));
-//}
-
-- (nullable NSNumber *)canMakePayments:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable NSNumber *)canMakePaymentsWithError:
+    (FlutterError *_Nullable *_Nonnull)error {
   return @([SKPaymentQueue canMakePayments]);
 }
 
-- (nullable NSArray<StorefrontWrapper *> *)storefront:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+
+- (nullable NSArray<StorefrontWrapper *> *)storefrontWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
       if (@available(iOS 13.0, macOS 10.15, *)) {
         SKStorefront *storefront = self.paymentQueueHandler.storefront;
         if (!storefront) {
@@ -148,7 +151,7 @@
 }
 
 
-- (nullable NSArray<PaymentTransactionWrapper *> *)transactions:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (nullable NSArray<PaymentTransactionWrapper *> *)transactionsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
   NSArray<SKPaymentTransaction *> *transactions =
       [self.paymentQueueHandler getUnfinishedTransactions];
   NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];

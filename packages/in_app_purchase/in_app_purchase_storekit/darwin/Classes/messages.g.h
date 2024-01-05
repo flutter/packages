@@ -133,11 +133,11 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 /// Returns if the current device is able to make payments
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)canMakePayments:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)canMakePaymentsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<PaymentTransactionWrapper *> *)transactions:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<PaymentTransactionWrapper *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<StorefrontWrapper *> *)storefront:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<StorefrontWrapper *> *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *_Nullable api);

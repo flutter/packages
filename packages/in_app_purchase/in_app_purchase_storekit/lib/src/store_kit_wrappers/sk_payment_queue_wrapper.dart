@@ -30,12 +30,8 @@ part 'sk_payment_queue_wrapper.g.dart';
 
 InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
 
-/// Sets the [PlatformImagesApi] instance used to implement the static methods
-/// of [IosPlatformImages].
-///
-/// This exists only for unit tests.
 @visibleForTesting
-void setPlatformImageHostApi(InAppPurchaseAPI api) {
+void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
   _hostApi = api;
 }
 
@@ -69,18 +65,17 @@ class SKPaymentQueueWrapper {
   }
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
-  Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    return _getTransactionList((await channel
-        .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
-  }
+  Future<List<PaymentTransactionWrapper?>> transactions() async =>
+    // return _getTransactionList((await channel
+   _hostApi.transactions();
+
 
   /// Calls [`-[SKPaymentQueue canMakePayments:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506139-canmakepayments?language=objc).
   static Future<bool> canMakePayments() async =>
-      (await channel
-          .invokeMethod<bool>('-[SKPaymentQueue canMakePayments:]')) ??
-      false;
-  //
-  // _hostApi.canMakePayments();
+    _hostApi.canMakePayments();
+  // (await channel
+  //     .invokeMethod<bool>('-[SKPaymentQueue canMakePayments:]')) ??
+  // false;
 
   /// Sets an observer to listen to all incoming transaction events.
   ///
