@@ -43,6 +43,18 @@ void main() {
 ''';
   }
 
+  void writeCodeOwners(List<RepositoryPackage> ownedPackages) {
+    final List<String> subpaths = ownedPackages
+        .map((RepositoryPackage p) => p.isFederated
+            ? <String>[p.directory.parent.basename, p.directory.basename]
+                .join('/')
+            : p.directory.basename)
+        .toList();
+    root.childFile('CODEOWNERS').writeAsStringSync('''
+${subpaths.map((String subpath) => 'packages/$subpath/** @someone').join('\n')}
+''');
+  }
+
   String readmeTableEntry(String packageName) {
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     return '| [$packageName](./packages/$packageName/) | '
@@ -54,12 +66,15 @@ void main() {
   }
 
   test('passes for correct README coverage', () async {
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
 ${readmeTableEntry('a_package')}
 ''');
+    writeCodeOwners(packages);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['repo-package-info-check']);
@@ -72,15 +87,18 @@ ${readmeTableEntry('a_package')}
       () async {
     const String pluginName = 'foo';
     final Directory pluginDir = packagesDir.childDirectory(pluginName);
-    createFakePlugin(pluginName, pluginDir);
-    createFakePlugin('${pluginName}_platform_interface', pluginDir);
-    createFakePlugin('${pluginName}_android', pluginDir);
-    createFakePlugin('${pluginName}_ios', pluginDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePlugin(pluginName, pluginDir),
+      createFakePlugin('${pluginName}_platform_interface', pluginDir),
+      createFakePlugin('${pluginName}_android', pluginDir),
+      createFakePlugin('${pluginName}_ios', pluginDir),
+    ];
 
     root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
 ${readmeTableEntry(pluginName)}
 ''');
+    writeCodeOwners(packages);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['repo-package-info-check']);
@@ -90,12 +108,15 @@ ${readmeTableEntry(pluginName)}
   });
 
   test('fails for unexpected README table entry', () async {
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
 ${readmeTableEntry('another_package')}
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -112,13 +133,16 @@ ${readmeTableEntry('another_package')}
   });
 
   test('fails for missing README table entry', () async {
-    createFakePackage('a_package', packagesDir);
-    createFakePackage('another_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+      createFakePackage('another_package', packagesDir),
+    ];
 
     root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
 ${readmeTableEntry('another_package')}
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -139,7 +163,9 @@ ${readmeTableEntry('another_package')}
   test('fails for unexpected format in README table entry', () async {
     const String packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     final String entry = '| [$packageName](./packages/$packageName/) | '
         'Some random text | '
@@ -152,6 +178,7 @@ ${readmeTableEntry('another_package')}
 ${readmeTableHeader()}
 $entry
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -174,7 +201,9 @@ $entry
     const String packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     const String incorrectPackageName = 'a_pakage';
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     final String entry =
         '| [$packageName](./packages/$incorrectPackageName/) | '
@@ -188,6 +217,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -210,7 +240,9 @@ $entry
     const String packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     const String incorrectPackageName = 'a_pakage';
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     final String entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
@@ -223,6 +255,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -245,7 +278,9 @@ $entry
     const String packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     final String incorrectTag = Uri.encodeComponent('p: a_pakage');
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     final String entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
@@ -258,6 +293,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -280,7 +316,9 @@ $entry
     const String packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     const String incorrectPackageName = 'a_pakage';
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     final String entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
@@ -293,6 +331,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -315,7 +354,9 @@ $entry
     const String packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     final String incorrectTag = Uri.encodeComponent('p: a_pakage');
-    createFakePackage('a_package', packagesDir);
+    final List<RepositoryPackage> packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
 
     final String entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
@@ -328,6 +369,7 @@ $entry
 ${readmeTableHeader()}
 $entry
 ''');
+    writeCodeOwners(packages);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -343,6 +385,34 @@ $entry
               'Incorrect anchor in root README.md table: "![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$incorrectTag?label=)'),
           contains('a_package:\n'
               '    Incorrect anchor in root README.md table')
+        ]));
+  });
+
+  test('fails for missing CODEOWNER', () async {
+    const String packageName = 'a_package';
+    final String encodedTag = Uri.encodeComponent('p: $packageName');
+    final String incorrectTag = Uri.encodeComponent('p: a_pakage');
+    createFakePackage('a_package', packagesDir);
+
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+    writeCodeOwners(<RepositoryPackage>[]);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Missing CODEOWNERS entry.'),
+          contains('a_package:\n'
+              '    Missing CODEOWNERS entry')
         ]));
   });
 }

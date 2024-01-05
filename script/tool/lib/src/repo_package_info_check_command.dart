@@ -20,8 +20,12 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
 
   late Directory _repoRoot;
 
+  /// Data from the root README.md table of packages.
   final Map<String, List<String>> _readmeTableEntries =
       <String, List<String>>{};
+
+  /// Packages with entries in CODEOWNERS.
+  final List<String> _ownedPackages = <String>[];
 
   @override
   final String name = 'repo-package-info-check';
@@ -40,6 +44,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   Future<void> initializeRun() async {
     _repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
+    // Extract all of the README.md table entries.
     final RegExp namePattern = RegExp(r'\[(.*?)\]\(');
     for (final String line
         in _repoRoot.childFile('README.md').readAsLinesSync()) {
@@ -68,19 +73,45 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         }
       }
     }
+
+    // Extract all of the CODEOWNERS package entries.
+    final RegExp packageOwnershipPattern =
+        RegExp(r'^((?:third_party/)?packages/(?:[^/]*/)?([^/]*))/\*\*');
+    for (final String line
+        in _repoRoot.childFile('CODEOWNERS').readAsLinesSync()) {
+      final RegExpMatch? match = packageOwnershipPattern.firstMatch(line);
+      if (match == null) {
+        continue;
+      }
+      final String path = match.group(1)!;
+      final String name = match.group(2)!;
+      if (!_repoRoot.childDirectory(path).existsSync()) {
+        printError('Unknown directory "$path" in CODEOWNERS');
+        throw ToolExit(_exitUknownPackageEntry);
+      }
+      _ownedPackages.add(name);
+    }
   }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    final String packageName = package.directory.basename;
     final List<String> errors = <String>[];
 
-    // All packages should have
+    // All packages should have an owner.
+    // Platform interface packages are considered to be owned by the app-facing
+    // package owner.
+    if (!(_ownedPackages.contains(packageName) ||
+        package.isPlatformInterface &&
+            _ownedPackages.contains(package.directory.parent.basename))) {
+      printError('${indentation}Missing CODEOWNERS entry.');
+      errors.add('Missing CODEOWNERS entry');
+    }
 
     // Any published package should be in the README table.
     // For federated plugins, only the app-facing package is listed.
     if (package.isPublishable() &&
         (!package.isFederated || package.isAppFacing)) {
-      final String packageName = package.directory.basename;
       final List<String>? cells = _readmeTableEntries[packageName];
 
       if (cells == null) {
