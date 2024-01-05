@@ -390,13 +390,11 @@ $entry
 
   test('fails for missing CODEOWNER', () async {
     const String packageName = 'a_package';
-    final String encodedTag = Uri.encodeComponent('p: $packageName');
-    final String incorrectTag = Uri.encodeComponent('p: a_pakage');
-    createFakePackage('a_package', packagesDir);
+    createFakePackage(packageName, packagesDir);
 
     root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
-${readmeTableEntry('a_package')}
+${readmeTableEntry(packageName)}
 ''');
     writeCodeOwners(<RepositoryPackage>[]);
 
