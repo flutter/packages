@@ -63,7 +63,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
 
         if (!(packagesDir.childDirectory(name).existsSync() ||
             thirdPartyPackagesDir.childDirectory(name).existsSync())) {
-          printError('Uknown package "$name" in README table.');
+          printError('Unknown package "$name" in root README.md table.');
           throw ToolExit(_exitUknownPackageEntry);
         }
       }
@@ -81,8 +81,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     if (package.isPublishable() &&
         (!package.isFederated || package.isAppFacing)) {
       if (!_readmeTableEntries.containsKey(package.directory.basename)) {
-        printError('${indentation}Missing table entry');
-        errors.add('Missing table entry');
+        printError('${indentation}Missing repo root README.md table entry');
+        errors.add('Missing repo root README.md table entry');
       }
     }
 
