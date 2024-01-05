@@ -253,7 +253,7 @@ public class CameraControlTest {
     }
   }
 
-    @Test
+  @Test
   public void setExposureCompensationIndex_setsExposureCompensationIndexAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =

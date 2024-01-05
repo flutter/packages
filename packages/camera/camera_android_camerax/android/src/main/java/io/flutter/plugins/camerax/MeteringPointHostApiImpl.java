@@ -28,13 +28,19 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   public static class MeteringPointProxy {
 
     public void create(@NonNull Double x, @NonNull Double y, @Nullable Double size) {
-        SurfaceOrientedMeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(1f, 1f);
+        SurfaceOrientedMeteringPointFactory factory = getSurfaceOrientedMeteringPointFactory(1f, 1f);
         if (size == null) {
-            return factory.createPoint(x, y);
+            return factory.createPoint(x.floatValue(), y.floatValue());
         } else {
-            return factory.createPoint(x, y, size);
+            return factory.createPoint(x.floatValue(), y.floatValue(), size.floatValue());
         }
     }
+
+  @VisibleForTesting
+  @NonNull
+  public FocusMeteringAction.Builder getSurfaceOrientedMeteringPointFactory(float width, float height) {
+    return new SurfaceOrientedMeteringPointFactory(width, height);
+  }
 
     @NonNull 
     public float getDefaultPointSize() {
