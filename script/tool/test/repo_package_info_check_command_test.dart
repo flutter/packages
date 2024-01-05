@@ -135,4 +135,108 @@ ${readmeTableEntry('another_package')}
               '    Missing repo root README.md table entry')
         ]));
   });
+
+  test('fails for unexpected format in README table entry', () async {
+    const String packageName = 'a_package';
+    final String encodedTag = Uri.encodeComponent(packageName);
+    createFakePackage('a_package', packagesDir);
+
+    final String entry = '| [$packageName](./packages/$packageName/) | '
+        'Some random text | '
+        '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
+        '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
+        '[![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedTag?label=)](https://github.com/flutter/flutter/labels/$encodedTag) | '
+        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedTag?label=)](https://github.com/flutter/packages/labels/$encodedTag) |';
+
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+$entry
+''');
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Invalid repo root README.md table entry: "Some random text"'),
+          contains('a_package:\n'
+              '    Invalid root README.md table entry')
+        ]));
+  });
+
+  test('fails for incorrect packages/* link in README table entry', () async {
+    const String packageName = 'a_package';
+    final String encodedTag = Uri.encodeComponent(packageName);
+    const String incorrectPackageName = 'a_pakage';
+    createFakePackage('a_package', packagesDir);
+
+    final String entry = '| [$packageName](./packages/$packageName/) | '
+        '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
+        '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$incorrectPackageName/score) | '
+        '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
+        '[![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedTag?label=)](https://github.com/flutter/flutter/labels/$encodedTag) | '
+        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedTag?label=)](https://github.com/flutter/packages/labels/$encodedTag) |';
+
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+$entry
+''');
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Incorrect link in root README.md table: "https://pub.dev/packages/$incorrectPackageName/score"'),
+          contains('a_package:\n'
+              '    Incorrect link in root README.md table')
+        ]));
+  });
+
+  test('fails for incorrect labels/* link in README table entry', () async {
+    const String packageName = 'a_package';
+    final String encodedTag = Uri.encodeComponent(packageName);
+    final String incorrectTag = Uri.encodeComponent('a_pakage');
+    createFakePackage('a_package', packagesDir);
+
+    final String entry = '| [$packageName](./packages/$packageName/) | '
+        '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
+        '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
+        '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
+        '[![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedTag?label=)](https://github.com/flutter/flutter/labels/$incorrectTag) | '
+        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedTag?label=)](https://github.com/flutter/packages/labels/$encodedTag) |';
+
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+$entry
+''');
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Incorrect link in root README.md table: "https://github.com/flutter/flutter/labels/$incorrectTag"'),
+          contains('a_package:\n'
+              '    Incorrect link in root README.md table')
+        ]));
+  });
 }

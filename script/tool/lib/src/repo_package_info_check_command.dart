@@ -80,9 +80,43 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     // For federated plugins, only the app-facing package is listed.
     if (package.isPublishable() &&
         (!package.isFederated || package.isAppFacing)) {
-      if (!_readmeTableEntries.containsKey(package.directory.basename)) {
+      final String packageName = package.directory.basename;
+      final List<String>? cells = _readmeTableEntries[packageName];
+
+      if (cells == null) {
         printError('${indentation}Missing repo root README.md table entry');
         errors.add('Missing repo root README.md table entry');
+      } else {
+        // Extract the two parts of a "[label](link)" .md link.
+        final RegExp mdLinkPattern = RegExp(r'\[().*\]\((.*)\)');
+        // Possible link targets.
+        for (final String cell in cells) {
+          final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
+          if (match == null) {
+            printError(
+                '${indentation}Invalid repo root README.md table entry: "$cell"');
+            errors.add('Invalid root README.md table entry');
+          } else {
+            final String encodedTag = Uri.encodeComponent('p: $packageName');
+            final String text = match.group(1)!;
+            final String target = match.group(2)!;
+            // A link should be one of:
+            // - a relative link to the in-repo package
+            // - a pub.dev link to the package
+            // - a github label link to the package's label.
+            final RegExp pubDevLink =
+                RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
+            final RegExp gitHubLink = RegExp(
+                '^https://github.com/flutter/(?:flutter|packages)/labels/$encodedTag\$');
+            if (!(target == './packages/$packageName/' ||
+                pubDevLink.hasMatch(target) ||
+                gitHubLink.hasMatch(target))) {
+              printError(
+                  '${indentation}Incorrect link in root README.md table: "$target"');
+              errors.add('Incorrect link in root README.md table');
+            }
+          }
+        }
       }
     }
 
