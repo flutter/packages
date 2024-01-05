@@ -97,7 +97,10 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
                 '${indentation}Invalid repo root README.md table entry: "$cell"');
             errors.add('Invalid root README.md table entry');
           } else {
-            final String encodedTag = Uri.encodeComponent('p: $packageName');
+            final String encodedIssueTag =
+                Uri.encodeComponent(_issueTagForPackage(packageName));
+            final String encodedPRTag =
+                Uri.encodeComponent(_prTagForPackage(packageName));
             final String anchor = match.group(1)!;
             final String target = match.group(2)!;
 
@@ -109,14 +112,19 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
                 RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
                     '$packageName'
                     r'(?:\.svg)?\)$');
-            final RegExp tagLink =
-                RegExp(r'^!\[.*\]\(https://img.shields.io/github/.*/'
-                    '$encodedTag'
-                    r'\?label=\)$');
+            final RegExp issueTagLink = RegExp(
+                r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
+                '$encodedIssueTag'
+                r'\?label=\)$');
+            final RegExp prTagLink = RegExp(
+                r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
+                '$encodedPRTag'
+                r'\?label=\)$');
             if (!(anchor == packageName ||
                 anchor == packageName.replaceAll('_', r'\_') ||
                 packageLink.hasMatch(anchor) ||
-                tagLink.hasMatch(anchor))) {
+                issueTagLink.hasMatch(anchor) ||
+                prTagLink.hasMatch(anchor))) {
               printError(
                   '${indentation}Incorrect anchor in root README.md table: "$anchor"');
               errors.add('Incorrect anchor in root README.md table');
@@ -128,11 +136,14 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
             // - a github label link to the package's label
             final RegExp pubDevLink =
                 RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
-            final RegExp gitHubLink = RegExp(
-                '^https://github.com/flutter/(?:flutter|packages)/labels/$encodedTag\$');
+            final RegExp gitHubIssueLink = RegExp(
+                '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$');
+            final RegExp gitHubPRLink = RegExp(
+                '^https://github.com/flutter/packages/labels/$encodedPRTag\$');
             if (!(target == './packages/$packageName/' ||
                 pubDevLink.hasMatch(target) ||
-                gitHubLink.hasMatch(target))) {
+                gitHubIssueLink.hasMatch(target) ||
+                gitHubPRLink.hasMatch(target))) {
               printError(
                   '${indentation}Incorrect link in root README.md table: "$target"');
               errors.add('Incorrect link in root README.md table');
@@ -145,5 +156,18 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     return errors.isEmpty
         ? PackageResult.success()
         : PackageResult.fail(errors);
+  }
+
+  String _prTagForPackage(String packageName) => 'p: $packageName';
+
+  String _issueTagForPackage(String packageName) {
+    switch (packageName) {
+      case 'google_maps_flutter':
+        return 'p: maps';
+      case 'webview_flutter':
+        return 'p: webview';
+      default:
+        return 'p: $packageName';
+    }
   }
 }

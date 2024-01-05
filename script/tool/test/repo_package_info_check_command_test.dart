@@ -43,8 +43,8 @@ void main() {
 ''';
   }
 
-  String readmeTableEntry(String packageName, {String? tag}) {
-    final String encodedTag = Uri.encodeComponent(tag ?? 'p: $packageName');
+  String readmeTableEntry(String packageName) {
+    final String encodedTag = Uri.encodeComponent('p: $packageName');
     return '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
