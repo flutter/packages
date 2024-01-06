@@ -11,6 +11,20 @@ import '../stub_in_app_purchase_platform.dart';
 import 'product_details_wrapper_test.dart';
 import 'purchase_wrapper_test.dart';
 
+const PurchaseWrapper dummyOldPurchase = PurchaseWrapper(
+  orderId: 'oldOrderId',
+  packageName: 'oldPackageName',
+  purchaseTime: 0,
+  signature: 'oldSignature',
+  products: <String>['oldProduct'],
+  purchaseToken: 'oldPurchaseToken',
+  isAutoRenewing: false,
+  originalJson: '',
+  developerPayload: 'old dummy payload',
+  isAcknowledged: true,
+  purchaseState: PurchaseStateWrapper.purchased,
+);
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

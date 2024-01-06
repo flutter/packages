@@ -10,7 +10,7 @@ import '../common/web_kit.g.dart';
 import 'foundation.dart';
 
 export '../common/web_kit.g.dart'
-    show NSUrlSessionAuthChallengeDisposition, NSUrlCredentialPersistence;
+    show NSUrlCredentialPersistence, NSUrlSessionAuthChallengeDisposition;
 
 Iterable<NSKeyValueObservingOptionsEnumData>
     _toNSKeyValueObservingOptionsEnumData(
@@ -23,16 +23,12 @@ Iterable<NSKeyValueObservingOptionsEnumData>
     switch (option) {
       case NSKeyValueObservingOptions.newValue:
         value = NSKeyValueObservingOptionsEnum.newValue;
-        break;
       case NSKeyValueObservingOptions.oldValue:
         value = NSKeyValueObservingOptionsEnum.oldValue;
-        break;
       case NSKeyValueObservingOptions.initialValue:
         value = NSKeyValueObservingOptionsEnum.initialValue;
-        break;
       case NSKeyValueObservingOptions.priorNotification:
         value = NSKeyValueObservingOptionsEnum.priorNotification;
-        break;
     }
 
     return NSKeyValueObservingOptionsEnumData(value: value);

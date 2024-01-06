@@ -284,7 +284,7 @@ void main() {
       expect(find.byKey(home), findsNothing);
       expect(find.byKey(settings), findsOneWidget);
 
-      showDialog(
+      showDialog<void>(
         context: navKey.currentContext!,
         builder: (_) => DummyScreen(key: dialog),
       );
@@ -296,7 +296,7 @@ void main() {
       expect(find.byKey(dialog), findsNothing);
       expect(find.byKey(settings), findsOneWidget);
 
-      showDialog(
+      showDialog<void>(
         context: navKey.currentContext!,
         builder: (_) => DummyScreen(key: dialog),
       );
@@ -4427,7 +4427,7 @@ void main() {
         expect(router.canPop(), isFalse);
         expect(find.text('A Screen'), findsOneWidget);
         expect(find.text('Shell'), findsOneWidget);
-        showDialog(
+        showDialog<void>(
             context: root.currentContext!,
             builder: (_) => const Text('A dialog'));
         await tester.pumpAndSettle();
