@@ -51,8 +51,8 @@ void defineTests() {
             ),
           ),
         );
-        final Container container =
-            tester.widgetList(find.byType(Container)).first as Container;
+        final ColoredBox container =
+            tester.widgetList(find.byType(ColoredBox)).first as ColoredBox;
         expect(container.color, Colors.red);
         expect(container.child, isInstanceOf<Text>());
         expect((container.child! as Text).data, blockContent);
@@ -363,7 +363,7 @@ class ImgBuilder extends MarkdownElementBuilder {
 class NoteBuilder extends MarkdownElementBuilder {
   @override
   Widget? visitText(md.Text text, TextStyle? preferredStyle) {
-    return Container(
+    return ColoredBox(
         color: Colors.red, child: Text(text.text, style: preferredStyle));
   }
 
