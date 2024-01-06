@@ -209,12 +209,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
         ? lastMatch.matches.uri
         : currentConfiguration.uri;
     final bool canPop = location.pathSegments.length > 1;
-    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
-    final bool hasDrawer = scaffold?.hasDrawer ?? false;
     final Widget button = canPop
-        ? hasDrawer
-            ? DrawerButton(onPressed: () => Scaffold.of(context).openDrawer())
-            : BackButton(onPressed: GoRouter.of(context).pop)
+        ? BackButton(onPressed: GoRouter.of(context).pop)
         : const SizedBox.shrink(key: ValueKey<String>('NoLeadingButton'));
     return button;
   }
