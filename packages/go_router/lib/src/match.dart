@@ -740,10 +740,7 @@ class RouteMatchList with Diagnosticable {
     if (matches.isEmpty) {
       return null;
     }
-    if (matches.last is RouteMatch) {
-      return matches.last as RouteMatch;
-    }
-    return (matches.last as ShellRouteMatch)._lastLeaf;
+    return last;
   }
 
   /// Returns true if the current match intends to display an error screen.
