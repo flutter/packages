@@ -10,7 +10,7 @@ import '../common/weak_reference_utils.dart';
 import 'foundation_api_impls.dart';
 
 export 'foundation_api_impls.dart'
-    show NSUrlSessionAuthChallengeDisposition, NSUrlCredentialPersistence;
+    show NSUrlCredentialPersistence, NSUrlSessionAuthChallengeDisposition;
 
 /// The values that can be returned in a change map.
 ///

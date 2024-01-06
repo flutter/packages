@@ -4,6 +4,7 @@
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
 import '../util.dart';
@@ -218,6 +219,17 @@ void main() {
     test('returns true for Flutter package', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, isFlutter: true);
+      expect(package.requiresFlutter(), true);
+    });
+
+    test('returns true for a dev dependency on Flutter', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      final File pubspecFile = package.pubspecFile;
+      final Pubspec pubspec = package.parsePubspec();
+      pubspec.devDependencies['flutter'] = SdkDependency('flutter');
+      pubspecFile.writeAsStringSync(pubspec.toString());
+
       expect(package.requiresFlutter(), true);
     });
 
