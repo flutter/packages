@@ -76,7 +76,11 @@ class GoRouterState {
   /// ```
   final ValueKey<String> pageKey;
 
-  /// The current matched top route
+  /// The current matched top route associated with this state.
+  ///
+  /// If this state represents a [ShellRoute], the top [GoRoute] will be the current
+  /// matched location associated with the [ShellRoute]. This allows the [ShellRoute]'s
+  /// associated GoRouterState to be uniquely identified using [GoRoute.name]
   final GoRoute? topRoute;
 
   /// Gets the [GoRouterState] from context.
