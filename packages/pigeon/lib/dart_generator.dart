@@ -355,7 +355,9 @@ $resultAt != null
         final String returnType = isAsync
             ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
             : _addGenericTypesNullable(func.returnType);
-        final String argSignature = _getMethodParameterSignature(func);
+        final String argSignature = _getMethodParameterSignature(
+          func.parameters,
+        );
         indent.writeln('$returnType ${func.name}($argSignature);');
         indent.newln();
       }
@@ -531,88 +533,14 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
         } else {
           first = false;
         }
-        addDocumentationComments(
-            indent, func.documentationComments, _docCommentSpec);
-        String argSignature = '';
-        String sendArgument = 'null';
-        if (func.parameters.isNotEmpty) {
-          final Iterable<String> argExpressions =
-              func.parameters.mapIndexed((int index, NamedType type) {
-            final String name = _getParameterName(index, type);
-            if (type.type.isEnum) {
-              return '$name${type.type.isNullable ? '?' : ''}.index';
-            } else {
-              return name;
-            }
-          });
-          sendArgument = '<Object?>[${argExpressions.join(', ')}]';
-          argSignature = _getMethodParameterSignature(func);
-        }
-        indent.write(
-          'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
+        _writeHostMethod(
+          indent,
+          name: func.name,
+          parameters: func.parameters,
+          returnType: func.returnType,
+          documentationComments: func.documentationComments,
+          channelName: makeChannelName(api, func, dartPackageName),
         );
-        indent.addScoped('{', '}', () {
-          indent.writeln(
-              "const String ${_varNamePrefix}channelName = '${makeChannelName(api, func, dartPackageName)}';");
-          indent.writeScoped(
-              'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
-              ');', () {
-            indent.writeln('${_varNamePrefix}channelName,');
-            indent.writeln('$_pigeonChannelCodec,');
-            indent
-                .writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
-          });
-          final String returnType = _makeGenericTypeArguments(func.returnType);
-          final String genericCastCall = _makeGenericCastCall(func.returnType);
-          const String accessor = '${_varNamePrefix}replyList[0]';
-          // Avoid warnings from pointlessly casting to `Object?`.
-          final String nullablyTypedAccessor =
-              returnType == 'Object' ? accessor : '($accessor as $returnType?)';
-          final String nullHandler = func.returnType.isNullable
-              ? (genericCastCall.isEmpty ? '' : '?')
-              : '!';
-          String returnStatement = 'return';
-          if (func.returnType.isEnum) {
-            if (func.returnType.isNullable) {
-              returnStatement =
-                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
-            } else {
-              returnStatement =
-                  '$returnStatement $returnType.values[$accessor! as int]';
-            }
-          } else if (!func.returnType.isVoid) {
-            returnStatement =
-                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
-          }
-          returnStatement = '$returnStatement;';
-
-          indent.format('''
-final List<Object?>? ${_varNamePrefix}replyList =
-\t\tawait ${_varNamePrefix}channel.send($sendArgument) as List<Object?>?;
-if (${_varNamePrefix}replyList == null) {
-\tthrow _createConnectionError(${_varNamePrefix}channelName);
-} else if (${_varNamePrefix}replyList.length > 1) {
-\tthrow PlatformException(
-\t\tcode: ${_varNamePrefix}replyList[0]! as String,
-\t\tmessage: ${_varNamePrefix}replyList[1] as String?,
-\t\tdetails: ${_varNamePrefix}replyList[2],
-\t);''');
-          // On iOS we can return nil from functions to accommodate error
-          // handling.  Returning a nil value and not returning an error is an
-          // exception.
-          if (!func.returnType.isNullable && !func.returnType.isVoid) {
-            indent.format('''
-} else if (${_varNamePrefix}replyList[0] == null) {
-\tthrow PlatformException(
-\t\tcode: 'null-error',
-\t\tmessage: 'Host platform returned null value for non-null return value.',
-\t);''');
-          }
-          indent.format('''
-} else {
-\t$returnStatement
-}''');
-        });
       }
     });
   }
@@ -1068,6 +996,7 @@ class $codecName extends StandardMessageCodec {
           api.constructors,
           apiName: api.name,
           dartPackageName: dartPackageName,
+          codecName: codecName,
           codecInstanceName: codecInstanceName,
           superClassApi: superClassApi,
           unattachedFields: api.unattachedFields,
@@ -1111,6 +1040,7 @@ class $codecName extends StandardMessageCodec {
     Iterable<Constructor> constructors, {
     required String apiName,
     required String dartPackageName,
+    required String codecName,
     required String codecInstanceName,
     required AstProxyApi? superClassApi,
     required Iterable<Field> unattachedFields,
@@ -1118,6 +1048,18 @@ class $codecName extends StandardMessageCodec {
     required Iterable<Method> interfacesMethods,
     required Iterable<Method> flutterMethods,
   }) {
+    final cb.Parameter binaryMessengerParameter = cb.Parameter(
+      (cb.ParameterBuilder builder) => builder
+        ..name = '${classMemberNamePrefix}binaryMessenger'
+        ..named = true
+        ..toSuper = true,
+    );
+    final cb.Parameter instanceManagerParameter = cb.Parameter(
+      (cb.ParameterBuilder builder) => builder
+        ..name = '${classMemberNamePrefix}instanceManager'
+        ..named = true
+        ..toSuper = true,
+    );
     return <cb.Constructor>[
       // All constructors for this api defined in the pigeon file.
       ...constructors.map(
@@ -1138,18 +1080,8 @@ class $codecName extends StandardMessageCodec {
               ))
               ..optionalParameters.addAll(
                 <cb.Parameter>[
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = '${classMemberNamePrefix}binaryMessenger'
-                      ..named = true
-                      ..toSuper = true,
-                  ),
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = '${classMemberNamePrefix}instanceManager'
-                      ..named = true
-                      ..toSuper = true,
-                  ),
+                  binaryMessengerParameter,
+                  instanceManagerParameter,
                   for (final Field field in unattachedFields)
                     cb.Parameter(
                       (cb.ParameterBuilder builder) => builder
@@ -1201,87 +1133,43 @@ class $codecName extends StandardMessageCodec {
                     const cb.Code('super.${classMemberNamePrefix}detached()')
                 ],
               )
-              ..body = cb.Block.of(<cb.Code>[
-                cb.Code(
-                  "const String ${_varNamePrefix}channelName = r'$channelName';",
-                ),
-                _basicMessageChannel(
-                  codec: cb.refer(codecInstanceName),
-                  binaryMessenger:
-                      cb.refer('${classMemberNamePrefix}binaryMessenger'),
-                ),
-                // __pigeon_channel.send(<Object?>[]).then((Object? value) { ... });
-                cb
-                    .refer('${_varNamePrefix}channel.send')
-                    .call(<cb.Expression>[
-                      // List of arguments for the method call
-                      // <Object?>[<instanceIdentifier>, ...<non-attached field names>, ...<constructor parameter names>]
-                      cb.literalList(
-                        <Object?>[
-                          cb.refer(
-                            '${classMemberNamePrefix}instanceManager.addDartCreatedInstance(this)',
-                          ),
-                          ...unattachedFields.mapIndexed(_hostMessageArgument),
-                          ...constructor.parameters.mapIndexed(
-                            _hostMessageArgument,
-                          )
-                        ],
-                        cb.refer('Object?'),
-                      )
-                    ])
-                    .property('then')
-                    .call(
-                      <cb.Expression>[
-                        // This creates a lambda Function `(Object? value) {...}`
-                        cb.Method(
-                          (cb.MethodBuilder builder) => builder
-                            ..requiredParameters.add(
-                              cb.Parameter(
-                                (cb.ParameterBuilder builder) => builder
-                                  ..name = 'value'
-                                  ..type = cb.refer('Object?'),
-                              ),
-                            )
-                            // Body of lambda function
-                            ..body = cb.Block.of(<cb.Code>[
-                              const cb.Code(
-                                'final List<Object?>? ${_varNamePrefix}replyList = value as List<Object?>?;',
-                              ),
-                              const cb.Code(
-                                'if (${_varNamePrefix}replyList == null) {',
-                              ),
-                              const cb.Code(
-                                'throw _createConnectionError(${_varNamePrefix}channelName);',
-                              ),
-                              const cb.Code(
-                                '} else if (${_varNamePrefix}replyList.length > 1) {',
-                              ),
-                              cb.InvokeExpression.newOf(
-                                  cb.refer('PlatformException'),
-                                  <cb.Expression>[],
-                                  <String, cb.Expression>{
-                                    'code': cb
-                                        .refer('${_varNamePrefix}replyList')
-                                        .index(cb.literal(0))
-                                        .nullChecked
-                                        .asA(cb.refer('String')),
-                                    'message': cb
-                                        .refer('${_varNamePrefix}replyList')
-                                        .index(cb.literal(1))
-                                        .asA(cb.refer('String?')),
-                                    'details': cb
-                                        .refer('${_varNamePrefix}replyList')
-                                        .index(cb.literal(2)),
-                                  }).thrown.statement,
-                              const cb.Code('}'),
-                            ]),
-                        ).genericClosure
-                      ],
-                      <String, cb.Expression>{},
-                      <cb.Reference>[cb.refer('void')],
-                    )
-                    .statement
-              ]);
+              ..body = cb.Block(
+                (cb.BlockBuilder builder) {
+                  final StringBuffer messageCallSink = StringBuffer();
+                  _writeHostMethodMessageCall(
+                    Indent(messageCallSink),
+                    channelName: channelName,
+                    parameters: <Parameter>[
+                      Parameter(
+                        name: '${_varNamePrefix}instanceIdentifier',
+                        type: const TypeDeclaration(
+                            baseName: 'int', isNullable: false),
+                      ),
+                      ...unattachedFields.map(
+                        (Field field) => Parameter(
+                          name: field.name,
+                          type: field.type,
+                        ),
+                      ),
+                      ...constructor.parameters,
+                    ],
+                    returnType: const TypeDeclaration.voidDeclaration(),
+                  );
+                  builder.statements.addAll(<cb.Code>[
+                    const cb.Code(
+                      'final int ${_varNamePrefix}instanceIdentifier = ${classMemberNamePrefix}instanceManager.addDartCreatedInstance(this);',
+                    ),
+                    cb.Code('final $codecName $_pigeonChannelCodec =\n'
+                        '    $codecInstanceName;'),
+                    cb.Code(
+                      'final BinaryMessenger? ${_varNamePrefix}binaryMessenger = ${binaryMessengerParameter.name};',
+                    ),
+                    const cb.Code('() async {'),
+                    cb.Code(messageCallSink.toString()),
+                    const cb.Code('}();'),
+                  ]);
+                },
+              );
           },
         ),
       ),
@@ -1300,18 +1188,8 @@ class $codecName extends StandardMessageCodec {
             '/// create copies.',
           ])
           ..optionalParameters.addAll(<cb.Parameter>[
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = '${classMemberNamePrefix}binaryMessenger'
-                ..named = true
-                ..toSuper = true,
-            ),
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = '${classMemberNamePrefix}instanceManager'
-                ..named = true
-                ..toSuper = true,
-            ),
+            binaryMessengerParameter,
+            instanceManagerParameter,
             for (final Field field in unattachedFields)
               cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
@@ -2245,6 +2123,113 @@ PlatformException _createConnectionError(String channelName) {
 \t);
 }''');
   }
+
+  void _writeHostMethod(
+    Indent indent, {
+    required String name,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required List<String> documentationComments,
+    required String channelName,
+  }) {
+    addDocumentationComments(indent, documentationComments, _docCommentSpec);
+    String argSignature = '';
+    if (parameters.isNotEmpty) {
+      argSignature = _getMethodParameterSignature(parameters);
+    }
+    indent.write(
+      'Future<${_addGenericTypesNullable(returnType)}> $name($argSignature) async ',
+    );
+    indent.addScoped('{', '}', () {
+      _writeHostMethodMessageCall(
+        indent,
+        channelName: channelName,
+        parameters: parameters,
+        returnType: returnType,
+      );
+    });
+  }
+
+  void _writeHostMethodMessageCall(
+    Indent indent, {
+    required String channelName,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+  }) {
+    String sendArgument = 'null';
+    if (parameters.isNotEmpty) {
+      final Iterable<String> argExpressions =
+          parameters.mapIndexed((int index, NamedType type) {
+        final String name = _getParameterName(index, type);
+        if (type.type.isEnum) {
+          return '$name${type.type.isNullable ? '?' : ''}.index';
+        } else {
+          return name;
+        }
+      });
+      sendArgument = '<Object?>[${argExpressions.join(', ')}]';
+    }
+
+    indent
+        .writeln("const String ${_varNamePrefix}channelName = '$channelName';");
+    indent.writeScoped(
+        'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
+        ');', () {
+      indent.writeln('${_varNamePrefix}channelName,');
+      indent.writeln('$_pigeonChannelCodec,');
+      indent.writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
+    });
+    final String returnTypeName = _makeGenericTypeArguments(returnType);
+    final String genericCastCall = _makeGenericCastCall(returnType);
+    const String accessor = '${_varNamePrefix}replyList[0]';
+    // Avoid warnings from pointlessly casting to `Object?`.
+    final String nullablyTypedAccessor = returnTypeName == 'Object'
+        ? accessor
+        : '($accessor as $returnTypeName?)';
+    final String nullHandler =
+        returnType.isNullable ? (genericCastCall.isEmpty ? '' : '?') : '!';
+    String returnStatement = 'return';
+    if (returnType.isEnum) {
+      if (returnType.isNullable) {
+        returnStatement =
+            '$returnStatement ($accessor as int?) == null ? null : $returnTypeName.values[$accessor! as int]';
+      } else {
+        returnStatement =
+            '$returnStatement $returnTypeName.values[$accessor! as int]';
+      }
+    } else if (!returnType.isVoid) {
+      returnStatement =
+          '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+    }
+    returnStatement = '$returnStatement;';
+
+    indent.format('''
+final List<Object?>? ${_varNamePrefix}replyList =
+\t\tawait ${_varNamePrefix}channel.send($sendArgument) as List<Object?>?;
+if (${_varNamePrefix}replyList == null) {
+\tthrow _createConnectionError(${_varNamePrefix}channelName);
+} else if (${_varNamePrefix}replyList.length > 1) {
+\tthrow PlatformException(
+\t\tcode: ${_varNamePrefix}replyList[0]! as String,
+\t\tmessage: ${_varNamePrefix}replyList[1] as String?,
+\t\tdetails: ${_varNamePrefix}replyList[2],
+\t);''');
+    // On iOS we can return nil from functions to accommodate error
+    // handling.  Returning a nil value and not returning an error is an
+    // exception.
+    if (!returnType.isNullable && !returnType.isVoid) {
+      indent.format('''
+} else if (${_varNamePrefix}replyList[0] == null) {
+\tthrow PlatformException(
+\t\tcode: 'null-error',
+\t\tmessage: 'Host platform returned null value for non-null return value.',
+\t);''');
+    }
+    indent.format('''
+} else {
+\t$returnStatement
+}''');
+  }
 }
 
 // Adds support for conditional expressions.
@@ -2483,20 +2468,20 @@ String _getParameterName(int count, NamedType field) =>
 
 /// Generates the parameters code for [func]
 /// Example: (func, _getParameterName) -> 'String? foo, int bar'
-String _getMethodParameterSignature(Method func) {
+String _getMethodParameterSignature(Iterable<Parameter> parameters) {
   String signature = '';
-  if (func.parameters.isEmpty) {
+  if (parameters.isEmpty) {
     return signature;
   }
 
-  final List<Parameter> requiredPositionalParams = func.parameters
+  final List<Parameter> requiredPositionalParams = parameters
       .where((Parameter p) => p.isPositional && !p.isOptional)
       .toList();
-  final List<Parameter> optionalPositionalParams = func.parameters
+  final List<Parameter> optionalPositionalParams = parameters
       .where((Parameter p) => p.isPositional && p.isOptional)
       .toList();
   final List<Parameter> namedParams =
-      func.parameters.where((Parameter p) => !p.isPositional).toList();
+      parameters.where((Parameter p) => !p.isPositional).toList();
 
   String getParameterString(Parameter p) {
     final String required = p.isRequired && !p.isPositional ? 'required ' : '';

@@ -3878,64 +3878,72 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     AnEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
   }) : super.pigeon_detached() {
-    const String __pigeon_channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_defaultConstructor';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      __pigeon_codecProxyIntegrationCoreApi,
-      binaryMessenger: pigeon_binaryMessenger,
-    );
-    __pigeon_channel.send(<Object?>[
-      pigeon_instanceManager.addDartCreatedInstance(this),
-      aBool,
-      anInt,
-      aDouble,
-      aString,
-      aUint8List,
-      aList,
-      aMap,
-      anEnum.index,
-      aProxyApi,
-      aNullableBool,
-      aNullableInt,
-      aNullableDouble,
-      aNullableString,
-      aNullableUint8List,
-      aNullableList,
-      aNullableMap,
-      aNullableEnum?.index,
-      aNullableProxyApi,
-      boolParam,
-      intParam,
-      doubleParam,
-      stringParam,
-      aUint8ListParam,
-      listParam,
-      mapParam,
-      enumParam.index,
-      proxyApiParam,
-      nullableBoolParam,
-      nullableIntParam,
-      nullableDoubleParam,
-      nullableStringParam,
-      nullableUint8ListParam,
-      nullableListParam,
-      nullableMapParam,
-      nullableEnumParam?.index,
-      nullableProxyApiParam,
-    ]).then<void>((Object? value) {
-      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecProxyIntegrationCoreApi;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList =
+          await __pigeon_channel.send(<Object?>[
+        __pigeon_instanceIdentifier,
+        aBool,
+        anInt,
+        aDouble,
+        aString,
+        aUint8List,
+        aList,
+        aMap,
+        anEnum.index,
+        aProxyApi,
+        aNullableBool,
+        aNullableInt,
+        aNullableDouble,
+        aNullableString,
+        aNullableUint8List,
+        aNullableList,
+        aNullableMap,
+        aNullableEnum?.index,
+        aNullableProxyApi,
+        boolParam,
+        intParam,
+        doubleParam,
+        stringParam,
+        aUint8ListParam,
+        listParam,
+        mapParam,
+        enumParam.index,
+        proxyApiParam,
+        nullableBoolParam,
+        nullableIntParam,
+        nullableDoubleParam,
+        nullableStringParam,
+        nullableUint8ListParam,
+        nullableListParam,
+        nullableMapParam,
+        nullableEnumParam?.index,
+        nullableProxyApiParam
+      ]) as List<Object?>?;
       if (__pigeon_replyList == null) {
         throw _createConnectionError(__pigeon_channelName);
       } else if (__pigeon_replyList.length > 1) {
         throw PlatformException(
-          code: (__pigeon_replyList[0]! as String),
-          message: (__pigeon_replyList[1] as String?),
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
           details: __pigeon_replyList[2],
         );
+      } else {
+        return;
       }
-    });
+    }();
   }
 
   /// Constructs ProxyIntegrationCoreApi without creating the associated native object.
@@ -8303,28 +8311,34 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
   }) {
-    const String __pigeon_channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_defaultConstructor';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      __pigeon_codecProxyApiSuperClass,
-      binaryMessenger: pigeon_binaryMessenger,
-    );
-    __pigeon_channel.send(<Object?>[
-      pigeon_instanceManager.addDartCreatedInstance(this)
-    ]).then<void>((Object? value) {
-      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecProxyApiSuperClass;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
       if (__pigeon_replyList == null) {
         throw _createConnectionError(__pigeon_channelName);
       } else if (__pigeon_replyList.length > 1) {
         throw PlatformException(
-          code: (__pigeon_replyList[0]! as String),
-          message: (__pigeon_replyList[1] as String?),
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
           details: __pigeon_replyList[2],
         );
+      } else {
+        return;
       }
-    });
+    }();
   }
 
   /// Constructs ProxyApiSuperClass without creating the associated native object.
