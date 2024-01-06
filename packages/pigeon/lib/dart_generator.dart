@@ -1283,8 +1283,8 @@ class $codecName extends StandardMessageCodec {
                   '',
                   '```dart',
                   'final WeakReference weakMyVariable = WeakReference(myVariable);',
-                  'final MyClass instance = MyClass(',
-                  '  myCallbackMethod: (_) {',
+                  'final $apiName instance = $apiName(',
+                  '  ${method.name}: ($apiName ${classMemberNamePrefix}instance, ...) {',
                   '    print(weakMyVariable?.target);',
                   '  },',
                   ');',
@@ -1373,6 +1373,7 @@ class $codecName extends StandardMessageCodec {
     required bool hasARequiredFlutterMethod,
   }) {
     return <cb.Method>[
+      // Flutter methods message handler
       cb.Method.returnsVoid(
         (cb.MethodBuilder builder) => builder
           ..name = '${classMemberNamePrefix}setUpMessageHandlers'
@@ -1697,103 +1698,78 @@ class $codecName extends StandardMessageCodec {
         cb.Method(
           (cb.MethodBuilder builder) {
             final String type = _addGenericTypesNullable(field.type);
-            final String channelName = makeChannelNameWithStrings(
-              apiName: apiName,
-              methodName: field.name,
-              dartPackageName: dartPackageName,
-            );
+            const String instanceName = '${_varNamePrefix}instance';
+            const String identifierInstanceName =
+                '${_varNamePrefix}instanceIdentifier';
             builder
               ..name = '$_varNamePrefix${field.name}'
               ..static = field.isStatic
               ..returns = cb.refer(type)
-              ..body = cb.Block.of(
-                <cb.Code>[
-                  cb.Code(
-                      'final $type ${_varNamePrefix}instance = $type.${classMemberNamePrefix}detached('),
-                  if (!field.isStatic) ...<cb.Code>[
-                    const cb.Code(
-                        '${classMemberNamePrefix}binaryMessenger: ${classMemberNamePrefix}binaryMessenger,'),
-                    const cb.Code(
-                        '${classMemberNamePrefix}instanceManager: ${classMemberNamePrefix}instanceManager,'),
-                  ],
-                  const cb.Code(');'),
-                  cb.Code(
-                    "const String ${_varNamePrefix}channelName = r'$channelName';",
-                  ),
-                  _basicMessageChannel(
-                    codec: !field.isStatic
-                        ? cb.refer(codecInstanceName)
-                        : cb.refer(
-                            '$codecName($instanceManagerClassName.instance)'),
-                    binaryMessenger: !field.isStatic
-                        ? cb.refer('${classMemberNamePrefix}binaryMessenger')
-                        : null,
-                  ),
-                  cb
-                      .refer('${_varNamePrefix}channel.send')
-                      .call(<cb.Expression>[
-                        cb.literalList(
-                          <Object?>[
-                            if (!field.isStatic) cb.refer('this'),
-                            cb.refer(
-                              '${field.isStatic ? '$instanceManagerClassName.instance' : '${classMemberNamePrefix}instanceManager'}.addDartCreatedInstance(${_varNamePrefix}instance)',
-                            ),
-                          ],
-                          cb.refer('Object?'),
-                        )
-                      ])
-                      .property('then')
-                      .call(
-                        <cb.Expression>[
-                          cb.Method(
-                            (cb.MethodBuilder builder) => builder
-                              ..requiredParameters.add(
-                                cb.Parameter(
-                                  (cb.ParameterBuilder builder) => builder
-                                    ..name = 'value'
-                                    ..type = cb.refer('Object?'),
-                                ),
-                              )
-                              ..body = cb.Block.of(<cb.Code>[
-                                const cb.Code(
-                                  'final List<Object?>? ${_varNamePrefix}replyList = value as List<Object?>?;',
-                                ),
-                                const cb.Code(
-                                  'if (${_varNamePrefix}replyList == null) {',
-                                ),
-                                const cb.Code(
-                                  'throw _createConnectionError(${_varNamePrefix}channelName);',
-                                ),
-                                const cb.Code(
-                                  '} else if (${_varNamePrefix}replyList.length > 1) {',
-                                ),
-                                cb.InvokeExpression.newOf(
-                                    cb.refer('PlatformException'),
-                                    <cb.Expression>[],
-                                    <String, cb.Expression>{
-                                      'code': cb
-                                          .refer('${_varNamePrefix}replyList')
-                                          .index(cb.literal(0))
-                                          .nullChecked
-                                          .asA(cb.refer('String')),
-                                      'message': cb
-                                          .refer('${_varNamePrefix}replyList')
-                                          .index(cb.literal(1))
-                                          .asA(cb.refer('String?')),
-                                      'details': cb
-                                          .refer('${_varNamePrefix}replyList')
-                                          .index(cb.literal(2)),
-                                    }).thrown.statement,
-                                const cb.Code('}'),
-                              ]),
-                          ).genericClosure,
-                        ],
-                        <String, cb.Expression>{},
-                        <cb.Reference>[cb.refer('void')],
-                      )
-                      .statement,
-                  const cb.Code('return ${_varNamePrefix}instance;'),
-                ],
+              ..body = cb.Block(
+                (cb.BlockBuilder builder) {
+                  final StringBuffer messageCallSink = StringBuffer();
+                  _writeHostMethodMessageCall(
+                    Indent(messageCallSink),
+                    channelName: makeChannelNameWithStrings(
+                      apiName: apiName,
+                      methodName: field.name,
+                      dartPackageName: dartPackageName,
+                    ),
+                    parameters: <Parameter>[
+                      if (!field.isStatic)
+                        Parameter(
+                          name: 'this',
+                          type: TypeDeclaration(
+                            baseName: apiName,
+                            isNullable: false,
+                          ),
+                        ),
+                      Parameter(
+                        name: identifierInstanceName,
+                        type: const TypeDeclaration(
+                          baseName: 'int',
+                          isNullable: false,
+                        ),
+                      ),
+                    ],
+                    returnType: const TypeDeclaration.voidDeclaration(),
+                  );
+                  builder.statements.addAll(<cb.Code>[
+                    if (!field.isStatic) ...<cb.Code>[
+                      cb.Code(
+                        'final $type $instanceName = $type.${classMemberNamePrefix}detached(\n'
+                        '  pigeon_binaryMessenger: pigeon_binaryMessenger,\n'
+                        '  pigeon_instanceManager: pigeon_instanceManager,\n'
+                        ');',
+                      ),
+                      cb.Code('final $codecName $_pigeonChannelCodec =\n'
+                          '    $codecInstanceName;'),
+                      const cb.Code(
+                        'final BinaryMessenger? ${_varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
+                      ),
+                      const cb.Code(
+                        'final int $identifierInstanceName = ${classMemberNamePrefix}instanceManager.addDartCreatedInstance($instanceName);',
+                      ),
+                    ] else ...<cb.Code>[
+                      cb.Code(
+                        'final $type $instanceName = $type.${classMemberNamePrefix}detached();',
+                      ),
+                      cb.Code(
+                        'final $codecName $_pigeonChannelCodec = $codecName($instanceManagerClassName.instance);',
+                      ),
+                      const cb.Code(
+                        'final BinaryMessenger ${_varNamePrefix}binaryMessenger = ServicesBinding.instance.defaultBinaryMessenger;',
+                      ),
+                      const cb.Code(
+                        'final int $identifierInstanceName = $instanceManagerClassName.instance.addDartCreatedInstance($instanceName);',
+                      ),
+                    ],
+                    const cb.Code('() async {'),
+                    cb.Code(messageCallSink.toString()),
+                    const cb.Code('}();'),
+                    const cb.Code('return $instanceName;'),
+                  ]);
+                },
               );
           },
         ),

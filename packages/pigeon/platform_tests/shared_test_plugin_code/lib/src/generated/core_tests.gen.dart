@@ -4050,8 +4050,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterNoop: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4072,8 +4072,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterThrowError: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4095,8 +4095,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterThrowErrorFromVoid: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4118,8 +4118,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoBool: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4143,8 +4143,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoInt: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4168,8 +4168,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoDouble: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4193,8 +4193,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoString: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4218,8 +4218,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoUint8List: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4243,8 +4243,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoList: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4269,8 +4269,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoProxyApiList: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4294,8 +4294,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoMap: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4320,8 +4320,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoProxyApiMap: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4345,8 +4345,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoEnum: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4370,8 +4370,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoProxyApi: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4395,8 +4395,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableBool: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4420,8 +4420,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableInt: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4445,8 +4445,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableDouble: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4470,8 +4470,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableString: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4495,8 +4495,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableUint8List: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4520,8 +4520,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableList: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4545,8 +4545,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableMap: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4570,8 +4570,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableEnum: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4595,8 +4595,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoNullableProxyApi: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4621,8 +4621,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterNoopAsync: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -4644,8 +4644,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyIntegrationCoreApi instance = ProxyIntegrationCoreApi(
+  ///  flutterEchoAsyncString: (ProxyIntegrationCoreApi pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -5928,56 +5928,69 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
-    const String __pigeon_channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.attachedField';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      __pigeon_codecProxyIntegrationCoreApi,
-      binaryMessenger: pigeon_binaryMessenger,
-    );
-    __pigeon_channel.send(<Object?>[
-      this,
-      pigeon_instanceManager.addDartCreatedInstance(__pigeon_instance),
-    ]).then<void>((Object? value) {
-      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+    final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecProxyIntegrationCoreApi;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(__pigeon_instance);
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.attachedField';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[this, __pigeon_instanceIdentifier]) as List<Object?>?;
       if (__pigeon_replyList == null) {
         throw _createConnectionError(__pigeon_channelName);
       } else if (__pigeon_replyList.length > 1) {
         throw PlatformException(
-          code: (__pigeon_replyList[0]! as String),
-          message: (__pigeon_replyList[1] as String?),
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
           details: __pigeon_replyList[2],
         );
+      } else {
+        return;
       }
-    });
+    }();
     return __pigeon_instance;
   }
 
   static ProxyApiSuperClass __pigeon_staticAttachedField() {
     final ProxyApiSuperClass __pigeon_instance =
         ProxyApiSuperClass.pigeon_detached();
-    const String __pigeon_channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.staticAttachedField';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      _Pigeon_ProxyApiBaseCodec(Pigeon_InstanceManager.instance),
-    );
-    __pigeon_channel.send(<Object?>[
-      Pigeon_InstanceManager.instance.addDartCreatedInstance(__pigeon_instance)
-    ]).then<void>((Object? value) {
-      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+    final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
+        _Pigeon_ProxyApiBaseCodec(Pigeon_InstanceManager.instance);
+    final BinaryMessenger __pigeon_binaryMessenger =
+        ServicesBinding.instance.defaultBinaryMessenger;
+    final int __pigeon_instanceIdentifier = Pigeon_InstanceManager.instance
+        .addDartCreatedInstance(__pigeon_instance);
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.staticAttachedField';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
       if (__pigeon_replyList == null) {
         throw _createConnectionError(__pigeon_channelName);
       } else if (__pigeon_replyList.length > 1) {
         throw PlatformException(
-          code: (__pigeon_replyList[0]! as String),
-          message: (__pigeon_replyList[1] as String?),
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
           details: __pigeon_replyList[2],
         );
+      } else {
+        return;
       }
-    });
+    }();
     return __pigeon_instance;
   }
 
@@ -8497,8 +8510,8 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final MyClass instance = MyClass(
-  ///  myCallbackMethod: (_) {
+  /// final ProxyApiInterface instance = ProxyApiInterface(
+  ///  anInterfaceMethod: (ProxyApiInterface pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
