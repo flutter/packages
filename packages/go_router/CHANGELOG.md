@@ -1,3 +1,7 @@
+## 13.0.1
+
+* Fixes new lint warnings.
+
 ## 13.0.0
 
 - Refactors `RouteMatchList` and imperative APIs.

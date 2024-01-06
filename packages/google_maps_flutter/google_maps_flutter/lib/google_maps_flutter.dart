@@ -15,8 +15,8 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
     show
-        ArgumentCallbacks,
         ArgumentCallback,
+        ArgumentCallbacks,
         BitmapDescriptor,
         CameraPosition,
         CameraPositionCallback,
@@ -41,8 +41,8 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         PolylineId,
         ScreenCoordinate,
         Tile,
-        TileOverlayId,
         TileOverlay,
+        TileOverlayId,
         TileProvider,
         WebGestureHandling;
 

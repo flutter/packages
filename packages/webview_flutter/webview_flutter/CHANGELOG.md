@@ -1,6 +1,7 @@
-## NEXT
+## 4.4.3
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
 
 ## 4.4.2
 

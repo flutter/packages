@@ -20,8 +20,8 @@ import 'android_navigation_delegate_test.dart';
 import 'android_webview_controller_test.mocks.dart';
 import 'android_webview_test.mocks.dart'
     show
-        MockTestGeolocationPermissionsCallbackHostApi,
-        MockTestCustomViewCallbackHostApi;
+        MockTestCustomViewCallbackHostApi,
+        MockTestGeolocationPermissionsCallbackHostApi;
 import 'test_android_webview.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[

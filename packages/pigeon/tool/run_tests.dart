@@ -9,6 +9,8 @@
 ///
 /// For any use other than CI, use test.dart instead.
 ////////////////////////////////////////////////////////////////////////////////
+library;
+
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
