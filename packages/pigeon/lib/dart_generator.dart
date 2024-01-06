@@ -1837,85 +1837,44 @@ class $codecName extends StandardMessageCodec {
                 ),
               ],
             ])
-            ..body = cb.Block.of(<cb.Code>[
-              cb.Code(
-                "const String ${_varNamePrefix}channelName = r'${makeChannelNameWithStrings(
-                  apiName: apiName,
-                  methodName: method.name,
-                  dartPackageName: dartPackageName,
-                )}';",
-              ),
-              _basicMessageChannel(
-                codec: !method.isStatic
-                    ? cb.refer(codecInstanceName)
-                    : cb.refer(
-                        '$codecName(${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance)',
+            ..body = cb.Block(
+              (cb.BlockBuilder builder) {
+                final StringBuffer messageCallSink = StringBuffer();
+                _writeHostMethodMessageCall(
+                  Indent(messageCallSink),
+                  channelName: makeChannelNameWithStrings(
+                    apiName: apiName,
+                    methodName: method.name,
+                    dartPackageName: dartPackageName,
+                  ),
+                  parameters: <Parameter>[
+                    if (!method.isStatic)
+                      Parameter(
+                        name: 'this',
+                        type: TypeDeclaration(
+                          baseName: apiName,
+                          isNullable: false,
+                        ),
                       ),
-                binaryMessenger:
-                    cb.refer('${classMemberNamePrefix}binaryMessenger'),
-              ),
-              const cb.Code(
-                  'final List<Object?>? ${_varNamePrefix}replyList ='),
-              cb
-                  .refer('${_varNamePrefix}channel.send')
-                  .call(<cb.Expression>[
-                    cb.literalList(
-                      <Object?>[
-                        if (!method.isStatic) cb.refer('this'),
-                        ...method.parameters.mapIndexed(_hostMessageArgument),
-                      ],
-                      cb.refer('Object?'),
-                    )
-                  ])
-                  .awaited
-                  .asA(cb.refer('List<Object?>?'))
-                  .statement,
-              const cb.Code('if (${_varNamePrefix}replyList == null) {'),
-              const cb.Code(
-                'throw _createConnectionError(${_varNamePrefix}channelName);',
-              ),
-              const cb.Code(
-                '} else if (${_varNamePrefix}replyList.length > 1) {',
-              ),
-              cb.InvokeExpression.newOf(
-                  cb.refer('PlatformException'),
-                  <cb.Expression>[],
-                  <String, cb.Expression>{
-                    'code': cb
-                        .refer('${_varNamePrefix}replyList')
-                        .index(cb.literal(0))
-                        .nullChecked
-                        .asA(cb.refer('String')),
-                    'message': cb
-                        .refer('${_varNamePrefix}replyList')
-                        .index(cb.literal(1))
-                        .asA(cb.refer('String?')),
-                    'details': cb
-                        .refer('${_varNamePrefix}replyList')
-                        .index(cb.literal(2)),
-                  }).thrown.statement,
-              // On iOS we can return nil from functions to accommodate error
-              // handling.  Returning a nil value and not returning an error is an
-              // exception.
-              if (!method.returnType.isNullable &&
-                  !method.returnType.isVoid) ...<cb.Code>[
-                const cb.Code(
-                  '} else if (${_varNamePrefix}replyList[0] == null) {',
-                ),
-                cb.InvokeExpression.newOf(
-                    cb.refer('PlatformException'),
-                    <cb.Expression>[],
-                    <String, cb.Expression>{
-                      'code': cb.literalString('null-error'),
-                      'message': cb.literalString(
-                        'Host platform returned null value for non-null return value.',
-                      )
-                    }).thrown.statement,
-              ],
-              const cb.Code('} else {'),
-              _unwrapReturnValue(method.returnType).returned.statement,
-              const cb.Code('}'),
-            ]),
+                    ...method.parameters,
+                  ],
+                  returnType: method.returnType,
+                );
+                builder.statements.addAll(<cb.Code>[
+                  if (!method.isStatic)
+                    cb.Code('final $codecName $_pigeonChannelCodec =\n'
+                        '    $codecInstanceName;')
+                  else
+                    cb.Code(
+                      'final $codecName $_pigeonChannelCodec = $codecName(${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance);',
+                    ),
+                  const cb.Code(
+                    'final BinaryMessenger? ${_varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
+                  ),
+                  cb.Code(messageCallSink.toString()),
+                ]);
+              },
+            ),
         ),
       cb.Method(
         (cb.MethodBuilder builder) => builder
@@ -2238,28 +2197,6 @@ extension on cb.Expression {
   cb.Expression nullCheckedIf(bool condition) => condition ? nullChecked : this;
 }
 
-cb.Expression _unwrapReturnValue(TypeDeclaration returnType) {
-  final String type = _makeGenericTypeArguments(returnType);
-  final String genericCastCall = _makeGenericCastCall(returnType);
-  const String accessor = '${_varNamePrefix}replyList[0]';
-  final String nullablyTypedAccessor =
-      type == 'Object' ? accessor : '($accessor as $type?)';
-  final String nullHandler =
-      returnType.isNullable ? (genericCastCall.isEmpty ? '' : '?') : '!';
-  if (returnType.isEnum) {
-    if (returnType.isNullable) {
-      return cb.refer(
-        '($accessor as int?) == null ? null : $type.values[$accessor! as int]',
-      );
-    } else {
-      return cb.refer('$type.values[$accessor! as int]');
-    }
-  } else if (!returnType.isVoid) {
-    return cb.refer('$nullablyTypedAccessor$nullHandler$genericCastCall');
-  }
-  return cb.refer('');
-}
-
 cb.Expression _wrapResultResponse(Method method) {
   final TypeDeclaration returnType = method.returnType;
   return cb.refer('wrapResponse').call(
@@ -2345,29 +2282,6 @@ cb.Code _basicMessageChannel({
         ),
       )
       .statement;
-}
-
-/// Converts enums to use their index.
-///
-/// ```dart
-/// apple, banana, myEnum${type.isNullable : '?' : ''}.index
-/// ```
-cb.Expression _hostMessageArgument(
-  int index,
-  NamedType type, {
-  String Function(int index, NamedType type) getArgumentName =
-      _getParameterName,
-}) {
-  final cb.Reference nameRef = cb.refer(getArgumentName(index, type));
-  if (type.type.isEnum) {
-    if (type.type.isNullable) {
-      return nameRef.nullSafeProperty('index');
-    } else {
-      return nameRef.property('index');
-    }
-  } else {
-    return nameRef;
-  }
 }
 
 cb.Reference _refer(
