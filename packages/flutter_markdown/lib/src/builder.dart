@@ -189,7 +189,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     _linkHandlers.clear();
     _isInBlockquote = false;
 
-    builders.forEach((key, value) {
+    builders.forEach((String key, MarkdownElementBuilder value) {
       if (value.isBlockElement()) {
         _kBlockTags.add(key);
       }
