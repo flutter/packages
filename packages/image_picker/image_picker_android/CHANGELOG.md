@@ -1,3 +1,7 @@
+## 0.8.9+2
+
+* Fixes new lint warnings.
+
 ## 0.8.9+1
 
 * Updates plugin and example Gradle versions to 7.6.3.

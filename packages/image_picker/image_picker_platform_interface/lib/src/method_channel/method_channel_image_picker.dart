@@ -312,13 +312,10 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     switch (type) {
       case kTypeImage:
         retrieveType = RetrieveType.image;
-        break;
       case kTypeVideo:
         retrieveType = RetrieveType.video;
-        break;
       case kTypeMedia:
         retrieveType = RetrieveType.media;
-        break;
     }
 
     PlatformException? exception;

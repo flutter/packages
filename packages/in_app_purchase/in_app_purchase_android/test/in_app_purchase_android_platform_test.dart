@@ -374,8 +374,8 @@ void main() {
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
-      subscription = purchaseStream.listen((_) {
-        purchaseDetails = _.first;
+      subscription = purchaseStream.listen((List<PurchaseDetails> details) {
+        purchaseDetails = details.first;
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
@@ -419,8 +419,8 @@ void main() {
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
-      subscription = purchaseStream.listen((_) {
-        purchaseDetails = _.first;
+      subscription = purchaseStream.listen((List<PurchaseDetails> details) {
+        purchaseDetails = details.first;
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
@@ -493,8 +493,8 @@ void main() {
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
-      subscription = purchaseStream.listen((_) {
-        purchaseDetails = _.first;
+      subscription = purchaseStream.listen((List<PurchaseDetails> details) {
+        purchaseDetails = details.first;
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
@@ -611,8 +611,8 @@ void main() {
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
-      subscription = purchaseStream.listen((_) {
-        purchaseDetails = _.first;
+      subscription = purchaseStream.listen((List<PurchaseDetails> details) {
+        purchaseDetails = details.first;
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
@@ -757,8 +757,8 @@ void main() {
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
-      subscription = purchaseStream.listen((_) {
-        purchaseDetails = _.first;
+      subscription = purchaseStream.listen((List<PurchaseDetails> details) {
+        purchaseDetails = details.first;
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
@@ -802,8 +802,8 @@ void main() {
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
-      subscription = purchaseStream.listen((_) {
-        purchaseDetails = _.first;
+      subscription = purchaseStream.listen((List<PurchaseDetails> details) {
+        purchaseDetails = details.first;
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});

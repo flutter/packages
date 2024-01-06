@@ -112,8 +112,10 @@ class RepositoryPackage {
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
+    const String flutterDependency = 'flutter';
     final Pubspec pubspec = parsePubspec();
-    return pubspec.dependencies.containsKey('flutter');
+    return pubspec.dependencies.containsKey(flutterDependency) ||
+        pubspec.devDependencies.containsKey(flutterDependency);
   }
 
   /// True if this appears to be a federated plugin package, according to
@@ -151,7 +153,9 @@ class RepositoryPackage {
       return false;
     }
     // Check whether this is one of the enclosing package's examples.
-    return enclosingPackage.getExamples().any((RepositoryPackage p) => p.path == path);
+    return enclosingPackage
+        .getExamples()
+        .any((RepositoryPackage p) => p.path == path);
   }
 
   /// Returns the Flutter example packages contained in the package, if any.
