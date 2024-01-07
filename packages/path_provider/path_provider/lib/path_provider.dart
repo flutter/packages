@@ -212,12 +212,13 @@ Future<List<Directory>?> getExternalStorageDirectories({
 /// The returned directory is not guaranteed to exist, so clients should verify
 /// that it does before using it, and potentially create it if necessary.
 ///
-/// Throws an [UnsupportedError] if this is not supported on the current
-/// platform.
-Future<Directory?> getDownloadsDirectory() async {
+/// Throws a [MissingPlatformDirectoryException] if the system is unable to
+/// provide the directory.
+Future<Directory> getDownloadsDirectory() async {
   final String? path = await _platform.getDownloadsPath();
   if (path == null) {
-    return null;
+    throw MissingPlatformDirectoryException(
+        'Unable to get downloads directory');
   }
   return Directory(path);
 }
