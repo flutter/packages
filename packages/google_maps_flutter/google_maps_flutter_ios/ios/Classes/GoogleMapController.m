@@ -250,9 +250,10 @@
     result(nil);
   } else if ([call.method isEqualToString:@"map#takeSnapshot"]) {
     if (self.mapView != nil) {
-      UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
+      UIGraphicsImageRenderer *renderer =
+          [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
       UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
-          [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
+        [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
       }];
       NSData *imageData = UIImagePNGRepresentation(image);
       FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:imageData];
