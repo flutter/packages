@@ -1,3 +1,7 @@
+## 2.3.5
+
+* Fix of takeSnapShot function.
+
 ## 2.3.4
 
 * Fixes new lint warnings.
