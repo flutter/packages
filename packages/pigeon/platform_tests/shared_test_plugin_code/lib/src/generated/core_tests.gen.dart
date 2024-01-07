@@ -4787,136 +4787,122 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance';
-      final BasicMessageChannel<Object?> __pigeon_channel =
-          BasicMessageChannel<Object?>(
-        __pigeon_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeon_binaryMessenger,
-      );
-      __pigeon_channel.setMessageHandler((Object? message) async {
-        assert(
-          message != null,
-          'Argument for $__pigeon_channelName was null.',
-        );
-        final List<Object?> args = (message as List<Object?>?)!;
-        final int? instanceIdentifier = (args[0] as int?);
-        assert(
-          instanceIdentifier != null,
-          'Argument for $__pigeon_channelName was null, expected non-null int.',
-        );
-        final bool? arg_aBool = (args[1] as bool?);
-        assert(
-          arg_aBool != null,
-          'Argument for $__pigeon_channelName was null, expected non-null bool.',
-        );
-        final int? arg_anInt = (args[2] as int?);
-        assert(
-          arg_anInt != null,
-          'Argument for $__pigeon_channelName was null, expected non-null int.',
-        );
-        final double? arg_aDouble = (args[3] as double?);
-        assert(
-          arg_aDouble != null,
-          'Argument for $__pigeon_channelName was null, expected non-null double.',
-        );
-        final String? arg_aString = (args[4] as String?);
-        assert(
-          arg_aString != null,
-          'Argument for $__pigeon_channelName was null, expected non-null String.',
-        );
-        final Uint8List? arg_aUint8List = (args[5] as Uint8List?);
-        assert(
-          arg_aUint8List != null,
-          'Argument for $__pigeon_channelName was null, expected non-null Uint8List.',
-        );
-        final List<Object?>? arg_aList =
-            (args[6] as List<Object?>?)?.cast<Object?>();
-        assert(
-          arg_aList != null,
-          'Argument for $__pigeon_channelName was null, expected non-null List<Object?>.',
-        );
-        final Map<String?, Object?>? arg_aMap =
-            (args[7] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-        assert(
-          arg_aMap != null,
-          'Argument for $__pigeon_channelName was null, expected non-null Map<String?, Object?>.',
-        );
-        final AnEnum? arg_anEnum =
-            args[8] == null ? null : AnEnum.values[args[8]! as int];
-        assert(
-          arg_anEnum != null,
-          'Argument for $__pigeon_channelName was null, expected non-null AnEnum.',
-        );
-        final ProxyApiSuperClass? arg_aProxyApi =
-            (args[9] as ProxyApiSuperClass?);
-        assert(
-          arg_aProxyApi != null,
-          'Argument for $__pigeon_channelName was null, expected non-null ProxyApiSuperClass.',
-        );
-        final bool? arg_aNullableBool = (args[10] as bool?);
-        final int? arg_aNullableInt = (args[11] as int?);
-        final double? arg_aNullableDouble = (args[12] as double?);
-        final String? arg_aNullableString = (args[13] as String?);
-        final Uint8List? arg_aNullableUint8List = (args[14] as Uint8List?);
-        final List<Object?>? arg_aNullableList =
-            (args[15] as List<Object?>?)?.cast<Object?>();
-        final Map<String?, Object?>? arg_aNullableMap =
-            (args[16] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-        final AnEnum? arg_aNullableEnum =
-            args[17] == null ? null : AnEnum.values[args[17]! as int];
-        final ProxyApiSuperClass? arg_aNullableProxyApi =
-            (args[18] as ProxyApiSuperClass?);
-        (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
-            .addHostCreatedInstance(
-          pigeon_newInstance?.call(
-                arg_aBool!,
-                arg_anInt!,
-                arg_aDouble!,
-                arg_aString!,
-                arg_aUint8List!,
-                arg_aList!,
-                arg_aMap!,
-                arg_anEnum!,
-                arg_aProxyApi!,
-                arg_aNullableBool,
-                arg_aNullableInt,
-                arg_aNullableDouble,
-                arg_aNullableString,
-                arg_aNullableUint8List,
-                arg_aNullableList,
-                arg_aNullableMap,
-                arg_aNullableEnum,
-                arg_aNullableProxyApi,
-              ) ??
-              ProxyIntegrationCoreApi.pigeon_detached(
-                pigeon_binaryMessenger: pigeon_binaryMessenger,
-                pigeon_instanceManager: pigeon_instanceManager,
-                aBool: arg_aBool!,
-                anInt: arg_anInt!,
-                aDouble: arg_aDouble!,
-                aString: arg_aString!,
-                aUint8List: arg_aUint8List!,
-                aList: arg_aList!,
-                aMap: arg_aMap!,
-                anEnum: arg_anEnum!,
-                aProxyApi: arg_aProxyApi!,
-                aNullableBool: arg_aNullableBool,
-                aNullableInt: arg_aNullableInt,
-                aNullableDouble: arg_aNullableDouble,
-                aNullableString: arg_aNullableString,
-                aNullableUint8List: arg_aNullableUint8List,
-                aNullableList: arg_aNullableList,
-                aNullableMap: arg_aNullableMap,
-                aNullableEnum: arg_aNullableEnum,
-                aNullableProxyApi: arg_aNullableProxyApi,
-              ),
-          instanceIdentifier!,
-        );
-        return;
-      });
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null int.');
+          final bool? arg_aBool = (args[1] as bool?);
+          assert(arg_aBool != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null bool.');
+          final int? arg_anInt = (args[2] as int?);
+          assert(arg_anInt != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null int.');
+          final double? arg_aDouble = (args[3] as double?);
+          assert(arg_aDouble != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null double.');
+          final String? arg_aString = (args[4] as String?);
+          assert(arg_aString != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null String.');
+          final Uint8List? arg_aUint8List = (args[5] as Uint8List?);
+          assert(arg_aUint8List != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null Uint8List.');
+          final List<Object?>? arg_aList =
+              (args[6] as List<Object?>?)?.cast<Object?>();
+          assert(arg_aList != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null List<Object?>.');
+          final Map<String?, Object?>? arg_aMap =
+              (args[7] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+          assert(arg_aMap != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null Map<String?, Object?>.');
+          final AnEnum? arg_anEnum =
+              args[8] == null ? null : AnEnum.values[args[8]! as int];
+          assert(arg_anEnum != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null AnEnum.');
+          final ProxyApiSuperClass? arg_aProxyApi =
+              (args[9] as ProxyApiSuperClass?);
+          assert(arg_aProxyApi != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance was null, expected non-null ProxyApiSuperClass.');
+          final bool? arg_aNullableBool = (args[10] as bool?);
+          final int? arg_aNullableInt = (args[11] as int?);
+          final double? arg_aNullableDouble = (args[12] as double?);
+          final String? arg_aNullableString = (args[13] as String?);
+          final Uint8List? arg_aNullableUint8List = (args[14] as Uint8List?);
+          final List<Object?>? arg_aNullableList =
+              (args[15] as List<Object?>?)?.cast<Object?>();
+          final Map<String?, Object?>? arg_aNullableMap =
+              (args[16] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+          final AnEnum? arg_aNullableEnum =
+              args[17] == null ? null : AnEnum.values[args[17]! as int];
+          final ProxyApiSuperClass? arg_aNullableProxyApi =
+              (args[18] as ProxyApiSuperClass?);
+          try {
+            (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(
+                      arg_aBool!,
+                      arg_anInt!,
+                      arg_aDouble!,
+                      arg_aString!,
+                      arg_aUint8List!,
+                      arg_aList!,
+                      arg_aMap!,
+                      arg_anEnum!,
+                      arg_aProxyApi!,
+                      arg_aNullableBool,
+                      arg_aNullableInt,
+                      arg_aNullableDouble,
+                      arg_aNullableString,
+                      arg_aNullableUint8List,
+                      arg_aNullableList,
+                      arg_aNullableMap,
+                      arg_aNullableEnum,
+                      arg_aNullableProxyApi) ??
+                  ProxyIntegrationCoreApi.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    aBool: arg_aBool!,
+                    anInt: arg_anInt!,
+                    aDouble: arg_aDouble!,
+                    aString: arg_aString!,
+                    aUint8List: arg_aUint8List!,
+                    aList: arg_aList!,
+                    aMap: arg_aMap!,
+                    anEnum: arg_anEnum!,
+                    aProxyApi: arg_aProxyApi!,
+                    aNullableBool: arg_aNullableBool,
+                    aNullableInt: arg_aNullableInt,
+                    aNullableDouble: arg_aNullableDouble,
+                    aNullableString: arg_aNullableString,
+                    aNullableUint8List: arg_aNullableUint8List,
+                    aNullableList: arg_aNullableList,
+                    aNullableMap: arg_aNullableMap,
+                    aNullableEnum: arg_aNullableEnum,
+                    aNullableProxyApi: arg_aNullableProxyApi,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
+
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
@@ -8274,36 +8260,40 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance';
-      final BasicMessageChannel<Object?> __pigeon_channel =
-          BasicMessageChannel<Object?>(
-        __pigeon_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeon_binaryMessenger,
-      );
-      __pigeon_channel.setMessageHandler((Object? message) async {
-        assert(
-          message != null,
-          'Argument for $__pigeon_channelName was null.',
-        );
-        final List<Object?> args = (message as List<Object?>?)!;
-        final int? instanceIdentifier = (args[0] as int?);
-        assert(
-          instanceIdentifier != null,
-          'Argument for $__pigeon_channelName was null, expected non-null int.',
-        );
-        (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
-            .addHostCreatedInstance(
-          pigeon_newInstance?.call() ??
-              ProxyApiSuperClass.pigeon_detached(
-                pigeon_binaryMessenger: pigeon_binaryMessenger,
-                pigeon_instanceManager: pigeon_instanceManager,
-              ),
-          instanceIdentifier!,
-        );
-        return;
-      });
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  ProxyApiSuperClass.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 
@@ -8387,37 +8377,42 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance';
-      final BasicMessageChannel<Object?> __pigeon_channel =
-          BasicMessageChannel<Object?>(
-        __pigeon_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeon_binaryMessenger,
-      );
-      __pigeon_channel.setMessageHandler((Object? message) async {
-        assert(
-          message != null,
-          'Argument for $__pigeon_channelName was null.',
-        );
-        final List<Object?> args = (message as List<Object?>?)!;
-        final int? instanceIdentifier = (args[0] as int?);
-        assert(
-          instanceIdentifier != null,
-          'Argument for $__pigeon_channelName was null, expected non-null int.',
-        );
-        (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
-            .addHostCreatedInstance(
-          pigeon_newInstance?.call() ??
-              ProxyApiInterface.pigeon_detached(
-                pigeon_binaryMessenger: pigeon_binaryMessenger,
-                pigeon_instanceManager: pigeon_instanceManager,
-              ),
-          instanceIdentifier!,
-        );
-        return;
-      });
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  ProxyApiInterface.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
+
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
