@@ -2092,14 +2092,13 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r"const String __pigeon_channelName = r'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
+            r"const String __pigeon_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'__pigeon_channel.send(<Object?>[ '
-            r'pigeon_instanceManager.addDartCreatedInstance(this) ])',
+            r'__pigeon_channel .send(<Object?>[__pigeon_instanceIdentifier])',
           ),
         );
       });
@@ -2200,9 +2199,9 @@ name: foobar
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'pigeon_instanceManager.addDartCreatedInstance(this), '
+            r'__pigeon_instanceIdentifier, '
             r'validType, enumType.index, proxyApiType, '
-            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
+            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType ])',
           ),
         );
       });
@@ -2310,9 +2309,9 @@ name: foobar
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'pigeon_instanceManager.addDartCreatedInstance(this), '
+            r'__pigeon_instanceIdentifier, '
             r'validType, enumType.index, proxyApiType, '
-            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
+            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType ])',
           ),
         );
         expect(
@@ -2532,7 +2531,7 @@ name: foobar
           contains(
             r'await __pigeon_channel.send(<Object?>[ this, validType, '
             r'enumType.index, proxyApiType, nullableValidType, '
-            r'nullableEnumType?.index, nullableProxyApiType, ])',
+            r'nullableEnumType?.index, nullableProxyApiType ])',
           ),
         );
       });
@@ -2578,7 +2577,7 @@ name: foobar
         );
         expect(
           collapsedCode,
-          contains(r'await __pigeon_channel.send(<Object?>[])'),
+          contains(r'await __pigeon_channel.send(null)'),
         );
       });
     });
@@ -2680,7 +2679,7 @@ name: foobar
         );
         expect(
           code,
-          contains(r'final Api? instance = (args[0] as Api?);'),
+          contains(r'final Api? arg_pigeon_instance = (args[0] as Api?);'),
         );
         expect(
           code,
@@ -2711,10 +2710,10 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'(doSomething ?? instance!.doSomething)?.call( instance!, '
+            r'(doSomething ?? arg_pigeon_instance!.doSomething)?.call( arg_pigeon_instance!, '
             r'arg_validType!, arg_enumType!, arg_proxyApiType!, '
             r'arg_nullableValidType, arg_nullableEnumType, '
-            r'arg_nullableProxyApiType, );',
+            r'arg_nullableProxyApiType);',
           ),
         );
       });
