@@ -1284,6 +1284,13 @@ class $codecName extends StandardMessageCodec {
           ..optionalParameters.addAll(<cb.Parameter>[
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
+                ..name = '${classMemberNamePrefix}clearHandlers'
+                ..type = cb.refer('bool')
+                ..named = true
+                ..defaultTo = const cb.Code('false'),
+            ),
+            cb.Parameter(
+              (cb.ParameterBuilder builder) => builder
                 ..name = '${classMemberNamePrefix}binaryMessenger'
                 ..named = true
                 ..type = cb.refer('BinaryMessenger?'),
@@ -1344,9 +1351,6 @@ class $codecName extends StandardMessageCodec {
             ),
             const cb.Code(
               'final BinaryMessenger? binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
-            ),
-            const cb.Code(
-              'int api = 4;',
             ),
             if (!hasARequiredFlutterMethod) ...<cb.Code>[
               const cb.Code('{'),
@@ -1476,40 +1480,45 @@ class $codecName extends StandardMessageCodec {
                     type: TypeDeclaration(baseName: apiName, isNullable: false),
                   ),
                 );
-                _writeFlutterMethodMessageHandler(Indent(messageHandlerSink),
-                    name: method.name,
-                    parameters: <Parameter>[
-                      Parameter(
-                        name: instanceName,
-                        type: TypeDeclaration(
-                          baseName: apiName,
-                          isNullable: false,
-                        ),
+                _writeFlutterMethodMessageHandler(
+                  Indent(messageHandlerSink),
+                  name: method.name,
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: instanceName,
+                      type: TypeDeclaration(
+                        baseName: apiName,
+                        isNullable: false,
                       ),
-                      ...method.parameters,
-                    ],
-                    returnType: TypeDeclaration(
-                      baseName: method.returnType.baseName,
-                      isNullable:
-                          !method.required || method.returnType.isNullable,
-                      typeArguments: method.returnType.typeArguments,
-                      associatedEnum: method.returnType.associatedEnum,
-                      associatedClass: method.returnType.associatedClass,
-                      associatedProxyApi: method.returnType.associatedProxyApi,
                     ),
-                    channelName: makeChannelNameWithStrings(
-                      apiName: apiName,
-                      methodName: method.name,
-                      dartPackageName: dartPackageName,
-                    ),
-                    isMockHandler: false,
-                    isAsynchronous: method.isAsynchronous, onCreateApiCall: (
-                  String methodName,
-                  Iterable<String> argNames,
-                ) {
-                  final String nullability = method.required ? '' : '?';
-                  return '($methodName ?? $safeInstanceName!.$methodName)$nullability.call(${argNames.join(',')})';
-                });
+                    ...method.parameters,
+                  ],
+                  returnType: TypeDeclaration(
+                    baseName: method.returnType.baseName,
+                    isNullable:
+                        !method.required || method.returnType.isNullable,
+                    typeArguments: method.returnType.typeArguments,
+                    associatedEnum: method.returnType.associatedEnum,
+                    associatedClass: method.returnType.associatedClass,
+                    associatedProxyApi: method.returnType.associatedProxyApi,
+                  ),
+                  channelName: makeChannelNameWithStrings(
+                    apiName: apiName,
+                    methodName: method.name,
+                    dartPackageName: dartPackageName,
+                  ),
+                  isMockHandler: false,
+                  isAsynchronous: method.isAsynchronous,
+                  nullHandlerExpression:
+                      '${classMemberNamePrefix}clearHandlers',
+                  onCreateApiCall: (
+                    String methodName,
+                    Iterable<String> argNames,
+                  ) {
+                    final String nullability = method.required ? '' : '?';
+                    return '($methodName ?? $safeInstanceName!.$methodName)$nullability.call(${argNames.join(',')})';
+                  },
+                );
                 return list..add(cb.Code(messageHandlerSink.toString()));
               },
             ),
@@ -1995,6 +2004,7 @@ if (${_varNamePrefix}replyList == null) {
     required String channelName,
     required bool isMockHandler,
     required bool isAsynchronous,
+    String nullHandlerExpression = 'api == null',
     String Function(String methodName, Iterable<String> argNames)
         onCreateApiCall = _createFlutterApiMethodCall,
   }) {
@@ -2012,7 +2022,7 @@ if (${_varNamePrefix}replyList == null) {
       final String messageHandlerSetterWithOpeningParentheses = isMockHandler
           ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${_varNamePrefix}channel, '
           : '${_varNamePrefix}channel.setMessageHandler(';
-      indent.write('if (api == null) ');
+      indent.write('if ($nullHandlerExpression) ');
       indent.addScoped('{', '}', () {
         indent.writeln('${messageHandlerSetterWithOpeningParentheses}null);');
       }, addTrailingNewline: false);

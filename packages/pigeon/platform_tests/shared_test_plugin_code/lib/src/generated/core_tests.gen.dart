@@ -4667,6 +4667,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
       __pigeon_staticAttachedField();
 
   static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
     ProxyIntegrationCoreApi Function(
@@ -4785,7 +4786,6 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
         _Pigeon_ProxyApiBaseCodec(
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    int api = 4;
     {
       const String __pigeon_channelName =
           r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance';
@@ -4923,7 +4923,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterNoop',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -4954,7 +4954,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowError',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -4986,7 +4986,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowErrorFromVoid',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5018,7 +5018,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoBool',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5053,7 +5053,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoInt',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5088,7 +5088,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoDouble',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5123,7 +5123,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoString',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5158,7 +5158,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoUint8List',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5193,7 +5193,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoList',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5229,7 +5229,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApiList',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5266,7 +5266,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoMap',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5302,7 +5302,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApiMap',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5340,7 +5340,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoEnum',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5376,7 +5376,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApi',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5412,7 +5412,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableBool',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5445,7 +5445,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableInt',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5478,7 +5478,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableDouble',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5511,7 +5511,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableString',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5544,7 +5544,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableUint8List',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5577,7 +5577,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableList',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5611,7 +5611,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableMap',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5645,7 +5645,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableEnum',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5679,7 +5679,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableProxyApi',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5713,7 +5713,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterNoopAsync',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -5744,7 +5744,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoAsyncString',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
@@ -8264,6 +8264,7 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
       _Pigeon_ProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
     ProxyApiSuperClass Function()? pigeon_newInstance,
@@ -8272,7 +8273,6 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
         _Pigeon_ProxyApiBaseCodec(
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    int api = 4;
     {
       const String __pigeon_channelName =
           r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance';
@@ -8376,6 +8376,7 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
   final void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod;
 
   static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
     ProxyApiInterface Function()? pigeon_newInstance,
@@ -8385,7 +8386,6 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
         _Pigeon_ProxyApiBaseCodec(
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    int api = 4;
     {
       const String __pigeon_channelName =
           r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance';
@@ -8424,7 +8424,7 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
-      if (api == null) {
+      if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
