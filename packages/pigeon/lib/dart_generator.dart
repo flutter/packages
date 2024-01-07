@@ -1415,13 +1415,12 @@ class $codecName extends StandardMessageCodec {
               <cb.Code>[],
               (List<cb.Code> list, Method method) {
                 final StringBuffer messageHandlerSink = StringBuffer();
-                const String instanceName = '${classMemberNamePrefix}instance';
                 _writeFlutterMethodMessageHandler(
                   Indent(messageHandlerSink),
                   name: method.name,
                   parameters: <Parameter>[
                     Parameter(
-                      name: instanceName,
+                      name: '${classMemberNamePrefix}instance',
                       type: TypeDeclaration(
                         baseName: apiName,
                         isNullable: false,
