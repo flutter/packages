@@ -6,8 +6,10 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.camera.core.FocusMeteringResult;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringResultFlutterApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringResultFlutterApi.Reply;
 
 /**
  * Flutter API implementation for {@link FocusMeteringResult}.
@@ -40,7 +42,7 @@ public class FocusMeteringResultFlutterApiImpl {
    */
   public void create(@NonNull FocusMeteringResult instance, @NonNull Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      FocusMeteringResultFlutterApi.create(
+      focusMeteringResultFlutterApi.create(
           instanceManager.addHostCreatedInstance(instance), callback);
     }
   }

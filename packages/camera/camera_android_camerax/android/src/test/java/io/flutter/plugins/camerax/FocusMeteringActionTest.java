@@ -82,8 +82,8 @@ public class FocusMeteringActionTest {
 
     hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos);
 
-    verify(mockFocusMeteringActionBuilder.add(mockMeteringPoint2, mockMeteringPoint2Mode));
-    verify(mockFocusMeteringActionBuilder.add(mockMeteringPoint3));
+    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint2, mockMeteringPoint2Mode));
+    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint3));
     assertEquals(instanceManager.getInstance(focusMeteringActionIdentifier), focusMeteringAction);
   }
 
@@ -132,8 +132,8 @@ public class FocusMeteringActionTest {
 
     hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos);
 
-    verify(mockFocusMeteringActionBuilder.add(mockMeteringPoint2, mockMeteringPoint2Mode));
-    verify(mockFocusMeteringActionBuilder.add(mockMeteringPoint3));
+    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint2, mockMeteringPoint2Mode));
+    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint3));
     assertEquals(instanceManager.getInstance(focusMeteringActionIdentifier), focusMeteringAction);
   }
 }

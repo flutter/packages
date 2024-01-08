@@ -58,16 +58,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
           ? QualitySelector.fromOrderedList(qualityList, fallbackStrategy)
           : QualitySelector.fromOrderedList(qualityList);
     }
-
-    public @NonNull ResolutionInfo getResolution(
-        @NonNull CameraInfo cameraInfo, @NonNull VideoQuality quality) {
-      final Size result =
-          QualitySelector.getResolution(cameraInfo, getQualityFromVideoQuality(quality));
-      return new ResolutionInfo.Builder()
-          .setWidth(Long.valueOf(result.getWidth()))
-          .setHeight(Long.valueOf(result.getHeight()))
-          .build();
-    }
   }
 
   /**
@@ -116,8 +106,14 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
   @Override
   public @NonNull ResolutionInfo getResolution(
       @NonNull Long cameraInfoIdentifier, @NonNull VideoQuality quality) {
-    return proxy.getResolution(
-        Objects.requireNonNull(instanceManager.getInstance(cameraInfoIdentifier)), quality);
+    final Size result =
+        QualitySelector.getResolution(
+            Objects.requireNonNull(instanceManager.getInstance(cameraInfoIdentifier)),
+            getQualityFromVideoQuality(quality));
+    return new ResolutionInfo.Builder()
+        .setWidth(Long.valueOf(result.getWidth()))
+        .setHeight(Long.valueOf(result.getHeight()))
+        .build();
   }
 
   /**

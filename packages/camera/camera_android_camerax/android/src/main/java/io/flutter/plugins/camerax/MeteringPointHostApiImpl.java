@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.MeteringPointHostApi;
 
 /**
@@ -25,7 +26,8 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   @VisibleForTesting
   public static class MeteringPointProxy {
 
-    public void create(@NonNull Double x, @NonNull Double y, @Nullable Double size) {
+    @NonNull
+    public MeteringPoint create(@NonNull Double x, @NonNull Double y, @Nullable Double size) {
       SurfaceOrientedMeteringPointFactory factory = getSurfaceOrientedMeteringPointFactory(1f, 1f);
       if (size == null) {
         return factory.createPoint(x.floatValue(), y.floatValue());
@@ -36,7 +38,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
 
     @VisibleForTesting
     @NonNull
-    public FocusMeteringAction.Builder getSurfaceOrientedMeteringPointFactory(
+    public SurfaceOrientedMeteringPointFactory getSurfaceOrientedMeteringPointFactory(
         float width, float height) {
       return new SurfaceOrientedMeteringPointFactory(width, height);
     }
@@ -78,6 +80,6 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   @Override
   @NonNull
   public Double getDefaultPointSize() {
-    return (Double) proxy.getDefaultPointSize;
+    return (double) proxy.getDefaultPointSize();
   }
 }

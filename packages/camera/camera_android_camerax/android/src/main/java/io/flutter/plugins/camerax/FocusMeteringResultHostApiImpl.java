@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.camera.core.FocusMeteringResult;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringResultHostApi;
 
 /**

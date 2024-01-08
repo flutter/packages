@@ -8,13 +8,16 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraControl;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.FocusMeteringResult;
 import androidx.core.content.ContextCompat;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraControlHostApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Result;
 import java.util.Objects;
 
 /**
@@ -31,6 +34,8 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
   @VisibleForTesting
   public static class CameraControlProxy {
     Context context;
+    BinaryMessenger binaryMessenger;
+    InstanceManager instanceManager;
 
     /** Enables or disables the torch of the specified {@link CameraControl} instance. */
     @NonNull
@@ -88,7 +93,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
         @NonNull FocusMeteringAction focusMeteringAction,
         @NonNull GeneratedCameraXLibrary.Result<Long> result) {
       ListenableFuture<FocusMeteringResult> focusMeteringResultFuture =
-          cameraControl.startFocusAndMetering(action);
+          cameraControl.startFocusAndMetering(focusMeteringAction);
 
       Futures.addCallback(
           focusMeteringResultFuture,
@@ -143,7 +148,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           setExposureCompensationIndexFuture,
           new FutureCallback<Integer>() {
             public void onSuccess(Integer integerResult) {
-              result.success(integerResult);
+              result.success(integerResult.longValue());
             }
 
             public void onFailure(Throwable t) {
@@ -160,8 +165,8 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public CameraControlHostApiImpl(
-      @NonNull InstanceManager instanceManager, @NonNull Context context) {
-    this(instanceManager, new CameraControlProxy(), context);
+       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager, @NonNull Context context) {
+    this(binaryMessenger, instanceManager, new CameraControlProxy(), context);
   }
 
   /**
@@ -173,12 +178,16 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    */
   @VisibleForTesting
   CameraControlHostApiImpl(
+      @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
       @NonNull CameraControlProxy proxy,
       @NonNull Context context) {
     this.instanceManager = instanceManager;
     this.proxy = proxy;
     proxy.context = context;
+    // proxy.startFocusAndMetering needs access these to create FocusMeteringResults as they become available:
+    proxy.instanceManager = instanceManager;
+    proxy.binaryMessenger = binaryMessenger;
   }
 
   /**

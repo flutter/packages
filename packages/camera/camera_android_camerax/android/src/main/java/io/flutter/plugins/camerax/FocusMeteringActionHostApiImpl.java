@@ -6,7 +6,10 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.MeteringPoint;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringActionHostApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.MeteringPointInfo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,30 +30,31 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
     /** Creates an instance of {@link FocusMeteringAction}. */
     public @NonNull FocusMeteringAction create(
         @NonNull List<MeteringPoint> meteringPoints, @NonNull List<Integer> meteringPointModes) {
-      if (meteringPoints.size() != meteringPointModes.size()) {
+      if (meteringPoints.size() >= 1 && meteringPoints.size() != meteringPointModes.size()) {
         throw new IllegalArgumentException(
-            "The number of specified metering points must match the number of specified metering point modes.");
+            "One metering point must be specified and the number of specified metering points must match the number of specified metering point modes.");
       }
+
       FocusMeteringAction.Builder focusMeteringActionBuilder;
 
-      for (int i = 0; i < meteringPoints.size(); i++) {
+      // Create builder to potentially add more MeteringPoints to.
+      MeteringPoint firstMeteringPoint = meteringPoints.get(0);
+      Integer firstMeteringPointMode = meteringPointModes.get(0);
+      if (firstMeteringPointMode == null) {
+          focusMeteringActionBuilder = getFocusMeteringActionBuilder(firstMeteringPoint);
+      } else {
+          focusMeteringActionBuilder = getFocusMeteringActionBuilder(firstMeteringPoint, firstMeteringPointMode);
+      }
+
+      // Add any additional metering points in order as specified by input lists.
+      for (int i = 1; i < meteringPoints.size(); i++) {
         MeteringPoint meteringPoint = meteringPoints.get(i);
         Integer meteringMode = meteringPointModes.get(i);
-        if (i == 0) {
-          // On the first iteration, create the builder to add points to.
-          if (meteringMode == null) {
-            focusMeteringActionBuilder = getFocusMeteringActionBuilder(meteringPoint);
-          } else {
-            focusMeteringActionBuilder = getFocusMeteringActionBuilder(meteringPoint, meteringMode);
-          }
-          continue;
-        }
 
-        // For any i(teration) > 0, add metering points in order as specified by input lists.
         if (meteringMode == null) {
-          focusMeteringActionBuilder.add(meteringPoint);
+          focusMeteringActionBuilder.addPoint(meteringPoint);
         } else {
-          focusMeteringActionBuilder.add(meteringPoint, meteringMode);
+          focusMeteringActionBuilder.addPoint(meteringPoint, meteringMode);
         }
       }
 
@@ -96,10 +100,10 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
   public void create(
       @NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos) {
     final List<MeteringPoint> meteringPoints = new ArrayList<MeteringPoint>();
-    final List<Integer> meteringPointModes = new ArrayList<int>();
+    final List<Integer> meteringPointModes = new ArrayList<Integer>();
     for (MeteringPointInfo meteringPointInfo : meteringPointInfos) {
-      meteringPoint.add(instanceManager.getInstance(meteringPointInfo.getMeteringPointId()));
-      meteringPointModes.add(meteringPointIngo.getMeteringMode().intValue());
+      meteringPoints.add(instanceManager.getInstance(meteringPointInfo.getMeteringPointId()));
+      meteringPointModes.add(meteringPointInfo.getMeteringMode().intValue());
     }
 
     instanceManager.addDartCreatedInstance(
