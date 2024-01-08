@@ -53,7 +53,8 @@ public class CameraControlTest {
   public void enableTorch_turnsTorchModeOnAndOffAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(
+              mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 88L;
       final boolean enableTorch = true;
 
@@ -103,7 +104,8 @@ public class CameraControlTest {
   public void setZoomRatio_setsZoomAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(
+              mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 33L;
       final Double zoomRatio = 0.2D;
 
@@ -154,7 +156,8 @@ public class CameraControlTest {
   public void startFocusAndMetering_startsFocusAndMeteringAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(
+              mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 90L;
       final FocusMeteringAction mockAction = mock(FocusMeteringAction.class);
       final Long mockActionId = 44L;
@@ -216,7 +219,8 @@ public class CameraControlTest {
   public void cancelFocusAndMetering_cancelFocusAndMeteringAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(
+              mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 8L;
 
       @SuppressWarnings("unchecked")
@@ -269,7 +273,8 @@ public class CameraControlTest {
   public void setExposureCompensationIndex_setsExposureCompensationIndexAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(
+              mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 53L;
       final Long index = 2L;
 

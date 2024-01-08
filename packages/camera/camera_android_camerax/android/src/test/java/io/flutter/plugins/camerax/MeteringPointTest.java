@@ -47,7 +47,7 @@ public class MeteringPointTest {
   public void hostApiCreate_createsExpectedMeteringPointWithSizeSpecified() {
     MeteringPointHostApiImpl.MeteringPointProxy proxySpy =
         spy(new MeteringPointHostApiImpl.MeteringPointProxy());
-    MeteringPointHostApiImpl hostApi = new MeteringPointHostApiImpl(testInstanceManager);
+    MeteringPointHostApiImpl hostApi = new MeteringPointHostApiImpl(testInstanceManager, proxySpy);
     final Long meteringPointIdentifier = 78L;
     final Float x = 0.3f;
     final Float y = 0.2f;
@@ -59,13 +59,11 @@ public class MeteringPointTest {
 
     when(proxySpy.getSurfaceOrientedMeteringPointFactory(surfaceWidth, surfaceHeight))
         .thenReturn(mockSurfaceOrientedMeteringPointFactory);
-    when(mockSurfaceOrientedMeteringPointFactory.createPoint(
-            x, y, size))
-        .thenReturn(meteringPoint);
+    when(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y, size)).thenReturn(meteringPoint);
 
     hostApi.create(meteringPointIdentifier, x.doubleValue(), y.doubleValue(), size.doubleValue());
 
-    verify(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y, size));
+    verify(mockSurfaceOrientedMeteringPointFactory).createPoint(x, y, size);
     assertEquals(testInstanceManager.getInstance(meteringPointIdentifier), meteringPoint);
   }
 
@@ -73,7 +71,7 @@ public class MeteringPointTest {
   public void hostApiCreate_createsExpectedMeteringPointWithoutSizeSpecified() {
     MeteringPointHostApiImpl.MeteringPointProxy proxySpy =
         spy(new MeteringPointHostApiImpl.MeteringPointProxy());
-    MeteringPointHostApiImpl hostApi = new MeteringPointHostApiImpl(testInstanceManager);
+    MeteringPointHostApiImpl hostApi = new MeteringPointHostApiImpl(testInstanceManager, proxySpy);
     final Long meteringPointIdentifier = 78L;
     final Float x = 0.3f;
     final Float y = 0.2f;
@@ -84,12 +82,11 @@ public class MeteringPointTest {
 
     when(proxySpy.getSurfaceOrientedMeteringPointFactory(surfaceWidth, surfaceHeight))
         .thenReturn(mockSurfaceOrientedMeteringPointFactory);
-    when(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y))
-        .thenReturn(meteringPoint);
+    when(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y)).thenReturn(meteringPoint);
 
     hostApi.create(meteringPointIdentifier, x.doubleValue(), y.doubleValue(), null);
 
-    verify(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y));
+    verify(mockSurfaceOrientedMeteringPointFactory).createPoint(x, y);
     assertEquals(testInstanceManager.getInstance(meteringPointIdentifier), meteringPoint);
   }
 

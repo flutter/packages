@@ -41,9 +41,10 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
       MeteringPoint firstMeteringPoint = meteringPoints.get(0);
       Integer firstMeteringPointMode = meteringPointModes.get(0);
       if (firstMeteringPointMode == null) {
-          focusMeteringActionBuilder = getFocusMeteringActionBuilder(firstMeteringPoint);
+        focusMeteringActionBuilder = getFocusMeteringActionBuilder(firstMeteringPoint);
       } else {
-          focusMeteringActionBuilder = getFocusMeteringActionBuilder(firstMeteringPoint, firstMeteringPointMode);
+        focusMeteringActionBuilder =
+            getFocusMeteringActionBuilder(firstMeteringPoint, firstMeteringPointMode);
       }
 
       // Add any additional metering points in order as specified by input lists.
@@ -103,7 +104,8 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
     final List<Integer> meteringPointModes = new ArrayList<Integer>();
     for (MeteringPointInfo meteringPointInfo : meteringPointInfos) {
       meteringPoints.add(instanceManager.getInstance(meteringPointInfo.getMeteringPointId()));
-      meteringPointModes.add(meteringPointInfo.getMeteringMode().intValue());
+      Long meteringPointMode = meteringPointInfo.getMeteringMode();
+      meteringPointModes.add(meteringPointMode == null ? null : meteringPointMode.intValue());
     }
 
     instanceManager.addDartCreatedInstance(

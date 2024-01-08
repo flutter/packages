@@ -43,11 +43,11 @@ public class FocusMeteringActionTest {
   }
 
   @Test
-  public void create_createsExpectedFocusMeteringActionWithInitialPointThatHasMode() {
+  public void hostApiCreatecreatesExpectedFocusMeteringActionWithInitialPointThatHasMode() {
     FocusMeteringActionHostApiImpl.FocusMeteringActionProxy proxySpy =
         spy(new FocusMeteringActionHostApiImpl.FocusMeteringActionProxy());
     FocusMeteringActionHostApiImpl hostApi =
-        new FocusMeteringActionHostApiImpl(testInstanceManager);
+        new FocusMeteringActionHostApiImpl(testInstanceManager, proxySpy);
     final Long focusMeteringActionIdentifier = 43L;
 
     FocusMeteringAction.Builder mockFocusMeteringActionBuilder =
@@ -65,13 +65,13 @@ public class FocusMeteringActionTest {
         new MeteringPointInfo.Builder()
             .setMeteringPointId(mockMeteringPoint1Id)
             .setMeteringMode(mockMeteringPoint1Mode.longValue())
-                        .build();
+            .build();
 
     MeteringPointInfo fakeMeteringPointInfo2 =
         new MeteringPointInfo.Builder()
             .setMeteringPointId(mockMeteringPoint2Id)
             .setMeteringMode(mockMeteringPoint2Mode.longValue())
-                        .build();
+            .build();
 
     MeteringPointInfo fakeMeteringPointInfo3 =
         new MeteringPointInfo.Builder()
@@ -83,7 +83,8 @@ public class FocusMeteringActionTest {
     testInstanceManager.addDartCreatedInstance(mockMeteringPoint2, mockMeteringPoint2Id);
     testInstanceManager.addDartCreatedInstance(mockMeteringPoint3, mockMeteringPoint3Id);
 
-    when(proxySpy.getFocusMeteringActionBuilder(mockMeteringPoint1, mockMeteringPoint1Id.intValue()))
+    when(proxySpy.getFocusMeteringActionBuilder(
+            mockMeteringPoint1, mockMeteringPoint1Mode.intValue()))
         .thenReturn(mockFocusMeteringActionBuilder);
     when(mockFocusMeteringActionBuilder.build()).thenReturn(focusMeteringAction);
 
@@ -92,18 +93,18 @@ public class FocusMeteringActionTest {
 
     hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos);
 
-    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint2, mockMeteringPoint2Mode));
-    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint3));
-    assertEquals(testInstanceManager.getInstance(focusMeteringActionIdentifier), focusMeteringAction);
+    verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint2, mockMeteringPoint2Mode);
+    verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint3);
+    assertEquals(
+        testInstanceManager.getInstance(focusMeteringActionIdentifier), focusMeteringAction);
   }
 
   @Test
-  public void
-      create_createsExpectedFocusMeteringActionWithInitialPointThatDoesNotHaveMode() {
+  public void hostApiCreatecreatesExpectedFocusMeteringActionWithInitialPointThatDoesNotHaveMode() {
     FocusMeteringActionHostApiImpl.FocusMeteringActionProxy proxySpy =
         spy(new FocusMeteringActionHostApiImpl.FocusMeteringActionProxy());
     FocusMeteringActionHostApiImpl hostApi =
-        new FocusMeteringActionHostApiImpl(testInstanceManager);
+        new FocusMeteringActionHostApiImpl(testInstanceManager, proxySpy);
     final Long focusMeteringActionIdentifier = 43L;
 
     FocusMeteringAction.Builder mockFocusMeteringActionBuilder =
@@ -120,7 +121,7 @@ public class FocusMeteringActionTest {
         new MeteringPointInfo.Builder()
             .setMeteringPointId(mockMeteringPoint1Id)
             .setMeteringMode(null)
-                        .build();
+            .build();
 
     MeteringPointInfo fakeMeteringPointInfo2 =
         new MeteringPointInfo.Builder()
@@ -131,8 +132,7 @@ public class FocusMeteringActionTest {
         new MeteringPointInfo.Builder()
             .setMeteringPointId(mockMeteringPoint3Id)
             .setMeteringMode(null)
-                        .build();
-
+            .build();
 
     testInstanceManager.addDartCreatedInstance(mockMeteringPoint1, mockMeteringPoint1Id);
     testInstanceManager.addDartCreatedInstance(mockMeteringPoint2, mockMeteringPoint2Id);
@@ -147,8 +147,9 @@ public class FocusMeteringActionTest {
 
     hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos);
 
-    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint2, mockMeteringPoint2Mode));
-    verify(mockFocusMeteringActionBuilder.addPoint(mockMeteringPoint3));
-    assertEquals(testInstanceManager.getInstance(focusMeteringActionIdentifier), focusMeteringAction);
+    verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint2, mockMeteringPoint2Mode);
+    verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint3);
+    assertEquals(
+        testInstanceManager.getInstance(focusMeteringActionIdentifier), focusMeteringAction);
   }
 }

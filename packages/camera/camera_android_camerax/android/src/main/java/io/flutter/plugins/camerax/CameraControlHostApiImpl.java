@@ -8,7 +8,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraControl;
-import androidx.camera.core.CameraInfo;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.FocusMeteringResult;
 import androidx.core.content.ContextCompat;
@@ -165,7 +164,9 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public CameraControlHostApiImpl(
-       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager, @NonNull Context context) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull InstanceManager instanceManager,
+      @NonNull Context context) {
     this(binaryMessenger, instanceManager, new CameraControlProxy(), context);
   }
 
