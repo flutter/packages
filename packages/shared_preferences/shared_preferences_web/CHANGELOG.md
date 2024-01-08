@@ -1,3 +1,6 @@
+## 2.2.3
+* Fixes shared_preferences_web issue where non-JSON formatted strings cause parsing errors when `getAllWithParameters` is called.
+
 ## 2.2.2
 
 * Updates minimum supported SDK version to Dart 3.2.
