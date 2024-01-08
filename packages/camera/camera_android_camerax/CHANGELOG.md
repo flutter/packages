@@ -1,3 +1,7 @@
+## 0.5.0+26
+
+* Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.
+
 ## 0.5.0+25
 
 * Implements `lockCaptureOrientation` and `unlockCaptureOrientation`.
