@@ -1,6 +1,6 @@
 ## 2.3.5
 
-* Fix of takeSnapShot function.
+* Fix of takeSnapShot function (for IOS 17, a blank image is no longer being returned).
 
 ## 2.3.4
 
