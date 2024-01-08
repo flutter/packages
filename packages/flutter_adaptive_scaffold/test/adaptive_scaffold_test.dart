@@ -374,7 +374,8 @@ void main() {
           home: MediaQuery(
             data: const MediaQueryData(size: Size(700, 900)),
             child: StatefulBuilder(
-              builder: (BuildContext context, Function(Function()) setState) {
+              builder: (BuildContext context,
+                  void Function(void Function()) setState) {
                 return AdaptiveScaffold(
                   destinations: destinations,
                   selectedIndex: selectedDestination,

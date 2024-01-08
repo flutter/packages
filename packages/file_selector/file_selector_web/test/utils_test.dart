@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @TestOn('chrome') // web-only package.
+library;
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:file_selector_web/src/utils.dart';
