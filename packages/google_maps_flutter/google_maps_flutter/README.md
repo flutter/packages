@@ -66,6 +66,9 @@ For details, see [the Android README](https://pub.dev/packages/google_maps_flutt
 Cloud-based map styling works on Android only if `AndroidMapRenderer.latest` map renderer has been initialized.
 For details, see [the Android README](https://pub.dev/packages/google_maps_flutter_android#map-renderer).
 
+Cloud-based map styling works on iOS only with GoogleMaps iOS SDK > 8.3.0. For this to be installed you need
+to set the minimum deployment target of your app to 14.0 or higher.
+
 ### iOS
 
 To set up, specify your API key in the application delegate `ios/Runner/AppDelegate.m`:
