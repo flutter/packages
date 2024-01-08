@@ -1,3 +1,7 @@
+## 0.8.9+1
+
+* Adds privacy manifests to iOS plugins.
+
 ## 0.8.9
 
 * Fixes resizing bug and updates rounding to be more accurate.

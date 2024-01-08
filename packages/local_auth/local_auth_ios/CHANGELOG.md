@@ -1,3 +1,7 @@
+## 1.1.6
+
+* Adds privacy manifests to iOS plugins.
+
 ## 1.1.5
 
 * Updates to Pigeon 13.

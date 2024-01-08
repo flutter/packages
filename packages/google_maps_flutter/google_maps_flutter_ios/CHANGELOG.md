@@ -1,3 +1,7 @@
+## 2.3.5
+
+* Adds privacy manifests to iOS plugins.
+
 ## 2.3.4
 
 * Fixes new lint warnings.
