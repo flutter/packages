@@ -178,6 +178,11 @@ void main() {
       parseTransform('translate(9e-6,6.5e-4)'),
       AffineMatrix.identity.translated(9e-6, 6.5e-4),
     );
+
+    expect(
+      parseTransform('translate(9E-6,6.5E-4)'),
+      AffineMatrix.identity.translated(9e-6, 6.5e-4),
+    );
   });
 
   test('Parse a transform with a missing space', () {
@@ -188,7 +193,15 @@ void main() {
   });
 
   test('Parse a transform with doubled periods', () {
-    print(parseTransform('matrix(.70711-.70711.70711.70711-640.89 452.68)'));
+    expect(
+      parseTransform('matrix(.70711-.70711.70711.70711-640.89 452.68)'),
+      const AffineMatrix(
+        0.70711, -0.70711, //
+        0.70711, 0.70711, //
+        -640.89, 452.68, //
+        0.70711, //
+      ),
+    );
   });
 }
 

@@ -31,7 +31,7 @@ List<double> _parseTransformParams(String params) {
   for (int i = 0; i < params.length; i += 1) {
     final String char = params[i];
     final bool isSeparator = char == ' ' || char == '-' || char == ',';
-    final bool isExponent = i > 0 && params[i - 1] == 'e';
+    final bool isExponent = i > 0 && params[i - 1].toLowerCase() == 'e';
     if (isSeparator && !isExponent) {
       if (current != '') {
         result.add(parseDouble(current)!);
