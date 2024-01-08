@@ -13,6 +13,8 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import androidx.camera.core.CameraControl;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.FocusMeteringResult;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -51,7 +53,7 @@ public class CameraControlTest {
   public void enableTorch_turnsTorchModeOnAndOffAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 88L;
       final boolean enableTorch = true;
 
@@ -101,7 +103,7 @@ public class CameraControlTest {
   public void setZoomRatio_setsZoomAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 33L;
       final Double zoomRatio = 0.2D;
 
@@ -152,7 +154,7 @@ public class CameraControlTest {
   public void startFocusAndMetering_startsFocusAndMeteringAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 90L;
       final FocusMeteringAction mockAction = mock(FocusMeteringAction.class);
       final Long mockActionId = 44L;
@@ -187,12 +189,12 @@ public class CameraControlTest {
 
       FutureCallback<FocusMeteringResult> successfulCallback = futureCallbackCaptor.getValue();
 
-      successfulFutureCallback.onSuccess(mockResult);
+      successfulCallback.onSuccess(mockResult);
       verify(successfulMockResult).success(mockResultId);
 
       // Test failed behavior.
       @SuppressWarnings("unchecked")
-      final GeneratedCameraXLibrary.Result<Void> failedMockResult =
+      final GeneratedCameraXLibrary.Result<Long> failedMockResult =
           mock(GeneratedCameraXLibrary.Result.class);
       final Throwable testThrowable = new Throwable();
       cameraControlHostApiImpl.startFocusAndMetering(
@@ -214,7 +216,7 @@ public class CameraControlTest {
   public void cancelFocusAndMetering_cancelFocusAndMeteringAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 8L;
 
       @SuppressWarnings("unchecked")
@@ -267,7 +269,7 @@ public class CameraControlTest {
   public void setExposureCompensationIndex_setsExposureCompensationIndexAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
-          new CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+          new CameraControlHostApiImpl(mockBinaryMessenger, testInstanceManager, mock(Context.class));
       final Long cameraControlIdentifier = 53L;
       final Long index = 2L;
 
@@ -299,8 +301,8 @@ public class CameraControlTest {
       FutureCallback<Integer> successfulCallback = futureCallbackCaptor.getValue();
       final Integer fakeResult = 4;
 
-      successfulFutureCallback.onSuccess(fakeResult);
-      verify(successfulMockResult).success(fakeResult);
+      successfulCallback.onSuccess(fakeResult);
+      verify(successfulMockResult).success(fakeResult.longValue());
 
       // Test failed behavior.
       @SuppressWarnings("unchecked")

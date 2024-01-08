@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import io.flutter.plugin.common.BinaryMessenger;
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +23,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
 public class MeteringPointTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -46,24 +49,24 @@ public class MeteringPointTest {
         spy(new MeteringPointHostApiImpl.MeteringPointProxy());
     MeteringPointHostApiImpl hostApi = new MeteringPointHostApiImpl(testInstanceManager);
     final Long meteringPointIdentifier = 78L;
-    final Long x = 0.3;
-    final Long y = 0.2;
-    final Long size = 6;
-    final float surfaceWidth = 1f;
-    final float surfaceHeight = 1f;
+    final Float x = 0.3f;
+    final Float y = 0.2f;
+    final Float size = 6f;
+    final Float surfaceWidth = 1f;
+    final Float surfaceHeight = 1f;
     SurfaceOrientedMeteringPointFactory mockSurfaceOrientedMeteringPointFactory =
         mock(SurfaceOrientedMeteringPointFactory.class);
 
     when(proxySpy.getSurfaceOrientedMeteringPointFactory(surfaceWidth, surfaceHeight))
         .thenReturn(mockSurfaceOrientedMeteringPointFactory);
     when(mockSurfaceOrientedMeteringPointFactory.createPoint(
-            x.floatValue(), y.floatValue(), size.floatValue()))
+            x, y, size))
         .thenReturn(meteringPoint);
 
-    hostApi.create(meteringPointIdentifier, x, y, size);
+    hostApi.create(meteringPointIdentifier, x.doubleValue(), y.doubleValue(), size.doubleValue());
 
     verify(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y, size));
-    assertEquals(instanceManager.getInstance(meteringPointIdentifier), meteringPoint);
+    assertEquals(testInstanceManager.getInstance(meteringPointIdentifier), meteringPoint);
   }
 
   @Test
@@ -72,22 +75,22 @@ public class MeteringPointTest {
         spy(new MeteringPointHostApiImpl.MeteringPointProxy());
     MeteringPointHostApiImpl hostApi = new MeteringPointHostApiImpl(testInstanceManager);
     final Long meteringPointIdentifier = 78L;
-    final Long x = 0.3;
-    final Long y = 0.2;
-    final float surfaceWidth = 1f;
-    final float surfaceHeight = 1f;
+    final Float x = 0.3f;
+    final Float y = 0.2f;
+    final Float surfaceWidth = 1f;
+    final Float surfaceHeight = 1f;
     SurfaceOrientedMeteringPointFactory mockSurfaceOrientedMeteringPointFactory =
         mock(SurfaceOrientedMeteringPointFactory.class);
 
     when(proxySpy.getSurfaceOrientedMeteringPointFactory(surfaceWidth, surfaceHeight))
         .thenReturn(mockSurfaceOrientedMeteringPointFactory);
-    when(mockSurfaceOrientedMeteringPointFactory.createPoint(x.floatValue(), y.floatValue()))
+    when(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y))
         .thenReturn(meteringPoint);
 
-    hostApi.create(meteringPointIdentifier, x, y, null);
+    hostApi.create(meteringPointIdentifier, x.doubleValue(), y.doubleValue(), null);
 
     verify(mockSurfaceOrientedMeteringPointFactory.createPoint(x, y));
-    assertEquals(instanceManager.getInstance(meteringPointIdentifier), meteringPoint);
+    assertEquals(testInstanceManager.getInstance(meteringPointIdentifier), meteringPoint);
   }
 
   @Test
@@ -104,7 +107,7 @@ public class MeteringPointTest {
 
       mockedMeteringPointFactory
           .when(() -> MeteringPointFactory.getDefaultPointSize())
-          .thenAnswer((Answer<float>) invocation -> defaultPointSize.floatValue());
+          .thenAnswer((Answer<Float>) invocation -> defaultPointSize.floatValue());
 
       assertEquals(meteringPointHostApiImpl.getDefaultPointSize(), defaultPointSize);
       mockedMeteringPointFactory.verify(() -> MeteringPointFactory.getDefaultPointSize());

@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import androidx.camera.core.FocusMeteringResult;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringResultFlutterApi;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +30,7 @@ public class FocusMeteringResultTest {
 
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public FocusMeteringResult focusMeteringResult;
+  @Mock public FocusMeteringResultFlutterApi mockFlutterApi;
 
   InstanceManager testInstanceManager;
 
@@ -44,7 +47,7 @@ public class FocusMeteringResultTest {
   @Test
   public void isFocusSuccessful_returnsExpectedResult() {
     final FocusMeteringResultHostApiImpl focusMeteringResultHostApiImpl =
-        new FocusMeteringResultHostApiImpl(testInstanceManager, mock(Context.class));
+        new FocusMeteringResultHostApiImpl(testInstanceManager);
     final Long focusMeteringResultIdentifier = 98L;
     final boolean result = true;
 
@@ -58,14 +61,16 @@ public class FocusMeteringResultTest {
 
   @Test
   public void flutterApiCreate_makesCallToCreateInstanceOnDartSide() {
-    final FocusMeteringResultFlutterApiImpl spyFlutterApi =
-        spy(new FocusMeteringResultFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
+    final FocusMeteringResultFlutterApiImpl flutterApi =
+        new FocusMeteringResultFlutterApiImpl(mockBinaryMessenger, testInstanceManager);
 
-    spyFlutterApi.create(focusMeteringResult, reply -> {});
+    flutterApi.setApi(mockFlutterApi);
 
+    flutterApi.create(focusMeteringResult, reply -> {});
     final long focusMeteringResultIdentifier =
         Objects.requireNonNull(
             testInstanceManager.getIdentifierForStrongReference(focusMeteringResult));
-    verify(spyFlutterApi).create(eq(focusMeteringResultIdentifier), any());
+
+    verify(mockFlutterApi).create(eq(focusMeteringResultIdentifier), any());
   }
 }
