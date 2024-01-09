@@ -1,3 +1,7 @@
+## 6.2.3
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 6.2.2
 
 * Adds a link about web limitations to the `url_launcher_web` package in the
