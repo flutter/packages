@@ -485,7 +485,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$observers',
           ),
         );
-        break;
       case 'TypedStatefulShellRoute':
         value = StatefulShellRouteConfig._(
           routeDataClass: classElement,
@@ -503,7 +502,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$navigatorContainerBuilder',
           ),
         );
-        break;
       case 'TypedStatefulShellBranch':
         value = StatefulShellBranchConfig._(
           routeDataClass: classElement,
@@ -521,7 +519,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$initialLocation',
           ),
         );
-        break;
       case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
         if (pathValue.isNull) {
@@ -541,7 +538,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$parentNavigatorKey',
           ),
         );
-        break;
       default:
         throw UnsupportedError('Unrecognized type $typeName');
     }

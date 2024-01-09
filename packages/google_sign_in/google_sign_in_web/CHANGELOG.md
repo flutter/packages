@@ -1,3 +1,7 @@
+## 0.12.3+2
+
+* Fixes new lint warnings.
+
 ## 0.12.3+1
 
 * Updates `FlexHtmlElementView` (the widget backing `renderButton`) to not

@@ -1,3 +1,7 @@
+## 1.1.1
+
+* Fixes new lint warnings.
+
 ## 1.1.0
 
 * Adds `computeAverage` and `computeDelta` methods to support analysis of benchmark results.

@@ -44,6 +44,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.processCameraProviderHostApiImpl = mockProcessCameraProviderHostApiImpl;
     plugin.liveDataHostApiImpl = mockLiveDataHostApiImpl;
     plugin.systemServicesHostApiImpl = mock(SystemServicesHostApiImpl.class);
+    plugin.deviceOrientationManagerHostApiImpl = mock(DeviceOrientationManagerHostApiImpl.class);
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onAttachedToActivity(activityPluginBinding);
@@ -68,6 +69,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.processCameraProviderHostApiImpl = mockProcessCameraProviderHostApiImpl;
     plugin.liveDataHostApiImpl = mockLiveDataHostApiImpl;
     plugin.systemServicesHostApiImpl = mock(SystemServicesHostApiImpl.class);
+    plugin.deviceOrientationManagerHostApiImpl = mock(DeviceOrientationManagerHostApiImpl.class);
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onAttachedToActivity(activityPluginBinding);

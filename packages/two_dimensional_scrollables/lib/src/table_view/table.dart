@@ -368,7 +368,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               HitTestEntry(
                   _columnMetrics[cellParentData.tableVicinity.column]!),
             );
-            break;
           case Axis.horizontal:
             // Column major order, columns go first.
             result.add(
@@ -378,7 +377,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             result.add(
               HitTestEntry(_rowMetrics[cellParentData.tableVicinity.row]!),
             );
-            break;
         }
         return true;
       }
@@ -969,7 +967,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           );
           decoration.paint(paintingDetails);
         });
-        break;
       // Column major order. Columns go first.
       case Axis.horizontal:
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
@@ -1027,7 +1024,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           );
           decoration.paint(paintingDetails);
         });
-        break;
       // Column major order. Columns go first.
       case Axis.horizontal:
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
