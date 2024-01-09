@@ -126,7 +126,7 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
-/// Convenience class for building [FocusMeteringAction] with multiple metering
+/// Convenience class for building [FocusMeteringAction]s with multiple metering
 /// points.
 class MeteringPointInfo {
   MeteringPointInfo({
@@ -134,11 +134,12 @@ class MeteringPointInfo {
     required this.meteringMode,
   });
 
-  /// Instance manager ID corresponding to [MeteringPoint] that relates to this
-  /// info.
+  /// InstanceManager ID for a [MeteringPoint].
   int meteringPointId;
 
-  /// Metering mode represented by one of the [FocusMeteringAction] constants.
+  /// The meterind mode of the [MeteringPoint] whose ID is [meteringPointId].
+  ///
+  /// Metering mode should be one of the [FocusMeteringAction] constants.
   int? meteringMode;
 }
 

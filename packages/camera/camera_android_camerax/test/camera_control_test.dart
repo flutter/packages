@@ -176,7 +176,7 @@ void main() {
       when(mockApi.setExposureCompensationIndex(cameraControlIdentifier, index))
           .thenAnswer((_) => Future<int>.value(fakeTargetExposureValue));
 
-      expect(await cameraControl.setExposureCompensationIndex(3),
+      expect(await cameraControl.setExposureCompensationIndex(index),
           equals(fakeTargetExposureValue));
       verify(
           mockApi.setExposureCompensationIndex(cameraControlIdentifier, index));

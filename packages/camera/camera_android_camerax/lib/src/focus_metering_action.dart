@@ -5,7 +5,6 @@
 import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:meta/meta.dart' show immutable;
 
-import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -28,7 +27,6 @@ class FocusMeteringAction extends JavaObject {
         ) {
     _api = _FocusMeteringActionHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
     _api.createFromInstance(this, meteringPointInfos);
   }
 
@@ -90,8 +88,8 @@ class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates a [FocusMeteringAction] instance with the flash mode and target resolution
-  /// if specified.
+  /// Creates a [FocusMeteringAction] instance with the specified list of
+  /// [MeteringPoint]s and their modes in order of descending priority.
   void createFromInstance(
       FocusMeteringAction instance,
       List<(MeteringPoint meteringPoint, int? meteringMode)>

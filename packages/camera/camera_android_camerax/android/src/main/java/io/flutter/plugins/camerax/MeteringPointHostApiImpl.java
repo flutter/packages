@@ -26,6 +26,13 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   @VisibleForTesting
   public static class MeteringPointProxy {
 
+    /**
+     * Creates a surface oriented {@link MeteringPoint} with the specified x, y, and size.
+     * 
+     * A {@link SurfaceOrientedMeteringPointFactory} is used to construct the {@link MeteringPoint}
+     * because underlying the camera preview that this plugin uses is a Flutter texture that is backed
+     * by a {@link Surface} created by the Flutter Android embedding.
+     */
     @NonNull
     public MeteringPoint create(@NonNull Double x, @NonNull Double y, @Nullable Double size) {
       SurfaceOrientedMeteringPointFactory factory = getSurfaceOrientedMeteringPointFactory(1f, 1f);
@@ -43,6 +50,10 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
       return new SurfaceOrientedMeteringPointFactory(width, height);
     }
 
+    /**
+     * Returns the default point size of the {@link MeteringPoint} width and height, which is a normalized
+     * percentage of the sensor width/height.
+     */
     @NonNull
     public float getDefaultPointSize() {
       return MeteringPointFactory.getDefaultPointSize();

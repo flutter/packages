@@ -66,13 +66,11 @@ public class FocusMeteringActionTest {
             .setMeteringPointId(mockMeteringPoint1Id)
             .setMeteringMode(mockMeteringPoint1Mode.longValue())
             .build();
-
     MeteringPointInfo fakeMeteringPointInfo2 =
         new MeteringPointInfo.Builder()
             .setMeteringPointId(mockMeteringPoint2Id)
             .setMeteringMode(mockMeteringPoint2Mode.longValue())
             .build();
-
     MeteringPointInfo fakeMeteringPointInfo3 =
         new MeteringPointInfo.Builder()
             .setMeteringPointId(mockMeteringPoint3Id)
@@ -122,7 +120,6 @@ public class FocusMeteringActionTest {
             .setMeteringPointId(mockMeteringPoint1Id)
             .setMeteringMode(null)
             .build();
-
     MeteringPointInfo fakeMeteringPointInfo2 =
         new MeteringPointInfo.Builder()
             .setMeteringPointId(mockMeteringPoint2Id)

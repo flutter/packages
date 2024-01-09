@@ -12,6 +12,8 @@ import 'java_object.dart';
 
 /// Representation for a region which can be converted to sensor coordinate
 /// system for focus and metering purpose.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/MeteringPoint.
 @immutable
 class MeteringPoint extends JavaObject {
   /// Creates a [MeteringPoint].
@@ -56,14 +58,14 @@ class MeteringPoint extends JavaObject {
   /// Y coordinate.
   final double y;
 
-  /// The size of the MeteringPoint width and height (ranging from 0 to 1),
-  /// which is a (normalized) percentage of the sensor width/height
-  /// (or crop region width/height if crop region is set).
+  /// The size of the [MeteringPoint] width and height (ranging from 0 to 1),
+  /// which is a normalized percentage of the sensor width/height (or crop
+  /// region width/height if crop region is set).
   final double? size;
 
-  /// The default size of the MeteringPoint width and height
-  /// (ranging from 0 to 1) which is a (normalized) percentage of the sensor
-  /// width/height (or crop region width/height if crop region is set).
+  /// The default size of the [MeteringPoint] width and height (ranging from 0
+  /// to 1) which is a (normalized) percentage of the sensor width/height (or
+  /// crop region width/height if crop region is set).
   static Future<double> getDefaultPointSize(
       {BinaryMessenger? binaryMessenger}) {
     final MeteringPointHostApi hostApi =
