@@ -154,8 +154,8 @@ public class QuickActionsTest {
     return scenario;
   }
 
-  // Broadcast a request to clear any system dialog that blocks the application.
-  // See https://github.com/flutter/flutter/issues/140987
+  // Broadcast a request to clear any system dialog that blocks the application from obtaining
+  // focus. See https://github.com/flutter/flutter/issues/140987
   private void clearAnySystemDialog(Context context) {
     final Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
     context.sendBroadcast(closeDialog);
