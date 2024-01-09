@@ -103,7 +103,7 @@ public class QuickActionsTest {
     Intent dynamicShortcutIntent = dynamicShortcut.getIntent();
     AtomicReference<QuickActionsTestActivity> initialActivity = new AtomicReference<>();
     scenario.onActivity(initialActivity::set);
-    clearAnySystemDialog(initialActivity.get());
+    clearAnySystemDialog(context);
     String appReadySentinel = " has launched";
 
     // Act
@@ -154,10 +154,10 @@ public class QuickActionsTest {
     return scenario;
   }
 
-  // Broadcast a request to clear a system dialog that blocks the Activity.
+  // Broadcast a request to clear any system dialog that blocks the application.
   // See https://github.com/flutter/flutter/issues/140987
-  private void clearAnySystemDialog(Activity activity) {
+  private void clearAnySystemDialog(Context context) {
     final Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-    activity.sendBroadcast(closeDialog);
+    context.sendBroadcast(closeDialog);
   }
 }
