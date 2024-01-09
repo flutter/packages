@@ -30,7 +30,7 @@ public class CameraAndroidCameraxPluginTest {
   @Mock FlutterPluginBinding flutterPluginBinding;
 
   @Test
-  public void onAttachedToActivity_setsLifecycleOwnerAsActivityIfLifecycleOwner() {
+  public void onAttachedToActivity_setsLifecycleOwnerAsActivityIfLifecycleOwnerAsNeeded() {
     CameraAndroidCameraxPlugin plugin = spy(new CameraAndroidCameraxPlugin());
     Activity mockActivity =
         mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
@@ -55,7 +55,7 @@ public class CameraAndroidCameraxPluginTest {
 
   @Test
   public void
-      onAttachedToActivity_setsLifecycleOwnerAsProxyLifecycleProviderIfActivityNotLifecycleOwner() {
+      onAttachedToActivity_setsLifecycleOwnerAsProxyLifecycleProviderIfActivityNotLifecycleOwnerAsNeeded() {
     CameraAndroidCameraxPlugin plugin = spy(new CameraAndroidCameraxPlugin());
     Activity mockActivity = mock(Activity.class);
     ProcessCameraProviderHostApiImpl mockProcessCameraProviderHostApiImpl =
@@ -77,5 +77,35 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockProcessCameraProviderHostApiImpl)
         .setLifecycleOwner(any(ProxyLifecycleProvider.class));
     verify(mockLiveDataHostApiImpl).setLifecycleOwner(any(ProxyLifecycleProvider.class));
+  }
+
+  @Test
+  public void onAttachedToActivity_setsActivityAsNeeded() {
+
+  }
+
+  @Test
+  public void onDetachedFromActivityForConfigChanges_removesReferencesToActivityPluginBindingAndActivity() {
+
+  }
+
+  @Test
+  public void onReattachedToActivityForConfigChanges_setsLifecycleOwnerAsActivityIfLifecycleOwnerAsNeeded() {
+
+  }
+
+    @Test
+  public void onReattachedToActivityForConfigChanges_setsLifecycleOwnerAsProxyLifecycleProviderIfActivityNotLifecycleOwnerAsNeeded() {
+    
+  }
+
+  @Test
+  public void onReattachedToActivityForConfigChanges_setsActivityAsNeeded() {
+
+  }
+
+  @Test
+  public void onDetachedFromActivity_removesReferencesToActivityPluginBindingAndActivity() {
+
   }
 }
