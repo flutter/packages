@@ -40,6 +40,7 @@ class ShellRouteConfig extends RouteBaseConfig {
     required this.navigatorKey,
     required this.parentNavigatorKey,
     required super.routeDataClass,
+    required this.observers,
     required super.parent,
   }) : super._();
 
@@ -48,6 +49,9 @@ class ShellRouteConfig extends RouteBaseConfig {
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
+
+  /// The navigator observers.
+  final String? observers;
 
   @override
   Iterable<String> classDeclarations() {
@@ -72,7 +76,8 @@ class ShellRouteConfig extends RouteBaseConfig {
   @override
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
-      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
+      '${observers == null ? '' : 'observers: $observers,'}';
 
   @override
   String get factorConstructorParameters =>
@@ -137,6 +142,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required super.routeDataClass,
     required super.parent,
     this.restorationScopeId,
+    this.initialLocation,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -144,6 +150,9 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 
   /// The restoration scope id.
   final String? restorationScopeId;
+
+  /// The initial route.
+  final String? initialLocation;
 
   @override
   Iterable<String> classDeclarations() => <String>[];
@@ -153,7 +162,8 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   @override
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
-      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}';
+      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
+      '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
@@ -470,8 +480,11 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$parentNavigatorKey',
           ),
+          observers: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$observers',
+          ),
         );
-        break;
       case 'TypedStatefulShellRoute':
         value = StatefulShellRouteConfig._(
           routeDataClass: classElement,
@@ -489,7 +502,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$navigatorContainerBuilder',
           ),
         );
-        break;
       case 'TypedStatefulShellBranch':
         value = StatefulShellBranchConfig._(
           routeDataClass: classElement,
@@ -502,8 +514,11 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$restorationScopeId',
           ),
+          initialLocation: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$initialLocation',
+          ),
         );
-        break;
       case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
         if (pathValue.isNull) {
@@ -523,7 +538,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$parentNavigatorKey',
           ),
         );
-        break;
       default:
         throw UnsupportedError('Unrecognized type $typeName');
     }
@@ -559,7 +573,9 @@ abstract class RouteBaseConfig {
           if (!element.isStatic || element.name != parameterName) {
             return false;
           }
-          if (parameterName.toLowerCase().contains('navigatorkey')) {
+          if (parameterName
+              .toLowerCase()
+              .contains(RegExp('navigatorKey | observers'))) {
             final DartType type = element.type;
             if (type is! ParameterizedType) {
               return false;
@@ -582,7 +598,6 @@ abstract class RouteBaseConfig {
     if (fieldDisplayName != null) {
       return '${classElement.name}.$fieldDisplayName';
     }
-
     final String? methodDisplayName = classElement.methods
         .where((MethodElement element) {
           return element.isStatic && element.name == parameterName;

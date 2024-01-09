@@ -26,9 +26,15 @@ class AsyncHandlersTest: XCTestCase {
     let flutterApi = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
-    flutterApi.echo(value) { output in
-      XCTAssertEqual(output, value)
+    flutterApi.echo(value) { result in
+    switch result {
+        case .success(let res) :
+      XCTAssertEqual(res, value)
       expectation.fulfill()
+        case .failure(_) :
+          return
+      }
+
     }
     wait(for: [expectation], timeout: 1.0)
   }

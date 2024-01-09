@@ -76,6 +76,40 @@ const String kTransparentBackgroundPage = '''
   </html>
 ''';
 
+const String kLogExamplePage = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Load file or HTML string example</title>
+</head>
+<body onload="console.log('Logging that the page is loading.')">
+
+<h1>Local demo page</h1>
+<p>
+  This page is used to test the forwarding of console logs to Dart.
+</p>
+
+<style>
+    .btn-group button {
+      padding: 24px; 24px;
+      display: block;
+      width: 25%;
+      margin: 5px 0px 0px 0px;
+    }
+</style>
+
+<div class="btn-group">
+    <button onclick="console.error('This is an error message.')">Error</button>
+    <button onclick="console.warn('This is a warning message.')">Warning</button>
+    <button onclick="console.info('This is a info message.')">Info</button>
+    <button onclick="console.debug('This is a debug message.')">Debug</button>
+    <button onclick="console.log('This is a log message.')">Log</button>
+</div>
+
+</body>
+</html>
+''';
+
 class WebViewExample extends StatefulWidget {
   const WebViewExample({super.key});
 
@@ -183,7 +217,7 @@ Page resource error:
     return FloatingActionButton(
       onPressed: () async {
         final String? url = await _controller.currentUrl();
-        if (context.mounted) {
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Favorited $url')),
           );
@@ -208,6 +242,7 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  logExample,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -227,43 +262,32 @@ class SampleMenu extends StatelessWidget {
         switch (value) {
           case MenuOptions.showUserAgent:
             _onShowUserAgent();
-            break;
           case MenuOptions.listCookies:
             _onListCookies(context);
-            break;
           case MenuOptions.clearCookies:
             _onClearCookies(context);
-            break;
           case MenuOptions.addToCache:
             _onAddToCache(context);
-            break;
           case MenuOptions.listCache:
             _onListCache();
-            break;
           case MenuOptions.clearCache:
             _onClearCache(context);
-            break;
           case MenuOptions.navigationDelegate:
             _onNavigationDelegateExample();
-            break;
           case MenuOptions.doPostRequest:
             _onDoPostRequest();
-            break;
           case MenuOptions.loadLocalFile:
             _onLoadLocalFileExample();
-            break;
           case MenuOptions.loadFlutterAsset:
             _onLoadFlutterAssetExample();
-            break;
           case MenuOptions.loadHtmlString:
             _onLoadHtmlStringExample();
-            break;
           case MenuOptions.transparentBackground:
             _onTransparentBackground();
-            break;
           case MenuOptions.setCookie:
             _onSetCookie();
-            break;
+          case MenuOptions.logExample:
+            _onLogExample();
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -319,6 +343,10 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.setCookie,
           child: Text('Set cookie'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.logExample,
+          child: Text('Log example'),
         ),
       ],
     );
@@ -462,6 +490,16 @@ class SampleMenu extends StatelessWidget {
     await indexFile.writeAsString(kLocalExamplePage);
 
     return indexFile.path;
+  }
+
+  Future<void> _onLogExample() {
+    webViewController
+        .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+      debugPrint(
+          '== JS == ${consoleMessage.level.name}: ${consoleMessage.message}');
+    });
+
+    return webViewController.loadHtmlString(kLogExamplePage);
   }
 }
 

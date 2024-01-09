@@ -13,10 +13,6 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
-}
-
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
@@ -34,6 +30,14 @@ private func wrapError(_ error: Any) -> [Any?] {
     "\(type(of: error))",
     "Stacktrace: \(Thread.callStackSymbols)"
   ]
+}
+
+private func createConnectionError(withChannelName channelName: String) -> FlutterError {
+  return FlutterError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+}
+
+private func isNullish(_ value: Any?) -> Bool {
+  return value is NSNull || value == nil
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -173,17 +177,34 @@ class ExampleHostApiSetup {
     }
   }
 }
-/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
-class MessageFlutterApi {
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
+protocol MessageFlutterApiProtocol {
+  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void)
+}
+class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger){
     self.binaryMessenger = binaryMessenger
   }
-  func flutterMethod(aString aStringArg: String?, completion: @escaping (String) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod", binaryMessenger: binaryMessenger)
+  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
-      let result = response as! String
-      completion(result)
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName:channelName)))
+        return
+      }
+      if (listResponse.count > 1) {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)));
+      } else if (listResponse[0] == nil) {
+        completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! String
+        completion(.success(result))
+      }
     }
   }
 }

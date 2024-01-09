@@ -9,6 +9,9 @@ import '../common/instance_manager.dart';
 import '../common/web_kit.g.dart';
 import 'foundation.dart';
 
+export '../common/web_kit.g.dart'
+    show NSUrlCredentialPersistence, NSUrlSessionAuthChallengeDisposition;
+
 Iterable<NSKeyValueObservingOptionsEnumData>
     _toNSKeyValueObservingOptionsEnumData(
   Iterable<NSKeyValueObservingOptions> options,
@@ -20,16 +23,12 @@ Iterable<NSKeyValueObservingOptionsEnumData>
     switch (option) {
       case NSKeyValueObservingOptions.newValue:
         value = NSKeyValueObservingOptionsEnum.newValue;
-        break;
       case NSKeyValueObservingOptions.oldValue:
         value = NSKeyValueObservingOptionsEnum.oldValue;
-        break;
       case NSKeyValueObservingOptions.initialValue:
         value = NSKeyValueObservingOptionsEnum.initialValue;
-        break;
       case NSKeyValueObservingOptions.priorNotification:
         value = NSKeyValueObservingOptionsEnum.priorNotification;
-        break;
     }
 
     return NSKeyValueObservingOptionsEnumData(value: value);
@@ -54,6 +53,14 @@ class FoundationFlutterApis {
   })  : _binaryMessenger = binaryMessenger,
         object = NSObjectFlutterApiImpl(instanceManager: instanceManager),
         url = NSUrlFlutterApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        urlProtectionSpace = NSUrlProtectionSpaceFlutterApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        urlAuthenticationChallenge = NSUrlAuthenticationChallengeFlutterApiImpl(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
         );
@@ -82,6 +89,14 @@ class FoundationFlutterApis {
   @visibleForTesting
   final NSUrlFlutterApiImpl url;
 
+  /// Flutter Api for [NSUrlProtectionSpace].
+  @visibleForTesting
+  final NSUrlProtectionSpaceFlutterApiImpl urlProtectionSpace;
+
+  /// Flutter Api for [NSUrlAuthenticationChallenge].
+  @visibleForTesting
+  final NSUrlAuthenticationChallengeFlutterApiImpl urlAuthenticationChallenge;
+
   /// Ensures all the Flutter APIs have been set up to receive calls from native code.
   void ensureSetUp() {
     if (!_hasBeenSetUp) {
@@ -90,6 +105,14 @@ class FoundationFlutterApis {
         binaryMessenger: _binaryMessenger,
       );
       NSUrlFlutterApi.setup(url, binaryMessenger: _binaryMessenger);
+      NSUrlProtectionSpaceFlutterApi.setup(
+        urlProtectionSpace,
+        binaryMessenger: _binaryMessenger,
+      );
+      NSUrlAuthenticationChallengeFlutterApi.setup(
+        urlAuthenticationChallenge,
+        binaryMessenger: _binaryMessenger,
+      );
       _hasBeenSetUp = true;
     }
   }
@@ -242,6 +265,124 @@ class NSUrlFlutterApiImpl implements NSUrlFlutterApi {
   void create(int identifier) {
     instanceManager.addHostCreatedInstance(
       NSUrl.detached(
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+}
+
+/// Host api implementation for [NSUrlCredential].
+class NSUrlCredentialHostApiImpl extends NSUrlCredentialHostApi {
+  /// Constructs an [NSUrlCredentialHostApiImpl].
+  NSUrlCredentialHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? NSObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with Objective-C objects.
+  final InstanceManager instanceManager;
+
+  /// Calls [createWithUser] with the ids of the provided object instances.
+  Future<void> createWithUserFromInstances(
+    NSUrlCredential instance,
+    String user,
+    String password,
+    NSUrlCredentialPersistence persistence,
+  ) {
+    return createWithUser(
+      instanceManager.addDartCreatedInstance(instance),
+      user,
+      password,
+      persistence,
+    );
+  }
+}
+
+/// Flutter API implementation for [NSUrlProtectionSpace].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+@protected
+class NSUrlProtectionSpaceFlutterApiImpl
+    implements NSUrlProtectionSpaceFlutterApi {
+  /// Constructs a [NSUrlProtectionSpaceFlutterApiImpl].
+  NSUrlProtectionSpaceFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? NSObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(
+    int identifier,
+    String? host,
+    String? realm,
+    String? authenticationMethod,
+  ) {
+    instanceManager.addHostCreatedInstance(
+      NSUrlProtectionSpace.detached(
+        host: host,
+        realm: realm,
+        authenticationMethod: authenticationMethod,
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+}
+
+/// Flutter API implementation for [NSUrlAuthenticationChallenge].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+@protected
+class NSUrlAuthenticationChallengeFlutterApiImpl
+    implements NSUrlAuthenticationChallengeFlutterApi {
+  /// Constructs a [NSUrlAuthenticationChallengeFlutterApiImpl].
+  NSUrlAuthenticationChallengeFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? NSObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(
+    int identifier,
+    int protectionSpaceIdentifier,
+  ) {
+    instanceManager.addHostCreatedInstance(
+      NSUrlAuthenticationChallenge.detached(
+        protectionSpace: instanceManager.getInstanceWithWeakReference(
+          protectionSpaceIdentifier,
+        )!,
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),

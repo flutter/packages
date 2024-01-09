@@ -15,8 +15,8 @@ export 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
         ProductDetailsResponse,
         PurchaseDetails,
         PurchaseParam,
-        PurchaseVerificationData,
-        PurchaseStatus;
+        PurchaseStatus,
+        PurchaseVerificationData;
 
 /// Basic API for making in app purchases across multiple platforms.
 class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
@@ -195,7 +195,7 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   /// Restored purchases are delivered through the [purchaseStream] with a
   /// status of [PurchaseStatus.restored]. You should listen for these purchases,
   /// validate their receipts, deliver the content and mark the purchase complete
-  /// by calling the [finishPurchase] method for each purchase.
+  /// by calling the [completePurchase] method for each purchase.
   ///
   /// This does not return consumed products. If you want to restore unused
   /// consumable products, you need to persist consumable product information

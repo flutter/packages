@@ -24,9 +24,12 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 
   public ImageAnalysisHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull InstanceManager instanceManager,
+      @NonNull Context context) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
+    this.context = context;
   }
 
   /**
@@ -38,9 +41,13 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
 
   /** Creates an {@link ImageAnalysis} instance with the target resolution if specified. */
   @Override
-  public void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId) {
+  public void create(
+      @NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId) {
     ImageAnalysis.Builder imageAnalysisBuilder = cameraXProxy.createImageAnalysisBuilder();
 
+    if (rotation != null) {
+      imageAnalysisBuilder.setTargetRotation(rotation.intValue());
+    }
     if (resolutionSelectorId != null) {
       ResolutionSelector resolutionSelector =
           Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
@@ -70,6 +77,13 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     ImageAnalysis imageAnalysis =
         (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
     imageAnalysis.clearAnalyzer();
+  }
+
+  /** Dynamically sets the target rotation of the {@link ImageAnalysis}. */
+  @Override
+  public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
+    ImageAnalysis imageAnalysis = getImageAnalysisInstance(identifier);
+    imageAnalysis.setTargetRotation(rotation.intValue());
   }
 
   /**

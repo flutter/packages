@@ -44,6 +44,9 @@ class AndroidWebViewProxy {
         onGeolocationPermissionsShowPrompt,
     void Function(android_webview.WebChromeClient instance)?
         onGeolocationPermissionsHidePrompt,
+    void Function(android_webview.WebChromeClient instance,
+            android_webview.ConsoleMessage message)?
+        onConsoleMessage,
     void Function(
             android_webview.WebChromeClient instance,
             android_webview.View view,
@@ -75,6 +78,12 @@ class AndroidWebViewProxy {
     void Function(android_webview.WebView webView, String url)? urlLoading,
     void Function(android_webview.WebView webView, String url, bool isReload)?
         doUpdateVisitedHistory,
+    void Function(
+      android_webview.WebView webView,
+      android_webview.HttpAuthHandler handler,
+      String host,
+      String realm,
+    )? onReceivedHttpAuthRequest,
   }) createAndroidWebViewClient;
 
   /// Constructs a [android_webview.FlutterAssetManager].

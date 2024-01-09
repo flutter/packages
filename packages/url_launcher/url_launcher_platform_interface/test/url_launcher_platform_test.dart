@@ -118,4 +118,55 @@ void main() {
     expect(launcher.headers['foo'], 'bar');
     expect(launcher.webOnlyWindowName, 'a_name');
   });
+
+  test('supportsMode defaults to true for platform default', () async {
+    final UrlLauncherPlatform launcher = CapturingUrlLauncher();
+
+    expect(
+        await launcher.supportsMode(PreferredLaunchMode.platformDefault), true);
+  });
+
+  test('supportsMode defaults to false for all specific values', () async {
+    final UrlLauncherPlatform launcher = CapturingUrlLauncher();
+
+    expect(await launcher.supportsMode(PreferredLaunchMode.externalApplication),
+        false);
+    expect(
+        await launcher
+            .supportsMode(PreferredLaunchMode.externalNonBrowserApplication),
+        false);
+    expect(await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+        false);
+    expect(
+        await launcher.supportsMode(PreferredLaunchMode.inAppWebView), false);
+  });
+
+  test('supportsCloseForMode defaults to true for in-app web views', () async {
+    final UrlLauncherPlatform launcher = CapturingUrlLauncher();
+
+    expect(
+        await launcher.supportsCloseForMode(PreferredLaunchMode.inAppWebView),
+        true);
+  });
+
+  test('supportsCloseForMode defaults to false for all other values', () async {
+    final UrlLauncherPlatform launcher = CapturingUrlLauncher();
+
+    expect(
+        await launcher
+            .supportsCloseForMode(PreferredLaunchMode.externalApplication),
+        false);
+    expect(
+        await launcher.supportsCloseForMode(
+            PreferredLaunchMode.externalNonBrowserApplication),
+        false);
+    expect(
+        await launcher
+            .supportsCloseForMode(PreferredLaunchMode.inAppBrowserView),
+        false);
+    expect(
+        await launcher
+            .supportsCloseForMode(PreferredLaunchMode.platformDefault),
+        false);
+  });
 }

@@ -1,6 +1,6 @@
 # video\_player\_avfoundation
 
-The iOS implementation of [`video_player`][1].
+The iOS and macOS implementation of [`video_player`][1].
 
 ## Usage
 

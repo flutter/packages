@@ -20,8 +20,8 @@ import 'android_navigation_delegate_test.dart';
 import 'android_webview_controller_test.mocks.dart';
 import 'android_webview_test.mocks.dart'
     show
-        MockTestGeolocationPermissionsCallbackHostApi,
-        MockTestCustomViewCallbackHostApi;
+        MockTestCustomViewCallbackHostApi,
+        MockTestGeolocationPermissionsCallbackHostApi;
 import 'test_android_webview.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
@@ -73,6 +73,9 @@ void main() {
               android_webview.CustomViewCallback callback)?
           onShowCustomView,
       void Function(android_webview.WebChromeClient instance)? onHideCustomView,
+      void Function(android_webview.WebChromeClient instance,
+              android_webview.ConsoleMessage message)?
+          onConsoleMessage,
     })? createWebChromeClient,
     android_webview.WebView? mockWebView,
     android_webview.WebViewClient? mockWebViewClient,
@@ -111,6 +114,9 @@ void main() {
                         onShowCustomView,
                     void Function(android_webview.WebChromeClient instance)?
                         onHideCustomView,
+                    void Function(android_webview.WebChromeClient instance,
+                            android_webview.ConsoleMessage message)?
+                        onConsoleMessage,
                   }) =>
                       MockWebChromeClient(),
               createAndroidWebView: () => nonNullMockWebView,
@@ -126,6 +132,12 @@ void main() {
                   String description,
                   String failingUrl,
                 )? onReceivedError,
+                void Function(
+                  android_webview.WebView webView,
+                  android_webview.HttpAuthHandler hander,
+                  String host,
+                  String realm,
+                )? onReceivedHttpAuthRequest,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
@@ -606,6 +618,7 @@ void main() {
           dynamic onPermissionRequest,
           dynamic onShowCustomView,
           dynamic onHideCustomView,
+          dynamic onConsoleMessage,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;
           return mockWebChromeClient;
@@ -676,6 +689,7 @@ void main() {
           dynamic onPermissionRequest,
           dynamic onShowCustomView,
           dynamic onHideCustomView,
+          dynamic onConsoleMessage,
         }) {
           onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
           onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
@@ -750,6 +764,7 @@ void main() {
               onShowCustomView,
           void Function(android_webview.WebChromeClient instance)?
               onHideCustomView,
+          dynamic onConsoleMessage,
         }) {
           onShowCustomViewHandle = onShowCustomView!;
           onHideCustomViewHandle = onHideCustomView!;
@@ -802,6 +817,7 @@ void main() {
           )? onPermissionRequest,
           dynamic onShowCustomView,
           dynamic onHideCustomView,
+          dynamic onConsoleMessage,
         }) {
           onPermissionRequestCallback = onPermissionRequest!;
           return mockWebChromeClient;
@@ -856,6 +872,7 @@ void main() {
           )? onPermissionRequest,
           dynamic onShowCustomView,
           dynamic onHideCustomView,
+          dynamic onConsoleMessage,
         }) {
           onPermissionRequestCallback = onPermissionRequest!;
           return mockWebChromeClient;
@@ -879,6 +896,104 @@ void main() {
       );
 
       expect(callbackCalled, isFalse);
+    });
+
+    test('setOnConsoleLogCallback', () async {
+      late final void Function(
+        android_webview.WebChromeClient instance,
+        android_webview.ConsoleMessage message,
+      ) onConsoleMessageCallback;
+
+      final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        createWebChromeClient: ({
+          dynamic onProgressChanged,
+          dynamic onShowFileChooser,
+          dynamic onGeolocationPermissionsShowPrompt,
+          dynamic onGeolocationPermissionsHidePrompt,
+          dynamic onPermissionRequest,
+          dynamic onShowCustomView,
+          dynamic onHideCustomView,
+          void Function(
+            android_webview.WebChromeClient,
+            android_webview.ConsoleMessage,
+          )? onConsoleMessage,
+        }) {
+          onConsoleMessageCallback = onConsoleMessage!;
+          return mockWebChromeClient;
+        },
+      );
+
+      final Map<String, JavaScriptLogLevel> logs =
+          <String, JavaScriptLogLevel>{};
+      await controller.setOnConsoleMessage(
+        (JavaScriptConsoleMessage message) async {
+          logs[message.message] = message.level;
+        },
+      );
+
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Debug message',
+          level: ConsoleMessageLevel.debug,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Error message',
+          level: ConsoleMessageLevel.error,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Log message',
+          level: ConsoleMessageLevel.log,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Tip message',
+          level: ConsoleMessageLevel.tip,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Warning message',
+          level: ConsoleMessageLevel.warning,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Unknown message',
+          level: ConsoleMessageLevel.unknown,
+          sourceId: 'source',
+        ),
+      );
+
+      expect(logs.length, 6);
+      expect(logs['Debug message'], JavaScriptLogLevel.debug);
+      expect(logs['Error message'], JavaScriptLogLevel.error);
+      expect(logs['Log message'], JavaScriptLogLevel.log);
+      expect(logs['Tip message'], JavaScriptLogLevel.debug);
+      expect(logs['Warning message'], JavaScriptLogLevel.warning);
+      expect(logs['Unknown message'], JavaScriptLogLevel.log);
     });
 
     test('runJavaScript', () async {
@@ -1150,6 +1265,20 @@ void main() {
       verify(mockWebView.settings).called(1);
       verify(mockSettings.setUserAgentString('Test Framework')).called(1);
     });
+
+    test('getUserAgent', () async {
+      final MockWebSettings mockSettings = MockWebSettings();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockSettings: mockSettings,
+      );
+
+      const String userAgent = 'str';
+
+      when(mockSettings.getUserAgentString())
+          .thenAnswer((_) => Future<String>.value(userAgent));
+
+      expect(await controller.getUserAgent(), userAgent);
+    });
   });
 
   test('setMediaPlaybackRequiresUserGesture', () async {
@@ -1334,6 +1463,7 @@ void main() {
                   android_webview.CustomViewCallback callback)?
               onShowCustomView,
           dynamic onHideCustomView,
+          dynamic onConsoleMessage,
         }) {
           onShowCustomViewCallback = onShowCustomView;
           return mockWebChromeClient;
