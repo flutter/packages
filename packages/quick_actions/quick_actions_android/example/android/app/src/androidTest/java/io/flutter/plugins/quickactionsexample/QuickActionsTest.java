@@ -106,7 +106,8 @@ public class QuickActionsTest {
 
     // Act
     context.startActivity(dynamicShortcutIntent);
-    device.wait(Until.hasObject(By.descContains(appReadySentinel)), 2000);
+    final Object o = device.wait(Until.hasObject(By.descContains(appReadySentinel)), 2000);
+    Assert.assertNotNull(o);
     AtomicReference<QuickActionsTestActivity> currentActivity = new AtomicReference<>();
     scenario.onActivity(currentActivity::set);
 
