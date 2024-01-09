@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk version to 34.
+
 ## 0.5.0+26
 
 * Fixes new lint warnings.
