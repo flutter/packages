@@ -128,8 +128,8 @@ void main() {
         // Mute to allow playing without DOM interaction on Web.
         // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
         await controller.setVolume(0);
-        final Duration tenMillisBeforeEnd =
-            controller.value.duration - const Duration(milliseconds: 10);
+        final Duration tenMillisBeforeEnd = controller.value.duration -
+            const Duration(milliseconds: 1); // TEST CHANGE ONLY
         await controller.seekTo(tenMillisBeforeEnd);
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
