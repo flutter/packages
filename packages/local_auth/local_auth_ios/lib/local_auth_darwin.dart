@@ -9,21 +9,21 @@ import 'package:local_auth_platform_interface/local_auth_platform_interface.dart
 import 'src/messages.g.dart';
 import 'types/auth_messages_ios.dart';
 
-export 'package:local_auth_ios/types/auth_messages_ios.dart';
+export 'package:local_auth_darwin/types/auth_messages_ios.dart';
 export 'package:local_auth_platform_interface/types/auth_messages.dart';
 export 'package:local_auth_platform_interface/types/auth_options.dart';
 export 'package:local_auth_platform_interface/types/biometric_type.dart';
 
 /// The implementation of [LocalAuthPlatform] for iOS.
-class LocalAuthIOS extends LocalAuthPlatform {
+class LocalAuthDarwin extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
-  LocalAuthIOS({
+  LocalAuthDarwin({
     @visibleForTesting LocalAuthApi? api,
   }) : _api = api ?? LocalAuthApi();
 
   /// Registers this class as the default instance of [LocalAuthPlatform].
   static void registerWith() {
-    LocalAuthPlatform.instance = LocalAuthIOS();
+    LocalAuthPlatform.instance = LocalAuthDarwin();
   }
 
   final LocalAuthApi _api;

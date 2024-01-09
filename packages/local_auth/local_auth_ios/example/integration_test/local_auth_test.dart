@@ -5,14 +5,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:local_auth_ios/local_auth_ios.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('canCheckBiometrics', (WidgetTester tester) async {
     expect(
-      LocalAuthIOS().getEnrolledBiometrics(),
+      LocalAuthDarwin().getEnrolledBiometrics(),
       completion(isList),
     );
   });

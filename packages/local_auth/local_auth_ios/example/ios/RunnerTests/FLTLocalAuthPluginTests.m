@@ -4,7 +4,7 @@
 
 @import LocalAuthentication;
 @import XCTest;
-@import local_auth_ios;
+@import local_auth_darwin;
 
 #import <OCMock/OCMock.h>
 

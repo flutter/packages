@@ -232,7 +232,7 @@ class LocalAuthApi {
   /// Returns true if this device supports authentication.
   Future<bool> isDeviceSupported() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.local_auth_ios.LocalAuthApi.isDeviceSupported',
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -261,7 +261,7 @@ class LocalAuthApi {
   /// any biometrics are enrolled or not.
   Future<bool> deviceCanSupportBiometrics() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.local_auth_ios.LocalAuthApi.deviceCanSupportBiometrics',
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -290,7 +290,7 @@ class LocalAuthApi {
   /// without additional setup.
   Future<List<AuthBiometricWrapper?>> getEnrolledBiometrics() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.local_auth_ios.LocalAuthApi.getEnrolledBiometrics',
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -320,7 +320,7 @@ class LocalAuthApi {
   Future<AuthResultDetails> authenticate(
       AuthOptions arg_options, AuthStrings arg_strings) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.local_auth_ios.LocalAuthApi.authenticate', codec,
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel
         .send(<Object?>[arg_options, arg_strings]) as List<Object?>?;

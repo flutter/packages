@@ -263,7 +263,7 @@ void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns true if this device supports authentication.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.local_auth_ios.LocalAuthApi.isDeviceSupported"
+           initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported"
         binaryMessenger:binaryMessenger
                   codec:FLALocalAuthApiGetCodec()];
     if (api) {
@@ -284,7 +284,7 @@ void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
   /// any biometrics are enrolled or not.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.local_auth_ios.LocalAuthApi.deviceCanSupportBiometrics"
+           initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics"
         binaryMessenger:binaryMessenger
                   codec:FLALocalAuthApiGetCodec()];
     if (api) {
@@ -305,7 +305,7 @@ void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
   /// without additional setup.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.local_auth_ios.LocalAuthApi.getEnrolledBiometrics"
+           initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics"
         binaryMessenger:binaryMessenger
                   codec:FLALocalAuthApiGetCodec()];
     if (api) {
@@ -326,7 +326,7 @@ void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
   /// [strings] for any UI.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.local_auth_ios.LocalAuthApi.authenticate"
+           initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate"
         binaryMessenger:binaryMessenger
                   codec:FLALocalAuthApiGetCodec()];
     if (api) {
