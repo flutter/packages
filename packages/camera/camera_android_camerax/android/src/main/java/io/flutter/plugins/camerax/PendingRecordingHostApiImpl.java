@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private Context context;
+  @Nullable private Context context;
 
   @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 

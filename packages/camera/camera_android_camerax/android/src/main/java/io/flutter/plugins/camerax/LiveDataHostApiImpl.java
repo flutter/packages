@@ -25,7 +25,7 @@ import java.util.Objects;
 public class LiveDataHostApiImpl implements LiveDataHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private LifecycleOwner lifecycleOwner;
+  @Nullable private LifecycleOwner lifecycleOwner;
 
   /**
    * Constructs a {@link LiveDataHostApiImpl}.

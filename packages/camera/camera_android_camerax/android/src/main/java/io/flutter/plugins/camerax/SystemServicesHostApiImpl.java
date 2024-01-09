@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
@@ -19,7 +20,7 @@ import java.io.IOException;
 public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private Context context;
+  @Nullable private Context context;
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
   @VisibleForTesting public @NonNull SystemServicesFlutterApiImpl systemServicesFlutterApi;

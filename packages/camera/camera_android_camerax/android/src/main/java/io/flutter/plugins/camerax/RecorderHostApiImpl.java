@@ -23,7 +23,7 @@ import java.util.concurrent.Executor;
 public class RecorderHostApiImpl implements RecorderHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private Context context;
+  @Nullable private Context context;
 
   @NonNull @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
 

@@ -22,7 +22,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  private Context context;
+  @Nullable private Context context;
   private SystemServicesFlutterApiImpl systemServicesFlutterApiImpl;
 
   public static final String TEMPORARY_FILE_NAME = "CAP";

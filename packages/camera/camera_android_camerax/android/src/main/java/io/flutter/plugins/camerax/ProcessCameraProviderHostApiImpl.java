@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
@@ -24,8 +25,8 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  private Context context;
-  private LifecycleOwner lifecycleOwner;
+  @Nullable private Context context;
+  @Nullable private LifecycleOwner lifecycleOwner;
 
   public ProcessCameraProviderHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
