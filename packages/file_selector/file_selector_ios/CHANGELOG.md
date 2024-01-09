@@ -1,6 +1,6 @@
 ## 0.5.1+8
 
-* Adds privacy manifests to iOS plugins.
+* Adds privacy manifest.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.5.1+7

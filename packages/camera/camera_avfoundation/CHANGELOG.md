@@ -1,6 +1,6 @@
 ## 0.9.13+10
 
-* Adds privacy manifests to iOS plugins.
+* Adds privacy manifest.
 
 ## 0.9.13+9
 

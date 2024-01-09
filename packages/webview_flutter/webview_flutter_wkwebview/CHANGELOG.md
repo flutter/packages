@@ -1,6 +1,6 @@
 ## 3.10.2
 
-* Adds privacy manifests to iOS plugins.
+* Adds privacy manifest.
 
 ## 3.10.1
 
