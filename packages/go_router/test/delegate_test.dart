@@ -430,7 +430,7 @@ void main() {
       final RouteMatchBase first =
           goRouter.routerDelegate.currentConfiguration.matches.first;
       final RouteMatch last = goRouter.routerDelegate.currentConfiguration.last;
-      goRouter.replace('/page-1');
+      goRouter.replace<void>('/page-1');
       expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
       expect(
         goRouter.routerDelegate.currentConfiguration.matches.first,
@@ -470,7 +470,7 @@ void main() {
         final ValueKey<String> prev =
             goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
-        goRouter.replace('/a');
+        goRouter.replace<void>('/a');
         await tester.pumpAndSettle();
 
         expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
@@ -498,7 +498,7 @@ void main() {
         final ValueKey<String> prev =
             goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
-        goRouter.replace('/');
+        goRouter.replace<void>('/');
         await tester.pumpAndSettle();
 
         expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
@@ -551,7 +551,7 @@ void main() {
       final RouteMatchBase first =
           goRouter.routerDelegate.currentConfiguration.matches.first;
       final RouteMatch last = goRouter.routerDelegate.currentConfiguration.last;
-      goRouter.replaceNamed('page1');
+      goRouter.replaceNamed<void>('page1');
       expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
       expect(
         goRouter.routerDelegate.currentConfiguration.matches.first,
@@ -591,7 +591,7 @@ void main() {
         final ValueKey<String> prev =
             goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
-        goRouter.replaceNamed('page0');
+        goRouter.replaceNamed<void>('page0');
         await tester.pumpAndSettle();
 
         expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
@@ -619,7 +619,7 @@ void main() {
         final ValueKey<String> prev =
             goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
-        goRouter.replaceNamed('home');
+        goRouter.replaceNamed<void>('home');
         await tester.pumpAndSettle();
 
         expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);

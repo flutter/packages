@@ -115,13 +115,10 @@ class GoRouteInformationProvider extends RouteInformationProvider
           return;
         }
         replace = _valueInEngine == _kEmptyRouteInformation;
-        break;
       case RouteInformationReportingType.neglect:
         replace = true;
-        break;
       case RouteInformationReportingType.navigate:
         replace = false;
-        break;
     }
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(

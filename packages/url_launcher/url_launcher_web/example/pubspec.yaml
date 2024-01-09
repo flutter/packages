@@ -14,7 +14,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.3
+  mockito: 5.4.4
   url_launcher_platform_interface: ^2.2.0
   url_launcher_web:
     path: ../

@@ -1,6 +1,10 @@
-## 0.5.0+26
+## 0.5.0+27
 
 * Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.
+
+## 0.5.0+26
+
+* Fixes new lint warnings.
 
 ## 0.5.0+25
 
