@@ -328,7 +328,7 @@ android {
           containsAll(<Matcher>[
             contains('This is the legacy file'),
             contains('minSdkVersion 21'),
-            contains('compileSdk 33'),
+            contains('compileSdk 34'),
           ]));
     });
 
@@ -362,7 +362,7 @@ android {
           buildGradle,
           containsAll(<Matcher>[
             contains('minSdkVersion 21'),
-            contains('compileSdk 33'),
+            contains('compileSdk 34'),
             contains('multiDexEnabled true'),
             contains('androidx.lifecycle:lifecycle-runtime'),
           ]));
