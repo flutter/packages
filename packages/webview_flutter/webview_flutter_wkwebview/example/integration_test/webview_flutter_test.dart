@@ -34,6 +34,15 @@ Future<void> main() async {
       request.response.writeln('${request.headers}');
     } else if (request.uri.path == '/favicon.ico') {
       request.response.statusCode = HttpStatus.notFound;
+    } else if (request.uri.path == '/http-basic-authentication') {
+      final bool isAuthenticating = request.headers['Authorization'] != null;
+      if (isAuthenticating) {
+        request.response.writeln('Authorized');
+      } else {
+        request.response.headers
+            .add('WWW-Authenticate', 'Basic realm="Test realm"');
+        request.response.statusCode = HttpStatus.unauthorized;
+      }
     } else {
       fail('unexpected request: ${request.method} ${request.uri}');
     }
@@ -43,6 +52,7 @@ Future<void> main() async {
   final String primaryUrl = '$prefixUrl/hello.txt';
   final String secondaryUrl = '$prefixUrl/secondary.txt';
   final String headersUrl = '$prefixUrl/headers';
+  final String basicAuthUrl = '$prefixUrl/http-basic-authentication';
 
   testWidgets(
       'withWeakReferenceTo allows encapsulating class to be garbage collected',
@@ -292,8 +302,28 @@ Future<void> main() async {
       },
     ));
 
-    final String customUserAgent2 = await _getUserAgent(controller);
-    expect(customUserAgent2, 'Custom_User_Agent1');
+    final String? customUserAgent = await controller.getUserAgent();
+    expect(customUserAgent, 'Custom_User_Agent1');
+  });
+
+  testWidgets(
+      'getUserAgent returns a default value when custom value is not set',
+      (WidgetTester tester) async {
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    final String? userAgent = await controller.getUserAgent();
+    expect(userAgent, isNotNull);
+    expect(userAgent, isNotEmpty);
   });
 
   group('Video playback policy', () {
@@ -1107,6 +1137,82 @@ Future<void> main() async {
     });
   });
 
+  testWidgets('can receive HTTP basic auth requests',
+      (WidgetTester tester) async {
+    final Completer<void> authRequested = Completer<void>();
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    final PlatformNavigationDelegate navigationDelegate =
+        PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    await navigationDelegate.setOnHttpAuthRequest(
+        (HttpAuthRequest request) => authRequested.complete());
+    await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+    // Clear cache so that the auth request is always received and we don't get
+    // a cached response.
+    await controller.clearCache();
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            WebKitWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
+
+    await controller.loadRequest(
+      LoadRequestParams(uri: Uri.parse(basicAuthUrl)),
+    );
+
+    await expectLater(authRequested.future, completes);
+  });
+
+  testWidgets('can reply to HTTP basic auth requests',
+      (WidgetTester tester) async {
+    final Completer<void> pageFinished = Completer<void>();
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    final PlatformNavigationDelegate navigationDelegate =
+        PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    await navigationDelegate.setOnPageFinished((_) => pageFinished.complete());
+    await navigationDelegate.setOnHttpAuthRequest(
+      (HttpAuthRequest request) => request.onProceed(
+        const WebViewCredential(user: 'user', password: 'password'),
+      ),
+    );
+    await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+    // Clear cache so that the auth request is always received and we don't get
+    // a cached response.
+    await controller.clearCache();
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            WebKitWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
+
+    await controller.loadRequest(
+      LoadRequestParams(uri: Uri.parse(basicAuthUrl)),
+    );
+
+    await expectLater(pageFinished.future, completes);
+  });
+
   testWidgets('launches with gestureNavigationEnabled on iOS',
       (WidgetTester tester) async {
     final WebKitWebViewController controller = WebKitWebViewController(
@@ -1196,12 +1302,48 @@ Future<void> main() async {
       await expectLater(controller.currentUrl(), completion(primaryUrl));
     },
   );
-}
 
-/// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.
-Future<String> _getUserAgent(PlatformWebViewController controller) async {
-  return await controller.runJavaScriptReturningResult('navigator.userAgent;')
-      as String;
+  group('Logging', () {
+    testWidgets('can receive console log messages',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+          </head>
+          <body onload="console.debug('Debug message')">
+            <p>Test page</p>
+          </body>
+          </html>
+         ''';
+
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+          debugMessageReceived.future, completion('debug:Debug message'));
+    });
+  });
 }
 
 class ResizableWebView extends StatefulWidget {

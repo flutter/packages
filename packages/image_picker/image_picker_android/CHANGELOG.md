@@ -1,3 +1,28 @@
+## 0.8.9+2
+
+* Fixes new lint warnings.
+
+## 0.8.9+1
+
+* Updates plugin and example Gradle versions to 7.6.3.
+
+## 0.8.9
+
+* Fixes resizing bug and updates rounding to be more accurate.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.8.8+2
+
+* Updates annotations lib to 1.7.0.
+
+## 0.8.8+1
+
+* Fixes NullPointerException on pre-Android 13 devices when using Android Photo Picker to pick image or video.
+
+## 0.8.8
+
+* Adds additional category II and III exif tags to be copied during photo resize.
+
 ## 0.8.7+5
 
 * Adds pub topics to package metadata.

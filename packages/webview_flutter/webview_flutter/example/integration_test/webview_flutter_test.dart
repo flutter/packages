@@ -179,7 +179,7 @@ Future<void> main() async {
 
     await pageFinished.future;
 
-    final String customUserAgent = await _getUserAgent(controller);
+    final String? customUserAgent = await controller.getUserAgent();
     expect(customUserAgent, 'Custom_User_Agent1');
   });
 
@@ -874,22 +874,6 @@ String _webViewString(String value) {
     return value;
   }
   return '"$value"';
-}
-
-/// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.
-Future<String> _getUserAgent(WebViewController controller) async {
-  return _runJavascriptReturningResult(controller, 'navigator.userAgent;');
-}
-
-Future<String> _runJavascriptReturningResult(
-  WebViewController controller,
-  String js,
-) async {
-  if (defaultTargetPlatform == TargetPlatform.iOS) {
-    return await controller.runJavaScriptReturningResult(js) as String;
-  }
-  return jsonDecode(await controller.runJavaScriptReturningResult(js) as String)
-      as String;
 }
 
 class ResizableWebView extends StatefulWidget {

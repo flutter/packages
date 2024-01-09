@@ -1,0 +1,16 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: download Dart and Android deps
+    script: script/tool_runner.sh
+    infra_step: true
+    args: ["fetch-deps", "--android", "--supporting-target-platforms-only", "--exclude=script/configs/exclude_integration_android_legacy_emulator.yaml"]
+  # Only these two tests are run because they are the only ones that use the
+  # emulator. Other tests would just duplicate android_platform_test.yaml tests.
+  - name: native integration tests
+    script: script/tool_runner.sh
+    args: ["native-test", "--android", "--no-unit", "--exclude=script/configs/exclude_integration_android_legacy_emulator.yaml"]
+  - name: drive examples
+    script: script/tool_runner.sh
+    args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android_legacy_emulator.yaml,script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml"]

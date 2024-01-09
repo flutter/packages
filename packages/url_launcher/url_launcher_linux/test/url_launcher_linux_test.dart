@@ -10,7 +10,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$UrlLauncherLinux', () {
+  group('UrlLauncherLinux', () {
     const MethodChannel channel =
         MethodChannel('plugins.flutter.io/url_launcher_linux');
     final List<MethodCall> log = <MethodCall>[];
@@ -38,11 +38,7 @@ void main() {
       await launcher.canLaunch('http://example.com/');
       expect(
         log,
-        <Matcher>[
-          isMethodCall('canLaunch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-          })
-        ],
+        <Matcher>[isMethodCall('canLaunch', arguments: 'http://example.com/')],
       );
     });
 
@@ -66,65 +62,7 @@ void main() {
       );
       expect(
         log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{},
-          })
-        ],
-      );
-    });
-
-    test('launch with headers', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{'key': 'value'},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{'key': 'value'},
-          })
-        ],
-      );
-    });
-
-    test('launch universal links only', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: true,
-        headers: const <String, String>{},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': true,
-            'headers': <String, String>{},
-          })
-        ],
+        <Matcher>[isMethodCall('launch', arguments: 'http://example.com/')],
       );
     });
 
@@ -141,6 +79,66 @@ void main() {
       );
 
       expect(launched, false);
+    });
+
+    group('launchUrl', () {
+      test('passes URL', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        await launcher.launchUrl('http://example.com/', const LaunchOptions());
+        expect(
+          log,
+          <Matcher>[isMethodCall('launch', arguments: 'http://example.com/')],
+        );
+      });
+
+      test('returns false if platform returns null', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        final bool launched = await launcher.launchUrl(
+            'http://example.com/', const LaunchOptions());
+
+        expect(launched, false);
+      });
+    });
+
+    group('supportsMode', () {
+      test('returns true for platformDefault', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+            true);
+      });
+
+      test('returns true for external application', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        expect(
+            await launcher
+                .supportsMode(PreferredLaunchMode.externalApplication),
+            true);
+      });
+
+      test('returns false for other modes', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        expect(
+            await launcher.supportsMode(
+                PreferredLaunchMode.externalNonBrowserApplication),
+            false);
+        expect(
+            await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+            false);
+        expect(await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
+            false);
+      });
+    });
+
+    test('supportsCloseForMode returns false', () async {
+      final UrlLauncherLinux launcher = UrlLauncherLinux();
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.platformDefault),
+          false);
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.externalApplication),
+          false);
     });
   });
 }

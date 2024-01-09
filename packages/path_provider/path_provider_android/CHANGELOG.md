@@ -1,3 +1,12 @@
+## 2.2.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates annotations lib to 1.7.1.
+
+## 2.2.1
+
+* Updates annotations lib to 1.7.0.
+
 ## 2.2.0
 
 * Adds implementation of `getDownloadsDirectory()`.

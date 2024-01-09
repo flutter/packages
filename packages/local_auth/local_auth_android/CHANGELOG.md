@@ -1,3 +1,11 @@
+## 1.0.36
+
+* Updates androidx.fragment version to 1.6.2.
+
+## 1.0.35
+
+* Updates androidx.fragment version to 1.6.1.
+
 ## 1.0.34
 
 * Updates pigeon to 11.0.0 and removes enum wrappers.

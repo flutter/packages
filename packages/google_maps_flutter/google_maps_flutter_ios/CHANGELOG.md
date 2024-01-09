@@ -1,3 +1,20 @@
+## 2.3.5
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.3.4
+
+* Fixes new lint warnings.
+
+## 2.3.3
+
+* Adds support for version 8 of the Google Maps SDK in apps targeting iOS 14+.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.2
+
+* Fixes an issue where the onDragEnd callback for marker is not called.
+
 ## 2.3.1
 
 * Adds pub topics to package metadata.

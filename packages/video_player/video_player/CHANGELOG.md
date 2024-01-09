@@ -1,3 +1,20 @@
+## 2.8.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 2.8.1
+
+* Updates the example app: replaces `ButtonBar` with `OverflowBar` widget.
+
+## 2.8.0
+
+* Adds support for macOS.
+
+## 2.7.2
+
+* Adds `isCompleted` event to `VideoPlayerEvent`.
+
 ## 2.7.1
 
 * Adds pub topics to package metadata.

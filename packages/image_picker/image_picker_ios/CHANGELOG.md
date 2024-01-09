@@ -1,3 +1,16 @@
+## 0.8.9
+
+* Fixes resizing bug and updates rounding to be more accurate.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.8.8+4
+
+* Updates to Pigeon 13.
+
+## 0.8.8+3
+
+* Fixes a possible crash when calling a picker method while another is waiting on permissions.
+
 ## 0.8.8+2
 
 * Adds pub topics to package metadata.

@@ -103,7 +103,7 @@ extern WKUserScript *FWFNativeWKUserScriptFromScriptData(FWFWKUserScriptData *da
   return [[WKUserScript alloc]
         initWithSource:data.source
          injectionTime:FWFNativeWKUserScriptInjectionTimeFromEnumData(data.injectionTime)
-      forMainFrameOnly:data.isMainFrameOnly.boolValue];
+      forMainFrameOnly:data.isMainFrameOnly];
 }
 
 WKUserScriptInjectionTime FWFNativeWKUserScriptInjectionTimeFromEnumData(
@@ -176,7 +176,7 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *req
 }
 
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *info) {
-  return [FWFWKFrameInfoData makeWithIsMainFrame:@(info.isMainFrame)];
+  return [FWFWKFrameInfoData makeWithIsMainFrame:info.isMainFrame];
 }
 
 WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
@@ -204,7 +204,7 @@ FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
       }
     }
   }
-  return [FWFNSErrorData makeWithCode:@(error.code) domain:error.domain userInfo:userInfo];
+  return [FWFNSErrorData makeWithCode:error.code domain:error.domain userInfo:userInfo];
 }
 
 FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(
@@ -253,7 +253,7 @@ FWFWKNavigationType FWFWKNavigationTypeFromNativeWKNavigationType(WKNavigationTy
 FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(
     WKSecurityOrigin *origin) {
   return [FWFWKSecurityOriginData makeWithHost:origin.host
-                                          port:@(origin.port)
+                                          port:origin.port
                                       protocol:origin.protocol];
 }
 
@@ -284,4 +284,37 @@ FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType
   }
 
   return nil;
+}
+
+NSURLSessionAuthChallengeDisposition
+FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(
+    FWFNSUrlSessionAuthChallengeDisposition value) {
+  switch (value) {
+    case FWFNSUrlSessionAuthChallengeDispositionUseCredential:
+      return NSURLSessionAuthChallengeUseCredential;
+    case FWFNSUrlSessionAuthChallengeDispositionPerformDefaultHandling:
+      return NSURLSessionAuthChallengePerformDefaultHandling;
+    case FWFNSUrlSessionAuthChallengeDispositionCancelAuthenticationChallenge:
+      return NSURLSessionAuthChallengeCancelAuthenticationChallenge;
+    case FWFNSUrlSessionAuthChallengeDispositionRejectProtectionSpace:
+      return NSURLSessionAuthChallengeRejectProtectionSpace;
+  }
+
+  return -1;
+}
+
+NSURLCredentialPersistence FWFNativeNSURLCredentialPersistenceFromFWFNSUrlCredentialPersistence(
+    FWFNSUrlCredentialPersistence value) {
+  switch (value) {
+    case FWFNSUrlCredentialPersistenceNone:
+      return NSURLCredentialPersistenceNone;
+    case FWFNSUrlCredentialPersistenceSession:
+      return NSURLCredentialPersistenceForSession;
+    case FWFNSUrlCredentialPersistencePermanent:
+      return NSURLCredentialPersistencePermanent;
+    case FWFNSUrlCredentialPersistenceSynchronizable:
+      return NSURLCredentialPersistenceSynchronizable;
+  }
+
+  return -1;
 }

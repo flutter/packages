@@ -102,8 +102,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
     final List<File> podspecs =
         await getFilesForPackage(package).where((File entity) {
-      final String filePath = entity.path;
-      return path.extension(filePath) == '.podspec';
+      final String filename = entity.basename;
+      return path.extension(filename) == '.podspec' &&
+          filename != 'Flutter.podspec' &&
+          filename != 'FlutterMacOS.podspec';
     }).toList();
 
     podspecs.sort((File a, File b) => a.basename.compareTo(b.basename));
@@ -140,9 +142,6 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       podspecPath,
       '--configuration=Debug', // Release targets unsupported arm64 simulators. Use Debug to only build against targeted x86_64 simulator devices.
       '--skip-tests',
-      // TODO(vashworth): remove allow-warnings when https://github.com/flutter/flutter/issues/125812 is fixed.
-      // https://github.com/flutter/flutter/issues/125812
-      '--allow-warnings',
       '--use-modular-headers', // Flutter sets use_modular_headers! in its templates.
       if (libraryLint) '--use-libraries'
     ];
