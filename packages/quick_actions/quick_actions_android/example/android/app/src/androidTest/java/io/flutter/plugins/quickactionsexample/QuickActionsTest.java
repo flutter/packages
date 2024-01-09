@@ -108,9 +108,7 @@ public class QuickActionsTest {
 
     // Act
     context.startActivity(dynamicShortcutIntent);
-    final Boolean o = device.wait(Until.hasObject(By.descContains(appReadySentinel)), 2000);
-    Assert.assertNotNull("check null", o);
-    Assert.assertTrue("check true", o);
+    device.wait(Until.hasObject(By.descContains(appReadySentinel)), 2000);
     AtomicReference<QuickActionsTestActivity> currentActivity = new AtomicReference<>();
     scenario.onActivity(currentActivity::set);
 
@@ -156,6 +154,8 @@ public class QuickActionsTest {
     return scenario;
   }
 
+  // Broadcast a request to clear a system dialog that blocks the Activity.
+  // See https://github.com/flutter/flutter/issues/140987
   private void clearAnySystemDialog(Activity activity) {
     final Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
     activity.sendBroadcast(closeDialog);
