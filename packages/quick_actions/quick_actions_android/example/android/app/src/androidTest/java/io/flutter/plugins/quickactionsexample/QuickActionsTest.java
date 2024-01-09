@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
@@ -102,13 +103,14 @@ public class QuickActionsTest {
     Intent dynamicShortcutIntent = dynamicShortcut.getIntent();
     AtomicReference<QuickActionsTestActivity> initialActivity = new AtomicReference<>();
     scenario.onActivity(initialActivity::set);
+    clearAnySystemDialog(initialActivity.get());
     String appReadySentinel = " has launched";
 
     // Act
     context.startActivity(dynamicShortcutIntent);
     final Boolean o = device.wait(Until.hasObject(By.descContains(appReadySentinel)), 2000);
-    Assert.assertNotNull(o);
-    Assert.assertTrue(o);
+    Assert.assertNotNull("check null", o);
+    Assert.assertTrue("check true", o);
     AtomicReference<QuickActionsTestActivity> currentActivity = new AtomicReference<>();
     scenario.onActivity(currentActivity::set);
 
@@ -152,5 +154,10 @@ public class QuickActionsTest {
         ActivityScenario.launch(QuickActionsTestActivity.class);
     scenario.moveToState(Lifecycle.State.STARTED);
     return scenario;
+  }
+
+  private void clearAnySystemDialog(Activity activity) {
+    final Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+    activity.sendBroadcast(closeDialog);
   }
 }
