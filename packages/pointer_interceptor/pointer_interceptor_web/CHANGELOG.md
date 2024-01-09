@@ -1,3 +1,7 @@
+## 0.10.1+1
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 0.10.1
 
 * Uses `HtmlElementView.fromTagName` instead of custom factories.
