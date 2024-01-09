@@ -111,7 +111,10 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           ContextCompat.getMainExecutor(context));
     }
 
-    /** Cancels current {@code FocusMeteringAction} and clears auto focus/auto exposure/auto white balance regions. */
+    /**
+     * Cancels current {@code FocusMeteringAction} and clears auto focus/auto exposure/auto white
+     * balance regions.
+     */
     public void cancelFocusAndMetering(
         @NonNull CameraControl cameraControl, @NonNull Result<Void> result) {
       ListenableFuture<Void> cancelFocusAndMeteringFuture = cameraControl.cancelFocusAndMetering();
@@ -131,12 +134,12 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
     }
 
     /**
-     * Sets the exposure compensation index for the specified {@link CameraControl} instance and returns
-     * the new target exposure value.
+     * Sets the exposure compensation index for the specified {@link CameraControl} instance and
+     * returns the new target exposure value.
      *
-     * <p>The exposure compensation value set on the camera must be within the range of
-     * {@code ExposureState#getExposureCompensationRange()} for the current {@code ExposureState}
-     * for the call to succeed.
+     * <p>The exposure compensation value set on the camera must be within the range of {@code
+     * ExposureState#getExposureCompensationRange()} for the current {@code ExposureState} for the
+     * call to succeed.
      */
     public void setExposureCompensationIndex(
         @NonNull CameraControl cameraControl, @NonNull Long index, @NonNull Result<Long> result) {

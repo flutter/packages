@@ -64,7 +64,8 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
 
     @VisibleForTesting
     @NonNull
-    public FocusMeteringAction.Builder getFocusMeteringActionBuilder(MeteringPoint meteringPoint) {
+    public FocusMeteringAction.Builder getFocusMeteringActionBuilder(
+        @NonNull MeteringPoint meteringPoint) {
       return new FocusMeteringAction.Builder(meteringPoint);
     }
 
