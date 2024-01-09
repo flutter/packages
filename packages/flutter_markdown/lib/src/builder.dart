@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore: unnecessary_import (see https://github.com/flutter/flutter/pull/138881)
+// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -501,13 +501,10 @@ class MarkdownBuilder implements md.NodeVisitor {
           switch (alignAttribute) {
             case 'left':
               align = TextAlign.left;
-              break;
             case 'center':
               align = TextAlign.center;
-              break;
             case 'right':
               align = TextAlign.right;
-              break;
           }
         }
         final Widget child = _buildTableCell(

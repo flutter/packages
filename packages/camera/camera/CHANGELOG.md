@@ -1,6 +1,19 @@
-## NEXT
+## 0.10.5+9
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 0.10.5+8
+
+* Fixes new lint warnings.
+
+## 0.10.5+7
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.10.5+6
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Drop unused dependency on `package:quiver`.
 
 ## 0.10.5+5
 

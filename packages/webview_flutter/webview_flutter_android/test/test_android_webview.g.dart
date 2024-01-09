@@ -1912,3 +1912,104 @@ abstract class TestGeolocationPermissionsCallbackHostApi {
     }
   }
 }
+
+/// Host API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+abstract class TestHttpAuthHandlerHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `HttpAuthHandler.useHttpAuthUsernamePassword`.
+  bool useHttpAuthUsernamePassword(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.cancel`.
+  void cancel(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.proceed`.
+  void proceed(int instanceId, String username, String password);
+
+  static void setup(TestHttpAuthHandlerHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.useHttpAuthUsernamePassword',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.useHttpAuthUsernamePassword was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.useHttpAuthUsernamePassword was null, expected non-null int.');
+          final bool output = api.useHttpAuthUsernamePassword(arg_instanceId!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.cancel',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.cancel was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.cancel was null, expected non-null int.');
+          api.cancel(arg_instanceId!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.proceed',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.proceed was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.proceed was null, expected non-null int.');
+          final String? arg_username = (args[1] as String?);
+          assert(arg_username != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.proceed was null, expected non-null String.');
+          final String? arg_password = (args[2] as String?);
+          assert(arg_password != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.proceed was null, expected non-null String.');
+          api.proceed(arg_instanceId!, arg_username!, arg_password!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}

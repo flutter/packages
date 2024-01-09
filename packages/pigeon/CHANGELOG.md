@@ -1,6 +1,29 @@
-## NEXT
+## 16.0.0
+
+* [java] Adds `VoidResult` type for `Void` returns.
+* **Breaking Change** [java] Updates all `Void` return types to use new `VoidResult`.
+
+## 15.0.3
+
+* Fixes new lint warnings.
+
+## 15.0.2
+
+* Prevents optional and non-positional parameters in Flutter APIs.
+* [dart] Fixes named parameters in test output of host API methods.
+
+## 15.0.1
+
+* [java] Adds @CanIgnoreReturnValue annotation to class builder.
+
+## 15.0.0
+
+* **Breaking Change** [kotlin] Updates Flutter API to use new errorClassName.
+
+## 14.0.1
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates issue_tracker link.
 
 ## 14.0.0
 

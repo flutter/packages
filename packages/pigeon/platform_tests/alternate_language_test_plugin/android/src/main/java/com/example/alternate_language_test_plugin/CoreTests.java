@@ -7,6 +7,9 @@
 
 package com.example.alternate_language_test_plugin;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.CLASS;
+
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +18,8 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +69,10 @@ public class CoreTests {
     return new FlutterError(
         "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
+
+  @Target(METHOD)
+  @Retention(CLASS)
+  @interface CanIgnoreReturnValue {}
 
   public enum AnEnum {
     ONE(0),
@@ -259,6 +268,7 @@ public class CoreTests {
 
       private @Nullable Boolean aBool;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setABool(@NonNull Boolean setterArg) {
         this.aBool = setterArg;
         return this;
@@ -266,6 +276,7 @@ public class CoreTests {
 
       private @Nullable Long anInt;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAnInt(@NonNull Long setterArg) {
         this.anInt = setterArg;
         return this;
@@ -273,6 +284,7 @@ public class CoreTests {
 
       private @Nullable Long anInt64;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAnInt64(@NonNull Long setterArg) {
         this.anInt64 = setterArg;
         return this;
@@ -280,6 +292,7 @@ public class CoreTests {
 
       private @Nullable Double aDouble;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setADouble(@NonNull Double setterArg) {
         this.aDouble = setterArg;
         return this;
@@ -287,6 +300,7 @@ public class CoreTests {
 
       private @Nullable byte[] aByteArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAByteArray(@NonNull byte[] setterArg) {
         this.aByteArray = setterArg;
         return this;
@@ -294,6 +308,7 @@ public class CoreTests {
 
       private @Nullable int[] a4ByteArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setA4ByteArray(@NonNull int[] setterArg) {
         this.a4ByteArray = setterArg;
         return this;
@@ -301,6 +316,7 @@ public class CoreTests {
 
       private @Nullable long[] a8ByteArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setA8ByteArray(@NonNull long[] setterArg) {
         this.a8ByteArray = setterArg;
         return this;
@@ -308,6 +324,7 @@ public class CoreTests {
 
       private @Nullable double[] aFloatArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAFloatArray(@NonNull double[] setterArg) {
         this.aFloatArray = setterArg;
         return this;
@@ -315,6 +332,7 @@ public class CoreTests {
 
       private @Nullable List<Object> aList;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAList(@NonNull List<Object> setterArg) {
         this.aList = setterArg;
         return this;
@@ -322,6 +340,7 @@ public class CoreTests {
 
       private @Nullable Map<Object, Object> aMap;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAMap(@NonNull Map<Object, Object> setterArg) {
         this.aMap = setterArg;
         return this;
@@ -329,6 +348,7 @@ public class CoreTests {
 
       private @Nullable AnEnum anEnum;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAnEnum(@NonNull AnEnum setterArg) {
         this.anEnum = setterArg;
         return this;
@@ -336,6 +356,7 @@ public class CoreTests {
 
       private @Nullable String aString;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAString(@NonNull String setterArg) {
         this.aString = setterArg;
         return this;
@@ -343,6 +364,7 @@ public class CoreTests {
 
       private @Nullable Object anObject;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAnObject(@NonNull Object setterArg) {
         this.anObject = setterArg;
         return this;
@@ -592,6 +614,7 @@ public class CoreTests {
 
       private @Nullable Boolean aNullableBool;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableBool(@Nullable Boolean setterArg) {
         this.aNullableBool = setterArg;
         return this;
@@ -599,6 +622,7 @@ public class CoreTests {
 
       private @Nullable Long aNullableInt;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableInt(@Nullable Long setterArg) {
         this.aNullableInt = setterArg;
         return this;
@@ -606,6 +630,7 @@ public class CoreTests {
 
       private @Nullable Long aNullableInt64;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableInt64(@Nullable Long setterArg) {
         this.aNullableInt64 = setterArg;
         return this;
@@ -613,6 +638,7 @@ public class CoreTests {
 
       private @Nullable Double aNullableDouble;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableDouble(@Nullable Double setterArg) {
         this.aNullableDouble = setterArg;
         return this;
@@ -620,6 +646,7 @@ public class CoreTests {
 
       private @Nullable byte[] aNullableByteArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableByteArray(@Nullable byte[] setterArg) {
         this.aNullableByteArray = setterArg;
         return this;
@@ -627,6 +654,7 @@ public class CoreTests {
 
       private @Nullable int[] aNullable4ByteArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullable4ByteArray(@Nullable int[] setterArg) {
         this.aNullable4ByteArray = setterArg;
         return this;
@@ -634,6 +662,7 @@ public class CoreTests {
 
       private @Nullable long[] aNullable8ByteArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullable8ByteArray(@Nullable long[] setterArg) {
         this.aNullable8ByteArray = setterArg;
         return this;
@@ -641,6 +670,7 @@ public class CoreTests {
 
       private @Nullable double[] aNullableFloatArray;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableFloatArray(@Nullable double[] setterArg) {
         this.aNullableFloatArray = setterArg;
         return this;
@@ -648,6 +678,7 @@ public class CoreTests {
 
       private @Nullable List<Object> aNullableList;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableList(@Nullable List<Object> setterArg) {
         this.aNullableList = setterArg;
         return this;
@@ -655,6 +686,7 @@ public class CoreTests {
 
       private @Nullable Map<Object, Object> aNullableMap;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableMap(@Nullable Map<Object, Object> setterArg) {
         this.aNullableMap = setterArg;
         return this;
@@ -662,6 +694,7 @@ public class CoreTests {
 
       private @Nullable List<List<Boolean>> nullableNestedList;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setNullableNestedList(@Nullable List<List<Boolean>> setterArg) {
         this.nullableNestedList = setterArg;
         return this;
@@ -669,6 +702,7 @@ public class CoreTests {
 
       private @Nullable Map<String, String> nullableMapWithAnnotations;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setNullableMapWithAnnotations(
           @Nullable Map<String, String> setterArg) {
         this.nullableMapWithAnnotations = setterArg;
@@ -677,6 +711,7 @@ public class CoreTests {
 
       private @Nullable Map<String, Object> nullableMapWithObject;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setNullableMapWithObject(@Nullable Map<String, Object> setterArg) {
         this.nullableMapWithObject = setterArg;
         return this;
@@ -684,6 +719,7 @@ public class CoreTests {
 
       private @Nullable AnEnum aNullableEnum;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableEnum(@Nullable AnEnum setterArg) {
         this.aNullableEnum = setterArg;
         return this;
@@ -691,6 +727,7 @@ public class CoreTests {
 
       private @Nullable String aNullableString;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableString(@Nullable String setterArg) {
         this.aNullableString = setterArg;
         return this;
@@ -698,6 +735,7 @@ public class CoreTests {
 
       private @Nullable Object aNullableObject;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setANullableObject(@Nullable Object setterArg) {
         this.aNullableObject = setterArg;
         return this;
@@ -834,6 +872,7 @@ public class CoreTests {
 
       private @Nullable AllNullableTypes allNullableTypes;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAllNullableTypes(@NonNull AllNullableTypes setterArg) {
         this.allNullableTypes = setterArg;
         return this;
@@ -841,6 +880,7 @@ public class CoreTests {
 
       private @Nullable AllTypes allTypes;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setAllTypes(@Nullable AllTypes setterArg) {
         this.allTypes = setterArg;
         return this;
@@ -896,6 +936,7 @@ public class CoreTests {
 
       private @Nullable List<Object> testList;
 
+      @CanIgnoreReturnValue
       public @NonNull Builder setTestList(@Nullable List<Object> setterArg) {
         this.testList = setterArg;
         return this;
@@ -935,6 +976,14 @@ public class CoreTests {
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
     void success(@Nullable T result);
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
+  /** Asynchronous error handling return type for void API method returns. */
+  public interface VoidResult {
+    /** Success case callback method for handling returns. */
+    void success();
 
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
@@ -1098,7 +1147,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    void noopAsync(@NonNull Result<Void> result);
+    void noopAsync(@NonNull VoidResult result);
     /** Returns passed in int asynchronously. */
     void echoAsyncInt(@NonNull Long anInt, @NonNull Result<Long> result);
     /** Returns passed in double asynchronously. */
@@ -1121,7 +1170,7 @@ public class CoreTests {
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(@NonNull NullableResult<Object> result);
     /** Responds with an error from an async void function. */
-    void throwAsyncErrorFromVoid(@NonNull Result<Void> result);
+    void throwAsyncErrorFromVoid(@NonNull VoidResult result);
     /** Responds with a Flutter error from an async function returning a value. */
     void throwAsyncFlutterError(@NonNull NullableResult<Object> result);
     /** Returns the passed object, to test async serialization and deserialization. */
@@ -1151,11 +1200,11 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
 
-    void callFlutterNoop(@NonNull Result<Void> result);
+    void callFlutterNoop(@NonNull VoidResult result);
 
     void callFlutterThrowError(@NonNull NullableResult<Object> result);
 
-    void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result);
+    void callFlutterThrowErrorFromVoid(@NonNull VoidResult result);
 
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
 
@@ -2056,9 +2105,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2393,9 +2442,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2793,9 +2842,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2851,9 +2900,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -3533,7 +3582,7 @@ public class CoreTests {
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic calling.
      */
-    public void noop(@NonNull Result<Void> result) {
+    public void noop(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop";
       BasicMessageChannel<Object> channel =
@@ -3550,7 +3599,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -3585,7 +3634,7 @@ public class CoreTests {
           });
     }
     /** Responds with an error from an async void function. */
-    public void throwErrorFromVoid(@NonNull Result<Void> result) {
+    public void throwErrorFromVoid(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid";
       BasicMessageChannel<Object> channel =
@@ -3602,7 +3651,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -4210,7 +4259,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    public void noopAsync(@NonNull Result<Void> result) {
+    public void noopAsync(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync";
       BasicMessageChannel<Object> channel =
@@ -4227,7 +4276,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -4317,7 +4366,7 @@ public class CoreTests {
 
     void echo(@NonNull String aString, @NonNull Result<String> result);
 
-    void voidVoid(@NonNull Result<Void> result);
+    void voidVoid(@NonNull VoidResult result);
 
     /** The codec used by HostSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -4366,9 +4415,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
