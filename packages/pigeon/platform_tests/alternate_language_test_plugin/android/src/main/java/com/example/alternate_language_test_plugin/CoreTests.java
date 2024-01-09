@@ -980,6 +980,14 @@ public class CoreTests {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+  /** Asynchronous error handling return type for void API method returns. */
+  public interface VoidResult {
+    /** Success case callback method for handling returns. */
+    void success();
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
 
   private static class HostIntegrationCoreApiCodec extends StandardMessageCodec {
     public static final HostIntegrationCoreApiCodec INSTANCE = new HostIntegrationCoreApiCodec();
@@ -1139,7 +1147,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    void noopAsync(@NonNull Result<Void> result);
+    void noopAsync(@NonNull VoidResult result);
     /** Returns passed in int asynchronously. */
     void echoAsyncInt(@NonNull Long anInt, @NonNull Result<Long> result);
     /** Returns passed in double asynchronously. */
@@ -1162,7 +1170,7 @@ public class CoreTests {
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(@NonNull NullableResult<Object> result);
     /** Responds with an error from an async void function. */
-    void throwAsyncErrorFromVoid(@NonNull Result<Void> result);
+    void throwAsyncErrorFromVoid(@NonNull VoidResult result);
     /** Responds with a Flutter error from an async function returning a value. */
     void throwAsyncFlutterError(@NonNull NullableResult<Object> result);
     /** Returns the passed object, to test async serialization and deserialization. */
@@ -1192,11 +1200,11 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
 
-    void callFlutterNoop(@NonNull Result<Void> result);
+    void callFlutterNoop(@NonNull VoidResult result);
 
     void callFlutterThrowError(@NonNull NullableResult<Object> result);
 
-    void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result);
+    void callFlutterThrowErrorFromVoid(@NonNull VoidResult result);
 
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
 
@@ -2097,9 +2105,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2434,9 +2442,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2834,9 +2842,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2892,9 +2900,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -3574,7 +3582,7 @@ public class CoreTests {
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic calling.
      */
-    public void noop(@NonNull Result<Void> result) {
+    public void noop(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop";
       BasicMessageChannel<Object> channel =
@@ -3591,7 +3599,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -3626,7 +3634,7 @@ public class CoreTests {
           });
     }
     /** Responds with an error from an async void function. */
-    public void throwErrorFromVoid(@NonNull Result<Void> result) {
+    public void throwErrorFromVoid(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid";
       BasicMessageChannel<Object> channel =
@@ -3643,7 +3651,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -4251,7 +4259,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    public void noopAsync(@NonNull Result<Void> result) {
+    public void noopAsync(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync";
       BasicMessageChannel<Object> channel =
@@ -4268,7 +4276,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -4358,7 +4366,7 @@ public class CoreTests {
 
     void echo(@NonNull String aString, @NonNull Result<String> result);
 
-    void voidVoid(@NonNull Result<Void> result);
+    void voidVoid(@NonNull VoidResult result);
 
     /** The codec used by HostSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -4407,9 +4415,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }

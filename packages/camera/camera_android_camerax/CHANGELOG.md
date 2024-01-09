@@ -1,3 +1,7 @@
+## 0.5.0+26
+
+* Fixes new lint warnings.
+
 ## 0.5.0+25
 
 * Implements `lockCaptureOrientation` and `unlockCaptureOrientation`.
