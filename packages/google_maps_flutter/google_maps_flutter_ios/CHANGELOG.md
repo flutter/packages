@@ -1,6 +1,10 @@
-## 2.3.5
+## 2.3.6
 
 * Fix of takeSnapShot function (for IOS 17, a blank image is no longer being returned).
+
+## 2.3.5
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
 
 ## 2.3.4
 

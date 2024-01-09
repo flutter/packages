@@ -1,3 +1,7 @@
+## 4.4.4
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 4.4.3
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
