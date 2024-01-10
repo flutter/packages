@@ -86,7 +86,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthCache({String? token}) async {
+  Future<void> clearAuthCache({required String token}) async {
     // There's nothing to be done here on iOS since the expired/invalid
     // tokens are refreshed automatically by getTokens.
   }

@@ -49,21 +49,24 @@ void main() {
     });
 
     testWidgets('Builds ShellRoute', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          GlobalKey<NavigatorState>();
       final RouteConfiguration config = createRouteConfiguration(
         routes: <RouteBase>[
           ShellRoute(
-              builder:
-                  (BuildContext context, GoRouterState state, Widget child) {
-                return _DetailsScreen();
-              },
-              routes: <GoRoute>[
-                GoRoute(
-                  path: '/',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return _DetailsScreen();
-                  },
-                ),
-              ]),
+            navigatorKey: shellNavigatorKey,
+            builder: (BuildContext context, GoRouterState state, Widget child) {
+              return _DetailsScreen();
+            },
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, GoRouterState state) {
+                  return _DetailsScreen();
+                },
+              ),
+            ],
+          ),
         ],
         redirectLimit: 10,
         topRedirect: (BuildContext context, GoRouterState state) {
@@ -73,9 +76,20 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-        matches: <RouteMatch>[
-          createRouteMatch(config.routes.first, '/'),
-          createRouteMatch(config.routes.first.routes.first, '/'),
+        matches: <RouteMatchBase>[
+          ShellRouteMatch(
+            route: config.routes.first as ShellRouteBase,
+            matchedLocation: '',
+            pageKey: const ValueKey<String>(''),
+            navigatorKey: shellNavigatorKey,
+            matches: <RouteMatchBase>[
+              RouteMatch(
+                route: config.routes.first.routes.first as GoRoute,
+                matchedLocation: '/',
+                pageKey: const ValueKey<String>('/'),
+              ),
+            ],
+          ),
         ],
         uri: Uri.parse('/'),
         pathParameters: const <String, String>{},
@@ -164,17 +178,19 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-          matches: <RouteMatch>[
-            RouteMatch(
-              route: config.routes.first,
-              matchedLocation: '',
-              pageKey: const ValueKey<String>(''),
-            ),
-            RouteMatch(
-              route: config.routes.first.routes.first,
-              matchedLocation: '/details',
-              pageKey: const ValueKey<String>('/details'),
-            ),
+          matches: <RouteMatchBase>[
+            ShellRouteMatch(
+                route: config.routes.first as ShellRouteBase,
+                matchedLocation: '',
+                pageKey: const ValueKey<String>(''),
+                navigatorKey: shellNavigatorKey,
+                matches: <RouteMatchBase>[
+                  RouteMatch(
+                    route: config.routes.first.routes.first as GoRoute,
+                    matchedLocation: '/details',
+                    pageKey: const ValueKey<String>('/details'),
+                  ),
+                ]),
           ],
           uri: Uri.parse('/details'),
           pathParameters: const <String, String>{});
@@ -290,9 +306,20 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-        matches: <RouteMatch>[
-          createRouteMatch(config.routes.first, ''),
-          createRouteMatch(config.routes.first.routes.first, '/a'),
+        matches: <RouteMatchBase>[
+          ShellRouteMatch(
+            route: config.routes.first as ShellRouteBase,
+            matchedLocation: '',
+            pageKey: const ValueKey<String>(''),
+            navigatorKey: shellNavigatorKey,
+            matches: <RouteMatchBase>[
+              RouteMatch(
+                route: config.routes.first.routes.first as GoRoute,
+                matchedLocation: '/a',
+                pageKey: const ValueKey<String>('/a'),
+              ),
+            ],
+          ),
         ],
         uri: Uri.parse('/b'),
         pathParameters: const <String, String>{},
@@ -430,8 +457,7 @@ class _BuilderTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: builder.tryBuild(context, matches, false,
-          routeConfiguration.navigatorKey, <Page<Object?>, GoRouterState>{}),
+      home: builder.build(context, matches, false),
     );
   }
 }

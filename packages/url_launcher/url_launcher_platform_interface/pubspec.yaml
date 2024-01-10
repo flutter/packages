@@ -4,7 +4,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/url_launcher/
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+url_launcher%22
 # NOTE: We strongly prefer non-breaking changes, even at the expense of a
 # less-clean API. See https://flutter.dev/go/platform-interface-breaking-changes
-version: 2.2.0
+version: 2.3.1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -13,12 +13,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.1.0
+  plugin_platform_interface: ^2.1.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 5.4.3
+  mockito: 5.4.4
 
 topics:
   - links

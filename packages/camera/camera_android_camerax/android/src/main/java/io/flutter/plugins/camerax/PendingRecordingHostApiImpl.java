@@ -75,7 +75,14 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
     if (event instanceof VideoRecordEvent.Finalize) {
       VideoRecordEvent.Finalize castedEvent = (VideoRecordEvent.Finalize) event;
       if (castedEvent.hasError()) {
-        systemServicesFlutterApi.sendCameraError(castedEvent.getCause().toString(), reply -> {});
+        String cameraErrorMessage;
+        if (castedEvent.getCause() != null) {
+          cameraErrorMessage = castedEvent.getCause().toString();
+        } else {
+          cameraErrorMessage =
+              "Error code " + castedEvent.getError() + ": An error occurred while recording video.";
+        }
+        systemServicesFlutterApi.sendCameraError(cameraErrorMessage, reply -> {});
       }
     }
   }

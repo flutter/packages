@@ -4,7 +4,7 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:io' show File, Directory;
+import 'dart:io' show Directory, File;
 
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
