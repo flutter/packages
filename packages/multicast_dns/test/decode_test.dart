@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:multicast_dns/src/packet.dart';
@@ -43,7 +44,7 @@ void testValidPackages() {
       TxtResourceRecord(
         'raspberrypi [b8:27:eb:03:92:4b]._workstation._tcp.local',
         result[0].validUntil,
-        text: '',
+        attrs: const <String>[],
       ),
       PtrResourceRecord(
         '_udisks-ssh._tcp.local',
@@ -61,7 +62,7 @@ void testValidPackages() {
       TxtResourceRecord(
         'raspberrypi._udisks-ssh._tcp.local',
         result[3].validUntil,
-        text: '',
+        attrs: const <String>[],
       ),
       PtrResourceRecord('_services._dns-sd._udp.local', result[4].validUntil,
           domainName: '_udisks-ssh._tcp.local'),
@@ -96,7 +97,7 @@ void testValidPackages() {
       TxtResourceRecord(
         'fletch-agent on raspberrypi._fletch_agent._tcp.local',
         result[1].validUntil,
-        text: '',
+        attrs: const <String>[],
       ),
       SrvResourceRecord(
         'fletch-agent on raspberrypi._fletch_agent._tcp.local',
@@ -160,7 +161,7 @@ void testValidPackages() {
       TxtResourceRecord(
         '______________________.____________.____._____',
         result[1].validUntil,
-        text: 'model=MacBookPro14,3\nosxvers=18\necolor=225,225,223\n',
+        attrs: const <String>['model=MacBookPro14,3', 'osxvers=18', 'ecolor=225,225,223'],
       ),
     ]);
   });
@@ -178,7 +179,25 @@ void testValidPackages() {
       TxtResourceRecord(
         '______________________.____________.____._____',
         result[1].validUntil,
-        text: '${')' * 129}\n',
+        attrs: <String>[')' * 129],
+      ),
+    ]);
+  });
+
+  test('Can decode packages with binary-encoded values', () {
+    final List<ResourceRecord> result = decodeMDnsResponse(packetWithBinaryEncodedValues)!;
+    expect(result, isNotNull);
+    expect(result.length, 2);
+    expect(result, <ResourceRecord>[
+      PtrResourceRecord(
+        '_______________.____._____',
+        result[0].validUntil,
+        domainName: '______________________._______________.____._____',
+      ),
+      TxtResourceRecord(
+        '______________________.____________.____._____',
+        result[1].validUntil,
+        attrs: <String>[utf8.decode(<int>[for (int i = 0; i < 129; i++) i], allowMalformed: true)],
       ),
     ]);
   });
@@ -1346,6 +1365,138 @@ const List<int> packetWithLongTxt = <int>[
   41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, //
   41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, // 128,
   41, // 129
+];
+
+// This is the same as packetWithLongTxt, but the text
+// resource has binary-encoded data including newline '\n' and '=' characters
+// to verify it can be parsed
+List<int> packetWithBinaryEncodedValues = <int>[
+  0,
+  0,
+  132,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  1,
+  15,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  4,
+  95,
+  95,
+  95,
+  95,
+  5,
+  95,
+  95,
+  95,
+  95,
+  95,
+  0,
+  0,
+  12,
+  0,
+  1,
+  0,
+  0,
+  17,
+  148,
+  0,
+  25,
+  22,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  192,
+  12,
+  22,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  12,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  95,
+  192,
+  28,
+  0,
+  16,
+  0,
+  1,
+  0,
+  0,
+  17,
+  148,
+  0,
+  51,
+  // Long string starts here.
+  129,
+  for (int i = 0; i < 129; i++) i,
 ];
 
 // Package with a domain name that is not valid utf-8.

@@ -329,9 +329,8 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
       case ResourceRecordType.text:
         checkLength(offset + readDataLength);
         // The first byte of the buffer is the length of the first string of
-        // the TXT record. Further length-prefixed strings may follow. We
-        // concatenate them with newlines.
-        final StringBuffer strings = StringBuffer();
+        // the TXT record. Further length-prefixed strings may follow.
+        final List<String> attrs = <String>[];
         int index = 0;
         while (index < readDataLength) {
           final int txtLength = data[offset + index];
@@ -343,11 +342,11 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
             Uint8List.view(data.buffer, offset + index, txtLength),
             allowMalformed: true,
           );
-          strings.writeln(text);
+          attrs.add(text);
           index += txtLength;
         }
         offset += readDataLength;
-        return TxtResourceRecord(fqdn, validUntil, text: strings.toString());
+        return TxtResourceRecord(fqdn, validUntil, attrs: attrs);
       default:
         checkLength(offset + readDataLength);
         offset += readDataLength;
