@@ -40,11 +40,12 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Markdown Demos'),
       ),
       body: SafeArea(
-        child: Container(
+        child: ColoredBox(
           color: Colors.black12,
           child: ListView(
             children: <Widget>[
-              for (MarkdownDemoWidget demo in _demos) DemoCard(widget: demo),
+              for (final MarkdownDemoWidget demo in _demos)
+                DemoCard(widget: demo),
             ],
           ),
         ),

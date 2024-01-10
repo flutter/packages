@@ -1,5 +1,17 @@
-## NEXT
+## 2.1.2
 
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.1.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.1.0
+
+* Adds getApplicationCachePath() for storing app-specific cache files.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.0.6

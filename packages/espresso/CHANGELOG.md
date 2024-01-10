@@ -1,3 +1,29 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.3.0+6
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.0+5
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Bumps okhttp version to 4.11.0.
+
+## 0.3.0+4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.3.0+3
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 0.3.0+2
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 0.3.0+1
 
 * Sets an explicit Java compatibility version.

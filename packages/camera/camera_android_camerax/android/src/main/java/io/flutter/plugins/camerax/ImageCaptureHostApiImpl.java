@@ -5,12 +5,12 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageCaptureHostApi;
 import java.io.File;
@@ -28,7 +28,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   public static final String TEMPORARY_FILE_NAME = "CAP";
   public static final String JPG_FILE_TYPE = ".jpg";
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
 
   public ImageCaptureHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -43,7 +43,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
    * Sets the context that the {@link ImageCapture} will use to find a location to save a captured
    * image.
    */
-  public void setContext(Context context) {
+  public void setContext(@NonNull Context context) {
     this.context = context;
   }
 
@@ -54,18 +54,24 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   @Override
   public void create(
       @NonNull Long identifier,
+      @Nullable Long rotation,
       @Nullable Long flashMode,
-      @Nullable GeneratedCameraXLibrary.ResolutionInfo targetResolution) {
+      @Nullable Long resolutionSelectorId) {
     ImageCapture.Builder imageCaptureBuilder = cameraXProxy.createImageCaptureBuilder();
+
+    if (rotation != null) {
+      imageCaptureBuilder.setTargetRotation(rotation.intValue());
+    }
     if (flashMode != null) {
       // This sets the requested flash mode, but may fail silently.
       imageCaptureBuilder.setFlashMode(flashMode.intValue());
     }
-    if (targetResolution != null) {
-      imageCaptureBuilder.setTargetResolution(
-          new Size(
-              targetResolution.getWidth().intValue(), targetResolution.getHeight().intValue()));
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector =
+          Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
+      imageCaptureBuilder.setResolutionSelector(resolutionSelector);
     }
+
     ImageCapture imageCapture = imageCaptureBuilder.build();
     instanceManager.addDartCreatedInstance(imageCapture, identifier);
   }
@@ -73,8 +79,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   /** Sets the flash mode of the {@link ImageCapture} instance with the specified identifier. */
   @Override
   public void setFlashMode(@NonNull Long identifier, @NonNull Long flashMode) {
-    ImageCapture imageCapture =
-        (ImageCapture) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    ImageCapture imageCapture = getImageCaptureInstance(identifier);
     imageCapture.setFlashMode(flashMode.intValue());
   }
 
@@ -82,8 +87,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   @Override
   public void takePicture(
       @NonNull Long identifier, @NonNull GeneratedCameraXLibrary.Result<String> result) {
-    ImageCapture imageCapture =
-        (ImageCapture) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    ImageCapture imageCapture = getImageCaptureInstance(identifier);
     final File outputDir = context.getCacheDir();
     File temporaryCaptureFile;
     try {
@@ -104,7 +108,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
 
   /** Creates a callback used when saving a captured image. */
   @VisibleForTesting
-  public ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
+  public @NonNull ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
       @NonNull File file, @NonNull GeneratedCameraXLibrary.Result<String> result) {
     return new ImageCapture.OnImageSavedCallback() {
       @Override
@@ -117,5 +121,19 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
         result.error(exception);
       }
     };
+  }
+
+  /** Dynamically sets the target rotation of the {@link ImageCapture}. */
+  @Override
+  public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
+    ImageCapture imageCapture = getImageCaptureInstance(identifier);
+    imageCapture.setTargetRotation(rotation.intValue());
+  }
+
+  /**
+   * Retrieves the {@link ImageCapture} instance associated with the specified {@code identifier}.
+   */
+  private ImageCapture getImageCaptureInstance(@NonNull Long identifier) {
+    return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }

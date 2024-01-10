@@ -1,3 +1,38 @@
+## 1.0.10
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 1.0.9
+
+* Changes method channels to pigeon.
+
+## 1.0.8
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.7
+
+* Adjusts SDK checks for better testability.
+
+## 1.0.6
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 1.0.5
+
+* Fixes Java warnings.
+
+## 1.0.4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 1.0.3
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 1.0.2
 
 * Clarifies explanation of endorsement in README.

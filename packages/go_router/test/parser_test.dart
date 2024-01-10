@@ -5,16 +5,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
-import 'package:go_router/src/parser.dart';
 
-RouteInformation createRouteInformation(String location, [Object? state]) {
-  // TODO(chunhtai): remove this ignore and migrate the code
-  // https://github.com/flutter/flutter/issues/124045.
-  // ignore: deprecated_member_use
-  return RouteInformation(location: location, state: state);
+import 'test_helpers.dart';
+
+RouteInformation createRouteInformation(String location, [Object? extra]) {
+  return RouteInformation(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
+      location: location,
+      state:
+          RouteInformationState<void>(type: NavigatingType.go, extra: extra));
 }
 
 void main() {
@@ -61,11 +62,11 @@ void main() {
     RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/'), context);
-    List<RouteMatch> matches = matchesObj.matches;
+    List<RouteMatchBase> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matchesObj.uri.toString(), '/');
-    expect(matches[0].extra, isNull);
-    expect(matches[0].subloc, '/');
+    expect(matchesObj.extra, isNull);
+    expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);
 
     final Object extra = Object();
@@ -74,13 +75,59 @@ void main() {
     matches = matchesObj.matches;
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/abc?def=ghi');
-    expect(matches[0].extra, extra);
-    expect(matches[0].subloc, '/');
+    expect(matchesObj.extra, extra);
+    expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);
 
-    expect(matches[1].extra, extra);
-    expect(matches[1].subloc, '/abc');
+    expect(matches[1].matchedLocation, '/abc');
     expect(matches[1].route, routes[0].routes[0]);
+  });
+
+  testWidgets(
+      'GoRouteInformationParser can restore full route matches if optionURLReflectsImperativeAPIs is true',
+      (WidgetTester tester) async {
+    final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+    GoRouter.optionURLReflectsImperativeAPIs = true;
+    final GoRouter router =
+        await createRouter(routes, tester, navigatorKey: navKey);
+
+    // Generate RouteMatchList with imperative route match
+    router.go('/abc');
+    await tester.pumpAndSettle();
+    router.push('/');
+    await tester.pumpAndSettle();
+    final RouteMatchList matchList = router.routerDelegate.currentConfiguration;
+    expect(matchList.uri.toString(), '/abc');
+    expect(matchList.matches.length, 3);
+
+    final RouteInformation restoredRouteInformation =
+        router.routeInformationParser.restoreRouteInformation(matchList)!;
+    // URL reflects the latest push.
+    // TODO(chunhtai): remove this ignore and migrate the code
+    // https://github.com/flutter/flutter/issues/124045.
+    // ignore: deprecated_member_use
+    expect(restoredRouteInformation.location, '/');
+
+    // Can restore back to original RouteMatchList.
+    final RouteMatchList parsedRouteMatch = await router.routeInformationParser
+        .parseRouteInformationWithDependencies(
+            restoredRouteInformation, navKey.currentContext!);
+    expect(parsedRouteMatch.uri.toString(), '/abc');
+    expect(parsedRouteMatch.matches.length, 3);
+
+    GoRouter.optionURLReflectsImperativeAPIs = false;
   });
 
   test('GoRouteInformationParser can retrieve route by name', () async {
@@ -108,7 +155,7 @@ void main() {
       ),
     ];
 
-    final RouteConfiguration configuration = RouteConfiguration(
+    final RouteConfiguration configuration = createRouteConfiguration(
       routes: routes,
       redirectLimit: 100,
       topRedirect: (_, __) => null,
@@ -116,21 +163,18 @@ void main() {
     );
 
     expect(configuration.namedLocation('lowercase'), '/abc');
-    expect(configuration.namedLocation('LOWERCASE'), '/abc');
     expect(configuration.namedLocation('camelCase'), '/efg');
-    expect(configuration.namedLocation('camelcase'), '/efg');
     expect(configuration.namedLocation('snake_case'), '/hij');
-    expect(configuration.namedLocation('SNAKE_CASE'), '/hij');
 
     // With query parameters
     expect(configuration.namedLocation('lowercase'), '/abc');
     expect(
         configuration.namedLocation('lowercase',
-            queryParams: const <String, String>{'q': '1'}),
+            queryParameters: const <String, String>{'q': '1'}),
         '/abc?q=1');
     expect(
         configuration.namedLocation('lowercase',
-            queryParams: const <String, String>{'q': '1', 'g': '2'}),
+            queryParameters: const <String, String>{'q': '1', 'g': '2'}),
         '/abc?q=1&g=2');
   });
 
@@ -151,7 +195,7 @@ void main() {
       ),
     ];
 
-    final RouteConfiguration configuration = RouteConfiguration(
+    final RouteConfiguration configuration = createRouteConfiguration(
       routes: routes,
       redirectLimit: 100,
       topRedirect: (_, __) => null,
@@ -160,7 +204,7 @@ void main() {
 
     expect(
       configuration
-          .namedLocation('routeName', queryParams: const <String, dynamic>{
+          .namedLocation('routeName', queryParameters: const <String, dynamic>{
         'q1': 'v1',
         'q2': <String>['v2', 'v3'],
       }),
@@ -194,13 +238,12 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/def'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
-    expect(matches.length, 1);
+    final List<RouteMatchBase> matches = matchesObj.matches;
+    expect(matches.length, 0);
     expect(matchesObj.uri.toString(), '/def');
-    expect(matches[0].extra, isNull);
-    expect(matches[0].subloc, '/def');
-    expect(matches[0].error!.toString(),
-        'Exception: no routes for location: /def');
+    expect(matchesObj.extra, isNull);
+    expect(matchesObj.error!.toString(),
+        'GoException: no routes for location: /def');
   });
 
   testWidgets(
@@ -224,7 +267,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (_, GoRouterState state) {
-        lastRedirectLocation = state.location;
+        lastRedirectLocation = state.uri.toString();
         return null;
       },
     );
@@ -260,18 +303,17 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/123/family/456'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/123/family/456');
     expect(matchesObj.pathParameters.length, 2);
     expect(matchesObj.pathParameters['uid'], '123');
     expect(matchesObj.pathParameters['fid'], '456');
-    expect(matches[0].extra, isNull);
-    expect(matches[0].subloc, '/');
+    expect(matchesObj.extra, isNull);
+    expect(matches[0].matchedLocation, '/');
 
-    expect(matches[1].extra, isNull);
-    expect(matches[1].subloc, '/123/family/456');
+    expect(matches[1].matchedLocation, '/123/family/456');
   });
 
   testWidgets(
@@ -294,7 +336,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (BuildContext context, GoRouterState state) {
-        if (state.location != '/123/family/345') {
+        if (state.uri.toString() != '/123/family/345') {
           return '/123/family/345';
         }
         return null;
@@ -305,13 +347,13 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/random/uri'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/123/family/345');
-    expect(matches[0].subloc, '/');
+    expect(matches[0].matchedLocation, '/');
 
-    expect(matches[1].subloc, '/123/family/345');
+    expect(matches[1].matchedLocation, '/123/family/345');
   });
 
   testWidgets(
@@ -345,13 +387,13 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/redirect'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/123/family/345');
-    expect(matches[0].subloc, '/');
+    expect(matches[0].matchedLocation, '/');
 
-    expect(matches[1].subloc, '/123/family/345');
+    expect(matches[1].matchedLocation, '/123/family/345');
   });
 
   testWidgets(
@@ -384,7 +426,8 @@ void main() {
       GoRoute(
         path: '/abc',
         builder: (_, __) => const Placeholder(),
-        redirect: (BuildContext context, GoRouterState state) => state.location,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.uri.toString(),
       ),
     ];
     final GoRouteInformationParser parser = await createParser(
@@ -397,10 +440,10 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/abd'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
-    expect(matches, hasLength(1));
-    expect(matches.first.error, isNotNull);
+    expect(matches, hasLength(0));
+    expect(matchesObj.error, isNotNull);
   });
 
   testWidgets('Creates a match for ShellRoute', (WidgetTester tester) async {
@@ -441,9 +484,11 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/a'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
-    expect(matches, hasLength(2));
-    expect(matches.first.error, isNull);
+    expect(matches, hasLength(1));
+    final ShellRouteMatch match = matches.first as ShellRouteMatch;
+    expect(match.matches, hasLength(1));
+    expect(matchesObj.error, isNull);
   });
 }

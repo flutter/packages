@@ -22,7 +22,7 @@ public class JavaObjectHostApiImpl implements JavaObjectHostApi {
    *
    * @param instanceManager maintains instances stored to communicate with Dart objects
    */
-  public JavaObjectHostApiImpl(InstanceManager instanceManager) {
+  public JavaObjectHostApiImpl(@NonNull InstanceManager instanceManager) {
     this.instanceManager = instanceManager;
   }
 

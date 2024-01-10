@@ -22,12 +22,10 @@ class WebViewAndroidWidget extends StatefulWidget {
     required this.callbacksHandler,
     required this.javascriptChannelRegistry,
     required this.onBuildWidget,
+    @visibleForTesting this.webViewProxy = const WebViewProxy(),
     @visibleForTesting
-        this.webViewProxy = const WebViewProxy(),
-    @visibleForTesting
-        this.flutterAssetManager = const android_webview.FlutterAssetManager(),
-    @visibleForTesting
-        this.webStorage,
+    this.flutterAssetManager = const android_webview.FlutterAssetManager(),
+    @visibleForTesting this.webStorage,
   });
 
   /// Initial parameters used to setup the WebView.
@@ -89,12 +87,10 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     required CreationParams creationParams,
     required this.callbacksHandler,
     required this.javascriptChannelRegistry,
+    @visibleForTesting this.webViewProxy = const WebViewProxy(),
     @visibleForTesting
-        this.webViewProxy = const WebViewProxy(),
-    @visibleForTesting
-        this.flutterAssetManager = const android_webview.FlutterAssetManager(),
-    @visibleForTesting
-        android_webview.WebStorage? webStorage,
+    this.flutterAssetManager = const android_webview.FlutterAssetManager(),
+    @visibleForTesting android_webview.WebStorage? webStorage,
   })  : webStorage = webStorage ?? android_webview.WebStorage.instance,
         assert(creationParams.webSettings?.hasNavigationDelegate != null),
         super(callbacksHandler) {

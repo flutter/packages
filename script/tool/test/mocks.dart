@@ -79,6 +79,9 @@ class MockProcess extends Mock implements io.Process {
 
   @override
   IOSink get stdin => stdinMock;
+
+  @override
+  bool kill([io.ProcessSignal signal = io.ProcessSignal.sigterm]) => true;
 }
 
 class MockIOSink extends Mock implements IOSink {

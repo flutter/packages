@@ -508,9 +508,7 @@ void main() {
     expect(find.text('Item 4'), findsNothing);
     await tester.binding.setSurfaceSize(const Size(280, 100));
     // resets the screen to its original size after the test end
-    // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-    // ignore: deprecated_member_use
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpAndSettle();
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Item 1'), findsOneWidget);
@@ -572,9 +570,7 @@ void main() {
 
     await tester.binding.setSurfaceSize(const Size(560, 100));
     // resets the screen to its original size after the test end
-    // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-    // ignore: deprecated_member_use
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpAndSettle();
 
     expect(find.text('Item 0'), findsOneWidget);

@@ -47,7 +47,7 @@ void main() {
       api.canLaunch = true;
 
       expect(
-          plugin.launch(
+          await plugin.launch(
             'http://example.com/',
             useSafariVC: true,
             useWebView: false,
@@ -56,12 +56,29 @@ void main() {
             universalLinksOnly: false,
             headers: const <String, String>{},
           ),
-          completes);
+          true);
       expect(api.argument, 'http://example.com/');
     });
 
     test('handles failure', () async {
       api.canLaunch = false;
+
+      expect(
+          await plugin.launch(
+            'http://example.com/',
+            useSafariVC: true,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          false);
+      expect(api.argument, 'http://example.com/');
+    });
+
+    test('handles errors', () async {
+      api.throwError = true;
 
       await expectLater(
           plugin.launch(
@@ -77,17 +94,59 @@ void main() {
       expect(api.argument, 'http://example.com/');
     });
   });
+
+  group('supportsMode', () {
+    test('returns true for platformDefault', () async {
+      final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+      expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+          true);
+    });
+
+    test('returns true for external application', () async {
+      final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+      expect(
+          await launcher.supportsMode(PreferredLaunchMode.externalApplication),
+          true);
+    });
+
+    test('returns false for other modes', () async {
+      final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+      expect(
+          await launcher
+              .supportsMode(PreferredLaunchMode.externalNonBrowserApplication),
+          false);
+      expect(await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+          false);
+      expect(
+          await launcher.supportsMode(PreferredLaunchMode.inAppWebView), false);
+    });
+  });
+
+  test('supportsCloseForMode returns false', () async {
+    final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+    expect(
+        await launcher
+            .supportsCloseForMode(PreferredLaunchMode.platformDefault),
+        false);
+    expect(
+        await launcher
+            .supportsCloseForMode(PreferredLaunchMode.externalApplication),
+        false);
+  });
 }
 
 class _FakeUrlLauncherApi implements UrlLauncherApi {
   /// The argument that was passed to an API call.
   String? argument;
 
-  /// Controls the behavior of the fake implementations.
+  /// Controls the behavior of the fake canLaunch implementations.
   ///
   /// - [canLaunchUrl] returns this value.
-  /// - [launchUrl] throws if this is false.
+  /// - [launchUrl] returns this value if [throwError] is false.
   bool canLaunch = false;
+
+  /// Whether to throw a platform exception.
+  bool throwError = false;
 
   @override
   Future<bool> canLaunchUrl(String url) async {
@@ -96,10 +155,11 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   }
 
   @override
-  Future<void> launchUrl(String url) async {
+  Future<bool> launchUrl(String url) async {
     argument = url;
-    if (!canLaunch) {
+    if (throwError) {
       throw PlatformException(code: 'Failed');
     }
+    return canLaunch;
   }
 }

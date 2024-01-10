@@ -72,6 +72,28 @@ void defineTests() {
         'two',
       ]);
     });
+
+    testWidgets(
+      'leading spaces are ignored (non-paragraph test case)',
+      (WidgetTester tester) async {
+        const String data = '- one\n-  two\n-   three';
+        await tester.pumpWidget(
+          boilerplate(
+            const MarkdownBody(data: data),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        expectTextStrings(widgets, <String>[
+          '•',
+          'one',
+          '•',
+          'two',
+          '•',
+          'three',
+        ]);
+      },
+    );
   });
 
   group('Ordered List', () {
@@ -194,17 +216,16 @@ void defineTests() {
 
         await tester.pumpWidget(
           boilerplate(
-            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-            // ignore: prefer_const_constructors
-            Column(
-              children: const <Widget>[
+            const Column(
+              children: <Widget>[
                 MarkdownBody(fitContent: false, data: data),
               ],
             ),
           ),
         );
 
-        final double screenWidth = tester.allElements.first.size!.width;
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
         final double markdownBodyWidth =
             find.byType(MarkdownBody).evaluate().single.size!.width;
 
@@ -219,17 +240,16 @@ void defineTests() {
 
         await tester.pumpWidget(
           boilerplate(
-            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-            // ignore: prefer_const_constructors
-            Column(
-              children: const <Widget>[
+            const Column(
+              children: <Widget>[
                 MarkdownBody(data: data),
               ],
             ),
           ),
         );
 
-        final double screenWidth = tester.allElements.first.size!.width;
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
         final double markdownBodyWidth =
             find.byType(MarkdownBody).evaluate().single.size!.width;
 

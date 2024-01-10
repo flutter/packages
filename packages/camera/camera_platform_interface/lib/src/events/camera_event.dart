@@ -27,7 +27,7 @@ abstract class CameraEvent {
   /// Build a Camera Event, that relates a `cameraId`.
   ///
   /// The `cameraId` is the ID of the camera that triggered the event.
-  const CameraEvent(this.cameraId) : assert(cameraId != null);
+  const CameraEvent(this.cameraId);
 
   /// The ID of the Camera this event is associated to.
   final int cameraId;

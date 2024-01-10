@@ -1,0 +1,5 @@
+# TODO(stuartmorgan): Remove this once more of the files that macOS doesn't
+# use have been eliminated via test consolidation.
+*.gen.h
+*.gen.m
+!CoreTests.gen.*

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -1147,8 +1148,13 @@ void defineTests() {
         final Finder imageFinder = find.byType(Image);
         expect(imageFinder, findsOneWidget);
         final Image image = imageFinder.evaluate().first.widget as Image;
-        final FileImage fi = image.image as FileImage;
-        expect(fi.file.path, equals('uri3'));
+        if (kIsWeb) {
+          final NetworkImage fi = image.image as NetworkImage;
+          expect(fi.url.endsWith('uri3'), true);
+        } else {
+          final FileImage fi = image.image as FileImage;
+          expect(fi.file.path, equals('uri3'));
+        }
         expect(linkTapResults, isNull);
       },
     );

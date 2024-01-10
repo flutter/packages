@@ -18,6 +18,7 @@ import android.util.Size;
 import android.view.Surface;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceRequest;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.core.util.Consumer;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
@@ -63,27 +64,20 @@ public class PreviewTest {
         new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry);
     final Preview.Builder mockPreviewBuilder = mock(Preview.Builder.class);
     final int targetRotation = 90;
-    final int targetResolutionWidth = 10;
-    final int targetResolutionHeight = 50;
     final Long previewIdentifier = 3L;
-    final GeneratedCameraXLibrary.ResolutionInfo resolutionInfo =
-        new GeneratedCameraXLibrary.ResolutionInfo.Builder()
-            .setWidth(Long.valueOf(targetResolutionWidth))
-            .setHeight(Long.valueOf(targetResolutionHeight))
-            .build();
+    final ResolutionSelector mockResolutionSelector = mock(ResolutionSelector.class);
+    final long mockResolutionSelectorId = 90;
 
     previewHostApi.cameraXProxy = mockCameraXProxy;
+    testInstanceManager.addDartCreatedInstance(mockResolutionSelector, mockResolutionSelectorId);
     when(mockCameraXProxy.createPreviewBuilder()).thenReturn(mockPreviewBuilder);
     when(mockPreviewBuilder.build()).thenReturn(mockPreview);
 
-    final ArgumentCaptor<Size> sizeCaptor = ArgumentCaptor.forClass(Size.class);
-
-    previewHostApi.create(previewIdentifier, Long.valueOf(targetRotation), resolutionInfo);
+    previewHostApi.create(
+        previewIdentifier, Long.valueOf(targetRotation), mockResolutionSelectorId);
 
     verify(mockPreviewBuilder).setTargetRotation(targetRotation);
-    verify(mockPreviewBuilder).setTargetResolution(sizeCaptor.capture());
-    assertEquals(sizeCaptor.getValue().getWidth(), targetResolutionWidth);
-    assertEquals(sizeCaptor.getValue().getHeight(), targetResolutionHeight);
+    verify(mockPreviewBuilder).setResolutionSelector(mockResolutionSelector);
     verify(mockPreviewBuilder).build();
     verify(testInstanceManager).addDartCreatedInstance(mockPreview, previewIdentifier);
   }
@@ -148,10 +142,12 @@ public class PreviewTest {
     verify(mockSurfaceRequest)
         .provideSurface(surfaceCaptor.capture(), any(Executor.class), consumerCaptor.capture());
 
-    // Test that the surface derived from the surface texture entry will be provided to the surface request.
+    // Test that the surface derived from the surface texture entry will be provided to the surface
+    // request.
     assertEquals(surfaceCaptor.getValue(), mockSurface);
 
-    // Test that the Consumer used to handle surface request result releases Flutter surface texture appropriately
+    // Test that the Consumer used to handle surface request result releases Flutter surface texture
+    // appropriately
     // and sends camera errors appropriately.
     Consumer<SurfaceRequest.Result> capturedConsumer = consumerCaptor.getValue();
 
@@ -220,5 +216,19 @@ public class PreviewTest {
     ResolutionInfo resolutionInfo = previewHostApi.getResolutionInfo(previewIdentifier);
     assertEquals(resolutionInfo.getWidth(), Long.valueOf(resolutionWidth));
     assertEquals(resolutionInfo.getHeight(), Long.valueOf(resolutionHeight));
+  }
+
+  @Test
+  public void setTargetRotation_makesCallToSetTargetRotation() {
+    final PreviewHostApiImpl hostApi =
+        new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry);
+    final long instanceIdentifier = 52;
+    final int targetRotation = Surface.ROTATION_180;
+
+    testInstanceManager.addDartCreatedInstance(mockPreview, instanceIdentifier);
+
+    hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
+
+    verify(mockPreview).setTargetRotation(targetRotation);
   }
 }

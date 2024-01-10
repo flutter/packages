@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -247,6 +244,7 @@ class ExampleGoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.cloudMapId,
   });
 
   /// Callback method for when the map is ready to be used.
@@ -349,6 +347,12 @@ class ExampleGoogleMap extends StatefulWidget {
   /// Which gestures should be consumed by the map.
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers;
 
+  /// Identifier that's associated with a specific cloud-based map style.
+  ///
+  /// See https://developers.google.com/maps/documentation/get-map-id
+  /// for more details.
+  final String? cloudMapId;
+
   /// Creates a [State] for this [ExampleGoogleMap].
   @override
   State createState() => _ExampleGoogleMapState();
@@ -423,41 +427,41 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
       return;
     }
     final ExampleGoogleMapController controller = await _controller.future;
-    controller._updateMapConfiguration(updates);
+    unawaited(controller._updateMapConfiguration(updates));
     _mapConfiguration = newConfig;
   }
 
   Future<void> _updateMarkers() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    controller._updateMarkers(
-        MarkerUpdates.from(_markers.values.toSet(), widget.markers));
+    unawaited(controller._updateMarkers(
+        MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
     _markers = keyByMarkerId(widget.markers);
   }
 
   Future<void> _updatePolygons() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    controller._updatePolygons(
-        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons));
+    unawaited(controller._updatePolygons(
+        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
     _polygons = keyByPolygonId(widget.polygons);
   }
 
   Future<void> _updatePolylines() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    controller._updatePolylines(
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines));
+    unawaited(controller._updatePolylines(
+        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
     _polylines = keyByPolylineId(widget.polylines);
   }
 
   Future<void> _updateCircles() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    controller._updateCircles(
-        CircleUpdates.from(_circles.values.toSet(), widget.circles));
+    unawaited(controller._updateCircles(
+        CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
   }
 
   Future<void> _updateTileOverlays() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    controller._updateTileOverlays(widget.tileOverlays);
+    unawaited(controller._updateTileOverlays(widget.tileOverlays));
   }
 
   Future<void> onPlatformViewCreated(int id) async {
@@ -468,7 +472,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
       this,
     );
     _controller.complete(controller);
-    _updateTileOverlays();
+    unawaited(_updateTileOverlays());
     widget.onMapCreated?.call(controller);
   }
 
@@ -534,5 +538,6 @@ MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
+    cloudMapId: map.cloudMapId,
   );
 }

@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-library plugin_platform_interface;
-
 import 'package:meta/meta.dart';
 
 /// Base class for platform interfaces.
@@ -126,4 +124,4 @@ abstract class PlatformInterface {
 ///    implements UrlLauncherPlatform {}
 /// ```
 @visibleForTesting
-abstract class MockPlatformInterfaceMixin implements PlatformInterface {}
+abstract mixin class MockPlatformInterfaceMixin implements PlatformInterface {}

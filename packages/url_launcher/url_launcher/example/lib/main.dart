@@ -62,7 +62,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _launchInWebViewOrVC(Uri url) async {
+  Future<void> _launchInBrowserView(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<void> _launchInWebView(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<void> _launchAsInAppWebViewWithCustomHeaders(Uri url) async {
     if (!await launchUrl(
       url,
       mode: LaunchMode.inAppWebView,
@@ -93,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _launchUniversalLinkIos(Uri url) async {
+  Future<void> _launchUniversalLinkIOS(Uri url) async {
     final bool nativeAppLaunchSucceeded = await launchUrl(
       url,
       mode: LaunchMode.externalNonBrowserApplication,
@@ -101,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!nativeAppLaunchSucceeded) {
       await launchUrl(
         url,
-        mode: LaunchMode.inAppWebView,
+        mode: LaunchMode.inAppBrowserView,
       );
     }
   }
@@ -167,9 +179,15 @@ class _MyHomePageState extends State<MyHomePage> {
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewOrVC(toLaunch);
+                  _launched = _launchInBrowserView(toLaunch);
                 }),
                 child: const Text('Launch in app'),
+              ),
+              ElevatedButton(
+                onPressed: () => setState(() {
+                  _launched = _launchAsInAppWebViewWithCustomHeaders(toLaunch);
+                }),
+                child: const Text('Launch in app (Custom Headers)'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
@@ -186,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchUniversalLinkIos(toLaunch);
+                  _launched = _launchUniversalLinkIOS(toLaunch);
                 }),
                 child: const Text(
                     'Launch a universal link in a native app, fallback to Safari.(Youtube)'),
@@ -194,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewOrVC(toLaunch);
+                  _launched = _launchInWebView(toLaunch);
                   Timer(const Duration(seconds: 5), () {
                     closeInAppWebView();
                   });

@@ -26,9 +26,15 @@ class AsyncHandlersTest: XCTestCase {
     let flutterApi = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
-    flutterApi.echo(value) { output in
-      XCTAssertEqual(output, value)
+    flutterApi.echo(value) { result in
+    switch result {
+        case .success(let res) :
+      XCTAssertEqual(res, value)
       expectation.fulfill()
+        case .failure(_) :
+          return
+      }
+
     }
     wait(for: [expectation], timeout: 1.0)
   }
@@ -37,7 +43,7 @@ class AsyncHandlersTest: XCTestCase {
     let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
     let mockHostSmallApi = MockHostSmallApi()
     HostSmallApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostSmallApi)
-    let channelName = "dev.flutter.pigeon.HostSmallApi.voidVoid"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let expectation = XCTestExpectation(description: "voidvoid callback")
@@ -55,7 +61,7 @@ class AsyncHandlersTest: XCTestCase {
     let value = "Test"
     mockHostSmallApi.output = value
     HostSmallApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostSmallApi)
-    let channelName = "dev.flutter.pigeon.HostSmallApi.echo"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let inputEncoded = binaryMessenger.codec.encode([value])

@@ -11,11 +11,16 @@ import 'src/messages.g.dart';
 
 /// An Android implementation of [ImagePickerPlatform].
 class ImagePickerAndroid extends ImagePickerPlatform {
-  /// Creates a new plugin implemenation instance.
+  /// Creates a new plugin implementation instance.
   ImagePickerAndroid({@visibleForTesting ImagePickerApi? api})
       : _hostApi = api ?? ImagePickerApi();
 
   final ImagePickerApi _hostApi;
+
+  /// Sets [ImagePickerAndroid] to use Android 13 Photo Picker.
+  ///
+  /// Currently defaults to false, but the default is subject to change.
+  bool useAndroidPhotoPicker = false;
 
   /// Registers this class as the default platform implementation.
   static void registerWith() {
@@ -77,13 +82,14 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     }
 
     return _hostApi.pickImages(
-        SourceSpecification(type: SourceType.gallery),
-        ImageSelectionOptions(
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            quality: imageQuality ?? 100),
-        /* allowMultiple */ true,
-        useAndroidPhotoPicker);
+      SourceSpecification(type: SourceType.gallery),
+      ImageSelectionOptions(
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          quality: imageQuality ?? 100),
+      GeneralOptions(
+          allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker),
+    );
   }
 
   Future<String?> _getImagePath({
@@ -108,13 +114,16 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     }
 
     final List<String?> paths = await _hostApi.pickImages(
-        _buildSourceSpec(source, preferredCameraDevice),
-        ImageSelectionOptions(
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            quality: imageQuality ?? 100),
-        /* allowMultiple */ false,
-        useAndroidPhotoPicker);
+      _buildSourceSpec(source, preferredCameraDevice),
+      ImageSelectionOptions(
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          quality: imageQuality ?? 100),
+      GeneralOptions(
+        allowMultiple: false,
+        usePhotoPicker: useAndroidPhotoPicker,
+      ),
+    );
     return paths.isEmpty ? null : paths.first;
   }
 
@@ -138,10 +147,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     Duration? maxDuration,
   }) async {
     final List<String?> paths = await _hostApi.pickVideos(
-        _buildSourceSpec(source, preferredCameraDevice),
-        VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
-        /* allowMultiple */ false,
-        useAndroidPhotoPicker);
+      _buildSourceSpec(source, preferredCameraDevice),
+      VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
+      GeneralOptions(
+        allowMultiple: false,
+        usePhotoPicker: useAndroidPhotoPicker,
+      ),
+    );
     return paths.isEmpty ? null : paths.first;
   }
 
@@ -198,6 +210,21 @@ class ImagePickerAndroid extends ImagePickerPlatform {
   }
 
   @override
+  Future<List<XFile>> getMedia({
+    required MediaOptions options,
+  }) async {
+    return (await _hostApi.pickMedia(
+      _mediaOptionsToMediaSelectionOptions(options),
+      GeneralOptions(
+        allowMultiple: options.allowMultiple,
+        usePhotoPicker: useAndroidPhotoPicker,
+      ),
+    ))
+        .map((String? path) => XFile(path!))
+        .toList();
+  }
+
+  @override
   Future<XFile?> getVideo({
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
@@ -209,6 +236,38 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       preferredCameraDevice: preferredCameraDevice,
     );
     return path != null ? XFile(path) : null;
+  }
+
+  MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(
+      MediaOptions mediaOptions) {
+    final ImageSelectionOptions imageSelectionOptions =
+        _imageOptionsToImageSelectionOptionsWithValidator(
+            mediaOptions.imageOptions);
+    return MediaSelectionOptions(
+      imageSelectionOptions: imageSelectionOptions,
+    );
+  }
+
+  ImageSelectionOptions _imageOptionsToImageSelectionOptionsWithValidator(
+      ImageOptions? imageOptions) {
+    final double? maxHeight = imageOptions?.maxHeight;
+    final double? maxWidth = imageOptions?.maxWidth;
+    final int? imageQuality = imageOptions?.imageQuality;
+
+    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
+      throw ArgumentError.value(
+          imageQuality, 'imageQuality', 'must be between 0 and 100');
+    }
+
+    if (maxWidth != null && maxWidth < 0) {
+      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
+    }
+
+    if (maxHeight != null && maxHeight < 0) {
+      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
+    }
+    return ImageSelectionOptions(
+        quality: imageQuality ?? 100, maxHeight: maxHeight, maxWidth: maxWidth);
   }
 
   @override
@@ -243,7 +302,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
         : PlatformException(code: error.code, message: error.message);
 
     // Entries are guaranteed not to be null, even though that's not currently
-    // expressable in Pigeon.
+    // expressible in Pigeon.
     final List<XFile> pickedFileList =
         result.paths.map((String? path) => XFile(path!)).toList();
 
@@ -309,9 +368,4 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     // ignore: dead_code
     return RetrieveType.image;
   }
-
-  /// Sets [ImagePickerAndroid] to use Android 13 Photo Picker.
-  ///
-  /// Currently defaults to false, but the default is subject to change.
-  bool useAndroidPhotoPicker = false;
 }

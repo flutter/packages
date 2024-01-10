@@ -26,8 +26,13 @@ class NullableReturnsTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
     api.doit(x: nil) { result in
-      XCTAssertEqual(99, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(99, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
@@ -35,12 +40,12 @@ class NullableReturnsTests: XCTestCase {
   func testNullableParameterWithHostApi() {
     let api = MockNullableArgHostApi()
     let binaryMessenger = MockBinaryMessenger<Int64?>(codec: codec)
-    let channel = "dev.flutter.pigeon.NullableArgHostApi.doit"
+    let channel = "dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit"
 
     NullableArgHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
     XCTAssertNotNil(binaryMessenger.handlers[channel])
 
-    let inputEncoded = binaryMessenger.codec.encode([nil])
+    let inputEncoded = binaryMessenger.codec.encode([nil] as [Any?])
 
     let expectation = XCTestExpectation(description: "callback")
     binaryMessenger.handlers[channel]?(inputEncoded) { _ in

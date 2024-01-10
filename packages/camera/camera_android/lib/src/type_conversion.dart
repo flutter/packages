@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
@@ -34,6 +32,8 @@ ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
       return ImageFormatGroup.yuv420;
     case 256: // android.graphics.ImageFormat.JPEG
       return ImageFormatGroup.jpeg;
+    case 17: // android.graphics.ImageFormat.NV21
+      return ImageFormatGroup.nv21;
   }
 
   return ImageFormatGroup.unknown;

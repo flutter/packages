@@ -18,12 +18,12 @@ class OpenMultipleImagesPage extends StatelessWidget {
     const XTypeGroup jpgsTypeGroup = XTypeGroup(
       label: 'JPEGs',
       extensions: <String>['jpg', 'jpeg'],
-      macUTIs: <String>['public.jpeg'],
+      uniformTypeIdentifiers: <String>['public.jpeg'],
     );
     const XTypeGroup pngTypeGroup = XTypeGroup(
       label: 'PNGs',
       extensions: <String>['png'],
-      macUTIs: <String>['public.png'],
+      uniformTypeIdentifiers: <String>['public.png'],
     );
     final List<XFile> files = await FileSelectorPlatform.instance
         .openFiles(acceptedTypeGroups: <XTypeGroup>[
@@ -54,11 +54,8 @@ class OpenMultipleImagesPage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                // ignore: deprecated_member_use
-                primary: Colors.blue,
-                // ignore: deprecated_member_use
-                onPrimary: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               child: const Text('Press to open multiple images (png, jpg)'),
               onPressed: () => _openImageFile(context),

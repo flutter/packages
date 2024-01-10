@@ -17,11 +17,12 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final String? path = await FileSelectorPlatform.instance.getSavePath(
-      // Operation was canceled by the user.
-      suggestedName: fileName,
+    final FileSaveLocation? result =
+        await FileSelectorPlatform.instance.getSaveLocation(
+      options: SaveDialogOptions(suggestedName: fileName),
     );
-    if (path == null) {
+    // Operation was canceled by the user.
+    if (result == null) {
       return;
     }
     final String text = _contentController.text;
@@ -29,7 +30,7 @@ class SaveTextPage extends StatelessWidget {
     const String fileMimeType = 'text/plain';
     final XFile textFile =
         XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-    await textFile.saveTo(path);
+    await textFile.saveTo(result.path);
   }
 
   @override
@@ -67,11 +68,8 @@ class SaveTextPage extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                // ignore: deprecated_member_use
-                primary: Colors.blue,
-                // ignore: deprecated_member_use
-                onPrimary: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               onPressed: _saveFile,
               child: const Text('Press to save a text file'),

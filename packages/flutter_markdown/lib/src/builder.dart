@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
+import 'dart:ui';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -27,7 +30,8 @@ const List<String> _kBlockTags = <String>[
   'table',
   'thead',
   'tbody',
-  'tr'
+  'tr',
+  'section',
 ];
 
 const List<String> _kListTags = <String>['ul', 'ol'];
@@ -74,6 +78,13 @@ class _InlineElement {
 
 /// A delegate used by [MarkdownBuilder] to control the widgets it creates.
 abstract class MarkdownBuilderDelegate {
+  /// Returns the [BuildContext] of the [MarkdownWidget].
+  ///
+  /// The context will be passed down to the
+  /// [MarkdownElementBuilder.visitElementBefore] method and allows elements to
+  /// get information from the context.
+  BuildContext get context;
+
   /// Returns a gesture recognizer to use for an `a` element with the given
   /// text, `href` attribute, and title.
   GestureRecognizer createLink(String text, String? href, String title);
@@ -162,6 +173,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_TableElement> _tables = <_TableElement>[];
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
+  final ScrollController _preScrollController = ScrollController();
   String? _currentBlockTag;
   String? _lastVisitedTag;
   bool _isInBlockquote = false;
@@ -312,7 +324,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       // Leading spaces in paragraph or list item are ignored
       // https://github.github.com/gfm/#example-192
       // https://github.github.com/gfm/#example-236
-      if (const <String>['ul', 'ol', 'p', 'br'].contains(_lastVisitedTag)) {
+      if (const <String>['ul', 'ol', 'li', 'p', 'br']
+          .contains(_lastVisitedTag)) {
         text = text.replaceAll(leadingSpacesPattern, '');
       }
 
@@ -328,7 +341,9 @@ class MarkdownBuilder implements md.NodeVisitor {
           .visitText(text, styleSheet.styles[_blocks.last.tag!]);
     } else if (_blocks.last.tag == 'pre') {
       child = Scrollbar(
+        controller: _preScrollController,
         child: SingleChildScrollView(
+          controller: _preScrollController,
           scrollDirection: Axis.horizontal,
           padding: styleSheet.codeblockPadding,
           child: _buildRichText(delegate.formatText(styleSheet, text.text)),
@@ -418,7 +433,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       } else if (tag == 'table') {
         child = Table(
           defaultColumnWidth: styleSheet.tableColumnWidth!,
-          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
           border: styleSheet.tableBorder,
           children: _tables.removeLast().rows,
         );
@@ -432,8 +447,9 @@ class MarkdownBuilder implements md.NodeVisitor {
           ),
         );
       } else if (tag == 'pre') {
-        child = DecoratedBox(
-          decoration: styleSheet.codeblockDecoration!,
+        child = Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: styleSheet.codeblockDecoration,
           child: child,
         );
       } else if (tag == 'hr') {
@@ -451,10 +467,18 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
 
       if (builders.containsKey(tag)) {
-        final Widget? child =
-            builders[tag]!.visitElementAfter(element, styleSheet.styles[tag]);
+        final Widget? child = builders[tag]!.visitElementAfterWithContext(
+          delegate.context,
+          element,
+          styleSheet.styles[tag],
+          parent.style,
+        );
         if (child != null) {
-          current.children[0] = child;
+          if (current.children.isEmpty) {
+            current.children.add(child);
+          } else {
+            current.children[0] = child;
+          }
         }
       } else if (tag == 'img') {
         // create an image widget for this image
@@ -477,13 +501,10 @@ class MarkdownBuilder implements md.NodeVisitor {
           switch (alignAttribute) {
             case 'left':
               align = TextAlign.left;
-              break;
             case 'center':
               align = TextAlign.center;
-              break;
             case 'right':
               align = TextAlign.right;
-              break;
           }
         }
         final Widget child = _buildTableCell(
@@ -493,6 +514,29 @@ class MarkdownBuilder implements md.NodeVisitor {
         _ambiguate(_tables.single.rows.last.children)!.add(child);
       } else if (tag == 'a') {
         _linkHandlers.removeLast();
+      } else if (tag == 'sup') {
+        final Widget c = current.children.last;
+        TextSpan? textSpan;
+        if (c is RichText && c.text is TextSpan) {
+          textSpan = c.text as TextSpan;
+        } else if (c is SelectableText && c.textSpan is TextSpan) {
+          textSpan = c.textSpan;
+        }
+        if (textSpan != null) {
+          final Widget richText = _buildRichText(
+            TextSpan(
+              recognizer: textSpan.recognizer,
+              text: element.textContent,
+              style: textSpan.style?.copyWith(
+                fontFeatures: <FontFeature>[
+                  const FontFeature.enable('sups'),
+                ],
+              ),
+            ),
+          );
+          current.children.removeLast();
+          current.children.add(richText);
+        }
       }
 
       if (current.children.isNotEmpty) {
@@ -825,6 +869,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (selectable) {
       return SelectableText.rich(
         text!,
+        // ignore: deprecated_member_use
         textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
@@ -833,6 +878,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       return RichText(
         text: text!,
+        // ignore: deprecated_member_use
         textScaleFactor: styleSheet.textScaleFactor!,
         textAlign: textAlign ?? TextAlign.start,
         key: k,

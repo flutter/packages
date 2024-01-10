@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -215,24 +214,24 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       ),
     );
 
-    webView.setUIDelegate(uiDelegate);
+    unawaited(webView.setUIDelegate(uiDelegate));
 
     await addJavascriptChannels(params.javascriptChannelNames);
 
-    webView.setNavigationDelegate(navigationDelegate);
+    unawaited(webView.setNavigationDelegate(navigationDelegate));
 
     if (params.userAgent != null) {
-      webView.setCustomUserAgent(params.userAgent);
+      unawaited(webView.setCustomUserAgent(params.userAgent));
     }
 
     if (params.webSettings != null) {
-      updateSettings(params.webSettings!);
+      unawaited(updateSettings(params.webSettings!));
     }
 
     if (params.backgroundColor != null) {
-      webView.setOpaque(false);
-      webView.setBackgroundColor(Colors.transparent);
-      webView.scrollView.setBackgroundColor(params.backgroundColor);
+      unawaited(webView.setOpaque(false));
+      unawaited(webView.setBackgroundColor(Colors.transparent));
+      unawaited(webView.scrollView.setBackgroundColor(params.backgroundColor));
     }
 
     if (params.initialUrl != null) {
@@ -253,10 +252,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     switch (autoMediaPlaybackPolicy) {
       case AutoMediaPlaybackPolicy.require_user_action_for_all_media_types:
         requiresUserAction = true;
-        break;
       case AutoMediaPlaybackPolicy.always_allow:
         requiresUserAction = false;
-        break;
     }
 
     configuration
@@ -316,7 +313,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     final NSUrlRequest urlRequest = NSUrlRequest(
       url: request.uri.toString(),
       allHttpHeaderFields: request.headers,
-      httpMethod: describeEnum(request.method),
+      httpMethod: request.method.name,
       httpBody: request.body,
     );
 
@@ -380,8 +377,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<String?> currentUrl() => webView.getUrl();
 
   @override
-  Future<void> scrollTo(int x, int y) async {
-    webView.scrollView.setContentOffset(Point<double>(
+  Future<void> scrollTo(int x, int y) {
+    return webView.scrollView.setContentOffset(Point<double>(
       x.toDouble(),
       y.toDouble(),
     ));
@@ -551,7 +548,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<void> _resetUserScripts({
     Set<String> removedJavaScriptChannels = const <String>{},
   }) async {
-    webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -577,25 +576,20 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     switch (error.code) {
       case WKErrorCode.unknown:
         errorType = WebResourceErrorType.unknown;
-        break;
       case WKErrorCode.webContentProcessTerminated:
         errorType = WebResourceErrorType.webContentProcessTerminated;
-        break;
       case WKErrorCode.webViewInvalidated:
         errorType = WebResourceErrorType.webViewInvalidated;
-        break;
       case WKErrorCode.javaScriptExceptionOccurred:
         errorType = WebResourceErrorType.javaScriptExceptionOccurred;
-        break;
       case WKErrorCode.javaScriptResultTypeIsUnsupported:
         errorType = WebResourceErrorType.javaScriptResultTypeIsUnsupported;
-        break;
     }
 
     return WebResourceError(
       errorCode: error.code,
       domain: error.domain,
-      description: error.localizedDescription,
+      description: error.localizedDescription ?? '',
       errorType: errorType,
     );
   }

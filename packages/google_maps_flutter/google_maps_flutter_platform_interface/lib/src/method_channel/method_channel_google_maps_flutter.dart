@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -173,24 +170,20 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     switch (call.method) {
       case 'camera#onMoveStarted':
         _mapEventStreamController.add(CameraMoveStartedEvent(mapId));
-        break;
       case 'camera#onMove':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(CameraMoveEvent(
           mapId,
           CameraPosition.fromMap(arguments['position'])!,
         ));
-        break;
       case 'camera#onIdle':
         _mapEventStreamController.add(CameraIdleEvent(mapId));
-        break;
       case 'marker#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(MarkerTapEvent(
           mapId,
           MarkerId(arguments['markerId']! as String),
         ));
-        break;
       case 'marker#onDragStart':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(MarkerDragStartEvent(
@@ -198,7 +191,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           LatLng.fromJson(arguments['position'])!,
           MarkerId(arguments['markerId']! as String),
         ));
-        break;
       case 'marker#onDrag':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(MarkerDragEvent(
@@ -206,7 +198,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           LatLng.fromJson(arguments['position'])!,
           MarkerId(arguments['markerId']! as String),
         ));
-        break;
       case 'marker#onDragEnd':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(MarkerDragEndEvent(
@@ -214,49 +205,42 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           LatLng.fromJson(arguments['position'])!,
           MarkerId(arguments['markerId']! as String),
         ));
-        break;
       case 'infoWindow#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(InfoWindowTapEvent(
           mapId,
           MarkerId(arguments['markerId']! as String),
         ));
-        break;
       case 'polyline#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(PolylineTapEvent(
           mapId,
           PolylineId(arguments['polylineId']! as String),
         ));
-        break;
       case 'polygon#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(PolygonTapEvent(
           mapId,
           PolygonId(arguments['polygonId']! as String),
         ));
-        break;
       case 'circle#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(CircleTapEvent(
           mapId,
           CircleId(arguments['circleId']! as String),
         ));
-        break;
       case 'map#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(MapTapEvent(
           mapId,
           LatLng.fromJson(arguments['position'])!,
         ));
-        break;
       case 'map#onLongPress':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(MapLongPressEvent(
           mapId,
           LatLng.fromJson(arguments['position'])!,
         ));
-        break;
       case 'tileOverlay#getTile':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         final Map<TileOverlayId, TileOverlay>? tileOverlaysForThisMap =
@@ -292,7 +276,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
   }) {
-    assert(optionsUpdate != null);
     return channel(mapId).invokeMethod<void>(
       'map#update',
       <String, dynamic>{
@@ -306,7 +289,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerUpdates markerUpdates, {
     required int mapId,
   }) {
-    assert(markerUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'markers#update',
       markerUpdates.toJson(),
@@ -318,7 +300,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     PolygonUpdates polygonUpdates, {
     required int mapId,
   }) {
-    assert(polygonUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'polygons#update',
       polygonUpdates.toJson(),
@@ -330,7 +311,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     PolylineUpdates polylineUpdates, {
     required int mapId,
   }) {
-    assert(polylineUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'polylines#update',
       polylineUpdates.toJson(),
@@ -342,7 +322,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     CircleUpdates circleUpdates, {
     required int mapId,
   }) {
-    assert(circleUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'circles#update',
       circleUpdates.toJson(),
@@ -452,7 +431,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    assert(markerId != null);
     return channel(mapId).invokeMethod<void>(
         'markers#showInfoWindow', <String, String>{'markerId': markerId.value});
   }
@@ -462,7 +440,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    assert(markerId != null);
     return channel(mapId).invokeMethod<void>(
         'markers#hideInfoWindow', <String, String>{'markerId': markerId.value});
   }
@@ -472,7 +449,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) async {
-    assert(markerId != null);
     return (await channel(mapId).invokeMethod<bool>('markers#isInfoWindowShown',
         <String, String>{'markerId': markerId.value}))!;
   }

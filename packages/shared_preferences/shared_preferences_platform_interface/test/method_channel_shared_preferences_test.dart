@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_platform_interface/method_channel_shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -65,11 +66,27 @@ void main() {
         if (methodCall.method == 'getAll') {
           return testData.getAll();
         }
-        if (methodCall.method == 'getAllWithPrefix') {
+        if (methodCall.method == 'getAllWithParameters') {
           final Map<String, Object?> arguments =
               getArgumentDictionary(methodCall);
           final String prefix = arguments['prefix']! as String;
-          return testData.getAllWithPrefix(prefix);
+          Set<String>? allowSet;
+          final List<dynamic>? allowList =
+              arguments['allowList'] as List<dynamic>?;
+          if (allowList != null) {
+            allowSet = <String>{};
+            for (final dynamic key in allowList) {
+              allowSet.add(key as String);
+            }
+          }
+          return testData.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(
+                prefix: prefix,
+                allowList: allowSet,
+              ),
+            ),
+          );
         }
         if (methodCall.method == 'remove') {
           final Map<String, Object?> arguments =
@@ -80,11 +97,24 @@ void main() {
         if (methodCall.method == 'clear') {
           return testData.clear();
         }
-        if (methodCall.method == 'clearWithPrefix') {
+        if (methodCall.method == 'clearWithParameters') {
           final Map<String, Object?> arguments =
               getArgumentDictionary(methodCall);
           final String prefix = arguments['prefix']! as String;
-          return testData.clearWithPrefix(prefix);
+          Set<String>? allowSet;
+          final List<dynamic>? allowList =
+              arguments['allowList'] as List<dynamic>?;
+          if (allowList != null) {
+            allowSet = <String>{};
+            for (final dynamic key in allowList) {
+              allowSet.add(key as String);
+            }
+          }
+          return testData.clearWithParameters(
+            ClearParameters(
+              filter: PreferencesFilter(prefix: prefix, allowList: allowSet),
+            ),
+          );
         }
         final RegExp setterRegExp = RegExp(r'set(.*)');
         final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
@@ -112,10 +142,31 @@ void main() {
       expect(log.single.method, 'getAll');
     });
 
-    test('getAllWithPrefix', () async {
+    test('getAllWithParameters with Prefix', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await store.getAllWithPrefix('prefix.'), prefixTestValues);
-      expect(log.single.method, 'getAllWithPrefix');
+      expect(
+          await store.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(prefix: 'prefix.'),
+            ),
+          ),
+          prefixTestValues);
+      expect(log.single.method, 'getAllWithParameters');
+    });
+
+    test('getAllWithParameters with allow list', () async {
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
+      final Map<String, Object> data = await store.getAllWithParameters(
+        GetAllParameters(
+          filter: PreferencesFilter(
+            prefix: 'prefix.',
+            allowList: <String>{'prefix.Bool'},
+          ),
+        ),
+      );
+      expect(data.length, 1);
+      expect(data['prefix.Bool'], true);
+      expect(log.single.method, 'getAllWithParameters');
     });
 
     test('remove', () async {
@@ -158,26 +209,95 @@ void main() {
       expect(log.single.method, 'clear');
     });
 
-    test('clearWithPrefix', () async {
+    test('clearWithParameters with Prefix', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
-      expect(await testData.getAllWithPrefix('prefix.'), isNotEmpty);
-      expect(await store.clearWithPrefix('prefix.'), true);
-      expect(await testData.getAllWithPrefix('prefix.'), isEmpty);
+      expect(
+          await testData.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(prefix: 'prefix.'),
+            ),
+          ),
+          isNotEmpty);
+      expect(
+          await store.clearWithParameters(
+            ClearParameters(
+              filter: PreferencesFilter(prefix: 'prefix.'),
+            ),
+          ),
+          true);
+      expect(
+          await testData.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(prefix: 'prefix.'),
+            ),
+          ),
+          isEmpty);
     });
 
-    test('getAllWithNoPrefix', () async {
+    test('getAllWithParameters with no Prefix', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
-      expect(await testData.getAllWithPrefix(''), hasLength(15));
+      expect(
+          await testData.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(prefix: ''),
+            ),
+          ),
+          hasLength(15));
     });
 
     test('clearWithNoPrefix', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
-      expect(await testData.getAllWithPrefix(''), isNotEmpty);
-      expect(await store.clearWithPrefix(''), true);
-      expect(await testData.getAllWithPrefix(''), isEmpty);
+      expect(
+          await testData.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(prefix: ''),
+            ),
+          ),
+          isNotEmpty);
+      expect(
+          await store.clearWithParameters(
+            ClearParameters(
+              filter: PreferencesFilter(prefix: ''),
+            ),
+          ),
+          true);
+      expect(
+          await testData.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(prefix: ''),
+            ),
+          ),
+          isEmpty);
+    });
+
+    test('clearWithParameters with allow list', () async {
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
+
+      expect(
+          await testData.getAllWithParameters(
+            GetAllParameters(
+              filter: PreferencesFilter(prefix: 'prefix.'),
+            ),
+          ),
+          isNotEmpty);
+      expect(
+          await store.clearWithParameters(
+            ClearParameters(
+              filter: PreferencesFilter(
+                prefix: 'prefix.',
+                allowList: <String>{'prefix.String'},
+              ),
+            ),
+          ),
+          true);
+      expect(
+          (await testData.getAllWithParameters(GetAllParameters(
+                  filter: PreferencesFilter(prefix: 'prefix.'))))
+              .length,
+          4);
     });
   });
 }

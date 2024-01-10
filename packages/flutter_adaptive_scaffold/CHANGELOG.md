@@ -1,6 +1,29 @@
-## 0.2.0
+## 0.1.7+2
 
-* Adds `transitionDuration` parameter for specifying how long the animation should be.
+* Fixes new lint warnings.
+
+## 0.1.7+1
+
+* Adds pub topics to package metadata.
+
+## 0.1.7
+
+* Fix top padding for NavigationBar.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.1.6
+
+* Added support for displaying an AppBar on any Breakpoint by introducing appBarBreakpoint
+
+## 0.1.5
+
+* Added support for Right-to-left (RTL) directionality.
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.1.4
+
+* Use Material 3 NavigationBar instead of BottomNavigationBar
 
 ## 0.1.3
 

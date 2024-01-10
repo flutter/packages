@@ -22,30 +22,36 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
     pendingCompletePurchase = !billingClientPurchase.isAcknowledged;
   }
 
-  /// Generate a [PurchaseDetails] object based on an Android [Purchase] object.
-  factory GooglePlayPurchaseDetails.fromPurchase(PurchaseWrapper purchase) {
-    final GooglePlayPurchaseDetails purchaseDetails = GooglePlayPurchaseDetails(
-      purchaseID: purchase.orderId,
-      productID: purchase.sku,
-      verificationData: PurchaseVerificationData(
-          localVerificationData: purchase.originalJson,
-          serverVerificationData: purchase.purchaseToken,
-          source: kIAPSource),
-      transactionDate: purchase.purchaseTime.toString(),
-      billingClientPurchase: purchase,
-      status: const PurchaseStateConverter()
-          .toPurchaseStatus(purchase.purchaseState),
-    );
-
-    if (purchaseDetails.status == PurchaseStatus.error) {
-      purchaseDetails.error = IAPError(
-        source: kIAPSource,
-        code: kPurchaseErrorCode,
-        message: '',
+  /// Generates a [List] of [PurchaseDetails] based on an Android [Purchase] object.
+  ///
+  /// The list contains one entry per product.
+  static List<GooglePlayPurchaseDetails> fromPurchase(
+      PurchaseWrapper purchase) {
+    return purchase.products.map((String productId) {
+      final GooglePlayPurchaseDetails purchaseDetails =
+          GooglePlayPurchaseDetails(
+        purchaseID: purchase.orderId,
+        productID: productId,
+        verificationData: PurchaseVerificationData(
+            localVerificationData: purchase.originalJson,
+            serverVerificationData: purchase.purchaseToken,
+            source: kIAPSource),
+        transactionDate: purchase.purchaseTime.toString(),
+        billingClientPurchase: purchase,
+        status: const PurchaseStateConverter()
+            .toPurchaseStatus(purchase.purchaseState),
       );
-    }
 
-    return purchaseDetails;
+      if (purchaseDetails.status == PurchaseStatus.error) {
+        purchaseDetails.error = IAPError(
+          source: kIAPSource,
+          code: kPurchaseErrorCode,
+          message: '',
+        );
+      }
+
+      return purchaseDetails;
+    }).toList();
   }
 
   /// Points back to the [PurchaseWrapper] which was used to generate this

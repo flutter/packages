@@ -33,8 +33,13 @@ void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
 void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
   int currentString = 0;
   for (final Widget widget in widgets) {
+    TextSpan? span;
     if (widget is RichText) {
-      final TextSpan span = widget.text as TextSpan;
+      span = widget.text as TextSpan;
+    } else if (widget is SelectableText) {
+      span = widget.textSpan;
+    }
+    if (span != null) {
       final String text = _extractTextFromTextSpan(span);
       expect(text, equals(strings[currentString]));
       currentString += 1;
@@ -192,6 +197,10 @@ class TestAssetBundle extends CachingAssetBundle {
       final ByteData manifest = const StandardMessageCodec().encodeMessage(
           <String, List<Object>>{'assets/logo.png': <Object>[]})!;
       return Future<ByteData>.value(manifest);
+    } else if (key == 'AssetManifest.smcbin') {
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(
+          <String, List<Object>>{'assets/logo.png': <Object>[]})!;
+      return Future<ByteData>.value(manifest);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'
       // verses 'flutter test test/*_test.dart'. Adjust the root directory
@@ -204,9 +213,6 @@ class TestAssetBundle extends CachingAssetBundle {
           io.File('${rootDirectory.path}/test/assets/images/logo.png');
 
       final ByteData asset = ByteData.view(file.readAsBytesSync().buffer);
-      if (asset == null) {
-        throw FlutterError('Unable to load asset: $key');
-      }
       return asset;
     } else {
       throw ArgumentError('Unknown asset key: $key');

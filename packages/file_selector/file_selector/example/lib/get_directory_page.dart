@@ -42,15 +42,12 @@ class GetDirectoryPage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                // ignore: deprecated_member_use
-                primary: Colors.blue,
-                // ignore: deprecated_member_use
-                onPrimary: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               onPressed: _isIOS ? null : () => _getDirectoryPath(context),
               child: const Text(
-                'Press to ask user to choose a directory (not supported on iOS).',
+                'Press to ask user to choose a directory.',
               ),
             ),
           ],

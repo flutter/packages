@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceRequest;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PreviewHostApi;
 import io.flutter.view.TextureRegistry;
@@ -19,12 +20,12 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 
 public class PreviewHostApiImpl implements PreviewHostApi {
-  private final BinaryMessenger binaryMessenger;
+  final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private final TextureRegistry textureRegistry;
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture;
+  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public @Nullable TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture;
 
   public PreviewHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -38,18 +39,18 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   /** Creates a {@link Preview} with the target rotation and resolution if specified. */
   @Override
   public void create(
-      @NonNull Long identifier,
-      @Nullable Long rotation,
-      @Nullable GeneratedCameraXLibrary.ResolutionInfo targetResolution) {
+      @NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId) {
     Preview.Builder previewBuilder = cameraXProxy.createPreviewBuilder();
+
     if (rotation != null) {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
-    if (targetResolution != null) {
-      previewBuilder.setTargetResolution(
-          new Size(
-              targetResolution.getWidth().intValue(), targetResolution.getHeight().intValue()));
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector =
+          Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
+      previewBuilder.setResolutionSelector(resolutionSelector);
     }
+
     Preview preview = previewBuilder.build();
     instanceManager.addDartCreatedInstance(preview, identifier);
   }
@@ -59,8 +60,8 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * by a Flutter {@link TextureRegistry.SurfaceTextureEntry} used to build the {@link Preview}.
    */
   @Override
-  public Long setSurfaceProvider(@NonNull Long identifier) {
-    Preview preview = (Preview) Objects.requireNonNull(instanceManager.getInstance(identifier));
+  public @NonNull Long setSurfaceProvider(@NonNull Long identifier) {
+    Preview preview = getPreviewInstance(identifier);
     flutterSurfaceTexture = textureRegistry.createSurfaceTexture();
     SurfaceTexture surfaceTexture = flutterSurfaceTexture.surfaceTexture();
     Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(surfaceTexture);
@@ -74,10 +75,11 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * {@code Preview} that is backed by a Flutter {@link TextureRegistry.SurfaceTextureEntry}.
    */
   @VisibleForTesting
-  public Preview.SurfaceProvider createSurfaceProvider(@NonNull SurfaceTexture surfaceTexture) {
+  public @NonNull Preview.SurfaceProvider createSurfaceProvider(
+      @NonNull SurfaceTexture surfaceTexture) {
     return new Preview.SurfaceProvider() {
       @Override
-      public void onSurfaceRequested(SurfaceRequest request) {
+      public void onSurfaceRequested(@NonNull SurfaceRequest request) {
         surfaceTexture.setDefaultBufferSize(
             request.getResolution().getWidth(), request.getResolution().getHeight());
         Surface flutterSurface = cameraXProxy.createSurface(surfaceTexture);
@@ -85,7 +87,9 @@ public class PreviewHostApiImpl implements PreviewHostApi {
             flutterSurface,
             Executors.newSingleThreadExecutor(),
             (result) -> {
-              // See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result for documentation.
+              // See
+              // https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result
+              // for documentation.
               // Always attempt a release.
               flutterSurface.release();
               int resultCode = result.getResultCode();
@@ -106,7 +110,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
                   break;
               }
             });
-      };
+      }
     };
   }
 
@@ -114,7 +118,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * Returns an error description for each {@link SurfaceRequest.Result} that represents an error
    * with providing a surface.
    */
-  private String getProvideSurfaceErrorDescription(@Nullable int resultCode) {
+  String getProvideSurfaceErrorDescription(int resultCode) {
     switch (resultCode) {
       case SurfaceRequest.Result.RESULT_INVALID_SURFACE:
         return resultCode + ": Provided surface could not be used by the camera.";
@@ -136,8 +140,9 @@ public class PreviewHostApiImpl implements PreviewHostApi {
 
   /** Returns the resolution information for the specified {@link Preview}. */
   @Override
-  public GeneratedCameraXLibrary.ResolutionInfo getResolutionInfo(@NonNull Long identifier) {
-    Preview preview = (Preview) Objects.requireNonNull(instanceManager.getInstance(identifier));
+  public @NonNull GeneratedCameraXLibrary.ResolutionInfo getResolutionInfo(
+      @NonNull Long identifier) {
+    Preview preview = getPreviewInstance(identifier);
     Size resolution = preview.getResolutionInfo().getResolution();
 
     GeneratedCameraXLibrary.ResolutionInfo.Builder resolutionInfo =
@@ -145,5 +150,17 @@ public class PreviewHostApiImpl implements PreviewHostApi {
             .setWidth(Long.valueOf(resolution.getWidth()))
             .setHeight(Long.valueOf(resolution.getHeight()));
     return resolutionInfo.build();
+  }
+
+  /** Dynamically sets the target rotation of the {@link Preview}. */
+  @Override
+  public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
+    Preview preview = getPreviewInstance(identifier);
+    preview.setTargetRotation(rotation.intValue());
+  }
+
+  /** Retrieves the {@link Preview} instance associated with the specified {@code identifier}. */
+  private Preview getPreviewInstance(@NonNull Long identifier) {
+    return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }

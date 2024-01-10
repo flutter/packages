@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,8 +14,7 @@ void main() {
 
     expect(
       find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is Image && (!Platform.isIOS || widget.image != null),
+        (Widget widget) => widget is Image,
       ),
       findsOneWidget,
     );

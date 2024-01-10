@@ -8,15 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_benchmarks/client.dart';
 
-import '../aboutpage.dart' show backKey;
-import '../homepage.dart' show aboutPageKey, textKey;
+import '../about_page.dart' show backKey;
+import '../home_page.dart' show aboutPageKey, textKey;
 import '../main.dart';
 
 /// A recorder that measures frame building durations.
 abstract class AppRecorder extends WidgetRecorder {
   AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
 
-  final String benchmarkName;
+  final String benchmarkName; // ignore: unreachable_from_main
 
   Future<void> automate();
 
@@ -39,10 +39,7 @@ class ScrollRecorder extends AppRecorder {
   @override
   Future<void> automate() async {
     final ScrollableState scrollable =
-        // TODO(cyanglaz): Fix the unnecessary non null assertion when https://github.com/flutter/flutter/commit/37b72342b0ce86fbfc238a9d43e524608b89af3a is on stable,
-        // https://github.com/flutter/flutter/issues/114434
-        //ignore: unnecessary_non_null_assertion
-        Scrollable.of(find.byKey(textKey).evaluate().single)!;
+        Scrollable.of(find.byKey(textKey).evaluate().single);
     await scrollable.position.animateTo(
       30000,
       curve: Curves.linear,

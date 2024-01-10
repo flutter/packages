@@ -1,5 +1,37 @@
-## NEXT
+## 3.1.13
 
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 3.1.12
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 3.1.11
+
+* Updates documentation reference of `finishPurchase` to `completePurchase`.
+
+## 3.1.10
+
+* Updates example code for current versions of Flutter.
+
+## 3.1.9
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.1.8
+
+* Updates documentation on handling subscription price changes to match Android's billing client v5.
+
+## 3.1.7
+
+* Fixes unawaited_futures violations.
+
+## 3.1.6
+
+* Bumps minimum in_app_purchase_android version to 0.3.0.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 3.1.5

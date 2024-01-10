@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#106316)
-// ignore: unnecessary_import
-import 'dart:ui';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player_avfoundation/src/messages.g.dart';
@@ -133,6 +129,18 @@ void main() {
       expect(log.createMessage?.asset, 'someAsset');
       expect(log.createMessage?.packageName, 'somePackage');
       expect(textureId, 3);
+    });
+
+    test('create with incorrect asset throws exception', () async {
+      try {
+        await player.create(DataSource(
+          sourceType: DataSourceType.asset,
+          asset: '/path/to/incorrect_asset',
+        ));
+        fail('should throw PlatformException');
+      } catch (e) {
+        expect(e, isException);
+      }
     });
 
     test('create with network', () async {

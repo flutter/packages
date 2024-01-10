@@ -1,3 +1,59 @@
+## 2.5.5
+
+* Fixes display of initial frame when paused.
+
+## 2.5.4
+
+* Fixes new lint warnings.
+
+## 2.5.3
+
+* Publishes an instance of the plugin to the registrar on macOS, as on iOS.
+
+## 2.5.2
+
+* Fixes flickering and seek-while-paused on macOS.
+
+## 2.5.1
+
+* Updates to  Pigeon 13.
+
+## 2.5.0
+
+* Adds support for macOS.
+
+## 2.4.11
+
+* Updates Pigeon.
+* Changes Objective-C class prefixes to avoid future collisions.
+
+## 2.4.10
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.4.9
+
+* Fixes the iOS crash when using multiple players on the same screen.
+  See: https://github.com/flutter/flutter/issues/124937
+
+## 2.4.8
+
+* Fixes missing `isPlaybackLikelyToKeepUp` check for iOS video player `bufferingEnd` event and `bufferingStart` event.
+
+## 2.4.7
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Adds iOS exception on incorrect asset path
+
+## 2.4.6
+
+* Fixes hang when seeking to end of video.
+
+## 2.4.5
+
+* Updates functions without a prototype to avoid deprecation warning.
+
 ## 2.4.4
 
 * Updates pigeon to fix warnings with clang 15.

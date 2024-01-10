@@ -1,3 +1,97 @@
+## 3.13.2
+
+* Fixes new lint warnings.
+
+## 3.13.1
+
+* Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.
+
+## 3.13.0
+
+* Adds support for `PlatformNavigationDelegate.setOnHttpAuthRequest`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 3.12.1
+
+* Fixes `use_build_context_synchronously` lint violations in the example app.
+
+## 3.12.0
+
+* Adds support for `PlatformWebViewController.getUserAgent`.
+
+## 3.11.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `AndroidWebViewController.onConsoleMessage`.
+
+## 3.10.1
+
+* Bumps androidx.annotation:annotation from 1.5.0 to 1.7.0.
+
+## 3.10.0
+
+* Adds support for playing video in fullscreen. See
+  `AndroidWebViewController.setCustomWidgetCallbacks`.
+
+## 3.9.5
+
+* Updates pigeon to 11 and removes unneeded enum wrappers.
+
+## 3.9.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.9.3
+
+* Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
+
+## 3.9.2
+
+* Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller or PlatformView
+  implementation flag changes.
+
+## 3.9.1
+
+* Adjusts SDK checks for better testability.
+
+## 3.9.0
+
+* Adds support for `WebResouceError.url`.
+
+## 3.8.2
+
+* Fixes unawaited_futures violations.
+
+## 3.8.1
+
+* Bumps androidx.webkit:webkit from 1.6.0 to 1.7.0.
+
+## 3.8.0
+
+* Adds support for handling geolocation permissions. See
+  `AndroidWebViewController.setGeolocationPermissionsPromptCallbacks`.
+
+## 3.7.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 3.7.0
+
+* Adds support to accept third party cookies. See
+  `AndroidWebViewCookieManager.setAcceptThirdPartyCookies`.
+
+## 3.6.3
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 3.6.2
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 3.6.1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 3.6.0
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.

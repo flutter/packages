@@ -3,14 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/git_version_finder.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
@@ -27,9 +28,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// Creates an instance of the command to convert selected dependencies to
   /// path-based.
   MakeDepsPathBasedCommand(
-    Directory packagesDir, {
-    GitDir? gitDir,
-  }) : super(packagesDir, gitDir: gitDir) {
+    super.packagesDir, {
+    super.gitDir,
+  }) {
     argParser.addMultiOption(_targetDependenciesArg,
         help:
             'The names of the packages to convert to path-based dependencies.\n'
@@ -40,7 +41,10 @@ class MakeDepsPathBasedCommand extends PackageCommand {
       _targetDependenciesWithNonBreakingUpdatesArg,
       help: 'Causes all packages that have non-breaking version changes '
           'when compared against the git base to be treated as target '
-          'packages.',
+          'packages.\n\nOnly packages with dependency constraints that allow '
+          'the new version of a given target package will be updated. E.g., '
+          'if package A depends on B: ^1.0.0, and B is updated from 2.0.0 to '
+          '2.0.1, the dependency on B in A will not become path based.',
     );
   }
 
@@ -65,10 +69,11 @@ class MakeDepsPathBasedCommand extends PackageCommand {
 
   @override
   Future<void> run() async {
-    final Set<String> targetDependencies =
-        getBoolArg(_targetDependenciesWithNonBreakingUpdatesArg)
-            ? await _getNonBreakingUpdatePackages()
-            : getStringListArg(_targetDependenciesArg).toSet();
+    final bool targetByVersion =
+        getBoolArg(_targetDependenciesWithNonBreakingUpdatesArg);
+    final Set<String> targetDependencies = targetByVersion
+        ? await _getNonBreakingUpdatePackages()
+        : getStringListArg(_targetDependenciesArg).toSet();
 
     if (targetDependencies.isEmpty) {
       print('No target dependencies; nothing to do.');
@@ -78,13 +83,24 @@ class MakeDepsPathBasedCommand extends PackageCommand {
 
     final Map<String, RepositoryPackage> localDependencyPackages =
         _findLocalPackages(targetDependencies);
+    // For targeting by version change, find the versions of the target
+    // dependencies.
+    final Map<String, Version?> localPackageVersions = targetByVersion
+        ? <String, Version?>{
+            for (final RepositoryPackage package
+                in localDependencyPackages.values)
+              package.directory.basename: package.parsePubspec().version
+          }
+        : <String, Version>{};
 
     final String repoRootPath = (await gitDir).path;
     for (final File pubspec in await _getAllPubspecs()) {
       final String displayPath = p.posix.joinAll(
           path.split(path.relative(pubspec.absolute.path, from: repoRootPath)));
       final bool changed = await _addDependencyOverridesIfNecessary(
-          RepositoryPackage(pubspec.parent), localDependencyPackages);
+          RepositoryPackage(pubspec.parent),
+          localDependencyPackages,
+          localPackageVersions);
       if (changed) {
         print('  Modified $displayPath');
       }
@@ -106,6 +122,13 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         targets[packageName] = RepositoryPackage(appFacingCandidate.existsSync()
             ? appFacingCandidate
             : topLevelCandidate);
+        continue;
+      }
+      // Check for a match in the third-party packages directory.
+      final Directory thirdPartyCandidate =
+          thirdPartyPackagesDir.childDirectory(packageName);
+      if (thirdPartyCandidate.existsSync()) {
+        targets[packageName] = RepositoryPackage(thirdPartyCandidate);
         continue;
       }
       // If there is no packages/<packageName> directory, then either the
@@ -141,16 +164,33 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// useful for overriding transitive dependencies.
   Future<bool> _addDependencyOverridesIfNecessary(
     RepositoryPackage package,
-    Map<String, RepositoryPackage> localDependencies, {
+    Map<String, RepositoryPackage> localDependencies,
+    Map<String, Version?> versions, {
     Iterable<String> additionalPackagesToOverride = const <String>{},
   }) async {
     final String pubspecContents = package.pubspecFile.readAsStringSync();
 
+    // Returns true if [dependency] allows a dependency on [version]. Always
+    // returns true if [version] is null, to err on the side of assuming it
+    // will apply in cases where we don't have a target version.
+    bool allowsVersion(Dependency dependency, Version? version) {
+      return version == null ||
+          dependency is! HostedDependency ||
+          dependency.version.allows(version);
+    }
+
     // Determine the dependencies to be overridden.
     final Pubspec pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
-      ...pubspec.dependencies.keys,
-      ...pubspec.devDependencies.keys,
+      // Filter out any dependencies with version constraint that wouldn't allow
+      // the target if published.
+      ...<MapEntry<String, Dependency>>[
+        ...pubspec.dependencies.entries,
+        ...pubspec.devDependencies.entries,
+      ]
+          .where((MapEntry<String, Dependency> element) =>
+              allowsVersion(element.value, versions[element.key]))
+          .map((MapEntry<String, Dependency> entry) => entry.key),
       ...additionalPackagesToOverride,
     ];
     final List<String> packagesToOverride = combinedDependencies
@@ -216,7 +256,8 @@ $dependencyOverridesKey:
     // example app doesn't. Since integration tests are run in the example app,
     // it needs the overrides in order for tests to pass.
     for (final RepositoryPackage example in package.getExamples()) {
-      _addDependencyOverridesIfNecessary(example, localDependencies,
+      await _addDependencyOverridesIfNecessary(
+          example, localDependencies, versions,
           additionalPackagesToOverride: packagesToOverride);
     }
 
@@ -271,15 +312,6 @@ $dependencyOverridesKey:
         print('  Skipping $packageName; no non-breaking version change.');
         continue;
       }
-      // TODO(stuartmorgan): Remove this special-casing once this tool checks
-      // for major version differences relative to the dependencies being
-      // updated rather than the version change in the PR:
-      // https://github.com/flutter/flutter/issues/121246
-      if (packageName == 'pigeon') {
-        print('  Skipping $packageName; see '
-            'https://github.com/flutter/flutter/issues/121246');
-        continue;
-      }
       changedPackages.add(packageName);
     }
     return changedPackages;
@@ -304,7 +336,7 @@ $dependencyOverridesKey:
     final Version newVersion = pubspec.version!;
     if ((newVersion.major > 0 && newVersion.major != previousVersion.major) ||
         (newVersion.major == 0 && newVersion.minor != previousVersion.minor)) {
-      // Breaking changes aren't targetted since they won't be picked up
+      // Breaking changes aren't targeted since they won't be picked up
       // automatically.
       return false;
     }

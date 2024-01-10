@@ -1,3 +1,39 @@
+## 0.9.13+9
+
+* Fixes new lint warnings.
+
+## 0.9.13+8
+
+* Updates example app to use non-deprecated video_player method.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.9.13+7
+
+* Fixes inverted orientation strings.
+
+## 0.9.13+6
+
+* Fixes incorrect use of `NSError` that could cause crashes on launch.
+
+## 0.9.13+5
+
+* Ignores audio samples until the first video sample arrives.
+
+## 0.9.13+4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.9.13+3
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+* Fixes unawaited_futures violations.
+
+## 0.9.13+2
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 0.9.13+1
 
 * Clarifies explanation of endorsement in README.

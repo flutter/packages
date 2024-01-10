@@ -1,5 +1,37 @@
-## NEXT
+## 2.9.3
 
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.9.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 2.9.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.9.0
+
+* Formally deprecates all methods that have been replaced with newer variants.
+
+## 2.8.0
+
+* Adds `getMedia` method.
+
+## 2.7.0
+
+* Adds `CameraDelegatingImagePickerPlatform` as a base class for platform
+  implementations that don't support `ImageSource.camera`, but allow for an-
+  implementation to be provided at the application level via implementation
+  of `CameraDelegatingImagePickerPlatform`.
+* Adds `supportsImageSource` to check source support at runtime.
+
+## 2.6.4
+
+* Adds compatibility with `http` 1.0.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.6.3
@@ -30,7 +62,7 @@
     * Adds `requestFullMetadata` option that allows disabling extra permission requests
       on certain platforms.
     * Moves optional image picking parameters to `ImagePickerOptions` class.
-* Minor fixes for new analysis options. 
+* Minor fixes for new analysis options.
 
 ## 2.4.4
 

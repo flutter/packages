@@ -8,6 +8,7 @@
 
 // This file is hand-formatted.
 
+// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
 import 'dart:ui' show FontFeature;
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
@@ -537,6 +538,8 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
     );
   },
 
+  // The "#docregion" pragma below makes this accessible from the README.md file.
+  // #docregion Row
   'Row': (BuildContext context, DataSource source) {
     return Row(
       mainAxisAlignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['mainAxisAlignment']) ?? MainAxisAlignment.start,
@@ -548,6 +551,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       children: source.childList(['children']),
     );
   },
+  // #enddocregion Row
 
   'SafeArea': (BuildContext context, DataSource source) {
     return SafeArea(
@@ -644,7 +648,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       locale: ArgumentDecoders.locale(source, ['locale']),
       softWrap: source.v<bool>(['softWrap']),
       overflow: ArgumentDecoders.enumValue<TextOverflow>(TextOverflow.values, source, ['overflow']),
-      textScaleFactor: source.v<double>(['textScaleFactor']),
+      textScaleFactor: source.v<double>(['textScaleFactor']),  // ignore: deprecated_member_use
       maxLines: source.v<int>(['maxLines']),
       semanticsLabel: source.v<String>(['semanticsLabel']),
       textWidthBasis: ArgumentDecoders.enumValue<TextWidthBasis>(TextWidthBasis.values, source, ['textWidthBasis']),

@@ -13,10 +13,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.hardware.camera2.CaptureRequest;
-import android.os.Build;
 import android.util.Range;
 import io.flutter.plugins.camera.CameraProperties;
-import io.flutter.plugins.camera.utils.TestUtils;
+import io.flutter.plugins.camera.DeviceInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,14 +23,14 @@ import org.junit.Test;
 public class FpsRangeFeatureTest {
   @Before
   public void before() {
-    TestUtils.setFinalStatic(Build.class, "BRAND", "Test Brand");
-    TestUtils.setFinalStatic(Build.class, "MODEL", "Test Model");
+    DeviceInfo.BRAND = "Test Brand";
+    DeviceInfo.MODEL = "Test Model";
   }
 
   @After
   public void after() {
-    TestUtils.setFinalStatic(Build.class, "BRAND", null);
-    TestUtils.setFinalStatic(Build.class, "MODEL", null);
+    DeviceInfo.BRAND = null;
+    DeviceInfo.MODEL = null;
   }
 
   @Test

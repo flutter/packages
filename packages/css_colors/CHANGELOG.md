@@ -1,7 +1,17 @@
-## NEXT
+## 1.1.4
 
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Improves README example and updates it to use code excerpts.
+
+## 1.1.3
+
+- Adds pub topics to package metadata.
+
+## 1.1.2
+
+- Updates the `Color` documentation link in the README.
+- Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 - Aligns Dart and Flutter SDK constraints.
-- Updates minimum Flutter version to 3.0.
 - Updates package description.
 
 ## 1.1.1

@@ -163,10 +163,65 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          ResolutionPreset.low,
         ),
         throwsUnimplementedError,
       );
+    });
+
+    test(
+        'Default implementation of createCameraWithSettings() should call createCamera() passing parameters',
+        () {
+      // Arrange
+      const CameraDescription cameraDescription = CameraDescription(
+        name: 'back',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 0,
+      );
+
+      const MediaSettings mediaSettings = MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      );
+
+      bool createCameraCalled = false;
+
+      final OverriddenCameraPlatform cameraPlatform = OverriddenCameraPlatform((
+        CameraDescription cameraDescriptionArg,
+        ResolutionPreset? resolutionPresetArg,
+        bool enableAudioArg,
+      ) {
+        expect(
+          cameraDescriptionArg,
+          cameraDescription,
+          reason: 'should pass camera description',
+        );
+        expect(
+          resolutionPresetArg,
+          mediaSettings.resolutionPreset,
+          reason: 'should pass resolution preset',
+        );
+        expect(
+          enableAudioArg,
+          mediaSettings.enableAudio,
+          reason: 'should pass enableAudio',
+        );
+
+        createCameraCalled = true;
+      });
+
+      // Act & Assert
+      cameraPlatform.createCameraWithSettings(
+        cameraDescription,
+        mediaSettings,
+      );
+
+      expect(createCameraCalled, isTrue,
+          reason:
+              'default implementation of createCameraWithSettings should call createCamera passing parameters');
     });
 
     test(
@@ -496,3 +551,21 @@ class ImplementsCameraPlatform implements CameraPlatform {
 }
 
 class ExtendsCameraPlatform extends CameraPlatform {}
+
+class OverriddenCameraPlatform extends CameraPlatform {
+  OverriddenCameraPlatform(this._onCreateCameraCalled);
+
+  final void Function(
+    CameraDescription cameraDescription,
+    ResolutionPreset? resolutionPreset,
+    bool enableAudio,
+  ) _onCreateCameraCalled;
+
+  @override
+  Future<int> createCamera(
+      CameraDescription cameraDescription, ResolutionPreset? resolutionPreset,
+      {bool enableAudio = false}) {
+    _onCreateCameraCalled(cameraDescription, resolutionPreset, enableAudio);
+    return Future<int>.value(0);
+  }
+}

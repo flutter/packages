@@ -26,6 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace 'dev.flutter.packages.animations.example'
     compileSdkVersion flutter.compileSdkVersion
 
     sourceSets {
@@ -35,7 +36,7 @@ android {
 
     defaultConfig {
         applicationId "dev.flutter.packages.animations.example"
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 32
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

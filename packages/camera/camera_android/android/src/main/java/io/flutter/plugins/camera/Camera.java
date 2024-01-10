@@ -24,8 +24,6 @@ import android.media.EncoderProfiles;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
-import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -58,19 +56,18 @@ import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
+import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 @FunctionalInterface
@@ -90,6 +87,7 @@ class Camera
     supportedImageFormats = new HashMap<>();
     supportedImageFormats.put("yuv420", ImageFormat.YUV_420_888);
     supportedImageFormats.put("jpeg", ImageFormat.JPEG);
+    supportedImageFormats.put("nv21", ImageFormat.NV21);
   }
 
   /**
@@ -131,7 +129,7 @@ class Camera
   CameraDeviceWrapper cameraDevice;
   CameraCaptureSession captureSession;
   private ImageReader pictureImageReader;
-  ImageReader imageStreamReader;
+  ImageStreamReader imageStreamReader;
   /** {@link CaptureRequest.Builder} for the camera preview */
   CaptureRequest.Builder previewRequestBuilder;
 
@@ -258,9 +256,8 @@ class Camera
 
     // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is null
     // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
-    EncoderProfiles recordingProfile = getRecordingProfile();
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && recordingProfile != null) {
-      mediaRecorderBuilder = new MediaRecorderBuilder(recordingProfile, outputFilePath);
+    if (SdkCapabilityChecker.supportsEncoderProfiles() && getRecordingProfile() != null) {
+      mediaRecorderBuilder = new MediaRecorderBuilder(getRecordingProfile(), outputFilePath);
     } else {
       mediaRecorderBuilder = new MediaRecorderBuilder(getRecordingProfileLegacy(), outputFilePath);
     }
@@ -306,7 +303,7 @@ class Camera
       imageFormat = ImageFormat.YUV_420_888;
     }
     imageStreamReader =
-        ImageReader.newInstance(
+        new ImageStreamReader(
             resolutionFeature.getPreviewSize().getWidth(),
             resolutionFeature.getPreviewSize().getHeight(),
             imageFormat,
@@ -322,15 +319,15 @@ class Camera
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
               startPreview();
-              if (!recordingVideo) // only send initialization if we werent already recording and switching cameras
-              dartMessenger.sendCameraInitializedEvent(
+              if (!recordingVideo) { // only send initialization if we werent already recording and switching cameras
+                dartMessenger.sendCameraInitializedEvent(
                     resolutionFeature.getPreviewSize().getWidth(),
                     resolutionFeature.getPreviewSize().getHeight(),
                     cameraFeatures.getExposureLock().getValue(),
                     cameraFeatures.getAutoFocus().getValue(),
                     cameraFeatures.getExposurePoint().checkIsSupported(),
                     cameraFeatures.getFocusPoint().checkIsSupported());
-
+              }
             } catch (Exception e) {
               if (BuildConfig.DEBUG) {
                 Log.i(TAG, "open | onOpened error: " + e.getMessage());
@@ -415,8 +412,14 @@ class Camera
 
     List<Surface> remainingSurfaces = Arrays.asList(surfaces);
     if (templateType != CameraDevice.TEMPLATE_PREVIEW) {
-      // If it is not preview mode, add all surfaces as targets.
+      // If it is not preview mode, add all surfaces as targets
+      // except the surface used for still capture as this should
+      // not be part of a repeating request.
+      Surface pictureImageReaderSurface = pictureImageReader.getSurface();
       for (Surface surface : remainingSurfaces) {
+        if (surface == pictureImageReaderSurface) {
+          continue;
+        }
         previewRequestBuilder.addTarget(surface);
       }
     }
@@ -463,7 +466,7 @@ class Camera
         };
 
     // Start the session.
-    if (VERSION.SDK_INT >= VERSION_CODES.P) {
+    if (SdkCapabilityChecker.supportsSessionConfiguration()) {
       // Collect all surfaces to render to.
       List<OutputConfiguration> configs = new ArrayList<>();
       configs.add(new OutputConfiguration(flutterSurface));
@@ -536,9 +539,13 @@ class Camera
       surfaces.add(mediaRecorder.getSurface());
       successCallback = () -> mediaRecorder.start();
     }
-    if (stream) {
+    if (stream && imageStreamReader != null) {
       surfaces.add(imageStreamReader.getSurface());
     }
+
+    // Add pictureImageReader surface to allow for still capture
+    // during recording/image streaming.
+    surfaces.add(pictureImageReader.getSurface());
 
     createCaptureSession(
         CameraDevice.TEMPLATE_RECORD, successCallback, surfaces.toArray(new Surface[0]));
@@ -660,7 +667,6 @@ class Camera
         };
 
     try {
-      captureSession.stopRepeating();
       Log.i(TAG, "sending capture request");
       captureSession.capture(stillBuilder.build(), captureCallback, backgroundHandler);
     } catch (CameraAccessException e) {
@@ -812,7 +818,7 @@ class Camera
     }
 
     try {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      if (SdkCapabilityChecker.supportsVideoPause()) {
         mediaRecorder.pause();
       } else {
         result.error("videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null);
@@ -833,7 +839,7 @@ class Camera
     }
 
     try {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      if (SdkCapabilityChecker.supportsVideoPause()) {
         mediaRecorder.resume();
       } else {
         result.error(
@@ -1070,8 +1076,13 @@ class Camera
 
   /** Pause the preview from dart. */
   public void pausePreview() throws CameraAccessException {
-    this.pausedPreview = true;
-    this.captureSession.stopRepeating();
+    if (!this.pausedPreview) {
+      this.pausedPreview = true;
+
+      if (this.captureSession != null) {
+        this.captureSession.stopRepeating();
+      }
+    }
   }
 
   /** Resume the preview from dart. */
@@ -1141,10 +1152,15 @@ class Camera
   public void onImageAvailable(ImageReader reader) {
     Log.i(TAG, "onImageAvailable");
 
+    // Use acquireNextImage since image reader is only for one image.
+    Image image = reader.acquireNextImage();
+    if (image == null) {
+      return;
+    }
+
     backgroundHandler.post(
         new ImageSaver(
-            // Use acquireNextImage since image reader is only for one image.
-            reader.acquireNextImage(),
+            image,
             captureFile,
             new ImageSaver.Callback() {
               @Override
@@ -1160,7 +1176,8 @@ class Camera
     cameraCaptureCallback.setCameraState(CameraState.STATE_PREVIEW);
   }
 
-  private void prepareRecording(@NonNull Result result) {
+  @VisibleForTesting
+  void prepareRecording(@NonNull Result result) {
     final File outputDir = applicationContext.getCacheDir();
     try {
       captureFile = File.createTempFile("REC", ".mp4", outputDir);
@@ -1191,49 +1208,21 @@ class Camera
 
           @Override
           public void onCancel(Object o) {
-            imageStreamReader.setOnImageAvailableListener(null, backgroundHandler);
+            if (imageStreamReader == null) {
+              return;
+            }
+
+            imageStreamReader.removeListener(backgroundHandler);
           }
         });
   }
 
   void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
-    imageStreamReader.setOnImageAvailableListener(
-        reader -> {
-          Image img = reader.acquireNextImage();
-          // Use acquireNextImage since image reader is only for one image.
-          if (img == null) return;
+    if (imageStreamReader == null) {
+      return;
+    }
 
-          List<Map<String, Object>> planes = new ArrayList<>();
-          for (Image.Plane plane : img.getPlanes()) {
-            ByteBuffer buffer = plane.getBuffer();
-
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes, 0, bytes.length);
-
-            Map<String, Object> planeBuffer = new HashMap<>();
-            planeBuffer.put("bytesPerRow", plane.getRowStride());
-            planeBuffer.put("bytesPerPixel", plane.getPixelStride());
-            planeBuffer.put("bytes", bytes);
-
-            planes.add(planeBuffer);
-          }
-
-          Map<String, Object> imageBuffer = new HashMap<>();
-          imageBuffer.put("width", img.getWidth());
-          imageBuffer.put("height", img.getHeight());
-          imageBuffer.put("format", img.getFormat());
-          imageBuffer.put("planes", planes);
-          imageBuffer.put("lensAperture", this.captureProps.getLastLensAperture());
-          imageBuffer.put("sensorExposureTime", this.captureProps.getLastSensorExposureTime());
-          Integer sensorSensitivity = this.captureProps.getLastSensorSensitivity();
-          imageBuffer.put(
-              "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
-
-          final Handler handler = new Handler(Looper.getMainLooper());
-          handler.post(() -> imageStreamSink.success(imageBuffer));
-          img.close();
-        },
-        backgroundHandler);
+    imageStreamReader.subscribeListener(this.captureProps, imageStreamSink, backgroundHandler);
   }
 
   void closeCaptureSession() {
@@ -1311,8 +1300,8 @@ class Camera
       return;
     }
 
-    // See VideoRenderer.java requires API 26 to switch camera while recording
-    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+    // See VideoRenderer.java; support for this EGL extension is required to switch camera while recording.
+    if (!SdkCapabilityChecker.supportsEglRecordableAndroid()) {
       result.error(
           "setDescriptionWhileRecordingFailed",
           "Device does not support switching the camera while recording",

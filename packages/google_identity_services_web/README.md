@@ -1,5 +1,3 @@
-<?code-excerpt path-base="excerpts/packages/google_identity_services_web_example"?>
-
 # google_identity_services_web
 
 A JS-interop layer for Google Identity's Sign In With Google SDK.
@@ -29,7 +27,7 @@ script tag [as recommended](https://developers.google.com/identity/gsi/web/guide
 Place the `script` tag in the `<head>` of your site, next to the script tag that
 loads `flutter.js`, so the browser can downloaded both in parallel:
 
-<?code-excerpt "../../web/index-with-script-tag.html (script-tag)"?>
+<?code-excerpt "example/web/index-with-script-tag.html (script-tag)"?>
 ```html
 <head>
 <!-- ··· -->
@@ -46,7 +44,7 @@ An alternative way, that downloads the SDK on demand, is to use the
 **`loadWebSdk`** function provided by the library. A simple location to embed
 this in a Flutter Web only app can be the `main.dart`:
 
-<?code-excerpt "main.dart (use-loader)"?>
+<?code-excerpt "example/lib/main.dart (use-loader)"?>
 ```dart
 import 'package:google_identity_services_web/loader.dart' as gis;
 // ···

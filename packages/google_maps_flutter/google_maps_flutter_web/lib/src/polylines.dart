@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// This class manages a set of [PolylinesController]s associated to a [GoogleMapController].
 class PolylinesController extends GeometryController {
@@ -30,10 +30,6 @@ class PolylinesController extends GeometryController {
   }
 
   void _addPolyline(Polyline polyline) {
-    if (polyline == null) {
-      return;
-    }
-
     final gmaps.PolylineOptions polylineOptions =
         _polylineOptionsFromPolyline(googleMap, polyline);
     final gmaps.Polyline gmPolyline = gmaps.Polyline(polylineOptions)

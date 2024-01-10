@@ -22,7 +22,6 @@ class InAppPurchaseAndroidPlatformAddition
   /// this is handled internally and the [enablePendingPurchase] property will
   /// always return `true`.
   ///
-  // ignore: deprecated_member_use_from_same_package
   /// See also [enablePendingPurchases] for more on pending purchases.
   @Deprecated(
       'The requirement to call `enablePendingPurchases()` has become obsolete '
@@ -50,10 +49,6 @@ class InAppPurchaseAndroidPlatformAddition
   /// delivered. The user won't be able to buy the same product again until the
   /// purchase of the product is consumed.
   Future<BillingResultWrapper> consumePurchase(PurchaseDetails purchase) {
-    if (purchase.verificationData == null) {
-      throw ArgumentError(
-          'consumePurchase unsuccessful. The `purchase.verificationData` is not valid');
-    }
     return _billingClientManager.runWithClient(
       (BillingClient client) =>
           client.consumeAsync(purchase.verificationData.serverVerificationData),
@@ -78,13 +73,14 @@ class InAppPurchaseAndroidPlatformAddition
       {String? applicationUserName}) async {
     List<PurchasesResultWrapper> responses;
     PlatformException? exception;
+
     try {
       responses = await Future.wait(<Future<PurchasesResultWrapper>>[
         _billingClientManager.runWithClient(
-          (BillingClient client) => client.queryPurchases(SkuType.inapp),
+          (BillingClient client) => client.queryPurchases(ProductType.inapp),
         ),
         _billingClientManager.runWithClient(
-          (BillingClient client) => client.queryPurchases(SkuType.subs),
+          (BillingClient client) => client.queryPurchases(ProductType.subs),
         ),
       ]);
     } on PlatformException catch (e) {
@@ -119,12 +115,11 @@ class InAppPurchaseAndroidPlatformAddition
     final String errorMessage =
         errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
 
-    final List<GooglePlayPurchaseDetails> pastPurchases =
-        responses.expand((PurchasesResultWrapper response) {
-      return response.purchasesList;
-    }).map((PurchaseWrapper purchaseWrapper) {
-      return GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper);
-    }).toList();
+    final List<GooglePlayPurchaseDetails> pastPurchases = responses
+        .expand((PurchasesResultWrapper response) => response.purchasesList)
+        .expand((PurchaseWrapper purchaseWrapper) =>
+            GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper))
+        .toList();
 
     IAPError? error;
     if (exception != null) {
@@ -149,21 +144,6 @@ class InAppPurchaseAndroidPlatformAddition
   Future<bool> isFeatureSupported(BillingClientFeature feature) async {
     return _billingClientManager.runWithClientNonRetryable(
       (BillingClient client) => client.isFeatureSupported(feature),
-    );
-  }
-
-  /// Initiates a flow to confirm the change of price for an item subscribed by the user.
-  ///
-  /// When the price of a user subscribed item has changed, launch this flow to take users to
-  /// a screen with price change information. User can confirm the new price or cancel the flow.
-  ///
-  /// The skuDetails needs to have already been fetched in a
-  /// [InAppPurchaseAndroidPlatform.queryProductDetails] call.
-  Future<BillingResultWrapper> launchPriceChangeConfirmationFlow(
-      {required String sku}) {
-    return _billingClientManager.runWithClient(
-      (BillingClient client) =>
-          client.launchPriceChangeConfirmationFlow(sku: sku),
     );
   }
 }

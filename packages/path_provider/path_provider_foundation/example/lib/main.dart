@@ -27,6 +27,7 @@ class _MyAppState extends State<MyApp> {
   String? _appSupportDirectory = 'Unknown';
   String? _documentsDirectory = 'Unknown';
   String? _containerDirectory = 'Unknown';
+  String? _cacheDirectory = 'Unknown';
 
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
     String? libraryDirectory;
     String? documentsDirectory;
     String? containerDirectory;
+    String? cacheDirectory;
     final PathProviderPlatform provider = PathProviderPlatform.instance;
     final PathProviderFoundation providerFoundation = PathProviderFoundation();
 
@@ -82,6 +84,12 @@ class _MyAppState extends State<MyApp> {
           'Failed to get app group container directory: $exception';
     }
 
+    try {
+      cacheDirectory = await provider.getApplicationCachePath();
+    } catch (exception) {
+      cacheDirectory = 'Failed to get cache directory: $exception';
+    }
+
     setState(() {
       _tempDirectory = tempDirectory;
       _downloadsDirectory = downloadsDirectory;
@@ -89,6 +97,7 @@ class _MyAppState extends State<MyApp> {
       _appSupportDirectory = appSupportDirectory;
       _documentsDirectory = documentsDirectory;
       _containerDirectory = containerDirectory;
+      _cacheDirectory = cacheDirectory;
     });
   }
 
@@ -108,6 +117,7 @@ class _MyAppState extends State<MyApp> {
               Text('Library Directory: $_libraryDirectory\n'),
               Text('Application Support Directory: $_appSupportDirectory\n'),
               Text('App Group Container Directory: $_containerDirectory\n'),
+              Text('Cache Directory: $_cacheDirectory\n'),
             ],
           ),
         ),

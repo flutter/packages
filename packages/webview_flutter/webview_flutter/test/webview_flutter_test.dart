@@ -10,6 +10,10 @@ void main() {
     test('ensure webview_flutter.dart exports classes from platform interface',
         () {
       // ignore: unnecessary_statements
+      main_file.JavaScriptConsoleMessage;
+      // ignore: unnecessary_statements
+      main_file.JavaScriptLogLevel;
+      // ignore: unnecessary_statements
       main_file.JavaScriptMessage;
       // ignore: unnecessary_statements
       main_file.JavaScriptMode;

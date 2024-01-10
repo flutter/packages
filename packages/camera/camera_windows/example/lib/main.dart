@@ -99,12 +99,12 @@ class _MyAppState extends State<MyApp> {
         enableAudio: _recordAudio,
       );
 
-      _errorStreamSubscription?.cancel();
+      unawaited(_errorStreamSubscription?.cancel());
       _errorStreamSubscription = CameraPlatform.instance
           .onCameraError(cameraId)
           .listen(_onCameraError);
 
-      _cameraClosingStreamSubscription?.cancel();
+      unawaited(_cameraClosingStreamSubscription?.cancel());
       _cameraClosingStreamSubscription = CameraPlatform.instance
           .onCameraClosing(cameraId)
           .listen(_onCameraClosing);
@@ -193,7 +193,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _recordTimed(int seconds) async {
     if (_initialized && _cameraId > 0 && !_recordingTimed) {
-      CameraPlatform.instance
+      unawaited(CameraPlatform.instance
           .onVideoRecordedEvent(_cameraId)
           .first
           .then((VideoRecordedEvent event) async {
@@ -204,7 +204,7 @@ class _MyAppState extends State<MyApp> {
 
           _showInSnackBar('Video captured to: ${event.file.path}');
         }
-      });
+      }));
 
       await CameraPlatform.instance.startVideoRecording(
         _cameraId,

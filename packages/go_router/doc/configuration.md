@@ -30,7 +30,7 @@ GoRoute(
 
 To navigate to this route, use
 [go()](https://pub.dev/documentation/go_router/latest/go_router/GoRouter/go.html).
-To learn more about how navigation, visit the
+To learn more about how navigation works, visit the
 [Navigation](https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html)
 topic.
 
@@ -43,7 +43,7 @@ the builder callback:
 ```dart
 GoRoute(
   path: '/users/:userId',
-  builder: (context, state) => const UserScreen(id: state.params['userId']),
+  builder: (context, state) => const UserScreen(id: state.pathParameters['userId']),
 ),
 ```
 
@@ -55,7 +55,7 @@ after the `?`), use [GoRouterState][]. For example, a URL path such as
 ```dart
 GoRoute(
   path: '/users',
-  builder: (context, state) => const UsersScreen(filter: state.queryParams['filter']),
+  builder: (context, state) => const UsersScreen(filter: state.uri.queryParameters['filter']),
 ),
 ```
 
@@ -84,6 +84,35 @@ GoRoute(
   ],
 )
 ```
+
+# Dynamic RoutingConfig
+The [RoutingConfig][] provides a way to update the GoRoute\[s\] after 
+the [GoRouter][] has already created. This can be done by creating a GoRouter
+with special constructor [GoRouter.routingConfig][]
+
+```dart
+final ValueNotifier<RoutingConfig> myRoutingConfig = ValueNotifier<RoutingConfig>(
+  RoutingConfig(
+    routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => HomeScreen())],
+  ),
+);
+final GoRouter router = GoRouter.routingConfig(routingConfig: myRoutingConfig);
+```
+
+To change the GoRoute later, modify the value of the [ValueNotifier][] directly.
+
+```dart
+myRoutingConfig.value = RoutingConfig(
+  routes: <RouteBase>[
+    GoRoute(path: '/', builder: (_, __) => AlternativeHomeScreen()),
+    GoRoute(path: '/a-new-route', builder: (_, __) => SomeScreen()),
+  ],
+);
+```
+
+The value change is automatically picked up by GoRouter and causes it to reparse
+the current routes, i.e. RouteMatchList, stored in GoRouter. The RouteMatchList will
+reflect the latest change of the `RoutingConfig`.
 
 # Nested navigation
 Some apps display destinations in a subsection of the screen, for example, an

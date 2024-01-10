@@ -25,7 +25,7 @@ Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction =
 /// ```dart
 /// Link(
 ///   uri: Uri.parse('https://flutter.dev'),
-///   builder: (BuildContext context, FollowLink followLink) => ElevatedButton(
+///   builder: (BuildContext context, FollowLink? followLink) => ElevatedButton(
 ///     onPressed: followLink,
 ///     // ... other properties here ...
 ///   )},
@@ -37,7 +37,7 @@ Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction =
 /// ```dart
 /// Link(
 ///   uri: Uri.parse('/home'),
-///   builder: (BuildContext context, FollowLink followLink) => ElevatedButton(
+///   builder: (BuildContext context, FollowLink? followLink) => ElevatedButton(
 ///     onPressed: followLink,
 ///     // ... other properties here ...
 ///   )},
@@ -121,14 +121,18 @@ class DefaultLinkDelegate extends StatelessWidget {
 
     // At this point, we know that the link is external. So we use the
     // `launchUrl` API to open the link.
-    if (await canLaunchUrl(url)) {
-      await launchUrl(
+    bool success;
+    try {
+      success = await launchUrl(
         url,
         mode: _useWebView
-            ? LaunchMode.inAppWebView
+            ? LaunchMode.inAppBrowserView
             : LaunchMode.externalApplication,
       );
-    } else {
+    } on PlatformException {
+      success = false;
+    }
+    if (!success) {
       FlutterError.reportError(FlutterErrorDetails(
         exception: 'Could not launch link $url',
         stack: StackTrace.current,

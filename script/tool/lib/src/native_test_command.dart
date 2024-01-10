@@ -2,16 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ffi';
+
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
-import 'package:platform/platform.dart';
 
 import 'common/cmake.dart';
 import 'common/core.dart';
 import 'common/gradle.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 import 'common/xcode.dart';
 
@@ -39,11 +40,12 @@ const String misconfiguredJavaIntegrationTestErrorExplanation =
 class NativeTestCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
   NativeTestCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  })  : _xcode = Xcode(processRunner: processRunner, log: true),
-        super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    Abi? abi,
+  })  : _abi = abi ?? Abi.current(),
+        _xcode = Xcode(processRunner: processRunner, log: true) {
     argParser.addOption(
       _iOSDestinationFlag,
       help: 'Specify the destination when running iOS tests.\n'
@@ -65,6 +67,9 @@ class NativeTestCommand extends PackageLoopingCommand {
         help: 'Runs native integration (UI) tests', defaultsTo: true);
   }
 
+  // The ABI of the host.
+  final Abi _abi;
+
   // The device destination flags for iOS tests.
   List<String> _iOSDestinationFlags = <String>[];
 
@@ -72,6 +77,9 @@ class NativeTestCommand extends PackageLoopingCommand {
 
   @override
   final String name = 'native-test';
+
+  @override
+  List<String> get aliases => <String>['test-native'];
 
   @override
   final String description = '''
@@ -268,11 +276,11 @@ this command.
     }
 
     final Iterable<RepositoryPackage> examples = plugin.getExamples();
+    final String pluginName = plugin.directory.basename;
 
     bool ranUnitTests = false;
     bool ranAnyTests = false;
     bool failed = false;
-    bool hasMissingBuild = false;
     bool hasMisconfiguredIntegrationTest = false;
     // Iterate through all examples (in the rare case that there is more than
     // one example); running any tests found for each one. Requirements on what
@@ -307,17 +315,29 @@ this command.
         platform: platform,
       );
       if (!project.isConfigured()) {
-        printError('ERROR: Run "flutter build apk" on $exampleName, or run '
-            'this tool\'s "build-examples --apk" command, '
-            'before executing tests.');
-        failed = true;
-        hasMissingBuild = true;
-        continue;
+        final int exitCode = await processRunner.runAndStream(
+          flutterCommand,
+          <String>['build', 'apk', '--config-only'],
+          workingDir: example.directory,
+        );
+        if (exitCode != 0) {
+          printError('Unable to configure Gradle project.');
+          failed = true;
+          continue;
+        }
       }
 
       if (runUnitTests) {
         print('Running unit tests...');
-        final int exitCode = await project.runCommand('testDebugUnitTest');
+        const String taskName = 'testDebugUnitTest';
+        // Target the unit tests in the app and plugin specifically, to avoid
+        // transitively running tests in dependencies. If unit tests have
+        // already run in an earlier example, only run any app-level unit tests.
+        final List<String> pluginTestTask = <String>[
+          if (!ranUnitTests) '$pluginName:$taskName'
+        ];
+        final int exitCode = await project.runCommand('app:$taskName',
+            additionalTasks: pluginTestTask);
         if (exitCode != 0) {
           printError('$exampleName unit tests failed.');
           failed = true;
@@ -367,10 +387,7 @@ this command.
     }
 
     if (failed) {
-      return _PlatformResult(RunState.failed,
-          error: hasMissingBuild
-              ? 'Examples must be built before testing.'
-              : null);
+      return _PlatformResult(RunState.failed);
     }
     if (hasMisconfiguredIntegrationTest) {
       return _PlatformResult(RunState.failed,
@@ -538,9 +555,10 @@ this command.
         isTestBinary: isTestBinary);
   }
 
-  /// Finds every file in the [buildDirectoryName] subdirectory of [plugin]'s
-  /// build directory for which [isTestBinary] is true, and runs all of them,
-  /// returning the overall result.
+  /// Finds every file in the relevant (based on [platformName], [buildMode],
+  /// and [arch]) subdirectory of [plugin]'s build directory for which
+  /// [isTestBinary] is true, and runs all of them, returning the overall
+  /// result.
   ///
   /// The binaries are assumed to be Google Test test binaries, thus returning
   /// zero for success and non-zero for failure.
@@ -553,11 +571,45 @@ this command.
     final List<File> testBinaries = <File>[];
     bool hasMissingBuild = false;
     bool buildFailed = false;
+    String? arch;
+    const String x64DirName = 'x64';
+    const String arm64DirName = 'arm64';
+    if (platform.isWindows) {
+      arch = _abi == Abi.windowsX64 ? x64DirName : arm64DirName;
+    } else if (platform.isLinux) {
+      // TODO(stuartmorgan): Support arm64 if that ever becomes a supported
+      // CI configuration for the repository.
+      arch = 'x64';
+    }
     for (final RepositoryPackage example in plugin.getExamples()) {
-      final CMakeProject project = CMakeProject(example.directory,
+      CMakeProject project = CMakeProject(example.directory,
           buildMode: buildMode,
           processRunner: processRunner,
-          platform: platform);
+          platform: platform,
+          arch: arch);
+      if (platform.isWindows) {
+        if (arch == arm64DirName && !project.isConfigured()) {
+          // Check for x64, to handle builds newer than 3.13, but that don't yet
+          // have https://github.com/flutter/flutter/issues/129807.
+          // TODO(stuartmorgan): Remove this when CI no longer supports a
+          // version of Flutter without the issue above fixed.
+          project = CMakeProject(example.directory,
+              buildMode: buildMode,
+              processRunner: processRunner,
+              platform: platform,
+              arch: x64DirName);
+        }
+        if (!project.isConfigured()) {
+          // Check again without the arch subdirectory, since 3.13 doesn't
+          // have it yet.
+          // TODO(stuartmorgan): Remove this when CI no longer supports Flutter
+          // 3.13.
+          project = CMakeProject(example.directory,
+              buildMode: buildMode,
+              processRunner: processRunner,
+              platform: platform);
+        }
+      }
       if (!project.isConfigured()) {
         printError('ERROR: Run "flutter build" on ${example.displayName}, '
             'or run this tool\'s "build-examples" command, for the target '

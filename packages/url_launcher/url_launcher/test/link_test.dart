@@ -64,7 +64,9 @@ void main() {
         )
         ..setResponse(true);
       await followLink!();
-      expect(mock.canLaunchCalled, isTrue);
+      // Calling canLaunch just to pre-check launch is an anti-pattern, since
+      // canLaunch doesn't always work, so ensure that it's not called.
+      expect(mock.canLaunchCalled, isFalse);
       expect(mock.launchCalled, isTrue);
     });
 
@@ -84,7 +86,7 @@ void main() {
       mock
         ..setLaunchExpectations(
           url: 'http://example.com/foobar',
-          launchMode: PreferredLaunchMode.inAppWebView,
+          launchMode: PreferredLaunchMode.inAppBrowserView,
           universalLinksOnly: false,
           enableJavaScript: true,
           enableDomStorage: true,
@@ -93,7 +95,9 @@ void main() {
         )
         ..setResponse(true);
       await followLink!();
-      expect(mock.canLaunchCalled, isTrue);
+      // Calling canLaunch just to pre-check launch is an anti-pattern, since
+      // canLaunch doesn't always work, so ensure that it's not called.
+      expect(mock.canLaunchCalled, isFalse);
       expect(mock.launchCalled, isTrue);
     });
 

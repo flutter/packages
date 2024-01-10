@@ -17,12 +17,16 @@ import 'util.dart';
 void main() {
   FileSystem fileSystem;
   late Directory packagesDir;
+  late Directory thirdPartyPackagesDir;
   late CommandRunner<void> runner;
   late RecordingProcessRunner processRunner;
 
   setUp(() {
     fileSystem = MemoryFileSystem();
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    thirdPartyPackagesDir = packagesDir.parent
+        .childDirectory('third_party')
+        .childDirectory('packages');
 
     final MockGitDir gitDir = MockGitDir();
     when(gitDir.path).thenReturn(packagesDir.parent.path);
@@ -48,13 +52,14 @@ void main() {
 
   /// Adds dummy 'dependencies:' entries for each package in [dependencies]
   /// to [package].
-  void addDependencies(
-      RepositoryPackage package, Iterable<String> dependencies) {
+  void addDependencies(RepositoryPackage package, Iterable<String> dependencies,
+      {String constraint = '<2.0.0'}) {
     final List<String> lines = package.pubspecFile.readAsLinesSync();
     final int dependenciesStartIndex = lines.indexOf('dependencies:');
     assert(dependenciesStartIndex != -1);
     lines.insertAll(dependenciesStartIndex + 1, <String>[
-      for (final String dependency in dependencies) '  $dependency: ^1.0.0',
+      for (final String dependency in dependencies)
+        '  $dependency: $constraint',
     ]);
     package.pubspecFile.writeAsStringSync(lines.join('\n'));
   }
@@ -62,13 +67,14 @@ void main() {
   /// Adds a 'dev_dependencies:' section with entries for each package in
   /// [dependencies] to [package].
   void addDevDependenciesSection(
-      RepositoryPackage package, Iterable<String> devDependencies) {
+      RepositoryPackage package, Iterable<String> devDependencies,
+      {String constraint = '<2.0.0'}) {
     final String originalContent = package.pubspecFile.readAsStringSync();
     package.pubspecFile.writeAsStringSync('''
 $originalContent
 
 dev_dependencies:
-${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
+${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
 ''');
   }
 
@@ -284,6 +290,31 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
         targetPackage.pubspecFile.readAsStringSync(),
         matches(RegExp(r'dependency_overrides:.*a:.*b:.*c:.*',
             multiLine: true, dotAll: true)));
+  });
+
+  test('finds third_party packages', () async {
+    createFakePackage('bar', thirdPartyPackagesDir, isFlutter: true);
+    final RepositoryPackage firstPartyPackge =
+        createFakePlugin('foo', packagesDir);
+
+    addDependencies(firstPartyPackge, <String>[
+      'bar',
+    ]);
+
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['make-deps-path-based', '--target-dependencies=bar']);
+
+    expect(
+        output,
+        containsAll(<String>[
+          'Rewriting references to: bar...',
+          '  Modified packages/foo/pubspec.yaml',
+        ]));
+
+    final Map<String, String?> simplePackageOverrides =
+        getDependencyOverrides(firstPartyPackge);
+    expect(simplePackageOverrides.length, 1);
+    expect(simplePackageOverrides['bar'], '../../third_party/packages/bar');
   });
 
   // This test case ensures that running CI using this command on an interim
@@ -521,6 +552,87 @@ ${devDependencies.map((String dep) => '  $dep: ^1.0.0').join('\n')}
           contains('No target dependencies'),
         ]),
       );
+    });
+
+    test('does not update references with an older major version', () async {
+      const String newVersion = '2.0.1';
+      final RepositoryPackage targetPackage =
+          createFakePackage('foo', packagesDir, version: newVersion);
+      final RepositoryPackage referencingPackage =
+          createFakePackage('bar', packagesDir);
+
+      // For a dependency on ^1.0.0, the 2.0.0->2.0.1 update should not apply.
+      addDependencies(referencingPackage, <String>['foo'],
+          constraint: '^1.0.0');
+
+      final File pubspecFile = targetPackage.pubspecFile;
+      final String changedFileOutput = <File>[
+        pubspecFile,
+      ].map((File file) => file.path).join('\n');
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents =
+          pubspecFile.readAsStringSync().replaceAll(newVersion, '2.0.0');
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'make-deps-path-based',
+        '--target-dependencies-with-non-breaking-updates'
+      ]);
+
+      final Pubspec referencingPubspec = referencingPackage.parsePubspec();
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Rewriting references to: foo'),
+        ]),
+      );
+      expect(referencingPubspec.dependencyOverrides.isEmpty, true);
+    });
+
+    test('does update references with a matching version range', () async {
+      const String newVersion = '2.0.1';
+      final RepositoryPackage targetPackage =
+          createFakePackage('foo', packagesDir, version: newVersion);
+      final RepositoryPackage referencingPackage =
+          createFakePackage('bar', packagesDir);
+
+      // For a dependency on ^1.0.0, the 2.0.0->2.0.1 update should not apply.
+      addDependencies(referencingPackage, <String>['foo'],
+          constraint: '^2.0.0');
+
+      final File pubspecFile = targetPackage.pubspecFile;
+      final String changedFileOutput = <File>[
+        pubspecFile,
+      ].map((File file) => file.path).join('\n');
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents =
+          pubspecFile.readAsStringSync().replaceAll(newVersion, '2.0.0');
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'make-deps-path-based',
+        '--target-dependencies-with-non-breaking-updates'
+      ]);
+
+      final Pubspec referencingPubspec = referencingPackage.parsePubspec();
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Rewriting references to: foo'),
+        ]),
+      );
+      expect(referencingPubspec.dependencyOverrides['foo'] is PathDependency,
+          true);
     });
 
     test('skips anything outside of the packages directory', () async {

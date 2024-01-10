@@ -6,11 +6,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 const int _exitUnsupportedPlatform = 2;
@@ -22,16 +21,16 @@ const int _exitPodNotInstalled = 3;
 class PodspecCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the linter command.
   PodspecCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform);
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  });
 
   @override
   final String name = 'podspec-check';
 
   @override
-  List<String> get aliases => <String>['podspec', 'podspecs'];
+  List<String> get aliases => <String>['podspec', 'podspecs', 'check-podspec'];
 
   @override
   final String description =
@@ -103,8 +102,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
     final List<File> podspecs =
         await getFilesForPackage(package).where((File entity) {
-      final String filePath = entity.path;
-      return path.extension(filePath) == '.podspec';
+      final String filename = entity.basename;
+      return path.extension(filename) == '.podspec' &&
+          filename != 'Flutter.podspec' &&
+          filename != 'FlutterMacOS.podspec';
     }).toList();
 
     podspecs.sort((File a, File b) => a.basename.compareTo(b.basename));

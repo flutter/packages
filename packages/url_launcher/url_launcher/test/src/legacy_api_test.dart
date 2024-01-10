@@ -2,11 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#105648)
-// ignore: unnecessary_import
-import 'dart:ui' show Brightness;
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:url_launcher/src/legacy_api.dart';
@@ -241,15 +238,18 @@ void main() {
           _anonymize(TestWidgetsFlutterBinding.ensureInitialized())!
               as TestWidgetsFlutterBinding;
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      binding.renderView.automaticSystemUiAdjustment = true;
+      // TODO(goderbauer): Migrate to binding.renderViews when that is available in the oldest supported stable.
+      final RenderView renderView =
+          binding.renderView; // ignore: deprecated_member_use
+      renderView.automaticSystemUiAdjustment = true;
       final Future<bool> launchResult =
           launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);
 
       // Should take over control of the automaticSystemUiAdjustment while it's
       // pending, then restore it back to normal after the launch finishes.
-      expect(binding.renderView.automaticSystemUiAdjustment, isFalse);
+      expect(renderView.automaticSystemUiAdjustment, isFalse);
       await launchResult;
-      expect(binding.renderView.automaticSystemUiAdjustment, isTrue);
+      expect(renderView.automaticSystemUiAdjustment, isTrue);
     });
 
     test('sets automaticSystemUiAdjustment to not be null', () async {
@@ -270,15 +270,18 @@ void main() {
           _anonymize(TestWidgetsFlutterBinding.ensureInitialized())!
               as TestWidgetsFlutterBinding;
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      expect(binding.renderView.automaticSystemUiAdjustment, true);
+      // TODO(goderbauer): Migrate to binding.renderViews when that is available in the oldest supported stable.
+      final RenderView renderView =
+          binding.renderView; // ignore: deprecated_member_use
+      expect(renderView.automaticSystemUiAdjustment, true);
       final Future<bool> launchResult =
           launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);
 
       // The automaticSystemUiAdjustment should be set before the launch
       // and equal to true after the launch result is complete.
-      expect(binding.renderView.automaticSystemUiAdjustment, true);
+      expect(renderView.automaticSystemUiAdjustment, true);
       await launchResult;
-      expect(binding.renderView.automaticSystemUiAdjustment, true);
+      expect(renderView.automaticSystemUiAdjustment, true);
     });
 
     test('open non-parseable url', () async {

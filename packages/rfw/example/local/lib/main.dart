@@ -16,6 +16,10 @@ void main() {
   runApp(const Example());
 }
 
+// The "#docregion" comment helps us keep this code in sync with the
+// excerpt in the rfw package's README.md file.
+//
+// #docregion Example
 class Example extends StatefulWidget {
   const Example({super.key});
 
@@ -35,6 +39,9 @@ class _ExampleState extends State<Example> {
 
   @override
   void reassemble() {
+    // This function causes the Runtime to be updated any time the app is
+    // hot reloaded, so that changes to _createLocalWidgets can be seen
+    // during development. This function has no effect in production.
     super.reassemble();
     _update();
   }
@@ -42,7 +49,7 @@ class _ExampleState extends State<Example> {
   static WidgetLibrary _createLocalWidgets() {
     return LocalWidgetLibrary(<String, LocalWidgetBuilder>{
       'GreenBox': (BuildContext context, DataSource source) {
-        return Container(
+        return ColoredBox(
           color: const Color(0xFF002211),
           child: source.child(<Object>['child']),
         );
@@ -87,3 +94,4 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+// #enddocregion Example

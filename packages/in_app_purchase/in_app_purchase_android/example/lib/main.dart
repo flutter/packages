@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -145,7 +143,7 @@ class _MyAppState extends State<_MyApp> {
             _buildConnectionCheckTile(),
             _buildProductList(),
             _buildConsumableBox(),
-            _FeatureCard(),
+            const _FeatureCard(),
           ],
         ),
       );
@@ -156,10 +154,8 @@ class _MyAppState extends State<_MyApp> {
     }
     if (_purchasePending) {
       stack.add(
-        // TODO(goderbauer): Make this const when that's available on stable.
-        // ignore: prefer_const_constructors
-        Stack(
-          children: const <Widget>[
+        const Stack(
+          children: <Widget>[
             Opacity(
               opacity: 0.3,
               child: ModalBarrier(dismissible: false, color: Colors.grey),
@@ -254,27 +250,11 @@ class _MyAppState extends State<_MyApp> {
               productDetails.description,
             ),
             trailing: previousPurchase != null
-                ? IconButton(
-                    onPressed: () {
-                      final InAppPurchaseAndroidPlatformAddition addition =
-                          InAppPurchasePlatformAddition.instance!
-                              as InAppPurchaseAndroidPlatformAddition;
-                      final SkuDetailsWrapper skuDetails =
-                          (productDetails as GooglePlayProductDetails)
-                              .skuDetails;
-                      addition
-                          .launchPriceChangeConfirmationFlow(
-                              sku: skuDetails.sku)
-                          .then((BillingResultWrapper value) => print(
-                              'confirmationResponse: ${value.responseCode}'));
-                    },
-                    icon: const Icon(Icons.upgrade))
+                ? const SizedBox.shrink()
                 : TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.green[800],
-                      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                      // ignore: deprecated_member_use
-                      primary: Colors.white,
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () {
                       // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
@@ -411,7 +391,7 @@ class _MyAppState extends State<_MyApp> {
             purchaseDetails.status == PurchaseStatus.restored) {
           final bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
-            deliverProduct(purchaseDetails);
+            unawaited(deliverProduct(purchaseDetails));
           } else {
             _handleInvalidPurchase(purchaseDetails);
             return;
@@ -458,9 +438,9 @@ class _MyAppState extends State<_MyApp> {
 }
 
 class _FeatureCard extends StatelessWidget {
-  _FeatureCard();
+  const _FeatureCard();
 
-  final InAppPurchaseAndroidPlatformAddition addition =
+  InAppPurchaseAndroidPlatformAddition get addition =>
       InAppPurchasePlatformAddition.instance!
           as InAppPurchaseAndroidPlatformAddition;
 
@@ -472,7 +452,8 @@ class _FeatureCard extends StatelessWidget {
             children: <Widget>[
           const ListTile(title: Text('Available features')),
           const Divider(),
-          for (BillingClientFeature feature in BillingClientFeature.values)
+          for (final BillingClientFeature feature
+              in BillingClientFeature.values)
             _buildFeatureWidget(feature),
         ]));
   }
@@ -503,6 +484,8 @@ class _FeatureCard extends StatelessWidget {
         return 'inAppItemsOnVR';
       case BillingClientFeature.priceChangeConfirmation:
         return 'priceChangeConfirmation';
+      case BillingClientFeature.productDetails:
+        return 'productDetails';
       case BillingClientFeature.subscriptions:
         return 'subscriptions';
       case BillingClientFeature.subscriptionsOnVR:

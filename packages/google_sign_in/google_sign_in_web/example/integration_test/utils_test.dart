@@ -57,6 +57,17 @@ void main() {
       expect(data.idToken, goodJwtToken);
     });
 
+    testWidgets('happy case (minimal)', (_) async {
+      final GoogleSignInUserData data =
+          gisResponsesToUserData(minimalCredential)!;
+
+      expect(data.displayName, isNull);
+      expect(data.id, '123456');
+      expect(data.email, 'adultman@example.com');
+      expect(data.photoUrl, isNull);
+      expect(data.idToken, minimalJwtToken);
+    });
+
     testWidgets('null response -> null', (_) async {
       expect(gisResponsesToUserData(null), isNull);
     });
@@ -74,6 +85,30 @@ void main() {
     });
   });
 
+  group('getCredentialResponseExpirationTimestamp', () {
+    testWidgets('Good payload -> data', (_) async {
+      final DateTime? expiration =
+          getCredentialResponseExpirationTimestamp(expiredCredential);
+
+      expect(expiration, isNotNull);
+      expect(expiration!.millisecondsSinceEpoch, 1430330400 * 1000);
+    });
+
+    testWidgets('No expiration -> null', (_) async {
+      expect(
+          getCredentialResponseExpirationTimestamp(minimalCredential), isNull);
+    });
+
+    testWidgets('Bad data -> null', (_) async {
+      final CredentialResponse bogus =
+          jsifyAs<CredentialResponse>(<String, Object?>{
+        'credential': 'some-bogus.thing-that-is-not.valid-jwt',
+      });
+
+      expect(getCredentialResponseExpirationTimestamp(bogus), isNull);
+    });
+  });
+
   group('getJwtTokenPayload', () {
     testWidgets('happy case -> data', (_) async {
       final Map<String, Object?>? data = getJwtTokenPayload(goodJwtToken);
@@ -88,6 +123,14 @@ void main() {
             'picture',
             'https://thispersondoesnotexist.com/image?x=.jpg',
           ));
+    });
+
+    testWidgets('happy case (minimal) -> data', (_) async {
+      final Map<String, Object?>? data = getJwtTokenPayload(minimalJwtToken);
+
+      expect(data, isNotNull);
+      expect(data, containsPair('email', 'adultman@example.com'));
+      expect(data, containsPair('sub', '123456'));
     });
 
     testWidgets('null Token -> null', (_) async {

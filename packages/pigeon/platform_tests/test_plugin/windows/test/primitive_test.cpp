@@ -60,11 +60,12 @@ TEST(Primitive, HostInt) {
   PrimitiveHostApi::SetUp(&messenger, &api);
 
   int64_t result = 0;
-  messenger.SendHostMessage("dev.flutter.pigeon.PrimitiveHostApi.anInt",
-                            EncodableValue(EncodableList({EncodableValue(7)})),
-                            [&result](const EncodableValue& reply) {
-                              result = GetResult(reply).LongValue();
-                            });
+  messenger.SendHostMessage(
+      "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt",
+      EncodableValue(EncodableList({EncodableValue(7)})),
+      [&result](const EncodableValue& reply) {
+        result = GetResult(reply).LongValue();
+      });
 
   EXPECT_EQ(result, 7);
 }
@@ -76,7 +77,7 @@ TEST(Primitive, HostBool) {
 
   bool result = false;
   messenger.SendHostMessage(
-      "dev.flutter.pigeon.PrimitiveHostApi.aBool",
+      "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool",
       EncodableValue(EncodableList({EncodableValue(true)})),
       [&result](const EncodableValue& reply) {
         result = std::get<bool>(GetResult(reply));
@@ -92,7 +93,7 @@ TEST(Primitive, HostDouble) {
 
   double result = 0.0;
   messenger.SendHostMessage(
-      "dev.flutter.pigeon.PrimitiveHostApi.aDouble",
+      "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble",
       EncodableValue(EncodableList({EncodableValue(3.0)})),
       [&result](const EncodableValue& reply) {
         result = std::get<double>(GetResult(reply));
@@ -108,7 +109,7 @@ TEST(Primitive, HostString) {
 
   std::string result;
   messenger.SendHostMessage(
-      "dev.flutter.pigeon.PrimitiveHostApi.aString",
+      "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString",
       EncodableValue(EncodableList({EncodableValue("hello")})),
       [&result](const EncodableValue& reply) {
         result = std::get<std::string>(GetResult(reply));
@@ -124,7 +125,7 @@ TEST(Primitive, HostList) {
 
   EncodableList result;
   messenger.SendHostMessage(
-      "dev.flutter.pigeon.PrimitiveHostApi.aList",
+      "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList",
       EncodableValue(EncodableList({EncodableValue(EncodableList({1, 2, 3}))})),
       [&result](const EncodableValue& reply) {
         result = std::get<EncodableList>(GetResult(reply));
@@ -141,7 +142,7 @@ TEST(Primitive, HostMap) {
 
   EncodableMap result;
   messenger.SendHostMessage(
-      "dev.flutter.pigeon.PrimitiveHostApi.aMap",
+      "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap",
       EncodableValue(EncodableList({EncodableValue(EncodableMap({
           {EncodableValue("foo"), EncodableValue("bar")},
       }))})),

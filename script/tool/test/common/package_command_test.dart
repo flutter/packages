@@ -7,11 +7,9 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/package_command.dart';
-import 'package:flutter_plugin_tools/src/common/process_runner.dart';
 import 'package:git/git.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
@@ -206,6 +204,21 @@ void main() {
       expect(command.plugins, unorderedEquals(<String>[]));
     });
 
+    test('filter-packages-to accepts config files', () async {
+      final RepositoryPackage plugin1 =
+          createFakePlugin('plugin1', packagesDir);
+      createFakePlugin('plugin2', packagesDir);
+      final File configFile = packagesDir.childFile('exclude.yaml');
+      configFile.writeAsStringSync('- plugin1');
+
+      await runCapturingPrint(runner, <String>[
+        'sample',
+        '--packages=plugin1,plugin2',
+        '--filter-packages-to=${configFile.path}'
+      ]);
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+    });
+
     test(
         'explicitly specifying the plugin (group) name of a federated plugin '
         'should include all plugins in the group', () async {
@@ -319,8 +332,7 @@ packages/plugin1/plugin1/plugin1.dart
         expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('Only one of --packages, --run-on-changed-packages, or '
-                  '--packages-for-branch can be provided.')
+              contains('Only one of the package selection arguments')
             ]));
       });
 
@@ -338,8 +350,25 @@ packages/plugin1/plugin1/plugin1.dart
         expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('Only one of --packages, --run-on-changed-packages, or '
-                  '--packages-for-branch can be provided.')
+              contains('Only one of the package selection arguments')
+            ]));
+      });
+
+      test('does not allow --packages with --current-package', () async {
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--current-package',
+          '--packages=plugin1',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Only one of the package selection arguments')
             ]));
       });
 
@@ -359,9 +388,108 @@ packages/plugin1/plugin1/plugin1.dart
         expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('Only one of --packages, --run-on-changed-packages, or '
-                  '--packages-for-branch can be provided.')
+              contains('Only one of the package selection arguments')
             ]));
+      });
+    });
+
+    group('current-package', () {
+      test('throws when run from outside of the packages directory', () async {
+        fileSystem.currentDirectory = packagesDir.parent;
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--current-package',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('--current-package can only be used within a repository '
+                  'package or package group')
+            ]));
+      });
+
+      test('throws when run directly in the packages directory', () async {
+        fileSystem.currentDirectory = packagesDir;
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--current-package',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('--current-package can only be used within a repository '
+                  'package or package group')
+            ]));
+      });
+
+      test('runs on a package when run from the package directory', () async {
+        final RepositoryPackage package =
+            createFakePlugin('a_package', packagesDir);
+        createFakePlugin('another_package', packagesDir);
+        fileSystem.currentDirectory = package.directory;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
+
+      test('runs only app-facing package of a federated plugin', () async {
+        const String pluginName = 'foo';
+        final Directory groupDir = packagesDir.childDirectory(pluginName);
+        final RepositoryPackage package =
+            createFakePlugin(pluginName, groupDir);
+        createFakePlugin('${pluginName}_someplatform', groupDir);
+        createFakePackage('${pluginName}_platform_interface', groupDir);
+        fileSystem.currentDirectory = package.directory;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
+
+      test('runs on a package when run from a package example directory',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'a_package', packagesDir,
+            examples: <String>['a', 'b', 'c']);
+        createFakePlugin('another_package', packagesDir);
+        fileSystem.currentDirectory = package.getExamples().first.directory;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
+
+      test('runs on a package group when run from the group directory',
+          () async {
+        final Directory pluginGroup = packagesDir.childDirectory('a_plugin');
+        final RepositoryPackage plugin1 =
+            createFakePlugin('a_plugin_foo', pluginGroup);
+        final RepositoryPackage plugin2 =
+            createFakePlugin('a_plugin_bar', pluginGroup);
+        createFakePlugin('unrelated_plugin', packagesDir);
+        fileSystem.currentDirectory = pluginGroup;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins,
+            unorderedEquals(<String>[plugin1.path, plugin2.path]));
       });
     });
 
@@ -652,7 +780,7 @@ packages/plugin1/plugin1/plugin1.dart
         expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
       });
 
-      test('--exclude flag works with --run-on-changed-packages', () async {
+      test('honors --exclude flag', () async {
         processRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
@@ -668,6 +796,103 @@ packages/plugin3/plugin3.dart
         await runCapturingPrint(runner, <String>[
           'sample',
           '--exclude=plugin2,plugin3',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
+
+      test('honors --filter-packages-to flag', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin1/plugin1.dart
+packages/plugin2/ios/plugin2.m
+packages/plugin3/plugin3.dart
+''')),
+        ];
+        final RepositoryPackage plugin1 =
+            createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
+        createFakePlugin('plugin2', packagesDir);
+        createFakePlugin('plugin3', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=plugin1',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
+
+      test(
+          'honors --filter-packages-to flag when a file is changed that makes '
+          'all packages potentially changed', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+.ci.yaml
+''')),
+        ];
+        final RepositoryPackage plugin1 =
+            createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
+        createFakePlugin('plugin2', packagesDir);
+        createFakePlugin('plugin3', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=plugin1',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
+
+      test('--filter-packages-to handles federated plugin groups', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/a_plugin/a_plugin/lib/foo.dart
+packages/a_plugin/a_plugin_impl/lib/foo.dart
+packages/a_plugin/a_plugin_platform_interface/lib/foo.dart
+''')),
+        ];
+        final Directory groupDir = packagesDir.childDirectory('a_plugin');
+        final RepositoryPackage plugin1 =
+            createFakePlugin('a_plugin', groupDir);
+        final RepositoryPackage plugin2 =
+            createFakePlugin('a_plugin_impl', groupDir);
+        final RepositoryPackage plugin3 =
+            createFakePlugin('a_plugin_platform_interface', groupDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=a_plugin',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(
+            command.plugins,
+            unorderedEquals(
+                <String>[plugin1.path, plugin2.path, plugin3.path]));
+      });
+
+      test('--filter-packages-to and --exclude work together', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+.ci.yaml
+''')),
+        ];
+        final RepositoryPackage plugin1 =
+            createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
+        createFakePlugin('plugin2', packagesDir);
+        createFakePlugin('plugin3', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=plugin1,plugin2',
+          '--exclude=plugin2',
           '--base-sha=main',
           '--run-on-changed-packages'
         ]);
@@ -1155,13 +1380,12 @@ packages/b_package/lib/src/foo.dart
 
 class SamplePackageCommand extends PackageCommand {
   SamplePackageCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
     this.includeSubpackages = false,
-  }) : super(packagesDir,
-            processRunner: processRunner, platform: platform, gitDir: gitDir);
+  });
 
   final List<String> plugins = <String>[];
 

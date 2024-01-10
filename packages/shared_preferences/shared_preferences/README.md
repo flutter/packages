@@ -1,5 +1,5 @@
 # Shared preferences plugin
-<?code-excerpt path-base="excerpts/packages/shared_preferences_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/shared_preferences.svg)](https://pub.dev/packages/shared_preferences)
 
@@ -11,9 +11,9 @@ returning, so this plugin must not be used for storing critical data.
 
 Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
-|             | Android | iOS  | Linux | macOS  | Web | Windows     |
-|-------------|---------|------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 9.0+ | Any   | 10.11+ | Any | Any         |
+|             | Android | iOS   | Linux | macOS  | Web | Windows     |
+|-------------|---------|-------|-------|--------|-----|-------------|
+| **Support** | SDK 16+ | 11.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
 To use this plugin, add `shared_preferences` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
@@ -100,6 +100,7 @@ by any non-flutter versions of the app (for migrating from a native app to flutt
 If the prefix is set to a value such as `''` that causes it to read values that were 
 not originally stored by the `SharedPreferences`, initializing `SharedPreferences` 
 may fail if any of the values are of types that are not supported by `SharedPreferences`.
+In this case, you can set an `allowList` that contains only preferences of supported types.
 
 If you decide to remove the prefix entirely, you can still access previously created
 preferences by manually adding the previous prefix `flutter.` to the beginning of 

@@ -1,3 +1,26 @@
+## 3.1.1
+
+* Updates `launchUrl` to return false instead of throwing when there is no handler.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 3.1.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
+
+## 3.0.8
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.0.7
+
+* Updates pigeon dependency for url_launcher_windows to "^10.1.2".
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 3.0.6
+
+* Sets a cmake_policy compatibility version to fix build warnings.
+
 ## 3.0.5
 
 * Clarifies explanation of endorsement in README.

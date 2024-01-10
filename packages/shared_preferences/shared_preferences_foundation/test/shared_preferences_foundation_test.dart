@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'test_api.g.dart';
 
@@ -13,10 +14,19 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Map<String?, Object?> getAllWithPrefix(String prefix) {
+  Map<String?, Object?> getAll(
+    String prefix,
+    List<String?>? allowList,
+  ) {
+    Set<String?>? allowSet;
+    if (allowList != null) {
+      allowSet = Set<String>.from(allowList);
+    }
     return <String?, Object?>{
       for (final String key in items.keys)
-        if (key.startsWith(prefix)) key: items[key]
+        if (key.startsWith(prefix) &&
+            (allowSet == null || allowSet.contains(key)))
+          key: items[key]
     };
   }
 
@@ -41,12 +51,14 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
   }
 
   @override
-  void clearWithPrefix(String prefix) {
+  bool clear(String prefix, List<String?>? allowList) {
     items.keys.toList().forEach((String key) {
-      if (key.startsWith(prefix)) {
+      if (key.startsWith(prefix) &&
+          (allowList == null || allowList.contains(key))) {
         items.remove(key);
       }
     });
+    return true;
   }
 }
 
@@ -124,6 +136,63 @@ void main() {
     expect(all.length, 0);
   });
 
+  test('clearWithParameters', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 0);
+  });
+
+  test('clearWithParameters with allow list', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.String'},
+        ),
+      ),
+    );
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 4);
+  });
+
   test('getAll', () async {
     final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
     for (final String key in flutterTestValues.keys) {
@@ -142,6 +211,37 @@ void main() {
     final Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
     expect(all.length, 5);
     expect(all, prefixTestValues);
+  });
+
+  test('getAllWithParameters', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    expect(all, prefixTestValues);
+  });
+
+  test('getAllWithParameters with allow list', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.Bool'},
+        ),
+      ),
+    );
+    expect(all.length, 1);
+    expect(all['prefix.Bool'], prefixTestValues['prefix.Bool']);
   });
 
   test('setValue', () async {
@@ -188,6 +288,45 @@ void main() {
     expect(all.length, 15);
     await plugin.clearWithPrefix('');
     all = await plugin.getAllWithPrefix('');
+    expect(all.length, 0);
+  });
+
+  test('getAllWithNoPrefix with param', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(all.length, 15);
+    expect(all, allTestValues);
+  });
+
+  test('clearWithNoPrefix with param', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(all.length, 15);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
     expect(all.length, 0);
   });
 }

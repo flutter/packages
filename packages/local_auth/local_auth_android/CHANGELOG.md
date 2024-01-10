@@ -1,3 +1,56 @@
+## 1.0.36
+
+* Updates androidx.fragment version to 1.6.2.
+
+## 1.0.35
+
+* Updates androidx.fragment version to 1.6.1.
+
+## 1.0.34
+
+* Updates pigeon to 11.0.0 and removes enum wrappers.
+
+## 1.0.33
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.32
+
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates androidx.fragment version to 1.6.0.
+
+## 1.0.31
+
+* Updates androidx.fragment version to 1.5.7.
+* Updates androidx.core version to 1.10.1.
+
+## 1.0.30
+
+* Updates androidx.fragment version to 1.5.6
+
+## 1.0.29
+
+* Fixes a regression in 1.0.23 that caused canceled auths to return success.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 1.0.28
+
+* Removes unused resources as indicated by Android lint warnings.
+
+## 1.0.27
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 1.0.26
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 1.0.25
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 1.0.24
 
 * Fixes `getEnrolledBiometrics` return value handling.

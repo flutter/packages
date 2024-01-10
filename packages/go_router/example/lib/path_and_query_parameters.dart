@@ -9,9 +9,9 @@ import 'package:go_router/go_router.dart';
 //
 // The route segments that start with ':' are treated as path parameters when
 // defining GoRoute[s]. The parameter values can be accessed through
-// GoRouterState.params.
+// GoRouterState.pathParameters.
 //
-// The query parameters are automatically stored in GoRouterState.queryParams.
+// The query parameters are automatically stored in GoRouterState.queryParameters.
 
 /// Family data class.
 class Family {
@@ -28,28 +28,25 @@ class Family {
 /// Person data class.
 class Person {
   /// Creates a person.
-  const Person({required this.name, required this.age});
+  const Person({required this.name});
 
   /// The first name of the person.
   final String name;
-
-  /// The age of the person.
-  final int age;
 }
 
 const Map<String, Family> _families = <String, Family>{
   'f1': Family(
     name: 'Doe',
     people: <String, Person>{
-      'p1': Person(name: 'Jane', age: 23),
-      'p2': Person(name: 'John', age: 6),
+      'p1': Person(name: 'Jane'),
+      'p2': Person(name: 'John'),
     },
   ),
   'f2': Family(
     name: 'Wong',
     people: <String, Person>{
-      'p1': Person(name: 'June', age: 51),
-      'p2': Person(name: 'Xin', age: 44),
+      'p1': Person(name: 'June'),
+      'p2': Person(name: 'Xin'),
     },
   ),
 };
@@ -84,8 +81,8 @@ class App extends StatelessWidget {
               path: 'family/:fid',
               builder: (BuildContext context, GoRouterState state) {
                 return FamilyScreen(
-                  fid: state.params['fid']!,
-                  asc: state.queryParams['sort'] == 'asc',
+                  fid: state.pathParameters['fid']!,
+                  asc: state.uri.queryParameters['sort'] == 'asc',
                 );
               }),
         ],
@@ -149,7 +146,8 @@ class FamilyScreen extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             onPressed: () => context.goNamed('family',
-                params: <String, String>{'fid': fid}, queryParams: newQueries),
+                pathParameters: <String, String>{'fid': fid},
+                queryParameters: newQueries),
             tooltip: 'sort ascending or descending',
             icon: const Icon(Icons.sort),
           )

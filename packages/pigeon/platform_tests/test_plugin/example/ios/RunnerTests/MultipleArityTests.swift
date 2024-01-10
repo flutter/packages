@@ -17,7 +17,7 @@ class MultipleArityTests: XCTestCase {
   func testSimpleHost() throws {
     let binaryMessenger = MockBinaryMessenger<Int64>(codec: EnumApi2HostCodec.shared)
     MultipleArityHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockMultipleArityHostApi())
-    let channelName = "dev.flutter.pigeon.MultipleArityHostApi.subtract"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let inputX = 10
@@ -45,10 +45,14 @@ class MultipleArityTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "subtraction")
     api.subtract(x: 30, y: 10) { result in
-      XCTAssertEqual(20, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(20, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
-
 }

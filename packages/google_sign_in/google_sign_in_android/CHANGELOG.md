@@ -1,3 +1,46 @@
+## 6.1.21
+
+* Updates `clearAuthCache` override to match base class declaration.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 6.1.20
+
+* Updates play-services-auth version to 20.7.0.
+
+## 6.1.19
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 6.1.18
+
+* Updates play-services-auth version to 20.6.0.
+
+## 6.1.17
+
+* Converts method channels to Pigeon.
+
+## 6.1.16
+
+* Updates Guava to version 32.0.1.
+
+## 6.1.15
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Updates Guava to version 32.0.0.
+
+## 6.1.14
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 6.1.13
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 6.1.12
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 6.1.11
 
 * Fixes Java warnings.

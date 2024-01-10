@@ -55,7 +55,7 @@ class App extends StatelessWidget {
       // cause go_router to reparse current route if StreamAuth has new sign-in
       // information.
       final bool loggedIn = await StreamAuthScope.of(context).isSignedIn();
-      final bool loggingIn = state.subloc == '/login';
+      final bool loggingIn = state.matchedLocation == '/login';
       if (!loggedIn) {
         return '/login';
       }

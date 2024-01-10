@@ -5,6 +5,9 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
+import android.view.View;
+import android.webkit.ConsoleMessage;
+import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -24,6 +27,24 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private final WebViewFlutterApiImpl webViewFlutterApi;
+
+  private static GeneratedAndroidWebView.ConsoleMessageLevel toConsoleMessageLevel(
+      ConsoleMessage.MessageLevel level) {
+    switch (level) {
+      case TIP:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.TIP;
+      case LOG:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.LOG;
+      case WARNING:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.WARNING;
+      case ERROR:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.ERROR;
+      case DEBUG:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.DEBUG;
+    }
+
+    return GeneratedAndroidWebView.ConsoleMessageLevel.UNKNOWN;
+  }
 
   /**
    * Creates a Flutter api that sends messages to Dart.
@@ -72,6 +93,32 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         callback);
   }
 
+  /** Passes arguments from {@link WebChromeClient#onGeolocationPermissionsShowPrompt} to Dart. */
+  public void onGeolocationPermissionsShowPrompt(
+      @NonNull WebChromeClient webChromeClient,
+      @NonNull String origin,
+      @NonNull GeolocationPermissions.Callback callback,
+      @NonNull WebChromeClientFlutterApi.Reply<Void> replyCallback) {
+    new GeolocationPermissionsCallbackFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(callback, reply -> {});
+    onGeolocationPermissionsShowPrompt(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(callback)),
+        origin,
+        replyCallback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onGeolocationPermissionsHidePrompt` on the
+   * Dart object representing `instance`.
+   */
+  public void onGeolocationPermissionsHidePrompt(
+      @NonNull WebChromeClient instance, @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    super.onGeolocationPermissionsHidePrompt(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        callback);
+  }
+
   /**
    * Sends a message to Dart to call `WebChromeClient.onPermissionRequest` on the Dart object
    * representing `instance`.
@@ -87,6 +134,56 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     super.onPermissionRequest(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(request)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onShowCustomView` on the Dart object
+   * representing `instance`.
+   */
+  public void onShowCustomView(
+      @NonNull WebChromeClient instance,
+      @NonNull View view,
+      @NonNull WebChromeClient.CustomViewCallback customViewCallback,
+      @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    new ViewFlutterApiImpl(binaryMessenger, instanceManager).create(view, reply -> {});
+    new CustomViewCallbackFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(customViewCallback, reply -> {});
+
+    onShowCustomView(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(view)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(customViewCallback)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onHideCustomView` on the Dart object
+   * representing `instance`.
+   */
+  public void onHideCustomView(
+      @NonNull WebChromeClient instance, @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    super.onHideCustomView(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onConsoleMessage` on the Dart object
+   * representing `instance`.
+   */
+  public void onConsoleMessage(
+      @NonNull WebChromeClient instance,
+      @NonNull ConsoleMessage message,
+      @NonNull Reply<Void> callback) {
+    super.onConsoleMessage(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        new GeneratedAndroidWebView.ConsoleMessage.Builder()
+            .setLineNumber((long) message.lineNumber())
+            .setMessage(message.message())
+            .setLevel(toConsoleMessageLevel(message.messageLevel()))
+            .setSourceId(message.sourceId())
+            .build(),
         callback);
   }
 

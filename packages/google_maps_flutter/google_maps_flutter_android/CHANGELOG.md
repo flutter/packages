@@ -1,3 +1,60 @@
+## 2.6.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.6.1
+
+* Fixes new lint warnings.
+
+## 2.6.0
+
+* Fixes missing updates in TLHC mode.
+* Switched default display mode to TLHC mode.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.5.3
+
+* Updates `com.google.android.gms:play-services-maps` to 18.2.0.
+
+## 2.5.2
+
+* Updates annotations lib to 1.7.0.
+
+## 2.5.1
+
+* Adds pub topics to package metadata.
+
+## 2.5.0
+
+* Adds implementation for `cloudMapId` parameter to support cloud-based map styling.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.4.16
+
+* Removes old empty override methods.
+* Fixes unawaited_futures violations.
+
+## 2.4.15
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.4.14
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 2.4.13
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.4.12
+
+* Fixes Java warnings.
+
+## 2.4.11
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 2.4.10
 
 * Bump RoboElectric dependency to 4.4.1 to support AndroidX.

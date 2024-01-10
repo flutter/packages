@@ -4,11 +4,9 @@
 
 package io.flutter.plugins.quickactions;
 
-import static io.flutter.plugins.quickactions.MethodCallHandlerImpl.EXTRA_ACTION;
-import static org.junit.Assert.assertEquals;
+import static io.flutter.plugins.quickactions.QuickActions.EXTRA_ACTION;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,23 +14,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutManager;
-import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.StandardMethodCodec;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
-import org.junit.After;
 import org.junit.Test;
 
 public class QuickActionsTest {
   private static class TestBinaryMessenger implements BinaryMessenger {
-    public MethodCall lastMethodCall;
+    public boolean launchActionCalled;
 
     @Override
     public void send(@NonNull String channel, @Nullable ByteBuffer message) {
@@ -44,9 +36,8 @@ public class QuickActionsTest {
         @NonNull String channel,
         @Nullable ByteBuffer message,
         @Nullable final BinaryReply callback) {
-      if (channel.equals("plugins.flutter.io/quick_actions_android")) {
-        lastMethodCall =
-            StandardMethodCodec.INSTANCE.decodeMethodCall((ByteBuffer) message.position(0));
+      if (channel.contains("launchAction")) {
+        launchActionCalled = true;
       }
     }
 
@@ -75,12 +66,9 @@ public class QuickActionsTest {
       throws NoSuchFieldException, IllegalAccessException {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin();
+    final QuickActionsPlugin plugin =
+        new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
-    setBuildVersion(SUPPORTED_BUILD);
-    Field handler = plugin.getClass().getDeclaredField("handler");
-    handler.setAccessible(true);
-    handler.set(plugin, mock(MethodCallHandlerImpl.class));
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
     final Activity mockMainActivity = mock(Activity.class);
     when(mockMainActivity.getIntent()).thenReturn(mockIntent);
@@ -96,37 +84,33 @@ public class QuickActionsTest {
     plugin.onAttachedToActivity(mockActivityPluginBinding);
 
     // Assert
-    assertNotNull(testBinaryMessenger.lastMethodCall);
-    assertEquals(testBinaryMessenger.lastMethodCall.method, "launch");
-    assertEquals(testBinaryMessenger.lastMethodCall.arguments, SHORTCUT_TYPE);
+    assertTrue(testBinaryMessenger.launchActionCalled);
   }
 
   @Test
-  public void onNewIntent_buildVersionUnsupported_doesNotInvokeMethod()
-      throws NoSuchFieldException, IllegalAccessException {
+  public void onNewIntent_buildVersionUnsupported_doesNotInvokeMethod() {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin();
+    final QuickActionsPlugin plugin =
+        new QuickActionsPlugin((version) -> UNSUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
-    setBuildVersion(UNSUPPORTED_BUILD);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
 
     // Act
     final boolean onNewIntentReturn = plugin.onNewIntent(mockIntent);
 
     // Assert
-    assertNull(testBinaryMessenger.lastMethodCall);
+    assertFalse(testBinaryMessenger.launchActionCalled);
     assertFalse(onNewIntentReturn);
   }
 
   @Test
-  public void onNewIntent_buildVersionSupported_invokesLaunchMethod()
-      throws NoSuchFieldException, IllegalAccessException {
+  public void onNewIntent_buildVersionSupported_invokesLaunchMethod() {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin();
+    final QuickActionsPlugin plugin =
+        new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
-    setBuildVersion(SUPPORTED_BUILD);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
     final Activity mockMainActivity = mock(Activity.class);
     when(mockMainActivity.getIntent()).thenReturn(mockIntent);
@@ -142,9 +126,7 @@ public class QuickActionsTest {
     final boolean onNewIntentReturn = plugin.onNewIntent(mockIntent);
 
     // Assert
-    assertNotNull(testBinaryMessenger.lastMethodCall);
-    assertEquals(testBinaryMessenger.lastMethodCall.method, "launch");
-    assertEquals(testBinaryMessenger.lastMethodCall.arguments, SHORTCUT_TYPE);
+    assertTrue(testBinaryMessenger.launchActionCalled);
     assertFalse(onNewIntentReturn);
   }
 
@@ -160,20 +142,5 @@ public class QuickActionsTest {
     when(mockIntent.hasExtra(EXTRA_ACTION)).thenReturn(true);
     when(mockIntent.getStringExtra(EXTRA_ACTION)).thenReturn(QuickActionsTest.SHORTCUT_TYPE);
     return mockIntent;
-  }
-
-  private void setBuildVersion(int buildVersion)
-      throws NoSuchFieldException, IllegalAccessException {
-    Field buildSdkField = Build.VERSION.class.getField("SDK_INT");
-    buildSdkField.setAccessible(true);
-    final Field modifiersField = Field.class.getDeclaredField("modifiers");
-    modifiersField.setAccessible(true);
-    modifiersField.setInt(buildSdkField, buildSdkField.getModifiers() & ~Modifier.FINAL);
-    buildSdkField.set(null, buildVersion);
-  }
-
-  @After
-  public void tearDown() throws NoSuchFieldException, IllegalAccessException {
-    setBuildVersion(0);
   }
 }

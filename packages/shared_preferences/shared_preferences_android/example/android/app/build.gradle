@@ -26,6 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace 'io.flutter.plugins.sharedpreferencesexample'
     compileSdkVersion flutter.compileSdkVersion
 
     sourceSets {
@@ -34,7 +35,7 @@ android {
 
     defaultConfig {
         applicationId "io.flutter.plugins.sharedpreferencesexample"
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

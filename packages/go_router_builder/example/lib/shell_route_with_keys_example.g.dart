@@ -13,8 +13,8 @@ List<RouteBase> get $appRoutes => [
     ];
 
 RouteBase get $myShellRouteData => ShellRouteData.$route(
-      factory: $MyShellRouteDataExtension._fromState,
       navigatorKey: MyShellRouteData.$navigatorKey,
+      factory: $MyShellRouteDataExtension._fromState,
       routes: [
         GoRouteData.$route(
           path: '/home',
@@ -26,8 +26,8 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: ':id',
-              factory: $UserRouteDataExtension._fromState,
               parentNavigatorKey: UserRouteData.$parentNavigatorKey,
+              factory: $UserRouteDataExtension._fromState,
             ),
           ],
         ),
@@ -52,6 +52,8 @@ extension $HomeRouteDataExtension on HomeRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UsersRouteDataExtension on UsersRouteData {
@@ -68,11 +70,13 @@ extension $UsersRouteDataExtension on UsersRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UserRouteDataExtension on UserRouteData {
   static UserRouteData _fromState(GoRouterState state) => UserRouteData(
-        id: int.parse(state.params['id']!),
+        id: int.parse(state.pathParameters['id']!),
       );
 
   String get location => GoRouteData.$location(
@@ -85,4 +89,6 @@ extension $UserRouteDataExtension on UserRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

@@ -30,7 +30,7 @@ void main() {
 
     // Setting up a handler requires bindings to be initialized, and since
     // registerWith is called very early in initialization the bindings won't
-    // have been initialized. While registerWith could intialize them, that
+    // have been initialized. While registerWith could initialize them, that
     // could slow down startup, so instead the handler should be set up lazily.
     final ByteData? response =
         await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
@@ -1120,7 +1120,7 @@ void main() {
         isMethodCall('startImageStream', arguments: null),
       ]);
 
-      subscription.cancel();
+      await subscription.cancel();
     });
 
     test('Should stop streaming', () async {
@@ -1137,7 +1137,7 @@ void main() {
       final StreamSubscription<CameraImageData> subscription = camera
           .onStreamedFrameAvailable(cameraId)
           .listen((CameraImageData imageData) {});
-      subscription.cancel();
+      await subscription.cancel();
 
       // Assert
       expect(channel.log, <Matcher>[

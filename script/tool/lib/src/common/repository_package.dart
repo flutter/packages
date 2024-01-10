@@ -92,6 +92,16 @@ class RepositoryPackage {
     return directory.childDirectory(directoryName);
   }
 
+  /// Returns true if the package is an app that supports [platform].
+  ///
+  /// The "app" prefix on this method is because this currently only works
+  /// for app packages (e.g., examples).
+  // TODO(stuartmorgan): Add support for non-app packages, by parsing the
+  // pubspec for `flutter:platform:` or `platform:` sections.
+  bool appSupportsPlatform(FlutterPlatform platform) {
+    return platformDirectory(platform).existsSync();
+  }
+
   late final Pubspec _parsedPubspec =
       Pubspec.parse(pubspecFile.readAsStringSync());
 
@@ -102,8 +112,10 @@ class RepositoryPackage {
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
+    const String flutterDependency = 'flutter';
     final Pubspec pubspec = parsePubspec();
-    return pubspec.dependencies.containsKey('flutter');
+    return pubspec.dependencies.containsKey(flutterDependency) ||
+        pubspec.devDependencies.containsKey(flutterDependency);
   }
 
   /// True if this appears to be a federated plugin package, according to
@@ -132,6 +144,20 @@ class RepositoryPackage {
       !isPlatformInterface &&
       directory.basename != directory.parent.basename;
 
+  /// True if this appears to be an example package, according to package
+  /// conventions.
+  bool get isExample {
+    final RepositoryPackage? enclosingPackage = getEnclosingPackage();
+    if (enclosingPackage == null) {
+      // An example package is enclosed in another package.
+      return false;
+    }
+    // Check whether this is one of the enclosing package's examples.
+    return enclosingPackage
+        .getExamples()
+        .any((RepositoryPackage p) => p.path == path);
+  }
+
   /// Returns the Flutter example packages contained in the package, if any.
   Iterable<RepositoryPackage> getExamples() {
     final Directory exampleDirectory = directory.childDirectory('example');
@@ -150,5 +176,20 @@ class RepositoryPackage {
         // isPackage guarantees that the cast to Directory is safe.
         .map((FileSystemEntity entity) =>
             RepositoryPackage(entity as Directory));
+  }
+
+  /// Returns the package that this package is a part of, if any.
+  ///
+  /// Currently this is limited to checking up two directories, since that
+  /// covers all the example structures currently used.
+  RepositoryPackage? getEnclosingPackage() {
+    final Directory parent = directory.parent;
+    if (isPackage(parent)) {
+      return RepositoryPackage(parent);
+    }
+    if (isPackage(parent.parent)) {
+      return RepositoryPackage(parent.parent);
+    }
+    return null;
   }
 }

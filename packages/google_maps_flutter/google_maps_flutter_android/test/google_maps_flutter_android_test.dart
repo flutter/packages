@@ -1,6 +1,7 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
@@ -157,7 +158,7 @@ void main() {
     expect(widget, isA<PlatformViewLink>());
   });
 
-  testWidgets('Defaults to surface view', (WidgetTester tester) async {
+  testWidgets('Defaults to AndroidView', (WidgetTester tester) async {
     final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
 
     final Widget widget = maps.buildViewWithConfiguration(1, (int _) {},
@@ -166,7 +167,55 @@ void main() {
                 CameraPosition(target: LatLng(0, 0), zoom: 1),
             textDirection: TextDirection.ltr));
 
-    expect(widget, isA<PlatformViewLink>());
+    expect(widget, isA<AndroidView>());
+  });
+
+  testWidgets('cloudMapId is passed', (WidgetTester tester) async {
+    const String cloudMapId = '000000000000000'; // Dummy map ID.
+    final Completer<String> passedCloudMapIdCompleter = Completer<String>();
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      SystemChannels.platform_views,
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'create') {
+          final Map<String, dynamic> args = Map<String, dynamic>.from(
+              methodCall.arguments as Map<dynamic, dynamic>);
+          if (args.containsKey('params')) {
+            final Uint8List paramsUint8List = args['params'] as Uint8List;
+            const StandardMessageCodec codec = StandardMessageCodec();
+            final ByteData byteData = ByteData.sublistView(paramsUint8List);
+            final Map<String, dynamic> creationParams =
+                Map<String, dynamic>.from(
+                    codec.decodeMessage(byteData) as Map<dynamic, dynamic>);
+            if (creationParams.containsKey('options')) {
+              final Map<String, dynamic> options = Map<String, dynamic>.from(
+                  creationParams['options'] as Map<dynamic, dynamic>);
+              if (options.containsKey('cloudMapId')) {
+                passedCloudMapIdCompleter
+                    .complete(options['cloudMapId'] as String);
+              }
+            }
+          }
+        }
+        return 0;
+      },
+    );
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+
+    await tester.pumpWidget(maps.buildViewWithConfiguration(1, (int id) {},
+        widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition:
+                CameraPosition(target: LatLng(0, 0), zoom: 1),
+            textDirection: TextDirection.ltr),
+        mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId)));
+
+    expect(
+      await passedCloudMapIdCompleter.future,
+      cloudMapId,
+      reason: 'Should pass cloudMapId on PlatformView creation message',
+    );
   });
 }
 

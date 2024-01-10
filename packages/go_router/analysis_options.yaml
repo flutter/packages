@@ -1,0 +1,11 @@
+# This custom rule set only exists to allow very targeted changes
+# relative to the default repo settings, for specific use cases.
+# Please do NOT add more changes here without consulting with
+# #hackers-ecosystem on Discord.
+
+include: ../../analysis_options.yaml
+
+analyzer:
+  exclude:
+    # This directory deliberately has errors, to test `fix`.
+    - "test_fixes/**"

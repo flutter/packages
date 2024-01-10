@@ -1,6 +1,49 @@
-## NEXT
+## 2.5.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.5.1
+
+* Fixes new lint warnings.
+
+## 2.5.0
+
+* Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
+
+## 2.4.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.4.0
+
+* Adds options for gesture handling and tilt controls on web.
+
+## 2.3.1
+
+* Fixes a regression from 2.2.8 that could cause incorrect handling of a
+  rapid series of map object updates.
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.0
+
+* Endorses [`google_maps_flutter_web`](https://pub.dev/packages/google_maps_flutter_web)
+  as the web implementation of this plugin.
+
+## 2.2.8
+
+* Fixes unawaited_futures violations.
+
+## 2.2.7
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.2.6
 
 * Aligns Dart and Flutter SDK constraints.
+* Updates README.md to specify not to use GoogleMaps widget within an unbounded widget.
 
 ## 2.2.5
 

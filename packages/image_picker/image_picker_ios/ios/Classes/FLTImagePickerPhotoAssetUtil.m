@@ -20,6 +20,20 @@
   return fetchResult.firstObject;
 }
 
++ (NSURL *)saveVideoFromURL:(NSURL *)videoURL {
+  if (![[NSFileManager defaultManager] isReadableFileAtPath:[videoURL path]]) {
+    return nil;
+  }
+  NSString *fileName = [videoURL lastPathComponent];
+  NSURL *destination = [NSURL fileURLWithPath:[self temporaryFilePath:fileName]];
+  NSError *error;
+  [[NSFileManager defaultManager] copyItemAtURL:videoURL toURL:destination error:&error];
+  if (error) {
+    return nil;
+  }
+  return destination;
+}
+
 + (NSString *)saveImageWithOriginalImageData:(NSData *)originalImageData
                                        image:(UIImage *)image
                                     maxWidth:(NSNumber *)maxWidth

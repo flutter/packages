@@ -13,6 +13,7 @@ import android.view.ViewParent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -74,6 +75,15 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     private WebViewClient currentWebViewClient;
     private WebChromeClientHostApiImpl.SecureWebChromeClient currentWebChromeClient;
 
+    private final @NonNull AndroidSdkChecker sdkChecker;
+
+    // Interface for an injectable SDK version checker.
+    @VisibleForTesting
+    interface AndroidSdkChecker {
+      @ChecksSdkIntAtLeast(parameter = 0)
+      boolean sdkIsAtLeast(int version);
+    }
+
     /**
      * Creates a {@link WebViewPlatformView}.
      *
@@ -83,10 +93,24 @@ public class WebViewHostApiImpl implements WebViewHostApi {
         @NonNull Context context,
         @NonNull BinaryMessenger binaryMessenger,
         @NonNull InstanceManager instanceManager) {
+      this(
+          context,
+          binaryMessenger,
+          instanceManager,
+          (int version) -> Build.VERSION.SDK_INT >= version);
+    }
+
+    @VisibleForTesting
+    WebViewPlatformView(
+        @NonNull Context context,
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull InstanceManager instanceManager,
+        @NonNull AndroidSdkChecker sdkChecker) {
       super(context);
       currentWebViewClient = new WebViewClient();
       currentWebChromeClient = new WebChromeClientHostApiImpl.SecureWebChromeClient();
       api = new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
+      this.sdkChecker = sdkChecker;
 
       setWebViewClient(currentWebViewClient);
       setWebChromeClient(currentWebChromeClient);
@@ -108,7 +132,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     @Override
     protected void onAttachedToWindow() {
       super.onAttachedToWindow();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      if (sdkChecker.sdkIsAtLeast(Build.VERSION_CODES.O)) {
         final FlutterView flutterView = tryFindFlutterView();
         if (flutterView != null) {
           flutterView.setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);

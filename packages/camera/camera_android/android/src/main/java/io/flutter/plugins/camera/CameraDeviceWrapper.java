@@ -24,7 +24,6 @@ interface CameraDeviceWrapper {
   @TargetApi(Build.VERSION_CODES.P)
   void createCaptureSession(SessionConfiguration config) throws CameraAccessException;
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   void createCaptureSession(
       @NonNull List<Surface> outputs,
       @NonNull CameraCaptureSession.StateCallback callback,

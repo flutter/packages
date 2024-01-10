@@ -86,7 +86,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyConsumable(
       {required PurchaseParam purchaseParam, bool autoConsume = true}) {
-    assert(autoConsume == true, 'On iOS, we should always auto consume');
+    assert(autoConsume, 'On iOS, we should always auto consume');
     return buyNonConsumable(purchaseParam: purchaseParam);
   }
 
@@ -131,12 +131,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           invalidProductIdentifiers: identifiers.toList());
     }
     List<AppStoreProductDetails> productDetails = <AppStoreProductDetails>[];
-    if (response.products != null) {
-      productDetails = response.products
-          .map((SKProductWrapper productWrapper) =>
-              AppStoreProductDetails.fromSKProduct(productWrapper))
-          .toList();
-    }
+    productDetails = response.products
+        .map((SKProductWrapper productWrapper) =>
+            AppStoreProductDetails.fromSKProduct(productWrapper))
+        .toList();
     List<String> invalidIdentifiers = response.invalidProductIdentifiers;
     if (productDetails.isEmpty) {
       invalidIdentifiers = identifiers.toList();

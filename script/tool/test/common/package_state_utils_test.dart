@@ -72,14 +72,18 @@ void main() {
         'packages/a_plugin/pigeons/messages.dart',
         // Test scripts.
         'packages/a_plugin/run_tests.sh',
+        'packages/a_plugin/dart_test.yaml',
         // Tools.
         'packages/a_plugin/tool/a_development_tool.dart',
         // Example build files.
         'packages/a_plugin/example/android/build.gradle',
         'packages/a_plugin/example/android/gradle/wrapper/gradle-wrapper.properties',
         'packages/a_plugin/example/ios/Runner.xcodeproj/project.pbxproj',
+        'packages/a_plugin/example/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
         'packages/a_plugin/example/linux/flutter/CMakeLists.txt',
+        'packages/a_plugin/example/macos/Podfile',
         'packages/a_plugin/example/macos/Runner.xcodeproj/project.pbxproj',
+        'packages/a_plugin/example/macos/Runner.xcworkspace/contents.xcworkspacedata',
         'packages/a_plugin/example/windows/CMakeLists.txt',
         'packages/a_plugin/example/pubspec.yaml',
         // Pigeon platform tests, which have an unusual structure.
@@ -273,6 +277,90 @@ void main() {
           "+  testImplementation 'junit:junit:4.13.2'",
           "-  implementation 'com.google.android.gms:play-services-maps:18.0.0'",
           "+  implementation 'com.google.android.gms:play-services-maps:18.0.2'",
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, true);
+      expect(state.needsChangelogChange, true);
+    });
+
+    test(
+        'does not requires changelog or version change for '
+        'non-doc-comment-only changes', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/lib/a_plugin.dart',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/lib/a_plugin.dart': <String>[
+          '-  // Old comment.',
+          '+  // New comment.',
+          '+ ', // Allow whitespace line changes as part of comment changes.
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
+    test('requires changelog or version change for doc comment changes',
+        () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/lib/a_plugin.dart',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/lib/a_plugin.dart': <String>[
+          '-  /// Old doc comment.',
+          '+  /// New doc comment.',
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+        git: git,
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, true);
+      expect(state.needsChangelogChange, true);
+    });
+
+    test('requires changelog or version change for Dart code change', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/lib/a_plugin.dart',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/lib/a_plugin.dart': <String>[
+          // Include inline comments to ensure the comment check doesn't have
+          // false positives for lines that include comment changes but aren't
+          // only comment changes.
+          '-  callOldMethod(); // inline comment',
+          '+  callNewMethod(); // inline comment',
         ]
       });
 

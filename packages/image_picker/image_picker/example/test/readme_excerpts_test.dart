@@ -51,6 +51,13 @@ class FakeImagePicker extends ImagePickerPlatform {
   }
 
   @override
+  Future<List<XFile>> getMedia({required MediaOptions options}) async {
+    return options.allowMultiple
+        ? <XFile>[XFile('medias'), XFile('medias')]
+        : <XFile>[XFile('media')];
+  }
+
+  @override
   Future<XFile?> getVideo(
       {required ImageSource source,
       CameraDevice preferredCameraDevice = CameraDevice.rear,

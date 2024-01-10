@@ -1,5 +1,25 @@
-## NEXT
+## 4.1.10
 
+* Fixes image asset link to use image within package.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates README to improve example of using `NetworkImageWithRetry`.
+
+## 4.1.9
+
+* Adds an example app.
+
+## 4.1.8
+
+* Adds pub topics to package metadata.
+## 4.1.7
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Migrates deprecated `ImageProvider.load` to `ImageProvider.loadBuffer`.
+
+## 4.1.6
+
+* Fixes unawaited_futures violations.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 4.1.5

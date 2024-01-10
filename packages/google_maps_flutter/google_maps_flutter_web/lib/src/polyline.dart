@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// The `PolygonController` class wraps a [gmaps.Polyline] and its `onTap` behavior.
 class PolylineController {
@@ -10,7 +10,7 @@ class PolylineController {
   PolylineController({
     required gmaps.Polyline polyline,
     bool consumeTapEvents = false,
-    ui.VoidCallback? onTap,
+    VoidCallback? onTap,
   })  : _polyline = polyline,
         _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {

@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages.g.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -80,6 +81,61 @@ void main() {
     expect(all.length, 0);
   });
 
+  test('clearWithParameters', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 0);
+  });
+
+  test('clearWithParameters with allow list', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.StringList'},
+        ),
+      ),
+    );
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 4);
+  });
+
   test('getAll', () async {
     for (final String key in flutterTestValues.keys) {
       api.items[key] = flutterTestValues[key]!;
@@ -89,13 +145,54 @@ void main() {
     expect(all, flutterTestValues);
   });
 
-  test('getAllWithPrefix', () async {
+  test('getAllWithNoPrefix', () async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
-    final Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    expect(all, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    await plugin.clearWithPrefix('');
+    all = await plugin.getAllWithPrefix('');
+    expect(all.length, 0);
+  });
+
+  test('getAllWithParameters', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
     expect(all.length, 5);
     expect(all, prefixTestValues);
+  });
+
+  test('getAllWithParameters with allow list', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.Bool'},
+        ),
+      ),
+    );
+    expect(all.length, 1);
+    expect(all['prefix.Bool'], true);
   });
 
   test('setValue', () async {
@@ -124,7 +221,11 @@ void main() {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
-    final Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
     expect(all.length, 15);
     expect(all, allTestValues);
   });
@@ -134,10 +235,22 @@ void main() {
       api.items[key] = allTestValues[key]!;
     }
 
-    Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
     expect(all.length, 15);
-    await plugin.clearWithPrefix('');
-    all = await plugin.getAllWithPrefix('');
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
     expect(all.length, 0);
   });
 }
@@ -146,10 +259,19 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Future<Map<String?, Object?>> getAllWithPrefix(String prefix) async {
+  Future<Map<String?, Object?>> getAll(
+    String prefix,
+    List<String?>? allowList,
+  ) async {
+    Set<String?>? allowSet;
+    if (allowList != null) {
+      allowSet = Set<String>.from(allowList);
+    }
     return <String?, Object?>{
       for (final String key in items.keys)
-        if (key.startsWith(prefix)) key: items[key]
+        if (key.startsWith(prefix) &&
+            (allowSet == null || allowSet.contains(key)))
+          key: items[key]
     };
   }
 
@@ -172,9 +294,10 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
   }
 
   @override
-  Future<bool> clearWithPrefix(String prefix) async {
+  Future<bool> clear(String prefix, List<String?>? allowList) async {
     items.keys.toList().forEach((String key) {
-      if (key.startsWith(prefix)) {
+      if (key.startsWith(prefix) &&
+          (allowList == null || allowList.contains(key))) {
         items.remove(key);
       }
     });

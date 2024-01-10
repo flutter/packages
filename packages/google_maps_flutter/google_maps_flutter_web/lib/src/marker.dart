@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// The `MarkerController` class wraps a [gmaps.Marker], how it handles events, and its associated (optional) [gmaps.InfoWindow] widget.
 class MarkerController {
@@ -14,7 +14,7 @@ class MarkerController {
     LatLngCallback? onDragStart,
     LatLngCallback? onDrag,
     LatLngCallback? onDragEnd,
-    ui.VoidCallback? onTap,
+    VoidCallback? onTap,
   })  : _marker = marker,
         _infoWindow = infoWindow,
         _consumeTapEvents = consumeTapEvents {
@@ -25,25 +25,19 @@ class MarkerController {
     }
     if (onDragStart != null) {
       marker.onDragstart.listen((gmaps.MapMouseEvent event) {
-        if (marker != null) {
-          marker.position = event.latLng;
-        }
+        marker.position = event.latLng;
         onDragStart.call(event.latLng ?? _nullGmapsLatLng);
       });
     }
     if (onDrag != null) {
       marker.onDrag.listen((gmaps.MapMouseEvent event) {
-        if (marker != null) {
-          marker.position = event.latLng;
-        }
+        marker.position = event.latLng;
         onDrag.call(event.latLng ?? _nullGmapsLatLng);
       });
     }
     if (onDragEnd != null) {
       marker.onDragend.listen((gmaps.MapMouseEvent event) {
-        if (marker != null) {
-          marker.position = event.latLng;
-        }
+        marker.position = event.latLng;
         onDragEnd.call(event.latLng ?? _nullGmapsLatLng);
       });
     }

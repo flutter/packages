@@ -78,7 +78,30 @@
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   GMSCameraPosition *camera =
       [FLTGoogleMapJSONConversions cameraPostionFromDictionary:args[@"initialCameraPosition"]];
-  GMSMapView *mapView = [GMSMapView mapWithFrame:frame camera:camera];
+  GMSMapView *mapView;
+  id mapID = nil;
+  NSString *cloudMapId = args[@"options"][@"cloudMapId"];
+
+  if (cloudMapId) {
+    Class mapIDClass = NSClassFromString(@"GMSMapID");
+    if (mapIDClass && [mapIDClass respondsToSelector:@selector(mapIDWithIdentifier:)]) {
+      mapID = [mapIDClass mapIDWithIdentifier:cloudMapId];
+    }
+  }
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Switch to initWithOptions: once versions older than
+  // iOS 14 are no longer supported by the plugin, or there is a specific need
+  // for its functionality. Since it involves a newly-added class, call it
+  // dynamically is more trouble than it is currently worth.
+  if (mapID && [GMSMapView respondsToSelector:@selector(mapWithFrame:mapID:camera:)]) {
+    mapView = [GMSMapView mapWithFrame:frame mapID:mapID camera:camera];
+  } else {
+    mapView = [GMSMapView mapWithFrame:frame camera:camera];
+  }
+#pragma clang diagnostic pop
+
   return [self initWithMapView:mapView viewIdentifier:viewId arguments:args registrar:registrar];
 }
 
@@ -527,7 +550,7 @@
   [self.markersController didEndDraggingMarkerWithIdentifier:markerId location:marker.position];
 }
 
-- (void)mapView:(GMSMapView *)mapView didStartDraggingMarker:(GMSMarker *)marker {
+- (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
   NSString *markerId = marker.userData[0];
   [self.markersController didStartDraggingMarkerWithIdentifier:markerId location:marker.position];
 }

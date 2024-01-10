@@ -57,6 +57,18 @@ class UrlLauncherMacOS extends UrlLauncherPlatform {
     return result.value;
   }
 
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    return mode == PreferredLaunchMode.platformDefault ||
+        mode == PreferredLaunchMode.externalApplication;
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    // No supported mode is closeable.
+    return false;
+  }
+
   Exception _getInvalidUrlException(String url) {
     // TODO(stuartmorgan): Make this an actual ArgumentError. This should be
     // coordinated across all platforms as a breaking change to have them all

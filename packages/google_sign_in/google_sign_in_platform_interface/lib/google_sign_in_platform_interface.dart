@@ -140,7 +140,7 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
     throw UnimplementedError('requestScopes() has not been implemented.');
   }
 
-  /// Determines if the current user can access all [scopes].
+  /// Checks if the current user has granted access to all the specified [scopes].
   ///
   /// Optionally, an [accessToken] can be passed for applications where a
   /// long-lived token may be cached (like the web).

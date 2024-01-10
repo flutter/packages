@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -21,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -111,18 +113,20 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix)
-      throws RuntimeException {
-    return getAllPrefs(prefix);
+  public @NonNull Map<String, Object> getAll(
+      @NonNull String prefix, @Nullable List<String> allowList) throws RuntimeException {
+    final Set<String> allowSet = allowList == null ? null : new HashSet<>(allowList);
+    return getAllPrefs(prefix, allowSet);
   }
 
   @Override
-  public @NonNull Boolean clearWithPrefix(@NonNull String prefix) throws RuntimeException {
+  public @NonNull Boolean clear(@NonNull String prefix, @Nullable List<String> allowList)
+      throws RuntimeException {
     SharedPreferences.Editor clearEditor = preferences.edit();
     Map<String, ?> allPrefs = preferences.getAll();
     ArrayList<String> filteredPrefs = new ArrayList<>();
     for (String key : allPrefs.keySet()) {
-      if (key.startsWith(prefix)) {
+      if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
         filteredPrefs.add(key);
       }
     }
@@ -133,12 +137,14 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
+  // Optionally filtered also to only those items in the optional [allowList].
   @SuppressWarnings("unchecked")
-  private @NonNull Map<String, Object> getAllPrefs(@NonNull String prefix) throws RuntimeException {
+  private @NonNull Map<String, Object> getAllPrefs(
+      @NonNull String prefix, @Nullable Set<String> allowList) throws RuntimeException {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
-      if (key.startsWith(prefix)) {
+      if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
         filteredPrefs.put(key, transformPref(key, allPrefs.get(key)));
       }
     }

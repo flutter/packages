@@ -1,3 +1,78 @@
+## 2.4.1
+
+* Fixes new lint warnings.
+
+## 2.4.0
+
+* Adds support for passing observers to the ShellRoute for the nested Navigator.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.4
+
+* Fixes a bug of typeArguments losing NullabilitySuffix
+
+## 2.3.3
+
+* Adds `initialLocation` for `StatefulShellBranchConfig`
+
+## 2.3.2
+
+* Supports the latest `package:analyzer`.
+
+## 2.3.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.3.0
+
+* Adds Support for StatefulShellRoute
+
+## 2.2.5
+
+* Fixes a bug where shell routes without const constructor were not generated correctly.
+
+## 2.2.4
+
+* Bumps example go_router version to v10.0.0 and migrate example code.
+
+## 2.2.3
+
+* Removes `path_to_regexp` from the dependencies.
+
+## 2.2.2
+
+* Bumps example go_router version and migrate example code.
+
+## 2.2.1
+
+* Cleans up go_router_builder code.
+
+## 2.2.0
+
+* Adds replace methods to the generated routes.
+
+## 2.1.1
+
+* Fixes a bug that the required/positional parameters are not added to query parameters correctly.
+
+## 2.1.0
+
+* Supports required/positional parameters that are not in the path.
+
+## 2.0.2
+
+* Fixes unawaited_futures violations.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.0.1
+
+* Supports name parameter for `TypedGoRoute`.
+## 2.0.0
+
+* Updates the documentation to go_router v7.0.0.
+* Bumps go_router version in example folder to v7.0.0.
+
 ## 1.2.2
 
 * Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)

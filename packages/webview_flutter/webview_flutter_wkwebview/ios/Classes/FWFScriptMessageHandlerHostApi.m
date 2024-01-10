@@ -28,10 +28,10 @@
                     userContentController:(WKUserContentController *)userContentController
                                   message:(WKScriptMessage *)message
                                completion:(void (^)(FlutterError *_Nullable))completion {
-  NSNumber *userContentControllerIdentifier =
-      @([self.instanceManager identifierWithStrongReferenceForInstance:userContentController]);
+  NSInteger userContentControllerIdentifier =
+      [self.instanceManager identifierWithStrongReferenceForInstance:userContentController];
   FWFWKScriptMessageData *messageData = FWFWKScriptMessageDataFromNativeWKScriptMessage(message);
-  [self didReceiveScriptMessageForHandlerWithIdentifier:@([self identifierForHandler:instance])
+  [self didReceiveScriptMessageForHandlerWithIdentifier:[self identifierForHandler:instance]
                         userContentControllerIdentifier:userContentControllerIdentifier
                                                 message:messageData
                                              completion:completion];
@@ -85,12 +85,10 @@
       instanceForIdentifier:identifier.longValue];
 }
 
-- (void)createWithIdentifier:(nonnull NSNumber *)identifier
-                       error:(FlutterError *_Nullable *_Nonnull)error {
+- (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error {
   FWFScriptMessageHandler *scriptMessageHandler =
       [[FWFScriptMessageHandler alloc] initWithBinaryMessenger:self.binaryMessenger
                                                instanceManager:self.instanceManager];
-  [self.instanceManager addDartCreatedInstance:scriptMessageHandler
-                                withIdentifier:identifier.longValue];
+  [self.instanceManager addDartCreatedInstance:scriptMessageHandler withIdentifier:identifier];
 }
 @end

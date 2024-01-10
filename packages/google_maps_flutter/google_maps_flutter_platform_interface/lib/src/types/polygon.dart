@@ -4,7 +4,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart'
-    show immutable, listEquals, VoidCallback;
+    show VoidCallback, immutable, listEquals;
 import 'package:flutter/material.dart' show Color, Colors;
 
 import 'types.dart';
@@ -148,13 +148,9 @@ class Polygon implements MapsObject<Polygon> {
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);
 
-    if (points != null) {
-      json['points'] = _pointsToJson();
-    }
+    json['points'] = _pointsToJson();
 
-    if (holes != null) {
-      json['holes'] = _holesToJson();
-    }
+    json['holes'] = _holesToJson();
 
     return json;
   }

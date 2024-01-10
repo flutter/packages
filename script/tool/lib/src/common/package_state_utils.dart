@@ -111,6 +111,7 @@ bool _isTestChange(List<String> pathComponents) {
       pathComponents.contains('androidTest') ||
       pathComponents.contains('RunnerTests') ||
       pathComponents.contains('RunnerUITests') ||
+      pathComponents.last == 'dart_test.yaml' ||
       // Pigeon's custom platform tests.
       pathComponents.first == 'platform_tests';
 }
@@ -177,12 +178,19 @@ Future<bool> _isDevChange(List<String> pathComponents,
       // Entry point for the 'custom-test' command, which is only for CI and
       // local testing.
       pathComponents.first == 'run_tests.sh' ||
-      // Ignoring lints doesn't affect clients.
+      // Lints don't affect clients.
+      pathComponents.contains('analysis_options.yaml') ||
       pathComponents.contains('lint-baseline.xml') ||
       // Example build files are very unlikely to be interesting to clients.
       _isExampleBuildFile(pathComponents) ||
       // Test-only gradle depenedencies don't affect clients.
       await _isGradleTestDependencyChange(pathComponents,
+          git: git, repoPath: repoPath) ||
+      // Implementation comments don't affect clients.
+      // This check is currently Dart-only since that's the only place
+      // this has come up in practice; it could be generalized to other
+      // languages if needed.
+      await _isDartImplementationCommentChange(pathComponents,
           git: git, repoPath: repoPath);
 }
 
@@ -194,7 +202,11 @@ bool _isExampleBuildFile(List<String> pathComponents) {
       pathComponents.contains('gradle.properties') ||
       pathComponents.contains('build.gradle') ||
       pathComponents.contains('Runner.xcodeproj') ||
+      pathComponents.contains('Runner.xcscheme') ||
+      pathComponents.contains('Runner.xcworkspace') ||
+      pathComponents.contains('Podfile') ||
       pathComponents.contains('CMakeLists.txt') ||
+      pathComponents.contains('.pluginToolsConfig.yaml') ||
       pathComponents.contains('pubspec.yaml');
 }
 
@@ -207,9 +219,9 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
     return false;
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-  final RegExp changeLine = RegExp(r'[+-] ');
+  final RegExp changeLine = RegExp(r'^[+-] ');
   final RegExp testDependencyLine =
-      RegExp(r'[+-]\s*(?:androidT|t)estImplementation\s');
+      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation\s');
   bool foundTestDependencyChange = false;
   for (final String line in diff) {
     if (!changeLine.hasMatch(line) ||
@@ -225,4 +237,35 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
   // Only return true if a test dependency change was found, as a failsafe
   // against having the wrong (e.g., incorrectly empty) diff output.
   return foundTestDependencyChange;
+}
+
+// Returns true if the given file is a Dart file whose only changes are
+// implementation comments (i.e., not doc comments).
+Future<bool> _isDartImplementationCommentChange(List<String> pathComponents,
+    {GitVersionFinder? git, String? repoPath}) async {
+  if (git == null) {
+    return false;
+  }
+  if (!pathComponents.last.endsWith('.dart')) {
+    return false;
+  }
+  final List<String> diff = await git.getDiffContents(targetPath: repoPath);
+  final RegExp changeLine = RegExp(r'^[+-] ');
+  final RegExp whitespaceLine = RegExp(r'^[+-]\s*$');
+  final RegExp nonDocCommentLine = RegExp(r'^[+-]\s*//\s');
+  bool foundIgnoredChange = false;
+  for (final String line in diff) {
+    if (!changeLine.hasMatch(line) ||
+        line.startsWith('--- ') ||
+        line.startsWith('+++ ')) {
+      continue;
+    }
+    if (!nonDocCommentLine.hasMatch(line) && !whitespaceLine.hasMatch(line)) {
+      return false;
+    }
+    foundIgnoredChange = true;
+  }
+  // Only return true if an ignored change was found, as a failsafe against
+  // having the wrong (e.g., incorrectly empty) diff output.
+  return foundIgnoredChange;
 }

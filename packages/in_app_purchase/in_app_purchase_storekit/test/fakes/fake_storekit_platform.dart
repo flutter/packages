@@ -163,8 +163,6 @@ class FakeStoreKitPlatform {
         return Future<void>.sync(() {});
       case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
         if (receiptData != null) {
-          // TODO(asashour): Remove the `ignore` when Dart 3 reaches stable.
-          // ignore: unnecessary_null_checks
           return Future<String>.value(receiptData!);
         } else {
           throw PlatformException(code: 'no_receipt_data');
@@ -213,20 +211,16 @@ class FakeStoreKitPlatform {
           InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
               transactions: <SKPaymentTransactionWrapper>[transactionFinished]);
         }
-        break;
       case '-[InAppPurchasePlugin finishTransaction:result:]':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         finishedTransactions.add(createPurchasedTransaction(
             arguments['productIdentifier']! as String,
             arguments['transactionIdentifier']! as String,
             quantity: transactions.first.payment.quantity));
-        break;
       case '-[SKPaymentQueue startObservingTransactionQueue]':
         queueIsActive = true;
-        break;
       case '-[SKPaymentQueue stopObservingTransactionQueue]':
         queueIsActive = false;
-        break;
     }
     return Future<void>.sync(() {});
   }

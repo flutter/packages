@@ -47,9 +47,9 @@ class SliverGridStaggeredTileLayout extends DynamicSliverGridLayout {
     required this.crossAxisSpacing,
     required this.childCrossAxisExtent,
     required this.scrollDirection,
-  })  : assert(crossAxisCount != null && crossAxisCount > 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0),
-        assert(childCrossAxisExtent != null && childCrossAxisExtent >= 0);
+  })  : assert(crossAxisCount > 0),
+        assert(crossAxisSpacing >= 0),
+        assert(childCrossAxisExtent >= 0);
 
   /// The number of children in the cross axis.
   final int crossAxisCount;
@@ -200,9 +200,9 @@ class DynamicSliverGridDelegateWithFixedCrossAxisCount
     required super.crossAxisCount,
     super.mainAxisSpacing = 0.0,
     super.crossAxisSpacing = 0.0,
-  })  : assert(crossAxisCount != null && crossAxisCount > 0),
-        assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0);
+  })  : assert(crossAxisCount > 0),
+        assert(mainAxisSpacing >= 0),
+        assert(crossAxisSpacing >= 0);
 
   bool _debugAssertIsValid() {
     assert(crossAxisCount > 0);
@@ -283,9 +283,9 @@ class DynamicSliverGridDelegateWithMaxCrossAxisExtent
     required super.maxCrossAxisExtent,
     super.mainAxisSpacing = 0.0,
     super.crossAxisSpacing = 0.0,
-  })  : assert(maxCrossAxisExtent != null && maxCrossAxisExtent > 0),
-        assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0);
+  })  : assert(maxCrossAxisExtent > 0),
+        assert(mainAxisSpacing >= 0),
+        assert(crossAxisSpacing >= 0);
 
   bool _debugAssertIsValid(double crossAxisExtent) {
     assert(crossAxisExtent > 0.0);

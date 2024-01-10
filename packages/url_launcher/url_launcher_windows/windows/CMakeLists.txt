@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 set(PROJECT_NAME "url_launcher_windows")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
+cmake_policy(VERSION 3.10...3.24)
+
 set(PLUGIN_NAME "${PROJECT_NAME}_plugin")
 
 list(APPEND PLUGIN_SOURCES
