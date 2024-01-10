@@ -11,8 +11,8 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-class PaymentTransactionWrapper {
-  PaymentTransactionWrapper({
+class SKPaymentTransactionMessage {
+  SKPaymentTransactionMessage({
     required this.payment,
     required this.transactionState,
     this.originalTransaction,
@@ -21,20 +21,20 @@ class PaymentTransactionWrapper {
     this.error,
   });
 
-  final PaymentWrapper payment;
+  final SKPaymentMessage payment;
 
-  final PaymentTransactionStateWrapper transactionState;
+  final SKPaymentTransactionStateMessage transactionState;
 
-  final PaymentTransactionWrapper? originalTransaction;
+  final SKPaymentTransactionMessage? originalTransaction;
 
   final double? transactionTimeStamp;
 
   final String? transactionIdentifier;
 
-  final ErrorWrapper? error;
+  final SKErrorMessage? error;
 }
 
-enum PaymentTransactionStateWrapper {
+enum SKPaymentTransactionStateMessage {
   /// Indicates the transaction is being processed in App Store.
   ///
   /// You should update your UI to indicate that you are waiting for the
@@ -71,9 +71,9 @@ enum PaymentTransactionStateWrapper {
   unspecified,
 }
 
-class PaymentWrapper {
+class SKPaymentMessage {
   /// Creates a new [SKPaymentWrapper] with the provided information.
-  const PaymentWrapper({
+  const SKPaymentMessage({
     required this.productIdentifier,
     this.applicationUsername,
     this.requestData,
@@ -93,12 +93,12 @@ class PaymentWrapper {
 
   final bool simulatesAskToBuyInSandbox;
 
-  final PaymentDiscountWrapper? paymentDiscount;
+  final SKPaymentDiscountMessage? paymentDiscount;
 }
 
-class ErrorWrapper {
+class SKErrorMessage {
   // a lot of comparison operators are overriden in this class - do i add them here?
-  const ErrorWrapper(
+  const SKErrorMessage(
       {required this.code, required this.domain, required this.userInfo});
 
   final int code;
@@ -106,8 +106,8 @@ class ErrorWrapper {
   final Map<String?, Object?> userInfo;
 }
 
-class PaymentDiscountWrapper {
-  const PaymentDiscountWrapper({
+class SKPaymentDiscountMessage {
+  const SKPaymentDiscountMessage({
     required this.identifier,
     required this.keyIdentifier,
     required this.nonce,
@@ -122,8 +122,8 @@ class PaymentDiscountWrapper {
   final int timestamp;
 }
 
-class StorefrontWrapper {
-  StorefrontWrapper({
+class SKStorefrontMessage {
+  const SKStorefrontMessage({
     required this.countryCode,
     required this.identifier,
   });
@@ -135,14 +135,14 @@ class StorefrontWrapper {
 @HostApi()
 abstract class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
-  @ObjCSelector('canMakePayments')
+  // @ObjCSelector('canMakePayments')
   bool canMakePayments();
 
-  @ObjCSelector('transactions')
-  List<PaymentTransactionWrapper> transactions();
+  // @ObjCSelector('transactions')
+  List<SKPaymentTransactionMessage> transactions();
 
-  @ObjCSelector('storefront')
-  List<StorefrontWrapper> storefront();
+  // @ObjCSelector('storefront')
+  SKStorefrontMessage storefront();
 }
 
 

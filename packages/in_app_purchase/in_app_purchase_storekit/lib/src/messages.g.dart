@@ -8,7 +8,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-enum PaymentTransactionStateWrapper {
+enum SKPaymentTransactionStateMessage {
   /// Indicates the transaction is being processed in App Store.
   ///
   /// You should update your UI to indicate that you are waiting for the
@@ -40,8 +40,8 @@ enum PaymentTransactionStateWrapper {
   unspecified,
 }
 
-class PaymentTransactionWrapper {
-  PaymentTransactionWrapper({
+class SKPaymentTransactionMessage {
+  SKPaymentTransactionMessage({
     required this.payment,
     required this.transactionState,
     this.originalTransaction,
@@ -50,17 +50,17 @@ class PaymentTransactionWrapper {
     this.error,
   });
 
-  PaymentWrapper payment;
+  SKPaymentMessage payment;
 
-  PaymentTransactionStateWrapper transactionState;
+  SKPaymentTransactionStateMessage transactionState;
 
-  PaymentTransactionWrapper? originalTransaction;
+  SKPaymentTransactionMessage? originalTransaction;
 
   double? transactionTimeStamp;
 
   String? transactionIdentifier;
 
-  ErrorWrapper? error;
+  SKErrorMessage? error;
 
   Object encode() {
     return <Object?>[
@@ -73,25 +73,25 @@ class PaymentTransactionWrapper {
     ];
   }
 
-  static PaymentTransactionWrapper decode(Object result) {
+  static SKPaymentTransactionMessage decode(Object result) {
     result as List<Object?>;
-    return PaymentTransactionWrapper(
-      payment: PaymentWrapper.decode(result[0]! as List<Object?>),
-      transactionState: PaymentTransactionStateWrapper.values[result[1]! as int],
+    return SKPaymentTransactionMessage(
+      payment: SKPaymentMessage.decode(result[0]! as List<Object?>),
+      transactionState: SKPaymentTransactionStateMessage.values[result[1]! as int],
       originalTransaction: result[2] != null
-          ? PaymentTransactionWrapper.decode(result[2]! as List<Object?>)
+          ? SKPaymentTransactionMessage.decode(result[2]! as List<Object?>)
           : null,
       transactionTimeStamp: result[3] as double?,
       transactionIdentifier: result[4] as String?,
       error: result[5] != null
-          ? ErrorWrapper.decode(result[5]! as List<Object?>)
+          ? SKErrorMessage.decode(result[5]! as List<Object?>)
           : null,
     );
   }
 }
 
-class PaymentWrapper {
-  PaymentWrapper({
+class SKPaymentMessage {
+  SKPaymentMessage({
     required this.productIdentifier,
     this.applicationUsername,
     this.requestData,
@@ -110,7 +110,7 @@ class PaymentWrapper {
 
   bool simulatesAskToBuyInSandbox;
 
-  PaymentDiscountWrapper? paymentDiscount;
+  SKPaymentDiscountMessage? paymentDiscount;
 
   Object encode() {
     return <Object?>[
@@ -123,23 +123,23 @@ class PaymentWrapper {
     ];
   }
 
-  static PaymentWrapper decode(Object result) {
+  static SKPaymentMessage decode(Object result) {
     result as List<Object?>;
-    return PaymentWrapper(
+    return SKPaymentMessage(
       productIdentifier: result[0]! as String,
       applicationUsername: result[1] as String?,
       requestData: result[2] as String?,
       quantity: result[3]! as int,
       simulatesAskToBuyInSandbox: result[4]! as bool,
       paymentDiscount: result[5] != null
-          ? PaymentDiscountWrapper.decode(result[5]! as List<Object?>)
+          ? SKPaymentDiscountMessage.decode(result[5]! as List<Object?>)
           : null,
     );
   }
 }
 
-class ErrorWrapper {
-  ErrorWrapper({
+class SKErrorMessage {
+  SKErrorMessage({
     required this.code,
     required this.domain,
     required this.userInfo,
@@ -159,9 +159,9 @@ class ErrorWrapper {
     ];
   }
 
-  static ErrorWrapper decode(Object result) {
+  static SKErrorMessage decode(Object result) {
     result as List<Object?>;
-    return ErrorWrapper(
+    return SKErrorMessage(
       code: result[0]! as int,
       domain: result[1]! as String,
       userInfo: (result[2] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
@@ -169,8 +169,8 @@ class ErrorWrapper {
   }
 }
 
-class PaymentDiscountWrapper {
-  PaymentDiscountWrapper({
+class SKPaymentDiscountMessage {
+  SKPaymentDiscountMessage({
     required this.identifier,
     required this.keyIdentifier,
     required this.nonce,
@@ -198,9 +198,9 @@ class PaymentDiscountWrapper {
     ];
   }
 
-  static PaymentDiscountWrapper decode(Object result) {
+  static SKPaymentDiscountMessage decode(Object result) {
     result as List<Object?>;
-    return PaymentDiscountWrapper(
+    return SKPaymentDiscountMessage(
       identifier: result[0]! as String,
       keyIdentifier: result[1]! as String,
       nonce: result[2]! as String,
@@ -210,8 +210,8 @@ class PaymentDiscountWrapper {
   }
 }
 
-class StorefrontWrapper {
-  StorefrontWrapper({
+class SKStorefrontMessage {
+  SKStorefrontMessage({
     required this.countryCode,
     required this.identifier,
   });
@@ -227,9 +227,9 @@ class StorefrontWrapper {
     ];
   }
 
-  static StorefrontWrapper decode(Object result) {
+  static SKStorefrontMessage decode(Object result) {
     result as List<Object?>;
-    return StorefrontWrapper(
+    return SKStorefrontMessage(
       countryCode: result[0]! as String,
       identifier: result[1]! as String,
     );
@@ -240,19 +240,19 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
   const _InAppPurchaseAPICodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ErrorWrapper) {
+    if (value is SKErrorMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is PaymentDiscountWrapper) {
+    } else if (value is SKPaymentDiscountMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PaymentTransactionWrapper) {
+    } else if (value is SKPaymentMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PaymentWrapper) {
+    } else if (value is SKPaymentTransactionMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is StorefrontWrapper) {
+    } else if (value is SKStorefrontMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
@@ -264,15 +264,15 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return ErrorWrapper.decode(readValue(buffer)!);
+        return SKErrorMessage.decode(readValue(buffer)!);
       case 129: 
-        return PaymentDiscountWrapper.decode(readValue(buffer)!);
+        return SKPaymentDiscountMessage.decode(readValue(buffer)!);
       case 130: 
-        return PaymentTransactionWrapper.decode(readValue(buffer)!);
+        return SKPaymentMessage.decode(readValue(buffer)!);
       case 131: 
-        return PaymentWrapper.decode(readValue(buffer)!);
+        return SKPaymentTransactionMessage.decode(readValue(buffer)!);
       case 132: 
-        return StorefrontWrapper.decode(readValue(buffer)!);
+        return SKStorefrontMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -317,7 +317,7 @@ class InAppPurchaseAPI {
     }
   }
 
-  Future<List<PaymentTransactionWrapper?>> transactions() async {
+  Future<List<SKPaymentTransactionMessage?>> transactions() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions', codec,
         binaryMessenger: _binaryMessenger);
@@ -340,11 +340,11 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<PaymentTransactionWrapper?>();
+      return (replyList[0] as List<Object?>?)!.cast<SKPaymentTransactionMessage?>();
     }
   }
 
-  Future<List<StorefrontWrapper?>> storefront() async {
+  Future<SKStorefrontMessage> storefront() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront', codec,
         binaryMessenger: _binaryMessenger);
@@ -367,7 +367,7 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<StorefrontWrapper?>();
+      return (replyList[0] as SKStorefrontMessage?)!;
     }
   }
 }

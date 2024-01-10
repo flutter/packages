@@ -10,68 +10,68 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
+typedef NS_ENUM(NSUInteger, SKPaymentTransactionStateMessage) {
   /// Indicates the transaction is being processed in App Store.
   ///
   /// You should update your UI to indicate that you are waiting for the
   /// transaction to update to another state. Never complete a transaction that
   /// is still in a purchasing state.
-  PaymentTransactionStateWrapperPurchasing = 0,
+  SKPaymentTransactionStateMessagePurchasing = 0,
   /// The user's payment has been succesfully processed.
   ///
   /// You should provide the user the content that they purchased.
-  PaymentTransactionStateWrapperPurchased = 1,
+  SKPaymentTransactionStateMessagePurchased = 1,
   /// The transaction failed.
   ///
   /// Check the [PaymentTransactionWrapper.error] property from
   /// [PaymentTransactionWrapper] for details.
-  PaymentTransactionStateWrapperFailed = 2,
+  SKPaymentTransactionStateMessageFailed = 2,
   /// This transaction is restoring content previously purchased by the user.
   ///
   /// The previous transaction information can be obtained in
   /// [PaymentTransactionWrapper.originalTransaction] from
   /// [PaymentTransactionWrapper].
-  PaymentTransactionStateWrapperRestored = 3,
+  SKPaymentTransactionStateMessageRestored = 3,
   /// The transaction is in the queue but pending external action. Wait for
   /// another callback to get the final state.
   ///
   /// You should update your UI to indicate that you are waiting for the
   /// transaction to update to another state.
-  PaymentTransactionStateWrapperDeferred = 4,
+  SKPaymentTransactionStateMessageDeferred = 4,
   /// Indicates the transaction is in an unspecified state.
-  PaymentTransactionStateWrapperUnspecified = 5,
+  SKPaymentTransactionStateMessageUnspecified = 5,
 };
 
-/// Wrapper for PaymentTransactionStateWrapper to allow for nullability.
-@interface PaymentTransactionStateWrapperBox : NSObject
-@property(nonatomic, assign) PaymentTransactionStateWrapper value;
-- (instancetype)initWithValue:(PaymentTransactionStateWrapper)value;
+/// Wrapper for SKPaymentTransactionStateMessage to allow for nullability.
+@interface SKPaymentTransactionStateMessageBox : NSObject
+@property(nonatomic, assign) SKPaymentTransactionStateMessage value;
+- (instancetype)initWithValue:(SKPaymentTransactionStateMessage)value;
 @end
 
-@class PaymentTransactionWrapper;
-@class PaymentWrapper;
-@class ErrorWrapper;
-@class PaymentDiscountWrapper;
-@class StorefrontWrapper;
+@class SKPaymentTransactionMessage;
+@class SKPaymentMessage;
+@class SKErrorMessage;
+@class SKPaymentDiscountMessage;
+@class SKStorefrontMessage;
 
-@interface PaymentTransactionWrapper : NSObject
+@interface SKPaymentTransactionMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithPayment:(PaymentWrapper *)payment
-    transactionState:(PaymentTransactionStateWrapper)transactionState
-    originalTransaction:(nullable PaymentTransactionWrapper *)originalTransaction
++ (instancetype)makeWithPayment:(SKPaymentMessage *)payment
+    transactionState:(SKPaymentTransactionStateMessage)transactionState
+    originalTransaction:(nullable SKPaymentTransactionMessage *)originalTransaction
     transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
     transactionIdentifier:(nullable NSString *)transactionIdentifier
-    error:(nullable ErrorWrapper *)error;
-@property(nonatomic, strong) PaymentWrapper * payment;
-@property(nonatomic, assign) PaymentTransactionStateWrapper transactionState;
-@property(nonatomic, strong, nullable) PaymentTransactionWrapper * originalTransaction;
+    error:(nullable SKErrorMessage *)error;
+@property(nonatomic, strong) SKPaymentMessage * payment;
+@property(nonatomic, assign) SKPaymentTransactionStateMessage transactionState;
+@property(nonatomic, strong, nullable) SKPaymentTransactionMessage * originalTransaction;
 @property(nonatomic, strong, nullable) NSNumber * transactionTimeStamp;
 @property(nonatomic, copy, nullable) NSString * transactionIdentifier;
-@property(nonatomic, strong, nullable) ErrorWrapper * error;
+@property(nonatomic, strong, nullable) SKErrorMessage * error;
 @end
 
-@interface PaymentWrapper : NSObject
+@interface SKPaymentMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithProductIdentifier:(NSString *)productIdentifier
@@ -79,16 +79,16 @@ typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
     requestData:(nullable NSString *)requestData
     quantity:(NSNumber *)quantity
     simulatesAskToBuyInSandbox:(NSNumber *)simulatesAskToBuyInSandbox
-    paymentDiscount:(nullable PaymentDiscountWrapper *)paymentDiscount;
+    paymentDiscount:(nullable SKPaymentDiscountMessage *)paymentDiscount;
 @property(nonatomic, copy) NSString * productIdentifier;
 @property(nonatomic, copy, nullable) NSString * applicationUsername;
 @property(nonatomic, copy, nullable) NSString * requestData;
 @property(nonatomic, strong) NSNumber * quantity;
 @property(nonatomic, strong) NSNumber * simulatesAskToBuyInSandbox;
-@property(nonatomic, strong, nullable) PaymentDiscountWrapper * paymentDiscount;
+@property(nonatomic, strong, nullable) SKPaymentDiscountMessage * paymentDiscount;
 @end
 
-@interface ErrorWrapper : NSObject
+@interface SKErrorMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCode:(NSNumber *)code
@@ -99,7 +99,7 @@ typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
 @property(nonatomic, strong) NSDictionary<NSString *, id> * userInfo;
 @end
 
-@interface PaymentDiscountWrapper : NSObject
+@interface SKPaymentDiscountMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithIdentifier:(NSString *)identifier
@@ -114,7 +114,7 @@ typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
 @property(nonatomic, strong) NSNumber * timestamp;
 @end
 
-@interface StorefrontWrapper : NSObject
+@interface SKStorefrontMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCountryCode:(NSString *)countryCode
@@ -130,11 +130,11 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 /// Returns if the current device is able to make payments
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)canMakePayments:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)canMakePaymentsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<PaymentTransactionWrapper *> *)transactions:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<StorefrontWrapper *> *)storefront:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *_Nullable api);
