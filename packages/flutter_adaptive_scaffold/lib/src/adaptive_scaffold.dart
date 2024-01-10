@@ -528,6 +528,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             )
           : null,
       body: AdaptiveLayout(
+        transitionDuration: widget.transitionDuration,
         bodyOrientation: widget.bodyOrientation,
         bodyRatio: widget.bodyRatio,
         internalAnimations: widget.internalAnimations,
