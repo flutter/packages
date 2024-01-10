@@ -1766,87 +1766,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: _calculateLineNumber(source, node.offset)));
       }
     } else if (_currentApi is AstProxyApi) {
-      final bool isStatic = _hasMetadata(node.metadata, 'static');
-      if (type is dart_ast.GenericFunctionType) {
-        final List<Parameter> parameters = type.parameters.parameters
-            .map(formalParameterToPigeonParameter)
-            .toList();
-        final String swiftFunction =
-            _findMetadata(node.metadata, 'SwiftFunction')
-                    ?.arguments
-                    ?.arguments
-                    .first
-                    .asNullable<dart_ast.SimpleStringLiteral>()
-                    ?.value ??
-                '';
-        final dart_ast.ArgumentList? taskQueueArguments =
-            _findMetadata(node.metadata, 'TaskQueue')?.arguments;
-        final String? taskQueueTypeName = taskQueueArguments == null
-            ? null
-            : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
-                ?.expression
-                .asNullable<dart_ast.PrefixedIdentifier>()
-                ?.name;
-        final TaskQueueType taskQueueType =
-            _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
-                TaskQueueType.serial;
-
-        // Methods without named return types aren't supported.
-        final dart_ast.TypeAnnotation returnType = type.returnType!;
-        returnType as dart_ast.NamedType;
-
-        _currentApi!.methods.add(
-          Method(
-            name: node.fields.variables[0].name.lexeme,
-            returnType: TypeDeclaration(
-              baseName: _getNamedTypeQualifiedName(returnType),
-              typeArguments:
-                  typeAnnotationsToTypeArguments(returnType.typeArguments),
-              isNullable: returnType.question != null,
-            ),
-            location: ApiLocation.flutter,
-            required: type.question == null,
-            isStatic: isStatic,
-            parameters: parameters,
-            isAsynchronous: _hasMetadata(node.metadata, 'async'),
-            swiftFunction: swiftFunction,
-            offset: node.offset,
-            taskQueueType: taskQueueType,
-            documentationComments:
-                _documentationCommentsParser(node.documentationComment?.tokens),
-          ),
-        );
-      } else if (type is dart_ast.NamedType) {
-        final _FindInitializer findInitializerVisitor = _FindInitializer();
-        node.visitChildren(findInitializerVisitor);
-        if (findInitializerVisitor.initializer != null) {
-          _errors.add(Error(
-              message:
-                  'Initialization isn\'t supported for fields in ProxyApis ("$node"), just use nullable types with no initializer (example "int? x;").',
-              lineNumber: _calculateLineNumber(source, node.offset)));
-        } else {
-          final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          (_currentApi as AstProxyApi?)!.fields.add(
-                Field(
-                  type: TypeDeclaration(
-                    baseName: _getNamedTypeQualifiedName(type),
-                    isNullable: type.question != null,
-                    typeArguments: typeAnnotationsToTypeArguments(
-                      typeArguments,
-                    ),
-                  ),
-                  name: node.fields.variables[0].name.lexeme,
-                  isAttached:
-                      _hasMetadata(node.metadata, 'attached') || isStatic,
-                  isStatic: isStatic,
-                  offset: node.offset,
-                  documentationComments: _documentationCommentsParser(
-                    node.documentationComment?.tokens,
-                  ),
-                ),
-              );
-        }
-      }
+      _addProxyApiField(type, node);
     } else if (_currentApi != null) {
       _errors.add(Error(
           message: 'Fields aren\'t supported in Pigeon API classes ("$node").',
@@ -1918,6 +1838,91 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return '${importPrefix.name.lexeme}.${node.name2.lexeme}';
     }
     return node.name2.lexeme;
+  }
+
+  void _addProxyApiField(
+    dart_ast.TypeAnnotation? type,
+    dart_ast.FieldDeclaration node,
+  ) {
+    final bool isStatic = _hasMetadata(node.metadata, 'static');
+    if (type is dart_ast.GenericFunctionType) {
+      final List<Parameter> parameters = type.parameters.parameters
+          .map(formalParameterToPigeonParameter)
+          .toList();
+      final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+              ?.arguments
+              ?.arguments
+              .first
+              .asNullable<dart_ast.SimpleStringLiteral>()
+              ?.value ??
+          '';
+      final dart_ast.ArgumentList? taskQueueArguments =
+          _findMetadata(node.metadata, 'TaskQueue')?.arguments;
+      final String? taskQueueTypeName = taskQueueArguments == null
+          ? null
+          : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+              ?.expression
+              .asNullable<dart_ast.PrefixedIdentifier>()
+              ?.name;
+      final TaskQueueType taskQueueType =
+          _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
+              TaskQueueType.serial;
+
+      // Methods without named return types aren't supported.
+      final dart_ast.TypeAnnotation returnType = type.returnType!;
+      returnType as dart_ast.NamedType;
+
+      _currentApi!.methods.add(
+        Method(
+          name: node.fields.variables[0].name.lexeme,
+          returnType: TypeDeclaration(
+            baseName: _getNamedTypeQualifiedName(returnType),
+            typeArguments:
+                typeAnnotationsToTypeArguments(returnType.typeArguments),
+            isNullable: returnType.question != null,
+          ),
+          location: ApiLocation.flutter,
+          required: type.question == null,
+          isStatic: isStatic,
+          parameters: parameters,
+          isAsynchronous: _hasMetadata(node.metadata, 'async'),
+          swiftFunction: swiftFunction,
+          offset: node.offset,
+          taskQueueType: taskQueueType,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
+    } else if (type is dart_ast.NamedType) {
+      final _FindInitializer findInitializerVisitor = _FindInitializer();
+      node.visitChildren(findInitializerVisitor);
+      if (findInitializerVisitor.initializer != null) {
+        _errors.add(Error(
+            message:
+                'Initialization isn\'t supported for fields in ProxyApis ("$node"), just use nullable types with no initializer (example "int? x;").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      } else {
+        final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
+        (_currentApi as AstProxyApi?)!.fields.add(
+              Field(
+                type: TypeDeclaration(
+                  baseName: _getNamedTypeQualifiedName(type),
+                  isNullable: type.question != null,
+                  typeArguments: typeAnnotationsToTypeArguments(
+                    typeArguments,
+                  ),
+                ),
+                name: node.fields.variables[0].name.lexeme,
+                isAttached: _hasMetadata(node.metadata, 'attached') || isStatic,
+                isStatic: isStatic,
+                offset: node.offset,
+                documentationComments: _documentationCommentsParser(
+                  node.documentationComment?.tokens,
+                ),
+              ),
+            );
+      }
+    }
   }
 }
 
