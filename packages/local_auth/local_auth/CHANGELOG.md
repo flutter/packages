@@ -1,3 +1,7 @@
+## 2.1.8
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 2.1.7
 
 * Adds pub topics to package metadata.

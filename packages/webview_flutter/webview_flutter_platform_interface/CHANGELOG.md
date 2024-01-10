@@ -1,3 +1,7 @@
+## 2.9.1
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 2.9.0
 
 * Adds support to show JavaScript dialog. See `PlatformWebViewController.setOnJavaScriptAlertDialog`, `PlatformWebViewController.setOnJavaScriptConfirmDialog` and `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
