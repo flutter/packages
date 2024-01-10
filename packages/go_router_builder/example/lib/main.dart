@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'dart:async';
 
@@ -179,7 +179,7 @@ class HomeScreen extends StatelessWidget {
                 PopupMenuItem<String>(
                   value: '1',
                   child: const Text('Push w/o return value'),
-                  onTap: () => const PersonRoute('f1', 1).push(context),
+                  onTap: () => const PersonRoute('f1', 1).push<void>(context),
                 ),
                 PopupMenuItem<String>(
                   value: '2',

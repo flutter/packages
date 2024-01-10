@@ -1,5 +1,14 @@
-## NEXT
+## 0.8.9+2
 
+* Fixes new lint warnings.
+
+## 0.8.9+1
+
+* Updates plugin and example Gradle versions to 7.6.3.
+
+## 0.8.9
+
+* Fixes resizing bug and updates rounding to be more accurate.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.8.8+2

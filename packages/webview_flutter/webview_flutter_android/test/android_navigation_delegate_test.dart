@@ -446,27 +446,52 @@ void main() {
       expect(callbackNavigationRequest.url, 'https://www.google.com');
       expect(completer.isCompleted, true);
     });
-  });
 
-  test('onUrlChange', () {
-    final AndroidNavigationDelegate androidNavigationDelegate =
-        AndroidNavigationDelegate(_buildCreationParams());
+    test('onUrlChange', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
 
-    late final AndroidUrlChange urlChange;
-    androidNavigationDelegate.setOnUrlChange(
-      (UrlChange change) {
-        urlChange = change as AndroidUrlChange;
-      },
-    );
+      late final AndroidUrlChange urlChange;
+      androidNavigationDelegate.setOnUrlChange(
+        (UrlChange change) {
+          urlChange = change as AndroidUrlChange;
+        },
+      );
 
-    CapturingWebViewClient.lastCreatedDelegate.doUpdateVisitedHistory!(
-      android_webview.WebView.detached(),
-      'https://www.google.com',
-      false,
-    );
+      CapturingWebViewClient.lastCreatedDelegate.doUpdateVisitedHistory!(
+        android_webview.WebView.detached(),
+        'https://www.google.com',
+        false,
+      );
 
-    expect(urlChange.url, 'https://www.google.com');
-    expect(urlChange.isReload, isFalse);
+      expect(urlChange.url, 'https://www.google.com');
+      expect(urlChange.isReload, isFalse);
+    });
+
+    test('onReceivedHttpAuthRequest emits host and realm', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      String? callbackHost;
+      String? callbackRealm;
+      androidNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
+        callbackHost = request.host;
+        callbackRealm = request.realm;
+      });
+
+      const String expectedHost = 'expectedHost';
+      const String expectedRealm = 'expectedRealm';
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
+        android_webview.WebView.detached(),
+        android_webview.HttpAuthHandler(),
+        expectedHost,
+        expectedRealm,
+      );
+
+      expect(callbackHost, expectedHost);
+      expect(callbackRealm, expectedRealm);
+    });
   });
 }
 
@@ -489,6 +514,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onPageFinished,
     super.onPageStarted,
     super.onReceivedError,
+    super.onReceivedHttpAuthRequest,
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,

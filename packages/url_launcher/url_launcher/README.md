@@ -98,6 +98,13 @@ See
 [the Android documentation](https://developer.android.com/training/package-visibility/use-cases)
 for examples of other queries.
 
+### Web
+
+Some web browsers may have limitations (e.g. a launch must be triggered by a
+user action). Check
+[package:url_launcher_web](https://pub.dev/packages/url_launcher_web#limitations-on-the-web-platform)
+for more web-specific information.
+
 ## Supported URL schemes
 
 The provided URL is passed directly to the host platform for handling. The

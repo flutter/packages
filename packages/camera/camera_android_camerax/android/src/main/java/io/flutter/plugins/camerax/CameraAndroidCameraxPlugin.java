@@ -27,6 +27,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
   private CameraControlHostApiImpl cameraControlHostApiImpl;
   public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
+  public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
 
   @VisibleForTesting
   public @Nullable ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
@@ -71,6 +72,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     systemServicesHostApiImpl =
         new SystemServicesHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.SystemServicesHostApi.setup(binaryMessenger, systemServicesHostApiImpl);
+    deviceOrientationManagerHostApiImpl =
+        new DeviceOrientationManagerHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.DeviceOrientationManagerHostApi.setup(
+        binaryMessenger, deviceOrientationManagerHostApiImpl);
     GeneratedCameraXLibrary.PreviewHostApi.setup(
         binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry));
     imageCaptureHostApiImpl =
@@ -145,6 +150,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     systemServicesHostApiImpl.setActivity(activity);
     systemServicesHostApiImpl.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
+    deviceOrientationManagerHostApiImpl.setActivity(activity);
   }
 
   @Override

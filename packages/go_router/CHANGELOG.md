@@ -1,3 +1,18 @@
+## 13.0.1
+
+* Fixes new lint warnings.
+
+## 13.0.0
+
+- Refactors `RouteMatchList` and imperative APIs.
+- **BREAKING CHANGE**:
+  - RouteMatchList structure changed.
+  - Matching logic updated.
+
+## 12.1.3
+
+* Fixes a typo in `navigation.md`.
+
 ## 12.1.2
 
 * Fixes an incorrect use of `extends` for Dart 3 compatibility.
