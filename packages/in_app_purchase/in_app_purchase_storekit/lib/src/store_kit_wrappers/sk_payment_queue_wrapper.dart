@@ -55,7 +55,7 @@ class SKPaymentQueueWrapper {
   /// Calls [`[SKPaymentQueue storefront]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3182430-storefront?language=objc).
   ///
   /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
-  Future<SKStorefrontWrapper?> storefront() async {
+  Future<StoreKitStorefrontWrapper?> storefront() async {
     // final Map<String, dynamic>? storefrontMap = await channel
     //     .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
     return _hostApi.storefront();
@@ -63,7 +63,7 @@ class SKPaymentQueueWrapper {
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    return _getTransactionList(_hostApi.transactions()! as List);
+    return _getTransactionList(_hostApi.transactions() as List<SKPaymentTransactionWrapper>);
   }
 
   // return _getTransactionList(_hostApi.transactions()!);
@@ -319,7 +319,7 @@ class SKPaymentQueueWrapper {
         // final SKStorefrontWrapper storefront = SKStorefrontWrapper.fromJson(
         //     (arguments['storefront']! as Map<dynamic, dynamic>)
         //         .cast<String, dynamic>());
-        final SKStorefrontWrapper storefront = SKStorefrontWrapper(countryCode: call.arguments['storefront']['countryCode'].toString(), identifier: call.arguments['storefront']['identifier'].toString());
+        final StoreKitStorefrontWrapper storefront = StoreKitStorefrontWrapper(countryCode: call.arguments['storefront']['countryCode'].toString(), identifier: call.arguments['storefront']['identifier'].toString());
         return delegate.shouldContinueTransaction(transaction, storefront);
       case 'shouldShowPriceConsent':
         return delegate.shouldShowPriceConsent();

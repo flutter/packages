@@ -151,7 +151,7 @@
 }
 
 
-- (nullable NSArray<PaymentTransactionWrapper *> *)transactionsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+- (nullable NSArray<SKPaymentTransactionWrapper *> *)transactionsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
   NSArray<SKPaymentTransaction *> *transactions =
       [self.paymentQueueHandler getUnfinishedTransactions];
   NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];

@@ -51,24 +51,24 @@ typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
 - (instancetype)initWithValue:(PaymentTransactionStateWrapper)value;
 @end
 
-@class PaymentTransactionWrapper;
+@class StoreKitPaymentTransactionWrapper;
 @class PaymentWrapper;
 @class ErrorWrapper;
 @class PaymentDiscountWrapper;
-@class SKStorefrontWrapper;
+@class StoreKitStorefrontWrapper;
 
-@interface PaymentTransactionWrapper : NSObject
+@interface StoreKitPaymentTransactionWrapper : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithPayment:(PaymentWrapper *)payment
     transactionState:(PaymentTransactionStateWrapper)transactionState
-    originalTransaction:(nullable PaymentTransactionWrapper *)originalTransaction
+    originalTransaction:(nullable StoreKitPaymentTransactionWrapper *)originalTransaction
     transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
     transactionIdentifier:(nullable NSString *)transactionIdentifier
     error:(nullable ErrorWrapper *)error;
 @property(nonatomic, strong) PaymentWrapper * payment;
 @property(nonatomic, assign) PaymentTransactionStateWrapper transactionState;
-@property(nonatomic, strong, nullable) PaymentTransactionWrapper * originalTransaction;
+@property(nonatomic, strong, nullable) StoreKitPaymentTransactionWrapper * originalTransaction;
 @property(nonatomic, strong, nullable) NSNumber * transactionTimeStamp;
 @property(nonatomic, copy, nullable) NSString * transactionIdentifier;
 @property(nonatomic, strong, nullable) ErrorWrapper * error;
@@ -117,7 +117,7 @@ typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
 @property(nonatomic, assign) NSInteger  timestamp;
 @end
 
-@interface SKStorefrontWrapper : NSObject
+@interface StoreKitStorefrontWrapper : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCountryCode:(NSString *)countryCode
@@ -135,9 +135,9 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)canMakePaymentsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<PaymentTransactionWrapper *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<StoreKitPaymentTransactionWrapper *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable SKStorefrontWrapper *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable StoreKitStorefrontWrapper *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *_Nullable api);

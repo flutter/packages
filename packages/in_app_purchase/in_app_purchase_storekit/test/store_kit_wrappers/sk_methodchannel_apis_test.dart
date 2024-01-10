@@ -125,9 +125,9 @@ void main() {
     test('storefront returns valid SKStoreFrontWrapper object', () async {
       final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
       when(_api.storefront()).thenAnswer((_) async =>
-          SKStorefrontWrapper(countryCode: 'USA', identifier: 'unique_identifier'));
+          StoreKitStorefrontWrapper(countryCode: 'USA', identifier: 'unique_identifier'));
 
-      final SKStorefrontWrapper? result = await queue.storefront();
+      final StoreKitStorefrontWrapper? result = await queue.storefront();
       expect(result, isNotNull);
       expect(result?.countryCode, 'USA');
       expect(result?.identifier, 'unique_identifier');

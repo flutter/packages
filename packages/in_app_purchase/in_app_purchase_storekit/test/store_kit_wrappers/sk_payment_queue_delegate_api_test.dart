@@ -139,7 +139,7 @@ class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {
 
   @override
   bool shouldContinueTransaction(
-      SKPaymentTransactionWrapper transaction, SKStorefrontWrapper storefront) {
+      SKPaymentTransactionWrapper transaction, StoreKitStorefrontWrapper storefront) {
     log.add('shouldContinueTransaction');
     return false;
   }

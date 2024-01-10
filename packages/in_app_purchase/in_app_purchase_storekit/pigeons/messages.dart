@@ -11,8 +11,8 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-class PaymentTransactionWrapper {
-  PaymentTransactionWrapper({
+class StoreKitPaymentTransactionWrapper {
+  StoreKitPaymentTransactionWrapper({
     required this.payment,
     required this.transactionState,
     this.originalTransaction,
@@ -25,7 +25,7 @@ class PaymentTransactionWrapper {
 
   final PaymentTransactionStateWrapper transactionState;
 
-  final PaymentTransactionWrapper? originalTransaction;
+  final StoreKitPaymentTransactionWrapper? originalTransaction;
 
   final double? transactionTimeStamp;
 
@@ -122,33 +122,14 @@ class PaymentDiscountWrapper {
   final int timestamp;
 }
 
-class SKStorefrontWrapper {
-  const SKStorefrontWrapper({
+class StoreKitStorefrontWrapper {
+  const StoreKitStorefrontWrapper({
     required this.countryCode,
     required this.identifier,
   });
 
   final String countryCode;
   final String identifier;
-
-  // @override
-  // bool operator ==(Object other) {
-  //   if (identical(other, this)) {
-  //     return true;
-  //   }
-  //   if (other.runtimeType != runtimeType) {
-  //     return false;
-  //   }
-  //   return other is SKStorefrontWrapper &&
-  //       other.countryCode == countryCode &&
-  //       other.identifier == identifier;
-  // }
-
-  // @override
-  // int get hashCode => Object.hash(
-  //   countryCode,
-  //   identifier,
-  // );
 }
 
 @HostApi()
@@ -158,10 +139,10 @@ abstract class InAppPurchaseAPI {
   bool canMakePayments();
 
   // @ObjCSelector('transactions')
-  List<PaymentTransactionWrapper> transactions();
+  List<StoreKitPaymentTransactionWrapper> transactions();
 
   // @ObjCSelector('storefront')
-  SKStorefrontWrapper storefront();
+  StoreKitStorefrontWrapper storefront();
 }
 
 

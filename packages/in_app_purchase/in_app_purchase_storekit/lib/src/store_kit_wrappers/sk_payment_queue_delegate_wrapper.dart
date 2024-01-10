@@ -25,7 +25,7 @@ abstract class SKPaymentQueueDelegateWrapper {
   /// See the documentation in StoreKit's [`[-SKPaymentQueueDelegate shouldContinueTransaction]`](https://developer.apple.com/documentation/storekit/skpaymentqueuedelegate/3242935-paymentqueue?language=objc).
   bool shouldContinueTransaction(
     SKPaymentTransactionWrapper transaction,
-    SKStorefrontWrapper storefront,
+      StoreKitStorefrontWrapper storefront,
   ) =>
       true;
 

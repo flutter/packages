@@ -50,8 +50,8 @@ enum PaymentTransactionStateWrapper {
   unspecified,
 }
 
-class PaymentTransactionWrapper {
-  PaymentTransactionWrapper({
+class StoreKitPaymentTransactionWrapper {
+  StoreKitPaymentTransactionWrapper({
     required this.payment,
     required this.transactionState,
     this.originalTransaction,
@@ -64,7 +64,7 @@ class PaymentTransactionWrapper {
 
   PaymentTransactionStateWrapper transactionState;
 
-  PaymentTransactionWrapper? originalTransaction;
+  StoreKitPaymentTransactionWrapper? originalTransaction;
 
   double? transactionTimeStamp;
 
@@ -83,13 +83,13 @@ class PaymentTransactionWrapper {
     ];
   }
 
-  static PaymentTransactionWrapper decode(Object result) {
+  static StoreKitPaymentTransactionWrapper decode(Object result) {
     result as List<Object?>;
-    return PaymentTransactionWrapper(
+    return StoreKitPaymentTransactionWrapper(
       payment: PaymentWrapper.decode(result[0]! as List<Object?>),
       transactionState: PaymentTransactionStateWrapper.values[result[1]! as int],
       originalTransaction: result[2] != null
-          ? PaymentTransactionWrapper.decode(result[2]! as List<Object?>)
+          ? StoreKitPaymentTransactionWrapper.decode(result[2]! as List<Object?>)
           : null,
       transactionTimeStamp: result[3] as double?,
       transactionIdentifier: result[4] as String?,
@@ -220,8 +220,8 @@ class PaymentDiscountWrapper {
   }
 }
 
-class SKStorefrontWrapper {
-  SKStorefrontWrapper({
+class StoreKitStorefrontWrapper {
+  StoreKitStorefrontWrapper({
     required this.countryCode,
     required this.identifier,
   });
@@ -237,9 +237,9 @@ class SKStorefrontWrapper {
     ];
   }
 
-  static SKStorefrontWrapper decode(Object result) {
+  static StoreKitStorefrontWrapper decode(Object result) {
     result as List<Object?>;
-    return SKStorefrontWrapper(
+    return StoreKitStorefrontWrapper(
       countryCode: result[0]! as String,
       identifier: result[1]! as String,
     );
@@ -256,13 +256,13 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
     } else if (value is PaymentDiscountWrapper) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PaymentTransactionWrapper) {
+    } else if (value is PaymentWrapper) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PaymentWrapper) {
+    } else if (value is StoreKitPaymentTransactionWrapper) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is SKStorefrontWrapper) {
+    } else if (value is StoreKitStorefrontWrapper) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
@@ -278,11 +278,11 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
       case 129: 
         return PaymentDiscountWrapper.decode(readValue(buffer)!);
       case 130: 
-        return PaymentTransactionWrapper.decode(readValue(buffer)!);
-      case 131: 
         return PaymentWrapper.decode(readValue(buffer)!);
+      case 131: 
+        return StoreKitPaymentTransactionWrapper.decode(readValue(buffer)!);
       case 132: 
-        return SKStorefrontWrapper.decode(readValue(buffer)!);
+        return StoreKitStorefrontWrapper.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -327,7 +327,7 @@ class InAppPurchaseAPI {
     }
   }
 
-  Future<List<PaymentTransactionWrapper?>> transactions() async {
+  Future<List<StoreKitPaymentTransactionWrapper?>> transactions() async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -350,11 +350,11 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as List<Object?>?)!.cast<PaymentTransactionWrapper?>();
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<StoreKitPaymentTransactionWrapper?>();
     }
   }
 
-  Future<SKStorefrontWrapper> storefront() async {
+  Future<StoreKitStorefrontWrapper> storefront() async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -377,7 +377,7 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as SKStorefrontWrapper?)!;
+      return (__pigeon_replyList[0] as StoreKitStorefrontWrapper?)!;
     }
   }
 }
