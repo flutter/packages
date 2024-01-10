@@ -30,7 +30,7 @@ class Method extends Node {
     required this.returnType,
     required this.parameters,
     required this.location,
-    this.required = false,
+    this.required = true,
     this.isAsynchronous = false,
     this.isStatic = false,
     this.offset,
@@ -184,34 +184,18 @@ class AstProxyApi extends Api {
 }
 
 /// Represents a constructor for an API.
-class Constructor extends Node {
+class Constructor extends Method {
   /// Parametric constructor for [Constructor].
   Constructor({
-    required this.name,
-    required this.parameters,
-    this.offset,
-    this.swiftFunction = '',
-    this.documentationComments = const <String>[],
-  });
-
-  /// The name of the method.
-  String name;
-
-  /// The parameters passed into the [Constructor].
-  List<Parameter> parameters;
-
-  /// The offset in the source file where the field appears.
-  int? offset;
-
-  /// An override for the generated swift function signature (ex. "divideNumber(_:by:)").
-  String swiftFunction;
-
-  /// List of documentation comments, separated by line.
-  ///
-  /// Lines should not include the comment marker itself, but should include any
-  /// leading whitespace, so that any indentation in the original comment is preserved.
-  /// For example: [" List of documentation comments, separated by line.", ...]
-  List<String> documentationComments;
+    required super.name,
+    required super.parameters,
+    super.offset,
+    super.swiftFunction = '',
+    super.documentationComments = const <String>[],
+  }) : super(
+          returnType: const TypeDeclaration.voidDeclaration(),
+          location: ApiLocation.host,
+        );
 
   @override
   String toString() {

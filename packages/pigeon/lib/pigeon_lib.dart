@@ -1667,7 +1667,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
           parameters: arguments,
-          required: true,
           isStatic: isStatic,
           location: switch (_currentApi!) {
             AstHostApi() => ApiLocation.host,
