@@ -175,7 +175,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.addScoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
@@ -191,14 +191,21 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     _writeFlutterError(indent);
     if (hasHostApi) {
-      _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+      _writeErrorOr(
+        indent,
+        friends: root.apis
+            .where((Api api) => api is AstFlutterApi || api is AstHostApi)
+            .map((Api api) => api.name),
+      );
     }
     if (hasFlutterApi) {
       // Nothing yet.
@@ -291,7 +298,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             indent.writeln('friend class ${friend.name};');
           }
         }
-        for (final Api api in root.apis) {
+        for (final Api api in root.apis
+            .where((Api api) => api is AstFlutterApi || api is AstHostApi)) {
           // TODO(gaaclarke): Find a way to be more precise with our
           // friendships.
           indent.writeln('friend class ${api.name};');
@@ -317,10 +325,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -370,10 +377,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -778,6 +784,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       final Iterable<_IndexedField> indexedFields = indexMap(
           getFieldsInSerializationOrder(classDefinition),
           (int index, NamedType field) => _IndexedField(index, field));
+
       final Iterable<_IndexedField> nullableFields = indexedFields
           .where((_IndexedField field) => field.field.type.isNullable);
       final Iterable<_IndexedField> nonNullableFields = indexedFields
@@ -823,10 +830,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -937,10 +943,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }

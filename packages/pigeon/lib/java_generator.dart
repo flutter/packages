@@ -400,7 +400,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
     /// Returns an argument name that can be used in a context where it is possible to collide
@@ -414,7 +414,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       return '${_getArgumentName(count, argument)}Arg';
     }
 
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
     }
@@ -556,9 +555,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
+        api is AstHostApi &&
             api.methods.any((Method it) => it.isAsynchronous) ||
-        api.location == ApiLocation.flutter)) {
+        api is AstFlutterApi)) {
       indent.newln();
       _writeResultInterfaces(indent);
     }
@@ -577,10 +576,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
     }
@@ -979,10 +977,12 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     indent.newln();
     _writeErrorClass(indent);

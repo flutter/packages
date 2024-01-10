@@ -1,3 +1,7 @@
+## 16.0.1
+
+* Adds ProxyApi to AST generation.
+
 ## 16.0.0
 
 * [java] Adds `VoidResult` type for `Void` returns.

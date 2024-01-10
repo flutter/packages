@@ -236,7 +236,7 @@ import FlutterMacOS
     required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
+        api is AstHostApi &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
@@ -256,11 +256,9 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
-
     /// Returns an argument name that can be used in a context where it is possible to collide.
     String getEnumSafeArgumentExpression(
         Root root, int count, NamedType argument) {
@@ -380,11 +378,9 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
-
     final String apiName = api.name;
 
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
@@ -802,10 +798,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     if (hasHostApi) {
       _writeWrapResult(indent);

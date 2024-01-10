@@ -313,7 +313,7 @@ abstract class AFlutterApi {
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
-    expect(results.root.apis[0].location, equals(ApiLocation.flutter));
+    expect(results.root.apis[0], isA<AstFlutterApi>());
   });
 
   test('void host api', () {
@@ -370,8 +370,10 @@ abstract class ApiWithMockDartClass {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
-    expect(results.root.apis[0].dartHostTestHandler,
-        equals('ApiWithMockDartClassMock'));
+    expect(
+      (results.root.apis[0] as AstHostApi).dartHostTestHandler,
+      equals('ApiWithMockDartClassMock'),
+    );
   });
 
   test('only visible from nesting', () {

@@ -282,6 +282,24 @@ String getGeneratedCodeWarning() {
 /// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
+/// Prefix for utility classes generated for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String classNamePrefix = 'Pigeon_';
+
+/// Name for the generated InstanceManager for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
+
+/// Prefix for class member names not defined by the user.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String classMemberNamePrefix = 'pigeon_';
+
 /// Collection of keys used in dictionaries across generators.
 class Keys {
   /// The key in the result hash for the 'result' value.
@@ -586,6 +604,88 @@ String? deducePackageName(String mainDartFile) {
   } catch (_) {
     return null;
   }
+}
+
+/// Recursively search for all the interfaces apis from a list of names of
+/// interfaces.
+///
+/// This method assumes that all interfaces names can be found in
+/// [allProxyApis]. Otherwise, throws an [ArgumentError].
+Set<AstProxyApi> recursiveFindAllInterfacesApis(
+  AstProxyApi api,
+  Iterable<AstProxyApi> allProxyApis,
+) {
+  final Set<AstProxyApi> interfacesApis = <AstProxyApi>{};
+
+  for (final AstProxyApi proxyApi in allProxyApis) {
+    if (api.interfacesNames.contains(proxyApi.name)) {
+      interfacesApis.add(proxyApi);
+    }
+  }
+
+  if (interfacesApis.length != api.interfacesNames.length) {
+    throw ArgumentError(
+      'Could not find a ProxyApi for every interface name: '
+      '${api.interfacesNames}, ${allProxyApis.map((Api api) => api.name)}',
+    );
+  }
+
+  for (final AstProxyApi proxyApi in Set<AstProxyApi>.from(interfacesApis)) {
+    interfacesApis.addAll(
+      recursiveFindAllInterfacesApis(proxyApi, allProxyApis),
+    );
+  }
+
+  return interfacesApis;
+}
+
+/// Creates a list of ProxyApis where each `extends` the ProxyApi that follows
+/// it.
+///
+/// Returns an empty list if [proxyApi] does not extend a ProxyApi.
+///
+/// This method assumes the super classes of each ProxyApi doesn't create a
+/// loop. Throws a [ArgumentError] if a loop is found.
+///
+/// This method also assumes that all super class names can be found in
+/// [allProxyApis]. Otherwise, throws an [ArgumentError].
+List<AstProxyApi> recursiveGetSuperClassApisChain(
+  AstProxyApi proxyApi,
+  Iterable<AstProxyApi> allProxyApis,
+) {
+  final List<AstProxyApi> proxyApis = <AstProxyApi>[];
+
+  String? currentProxyApiName = proxyApi.superClassName;
+  while (currentProxyApiName != null) {
+    if (proxyApis.length > allProxyApis.length) {
+      final Iterable<String> apiNames = proxyApis.map(
+        (AstProxyApi api) => api.name,
+      );
+      throw ArgumentError(
+        'Loop found when processing super classes for a ProxyApi: '
+        '${proxyApi.name},${apiNames.join(',')}',
+      );
+    }
+
+    AstProxyApi? nextProxyApi;
+    for (final AstProxyApi node in allProxyApis) {
+      if (currentProxyApiName == node.name) {
+        nextProxyApi = node;
+        proxyApis.add(node);
+      }
+    }
+
+    if (nextProxyApi == null) {
+      throw ArgumentError(
+        'Could not find a ProxyApi for every super class name: '
+        '$currentProxyApiName, ${allProxyApis.map((Api api) => api.name)}',
+      );
+    }
+
+    currentProxyApiName = nextProxyApi.superClassName;
+  }
+
+  return proxyApis;
 }
 
 /// Enum to specify api type when generating code.

@@ -78,10 +78,10 @@ void main() {
   });
 
   test('get codec classes from argument type arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
+        location: ApiLocation.flutter,
         parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
@@ -123,10 +123,10 @@ void main() {
   });
 
   test('get codec classes from return value type arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
+        location: ApiLocation.flutter,
         parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
@@ -168,10 +168,10 @@ void main() {
   });
 
   test('get codec classes from all arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
+        location: ApiLocation.flutter,
         parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
@@ -216,9 +216,10 @@ void main() {
 
   test('getCodecClasses: nested type arguments', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'foo',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 name: 'x',
@@ -272,12 +273,12 @@ void main() {
 
   test('getCodecClasses: with Object', () {
     final Root root = Root(apis: <Api>[
-      Api(
+      AstFlutterApi(
         name: 'Api1',
-        location: ApiLocation.flutter,
         methods: <Method>[
           Method(
             name: 'foo',
+            location: ApiLocation.flutter,
             parameters: <Parameter>[
               Parameter(
                   name: 'x',
@@ -311,12 +312,12 @@ void main() {
 
   test('getCodecClasses: unique entries', () {
     final Root root = Root(apis: <Api>[
-      Api(
+      AstFlutterApi(
         name: 'Api1',
-        location: ApiLocation.flutter,
         methods: <Method>[
           Method(
             name: 'foo',
+            location: ApiLocation.flutter,
             parameters: <Parameter>[
               Parameter(
                   name: 'x',
@@ -330,12 +331,12 @@ void main() {
           )
         ],
       ),
-      Api(
+      AstHostApi(
         name: 'Api2',
-        location: ApiLocation.host,
         methods: <Method>[
           Method(
             name: 'foo',
+            location: ApiLocation.host,
             parameters: <Parameter>[
               Parameter(
                   name: 'x',

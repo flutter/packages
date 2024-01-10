@@ -617,10 +617,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     final String apiName = _className(generatorOptions.prefix, api.name);
 
     _writeCodecAndGetter(generatorOptions, root, indent, api);
@@ -649,10 +648,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     final String apiName = _className(generatorOptions.prefix, api.name);
 
     _writeCodecAndGetter(generatorOptions, root, indent, api);
@@ -702,10 +700,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     if (hasHostApi) {
       _writeWrapError(indent);
