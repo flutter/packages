@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
@@ -157,7 +156,6 @@ public class QuickActionsTest {
   // Broadcast a request to clear any system dialog that blocks the application from obtaining
   // focus. See https://github.com/flutter/flutter/issues/140987
   private void clearAnySystemDialog(Context context) {
-    final Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-    context.sendBroadcast(closeDialog);
+    context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
   }
 }
