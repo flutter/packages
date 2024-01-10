@@ -128,9 +128,24 @@ FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(size_t
 
   m_descriptor = {};
   m_descriptor.struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
-  m_descriptor.handle = m_videoSurfaceHandle;
-  m_descriptor.width = m_descriptor.visible_width = width;
-  m_descriptor.height = m_descriptor.visible_height = height;
+  m_descriptor.format = kFlutterDesktopPixelFormatNone;
+  if (!m_videoSurfaceSharedHandle) {
+    winrt::com_ptr<ID3D11Texture2D> spTexture =
+        m_mediaEngineWrapper->TransferVideoFrame();
+
+    winrt::com_ptr<IDXGIResource1> spDXGIResource =
+        spTexture.as<IDXGIResource1>();
+
+    if (spDXGIResource) {
+        THROW_IF_FAILED(spDXGIResource->GetSharedHandle(&m_videoSurfaceSharedHandle));
+    }
+
+    m_descriptor.handle = m_videoSurfaceSharedHandle;
+    D3D11_TEXTURE2D_DESC desc;
+    spTexture->GetDesc(&desc);
+    m_descriptor.width = m_descriptor.visible_width = desc.Width;
+    m_descriptor.height = m_descriptor.visible_height = desc.Height;
+  }
   m_descriptor.release_context = buffer_lock.release();
   m_descriptor.release_callback = [](void* release_context) {
     auto mutex = reinterpret_cast<std::mutex*>(release_context);
@@ -155,27 +170,28 @@ void VideoPlayer::SetupVideoVisual() {
   // Complete setting up video visual if we have a surface from the media engine
   // and the visual tree has been initialized
   m_videoSurfaceHandle = m_mediaEngineWrapper->GetSurfaceHandle();
+  m_videoSurfaceSharedHandle = 0;
 
   m_target = m_mediaEngineWrapper->GetCompositionTarget();
 
   if (!m_videoVisual && m_videoSurfaceHandle != NULL && m_target != nullptr) {
 
     // Create root visual and set it on the target
-    THROW_IF_FAILED(m_mediaEngineWrapper->GetCompositionDevice()->CreateVisual(m_videoVisual.put()));
-    THROW_IF_FAILED(m_target->SetRoot(m_videoVisual.get()));
+    // THROW_IF_FAILED(m_mediaEngineWrapper->GetCompositionDevice()->CreateVisual(m_videoVisual.put()));
+    // THROW_IF_FAILED(m_target->SetRoot(m_videoVisual.get()));
 
-    // Create video visual and add it to the DCOMP tree
-    winrt::com_ptr<IDCompositionDevice> dcompDevice;
-    THROW_IF_FAILED(m_mediaEngineWrapper->GetCompositionDevice()->QueryInterface(IID_PPV_ARGS(dcompDevice.put())));
-    std::shared_ptr<ui::DirectCompositionLayer> videoLayer =
-        ui::DirectCompositionLayer::CreateFromSurface(dcompDevice.get(), m_videoSurfaceHandle);
-    THROW_IF_FAILED(m_videoVisual->AddVisual(videoLayer->GetVisual(), TRUE, nullptr));
-    m_videoVisual->SetOffsetX(100);
-    m_videoVisual->SetOffsetY(100);
+    // // Create video visual and add it to the DCOMP tree
+    // winrt::com_ptr<IDCompositionDevice> dcompDevice;
+    // THROW_IF_FAILED(m_mediaEngineWrapper->GetCompositionDevice()->QueryInterface(IID_PPV_ARGS(dcompDevice.put())));
+    // std::shared_ptr<ui::DirectCompositionLayer> videoLayer =
+    //     ui::DirectCompositionLayer::CreateFromSurface(dcompDevice.get(), m_videoSurfaceHandle);
+    // THROW_IF_FAILED(m_videoVisual->AddVisual(videoLayer->GetVisual(), TRUE, nullptr));
+    // m_videoVisual->SetOffsetX(100);
+    // m_videoVisual->SetOffsetY(100);
 
     UpdateVideoSize();
 
-    dcompDevice->Commit();
+    //dcompDevice->Commit();
   }
 }
 

@@ -242,6 +242,95 @@ void MediaEngineWrapper::GetNativeVideoSize(uint32_t& cx, uint32_t& cy) {
   });
 }
 
+void MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height)
+{
+  bool shouldCreate = false;
+  D3D11_TEXTURE2D_DESC desc;
+
+  if(!m_pTexture) {
+    shouldCreate = true;
+  } else {
+    m_pTexture->GetDesc(&desc);
+    if(desc.Width != width || desc.Height != height) {
+      shouldCreate = true;
+    }
+  }
+
+  if(shouldCreate)
+  {
+    RtlZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
+    desc.Width     = width;
+    desc.Height    = height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format    = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+    desc.SampleDesc.Count = 1;
+    desc.Usage            = D3D11_USAGE_DEFAULT;
+    desc.BindFlags        = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags   = 0;
+    desc.MiscFlags        = D3D11_RESOURCE_MISC_SHARED;
+
+    THROW_IF_FAILED(m_d3d11Device->CreateTexture2D(&desc, nullptr, m_pTexture.put()));
+  }
+}
+
+winrt::com_ptr<ID3D11Texture2D> MediaEngineWrapper::TransferVideoFrame()
+{
+    winrt::com_ptr<ID3D11Texture2D> returnTexture;
+
+    RunSyncInMTA(
+        [&]()
+        {
+            auto lock = m_lock.lock();
+
+            DWORD width, height;
+            m_mediaEngine->GetNativeVideoSize(&width, &height);
+            
+            EnsureTextureCreated(width, height);
+
+            if (UpdateDXTexture(width, height)) {
+              returnTexture = m_pTexture;
+            }
+        });
+
+    return returnTexture;
+}
+
+bool MediaEngineWrapper::UpdateDXTexture() {
+  D3D11_TEXTURE2D_DESC desc;
+
+  if(!m_pTexture) {
+    return false;
+  }
+
+  m_pTexture->GetDesc(&desc);
+  return UpdateDXTexture(desc.Width, desc.Height);
+}
+
+bool MediaEngineWrapper::UpdateDXTexture(DWORD width, DWORD height) {
+  auto rcNormalized = MFVideoNormalizedRect();
+
+  RECT rect;
+  rect.top    = 0;
+  rect.left   = 0;
+  rect.bottom = height;
+  rect.right  = width;
+
+  LONGLONG pts;
+  if (m_mediaEngine->OnVideoStreamTick(&pts) == S_OK)
+  {
+      HRESULT hr = m_mediaEngine->TransferVideoFrame(m_pTexture.get(), &rcNormalized, &rect, nullptr);
+
+      if (hr == S_OK)
+      {
+          return true;
+      }
+  }
+
+  return false;
+}
+
 HANDLE MediaEngineWrapper::GetSurfaceHandle() {
   HANDLE surfaceHandle = INVALID_HANDLE_VALUE;
   RunSyncInMTA([&]() { surfaceHandle = m_dcompSurfaceHandle.get(); });
@@ -274,6 +363,7 @@ void MediaEngineWrapper::OnWindowUpdate(uint32_t width, uint32_t height) {
           mediaEngineEx->UpdateVideoStream(nullptr, &destRect, nullptr));
     }
   });
+  UpdateDXTexture();
 }
 
 // Internal methods
@@ -339,7 +429,6 @@ void MediaEngineWrapper::InitializeVideo() {
   THROW_IF_FAILED(
       MFLockDXGIDeviceManager(&m_deviceResetToken, m_dxgiDeviceManager.put()));
 
-  winrt::com_ptr<ID3D11Device> d3d11Device;
   UINT creationFlags = 0;
   constexpr D3D_FEATURE_LEVEL featureLevels[] = {
       D3D_FEATURE_LEVEL_10_0};
@@ -347,9 +436,9 @@ void MediaEngineWrapper::InitializeVideo() {
   THROW_IF_FAILED(D3D11CreateDevice(m_adapter.get(), D3D_DRIVER_TYPE_UNKNOWN, 0,
                                     creationFlags, featureLevels,
                                     ARRAYSIZE(featureLevels), D3D11_SDK_VERSION,
-                                    d3d11Device.put(), nullptr, nullptr));
+                                    m_d3d11Device.put(), nullptr, nullptr));
 
-  winrt::com_ptr<IDXGIDevice> m_DXGIDevice = d3d11Device.as<IDXGIDevice>();
+  winrt::com_ptr<IDXGIDevice> m_DXGIDevice = m_d3d11Device.as<IDXGIDevice>();
 
   winrt::com_ptr<IDCompositionDevice> dcompDevice;
   THROW_IF_FAILED(DCompositionCreateDevice2(m_DXGIDevice.get(), IID_PPV_ARGS(dcompDevice.put())));
@@ -360,11 +449,11 @@ void MediaEngineWrapper::InitializeVideo() {
   winrt::com_ptr<IDCompositionDesktopDevice> desktopDevice = m_dcompDevice.as<IDCompositionDesktopDevice>();
   THROW_IF_FAILED(desktopDevice->CreateTargetForHwnd(m_window, TRUE, m_dcompTarget.put()));
 
-  winrt::com_ptr<ID3D10Multithread> multithreadedDevice = d3d11Device.as<ID3D10Multithread>();
+  winrt::com_ptr<ID3D10Multithread> multithreadedDevice = m_d3d11Device.as<ID3D10Multithread>();
   multithreadedDevice->SetMultithreadProtected(TRUE);
 
   THROW_IF_FAILED(
-      m_dxgiDeviceManager->ResetDevice(d3d11Device.get(), m_deviceResetToken));
+      m_dxgiDeviceManager->ResetDevice(m_d3d11Device.get(), m_deviceResetToken));
 }
 
 // Callback methods
@@ -409,12 +498,14 @@ void MediaEngineWrapper::OnBufferingStateChange(BufferingState state) {
 }
 
 void MediaEngineWrapper::OnPlaybackEnded() {
+  UpdateDXTexture();
   if (m_playbackEndedCB) {
     m_playbackEndedCB();
   }
 }
 
 void MediaEngineWrapper::OnTimeUpdate() {
+  UpdateDXTexture();
   if (m_timeUpdateCB) {
     m_timeUpdateCB();
   }

@@ -116,6 +116,7 @@ class VideoPlayer {
   FlutterDesktopGpuSurfaceDescriptor m_descriptor;
   std::mutex m_buffer_mutex;
   HANDLE m_videoSurfaceHandle;
+  HANDLE m_videoSurfaceSharedHandle;
   winrt::com_ptr<IDXGIAdapter> m_adapter;
   HWND m_window;
 

@@ -66,6 +66,8 @@ class MediaEngineWrapper
 
   void GetNativeVideoSize(uint32_t& cx, uint32_t& cy);
 
+  winrt::com_ptr<ID3D11Texture2D> TransferVideoFrame();
+
   // Get a handle to a DCOMP surface for integrating into a visual tree
   HANDLE GetSurfaceHandle();
   winrt::com_ptr<IDCompositionTarget> GetCompositionTarget();
@@ -85,8 +87,10 @@ class MediaEngineWrapper
   winrt::com_ptr<IMFMediaEngine> m_mediaEngine;
   UINT m_deviceResetToken = 0;
   winrt::com_ptr<IDXGIAdapter> m_adapter;
+  winrt::com_ptr<ID3D11Device> m_d3d11Device;
   winrt::com_ptr<IDCompositionDevice2> m_dcompDevice;
   winrt::com_ptr<IDCompositionTarget> m_dcompTarget;
+  winrt::com_ptr<ID3D11Texture2D> m_pTexture;
   HWND m_window;
   winrt::com_ptr<IMFDXGIDeviceManager> m_dxgiDeviceManager;
   winrt::com_ptr<MediaEngineExtension> m_mediaEngineExtension;
@@ -95,6 +99,9 @@ class MediaEngineWrapper
   uint32_t m_width = 0;
   uint32_t m_height = 0;
   bool m_hasSetSource = false;
+  void EnsureTextureCreated(DWORD width, DWORD height);
+  bool UpdateDXTexture();
+  bool UpdateDXTexture(DWORD width, DWORD height);
   void InitializeVideo();
   void CreateMediaEngine(IMFMediaSource* mediaSource);
   void OnLoaded();
