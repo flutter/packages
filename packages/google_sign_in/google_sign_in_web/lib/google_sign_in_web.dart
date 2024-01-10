@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/foundation.dart' show visibleForTesting, kDebugMode;
+import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';

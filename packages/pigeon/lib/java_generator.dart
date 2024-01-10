@@ -448,8 +448,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
 
       for (final Method func in api.methods) {
-        final String resultType =
-            func.returnType.isNullable ? 'NullableResult' : 'Result';
+        final String resultType = _getResultType(func.returnType);
         final String returnType = func.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(func.returnType);
@@ -457,8 +456,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
         if (func.parameters.isEmpty) {
-          indent.write(
-              'public void ${func.name}(@NonNull $resultType<$returnType> result) ');
+          indent
+              .write('public void ${func.name}(@NonNull $resultType result) ');
           sendArgument = 'null';
         } else {
           final Iterable<String> argTypes = func.parameters
@@ -478,7 +477,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
               map2(argTypes, argNames, (String x, String y) => '$x $y')
                   .join(', ');
           indent.write(
-              'public void ${func.name}($argsSignature, @NonNull $resultType<$returnType> result) ');
+              'public void ${func.name}($argsSignature, @NonNull $resultType result) ');
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
@@ -513,7 +512,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                 }
                 indent.addScoped('else {', '}', () {
                   if (func.returnType.isVoid) {
-                    indent.writeln('result.success(null);');
+                    indent.writeln('result.success();');
                   } else {
                     const String output = 'output';
                     final String outputExpression;
@@ -633,8 +632,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   ///   int add(int x, int y);
   void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
       Indent indent, Api api, final Method method) {
-    final String resultType =
-        method.returnType.isNullable ? 'NullableResult' : 'Result';
+    final String resultType = _getResultType(method.returnType);
     final String nullableType = method.isAsynchronous
         ? ''
         : _nullabilityAnnotationFromType(method.returnType);
@@ -653,10 +651,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       }));
     }
     if (method.isAsynchronous) {
-      final String returnType = method.returnType.isVoid
-          ? 'Void'
-          : _javaTypeForDartType(method.returnType);
-      argSignature.add('@NonNull $resultType<$returnType> result');
+      argSignature.add('@NonNull $resultType result');
     }
     if (method.documentationComments.isNotEmpty) {
       addDocumentationComments(
@@ -748,14 +743,17 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     ? ' == null ? null : $resultValue.index'
                     : '.index';
               }
-              final String resultType =
-                  method.returnType.isNullable ? 'NullableResult' : 'Result';
+              final String resultType = _getResultType(method.returnType);
+              final String resultParam =
+                  method.returnType.isVoid ? '' : '$returnType result';
+              final String addResultArg =
+                  method.returnType.isVoid ? 'null' : '$resultValue$enumTag';
               const String resultName = 'resultCallback';
               indent.format('''
-$resultType<$returnType> $resultName =
-\t\tnew $resultType<$returnType>() {
-\t\t\tpublic void success($returnType result) {
-\t\t\t\twrapped.add(0, $resultValue$enumTag);
+$resultType $resultName =
+\t\tnew $resultType() {
+\t\t\tpublic void success($resultParam) {
+\t\t\t\twrapped.add(0, $addResultArg);
 \t\t\t\treply.reply(wrapped);
 \t\t\t}
 
@@ -890,6 +888,19 @@ $resultType<$returnType> $resultName =
       indent
           .writeln('/** Success case callback method for handling returns. */');
       indent.writeln('void success(@Nullable T result);');
+      indent.newln();
+      indent
+          .writeln('/** Failure case callback method for handling errors. */');
+      indent.writeln('void error(@NonNull Throwable error);');
+    });
+
+    indent.writeln(
+        '/** Asynchronous error handling return type for void API method returns. */');
+    indent.write('public interface VoidResult ');
+    indent.addScoped('{', '}', () {
+      indent
+          .writeln('/** Success case callback method for handling returns. */');
+      indent.writeln('void success();');
       indent.newln();
       indent
           .writeln('/** Failure case callback method for handling errors. */');
@@ -1101,4 +1112,15 @@ String _castObject(NamedType field, String varName) {
   } else {
     return _cast(varName, javaType: hostDatatype.datatype);
   }
+}
+
+/// Returns string of Result class type for method based on [TypeDeclaration].
+String _getResultType(TypeDeclaration type) {
+  if (type.isVoid) {
+    return 'VoidResult';
+  }
+  if (type.isNullable) {
+    return 'NullableResult<${_javaTypeForDartType(type)}>';
+  }
+  return 'Result<${_javaTypeForDartType(type)}>';
 }
