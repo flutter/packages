@@ -137,7 +137,7 @@
 }
 
 
-- (nullable NSArray<SKStorefrontWrapper *> *)storefrontWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+- (nullable NSArray<StoreKitStorefrontWrapper *> *)storefrontWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
       if (@available(iOS 13.0, macOS 10.15, *)) {
         SKStorefront *storefront = self.paymentQueueHandler.storefront;
         if (!storefront) {
@@ -151,7 +151,7 @@
 }
 
 
-- (nullable NSArray<SKPaymentTransactionWrapper *> *)transactionsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+- (nullable NSArray<StoreKitPaymentTransactionWrapper *> *)transactionsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
   NSArray<SKPaymentTransaction *> *transactions =
       [self.paymentQueueHandler getUnfinishedTransactions];
   NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];
