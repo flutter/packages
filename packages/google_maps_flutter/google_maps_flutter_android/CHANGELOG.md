@@ -1,5 +1,15 @@
-## NEXT
+## 2.6.2
 
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.6.1
+
+* Fixes new lint warnings.
+
+## 2.6.0
+
+* Fixes missing updates in TLHC mode.
+* Switched default display mode to TLHC mode.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 2.5.3

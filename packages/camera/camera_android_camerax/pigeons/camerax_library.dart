@@ -211,19 +211,27 @@ abstract class SystemServicesHostApi {
   @async
   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
 
-  void startListeningForDeviceOrientationChange(
-      bool isFrontFacing, int sensorOrientation);
-
-  void stopListeningForDeviceOrientationChange();
-
   String getTempFilePath(String prefix, String suffix);
 }
 
 @FlutterApi()
 abstract class SystemServicesFlutterApi {
-  void onDeviceOrientationChanged(String orientation);
-
   void onCameraError(String errorDescription);
+}
+
+@HostApi(dartHostTestHandler: 'TestDeviceOrientationManagerHostApi')
+abstract class DeviceOrientationManagerHostApi {
+  void startListeningForDeviceOrientationChange(
+      bool isFrontFacing, int sensorOrientation);
+
+  void stopListeningForDeviceOrientationChange();
+
+  int getDefaultDisplayRotation();
+}
+
+@FlutterApi()
+abstract class DeviceOrientationManagerFlutterApi {
+  void onDeviceOrientationChanged(String orientation);
 }
 
 @HostApi(dartHostTestHandler: 'TestPreviewHostApi')
@@ -235,6 +243,8 @@ abstract class PreviewHostApi {
   void releaseFlutterSurfaceTexture();
 
   ResolutionInfo getResolutionInfo(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestVideoCaptureHostApi')
@@ -242,6 +252,8 @@ abstract class VideoCaptureHostApi {
   int withOutput(int videoOutputId);
 
   int getOutput(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @FlutterApi()
@@ -294,12 +306,15 @@ abstract class RecordingFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
 abstract class ImageCaptureHostApi {
-  void create(int identifier, int? flashMode, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? flashMode,
+      int? resolutionSelectorId);
 
   void setFlashMode(int identifier, int flashMode);
 
   @async
   String takePicture(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
@@ -341,11 +356,13 @@ abstract class ZoomStateFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
 abstract class ImageAnalysisHostApi {
-  void create(int identifier, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? resolutionSelectorId);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
   void clearAnalyzer(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestAnalyzerHostApi')

@@ -21,7 +21,7 @@ Downloaded by pub (not CocoaPods).
   # Allow any version up to the next breaking change after the latest version that
   # has been confirmed to be compatible via an example in examples/. See discussion
   # in https://github.com/flutter/flutter/issues/86820 for why this is so broad.
-  s.dependency 'GoogleMaps', '< 8.0'
+  s.dependency 'GoogleMaps', '< 9.0'
   s.static_framework = true
   s.platform = :ios, '11.0'
   # GoogleMaps does not support arm64 simulators.

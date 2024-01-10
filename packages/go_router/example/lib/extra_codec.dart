@@ -116,7 +116,7 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'ComplexData2') {
       return ComplexData2(inputAsList[1]! as String);
     }
-    throw FormatException('Unable tp parse input: $input');
+    throw FormatException('Unable to parse input: $input');
   }
 }
 
@@ -127,11 +127,11 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
     if (input == null) {
       return null;
     }
-    switch (input.runtimeType) {
-      case ComplexData1:
-        return <Object?>['ComplexData1', (input as ComplexData1).data];
-      case ComplexData2:
-        return <Object?>['ComplexData2', (input as ComplexData2).data];
+    switch (input) {
+      case ComplexData1 _:
+        return <Object?>['ComplexData1', input.data];
+      case ComplexData2 _:
+        return <Object?>['ComplexData2', input.data];
       default:
         throw FormatException('Cannot encode type ${input.runtimeType}');
     }
