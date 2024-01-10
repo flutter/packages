@@ -2,39 +2,44 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 import 'package:pointer_interceptor_web/pointer_interceptor_web.dart';
+import 'package:web/web.dart' as web;
 
 const String _htmlElementViewType = '_htmlElementViewType';
-const double _videoWidth = 640;
-const double _videoHeight = 480;
+const double _containerWidth = 640;
+const double _containerHeight = 480;
 
 /// The html.Element that will be rendered underneath the flutter UI.
-html.Element htmlElement = html.DivElement()
-  ..style.width = '100%'
-  ..style.height = '100%'
-  ..style.backgroundColor = '#fabada'
-  ..style.cursor = 'auto'
-  ..id = 'background-html-view';
+final web.Element _htmlElement =
+    (web.document.createElement('div') as web.HTMLDivElement)
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.backgroundColor = '#fabada'
+      ..style.cursor = 'auto'
+      ..id = 'background-html-view';
 
 // See other examples commented out below...
 
-// html.Element htmlElement = html.VideoElement()
-//   ..style.width = '100%'
-//   ..style.height = '100%'
-//   ..style.cursor = 'auto'
-//   ..style.backgroundColor = 'black'
-//   ..id = 'background-html-view'
-//   ..src = 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
-//   ..poster = 'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217'
-//   ..controls = true;
+// final web.Element _htmlElement =
+//     (web.document.createElement('video') as web.HTMLVideoElement)
+//       ..style.width = '100%'
+//       ..style.height = '100%'
+//       ..style.cursor = 'auto'
+//       ..style.backgroundColor = 'black'
+//       ..id = 'background-html-view'
+//       ..src =
+//           'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
+//       ..poster =
+//           'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217'
+//       ..controls = true;
 
-// html.Element htmlElement = html.IFrameElement()
+// final web.Element _htmlElement =
+//     (web.document.createElement('video') as web.HTMLIFrameElement)
 //       ..width = '100%'
 //       ..height = '100%'
 //       ..id = 'background-html-view'
@@ -42,10 +47,6 @@ html.Element htmlElement = html.DivElement()
 //       ..style.border = 'none';
 
 void main() {
-  ui_web.platformViewRegistry.registerViewFactory(
-    _htmlElementViewType,
-    (int viewId) => htmlElement,
-  );
   runApp(const MyApp());
 }
 
@@ -82,6 +83,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    ui_web.platformViewRegistry.registerViewFactory(
+      _htmlElementViewType,
+      (int viewId) => _htmlElement,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -109,13 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Container(
               color: Colors.black,
-              width: _videoWidth,
-              height: _videoHeight,
+              width: _containerWidth,
+              height: _containerHeight,
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
                   HtmlElement(
-                    key: const ValueKey<String>('background-widget'),
+                    key: const Key('background-widget'),
                     onClick: () {
                       _clickedOn('html-element');
                     },
@@ -207,9 +217,12 @@ class HtmlElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    htmlElement.onClick.listen((_) {
-      onClick();
-    });
+    _htmlElement.addEventListener(
+      'click',
+      (JSAny? _) {
+        onClick();
+      }.toJS,
+    );
 
     return const HtmlElementView(
       viewType: _htmlElementViewType,

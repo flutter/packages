@@ -7,7 +7,7 @@ import 'dart:js_util';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mockito/mockito.dart' show any, verify, when, Mock;
+import 'package:mockito/mockito.dart' show Mock, any, verify, when;
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:url_launcher_web/url_launcher_web.dart';
 import 'package:web/helpers.dart' as html;
