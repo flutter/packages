@@ -1,6 +1,15 @@
-## NEXT
+## 2.3.1
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.3.0
+* Adds `InAppBrowserConfiguration` parameter to `LaunchOptions`, to configure in-app browser views, such as Android Custom Tabs or `SFSafariViewController`.
+* Adds `showTitle` parameter to `InAppBrowserConfiguration` in order to control web-page title visibility.
+
+## 2.2.1
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
 
 ## 2.2.0
 
