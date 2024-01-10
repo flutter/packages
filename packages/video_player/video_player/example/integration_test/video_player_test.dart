@@ -128,19 +128,19 @@ void main() {
         // Mute to allow playing without DOM interaction on Web.
         // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
         await controller.setVolume(0);
-        final Duration fiveMillisBeforeEnd =
-            controller.value.duration - const Duration(milliseconds: 5);
-        await controller.seekTo(fiveMillisBeforeEnd);
+        final Duration tenMillisBeforeEnd =
+            controller.value.duration - const Duration(milliseconds: 10);
+        await controller.seekTo(tenMillisBeforeEnd);
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
-        await controller.seekTo(fiveMillisBeforeEnd);
+        await controller.seekTo(tenMillisBeforeEnd);
         await tester.pumpAndSettle(_playDuration);
 
         expect(controller.value.isPlaying, false);
-        expect(controller.value.position, fiveMillisBeforeEnd);
+        expect(controller.value.position, tenMillisBeforeEnd);
       },
       // Flaky on web: https://github.com/flutter/flutter/issues/130147
       skip: kIsWeb,
