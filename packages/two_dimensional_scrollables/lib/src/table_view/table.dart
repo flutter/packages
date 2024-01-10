@@ -290,7 +290,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   // Used to optimize decorating when there are no merged cells in a given
   // frame.
   final List<int> _mergedRows = <int>[];
-  // bool _mergedColumns = false;
+  final List<int> _mergedColumns = <int>[];
 
   // Cached Table metrics
   Map<int, _Span> _columnMetrics = <int, _Span>{};
@@ -610,7 +610,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // Reset for a new frame
     _mergedVicinities.clear();
     _mergedRows.clear();
-    // _mergedColumns = false;
+    _mergedColumns.clear();
 
     if (needsDelegateRebuild || didResize) {
       // Recomputes the table metrics, invalidates any cached information.
@@ -731,9 +731,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       double? mergedRowHeight;
       double? mergedYPaintOffset;
       yPaintOffset += rowSpan.configuration.padding.leading;
+
       for (int column = start.column; column <= end.column; column += 1) {
         colSpan = _columnMetrics[column]!;
-        final double columnWidth = colSpan.extent;
+        final double standardColumnWidth = colSpan.extent;
+        double? mergedColumnWidth;
+        double? mergedXPaintOffset;
         xPaintOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
@@ -747,7 +750,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         if (cell != null) {
           final TableViewParentData cellParentData = parentDataOf(cell);
 
-          // Merged cell handling
+          // Merged row handling
           if (cellParentData.rowMergeStart != null) {
             final int rowMergeStart = cellParentData.rowMergeStart!;
             _mergedRows.add(rowMergeStart);
@@ -777,21 +780,56 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               nextRow++;
             }
           }
-          // TODO(Piinks): Copy logic for merged columns
+
+          // Merged column handling.
+          if (cellParentData.columnMergeStart != null) {
+            final int columnMergeStart = cellParentData.columnMergeStart!;
+            _mergedColumns.add(columnMergeStart);
+            final int lastColumn =
+                columnMergeStart + cellParentData.columnMergeSpan! - 1;
+            assert(_debugCheckMergeBounds(
+              spanOrientation: 'Column',
+              currentSpan: column,
+              spanMergeStart: columnMergeStart,
+              spanMergeEnd: lastColumn,
+              spanCount: delegate.columnCount,
+              pinnedSpanCount: delegate.pinnedColumnCount,
+              currentVicinity: vicinity,
+            ));
+            // Compute width and layout offset for merged columns.
+            final _Span firstColumn = _columnMetrics[columnMergeStart]!;
+            mergedColumnWidth = firstColumn.extent;
+            mergedXPaintOffset = -horizontalOffset.pixels +
+                firstColumn.leadingOffset +
+                firstColumn.configuration.padding.leading;
+            _mergedVicinities[vicinity.copyWith(column: columnMergeStart)] =
+                vicinity;
+            int nextColumn = columnMergeStart + 1;
+            while (nextColumn <= lastColumn) {
+              _mergedColumns.add(nextColumn);
+              _mergedVicinities[vicinity.copyWith(column: nextColumn)] =
+                  vicinity;
+              mergedColumnWidth =
+                  mergedColumnWidth! + _columnMetrics[nextColumn]!.extent;
+              nextColumn++;
+            }
+          }
 
           final BoxConstraints cellConstraints = BoxConstraints.tightFor(
-            width: columnWidth,
+            width: mergedColumnWidth ?? standardColumnWidth,
             height: mergedRowHeight ?? standardRowHeight,
           );
           cell.layout(cellConstraints);
           cellParentData.layoutOffset = Offset(
-            xPaintOffset,
+            mergedXPaintOffset ?? xPaintOffset,
             mergedYPaintOffset ?? yPaintOffset,
           );
           mergedYPaintOffset = null;
           mergedRowHeight = null;
+          mergedXPaintOffset = null;
+          mergedColumnWidth = null;
         }
-        xPaintOffset += columnWidth +
+        xPaintOffset += standardColumnWidth +
             _columnMetrics[column]!.configuration.padding.trailing;
       }
       yPaintOffset +=
@@ -929,6 +967,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   RenderBox _getMergedChildFor(TableVicinity vicinity) {
+    // A merged cell spans multiple vicinities, but only lays out one child for
+    // the full area. Returns the child that has been laid out to span the given
+    // vicinity.
     assert(_mergedVicinities.keys.contains(vicinity));
     final TableVicinity mergedVicinity = _mergedVicinities[vicinity]!;
     return getChildFor(mergedVicinity)!;
@@ -940,6 +981,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required TableVicinity trailing,
     required Offset offset,
   }) {
+    print('paint cells');
     // Column decorations
     final LinkedHashMap<Rect, TableSpanDecoration> foregroundColumns =
         LinkedHashMap<Rect, TableSpanDecoration>();
@@ -948,15 +990,44 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     final TableSpan rowSpan = _rowMetrics[leading.row]!.configuration;
     for (int column = leading.column; column <= trailing.column; column++) {
-      final TableSpan columnSpan = _columnMetrics[column]!.configuration;
+      TableSpan columnSpan = _columnMetrics[column]!.configuration;
       if (columnSpan.backgroundDecoration != null ||
-          columnSpan.foregroundDecoration != null) {
-        final RenderBox leadingCell = getChildFor(
-          TableVicinity(column: column, row: leading.row),
-        )!;
-        final RenderBox trailingCell = getChildFor(
-          TableVicinity(column: column, row: trailing.row),
-        )!;
+          columnSpan.foregroundDecoration != null || _mergedColumns.contains(column)) {
+        final List<(RenderBox, RenderBox)> decorationCells = <(RenderBox, RenderBox)>[];
+        late RenderBox? leadingCell;
+        late RenderBox? trailingCell;
+        if ((_mergedColumns.isEmpty || !_mergedColumns.contains(column)) && _mergedRows.isEmpty) {
+          // One decoration across the whole column.
+          decorationCells.add((
+            getChildFor(TableVicinity(column: column, row: leading.row,))!, // leading
+            getChildFor(TableVicinity(column: column, row: trailing.row,))!, // trailing
+          ));
+        } else {
+          // Walk through the rows to separate merged cells for decorating. A
+          // merged column takes the decoration of its leading column.
+          int currentRow = leading.row;
+          print('column: $column trailing.row: ${trailing.row}');
+          while (currentRow <= trailing.row) {
+            print('currentRow: $currentRow');
+            TableVicinity vicinity = TableVicinity(column: column, row: currentRow,);
+            leadingCell = getChildFor(vicinity) ?? _getMergedChildFor(vicinity);
+            if (parentDataOf(leadingCell).columnMergeStart != null) {
+              // Merged cell decorated individually.
+              print('column $column is merged');
+              decorationCells.add((leadingCell, leadingCell));
+              currentRow ++;
+              continue;
+            }
+            RenderBox? nextCell = leadingCell;
+            while (nextCell != null && parentDataOf(nextCell).columnMergeStart == null) {
+              trailingCell = nextCell;
+              vicinity = vicinity.copyWith(row: currentRow++);
+              nextCell = getChildFor(vicinity);
+            }
+            decorationCells.add((leadingCell, trailingCell!));
+            currentRow--;
+          }
+        }
 
         Rect getColumnRect(bool consumePadding) {
           final ({double leading, double trailing}) offsetCorrection =
@@ -968,13 +1039,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                   : (leading: 0.0, trailing: 0.0);
 
           return Rect.fromPoints(
-            parentDataOf(leadingCell).paintOffset! +
+            parentDataOf(leadingCell!).paintOffset! +
                 offset -
                 Offset(
                   consumePadding ? columnSpan.padding.leading : 0.0,
                   rowSpan.padding.leading - offsetCorrection.leading,
                 ),
-            parentDataOf(trailingCell).paintOffset! +
+            parentDataOf(trailingCell!).paintOffset! +
                 offset +
                 Offset(trailingCell.size.width, trailingCell.size.height) +
                 Offset(
@@ -984,20 +1055,37 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           );
         }
 
-        if (columnSpan.backgroundDecoration != null) {
-          final Rect rect = getColumnRect(
-            columnSpan.backgroundDecoration!.consumeSpanPadding,
-          );
-          backgroundColumns[rect] = columnSpan.backgroundDecoration!;
-        }
-        if (columnSpan.foregroundDecoration != null) {
-          final Rect rect = getColumnRect(
-            columnSpan.foregroundDecoration!.consumeSpanPadding,
-          );
-          foregroundColumns[rect] = columnSpan.foregroundDecoration!;
+        for (final (RenderBox, RenderBox) span in decorationCells) {
+          (leadingCell, trailingCell) = span;
+          // If this was a merged cell, the decoration is defined by the leading
+          // cell, which may come from a different column.
+          final int columnIndex = parentDataOf(leadingCell).columnMergeStart ?? parentDataOf(leadingCell).tableVicinity.column;
+          columnSpan = _columnMetrics[columnIndex]!.configuration;
+          if (columnSpan.backgroundDecoration != null) {
+            final Rect rect =
+            getColumnRect(columnSpan.backgroundDecoration!.consumeSpanPadding);
+            // We could have already added this rect if it came from another
+            // vicinity contained by the merged
+            // cell.
+            if (!backgroundColumns.keys.contains(rect)) {
+              backgroundColumns[rect] = columnSpan.backgroundDecoration!;
+            }
+          }
+          if (columnSpan.foregroundDecoration != null) {
+            final Rect rect =
+            getColumnRect(columnSpan.foregroundDecoration!.consumeSpanPadding);
+            // We could have already added this rect if it came from another
+            // vicinity contained by the merged
+            // cell.
+            if (!foregroundColumns.keys.contains(rect)) {
+              foregroundColumns[rect] = columnSpan.foregroundDecoration!;
+            }
+          }
         }
       }
     }
+
+    print('columns sorted');
 
     // Row decorations
     final LinkedHashMap<Rect, TableSpanDecoration> foregroundRows =
@@ -1008,22 +1096,29 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     for (int row = leading.row; row <= trailing.row; row++) {
       TableSpan rowSpan = _rowMetrics[row]!.configuration;
       if (rowSpan.backgroundDecoration != null ||
-          rowSpan.foregroundDecoration != null || _mergedRows.contains(row)) {
-        final List<(RenderBox, RenderBox)> decorationCells = <(RenderBox, RenderBox)>[];
+          rowSpan.foregroundDecoration != null ||
+          _mergedRows.contains(row)) {
+        final List<(RenderBox, RenderBox)> decorationCells =
+            <(RenderBox, RenderBox)>[];
         late RenderBox? leadingCell;
         late RenderBox? trailingCell;
         if (_mergedRows.isEmpty || !_mergedRows.contains(row)) {
           // One decoration across the whole row.
           decorationCells.add((
-            getChildFor(TableVicinity(column: leading.column, row: row))!, // leading
-            getChildFor(TableVicinity(column: trailing.column, row: row))!, // trailing
+            getChildFor(
+                TableVicinity(column: leading.column, row: row,))!, // leading
+            getChildFor(
+                TableVicinity(column: trailing.column, row: row,))!, // trailing
           ));
         } else {
-          // Walk through the columns to separate merged rows for decorating. A
+          // Walk through the columns to separate merged cells for decorating. A
           // merged row takes the decoration of its leading row.
           int currentColumn = leading.column;
           while (currentColumn <= trailing.column) {
-            TableVicinity vicinity = TableVicinity(column: currentColumn, row: row,);
+            TableVicinity vicinity = TableVicinity(
+              column: currentColumn,
+              row: row,
+            );
             leadingCell = getChildFor(vicinity) ?? _getMergedChildFor(vicinity);
             if (parentDataOf(leadingCell).rowMergeStart != null) {
               // Merged cell decorated individually.
@@ -1032,7 +1127,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               continue;
             }
             RenderBox? nextCell = leadingCell;
-            while (nextCell != null && parentDataOf(nextCell).rowMergeStart == null) {
+            while (nextCell != null &&
+                parentDataOf(nextCell).rowMergeStart == null) {
               trailingCell = nextCell;
               vicinity = vicinity.copyWith(column: currentColumn++);
               nextCell = getChildFor(vicinity);
@@ -1071,12 +1167,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           (leadingCell, trailingCell) = span;
           // If this was a merged cell, the decoration is defined by the leading
           // cell, which may come from a different row.
-          final int rowIndex = parentDataOf(leadingCell).rowMergeStart ?? parentDataOf(leadingCell).tableVicinity.row;
+          final int rowIndex = parentDataOf(leadingCell).rowMergeStart ??
+              parentDataOf(leadingCell).tableVicinity.row;
           rowSpan = _rowMetrics[rowIndex]!.configuration;
           if (rowSpan.backgroundDecoration != null) {
             final Rect rect =
-            getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding);
-            // We could have already added this rect if it came from a merged
+                getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding);
+            // We could have already added this rect if it came from another
+            // vicinity contained by the merged
             // cell.
             if (!backgroundRows.keys.contains(rect)) {
               backgroundRows[rect] = rowSpan.backgroundDecoration!;
@@ -1084,8 +1182,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           }
           if (rowSpan.foregroundDecoration != null) {
             final Rect rect =
-            getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding);
-            // We could have already added this rect if it came from a merged
+                getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding);
+            // We could have already added this rect if it came from another
+            // vicinity contained by the merged
             // cell.
             if (!foregroundRows.keys.contains(rect)) {
               foregroundRows[rect] = rowSpan.foregroundDecoration!;
@@ -1094,6 +1193,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         }
       }
     }
+    print('rows sorted');
 
     // Get to painting.
     // Painting is done in row or column major ordering according to the main

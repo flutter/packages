@@ -41,14 +41,22 @@ class TableExample extends StatefulWidget {
 }
 
 class _TableExampleState extends State<TableExample> {
-  final Map<TableVicinity, (int, int)> mergedRows= <TableVicinity, (int, int)>{
+  final Map<TableVicinity, (int, int)> mergedRows = <TableVicinity, (int, int)>{
     // TableVicinity in merged cell : (start, span)
-    TableVicinity.zero : (0, 2),
+    TableVicinity.zero: (0, 2),
     TableVicinity.zero.copyWith(row: 1): (0, 2),
-    const TableVicinity(row: 1, column: 1) : (1, 2),
-    const TableVicinity(row: 2, column: 1) : (1, 2),
-    const TableVicinity(row: 2, column: 2) : (2, 2),
-    const TableVicinity(row: 3, column: 2) : (2, 2),
+    const TableVicinity(row: 1, column: 1): (1, 2),
+    const TableVicinity(row: 2, column: 1): (1, 2),
+    const TableVicinity(row: 2, column: 2): (2, 2),
+    const TableVicinity(row: 3, column: 2): (2, 2),
+  };
+
+  final Map<TableVicinity, (int, int)> mergedColumns = <TableVicinity, (int, int)>{
+    // TableVicinity in merged cell : (start, span)
+    const TableVicinity(row: 0, column: 2) : (2, 2),
+    const TableVicinity(row: 0, column: 3) : (2, 2),
+    const TableVicinity(row: 3, column: 0) : (0, 2),
+    const TableVicinity(row: 3, column: 1) : (0, 2),
   };
 
   @override
@@ -68,10 +76,18 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    if (mergedRows.keys.contains(vicinity)) {
+    if (mergedColumns.keys.contains(vicinity) || mergedRows.keys.contains(vicinity)) {
+      print('Vicinity $vicinity has: \n '
+        '\t rowMergeStart: ${mergedRows[vicinity]?.$1}\n'
+        '\t rowMergeSpan: ${mergedRows[vicinity]?.$2}\n'
+        '\t columnMergeStart: ${mergedColumns[vicinity]?.$1}\n'
+        '\t columnMergeSpan: ${mergedColumns[vicinity]?.$2} '
+      );
       return TableViewCell(
-        rowMergeStart: mergedRows[vicinity]!.$1,
-        rowMergeSpan: mergedRows[vicinity]!.$2,
+        rowMergeStart: mergedRows[vicinity]?.$1,
+        rowMergeSpan: mergedRows[vicinity]?.$2,
+        // columnMergeStart: mergedColumns[vicinity]?.$1,
+        // columnMergeSpan: mergedColumns[vicinity]?.$2,
         child: const Center(
           child: Text('Merged'),
         ),
@@ -87,19 +103,26 @@ class _TableExampleState extends State<TableExample> {
 
   TableSpan _buildRowSpan(int index) {
     late final Color color;
-    switch(index) {
-      case 1: color = Colors.purple;
-      case 2: color = Colors.blue;
-      case 3: color = Colors.green;
-      default: color = Colors.transparent;
+    switch (index) {
+      case 1:
+        color = Colors.purple;
+      case 2:
+        color = Colors.blue;
+      case 3:
+        color = Colors.green;
+      default:
+        color = Colors.transparent;
     }
 
     return TableSpan(
       extent: const FixedTableSpanExtent(100.0),
-      backgroundDecoration: TableSpanDecoration(
-        color: color,
-        border: const TableSpanBorder(leading: BorderSide(), trailing: BorderSide(),),
-      ),
+      // backgroundDecoration: TableSpanDecoration(
+      //   color: color,
+      //   border: const TableSpanBorder(
+      //     leading: BorderSide(),
+      //     trailing: BorderSide(),
+      //   ),
+      // ),
     );
   }
 
@@ -107,7 +130,7 @@ class _TableExampleState extends State<TableExample> {
     return const TableSpan(
       extent: FixedTableSpanExtent(100.0),
       // foregroundDecoration: TableSpanDecoration(
-      //   border: const TableSpanBorder(leading: BorderSide(), trailing: BorderSide(),),
+      //   border: TableSpanBorder(leading: BorderSide(), trailing: BorderSide(),),
       // ),
     );
   }

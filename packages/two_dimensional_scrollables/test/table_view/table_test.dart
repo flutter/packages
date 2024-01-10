@@ -59,7 +59,7 @@ void main() {
       expect(
         delegate.builder(
           _NullBuildContext(),
-          const TableVicinity(row: 0, column: 0),
+          TableVicinity.zero,
         ),
         cell,
       );
@@ -281,7 +281,7 @@ void main() {
       );
       expect(viewport.mainAxis, Axis.vertical);
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -367,7 +367,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -432,7 +432,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      vicinity = const TableVicinity(column: 0, row: 0);
+      vicinity = TableVicinity.zero;
       parentData = parentDataOf(
         viewport.firstChild!,
       );
