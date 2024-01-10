@@ -131,8 +131,12 @@ void main() {
         final Duration tenMillisBeforeEnd =
             controller.value.duration - const Duration(milliseconds: 10);
         await controller.seekTo(tenMillisBeforeEnd);
+        print(controller.value.position);
+        print(controller.value.duration);
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
+        print(controller.value.position);
+        print(controller.value.duration);
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
@@ -155,8 +159,12 @@ void main() {
         await controller.setVolume(0);
         await controller.seekTo(
             controller.value.duration - const Duration(milliseconds: 10));
+        print(controller.value.position);
+        print(controller.value.duration);
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
+        print(controller.value.position);
+        print(controller.value.duration);
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
