@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Initialize transition time variable.
   @override
-  void initState(){
+  void initState() {
     super.initState();
     setState(() {
       _transTime = widget.transTime;
