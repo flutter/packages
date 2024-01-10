@@ -183,7 +183,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
   /**
    * Updates context that is used to fetch the corresponding instance of a {@code
-   * ProcessCameraProvider}.
+   * ProcessCameraProvider} to each of the relevant camera controls.
    */
   public void updateContext(@NonNull Context context) {
     if (processCameraProviderHostApiImpl != null) {
@@ -213,7 +213,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
    * Sets {@code LifecycleOwner} that is used to control the lifecycle
    * of the camera by CameraX.
    */
-  public void updateLifecycleOwner(@NonNull Activity activity) {
+  public void updateLifecycleOwner(@Nullable Activity activity) {
     if (activity instanceof LifecycleOwner) {
       processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
       liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
