@@ -5,7 +5,10 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/src/channel.dart';
+import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+
+// import '../../pigeons/messages.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

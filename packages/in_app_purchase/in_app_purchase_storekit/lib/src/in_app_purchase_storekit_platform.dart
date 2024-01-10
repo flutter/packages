@@ -74,8 +74,8 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   }
 
   @override
-  // Future<bool> isAvailable() => _hostApi.canMakePayments();
-  Future<bool> isAvailable() => SKPaymentQueueWrapper.canMakePayments();
+  Future<bool> isAvailable() => _hostApi.canMakePayments();
+  // Future<bool> isAvailable() => SKPaymentQueueWrapper.canMakePayments();
 
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {

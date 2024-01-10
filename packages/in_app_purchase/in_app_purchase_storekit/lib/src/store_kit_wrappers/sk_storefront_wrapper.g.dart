@@ -6,14 +6,14 @@ part of 'sk_storefront_wrapper.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SKStorefrontWrapper _$SKStorefrontWrapperFromJson(Map json) =>
-    SKStorefrontWrapper(
+_SKStorefrontWrapper _$SKStorefrontWrapperFromJson(Map json) =>
+    _SKStorefrontWrapper(
       countryCode: json['countryCode'] as String,
       identifier: json['identifier'] as String,
     );
 
 Map<String, dynamic> _$SKStorefrontWrapperToJson(
-        SKStorefrontWrapper instance) =>
+        _SKStorefrontWrapper instance) =>
     <String, dynamic>{
       'countryCode': instance.countryCode,
       'identifier': instance.identifier,

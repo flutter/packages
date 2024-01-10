@@ -2,36 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:pigeon/pigeon.dart';
 
-part 'sk_storefront_wrapper.g.dart';
+@ConfigurePigeon(PigeonOptions(
+  dartOut: 'lib/src/sk_storefront_wrapper.g.dart',
+  objcHeaderOut: 'darwin/Classes/messages.g.h',
+  objcSourceOut: 'darwin/Classes/messages.g.m',
+  copyrightHeader: 'pigeons/copyright.txt',
+))
 
 /// Contains the location and unique identifier of an Apple App Store storefront.
 ///
 /// Dart wrapper around StoreKit's
 /// [SKStorefront](https://developer.apple.com/documentation/storekit/skstorefront?language=objc).
-@JsonSerializable(createToJson: true)
-@immutable
-class _SKStorefrontWrapper {
+class SKStorefrontWrapper {
   /// Creates a new [SKStorefrontWrapper] with the provided information.
   // TODO(stuartmorgan): Temporarily ignore const warning in other parts of the
   // federated package, and remove this.
   // ignore: prefer_const_constructors_in_immutables
-  _SKStorefrontWrapper({
+  SKStorefrontWrapper({
     required this.countryCode,
     required this.identifier,
   });
-
-  /// Constructs an instance of the [SKStorefrontWrapper] from a key value map
-  /// of data.
-  ///
-  /// The map needs to have named string keys with values matching the names and
-  /// types of all of the members on this class. The `map` parameter must not be
-  /// null.
-  factory _SKStorefrontWrapper.fromJson(Map<String, dynamic> map) {
-    return _$SKStorefrontWrapperFromJson(map);
-  }
 
   /// The three-letter code representing the country or region associated with
   /// the App Store storefront.
@@ -48,21 +40,14 @@ class _SKStorefrontWrapper {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _SKStorefrontWrapper &&
+    return other is SKStorefrontWrapper &&
         other.countryCode == countryCode &&
         other.identifier == identifier;
   }
 
   @override
   int get hashCode => Object.hash(
-        countryCode,
-        identifier,
-      );
-
-  @override
-  String toString() => _$SKStorefrontWrapperToJson(this).toString();
-
-  /// Converts the instance to a key value map which can be used to serialize
-  /// to JSON format.
-  Map<String, dynamic> toMap() => _$SKStorefrontWrapperToJson(this);
+    countryCode,
+    identifier,
+  );
 }

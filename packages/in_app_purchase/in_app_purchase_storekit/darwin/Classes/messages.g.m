@@ -64,9 +64,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface StorefrontWrapper ()
-+ (StorefrontWrapper *)fromList:(NSArray *)list;
-+ (nullable StorefrontWrapper *)nullableFromList:(NSArray *)list;
+@interface SKStorefrontWrapper ()
++ (SKStorefrontWrapper *)fromList:(NSArray *)list;
++ (nullable SKStorefrontWrapper *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -218,22 +218,22 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation StorefrontWrapper
+@implementation SKStorefrontWrapper
 + (instancetype)makeWithCountryCode:(NSString *)countryCode
     identifier:(NSString *)identifier {
-  StorefrontWrapper* pigeonResult = [[StorefrontWrapper alloc] init];
+  SKStorefrontWrapper* pigeonResult = [[SKStorefrontWrapper alloc] init];
   pigeonResult.countryCode = countryCode;
   pigeonResult.identifier = identifier;
   return pigeonResult;
 }
-+ (StorefrontWrapper *)fromList:(NSArray *)list {
-  StorefrontWrapper *pigeonResult = [[StorefrontWrapper alloc] init];
++ (SKStorefrontWrapper *)fromList:(NSArray *)list {
+  SKStorefrontWrapper *pigeonResult = [[SKStorefrontWrapper alloc] init];
   pigeonResult.countryCode = GetNullableObjectAtIndex(list, 0);
   pigeonResult.identifier = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
-+ (nullable StorefrontWrapper *)nullableFromList:(NSArray *)list {
-  return (list) ? [StorefrontWrapper fromList:list] : nil;
++ (nullable SKStorefrontWrapper *)nullableFromList:(NSArray *)list {
+  return (list) ? [SKStorefrontWrapper fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -257,7 +257,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     case 131: 
       return [PaymentWrapper fromList:[self readValue]];
     case 132: 
-      return [StorefrontWrapper fromList:[self readValue]];
+      return [SKStorefrontWrapper fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -280,7 +280,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   } else if ([value isKindOfClass:[PaymentWrapper class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[StorefrontWrapper class]]) {
+  } else if ([value isKindOfClass:[SKStorefrontWrapper class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
   } else {
@@ -356,7 +356,7 @@ void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
       NSCAssert([api respondsToSelector:@selector(storefrontWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(storefrontWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        NSArray<StorefrontWrapper *> *output = [api storefrontWithError:&error];
+        SKStorefrontWrapper *output = [api storefrontWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {

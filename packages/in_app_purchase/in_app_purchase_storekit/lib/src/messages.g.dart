@@ -220,8 +220,8 @@ class PaymentDiscountWrapper {
   }
 }
 
-class StorefrontWrapper {
-  StorefrontWrapper({
+class SKStorefrontWrapper {
+  SKStorefrontWrapper({
     required this.countryCode,
     required this.identifier,
   });
@@ -237,9 +237,9 @@ class StorefrontWrapper {
     ];
   }
 
-  static StorefrontWrapper decode(Object result) {
+  static SKStorefrontWrapper decode(Object result) {
     result as List<Object?>;
-    return StorefrontWrapper(
+    return SKStorefrontWrapper(
       countryCode: result[0]! as String,
       identifier: result[1]! as String,
     );
@@ -262,7 +262,7 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
     } else if (value is PaymentWrapper) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is StorefrontWrapper) {
+    } else if (value is SKStorefrontWrapper) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
@@ -282,7 +282,7 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
       case 131: 
         return PaymentWrapper.decode(readValue(buffer)!);
       case 132: 
-        return StorefrontWrapper.decode(readValue(buffer)!);
+        return SKStorefrontWrapper.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -354,7 +354,7 @@ class InAppPurchaseAPI {
     }
   }
 
-  Future<List<StorefrontWrapper?>> storefront() async {
+  Future<SKStorefrontWrapper> storefront() async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -377,7 +377,7 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as List<Object?>?)!.cast<StorefrontWrapper?>();
+      return (__pigeon_replyList[0] as SKStorefrontWrapper?)!;
     }
   }
 }

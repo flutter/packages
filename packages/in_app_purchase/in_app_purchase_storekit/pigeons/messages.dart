@@ -122,14 +122,33 @@ class PaymentDiscountWrapper {
   final int timestamp;
 }
 
-class StorefrontWrapper {
-  StorefrontWrapper({
+class SKStorefrontWrapper {
+  const SKStorefrontWrapper({
     required this.countryCode,
     required this.identifier,
   });
 
   final String countryCode;
   final String identifier;
+
+  // @override
+  // bool operator ==(Object other) {
+  //   if (identical(other, this)) {
+  //     return true;
+  //   }
+  //   if (other.runtimeType != runtimeType) {
+  //     return false;
+  //   }
+  //   return other is SKStorefrontWrapper &&
+  //       other.countryCode == countryCode &&
+  //       other.identifier == identifier;
+  // }
+
+  // @override
+  // int get hashCode => Object.hash(
+  //   countryCode,
+  //   identifier,
+  // );
 }
 
 @HostApi()
@@ -142,7 +161,7 @@ abstract class InAppPurchaseAPI {
   List<PaymentTransactionWrapper> transactions();
 
   // @ObjCSelector('storefront')
-  List<StorefrontWrapper> storefront();
+  SKStorefrontWrapper storefront();
 }
 
 

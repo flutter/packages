@@ -589,7 +589,7 @@ class FakeInAppPurchaseAPI implements InAppPurchaseAPI {
   }
 
   @override
-  Future<List<StorefrontWrapper?>> storefront() {
+  Future<SKStorefrontWrapper> storefront() {
     // TODO: implement storefront
     throw UnimplementedError();
   }

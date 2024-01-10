@@ -56,26 +56,20 @@ class SKPaymentQueueWrapper {
   ///
   /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
   Future<SKStorefrontWrapper?> storefront() async {
-    final Map<String, dynamic>? storefrontMap = await channel
-        .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
-    if (storefrontMap == null) {
-      return null;
-    }
-    return SKStorefrontWrapper.fromJson(storefrontMap);
+    // final Map<String, dynamic>? storefrontMap = await channel
+    //     .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
+    return _hostApi.storefront();
   }
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
-  Future<List<PaymentTransactionWrapper?>> transactions() async =>
-    // return _getTransactionList((await channel
-   _hostApi.transactions();
+  Future<List<SKPaymentTransactionWrapper>> transactions() async {
+    return _getTransactionList(_hostApi.transactions()! as List);
+  }
 
-
+  // return _getTransactionList(_hostApi.transactions()!);
   /// Calls [`-[SKPaymentQueue canMakePayments:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506139-canmakepayments?language=objc).
   static Future<bool> canMakePayments() async =>
     _hostApi.canMakePayments();
-  // (await channel
-  //     .invokeMethod<bool>('-[SKPaymentQueue canMakePayments:]')) ??
-  // false;
 
   /// Sets an observer to listen to all incoming transaction events.
   ///
@@ -322,9 +316,10 @@ class SKPaymentQueueWrapper {
             SKPaymentTransactionWrapper.fromJson(
                 (arguments['transaction']! as Map<dynamic, dynamic>)
                     .cast<String, dynamic>());
-        final SKStorefrontWrapper storefront = SKStorefrontWrapper.fromJson(
-            (arguments['storefront']! as Map<dynamic, dynamic>)
-                .cast<String, dynamic>());
+        // final SKStorefrontWrapper storefront = SKStorefrontWrapper.fromJson(
+        //     (arguments['storefront']! as Map<dynamic, dynamic>)
+        //         .cast<String, dynamic>());
+        final SKStorefrontWrapper storefront = SKStorefrontWrapper(countryCode: call.arguments['storefront']['countryCode'].toString(), identifier: call.arguments['storefront']['identifier'].toString());
         return delegate.shouldContinueTransaction(transaction, storefront);
       case 'shouldShowPriceConsent':
         return delegate.shouldShowPriceConsent();

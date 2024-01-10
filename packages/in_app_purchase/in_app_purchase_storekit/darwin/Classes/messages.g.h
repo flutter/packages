@@ -55,7 +55,7 @@ typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
 @class PaymentWrapper;
 @class ErrorWrapper;
 @class PaymentDiscountWrapper;
-@class StorefrontWrapper;
+@class SKStorefrontWrapper;
 
 @interface PaymentTransactionWrapper : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -117,7 +117,7 @@ typedef NS_ENUM(NSUInteger, PaymentTransactionStateWrapper) {
 @property(nonatomic, assign) NSInteger  timestamp;
 @end
 
-@interface StorefrontWrapper : NSObject
+@interface SKStorefrontWrapper : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCountryCode:(NSString *)countryCode
@@ -137,7 +137,7 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSArray<PaymentTransactionWrapper *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<StorefrontWrapper *> *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable SKStorefrontWrapper *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *_Nullable api);

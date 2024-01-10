@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import '../../store_kit_wrappers.dart';
+import '../messages.g.dart';
 
 /// A wrapper around
 /// [`SKPaymentQueueDelegate`](https://developer.apple.com/documentation/storekit/skpaymentqueuedelegate?language=objc).

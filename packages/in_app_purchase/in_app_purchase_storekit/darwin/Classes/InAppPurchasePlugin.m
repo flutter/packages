@@ -137,7 +137,7 @@
 }
 
 
-- (nullable NSArray<StorefrontWrapper *> *)storefrontWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+- (nullable NSArray<SKStorefrontWrapper *> *)storefrontWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
       if (@available(iOS 13.0, macOS 10.15, *)) {
         SKStorefront *storefront = self.paymentQueueHandler.storefront;
         if (!storefront) {
