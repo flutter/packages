@@ -682,8 +682,7 @@ if (${_varNamePrefix}replyList == null) {
     required bool isMockHandler,
     required bool isAsynchronous,
     String nullHandlerExpression = 'api == null',
-    String Function(String methodName, Iterable<Parameter> parameters,
-            Iterable<String> safeArgumentNames)
+    String Function(String methodName, Iterable<String> safeArgumentNames)
         onCreateApiCall = _createFlutterApiMethodCall,
   }) {
     indent.write('');
@@ -750,7 +749,7 @@ if (${_varNamePrefix}replyList == null) {
               final String name = _getSafeArgumentName(index, field);
               return '${field.isNamed ? '${field.name}: ' : ''}$name${field.type.isNullable ? '' : '!'}';
             });
-            call = onCreateApiCall(name, parameters, argNames);
+            call = onCreateApiCall(name, argNames);
           }
           indent.writeScoped('try {', '} ', () {
             if (returnType.isVoid) {
@@ -792,7 +791,6 @@ if (${_varNamePrefix}replyList == null) {
 
   static String _createFlutterApiMethodCall(
     String methodName,
-    Iterable<Parameter> parameters,
     Iterable<String> safeArgumentNames,
   ) {
     return 'api.$methodName(${safeArgumentNames.join(', ')})';

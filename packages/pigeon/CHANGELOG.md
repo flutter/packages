@@ -1,6 +1,6 @@
 ## 16.0.1
 
-* Separates message call code generation into separate methods in the  `DartGenerator`.
+* Separates message call code generation into separate methods in the `DartGenerator`.
 
 ## 16.0.0
 
