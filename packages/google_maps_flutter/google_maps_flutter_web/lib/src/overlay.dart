@@ -61,13 +61,10 @@ class TileOverlayController {
         Blob(tile.data!.map((int byte) => byte.toJS).toList().toJS) as JSObject,
       );
       img.src = src;
-      img.addEventListener(
-        'load',
-        allowInterop((_) {
-          img.hidden = false.toJS;
-          URL.revokeObjectURL(src);
-        }).toJS,
-      );
+      img.onload = (JSAny? _) {
+        img.hidden = false.toJS;
+        URL.revokeObjectURL(src);
+      }.toJS;
     });
 
     return img;

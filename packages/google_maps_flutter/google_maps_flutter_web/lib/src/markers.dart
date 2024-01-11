@@ -42,14 +42,9 @@ class MarkersController extends GeometryController {
           infoWindowOptions.content is HTMLElement) {
         final HTMLElement content = infoWindowOptions.content! as HTMLElement;
 
-        // TODO(ditman): Use the premade handler
-        // See https://github.com/dart-lang/web/issues/76
-        content.addEventListener(
-          'click',
-          allowInterop((_) {
-            _onInfoWindowTap(marker.markerId);
-          }).toJS,
-        );
+        content.onclick = (JSAny? _) {
+          _onInfoWindowTap(marker.markerId);
+        }.toJS;
       }
     }
 
