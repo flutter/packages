@@ -139,7 +139,7 @@ void main() {
         // due to CI issues, so just report it as skipped.
         // TODO(stuartmorgan): Remove once
         // https://github.com/flutter/flutter/issues/141145 is fixed.
-        if (Platform.isAndroid &&
+        if ((!kIsWeb && Platform.isAndroid) &&
             controller.value.isPlaying &&
             controller.value.position == tenMillisBeforeEnd) {
           markTestSkipped(
@@ -177,7 +177,7 @@ void main() {
         // due to CI issues, so just report it as skipped.
         // TODO(stuartmorgan): Remove once
         // https://github.com/flutter/flutter/issues/141145 is fixed.
-        if (Platform.isAndroid &&
+        if ((!kIsWeb && Platform.isAndroid) &&
             controller.value.isPlaying &&
             controller.value.position == tenMillisBeforeEnd) {
           markTestSkipped(
