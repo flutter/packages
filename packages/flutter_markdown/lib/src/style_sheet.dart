@@ -60,6 +60,7 @@ class MarkdownStyleSheet {
     this.blockquoteAlign = WrapAlignment.start,
     this.codeblockAlign = WrapAlignment.start,
     this.textScaleFactor,
+    this.superscriptFontFeatureTag,
   }) : _styles = <String, TextStyle?>{
           'a': a,
           'p': p,
@@ -381,6 +382,7 @@ class MarkdownStyleSheet {
     WrapAlignment? blockquoteAlign,
     WrapAlignment? codeblockAlign,
     double? textScaleFactor,
+    String? superscriptFontFeatureTag,
   }) {
     return MarkdownStyleSheet(
       a: a ?? this.a,
@@ -436,6 +438,8 @@ class MarkdownStyleSheet {
       blockquoteAlign: blockquoteAlign ?? this.blockquoteAlign,
       codeblockAlign: codeblockAlign ?? this.codeblockAlign,
       textScaleFactor: textScaleFactor ?? this.textScaleFactor,
+      superscriptFontFeatureTag:
+          superscriptFontFeatureTag ?? this.superscriptFontFeatureTag,
     );
   }
 
@@ -497,6 +501,7 @@ class MarkdownStyleSheet {
       blockquoteAlign: other.blockquoteAlign,
       codeblockAlign: other.codeblockAlign,
       textScaleFactor: other.textScaleFactor,
+      superscriptFontFeatureTag: other.superscriptFontFeatureTag,
     );
   }
 
@@ -653,6 +658,10 @@ class MarkdownStyleSheet {
   /// The text scale factor to use in textual elements
   final double? textScaleFactor;
 
+  // Custom font feature tag for font which does not support `sups'
+  // feature to create superscript in footnotes.
+  final String? superscriptFontFeatureTag;
+
   /// A [Map] from element name to the corresponding [TextStyle] object.
   Map<String, TextStyle?> get styles => _styles;
   Map<String, TextStyle?> _styles;
@@ -717,7 +726,8 @@ class MarkdownStyleSheet {
         other.orderedListAlign == orderedListAlign &&
         other.blockquoteAlign == blockquoteAlign &&
         other.codeblockAlign == codeblockAlign &&
-        other.textScaleFactor == textScaleFactor;
+        other.textScaleFactor == textScaleFactor &&
+        other.superscriptFontFeatureTag == superscriptFontFeatureTag;
   }
 
   @override
@@ -775,6 +785,7 @@ class MarkdownStyleSheet {
       blockquoteAlign,
       codeblockAlign,
       textScaleFactor,
+      superscriptFontFeatureTag,
     ]);
   }
 }
