@@ -36,9 +36,9 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
         @NonNull CameraControl cameraControl,
         @NonNull Boolean torch,
         @NonNull GeneratedCameraXLibrary.Result<Void> result) {
-    if (context == null) {
-      throw new IllegalStateException("Context must be set to enable the torch.");
-    }
+      if (context == null) {
+        throw new IllegalStateException("Context must be set to enable the torch.");
+      }
 
       ListenableFuture<Void> enableTorchFuture = cameraControl.enableTorch(torch);
 
@@ -62,9 +62,9 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
         @NonNull CameraControl cameraControl,
         @NonNull Double ratio,
         @NonNull GeneratedCameraXLibrary.Result<Void> result) {
-    if (context == null) {
-      throw new IllegalStateException("Context must be set to set zoom ratio.");
-    }
+      if (context == null) {
+        throw new IllegalStateException("Context must be set to set zoom ratio.");
+      }
 
       float ratioAsFloat = ratio.floatValue();
       ListenableFuture<Void> setZoomRatioFuture = cameraControl.setZoomRatio(ratioAsFloat);

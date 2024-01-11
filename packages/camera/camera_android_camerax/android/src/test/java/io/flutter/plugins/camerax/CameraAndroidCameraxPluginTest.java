@@ -156,10 +156,11 @@ public class CameraAndroidCameraxPluginTest {
         mock(PendingRecordingHostApiImpl.class);
     final SystemServicesHostApiImpl mockSystemServicesHostApiImpl =
         mock(SystemServicesHostApiImpl.class);
-    final ImageCaptureHostApiImpl mockImageCaptureHostApiImpl =
-        mock(ImageCaptureHostApiImpl.class);
-    final ImageAnalysisHostApiImpl mockImageAnalysisHostApiImpl = mock(ImageAnalysisHostApiImpl.class);
-    final CameraControlHostApiImpl mockCameraControlHostApiImpl = mock(CameraControlHostApiImpl.class);
+    final ImageCaptureHostApiImpl mockImageCaptureHostApiImpl = mock(ImageCaptureHostApiImpl.class);
+    final ImageAnalysisHostApiImpl mockImageAnalysisHostApiImpl =
+        mock(ImageAnalysisHostApiImpl.class);
+    final CameraControlHostApiImpl mockCameraControlHostApiImpl =
+        mock(CameraControlHostApiImpl.class);
 
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mockContext);
 
@@ -246,7 +247,8 @@ public class CameraAndroidCameraxPluginTest {
     final ImageAnalysisHostApiImpl mockImageAnalysisHostApiImpl =
         mock(ImageAnalysisHostApiImpl.class);
     final ImageCaptureHostApiImpl mockImageCaptureHostApiImpl = mock(ImageCaptureHostApiImpl.class);
-    final CameraControlHostApiImpl mockCameraControlHostApiImpl = mock(CameraControlHostApiImpl.class);
+    final CameraControlHostApiImpl mockCameraControlHostApiImpl =
+        mock(CameraControlHostApiImpl.class);
     final DeviceOrientationManagerHostApiImpl mockDeviceOrientationManagerHostApiImpl =
         mock(DeviceOrientationManagerHostApiImpl.class);
     final ArgumentCaptor<PermissionsRegistry> permissionsRegistryCaptor =
@@ -327,7 +329,8 @@ public class CameraAndroidCameraxPluginTest {
     final ImageAnalysisHostApiImpl mockImageAnalysisHostApiImpl =
         mock(ImageAnalysisHostApiImpl.class);
     final ImageCaptureHostApiImpl mockImageCaptureHostApiImpl = mock(ImageCaptureHostApiImpl.class);
-    final CameraControlHostApiImpl mockCameraControlHostApiImpl = mock(CameraControlHostApiImpl.class);
+    final CameraControlHostApiImpl mockCameraControlHostApiImpl =
+        mock(CameraControlHostApiImpl.class);
     final ArgumentCaptor<PermissionsRegistry> permissionsRegistryCaptor =
         ArgumentCaptor.forClass(PermissionsRegistry.class);
 

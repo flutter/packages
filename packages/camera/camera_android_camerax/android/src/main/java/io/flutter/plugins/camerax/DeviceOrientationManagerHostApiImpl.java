@@ -49,7 +49,8 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
   public void startListeningForDeviceOrientationChange(
       @NonNull Boolean isFrontFacing, @NonNull Long sensorOrientation) {
     if (activity == null) {
-      throw new IllegalStateException("Activity must be set to start listening for device orientation changes.");
+      throw new IllegalStateException(
+          "Activity must be set to start listening for device orientation changes.");
     }
 
     deviceOrientationManager =

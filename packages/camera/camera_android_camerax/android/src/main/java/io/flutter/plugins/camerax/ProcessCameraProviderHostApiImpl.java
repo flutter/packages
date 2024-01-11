@@ -116,7 +116,8 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
       @NonNull Long cameraSelectorIdentifier,
       @NonNull List<Long> useCaseIds) {
     if (lifecycleOwner == null) {
-      throw new IllegalStateException("LifecycleOwner must be set to get ProcessCameraProvider instance.");
+      throw new IllegalStateException(
+          "LifecycleOwner must be set to get ProcessCameraProvider instance.");
     }
 
     ProcessCameraProvider processCameraProvider =

@@ -27,7 +27,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @VisibleForTesting public ImageCaptureHostApiImpl imageCaptureHostApiImpl;
   @VisibleForTesting public CameraControlHostApiImpl cameraControlHostApiImpl;
   @VisibleForTesting public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
-  @VisibleForTesting public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
+
+  @VisibleForTesting
+  public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
 
   @VisibleForTesting
   public @Nullable ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
