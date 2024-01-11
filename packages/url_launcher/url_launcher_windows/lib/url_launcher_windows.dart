@@ -41,8 +41,18 @@ class UrlLauncherWindows extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    await _hostApi.launchUrl(url);
-    // Failure is handled via a PlatformException from `launchUrl`.
-    return true;
+    return _hostApi.launchUrl(url);
+  }
+
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    return mode == PreferredLaunchMode.platformDefault ||
+        mode == PreferredLaunchMode.externalApplication;
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    // No supported mode is closeable.
+    return false;
   }
 }

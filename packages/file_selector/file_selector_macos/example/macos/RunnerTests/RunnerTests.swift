@@ -2,9 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@testable import file_selector_macos
 import FlutterMacOS
+import UniformTypeIdentifiers
 import XCTest
+
+@testable import file_selector_macos
 
 class TestPanelController: NSObject, PanelController {
   // The last panels that the relevant display methods were called on.
@@ -15,12 +17,17 @@ class TestPanelController: NSObject, PanelController {
   public var saveURL: URL?
   public var openURLs: [URL]?
 
-  func display(_ panel: NSSavePanel, for window: NSWindow?, completionHandler handler: @escaping (URL?) -> Void) {
+  func display(
+    _ panel: NSSavePanel, for window: NSWindow?, completionHandler handler: @escaping (URL?) -> Void
+  ) {
     savePanel = panel
     handler(saveURL)
   }
 
-  func display(_ panel: NSOpenPanel, for window: NSWindow?, completionHandler handler: @escaping ([URL]?) -> Void) {
+  func display(
+    _ panel: NSOpenPanel, for window: NSWindow?,
+    completionHandler handler: @escaping ([URL]?) -> Void
+  ) {
     openPanel = panel
     handler(openURLs)
   }
@@ -28,9 +35,7 @@ class TestPanelController: NSObject, PanelController {
 
 class TestViewProvider: NSObject, ViewProvider {
   var view: NSView? {
-    get {
-      window?.contentView
-    }
+    window?.contentView
   }
   var window: NSWindow? = NSWindow()
 }
@@ -52,12 +57,17 @@ class exampleTests: XCTestCase {
       canChooseDirectories: false,
       canChooseFiles: true,
       baseOptions: SavePanelOptions())
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths[0], returnPath)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths[0], returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
     if let panel = panelController.openPanel {
       XCTAssertTrue(panel.canChooseFiles)
@@ -84,12 +94,17 @@ class exampleTests: XCTestCase {
         directoryPath: "/some/dir",
         nameFieldStringValue: "a name",
         prompt: "Open it!"))
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths[0], returnPath)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths[0], returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
     if let panel = panelController.openPanel {
       XCTAssertEqual(panel.directoryURL?.path, "/some/dir")
@@ -113,14 +128,19 @@ class exampleTests: XCTestCase {
       canChooseDirectories: false,
       canChooseFiles: true,
       baseOptions: SavePanelOptions())
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths.count, returnPaths.count)
-      XCTAssertEqual(paths[0], returnPaths[0])
-      XCTAssertEqual(paths[1], returnPaths[1])
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths.count, returnPaths.count)
+        XCTAssertEqual(paths[0], returnPaths[0])
+        XCTAssertEqual(paths[1], returnPaths[1])
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
   }
 
@@ -141,17 +161,122 @@ class exampleTests: XCTestCase {
       baseOptions: SavePanelOptions(
         allowedFileTypes: AllowedTypes(
           extensions: ["txt", "json"],
-          mimeTypes: [],
+          mimeTypes: ["text/html"],
           utis: ["public.text", "public.image"])))
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths[0], returnPath)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths[0], returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
     if let panel = panelController.openPanel {
+      if #available(macOS 11.0, *) {
+        XCTAssertTrue(panel.allowedContentTypes.contains(UTType.plainText))
+        XCTAssertTrue(panel.allowedContentTypes.contains(UTType.json))
+        XCTAssertTrue(panel.allowedContentTypes.contains(UTType.html))
+        XCTAssertTrue(panel.allowedContentTypes.contains(UTType.image))
+      } else {
+        // MIME type is not supported for the legacy codepath, but the rest should be set.
+        XCTAssertEqual(panel.allowedFileTypes, ["txt", "json", "public.text", "public.image"])
+      }
+    }
+  }
+
+  func testFilterUnknownFileExtension() throws {
+    let panelController = TestPanelController()
+    let plugin = FileSelectorPlugin(
+      viewProvider: TestViewProvider(),
+      panelController: panelController)
+
+    let unknownExtension = "somenewextension"
+    let returnPath = "/foo/bar"
+    panelController.openURLs = [URL(fileURLWithPath: returnPath)]
+
+    let called = XCTestExpectation()
+    let options = OpenPanelOptions(
+      allowsMultipleSelection: true,
+      canChooseDirectories: false,
+      canChooseFiles: true,
+      baseOptions: SavePanelOptions(
+        allowedFileTypes: AllowedTypes(
+          extensions: [unknownExtension],
+          mimeTypes: [],
+          utis: [])))
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths[0], returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
+      called.fulfill()
+    }
+
+    wait(for: [called])
+    XCTAssertNotNil(panelController.openPanel)
+    if let panel = panelController.openPanel {
+      if #available(macOS 11.0, *) {
+        XCTAssertEqual(panel.allowedContentTypes.count, 1)
+        XCTAssertEqual(panel.allowedContentTypes[0].preferredFilenameExtension, unknownExtension)
+        // If this isn't true, the dynamic type created for the extension won't work as a file
+        // extension filter.
+        XCTAssertTrue(panel.allowedContentTypes[0].conforms(to: UTType.data))
+      } else {
+        XCTAssertEqual(panel.allowedFileTypes, [unknownExtension])
+      }
+    }
+  }
+
+  func testOpenWithFilterLegacy() throws {
+    let panelController = TestPanelController()
+    let plugin = FileSelectorPlugin(
+      viewProvider: TestViewProvider(),
+      panelController: panelController)
+    plugin.forceLegacyTypes = true
+
+    let returnPath = "/foo/bar"
+    panelController.openURLs = [URL(fileURLWithPath: returnPath)]
+
+    let called = XCTestExpectation()
+    let options = OpenPanelOptions(
+      allowsMultipleSelection: true,
+      canChooseDirectories: false,
+      canChooseFiles: true,
+      baseOptions: SavePanelOptions(
+        allowedFileTypes: AllowedTypes(
+          extensions: ["txt", "json"],
+          mimeTypes: ["text/html"],
+          utis: ["public.text", "public.image"])))
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths[0], returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
+      called.fulfill()
+    }
+
+    wait(for: [called])
+    XCTAssertNotNil(panelController.openPanel)
+    if let panel = panelController.openPanel {
+      // On the legacy path, the allowedFileTypes should be set directly.
       XCTAssertEqual(panel.allowedFileTypes, ["txt", "json", "public.text", "public.image"])
+
+      // They should also be translated to corresponding allowed content types.
+      if #available(macOS 11.0, *) {
+        XCTAssertTrue(panel.allowedContentTypes.contains(UTType.plainText))
+        XCTAssertTrue(panel.allowedContentTypes.contains(UTType.json))
+        XCTAssertTrue(panel.allowedContentTypes.contains(UTType.image))
+        // MIME type is not supported for the legacy codepath.
+        XCTAssertFalse(panel.allowedContentTypes.contains(UTType.html))
+      }
     }
   }
 
@@ -167,12 +292,17 @@ class exampleTests: XCTestCase {
       canChooseDirectories: false,
       canChooseFiles: true,
       baseOptions: SavePanelOptions())
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths.count, 0)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths.count, 0)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
   }
 
@@ -187,12 +317,17 @@ class exampleTests: XCTestCase {
 
     let called = XCTestExpectation()
     let options = SavePanelOptions()
-    plugin.displaySavePanel(options: options) { path in
-      XCTAssertEqual(path, returnPath)
+    plugin.displaySavePanel(options: options) { result in
+      switch result {
+      case .success(let path):
+        XCTAssertEqual(path, returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.savePanel)
   }
 
@@ -209,12 +344,17 @@ class exampleTests: XCTestCase {
     let options = SavePanelOptions(
       directoryPath: "/some/dir",
       prompt: "Save it!")
-    plugin.displaySavePanel(options: options) { path in
-      XCTAssertEqual(path, returnPath)
+    plugin.displaySavePanel(options: options) { result in
+      switch result {
+      case .success(let path):
+        XCTAssertEqual(path, returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.savePanel)
     if let panel = panelController.savePanel {
       XCTAssertEqual(panel.directoryURL?.path, "/some/dir")
@@ -230,12 +370,17 @@ class exampleTests: XCTestCase {
 
     let called = XCTestExpectation()
     let options = SavePanelOptions()
-    plugin.displaySavePanel(options: options) { path in
-      XCTAssertNil(path)
+    plugin.displaySavePanel(options: options) { result in
+      switch result {
+      case .success(let path):
+        XCTAssertNil(path)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.savePanel)
   }
 
@@ -254,12 +399,17 @@ class exampleTests: XCTestCase {
       canChooseDirectories: true,
       canChooseFiles: false,
       baseOptions: SavePanelOptions())
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths[0], returnPath)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths[0], returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
     if let panel = panelController.openPanel {
       XCTAssertTrue(panel.canChooseDirectories)
@@ -283,13 +433,78 @@ class exampleTests: XCTestCase {
       canChooseDirectories: true,
       canChooseFiles: false,
       baseOptions: SavePanelOptions())
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths.count, 0)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths.count, 0)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
-    wait(for: [called], timeout: 0.5)
+    wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
   }
 
+  func testGetDirectoriesMultiple() throws {
+    let panelController = TestPanelController()
+    let plugin = FileSelectorPlugin(
+      viewProvider: TestViewProvider(),
+      panelController: panelController)
+
+    let returnPaths = ["/foo/bar", "/foo/test"]
+    panelController.openURLs = returnPaths.map({ path in URL(fileURLWithPath: path) })
+
+    let called = XCTestExpectation()
+    let options = OpenPanelOptions(
+      allowsMultipleSelection: true,
+      canChooseDirectories: true,
+      canChooseFiles: false,
+      baseOptions: SavePanelOptions())
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths, returnPaths)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
+      called.fulfill()
+    }
+
+    wait(for: [called])
+    XCTAssertNotNil(panelController.openPanel)
+    if let panel = panelController.openPanel {
+      XCTAssertTrue(panel.canChooseDirectories)
+      // For consistency across platforms, file selection is disabled.
+      XCTAssertFalse(panel.canChooseFiles)
+      XCTAssertTrue(panel.allowsMultipleSelection)
+    }
+  }
+
+  func testGetDirectoryMultipleCancel() throws {
+    let panelController = TestPanelController()
+    let plugin = FileSelectorPlugin(
+      viewProvider: TestViewProvider(),
+      panelController: panelController)
+
+    let called = XCTestExpectation()
+    let options = OpenPanelOptions(
+      allowsMultipleSelection: true,
+      canChooseDirectories: true,
+      canChooseFiles: false,
+      baseOptions: SavePanelOptions())
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths.count, 0)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
+      called.fulfill()
+    }
+
+    wait(for: [called])
+    XCTAssertNotNil(panelController.openPanel)
+  }
 }

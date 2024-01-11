@@ -15,7 +15,7 @@ import org.junit.Test;
 public class InstanceManagerTest {
   @Test
   public void addDartCreatedInstance() {
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
     final Object object = new Object();
     instanceManager.addDartCreatedInstance(object, 0);
@@ -24,12 +24,12 @@ public class InstanceManagerTest {
     assertEquals((Long) 0L, instanceManager.getIdentifierForStrongReference(object));
     assertTrue(instanceManager.containsInstance(object));
 
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
   public void addHostCreatedInstance() {
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
     final Object object = new Object();
     long identifier = instanceManager.addHostCreatedInstance(object);
@@ -38,12 +38,12 @@ public class InstanceManagerTest {
     assertEquals(object, instanceManager.getInstance(identifier));
     assertTrue(instanceManager.containsInstance(object));
 
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
   public void remove() {
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
     Object object = new Object();
     instanceManager.addDartCreatedInstance(object, 0);
@@ -58,54 +58,83 @@ public class InstanceManagerTest {
 
     assertNull(instanceManager.getInstance(0));
 
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
-  public void removeReturnsNullWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.close();
+  public void clear() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
-    assertNull(instanceManager.remove(0));
+    final Object instance = new Object();
+
+    instanceManager.addDartCreatedInstance(instance, 0);
+    assertTrue(instanceManager.containsInstance(instance));
+
+    instanceManager.clear();
+    assertFalse(instanceManager.containsInstance(instance));
+
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
-  public void getIdentifierForStrongReferenceReturnsNullWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.close();
+  public void canAddSameObjectWithAddDartCreatedInstance() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
-    assertNull(instanceManager.getIdentifierForStrongReference(object));
+    final Object instance = new Object();
+
+    instanceManager.addDartCreatedInstance(instance, 0);
+    instanceManager.addDartCreatedInstance(instance, 1);
+
+    assertTrue(instanceManager.containsInstance(instance));
+
+    assertEquals(instanceManager.getInstance(0), instance);
+    assertEquals(instanceManager.getInstance(1), instance);
+
+    instanceManager.stopFinalizationListener();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void cannotAddSameObjectsWithAddHostCreatedInstance() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
+
+    final Object instance = new Object();
+
+    instanceManager.addHostCreatedInstance(instance);
+    instanceManager.addHostCreatedInstance(instance);
+
+    instanceManager.stopFinalizationListener();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void cannotUseIdentifierLessThanZero() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
+
+    instanceManager.addDartCreatedInstance(new Object(), -1);
+
+    instanceManager.stopFinalizationListener();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void identifiersMustBeUnique() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
+
+    instanceManager.addDartCreatedInstance(new Object(), 0);
+    instanceManager.addDartCreatedInstance(new Object(), 0);
+
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
-  public void addHostCreatedInstanceReturnsNegativeOneWhenClosed() {
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
-    instanceManager.close();
+  public void managerIsUsableWhileListenerHasStopped() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
+    instanceManager.stopFinalizationListener();
 
-    assertEquals(instanceManager.addHostCreatedInstance(new Object()), -1L);
-  }
+    final Object instance = new Object();
+    final long identifier = 0;
 
-  @Test
-  public void getInstanceReturnsNullWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.close();
-
-    assertNull(instanceManager.getInstance(0));
-  }
-
-  @Test
-  public void containsInstanceReturnsFalseWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.close();
-
-    assertFalse(instanceManager.containsInstance(object));
+    instanceManager.addDartCreatedInstance(instance, identifier);
+    assertEquals(instanceManager.getInstance(identifier), instance);
+    assertEquals(instanceManager.getIdentifierForStrongReference(instance), (Long) identifier);
+    assertTrue(instanceManager.containsInstance(instance));
   }
 }

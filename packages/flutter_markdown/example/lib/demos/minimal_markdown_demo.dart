@@ -93,7 +93,7 @@ void main() {
 
 class MinimalMarkdownDemo extends StatelessWidget
     implements MarkdownDemoWidget {
-  const MinimalMarkdownDemo({Key? key}) : super(key: key);
+  const MinimalMarkdownDemo({super.key});
 
   static const String _title = 'Minimal Markdown Demo';
 

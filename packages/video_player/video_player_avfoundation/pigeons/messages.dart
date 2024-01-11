@@ -7,10 +7,10 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'ios/Classes/messages.g.h',
-  objcSourceOut: 'ios/Classes/messages.g.m',
+  objcHeaderOut: 'darwin/Classes/messages.g.h',
+  objcSourceOut: 'darwin/Classes/messages.g.m',
   objcOptions: ObjcOptions(
-    prefix: 'FLT',
+    prefix: 'FVP',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
@@ -75,6 +75,7 @@ abstract class AVFoundationVideoPlayerApi {
   void play(TextureMessage msg);
   @ObjCSelector('position:')
   PositionMessage position(TextureMessage msg);
+  @async
   @ObjCSelector('seekTo:')
   void seekTo(PositionMessage msg);
   @ObjCSelector('pause:')

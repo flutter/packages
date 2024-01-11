@@ -7,8 +7,8 @@ package io.flutter.plugins.camera.media;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.media.MediaRecorder;
-import android.os.Build;
 import androidx.annotation.NonNull;
+import io.flutter.plugins.camera.SdkCapabilityChecker;
 import java.io.IOException;
 
 public class MediaRecorderBuilder {
@@ -57,16 +57,19 @@ public class MediaRecorderBuilder {
     this.recorderFactory = helper;
   }
 
+  @NonNull
   public MediaRecorderBuilder setEnableAudio(boolean enableAudio) {
     this.enableAudio = enableAudio;
     return this;
   }
 
+  @NonNull
   public MediaRecorderBuilder setMediaOrientation(int orientation) {
     this.mediaOrientation = orientation;
     return this;
   }
 
+  @NonNull
   public MediaRecorder build() throws IOException, NullPointerException, IndexOutOfBoundsException {
     MediaRecorder mediaRecorder = recorderFactory.makeMediaRecorder();
 
@@ -75,7 +78,7 @@ public class MediaRecorderBuilder {
     if (enableAudio) mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && encoderProfiles != null) {
+    if (SdkCapabilityChecker.supportsEncoderProfiles() && encoderProfiles != null) {
       EncoderProfiles.VideoProfile videoProfile = encoderProfiles.getVideoProfiles().get(0);
       EncoderProfiles.AudioProfile audioProfile = encoderProfiles.getAudioProfiles().get(0);
 
@@ -89,8 +92,7 @@ public class MediaRecorderBuilder {
       mediaRecorder.setVideoEncodingBitRate(videoProfile.getBitrate());
       mediaRecorder.setVideoFrameRate(videoProfile.getFrameRate());
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
-      mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
-    } else {
+    } else if (camcorderProfile != null) {
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
         mediaRecorder.setAudioEncoder(camcorderProfile.audioCodec);

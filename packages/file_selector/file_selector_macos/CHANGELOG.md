@@ -1,3 +1,52 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.9.3+3
+
+* Fixes handling of unknown file extensions on macOS 11+.
+
+## 0.9.3+2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
+## 0.9.3+1
+
+* Updates to the latest version of `pigeon`.
+
+## 0.9.3
+
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+* Updates minimum supported macOS version to 10.14.
+
+## 0.9.2
+
+* Adds support for MIME types on macOS 11+.
+
+## 0.9.1+1
+
+* Updates references to the deprecated `macUTIs`.
+
+## 0.9.1
+
+* Adds `getDirectoryPaths` implementation.
+
+## 0.9.0+8
+
+* Updates pigeon for null value handling fixes.
+* Updates minimum Flutter version to 3.3.
+
+## 0.9.0+7
+
+* Updates to `pigeon` version 9.
+
+## 0.9.0+6
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.9.0+5
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

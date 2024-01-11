@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// The demo page for [FadeThroughTransition].
 class FadeThroughTransitionDemo extends StatefulWidget {
   /// Creates the demo page for [FadeThroughTransition].
-  const FadeThroughTransitionDemo({Key? key}) : super(key: key);
+  const FadeThroughTransitionDemo({super.key});
 
   @override
   State<FadeThroughTransitionDemo> createState() =>
@@ -79,7 +79,7 @@ class _ExampleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Expanded(
-                  child: Container(
+                  child: ColoredBox(
                     color: Colors.black26,
                     child: Padding(
                       padding: const EdgeInsets.all(30.0),

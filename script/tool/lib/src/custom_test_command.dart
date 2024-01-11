@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 const String _scriptName = 'run_tests.dart';
@@ -20,13 +19,16 @@ const String _legacyScriptName = 'run_tests.sh';
 class CustomTestCommand extends PackageLoopingCommand {
   /// Creates a custom test command instance.
   CustomTestCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform);
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  });
 
   @override
   final String name = 'custom-test';
+
+  @override
+  List<String> get aliases => <String>['test-custom'];
 
   @override
   final String description = 'Runs package-specific custom tests defined in '
@@ -44,10 +46,7 @@ class CustomTestCommand extends PackageLoopingCommand {
     // Run the custom Dart script if presest.
     if (script.existsSync()) {
       // Ensure that dependencies are available.
-      final int pubGetExitCode = await processRunner.runAndStream(
-          'dart', <String>['pub', 'get'],
-          workingDir: package.directory);
-      if (pubGetExitCode != 0) {
+      if (!await runPubGet(package, processRunner, platform)) {
         return PackageResult.fail(
             <String>['Unable to get script dependencies']);
       }

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// This class manages a set of [PolygonController]s associated to a [GoogleMapController].
 class PolygonsController extends GeometryController {
@@ -26,16 +26,10 @@ class PolygonsController extends GeometryController {
   ///
   /// Wraps each Polygon into its corresponding [PolygonController].
   void addPolygons(Set<Polygon> polygonsToAdd) {
-    if (polygonsToAdd != null) {
-      polygonsToAdd.forEach(_addPolygon);
-    }
+    polygonsToAdd.forEach(_addPolygon);
   }
 
   void _addPolygon(Polygon polygon) {
-    if (polygon == null) {
-      return;
-    }
-
     final gmaps.PolygonOptions polygonOptions =
         _polygonOptionsFromPolygon(googleMap, polygon);
     final gmaps.Polygon gmPolygon = gmaps.Polygon(polygonOptions)
@@ -51,9 +45,7 @@ class PolygonsController extends GeometryController {
 
   /// Updates a set of [Polygon] objects with new options.
   void changePolygons(Set<Polygon> polygonsToChange) {
-    if (polygonsToChange != null) {
-      polygonsToChange.forEach(_changePolygon);
-    }
+    polygonsToChange.forEach(_changePolygon);
   }
 
   void _changePolygon(Polygon polygon) {

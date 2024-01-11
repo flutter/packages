@@ -1,3 +1,25 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.2.1+1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.2.1
+
+* Adds `getMedia` method.
+
+## 0.2.0
+
+* Updates minimum Flutter version to 3.3.
+
+## 0.1.0+6
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.1.0+5
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

@@ -11,7 +11,11 @@ import 'package:yaml/yaml.dart';
 /// Finding diffs based on `baseGitDir` and `baseSha`.
 class GitVersionFinder {
   /// Constructor
-  GitVersionFinder(this.baseGitDir, String? baseSha) : _baseSha = baseSha;
+  GitVersionFinder(this.baseGitDir, {String? baseSha, String? baseBranch})
+      : assert(baseSha == null || baseBranch == null,
+            'At most one of baseSha and baseBranch can be provided'),
+        _baseSha = baseSha,
+        _baseBranch = baseBranch ?? 'FETCH_HEAD';
 
   /// The top level directory of the git repo.
   ///
@@ -20,6 +24,9 @@ class GitVersionFinder {
 
   /// The base sha used to get diff.
   String? _baseSha;
+
+  /// The base branche used to find a merge point if baseSha is not provided.
+  final String _baseBranch;
 
   static bool _isPubspec(String file) {
     return file.trim().endsWith('pubspec.yaml');
@@ -101,13 +108,13 @@ class GitVersionFinder {
     }
 
     io.ProcessResult baseShaFromMergeBase = await baseGitDir.runCommand(
-        <String>['merge-base', '--fork-point', 'FETCH_HEAD', 'HEAD'],
+        <String>['merge-base', '--fork-point', _baseBranch, 'HEAD'],
         throwOnError: false);
     final String stdout = (baseShaFromMergeBase.stdout as String? ?? '').trim();
     final String stderr = (baseShaFromMergeBase.stderr as String? ?? '').trim();
     if (stderr.isNotEmpty || stdout.isEmpty) {
       baseShaFromMergeBase = await baseGitDir
-          .runCommand(<String>['merge-base', 'FETCH_HEAD', 'HEAD']);
+          .runCommand(<String>['merge-base', _baseBranch, 'HEAD']);
     }
     baseSha = (baseShaFromMergeBase.stdout as String).trim();
     _baseSha = baseSha;

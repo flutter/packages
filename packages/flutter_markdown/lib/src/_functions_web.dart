@@ -57,18 +57,17 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
       result = userAgent.contains('Mac OS X')
           ? MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context))
           : MarkdownStyleSheet.fromTheme(Theme.of(context));
-      break;
     case MarkdownStyleSheetBaseTheme.cupertino:
       result =
           MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
-      break;
     case MarkdownStyleSheetBaseTheme.material:
     default: // ignore: no_default_cases
       result = MarkdownStyleSheet.fromTheme(Theme.of(context));
   }
 
   return result.copyWith(
-    textScaleFactor: MediaQuery.textScaleFactorOf(context),
+    textScaleFactor:
+        MediaQuery.textScaleFactorOf(context), // ignore: deprecated_member_use
   );
 };
 

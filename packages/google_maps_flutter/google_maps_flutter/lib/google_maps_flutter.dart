@@ -6,9 +6,6 @@ library google_maps_flutter;
 
 import 'dart:async';
 import 'dart:io';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -18,8 +15,8 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
     show
-        ArgumentCallbacks,
         ArgumentCallback,
+        ArgumentCallbacks,
         BitmapDescriptor,
         CameraPosition,
         CameraPositionCallback,
@@ -44,9 +41,10 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         PolylineId,
         ScreenCoordinate,
         Tile,
-        TileOverlayId,
         TileOverlay,
-        TileProvider;
+        TileOverlayId,
+        TileProvider,
+        WebGestureHandling;
 
 part 'src/controller.dart';
 part 'src/google_map.dart';

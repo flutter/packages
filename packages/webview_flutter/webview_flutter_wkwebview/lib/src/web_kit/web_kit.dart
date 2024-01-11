@@ -10,7 +10,8 @@ import '../foundation/foundation.dart';
 import '../ui_kit/ui_kit.dart';
 import 'web_kit_api_impls.dart';
 
-export 'web_kit_api_impls.dart' show WKNavigationType;
+export 'web_kit_api_impls.dart'
+    show WKMediaCaptureType, WKNavigationType, WKPermissionDecision;
 
 /// Times at which to inject script content into a webpage.
 ///
@@ -677,6 +678,20 @@ class WKWebViewConfiguration extends NSObject {
     );
   }
 
+  /// Indicates whether the web view limits navigation to pages within the app’s domain.
+  ///
+  /// When navigation is limited, Javascript evaluation is unrestricted.
+  /// See https://webkit.org/blog/10882/app-bound-domains/
+  ///
+  /// Sets [WKWebViewConfiguration.limitsNavigationsToAppBoundDomains](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/3585117-limitsnavigationstoappbounddomai?language=objc).
+  Future<void> setLimitsNavigationsToAppBoundDomains(bool limit) {
+    return _webViewConfigurationApi
+        .setLimitsNavigationsToAppBoundDomainsForInstances(
+      this,
+      limit,
+    );
+  }
+
   /// The media types that require a user gesture to begin playing.
   ///
   /// Use [WKAudiovisualMediaType.none] to indicate that no user gestures are
@@ -712,6 +727,7 @@ class WKUIDelegate extends NSObject {
   /// Constructs a [WKUIDelegate].
   WKUIDelegate({
     this.onCreateWebView,
+    this.requestMediaCapturePermission,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -732,6 +748,7 @@ class WKUIDelegate extends NSObject {
   /// create copies.
   WKUIDelegate.detached({
     this.onCreateWebView,
+    this.requestMediaCapturePermission,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -752,15 +769,49 @@ class WKUIDelegate extends NSObject {
     WKNavigationAction navigationAction,
   )? onCreateWebView;
 
+  /// Determines whether a web resource, which the security origin object
+  /// describes, can gain access to the device’s microphone audio and camera
+  /// video.
+  final Future<WKPermissionDecision> Function(
+    WKUIDelegate instance,
+    WKWebView webView,
+    WKSecurityOrigin origin,
+    WKFrameInfo frame,
+    WKMediaCaptureType type,
+  )? requestMediaCapturePermission;
+
   @override
   WKUIDelegate copy() {
     return WKUIDelegate.detached(
       onCreateWebView: onCreateWebView,
+      requestMediaCapturePermission: requestMediaCapturePermission,
       observeValue: observeValue,
       binaryMessenger: _uiDelegateApi.binaryMessenger,
       instanceManager: _uiDelegateApi.instanceManager,
     );
   }
+}
+
+/// An object that identifies the origin of a particular resource.
+///
+/// Wraps https://developer.apple.com/documentation/webkit/wksecurityorigin?language=objc.
+@immutable
+class WKSecurityOrigin {
+  /// Constructs an [WKSecurityOrigin].
+  const WKSecurityOrigin({
+    required this.host,
+    required this.port,
+    required this.protocol,
+  });
+
+  /// The security origin’s host.
+  final String host;
+
+  /// The security origin's port.
+  final int port;
+
+  /// The security origin's protocol.
+  final String protocol;
 }
 
 /// Methods for handling navigation changes and tracking navigation requests.
@@ -779,6 +830,7 @@ class WKNavigationDelegate extends NSObject {
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
+    this.didReceiveAuthenticationChallenge,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -804,6 +856,7 @@ class WKNavigationDelegate extends NSObject {
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
+    this.didReceiveAuthenticationChallenge,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -850,6 +903,16 @@ class WKNavigationDelegate extends NSObject {
   /// {@macro webview_flutter_wkwebview.foundation.callbacks}
   final void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
+  /// Called when the delegate needs a response to an authentication challenge.
+  final void Function(
+    WKWebView webView,
+    NSUrlAuthenticationChallenge challenge,
+    void Function(
+      NSUrlSessionAuthChallengeDisposition disposition,
+      NSUrlCredential? credential,
+    ) completionHandler,
+  )? didReceiveAuthenticationChallenge;
+
   @override
   WKNavigationDelegate copy() {
     return WKNavigationDelegate.detached(
@@ -860,6 +923,7 @@ class WKNavigationDelegate extends NSObject {
       didFailProvisionalNavigation: didFailProvisionalNavigation,
       webViewWebContentProcessDidTerminate:
           webViewWebContentProcessDidTerminate,
+      didReceiveAuthenticationChallenge: didReceiveAuthenticationChallenge,
       observeValue: observeValue,
       binaryMessenger: _navigationDelegateApi.binaryMessenger,
       instanceManager: _navigationDelegateApi.instanceManager,
@@ -1054,6 +1118,31 @@ class WKWebView extends UIView {
       this,
       javaScriptString,
     );
+  }
+
+  /// Enables debugging of web contents (HTML / CSS / JavaScript) in the
+  /// underlying WebView.
+  ///
+  /// This flag can be enabled in order to facilitate debugging of web layouts
+  /// and JavaScript code running inside WebViews. Please refer to [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview?language=objc).
+  /// documentation for the debugging guide.
+  ///
+  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
+  /// the default value is set to false.
+  ///
+  /// Defaults to true in previous versions.
+  Future<void> setInspectable(bool inspectable) {
+    return _webViewApi.setInspectableForInstances(
+      this,
+      inspectable,
+    );
+  }
+
+  /// The custom user agent string.
+  ///
+  /// Represents [WKWebView.customUserAgent](https://developer.apple.com/documentation/webkit/wkwebview/1414950-customuseragent?language=objc).
+  Future<String?> getCustomUserAgent() {
+    return _webViewApi.getCustomUserAgentForInstances(this);
   }
 
   @override

@@ -743,7 +743,7 @@ class _CurriedSwitch extends _CurriedWidget {
 }
 
 class _Widget extends StatefulWidget {
-  const _Widget({ Key? key, required this.curriedWidget, required this.data, required this.remoteEventTarget, required this.states }) : super(key: key);
+  const _Widget({ required this.curriedWidget, required this.data, required this.remoteEventTarget, required this.states });
 
   final _CurriedWidget curriedWidget;
 

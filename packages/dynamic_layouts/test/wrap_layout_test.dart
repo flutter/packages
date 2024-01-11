@@ -508,7 +508,7 @@ void main() {
     expect(find.text('Item 4'), findsNothing);
     await tester.binding.setSurfaceSize(const Size(280, 100));
     // resets the screen to its original size after the test end
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpAndSettle();
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Item 1'), findsOneWidget);
@@ -570,7 +570,7 @@ void main() {
 
     await tester.binding.setSurfaceSize(const Size(560, 100));
     // resets the screen to its original size after the test end
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpAndSettle();
 
     expect(find.text('Item 0'), findsOneWidget);

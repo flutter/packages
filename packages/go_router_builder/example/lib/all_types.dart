@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +25,8 @@ part 'all_types.g.dart';
   TypedGoRoute<StringRoute>(path: 'string-route/:requiredStringField'),
   TypedGoRoute<UriRoute>(path: 'uri-route/:requiredUriField'),
   TypedGoRoute<IterableRoute>(path: 'iterable-route'),
+  TypedGoRoute<IterableRouteWithDefaultValues>(
+      path: 'iterable-route-with-default-values'),
 ])
 @immutable
 class AllTypesBaseRoute extends GoRouteData {
@@ -56,7 +58,7 @@ class BigIntRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('BigIntRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -82,7 +84,7 @@ class BoolRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('BoolRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -105,7 +107,7 @@ class DateTimeRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('DateTimeRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -131,7 +133,7 @@ class DoubleRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('DoubleRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -157,7 +159,7 @@ class IntRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('IntRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -183,7 +185,7 @@ class NumRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('NumRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -210,7 +212,7 @@ class EnumRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('EnumRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -237,7 +239,7 @@ class EnhancedEnumRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('EnhancedEnumRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -263,7 +265,7 @@ class StringRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('StringRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -286,7 +288,7 @@ class UriRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('UriRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -297,16 +299,19 @@ class IterableRoute extends GoRouteData {
     this.stringIterableField,
     this.boolIterableField,
     this.enumIterableField,
+    this.enumOnlyInIterableField,
     this.intListField,
     this.doubleListField,
     this.stringListField,
     this.boolListField,
     this.enumListField,
+    this.enumOnlyInListField,
     this.intSetField,
     this.doubleSetField,
     this.stringSetField,
     this.boolSetField,
     this.enumSetField,
+    this.enumOnlyInSetField,
   });
 
   final Iterable<int>? intIterableField;
@@ -329,16 +334,103 @@ class IterableRoute extends GoRouteData {
   final List<SportDetails>? enumListField;
   final Set<SportDetails>? enumSetField;
 
+  final Iterable<CookingRecipe>? enumOnlyInIterableField;
+  final List<CookingRecipe>? enumOnlyInListField;
+  final Set<CookingRecipe>? enumOnlyInSetField;
+
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const BasePage<String>(
+  Widget build(BuildContext context, GoRouterState state) => IterablePage(
         dataTitle: 'IterableRoute',
+        intIterableField: intIterableField,
+        doubleIterableField: doubleIterableField,
+        stringIterableField: stringIterableField,
+        boolIterableField: boolIterableField,
+        enumIterableField: enumIterableField,
+        intListField: intListField,
+        doubleListField: doubleListField,
+        stringListField: stringListField,
+        boolListField: boolListField,
+        enumListField: enumListField,
+        intSetField: intSetField,
+        doubleSetField: doubleSetField,
+        stringSetField: stringSetField,
+        boolSetField: boolSetField,
+        enumSetField: enumSetField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('IterableRoute'),
         onTap: () => go(context),
-        selected: GoRouter.of(context).location == location,
+        selected: GoRouterState.of(context).uri.toString() == location,
+      );
+}
+
+class IterableRouteWithDefaultValues extends GoRouteData {
+  const IterableRouteWithDefaultValues({
+    this.intIterableField = const <int>[0],
+    this.doubleIterableField = const <double>[0, 1, 2],
+    this.stringIterableField = const <String>['defaultValue'],
+    this.boolIterableField = const <bool>[false],
+    this.enumIterableField = const <SportDetails>[
+      SportDetails.tennis,
+      SportDetails.hockey,
+    ],
+    this.intListField = const <int>[0],
+    this.doubleListField = const <double>[1, 2, 3],
+    this.stringListField = const <String>['defaultValue0', 'defaultValue1'],
+    this.boolListField = const <bool>[true],
+    this.enumListField = const <SportDetails>[SportDetails.football],
+    this.intSetField = const <int>{0, 1},
+    this.doubleSetField = const <double>{},
+    this.stringSetField = const <String>{'defaultValue'},
+    this.boolSetField = const <bool>{true, false},
+    this.enumSetField = const <SportDetails>{SportDetails.hockey},
+  });
+
+  final Iterable<int> intIterableField;
+  final List<int> intListField;
+  final Set<int> intSetField;
+
+  final Iterable<double> doubleIterableField;
+  final List<double> doubleListField;
+  final Set<double> doubleSetField;
+
+  final Iterable<String> stringIterableField;
+  final List<String> stringListField;
+  final Set<String> stringSetField;
+
+  final Iterable<bool> boolIterableField;
+  final List<bool> boolListField;
+  final Set<bool> boolSetField;
+
+  final Iterable<SportDetails> enumIterableField;
+  final List<SportDetails> enumListField;
+  final Set<SportDetails> enumSetField;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => IterablePage(
+        dataTitle: 'IterableRouteWithDefaultValues',
+        intIterableField: intIterableField,
+        doubleIterableField: doubleIterableField,
+        stringIterableField: stringIterableField,
+        boolIterableField: boolIterableField,
+        enumIterableField: enumIterableField,
+        intListField: intListField,
+        doubleListField: doubleListField,
+        stringListField: stringListField,
+        boolListField: boolListField,
+        enumListField: enumListField,
+        intSetField: intSetField,
+        doubleSetField: doubleSetField,
+        stringSetField: stringSetField,
+        boolSetField: boolSetField,
+        enumSetField: enumSetField,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('IterableRouteWithDefaultValues'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.toString() == location,
       );
 }
 
@@ -430,6 +522,7 @@ class BasePage<T> extends StatelessWidget {
                 SportDetails.hockey,
               },
             ).drawerTile(context),
+            const IterableRouteWithDefaultValues().drawerTile(context),
           ],
         )),
         body: Center(
@@ -443,7 +536,7 @@ class BasePage<T> extends StatelessWidget {
               Text(
                 'Query param with default value: $queryParamWithDefaultValue',
               ),
-              SelectableText(GoRouter.of(context).location),
+              SelectableText(GoRouterState.of(context).uri.toString()),
             ],
           ),
         ),
@@ -457,9 +550,7 @@ class AllTypesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
-        routeInformationProvider: _router.routeInformationProvider,
+        routerConfig: _router,
       );
 
   late final GoRouter _router = GoRouter(
@@ -467,4 +558,72 @@ class AllTypesApp extends StatelessWidget {
     routes: $appRoutes,
     initialLocation: const AllTypesBaseRoute().location,
   );
+}
+
+class IterablePage extends StatelessWidget {
+  const IterablePage({
+    required this.dataTitle,
+    this.intIterableField,
+    this.doubleIterableField,
+    this.stringIterableField,
+    this.boolIterableField,
+    this.enumIterableField,
+    this.intListField,
+    this.doubleListField,
+    this.stringListField,
+    this.boolListField,
+    this.enumListField,
+    this.intSetField,
+    this.doubleSetField,
+    this.stringSetField,
+    this.boolSetField,
+    this.enumSetField,
+    super.key,
+  });
+
+  final String dataTitle;
+
+  final Iterable<int>? intIterableField;
+  final List<int>? intListField;
+  final Set<int>? intSetField;
+
+  final Iterable<double>? doubleIterableField;
+  final List<double>? doubleListField;
+  final Set<double>? doubleSetField;
+
+  final Iterable<String>? stringIterableField;
+  final List<String>? stringListField;
+  final Set<String>? stringSetField;
+
+  final Iterable<bool>? boolIterableField;
+  final List<bool>? boolListField;
+  final Set<bool>? boolSetField;
+
+  final Iterable<SportDetails>? enumIterableField;
+  final List<SportDetails>? enumListField;
+  final Set<SportDetails>? enumSetField;
+
+  @override
+  Widget build(BuildContext context) {
+    return BasePage<String>(
+      dataTitle: dataTitle,
+      queryParamWithDefaultValue: <String, Iterable<dynamic>?>{
+        'intIterableField': intIterableField,
+        'intListField': intListField,
+        'intSetField': intSetField,
+        'doubleIterableField': doubleIterableField,
+        'doubleListField': doubleListField,
+        'doubleSetField': doubleSetField,
+        'stringIterableField': stringIterableField,
+        'stringListField': stringListField,
+        'stringSetField': stringSetField,
+        'boolIterableField': boolIterableField,
+        'boolListField': boolListField,
+        'boolSetField': boolSetField,
+        'enumIterableField': enumIterableField,
+        'enumListField': enumListField,
+        'enumSetField': enumSetField,
+      }.toString(),
+    );
+  }
 }

@@ -1,3 +1,33 @@
+## 2.4.5
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.4.4
+
+* Updates `clearAuthCache` override to match base class declaration.
+
+## 2.4.3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Drop dependency on `package:quiver`.
+
+## 2.4.2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.4.1
+
+* Clarifies `canAccessScopes` method documentation.
+
+## 2.4.0
+
+* Introduces: `canAccessScopes` method and `userDataEvents` stream.
+  * These enable separation of Authentication and Authorization, and asynchronous
+    sign-in operations where needed (on the web, for example!)
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.3.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

@@ -3,11 +3,7 @@
 This is a set of utilities used in this repository, both for CI and for
 local development.
 
-The tool is designed to be run at the root of the repository or `<repository-root>/packages/`.
-
 ## Getting Started
-
-In flutter/packages, the tool is run from source.
 
 Set up:
 
@@ -23,12 +19,6 @@ dart run script/tool/bin/flutter_plugin_tools.dart <args>
 
 Many commands require the Flutter-bundled version of Dart to be the first `dart` in the path.
 
-### Extra Setup
-
-When updating sample code excerpts (`update-excerpts`) for the README.md files,
-there is some [extra setup for
-submodules](#update-readmemd-from-example-sources) that is necessary.
-
 ## Commands
 
 Run with `--help` for a full list of commands and arguments, but the
@@ -42,31 +32,36 @@ command is targetting. An package name can be any of:
 - A combination federated_plugin_name/package_name (e.g.,
   `path_provider/path_provider` for the app-facing package).
 
+The examples below assume they are being run from the repository root, but
+the script works from anywhere. If you develop in flutter/packages frequently,
+it may be useful to make an alias for
+`dart run /absolute/path/to/script/tool/bin/flutter_plugin_tools.dart` so that
+you can easily run commands from within packages. For that use case there is
+also a `--current-package` flag as an alternative to `--packages`, to target the
+current working directory's package (or enclosing package; it can be used from
+anywhere within a package).
+
 ### Format Code
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart format --packages package_name
 ```
 
 ### Run the Dart Static Analyzer
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart analyze --packages package_name
 ```
 
 ### Run Dart Unit Tests
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart test --packages package_name
 ```
 
 ### Run Dart Integration Tests
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart build-examples --apk --packages package_name
 dart run script/tool/bin/flutter_plugin_tools.dart drive-examples --android --packages package_name
 ```
@@ -83,7 +78,6 @@ runs both unit tests and (on platforms that support it) integration tests, but
 Examples:
 
 ```sh
-cd <repository root>
 # Run just unit tests for iOS and Android:
 dart run script/tool/bin/flutter_plugin_tools.dart native-test --ios --android --no-integration --packages package_name
 # Run all tests for macOS:
@@ -94,14 +88,15 @@ dart run script/tool/bin/flutter_plugin_tools.dart native-test --windows --packa
 
 ### Update README.md from Example Sources
 
-`update-excerpts` requires sources that are in a submodule. If you didn't clone
-with submodules, you will need to `git submodule update --init --recursive`
-before running this command.
-
 ```sh
-cd <repository root>
+# Update all .md files for all packages:
+dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts
+
+# Update the .md files only for one package:
 dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts --packages package_name
 ```
+
+_See also: https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#readme-code_
 
 ### Update CHANGELOG and Version
 
@@ -114,9 +109,9 @@ For instance, if you add a new analysis option that requires production
 code changes across many packages:
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
   --version=minimal \
+  --base-branch=upstream/main \
   --changelog="Fixes violations of new analysis option some_new_option."
 ```
 
@@ -124,9 +119,34 @@ The `minimal` option for `--version` will skip unchanged packages, and treat
 each changed package as either `bugfix` or `next` depending on the files that
 have changed in that package, so it is often the best choice for a bulk change.
 
-For cases where you know the change time, `minor` or `bugfix` will make the
+For cases where you know the change type, `minor` or `bugfix` will make the
 corresponding version bump, or `next` will update only `CHANGELOG.md` without
 changing the version.
+
+If you have a standard repository setup, `--base-branch=upstream/main` will
+usually give the behavior you want, finding all packages changed relative to
+the branch point from `upstream/main`. For more complex use cases where you want
+a different diff point, you can pass a different `--base-branch`, or use
+`--base-sha` to pick the exact diff point.
+
+### Update a dependency
+
+`update-dependency` will update a pub dependency to a new version.
+
+For instance, to updated to version 3.0.0 of `some_package` in every package
+that depends on it:
+
+```sh
+dart run script/tool/bin/flutter_plugin_tools.dart update-dependency \
+  --pub-package=some_package \
+  --version=3.0.0 \
+```
+
+If a `--version` is not provided, the latest version from pub will be used.
+
+Currently this only updates the dependency itself in pubspec.yaml, but in the
+future this will also update any generated code for packages that use code
+generation (e.g., regenerating mocks when updating `mockito`).
 
 ### Publish a Release
 
@@ -154,13 +174,3 @@ _everything_, including untracked or uncommitted files in version control.
 `publish` will first check the status of the local
 directory and refuse to publish if there are any mismatched files with version
 control present.
-
-## Updating the Tool
-
-For flutter/packages, just changing the source here is all that's needed.
-
-For changes that are relevant to flutter/packages, you will also need to:
-- Update the tool's pubspec.yaml and CHANGELOG
-- Publish the tool
-- Update the pinned version in
-  [flutter/packages](https://github.com/flutter/packages/blob/main/.cirrus.yml)

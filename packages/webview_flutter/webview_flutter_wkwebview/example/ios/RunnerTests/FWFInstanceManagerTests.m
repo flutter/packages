@@ -52,4 +52,20 @@
   // Tests that this doesn't cause a EXC_BAD_ACCESS crash.
   [instanceManager removeInstanceWithIdentifier:0];
 }
+
+- (void)testObjectsAreStoredWithPointerHashcode {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  NSURL *url1 = [NSURL URLWithString:@"https://www.flutter.dev"];
+  NSURL *url2 = [NSURL URLWithString:@"https://www.flutter.dev"];
+
+  // Ensure urls are considered equal.
+  XCTAssertTrue([url1 isEqual:url2]);
+
+  [instanceManager addHostCreatedInstance:url1];
+  [instanceManager addHostCreatedInstance:url2];
+
+  XCTAssertNotEqual([instanceManager identifierWithStrongReferenceForInstance:url1],
+                    [instanceManager identifierWithStrongReferenceForInstance:url2]);
+}
 @end

@@ -1,3 +1,39 @@
+## 0.3.8
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 0.3.7
+
+* Adds `Future<SKStorefrontWrapper?> storefront()` in SKPaymentQueueWrapper class. 
+
+## 0.3.6+7
+
+* Updates example code for current versions of Flutter.
+
+## 0.3.6+6
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.6+5
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
+## 0.3.6+4
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.3.6+3
+
+* Adds a null check, to prevent a new diagnostic.
+
+## 0.3.6+2
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.3.6+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
@@ -8,7 +44,7 @@
 
 ## 0.3.5+2
 
-* Fix a crash when `appStoreReceiptURL` is nil.
+* Fixes a crash when `appStoreReceiptURL` is nil.
 
 ## 0.3.5+1
 

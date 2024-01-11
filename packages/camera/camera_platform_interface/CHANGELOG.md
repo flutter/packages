@@ -1,3 +1,35 @@
+## 2.7.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.7.1
+
+* Fixes new lint warnings.
+
+## 2.7.0
+
+* Adds support for setting the image file format. See `CameraPlatform.setImageFileFormat`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.6.0
+
+* Adds support to control video fps and bitrate. See `CameraPlatform.createCameraWithSettings`.
+
+## 2.5.2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.5.1
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.5.0
+
+* Adds NV21 as an image stream format (suitable for Android).
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.4.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

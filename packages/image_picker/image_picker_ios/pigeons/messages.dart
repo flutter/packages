@@ -20,6 +20,20 @@ class MaxSize {
   double? height;
 }
 
+class MediaSelectionOptions {
+  MediaSelectionOptions({
+    required this.maxSize,
+    this.imageQuality,
+    required this.requestFullMetadata,
+    required this.allowMultiple,
+  });
+
+  MaxSize maxSize;
+  int? imageQuality;
+  bool requestFullMetadata;
+  bool allowMultiple;
+}
+
 // Corresponds to `CameraDevice` from the platform interface package.
 enum SourceCamera { rear, front }
 
@@ -29,7 +43,7 @@ enum SourceType { camera, gallery }
 class SourceSpecification {
   SourceSpecification(this.type, this.camera);
   SourceType type;
-  SourceCamera? camera;
+  SourceCamera camera;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostImagePickerApi')
@@ -40,9 +54,14 @@ abstract class ImagePickerApi {
       int? imageQuality, bool requestFullMetadata);
   @async
   @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:')
-  List<String>? pickMultiImage(
+  List<String?> pickMultiImage(
       MaxSize maxSize, int? imageQuality, bool requestFullMetadata);
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
+
+  /// Selects images and videos and returns their paths.
+  @async
+  @ObjCSelector('pickMediaWithMediaSelectionOptions:')
+  List<String?> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 }

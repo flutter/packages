@@ -18,7 +18,7 @@ import 'camera_preview.dart';
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {
   /// Default Constructor
-  const CameraExampleHome({Key? key}) : super(key: key);
+  const CameraExampleHome({super.key});
 
   @override
   State<CameraExampleHome> createState() {
@@ -123,7 +123,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      onNewCameraSelected(cameraController.description);
+      _initializeCameraController(cameraController.description);
     }
   }
 
@@ -253,9 +253,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                         child: Center(
                           child: AspectRatio(
                               aspectRatio:
-                                  localVideoController.value.size != null
-                                      ? localVideoController.value.aspectRatio
-                                      : 1.0,
+                                  localVideoController.value.aspectRatio,
                               child: VideoPlayer(localVideoController)),
                         ),
                       ),
@@ -370,16 +368,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Widget _exposureModeControlRowWidget() {
     final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.auto
+      foregroundColor: controller?.value.exposureMode == ExposureMode.auto
           ? Colors.orange
           : Colors.blue,
     );
     final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.locked
+      foregroundColor: controller?.value.exposureMode == ExposureMode.locked
           ? Colors.orange
           : Colors.blue,
     );
@@ -387,7 +381,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _exposureModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[
@@ -458,16 +452,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Widget _focusModeControlRowWidget() {
     final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.auto
+      foregroundColor: controller?.value.focusMode == FocusMode.auto
           ? Colors.orange
           : Colors.blue,
     );
     final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.locked
+      foregroundColor: controller?.value.focusMode == FocusMode.locked
           ? Colors.orange
           : Colors.blue,
     );
@@ -475,7 +465,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _focusModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[
@@ -603,10 +593,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged:
-                  controller != null && controller!.value.isRecordingVideo
-                      ? null
-                      : onChanged,
+              onChanged: onChanged,
             ),
           ),
         );
@@ -639,17 +626,15 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    final CameraController? oldController = controller;
-    if (oldController != null) {
-      // `controller` needs to be set to null before getting disposed,
-      // to avoid a race condition when we use the controller that is being
-      // disposed. This happens when camera permission dialog shows up,
-      // which triggers `didChangeAppLifecycleState`, which disposes and
-      // re-creates the controller.
-      controller = null;
-      await oldController.dispose();
+    if (controller != null) {
+      return controller!.setDescription(cameraDescription);
+    } else {
+      return _initializeCameraController(cameraDescription);
     }
+  }
 
+  Future<void> _initializeCameraController(
+      CameraDescription cameraDescription) async {
     final CameraController cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
@@ -692,30 +677,23 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       switch (e.code) {
         case 'CameraAccessDenied':
           showInSnackBar('You have denied camera access.');
-          break;
         case 'CameraAccessDeniedWithoutPrompt':
           // iOS only
           showInSnackBar('Please go to Settings app to enable camera access.');
-          break;
         case 'CameraAccessRestricted':
           // iOS only
           showInSnackBar('Camera access is restricted.');
-          break;
         case 'AudioAccessDenied':
           showInSnackBar('You have denied audio access.');
-          break;
         case 'AudioAccessDeniedWithoutPrompt':
           // iOS only
           showInSnackBar('Please go to Settings app to enable audio access.');
-          break;
         case 'AudioAccessRestricted':
           // iOS only
           showInSnackBar('Audio access is restricted.');
-          break;
         case 'cameraPermission':
           // Android & web only
           showInSnackBar('Unknown permission error.');
-          break;
         default:
           _showCameraException(e);
           break;
@@ -1009,11 +987,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     final VideoPlayerController vController = kIsWeb
-        ? VideoPlayerController.network(videoFile!.path)
+        ? VideoPlayerController.networkUrl(Uri.parse(videoFile!.path))
         : VideoPlayerController.file(File(videoFile!.path));
 
     videoPlayerListener = () {
-      if (videoController != null && videoController!.value.size != null) {
+      if (videoController != null) {
         // Refreshing the state to update video player with the correct ratio.
         if (mounted) {
           setState(() {});
@@ -1064,7 +1042,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 /// CameraApp is the Main Application.
 class CameraApp extends StatelessWidget {
   /// Default Constructor
-  const CameraApp({Key? key}) : super(key: key);
+  const CameraApp({super.key});
 
   @override
   Widget build(BuildContext context) {

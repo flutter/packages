@@ -1,26 +1,19 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-// TODO(bparrishMines): Replace unused callback methods in constructors with
-// variables once automatic garbage collection is fully implemented. See
-// https://github.com/flutter/flutter/issues/107199.
-// ignore_for_file: avoid_unused_constructor_parameters
-
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:flutter/widgets.dart' show AndroidViewSurface;
+
+import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
 import 'instance_manager.dart';
 
-export 'android_webview_api_impls.dart' show FileChooserMode;
+export 'android_webview_api_impls.dart'
+    show ConsoleMessage, ConsoleMessageLevel, FileChooserMode;
 
 /// Root of the Java class hierarchy.
 ///
@@ -30,6 +23,7 @@ class JavaObject with Copyable {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   JavaObject.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
@@ -39,11 +33,18 @@ class JavaObject with Copyable {
         );
 
   /// Global instance of [InstanceManager].
-  static final InstanceManager globalInstanceManager = InstanceManager(
-    onWeakReferenceRemoved: (int identifier) {
-      JavaObjectHostApiImpl().dispose(identifier);
-    },
-  );
+  static final InstanceManager globalInstanceManager = _initInstanceManager();
+
+  static InstanceManager _initInstanceManager() {
+    WidgetsFlutterBinding.ensureInitialized();
+    // Clears the native `InstanceManager` on initial use of the Dart one.
+    InstanceManagerHostApi().clear();
+    return InstanceManager(
+      onWeakReferenceRemoved: (int identifier) {
+        JavaObjectHostApiImpl().dispose(identifier);
+      },
+    );
+  }
 
   /// Pigeon Host Api implementation for [JavaObject].
   final JavaObjectHostApiImpl _api;
@@ -56,6 +57,57 @@ class JavaObject with Copyable {
   @override
   JavaObject copy() {
     return JavaObject.detached();
+  }
+}
+
+/// A callback interface used by the host application to set the Geolocation
+/// permission state for an origin.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+@immutable
+class GeolocationPermissionsCallback extends JavaObject {
+  /// Instantiates a [GeolocationPermissionsCallback] without creating and
+  /// attaching to an instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy.
+  @protected
+  GeolocationPermissionsCallback.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _geolocationPermissionsCallbackApi =
+            GeolocationPermissionsCallbackHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  final GeolocationPermissionsCallbackHostApiImpl
+      _geolocationPermissionsCallbackApi;
+
+  /// Sets the Geolocation permission state for the supplied origin.
+  ///
+  /// [origin]: The origin for which permissions are set.
+  ///
+  /// [allow]: Whether or not the origin should be allowed to use the Geolocation API.
+  ///
+  /// [retain]: Whether the permission should be retained beyond the lifetime of
+  /// a page currently being displayed by a WebView.
+  Future<void> invoke(String origin, bool allow, bool retain) {
+    return _geolocationPermissionsCallbackApi.invokeFromInstances(
+      this,
+      origin,
+      allow,
+      retain,
+    );
+  }
+
+  @override
+  GeolocationPermissionsCallback copy() {
+    return GeolocationPermissionsCallback.detached(
+      binaryMessenger: _geolocationPermissionsCallbackApi.binaryMessenger,
+      instanceManager: _geolocationPermissionsCallbackApi.instanceManager,
+    );
   }
 }
 
@@ -78,13 +130,16 @@ class JavaObject with Copyable {
 /// [Web-based content](https://developer.android.com/guide/webapps).
 ///
 /// When a [WebView] is no longer needed [release] must be called.
-class WebView extends JavaObject {
+class WebView extends View {
   /// Constructs a new WebView.
   ///
   /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
   /// any effect and should not be exposed publicly. More info here:
   /// https://github.com/flutter/flutter/issues/108106
-  WebView({this.useHybridComposition = false}) : super.detached() {
+  WebView({
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     api.createFromInstance(this);
   }
 
@@ -92,22 +147,15 @@ class WebView extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  WebView.detached({this.useHybridComposition = false}) : super.detached();
+  @protected
+  WebView.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebView].
   @visibleForTesting
   static WebViewHostApiImpl api = WebViewHostApiImpl();
-
-  /// Whether the [WebView] will be rendered with an [AndroidViewSurface].
-  ///
-  /// This implementation uses hybrid composition to render the WebView Widget.
-  /// This comes at the cost of some performance on Android versions below 10.
-  /// See
-  /// https://flutter.dev/docs/development/platform-integration/platform-views#performance
-  /// for more information.
-  ///
-  /// Defaults to false.
-  final bool useHybridComposition;
 
   /// The [WebSettings] object used to control the settings for this WebView.
   late final WebSettings settings = WebSettings(this);
@@ -399,26 +447,42 @@ class WebView extends JavaObject {
 
   @override
   WebView copy() {
-    return WebView.detached(useHybridComposition: useHybridComposition);
+    return WebView.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
   }
 }
 
 /// Manages cookies globally for all webviews.
-class CookieManager {
-  CookieManager._();
+///
+/// See https://developer.android.com/reference/android/webkit/CookieManager.
+class CookieManager extends JavaObject {
+  /// Instantiates a [CookieManager] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  CookieManager.detached({super.binaryMessenger, super.instanceManager})
+      : _cookieManagerApi = CookieManagerHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
 
-  static CookieManager? _instance;
+  static final CookieManager _instance =
+      CookieManagerHostApiImpl().attachInstanceFromInstances(
+    CookieManager.detached(),
+  );
 
-  /// Gets the globally set CookieManager instance.
-  static CookieManager get instance => _instance ??= CookieManager._();
+  final CookieManagerHostApiImpl _cookieManagerApi;
 
-  /// Setter for the singleton value, for testing purposes only.
-  @visibleForTesting
-  static set instance(CookieManager value) => _instance = value;
-
-  /// Pigeon Host Api implementation for [CookieManager].
-  @visibleForTesting
-  static CookieManagerHostApi api = CookieManagerHostApi();
+  /// Access a static field synchronously.
+  static CookieManager get instance {
+    AndroidWebViewFlutterApis.instance.ensureSetUp();
+    return _instance;
+  }
 
   /// Sets a single cookie (key-value pair) for the given URL. Any existing
   /// cookie with the same host, path and name will be replaced with the new
@@ -438,12 +502,37 @@ class CookieManager {
   /// Params:
   /// url – the URL for which the cookie is to be set
   /// value – the cookie as a string, using the format of the 'Set-Cookie' HTTP response header
-  Future<void> setCookie(String url, String value) => api.setCookie(url, value);
+  Future<void> setCookie(String url, String value) {
+    return _cookieManagerApi.setCookieFromInstances(this, url, value);
+  }
 
   /// Removes all cookies.
   ///
   /// The returned future resolves to true if any cookies were removed.
-  Future<bool> clearCookies() => api.clearCookies();
+  Future<bool> removeAllCookies() {
+    return _cookieManagerApi.removeAllCookiesFromInstances(this);
+  }
+
+  /// Sets whether the WebView should allow third party cookies to be set.
+  ///
+  /// Apps that target `Build.VERSION_CODES.KITKAT` or below default to allowing
+  /// third party cookies. Apps targeting `Build.VERSION_CODES.LOLLIPOP` or
+  /// later default to disallowing third party cookies.
+  Future<void> setAcceptThirdPartyCookies(WebView webView, bool accept) {
+    return _cookieManagerApi.setAcceptThirdPartyCookiesFromInstances(
+      this,
+      webView,
+      accept,
+    );
+  }
+
+  @override
+  CookieManager copy() {
+    return CookieManager.detached(
+      binaryMessenger: _cookieManagerApi.binaryMessenger,
+      instanceManager: _cookieManagerApi.instanceManager,
+    );
+  }
 }
 
 /// Manages settings state for a [WebView].
@@ -459,7 +548,11 @@ class WebSettings extends JavaObject {
   /// This constructor is only used for testing. An instance should be obtained
   /// with [WebView.settings].
   @visibleForTesting
-  WebSettings(WebView webView) : super.detached() {
+  WebSettings(
+    WebView webView, {
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     api.createFromInstance(this, webView);
   }
 
@@ -467,7 +560,11 @@ class WebSettings extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  WebSettings.detached() : super.detached();
+  @protected
+  WebSettings.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebSettings].
   @visibleForTesting
@@ -591,9 +688,24 @@ class WebSettings extends JavaObject {
     return api.setAllowFileAccessFromInstance(this, enabled);
   }
 
+  /// Sets the text zoom of the page in percent.
+  ///
+  /// The default is 100. See https://developer.android.com/reference/android/webkit/WebSettings#setTextZoom(int)
+  Future<void> setTextZoom(int textZoom) {
+    return api.setSetTextZoomFromInstance(this, textZoom);
+  }
+
+  /// Gets the WebView's user-agent string.
+  Future<String> getUserAgentString() {
+    return api.getUserAgentStringFromInstance(this);
+  }
+
   @override
   WebSettings copy() {
-    return WebSettings.detached();
+    return WebSettings.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
   }
 }
 
@@ -605,6 +717,8 @@ class JavaScriptChannel extends JavaObject {
   JavaScriptChannel(
     this.channelName, {
     required this.postMessage,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
   }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
@@ -615,9 +729,12 @@ class JavaScriptChannel extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   JavaScriptChannel.detached(
     this.channelName, {
     required this.postMessage,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [JavaScriptChannel].
@@ -632,7 +749,12 @@ class JavaScriptChannel extends JavaObject {
 
   @override
   JavaScriptChannel copy() {
-    return JavaScriptChannel.detached(channelName, postMessage: postMessage);
+    return JavaScriptChannel.detached(
+      channelName,
+      postMessage: postMessage,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
   }
 }
 
@@ -646,6 +768,10 @@ class WebViewClient extends JavaObject {
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
+    this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
   }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
@@ -655,6 +781,7 @@ class WebViewClient extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   WebViewClient.detached({
     this.onPageStarted,
     this.onPageFinished,
@@ -662,6 +789,10 @@ class WebViewClient extends JavaObject {
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
+    this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// User authentication failed on server.
@@ -804,6 +935,18 @@ class WebViewClient extends JavaObject {
   /// indicates whether the [WebView] loaded the URL.
   final void Function(WebView webView, String url)? urlLoading;
 
+  /// Notify the host application to update its visited links database.
+  final void Function(WebView webView, String url, bool isReload)?
+      doUpdateVisitedHistory;
+
+  /// This callback is only called for requests that require HTTP authentication.
+  final void Function(
+    WebView webView,
+    HttpAuthHandler handler,
+    String host,
+    String realm,
+  )? onReceivedHttpAuthRequest;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -831,6 +974,10 @@ class WebViewClient extends JavaObject {
       onReceivedError: onReceivedError,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
+      doUpdateVisitedHistory: doUpdateVisitedHistory,
+      onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
     );
   }
 }
@@ -839,7 +986,11 @@ class WebViewClient extends JavaObject {
 /// engine for [WebView], and should be downloaded instead.
 class DownloadListener extends JavaObject {
   /// Constructs a [DownloadListener].
-  DownloadListener({required this.onDownloadStart}) : super.detached() {
+  DownloadListener({
+    required this.onDownloadStart,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
   }
@@ -849,7 +1000,12 @@ class DownloadListener extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  DownloadListener.detached({required this.onDownloadStart}) : super.detached();
+  @protected
+  DownloadListener.detached({
+    required this.onDownloadStart,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
 
   /// Pigeon Host Api implementation for [DownloadListener].
   @visibleForTesting
@@ -866,15 +1022,52 @@ class DownloadListener extends JavaObject {
 
   @override
   DownloadListener copy() {
-    return DownloadListener.detached(onDownloadStart: onDownloadStart);
+    return DownloadListener.detached(
+      onDownloadStart: onDownloadStart,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
   }
 }
+
+/// Responsible for request the Geolocation API.
+typedef GeolocationPermissionsShowPrompt = Future<void> Function(
+  String origin,
+  GeolocationPermissionsCallback callback,
+);
+
+/// Responsible for request the Geolocation API is Cancel.
+typedef GeolocationPermissionsHidePrompt = void Function(
+  WebChromeClient instance,
+);
+
+/// Signature for the callback that is responsible for showing a custom view.
+typedef ShowCustomViewCallback = void Function(
+  WebChromeClient instance,
+  View view,
+  CustomViewCallback callback,
+);
+
+/// Signature for the callback that is responsible for hiding a custom view.
+typedef HideCustomViewCallback = void Function(
+  WebChromeClient instance,
+);
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
-  WebChromeClient({this.onProgressChanged, this.onShowFileChooser})
-      : super.detached() {
+  WebChromeClient({
+    this.onProgressChanged,
+    this.onShowFileChooser,
+    this.onPermissionRequest,
+    this.onGeolocationPermissionsShowPrompt,
+    this.onGeolocationPermissionsHidePrompt,
+    this.onShowCustomView,
+    this.onHideCustomView,
+    this.onConsoleMessage,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
   }
@@ -884,9 +1077,18 @@ class WebChromeClient extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   WebChromeClient.detached({
     this.onProgressChanged,
     this.onShowFileChooser,
+    this.onPermissionRequest,
+    this.onGeolocationPermissionsShowPrompt,
+    this.onGeolocationPermissionsHidePrompt,
+    this.onShowCustomView,
+    this.onHideCustomView,
+    this.onConsoleMessage,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebChromeClient].
@@ -908,6 +1110,39 @@ class WebChromeClient extends JavaObject {
     WebView webView,
     FileChooserParams params,
   )? onShowFileChooser;
+
+  /// Notify the host application that web content is requesting permission to
+  /// access the specified resources and the permission currently isn't granted
+  /// or denied.
+  ///
+  /// Only invoked on Android versions 21+.
+  final void Function(
+    WebChromeClient instance,
+    PermissionRequest request,
+  )? onPermissionRequest;
+
+  /// Indicates the client should handle geolocation permissions.
+  final GeolocationPermissionsShowPrompt? onGeolocationPermissionsShowPrompt;
+
+  /// Notify the host application that a request for Geolocation permissions,
+  /// made with a previous call to [onGeolocationPermissionsShowPrompt] has been
+  /// canceled.
+  final GeolocationPermissionsHidePrompt? onGeolocationPermissionsHidePrompt;
+
+  /// Notify the host application that the current page has entered full screen
+  /// mode.
+  ///
+  /// After this call, web content will no longer be rendered in the WebView,
+  /// but will instead be rendered in `view`.
+  final ShowCustomViewCallback? onShowCustomView;
+
+  /// Notify the host application that the current page has exited full screen
+  /// mode.
+  final HideCustomViewCallback? onHideCustomView;
+
+  /// Report a JavaScript console message to the host application.
+  final void Function(WebChromeClient instance, ConsoleMessage message)?
+      onConsoleMessage;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -938,11 +1173,117 @@ class WebChromeClient extends JavaObject {
     );
   }
 
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onShowFileChooser(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onConsoleMessage(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires [onConsoleMessage] to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnConsoleMessage(
+    bool value,
+  ) {
+    if (value && onConsoleMessage == null) {
+      throw StateError(
+        'Setting this to true requires `onConsoleMessage` to be nonnull.',
+      );
+    }
+    return api.setSynchronousReturnValueForOnConsoleMessageFromInstance(
+      this,
+      value,
+    );
+  }
+
   @override
   WebChromeClient copy() {
     return WebChromeClient.detached(
       onProgressChanged: onProgressChanged,
       onShowFileChooser: onShowFileChooser,
+      onPermissionRequest: onPermissionRequest,
+      onGeolocationPermissionsShowPrompt: onGeolocationPermissionsShowPrompt,
+      onGeolocationPermissionsHidePrompt: onGeolocationPermissionsHidePrompt,
+      onShowCustomView: onShowCustomView,
+      onHideCustomView: onHideCustomView,
+      onConsoleMessage: onConsoleMessage,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
+}
+
+/// This class defines a permission request and is used when web content
+/// requests access to protected resources.
+///
+/// Only supported on Android versions >= 21.
+///
+/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
+class PermissionRequest extends JavaObject {
+  /// Instantiates a [PermissionRequest] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  PermissionRequest.detached({
+    required this.resources,
+    required super.binaryMessenger,
+    required super.instanceManager,
+  })  : _permissionRequestApi = PermissionRequestHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  /// Resource belongs to audio capture device, like microphone.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_AUDIO_CAPTURE.
+  static const String audioCapture = 'android.webkit.resource.AUDIO_CAPTURE';
+
+  /// Resource will allow sysex messages to be sent to or received from MIDI
+  /// devices.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_MIDI_SYSEX.
+  static const String midiSysex = 'android.webkit.resource.MIDI_SYSEX';
+
+  /// Resource belongs to video capture device, like camera.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_VIDEO_CAPTURE.
+  static const String videoCapture = 'android.webkit.resource.VIDEO_CAPTURE';
+
+  /// Resource belongs to protected media identifier.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_VIDEO_CAPTURE.
+  static const String protectedMediaId =
+      'android.webkit.resource.PROTECTED_MEDIA_ID';
+
+  final PermissionRequestHostApiImpl _permissionRequestApi;
+
+  /// Resources the web page is trying to access.
+  final List<String> resources;
+
+  /// Call this method to get the resources the web page is trying to access.
+  Future<void> grant(List<String> resources) {
+    return _permissionRequestApi.grantFromInstances(this, resources);
+  }
+
+  /// Call this method to grant origin the permission to access the given
+  /// resources.
+  Future<void> deny() {
+    return _permissionRequestApi.denyFromInstances(this);
+  }
+
+  @override
+  PermissionRequest copy() {
+    return PermissionRequest.detached(
+      resources: resources,
+      binaryMessenger: _permissionRequestApi.binaryMessenger,
+      instanceManager: _permissionRequestApi.instanceManager,
     );
   }
 }
@@ -956,6 +1297,7 @@ class FileChooserParams extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
+  @protected
   FileChooserParams.detached({
     required this.isCaptureEnabled,
     required this.acceptTypes,
@@ -984,6 +1326,8 @@ class FileChooserParams extends JavaObject {
       acceptTypes: acceptTypes,
       filenameHint: filenameHint,
       mode: mode,
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
     );
   }
 }
@@ -1067,7 +1411,10 @@ class WebStorage extends JavaObject {
   /// This constructor is only used for testing. An instance should be obtained
   /// with [WebStorage.instance].
   @visibleForTesting
-  WebStorage() : super.detached() {
+  WebStorage({
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
   }
@@ -1076,7 +1423,11 @@ class WebStorage extends JavaObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  WebStorage.detached() : super.detached();
+  @protected
+  WebStorage.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebStorage].
   @visibleForTesting
@@ -1092,6 +1443,105 @@ class WebStorage extends JavaObject {
 
   @override
   WebStorage copy() {
-    return WebStorage.detached();
+    return WebStorage.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
+}
+
+/// The basic building block for user interface components.
+///
+/// See https://developer.android.com/reference/android/view/View.
+class View extends JavaObject {
+  /// Instantiates a [View] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  View.detached({super.binaryMessenger, super.instanceManager})
+      : super.detached();
+
+  @override
+  View copy() {
+    return View.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
+}
+
+/// A callback interface used by the host application to notify the current page
+/// that its custom view has been dismissed.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+class CustomViewCallback extends JavaObject {
+  /// Instantiates a [CustomViewCallback] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  CustomViewCallback.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _customViewCallbackApi = CustomViewCallbackHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  final CustomViewCallbackHostApiImpl _customViewCallbackApi;
+
+  /// Invoked when the host application dismisses the custom view.
+  Future<void> onCustomViewHidden() {
+    return _customViewCallbackApi.onCustomViewHiddenFromInstances(this);
+  }
+
+  @override
+  CustomViewCallback copy() {
+    return CustomViewCallback.detached(
+      binaryMessenger: _customViewCallbackApi.binaryMessenger,
+      instanceManager: _customViewCallbackApi.instanceManager,
+    );
+  }
+}
+
+/// Represents a request for HTTP authentication.
+///
+/// Instances of this class are created by the [WebView] and passed to
+/// [WebViewClient.onReceivedHttpAuthRequest]. The host application must call
+/// either [HttpAuthHandler.proceed] or [HttpAuthHandler.cancel] to set the
+/// WebView's response to the request.
+class HttpAuthHandler extends JavaObject {
+  /// Constructs a [HttpAuthHandler].
+  HttpAuthHandler({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// Pigeon Host Api implementation for [HttpAuthHandler].
+  @visibleForTesting
+  static HttpAuthHandlerHostApiImpl api = HttpAuthHandlerHostApiImpl();
+
+  /// Instructs the WebView to cancel the authentication request.
+  Future<void> cancel() {
+    return api.cancelFromInstance(this);
+  }
+
+  /// Instructs the WebView to proceed with the authentication with the provided
+  /// credentials.
+  Future<void> proceed(String username, String password) {
+    return api.proceedFromInstance(this, username, password);
+  }
+
+  /// Gets whether the credentials stored for the current host are suitable for
+  /// use.
+  ///
+  /// Credentials are not suitable if they have previously been rejected by the
+  /// server for the current request.
+  Future<bool> useHttpAuthUsernamePassword() {
+    return api.useHttpAuthUsernamePasswordFromInstance(this);
   }
 }

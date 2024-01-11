@@ -8,22 +8,40 @@ import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart' show Error;
 import 'package:test/test.dart';
 
+const String DEFAULT_PACKAGE_NAME = 'test_package';
+
+final Class emptyClass = Class(name: 'className', fields: <NamedType>[
+  NamedType(
+    name: 'namedTypeName',
+    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+  )
+]);
+
+final Enum emptyEnum = Enum(
+  name: 'enumName',
+  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
+);
+
 void main() {
   test('gen one api', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -52,7 +70,8 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
@@ -67,14 +86,16 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('Input::Input()'));
       expect(code, contains('Output::Output'));
       expect(
           code,
-          contains(
-              'void Api::SetUp(flutter::BinaryMessenger* binary_messenger, Api* api)'));
+          contains(RegExp(r'void Api::SetUp\(\s*'
+              r'flutter::BinaryMessenger\* binary_messenger,\s*'
+              r'Api\* api\s*\)')));
     }
   });
 
@@ -83,16 +104,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -121,7 +146,8 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       // Method name and argument names should be adjusted.
       expect(code, contains(' DoSomething(const Input& some_input)'));
@@ -142,12 +168,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
-      expect(code, contains('pointer_input_field'));
+      expect(code, contains('encodable_some_input'));
       expect(code, contains('Output::output_field()'));
       expect(code, contains('Output::set_output_field(bool value_arg)'));
-      expect(code, contains('encodable_output_field'));
     }
   });
 
@@ -156,8 +182,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
@@ -180,6 +206,7 @@ void main() {
         generatorOptions,
         root,
         sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
 
@@ -206,8 +233,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
@@ -226,7 +253,8 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
 
       expect(
@@ -248,16 +276,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -286,7 +318,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
@@ -299,7 +336,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
@@ -311,8 +353,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
@@ -331,7 +373,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('''
 #include <flutter/basic_message_channel.h>
@@ -352,7 +399,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(headerIncludePath: 'a_header.h'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('''
 #include "a_header.h"
@@ -374,8 +426,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
@@ -394,7 +446,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(namespace: 'foo'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
@@ -407,7 +464,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(namespace: 'foo'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
@@ -419,11 +481,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
@@ -459,9 +522,10 @@ void main() {
             ),
             name: 'nullableString'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: true,
+              associatedClass: emptyClass,
             ),
             name: 'nullableNested'),
       ]),
@@ -474,8 +538,22 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
+
+      // There should be a default constructor.
+      expect(code, contains('Nested();'));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(
+              RegExp(r'explicit Nested\(\s*const bool\* nested_value\s*\)')));
+
       // Getters should return const pointers.
       expect(code, contains('const bool* nullable_bool()'));
       expect(code, contains('const int64_t* nullable_int()'));
@@ -512,8 +590,23 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
+
+      // There should be a default constructor.
+      expect(code, contains('Nested::Nested() {}'));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(RegExp(r'Nested::Nested\(\s*const bool\* nested_value\s*\)'
+              r'\s*:\s*nested_value_\(nested_value \? '
+              r'std::optional<bool>\(\*nested_value\) : std::nullopt\)\s*{}')));
+
       // Getters extract optionals.
       expect(code,
           contains('return nullable_bool_ ? &(*nullable_bool_) : nullptr;'));
@@ -571,11 +664,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
@@ -611,9 +705,10 @@ void main() {
             ),
             name: 'nonNullableString'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: false,
+              associatedClass: emptyClass,
             ),
             name: 'nonNullableNested'),
       ]),
@@ -626,8 +721,20 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
+
+      // There should not be a default constructor.
+      expect(code, isNot(contains('Nested();')));
+      // There should be a convenience constructor.
+      expect(code,
+          contains(RegExp(r'explicit Nested\(\s*bool nested_value\s*\)')));
+
       // POD getters should return copies references.
       expect(code, contains('bool non_nullable_bool()'));
       expect(code, contains('int64_t non_nullable_int()'));
@@ -657,8 +764,22 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
+
+      // There should not be a default constructor.
+      expect(code, isNot(contains('Nested::Nested() {}')));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(RegExp(r'Nested::Nested\(\s*bool nested_value\s*\)'
+              r'\s*:\s*nested_value_\(nested_value\)\s*{}')));
+
       // Getters just return the value.
       expect(code, contains('return non_nullable_bool_;'));
       expect(code, contains('return non_nullable_int_;'));
@@ -686,7 +807,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'returnNullableBool',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: true,
@@ -694,7 +815,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableInt',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: true,
@@ -702,7 +823,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableString',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: true,
@@ -710,7 +831,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableList',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
@@ -724,7 +845,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableMap',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
@@ -742,10 +863,11 @@ void main() {
         ),
         Method(
           name: 'returnNullableDataClass',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: true,
+            associatedClass: emptyClass,
           ),
         ),
       ])
@@ -767,7 +889,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code, contains('ErrorOr<std::optional<bool>> ReturnNullableBool()'));
@@ -797,7 +924,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'returnBool',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: false,
@@ -805,7 +932,7 @@ void main() {
         ),
         Method(
           name: 'returnInt',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: false,
@@ -813,7 +940,7 @@ void main() {
         ),
         Method(
           name: 'returnString',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: false,
@@ -821,7 +948,7 @@ void main() {
         ),
         Method(
           name: 'returnList',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
@@ -835,7 +962,7 @@ void main() {
         ),
         Method(
           name: 'returnMap',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
@@ -853,10 +980,11 @@ void main() {
         ),
         Method(
           name: 'returnDataClass',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: false,
+            associatedClass: emptyClass,
           ),
         ),
       ])
@@ -878,7 +1006,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
       expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
@@ -894,26 +1027,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -922,7 +1055,7 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -932,13 +1065,14 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -966,17 +1100,23 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(const bool* a_bool, '
-              'const int64_t* an_int, '
-              'const std::string* a_string, '
-              'const flutter::EncodableList* a_list, '
-              'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object, '
-              'const flutter::EncodableValue* a_generic_object)'));
+          contains(RegExp(r'DoSomething\(\s*'
+              r'const bool\* a_bool,\s*'
+              r'const int64_t\* an_int,\s*'
+              r'const std::string\* a_string,\s*'
+              r'const flutter::EncodableList\* a_list,\s*'
+              r'const flutter::EncodableMap\* a_map,\s*'
+              r'const ParameterObject\* an_object,\s*'
+              r'const flutter::EncodableValue\* a_generic_object\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -986,7 +1126,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Most types should just use get_if, since the parameter is a pointer,
       // and get_if will automatically handle null values (since a null
@@ -1009,7 +1154,7 @@ void main() {
           contains(
               'const auto* a_map_arg = std::get_if<EncodableMap>(&encodable_a_map_arg);'));
       // Ints are complicated since there are two possible pointer types, but
-      // the paramter always needs an int64_t*.
+      // the parameter always needs an int64_t*.
       expect(
           code,
           contains(
@@ -1037,26 +1182,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1065,7 +1210,7 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1075,13 +1220,14 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -1109,17 +1255,23 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(bool a_bool, '
-              'int64_t an_int, '
-              'const std::string& a_string, '
-              'const flutter::EncodableList& a_list, '
-              'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object, '
-              'const flutter::EncodableValue& a_generic_object)'));
+          contains(RegExp(r'DoSomething\(\s*'
+              r'bool a_bool,\s*'
+              r'int64_t an_int,\s*'
+              r'const std::string& a_string,\s*'
+              r'const flutter::EncodableList& a_list,\s*'
+              r'const flutter::EncodableMap& a_map,\s*'
+              r'const ParameterObject& an_object,\s*'
+              r'const flutter::EncodableValue& a_generic_object\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1129,7 +1281,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Most types should extract references. Since the type is non-nullable,
       // there's only one possible type.
@@ -1150,7 +1307,7 @@ void main() {
           contains(
               'const auto& a_map_arg = std::get<EncodableMap>(encodable_a_map_arg);'));
       // Ints use a copy since there are two possible reference types, but
-      // the paramter always needs an int64_t.
+      // the parameter always needs an int64_t.
       expect(
           code,
           contains(
@@ -1175,26 +1332,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1203,7 +1360,7 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1213,13 +1370,14 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -1250,7 +1408,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Nullable arguments should all be pointers. This will make them somewhat
       // awkward for some uses (literals, values that could be inlined) but
@@ -1261,20 +1424,22 @@ void main() {
       // would need to be considered.
       expect(
           code,
-          contains('DoSomething(const bool* a_bool, '
-              'const int64_t* an_int, '
+          contains(RegExp(r'DoSomething\(\s*'
+              r'const bool\* a_bool,\s*'
+              r'const int64_t\* an_int,\s*'
               // Nullable strings use std::string* rather than std::string_view*
               // since there's no implicit conversion for pointer types.
-              'const std::string* a_string, '
-              'const flutter::EncodableList* a_list, '
-              'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object, '
-              'const flutter::EncodableValue* a_generic_object, '));
+              r'const std::string\* a_string,\s*'
+              r'const flutter::EncodableList\* a_list,\s*'
+              r'const flutter::EncodableMap\* a_map,\s*'
+              r'const ParameterObject\* an_object,\s*'
+              r'const flutter::EncodableValue\* a_generic_object,')));
       // The callback should pass a pointer as well.
       expect(
           code,
-          contains('std::function<void(const bool*)>&& on_success, '
-              'std::function<void(const FlutterError&)>&& on_error)'));
+          contains(
+              RegExp(r'std::function<void\(const bool\*\)>&& on_success,\s*'
+                  r'std::function<void\(const FlutterError&\)>&& on_error\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1284,7 +1449,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // All types pass nulls values when the pointer is null.
       // Standard types are wrapped an EncodableValues.
@@ -1312,7 +1482,7 @@ void main() {
       expect(
           code,
           contains(
-              'an_object_arg ? EncodableValue(an_object_arg->ToEncodableList()) : EncodableValue()'));
+              'an_object_arg ? CustomEncodableValue(*an_object_arg) : EncodableValue()'));
     }
   });
 
@@ -1321,26 +1491,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1349,7 +1519,7 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1359,13 +1529,14 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -1396,25 +1567,31 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(bool a_bool, '
-              'int64_t an_int, '
+          contains(RegExp(r'DoSomething\(\s*'
+              r'bool a_bool,\s*'
+              r'int64_t an_int,\s*'
               // Non-nullable strings use std::string for consistency with
               // nullable strings.
-              'const std::string& a_string, '
+              r'const std::string& a_string,\s*'
               // Non-POD types use const references.
-              'const flutter::EncodableList& a_list, '
-              'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object, '
-              'const flutter::EncodableValue& a_generic_object, '));
+              r'const flutter::EncodableList& a_list,\s*'
+              r'const flutter::EncodableMap& a_map,\s*'
+              r'const ParameterObject& an_object,\s*'
+              r'const flutter::EncodableValue& a_generic_object,\s*')));
       // The callback should pass a value.
       expect(
           code,
-          contains('std::function<void(bool)>&& on_success, '
-              'std::function<void(const FlutterError&)>&& on_error)'));
+          contains(RegExp(r'std::function<void\(bool\)>&& on_success,\s*'
+              r'std::function<void\(const FlutterError&\)>&& on_error\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1424,7 +1601,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Standard types are wrapped an EncodableValues.
       expect(code, contains('EncodableValue(a_bool_arg)'));
@@ -1433,7 +1615,7 @@ void main() {
       expect(code, contains('EncodableValue(a_list_arg)'));
       expect(code, contains('EncodableValue(a_map_arg)'));
       // Class types use ToEncodableList.
-      expect(code, contains('EncodableValue(an_object_arg.ToEncodableList())'));
+      expect(code, contains('CustomEncodableValue(an_object_arg)'));
     }
   });
 
@@ -1442,8 +1624,8 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'anArg',
                 type: const TypeDeclaration(
                   baseName: 'int',
@@ -1462,10 +1644,15 @@ void main() {
       fileType: FileType.source,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
-    // ineffecient.
+    // inefficient.
     expect(
         code, contains('const auto& args = std::get<EncodableList>(message);'));
     expect(code, contains('const auto& encodable_an_arg_arg = args.at(0);'));
@@ -1478,11 +1665,15 @@ void main() {
           Method(
               name: 'bar',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
-                    name: 'foo',
-                    type: const TypeDeclaration(
-                        baseName: 'Foo', isNullable: false))
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'foo',
+                  type: TypeDeclaration(
+                    baseName: 'Foo',
+                    isNullable: false,
+                    associatedEnum: emptyEnum,
+                  ),
+                )
               ])
         ])
       ],
@@ -1523,8 +1714,8 @@ void main() {
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
                     baseName: 'int',
@@ -1578,7 +1769,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const CppOptions(headerIncludePath: 'foo'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('//$comment'));
@@ -1586,7 +1782,7 @@ void main() {
     expect(code, contains('// ///'));
   });
 
-  test('doesnt create codecs if no custom datatypes', () {
+  test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -1596,8 +1792,8 @@ void main() {
             Method(
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
                     baseName: 'int',
@@ -1619,7 +1815,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
   });
@@ -1629,16 +1830,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
           isAsynchronous: true,
         )
       ])
@@ -1667,7 +1872,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
   });
@@ -1677,26 +1887,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1705,7 +1915,7 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1715,11 +1925,12 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
@@ -1742,7 +1953,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
     expect(code, contains('reply(EncodableValue('));
@@ -1753,14 +1969,14 @@ void main() {
       Api(name: 'HostApi', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
@@ -1775,14 +1991,14 @@ void main() {
       Api(name: 'FlutterApi', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
@@ -1802,7 +2018,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     // Nothing should be captured by reference for async handlers, since their
     // lifetime is unknown (and expected to be longer than the stack's).
@@ -1812,5 +2033,52 @@ void main() {
     // ensure that the negative tests above get updated if there are any
     // changes to lambda capture.
     expect(code, contains('[reply]('));
+  });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            '"Unable to establish connection on channel: \'" + channel_name + "\'."'));
+    expect(code, contains('on_error(CreateConnectionError(channel_name));'));
   });
 }

@@ -80,7 +80,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   /// All arguments except for [key] must not be null. The arguments
   /// [openBuilder] and [closedBuilder] are required.
   const OpenContainer({
-    Key? key,
+    super.key,
     this.closedColor = Colors.white,
     this.openColor = Colors.white,
     this.middleColor,
@@ -99,7 +99,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.useRootNavigator = false,
     this.routeSettings,
     this.clipBehavior = Clip.antiAlias,
-  }) : super(key: key);
+  });
 
   /// Background color of the container while it is closed.
   ///
@@ -341,9 +341,9 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
 ///    `isVisible` is ignored).
 class _Hideable extends StatefulWidget {
   const _Hideable({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Widget child;
 
@@ -604,10 +604,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       switch (status) {
         case AnimationStatus.dismissed:
           _toggleHideable(hide: false);
-          break;
         case AnimationStatus.completed:
           _toggleHideable(hide: true);
-          break;
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
           break;
@@ -699,11 +697,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       case AnimationStatus.completed:
       case AnimationStatus.dismissed:
         isInProgress = false;
-        break;
       case AnimationStatus.forward:
       case AnimationStatus.reverse:
         isInProgress = true;
-        break;
       case null:
         break;
     }
@@ -711,11 +707,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       case AnimationStatus.completed:
       case AnimationStatus.dismissed:
         wasInProgress = false;
-        break;
       case AnimationStatus.forward:
       case AnimationStatus.reverse:
         wasInProgress = true;
-        break;
       case null:
         break;
     }
@@ -769,7 +763,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
               openOpacityTween = _openOpacityTween;
               colorTween = _colorTween;
               scrimTween = _scrimFadeInTween;
-              break;
             case AnimationStatus.reverse:
               if (_transitionWasInterrupted) {
                 closedOpacityTween = _closedOpacityTween;
@@ -782,10 +775,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
               openOpacityTween = _openOpacityTween.flipped;
               colorTween = _colorTween.flipped;
               scrimTween = _scrimFadeOutTween;
-              break;
             case AnimationStatus.completed:
               assert(false); // Unreachable.
-              break;
           }
           assert(colorTween != null);
           assert(closedOpacityTween != null);

@@ -2,13 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:meta/meta.dart' show immutable;
+
 import 'java_object.dart';
 
 /// Handle onto the raw buffer managed by screen compositor.
 ///
 /// See https://developer.android.com/reference/android/view/Surface.html.
+@immutable
 class Surface extends JavaObject {
-  /// Creates a detached [UseCase].
+  /// Creates a detached [Surface].
   Surface.detached({super.binaryMessenger, super.instanceManager})
       : super.detached();
 

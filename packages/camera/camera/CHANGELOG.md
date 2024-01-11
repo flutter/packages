@@ -1,3 +1,57 @@
+## 0.10.5+9
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 0.10.5+8
+
+* Fixes new lint warnings.
+
+## 0.10.5+7
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.10.5+6
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Drop unused dependency on `package:quiver`.
+
+## 0.10.5+5
+
+* Fixes bug where old camera resources were not disposed when switching between camera descriptions.
+* Fixes bug where _deviceOrientationSubscription was recreated every time the camera description was
+  changed.
+
+## 0.10.5+4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.10.5+3
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
+## 0.10.5+2
+
+* Fixes unawaited_futures violations.
+
+## 0.10.5+1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.10.5
+
+* Adds NV21 as an image streaming option for Android.
+
+## 0.10.4
+
+* Allows camera to be switched while video recording.
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.10.3+2
+
+* Updates iOS minimum version in README.
+
 ## 0.10.3+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

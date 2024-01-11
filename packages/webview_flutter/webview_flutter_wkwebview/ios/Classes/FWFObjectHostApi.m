@@ -3,9 +3,14 @@
 // found in the LICENSE file.
 
 #import "FWFObjectHostApi.h"
+#import <objc/runtime.h>
 #import "FWFDataConverters.h"
+#import "FWFURLHostApi.h"
 
 @interface FWFObjectFlutterApiImpl ()
+// BinaryMessenger must be weak to prevent a circular reference with the host API it
+// references.
+@property(nonatomic, weak) id<FlutterBinaryMessenger> binaryMessenger;
 // InstanceManager must be weak to prevent a circular reference with the object it stores.
 @property(nonatomic, weak) FWFInstanceManager *instanceManager;
 @end
@@ -15,6 +20,7 @@
                         instanceManager:(FWFInstanceManager *)instanceManager {
   self = [self initWithBinaryMessenger:binaryMessenger];
   if (self) {
+    _binaryMessenger = binaryMessenger;
     _instanceManager = instanceManager;
   }
   return self;
@@ -28,18 +34,36 @@
                       keyPath:(NSString *)keyPath
                        object:(NSObject *)object
                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
-                   completion:(void (^)(NSError *_Nullable))completion {
+                   completion:(void (^)(FlutterError *_Nullable))completion {
   NSMutableArray<FWFNSKeyValueChangeKeyEnumData *> *changeKeys = [NSMutableArray array];
   NSMutableArray<id> *changeValues = [NSMutableArray array];
 
   [change enumerateKeysAndObjectsUsingBlock:^(NSKeyValueChangeKey key, id value, BOOL *stop) {
-    [changeKeys addObject:FWFNSKeyValueChangeKeyEnumDataFromNSKeyValueChangeKey(key)];
-    [changeValues addObject:value];
+    [changeKeys addObject:FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(key)];
+    BOOL isIdentifier = NO;
+    if ([self.instanceManager containsInstance:value]) {
+      isIdentifier = YES;
+    } else if (object_getClass(value) == [NSURL class]) {
+      FWFURLFlutterApiImpl *flutterApi =
+          [[FWFURLFlutterApiImpl alloc] initWithBinaryMessenger:self.binaryMessenger
+                                                instanceManager:self.instanceManager];
+      [flutterApi create:value
+              completion:^(FlutterError *error) {
+                NSAssert(!error, @"%@", error);
+              }];
+      isIdentifier = YES;
+    }
+
+    id returnValue = isIdentifier
+                         ? @([self.instanceManager identifierWithStrongReferenceForInstance:value])
+                         : value;
+    [changeValues addObject:[FWFObjectOrIdentifier makeWithValue:returnValue
+                                                    isIdentifier:isIdentifier]];
   }];
 
-  NSNumber *objectIdentifier =
-      @([self.instanceManager identifierWithStrongReferenceForInstance:object]);
-  [self observeValueForObjectWithIdentifier:@([self identifierForObject:instance])
+  NSInteger objectIdentifier =
+      [self.instanceManager identifierWithStrongReferenceForInstance:object];
+  [self observeValueForObjectWithIdentifier:[self identifierForObject:instance]
                                     keyPath:keyPath
                            objectIdentifier:objectIdentifier
                                  changeKeys:changeKeys
@@ -67,7 +91,7 @@
                                 keyPath:keyPath
                                  object:object
                                  change:change
-                             completion:^(NSError *error) {
+                             completion:^(FlutterError *error) {
                                NSAssert(!error, @"%@", error);
                              }];
 }
@@ -87,12 +111,12 @@
   return self;
 }
 
-- (NSObject *)objectForIdentifier:(NSNumber *)identifier {
-  return (NSObject *)[self.instanceManager instanceForIdentifier:identifier.longValue];
+- (NSObject *)objectForIdentifier:(NSInteger)identifier {
+  return (NSObject *)[self.instanceManager instanceForIdentifier:identifier];
 }
 
-- (void)addObserverForObjectWithIdentifier:(nonnull NSNumber *)identifier
-                        observerIdentifier:(nonnull NSNumber *)observer
+- (void)addObserverForObjectWithIdentifier:(NSInteger)identifier
+                        observerIdentifier:(NSInteger)observer
                                    keyPath:(nonnull NSString *)keyPath
                                    options:
                                        (nonnull NSArray<FWFNSKeyValueObservingOptionsEnumData *> *)
@@ -100,7 +124,7 @@
                                      error:(FlutterError *_Nullable *_Nonnull)error {
   NSKeyValueObservingOptions optionsInt = 0;
   for (FWFNSKeyValueObservingOptionsEnumData *data in options) {
-    optionsInt |= FWFNSKeyValueObservingOptionsFromEnumData(data);
+    optionsInt |= FWFNativeNSKeyValueObservingOptionsFromEnumData(data);
   }
   [[self objectForIdentifier:identifier] addObserver:[self objectForIdentifier:observer]
                                           forKeyPath:keyPath
@@ -108,16 +132,16 @@
                                              context:nil];
 }
 
-- (void)removeObserverForObjectWithIdentifier:(nonnull NSNumber *)identifier
-                           observerIdentifier:(nonnull NSNumber *)observer
+- (void)removeObserverForObjectWithIdentifier:(NSInteger)identifier
+                           observerIdentifier:(NSInteger)observer
                                       keyPath:(nonnull NSString *)keyPath
                                         error:(FlutterError *_Nullable *_Nonnull)error {
   [[self objectForIdentifier:identifier] removeObserver:[self objectForIdentifier:observer]
                                              forKeyPath:keyPath];
 }
 
-- (void)disposeObjectWithIdentifier:(nonnull NSNumber *)identifier
+- (void)disposeObjectWithIdentifier:(NSInteger)identifier
                               error:(FlutterError *_Nullable *_Nonnull)error {
-  [self.instanceManager removeInstanceWithIdentifier:identifier.longValue];
+  [self.instanceManager removeInstanceWithIdentifier:identifier];
 }
 @end

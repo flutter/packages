@@ -32,14 +32,10 @@ abstract class ImagePickerPlatform extends PlatformInterface {
 
   /// Platform-specific plugins should set this with their own platform-specific
   /// class that extends [ImagePickerPlatform] when they register themselves.
-  // TODO(amirh): Extract common platform interface logic.
-  // https://github.com/flutter/flutter/issues/43368
   static set instance(ImagePickerPlatform instance) {
     PlatformInterface.verify(instance, _token);
     _instance = instance;
   }
-
-  // Next version of the API.
 
   /// Returns a [PickedFile] with the image that was picked.
   ///
@@ -69,6 +65,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// in this call. You can then call [retrieveLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getImageFromSource instead.')
   Future<PickedFile?> pickImage({
     required ImageSource source,
     double? maxWidth,
@@ -97,6 +94,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// a warning message will be logged.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getMultiImageWithOptions instead.')
   Future<List<PickedFile>?> pickMultiImage({
     double? maxWidth,
     double? maxHeight,
@@ -117,10 +115,11 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
   /// Defaults to [CameraDevice.rear].
   ///
-  /// In Android, the MainActivity can be destroyed for various fo reasons. If that happens, the result will be lost
+  /// In Android, the MainActivity can be destroyed for various reasons. If that happens, the result will be lost
   /// in this call. You can then call [retrieveLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getVideo instead.')
   Future<PickedFile?> pickVideo({
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
@@ -143,12 +142,11 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// See also:
   /// * [LostData], for what's included in the response.
   /// * [Android Activity Lifecycle](https://developer.android.com/reference/android/app/Activity.html), for more information on MainActivity destruction.
+  @Deprecated('Use getLostData instead.')
   Future<LostData> retrieveLostData() {
     throw UnimplementedError('retrieveLostData() has not been implemented.');
   }
 
-  /// This method is deprecated in favor of [getImageFromSource] and will be removed in a future update.
-  ///
   /// Returns an [XFile] with the image that was picked.
   ///
   /// The `source` argument controls where the image comes from. This can
@@ -177,6 +175,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// in this call. You can then call [getLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getImageFromSource instead.')
   Future<XFile?> getImage({
     required ImageSource source,
     double? maxWidth,
@@ -187,8 +186,6 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     throw UnimplementedError('getImage() has not been implemented.');
   }
 
-  /// This method is deprecated in favor of [getMultiImageWithOptions] and will be removed in a future update.
-  ///
   /// Returns a [List<XFile>] with the images that were picked.
   ///
   /// The images come from the [ImageSource.gallery].
@@ -207,12 +204,31 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// a warning message will be logged.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getMultiImageWithOptions instead.')
   Future<List<XFile>?> getMultiImage({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
   }) {
     throw UnimplementedError('getMultiImage() has not been implemented.');
+  }
+
+  /// Returns a [List<XFile>] with the images and/or videos that were picked.
+  /// The images and videos come from the gallery.
+  ///
+  /// Where iOS supports HEIC images, Android 8 and below doesn't. Android 9 and
+  /// above only support HEIC images if used in addition to a size modification,
+  /// of which the usage is explained below.
+  ///
+  /// In Android, the MainActivity can be destroyed for various reasons.
+  /// If that happens, the result will be lost in this call. You can then
+  /// call [getLostData] when your app relaunches to retrieve the lost data.
+  ///
+  /// If no images or videos were picked, the return value is an empty list.
+  Future<List<XFile>> getMedia({
+    required MediaOptions options,
+  }) {
+    throw UnimplementedError('getMedia() has not been implemented.');
   }
 
   /// Returns a [XFile] containing the video that was picked.
@@ -227,7 +243,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
   /// Defaults to [CameraDevice.rear].
   ///
-  /// In Android, the MainActivity can be destroyed for various fo reasons. If that happens, the result will be lost
+  /// In Android, the MainActivity can be destroyed for various reasons. If that happens, the result will be lost
   /// in this call. You can then call [getLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
@@ -304,5 +320,76 @@ abstract class ImagePickerPlatform extends PlatformInterface {
       imageQuality: options.imageOptions.imageQuality,
     );
     return pickedImages ?? <XFile>[];
+  }
+
+  /// Returns true if the implementation supports [source].
+  ///
+  /// Defaults to true for the original image sources, `gallery` and `camera`,
+  /// for backwards compatibility.
+  bool supportsImageSource(ImageSource source) {
+    return source == ImageSource.gallery || source == ImageSource.camera;
+  }
+}
+
+/// A base class for an [ImagePickerPlatform] implementation that does not
+/// directly support [ImageSource.camera], but supports delegating to a
+/// provided [ImagePickerCameraDelegate].
+abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
+  /// A delegate to respond to calls that use [ImageSource.camera].
+  ///
+  /// When it is null, attempting to use [ImageSource.camera] will throw a
+  /// [StateError].
+  ImagePickerCameraDelegate? cameraDelegate;
+
+  @override
+  bool supportsImageSource(ImageSource source) {
+    if (source == ImageSource.camera) {
+      return cameraDelegate != null;
+    }
+    return super.supportsImageSource(source);
+  }
+
+  @override
+  Future<XFile?> getImageFromSource({
+    required ImageSource source,
+    ImagePickerOptions options = const ImagePickerOptions(),
+  }) async {
+    if (source == ImageSource.camera) {
+      final ImagePickerCameraDelegate? delegate = cameraDelegate;
+      if (delegate == null) {
+        throw StateError(
+            'This implementation of ImagePickerPlatform requires a '
+            '"cameraDelegate" in order to use ImageSource.camera');
+      }
+      return delegate.takePhoto(
+          options: ImagePickerCameraDelegateOptions(
+        preferredCameraDevice: options.preferredCameraDevice,
+      ));
+    }
+    return super.getImageFromSource(source: source, options: options);
+  }
+
+  @override
+  Future<XFile?> getVideo({
+    required ImageSource source,
+    CameraDevice preferredCameraDevice = CameraDevice.rear,
+    Duration? maxDuration,
+  }) async {
+    if (source == ImageSource.camera) {
+      final ImagePickerCameraDelegate? delegate = cameraDelegate;
+      if (delegate == null) {
+        throw StateError(
+            'This implementation of ImagePickerPlatform requires a '
+            '"cameraDelegate" in order to use ImageSource.camera');
+      }
+      return delegate.takeVideo(
+          options: ImagePickerCameraDelegateOptions(
+              preferredCameraDevice: preferredCameraDevice,
+              maxVideoDuration: maxDuration));
+    }
+    return super.getVideo(
+        source: source,
+        preferredCameraDevice: preferredCameraDevice,
+        maxDuration: maxDuration);
   }
 }

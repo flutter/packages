@@ -11,25 +11,27 @@
 @implementation FLTImagePickerPhotoAssetUtil
 
 + (PHAsset *)getAssetFromImagePickerInfo:(NSDictionary *)info {
-  if (@available(iOS 11, *)) {
-    return [info objectForKey:UIImagePickerControllerPHAsset];
-  }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  NSURL *referenceURL = [info objectForKey:UIImagePickerControllerReferenceURL];
-  if (!referenceURL) {
-    return nil;
-  }
-  PHFetchResult<PHAsset *> *result = [PHAsset fetchAssetsWithALAssetURLs:@[ referenceURL ]
-                                                                 options:nil];
-  return result.firstObject;
-#pragma clang diagnostic pop
+  return info[UIImagePickerControllerPHAsset];
 }
 
 + (PHAsset *)getAssetFromPHPickerResult:(PHPickerResult *)result API_AVAILABLE(ios(14)) {
   PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[ result.assetIdentifier ]
                                                                 options:nil];
   return fetchResult.firstObject;
+}
+
++ (NSURL *)saveVideoFromURL:(NSURL *)videoURL {
+  if (![[NSFileManager defaultManager] isReadableFileAtPath:[videoURL path]]) {
+    return nil;
+  }
+  NSString *fileName = [videoURL lastPathComponent];
+  NSURL *destination = [NSURL fileURLWithPath:[self temporaryFilePath:fileName]];
+  NSError *error;
+  [[NSFileManager defaultManager] copyItemAtURL:videoURL toURL:destination error:&error];
+  if (error) {
+    return nil;
+  }
+  return destination;
 }
 
 + (NSString *)saveImageWithOriginalImageData:(NSData *)originalImageData

@@ -14,11 +14,8 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+@GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<GoogleMapController>()])
 import 'google_maps_plugin_test.mocks.dart';
-
-@GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[
-  MockSpec<GoogleMapController>(onMissingStub: OnMissingStub.returnDefault),
-])
 
 /// Test GoogleMapsPlugin
 void main() {
@@ -197,27 +194,14 @@ void main() {
         expect(style.stylers?.length, 1);
         expect(getProperty<String>(style.stylers![0]!, 'color'), '#6b9a76');
       });
-    });
 
-    group('Noop methods:', () {
-      const int mapId = 0;
-      setUp(() {
-        plugin.debugSetMapById(<int, GoogleMapController>{mapId: controller});
-      });
-      // Options
-      testWidgets('updateTileOverlays', (WidgetTester tester) async {
-        final Future<void> update = plugin.updateTileOverlays(
-          mapId: mapId,
-          newTileOverlays: <TileOverlay>{},
-        );
-        expect(update, completion(null));
-      });
-      testWidgets('updateTileOverlays', (WidgetTester tester) async {
-        final Future<void> update = plugin.clearTileCache(
-          const TileOverlayId('any'),
-          mapId: mapId,
-        );
-        expect(update, completion(null));
+      testWidgets('throws MapStyleException for invalid styles',
+          (WidgetTester tester) async {
+        plugin.debugSetMapById(<int, GoogleMapController>{0: controller});
+
+        expect(() async {
+          await plugin.setMapStyle('invalid_style', mapId: 0);
+        }, throwsA(isA<MapStyleException>()));
       });
     });
 
@@ -277,6 +261,24 @@ void main() {
         await plugin.updateCircles(expectedUpdates, mapId: mapId);
 
         verify(controller.updateCircles(expectedUpdates));
+      });
+      // Tile Overlays
+      testWidgets('updateTileOverlays', (WidgetTester tester) async {
+        final Set<TileOverlay> expectedOverlays = <TileOverlay>{
+          const TileOverlay(tileOverlayId: TileOverlayId('overlay'))
+        };
+
+        await plugin.updateTileOverlays(
+            newTileOverlays: expectedOverlays, mapId: mapId);
+
+        verify(controller.updateTileOverlays(expectedOverlays));
+      });
+      testWidgets('clearTileCache', (WidgetTester tester) async {
+        const TileOverlayId tileOverlayId = TileOverlayId('Dory');
+
+        await plugin.clearTileCache(tileOverlayId, mapId: mapId);
+
+        verify(controller.clearTileCache(tileOverlayId));
       });
       // Camera
       testWidgets('animateCamera', (WidgetTester tester) async {

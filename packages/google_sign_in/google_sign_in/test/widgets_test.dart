@@ -100,7 +100,9 @@ void main() {
       id: 'userId',
       photoUrl: 'photoUrl',
     );
-    tester.binding.window.physicalSizeTestValue = const Size(100, 100);
+
+    tester.view.physicalSize = const Size(100, 100);
+    addTearDown(tester.view.reset);
 
     await HttpOverrides.runZoned(
       () async {

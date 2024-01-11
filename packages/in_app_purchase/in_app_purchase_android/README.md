@@ -4,11 +4,15 @@ The Android implementation of [`in_app_purchase`][1].
 
 ## Usage
 
-This package has been [endorsed][2], meaning that you only need to add `in_app_purchase`
-as a dependency in your `pubspec.yaml`. This package will be automatically included in your app
-when you do.
+This package is [endorsed][2], which means you can simply use `in_app_purchase`
+normally. This package will be automatically included in your app when you do,
+so you do not need to add it to your `pubspec.yaml`.
 
-If you wish to use the Android package only, you can [add  `in_app_purchase_android` directly][3].
+However, if you `import` this package to use any of its APIs directly, you
+should [add it to your `pubspec.yaml` as usual][3].
+
+## Migrating to 0.3.0
+To migrate to version 0.3.0 from 0.2.x, have a look at the [migration guide](migration_guide.md).
 
 ## Contributing
 

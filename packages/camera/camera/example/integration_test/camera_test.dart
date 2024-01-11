@@ -69,32 +69,28 @@ void main() {
         expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
   }
 
-  testWidgets(
-    'Capture specific image resolutions',
-    (WidgetTester tester) async {
-      final List<CameraDescription> cameras = await availableCameras();
-      if (cameras.isEmpty) {
-        return;
+  testWidgets('Capture specific image resolutions',
+      (WidgetTester tester) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+    for (final CameraDescription cameraDescription in cameras) {
+      bool previousPresetExactlySupported = true;
+      for (final MapEntry<ResolutionPreset, Size> preset
+          in presetExpectedSizes.entries) {
+        final CameraController controller =
+            CameraController(cameraDescription, preset.key);
+        await controller.initialize();
+        final bool presetExactlySupported =
+            await testCaptureImageResolution(controller, preset.key);
+        assert(!(!previousPresetExactlySupported && presetExactlySupported),
+            'The camera took higher resolution pictures at a lower resolution.');
+        previousPresetExactlySupported = presetExactlySupported;
+        await controller.dispose();
       }
-      for (final CameraDescription cameraDescription in cameras) {
-        bool previousPresetExactlySupported = true;
-        for (final MapEntry<ResolutionPreset, Size> preset
-            in presetExpectedSizes.entries) {
-          final CameraController controller =
-              CameraController(cameraDescription, preset.key);
-          await controller.initialize();
-          final bool presetExactlySupported =
-              await testCaptureImageResolution(controller, preset.key);
-          assert(!(!previousPresetExactlySupported && presetExactlySupported),
-              'The camera took higher resolution pictures at a lower resolution.');
-          previousPresetExactlySupported = presetExactlySupported;
-          await controller.dispose();
-        }
-      }
-    },
-    // TODO(egarciad): Fix https://github.com/flutter/flutter/issues/93686.
-    skip: true,
-  );
+    }
+  });
 
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
@@ -264,6 +260,45 @@ void main() {
     });
     return completer.future;
   }
+
+  testWidgets('Set description while recording', (WidgetTester tester) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.length < 2) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
+
+    await controller.initialize();
+    await controller.prepareForVideoRecording();
+
+    await controller.startVideoRecording();
+    await controller.setDescription(cameras[1]);
+
+    expect(controller.description, cameras[1]);
+  });
+
+  testWidgets('Set description', (WidgetTester tester) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.length < 2) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
+
+    await controller.initialize();
+    await controller.setDescription(cameras[1]);
+
+    expect(controller.description, cameras[1]);
+  });
 
   testWidgets(
     'iOS image streaming with imageFormatGroup',

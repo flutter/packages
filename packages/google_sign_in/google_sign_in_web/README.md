@@ -2,7 +2,7 @@
 
 The web implementation of [google_sign_in](https://pub.dev/packages/google_sign_in)
 
-## Migrating to v0.11 (Google Identity Services)
+## Migrating to v0.11 and v0.12 (Google Identity Services)
 
 The `google_sign_in_web` plugin is backed by the new Google Identity Services
 (GIS) JS SDK since version 0.11.0.
@@ -27,15 +27,12 @@ quickly and easily sign users into your app suing their Google accounts.
     flows will not return authentication information.
 * The GIS SDK no longer has direct access to previously-seen users upon initialization.
   * `signInSilently` now displays the One Tap UX for web.
-* The GIS SDK only provides an `idToken` (JWT-encoded info) when the user
-  successfully completes an authentication flow. In the plugin: `signInSilently`.
-* The plugin `signIn` method uses the Oauth "Implicit Flow" to Authorize the requested `scopes`.
-  * If the user hasn't `signInSilently`, they'll have to sign in as a first step
-    of the Authorization popup flow.
-  * If `signInSilently` was unsuccessful, the plugin will add extra `scopes` to
-    `signIn` and retrieve basic Profile information from the People API via a
-    REST call immediately after a successful authorization. In this case, the
-    `idToken` field of the `GoogleSignInUserData` will always be null.
+* **Since 0.12** The plugin provides an `idToken` (JWT-encoded info) when the
+  user successfully completes an authentication flow:
+  * In the plugin: `signInSilently` and through the web-only `renderButton` widget.
+* The plugin `signIn` method uses the OAuth "Implicit Flow" to Authorize the requested `scopes`.
+  * This method only provides an `accessToken`, and not an `idToken`, so if your
+    app needs an `idToken`, this method **should be avoided on the web**.
 * The GIS SDK no longer handles sign-in state and user sessions, it only provides
   Authentication credentials for the moment the user did authenticate.
 * The GIS SDK no longer is able to renew Authorization sessions on the web.
@@ -49,48 +46,74 @@ See more differences in the following migration guides:
 
 ### New use cases to take into account in your app
 
+#### Authentication != Authorization
+
+In the GIS SDK, the concepts of Authentication and Authorization have been separated.
+
+It is possible now to have an Authenticated user that hasn't Authorized any `scopes`.
+
+Flutter apps that need to run in the web must now handle the fact that an Authenticated
+user may not have permissions to access the `scopes` it requires to function.
+
+The Google Sign In plugin has a new `canAccessScopes` method that can be used to
+check if a user is Authorized or not.
+
+It is also possible that Authorizations expire while users are using an app
+(after 3600 seconds), so apps should monitor response failures from the APIs, and
+prompt users (interactively) to grant permissions again.
+
+Check the "Integration considerations > [UX separation for authentication and authorization](https://developers.google.com/identity/gsi/web/guides/integrate#ux_separation_for_authentication_and_authorization)
+guide" in the official GIS SDK documentation for more information about this.
+
+_(See also the [package:google_sign_in example app](https://pub.dev/packages/google_sign_in/example)
+for a simple implementation of this (look at the `isAuthorized` variable).)_
+
+#### Is this separation *always required*?
+
+Only if the scopes required by an app are different from the
+[OpenID Connect scopes](https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect).
+
+If an app only needs an `idToken`, or the OpenID Connect scopes, the Authentication
+bits of the plugin should be enough for your app (`signInSilently` and `renderButton`).
+
+### What happened to the `signIn` method on the web?
+
+Because the GIS SDK for web no longer provides users with the ability to create
+their own Sign-In buttons, or an API to start the sign in flow, the current
+implementation of `signIn` (that does authorization and authentication) is no
+longer feasible on the web.
+
+The web plugin attempts to simulate the old `signIn` behavior by using the 
+[OAuth Implicit pop-up flow](https://developers.google.com/identity/oauth2/web/guides/use-token-model),
+which authenticates and authorizes users.
+
+The drawback of this approach is that the OAuth flow **only returns an `accessToken`**,
+and a synthetic version of the User Data, that does **not include an `idToken`**.
+
+The solution to this is to **migrate your custom "Sign In" buttons in the web to
+the Button Widget provided by this package: `Widget renderButton()`.**
+
+_(Check the [package:google_sign_in example app](https://pub.dev/packages/google_sign_in/example)
+for an example on how to mix the `renderButton` widget on the web, with a custom
+button for the mobile.)_
+
 #### Enable access to the People API for your GCP project
 
-Since the GIS SDK is separating Authentication from Authorization, the
-[Oauth Implicit pop-up flow](https://developers.google.com/identity/oauth2/web/guides/use-token-model)
-used to Authorize scopes does **not** return any Authentication information
-anymore (user credential / `idToken`).
+If you want to use the `signIn` method on the web, the plugin will do an additional
+request to the PeopleAPI to retrieve the logged-in user information (minus the `idToken`).
 
-If the plugin is not able to Authenticate an user from `signInSilently` (the
-OneTap UX flow), it'll add extra `scopes` to those requested by the programmer
-so it can perform a [People API request](https://developers.google.com/people/api/rest/v1/people/get)
-to retrieve basic profile information about the user that is signed-in.
+For this to work, you must enable access to the People API on your Client ID in
+the GCP console.
 
-The information retrieved from the People API is used to complete data for the
-[`GoogleSignInAccount`](https://pub.dev/documentation/google_sign_in/latest/google_sign_in/GoogleSignInAccount-class.html)
-object that is returned after `signIn` completes successfully.
+This is **not recommended**. Ideally, your web application should use a mix of
+`signInSilently` and the Google Sign In web `renderButton` to authenticate your
+users, and then `canAccessScopes` and `requestScopes` to authorize the `scopes`
+that are needed.
 
-#### `signInSilently` always returns `null`
+#### Why is the `idToken` missing after `signIn`?
 
-Previous versions of this plugin were able to return a `GoogleSignInAccount`
-object that was fully populated (signed-in and authorized) from `signInSilently`
-because the former SDK equated "is authenticated" and "is authorized".
-
-With the GIS SDK, `signInSilently` only deals with user Authentication, so users
-retrieved "silently" will only contain an `idToken`, but not an `accessToken`.
-
-Only after `signIn` or `requestScopes`, a user will be fully formed.
-
-The GIS-backed plugin always returns `null` from `signInSilently`, to force apps
-that expect the former logic to perform a full `signIn`, which will result in a
-fully Authenticated and Authorized user, and making this migration easier.
-
-#### `idToken` is `null` in the `GoogleSignInAccount` object after `signIn`
-
-Since the GIS SDK is separating Authentication and Authorization, when a user
-fails to Authenticate through `signInSilently` and the plugin performs the
-fallback request to the People API described above,
-the returned `GoogleSignInUserData` object will contain basic profile information
-(name, email, photo, ID), but its `idToken` will be `null`.
-
-This is because JWT are cryptographically signed by Google Identity Services, and
-this plugin won't spoof that signature when it retrieves the information from a
-simple REST request.
+The `idToken` is cryptographically signed by Google Identity Services, and
+this plugin can't spoof that signature.
 
 #### User Sessions
 
@@ -113,8 +136,8 @@ codes different to `200`. For example:
 * `401`: Missing or invalid access token.
 * `403`: Expired access token.
 
-In either case, your app needs to prompt the end user to `signIn` or
-`requestScopes`, to interactively renew the token.
+In either case, your app needs to prompt the end user to `requestScopes`, to
+**interactively** renew the token.
 
 The GIS SDK limits authorization token duration to one hour (3600 seconds).
 
@@ -124,7 +147,14 @@ The GIS SDK limits authorization token duration to one hour (3600 seconds).
 
 This package is [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
 which means you can simply use `google_sign_in`
-normally. This package will be automatically included in your app when you do.
+normally. This package will be automatically included in your app when you do,
+so you do not need to add it to your `pubspec.yaml`.
+
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
+
+For example, you need to import this package directly if you plan to use the
+web-only `Widget renderButton()` method.
 
 ### Web integration
 

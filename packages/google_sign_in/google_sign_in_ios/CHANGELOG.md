@@ -1,3 +1,42 @@
+## 5.7.2
+
+* Updates `clearAuthCache` override to match base class declaration.
+
+## 5.7.1
+
+* Changes `pigeon` to a dev dependency.
+
+## 5.7.0
+
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 5.6.5
+
+* Upgrades GoogleSignIn iOS SDK to 7.0.
+
+## 5.6.4
+
+* Converts platform communication to Pigeon.
+
+## 5.6.3
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 5.6.2
+
+* Updates functions without a prototype to avoid deprecation warning.
+
+## 5.6.1
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 5.6.0
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
 ## 5.5.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

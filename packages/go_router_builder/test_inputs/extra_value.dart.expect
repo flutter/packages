@@ -1,0 +1,40 @@
+RouteBase get $extraValueRoute => GoRouteData.$route(
+      path: '/default-value-route',
+      factory: $ExtraValueRouteExtension._fromState,
+    );
+
+extension $ExtraValueRouteExtension on ExtraValueRoute {
+  static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
+        param:
+            _$convertMapValue('param', state.uri.queryParameters, int.parse) ??
+                0,
+        $extra: state.extra as int?,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+        queryParams: {
+          if (param != 0) 'param': param.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}

@@ -1,0 +1,22 @@
+RouteBase get $namedRoute => GoRouteData.$route(
+      path: '/named-route',
+      name: 'namedRoute',
+      factory: $NamedRouteExtension._fromState,
+    );
+
+extension $NamedRouteExtension on NamedRoute {
+  static NamedRoute _fromState(GoRouterState state) => NamedRoute();
+
+  String get location => GoRouteData.$location(
+        '/named-route',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}

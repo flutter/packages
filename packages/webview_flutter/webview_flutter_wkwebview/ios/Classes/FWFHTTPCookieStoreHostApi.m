@@ -20,42 +20,27 @@
   return self;
 }
 
-- (WKHTTPCookieStore *)HTTPCookieStoreForIdentifier:(NSNumber *)identifier
-    API_AVAILABLE(ios(11.0)) {
-  return (WKHTTPCookieStore *)[self.instanceManager instanceForIdentifier:identifier.longValue];
+- (WKHTTPCookieStore *)HTTPCookieStoreForIdentifier:(NSInteger)identifier {
+  return (WKHTTPCookieStore *)[self.instanceManager instanceForIdentifier:identifier];
 }
 
-- (void)createFromWebsiteDataStoreWithIdentifier:(nonnull NSNumber *)identifier
-                             dataStoreIdentifier:(nonnull NSNumber *)websiteDataStoreIdentifier
+- (void)createFromWebsiteDataStoreWithIdentifier:(NSInteger)identifier
+                             dataStoreIdentifier:(NSInteger)websiteDataStoreIdentifier
                                            error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
                                                      error {
-  if (@available(iOS 11.0, *)) {
-    WKWebsiteDataStore *dataStore = (WKWebsiteDataStore *)[self.instanceManager
-        instanceForIdentifier:websiteDataStoreIdentifier.longValue];
-    [self.instanceManager addDartCreatedInstance:dataStore.httpCookieStore
-                                  withIdentifier:identifier.longValue];
-  } else {
-    *error = [FlutterError
-        errorWithCode:@"FWFUnsupportedVersionError"
-              message:@"WKWebsiteDataStore.httpCookieStore is only supported on versions 11+."
-              details:nil];
-  }
+  WKWebsiteDataStore *dataStore =
+      (WKWebsiteDataStore *)[self.instanceManager instanceForIdentifier:websiteDataStoreIdentifier];
+  [self.instanceManager addDartCreatedInstance:dataStore.httpCookieStore withIdentifier:identifier];
 }
 
-- (void)setCookieForStoreWithIdentifier:(nonnull NSNumber *)identifier
+- (void)setCookieForStoreWithIdentifier:(NSInteger)identifier
                                  cookie:(nonnull FWFNSHttpCookieData *)cookie
                              completion:(nonnull void (^)(FlutterError *_Nullable))completion {
-  NSHTTPCookie *nsCookie = FWFNSHTTPCookieFromCookieData(cookie);
+  NSHTTPCookie *nsCookie = FWFNativeNSHTTPCookieFromCookieData(cookie);
 
-  if (@available(iOS 11.0, *)) {
-    [[self HTTPCookieStoreForIdentifier:identifier] setCookie:nsCookie
-                                            completionHandler:^{
-                                              completion(nil);
-                                            }];
-  } else {
-    completion([FlutterError errorWithCode:@"FWFUnsupportedVersionError"
-                                   message:@"setCookie is only supported on versions 11+."
-                                   details:nil]);
-  }
+  [[self HTTPCookieStoreForIdentifier:identifier] setCookie:nsCookie
+                                          completionHandler:^{
+                                            completion(nil);
+                                          }];
 }
 @end

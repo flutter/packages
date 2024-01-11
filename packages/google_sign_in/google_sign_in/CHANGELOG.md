@@ -1,3 +1,53 @@
+## 6.2.1
+
+* Improves README example and updates it to use code excerpts.
+
+## 6.2.0
+
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16.
+
+## 6.1.6
+
+* Updates README to direct to google_sign_in_ios README for iOS integration instructions.
+
+## 6.1.5
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 6.1.4
+
+* Adds compatibility with `http` 1.0.
+
+## 6.1.3
+
+* Clarifies `canAccessScopes` method documentation.
+
+## 6.1.2
+
+* Fixes unawaited_futures violations.
+
+## 6.1.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 6.1.0
+
+* Exposes the new method `canAccessScopes`.
+  * This method is only needed, and implemented, on the web platform.
+    * Other platforms will throw an `UnimplementedError`.
+* Updates example app to separate Authentication from Authorization for those
+  platforms where scopes are not automatically granted upon `signIn` (like the web).
+  * When `signInSilently` is successful, it returns a User object again on the web.
+  * Updates README with information about these changes.
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
+## 6.0.2
+
+* Updates iOS minimum version in README.
+
 ## 6.0.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

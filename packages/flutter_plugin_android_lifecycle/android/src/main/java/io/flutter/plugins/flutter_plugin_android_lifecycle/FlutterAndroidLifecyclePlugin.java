@@ -15,7 +15,8 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
  */
 public class FlutterAndroidLifecyclePlugin implements FlutterPlugin {
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     // no-op
   }
 

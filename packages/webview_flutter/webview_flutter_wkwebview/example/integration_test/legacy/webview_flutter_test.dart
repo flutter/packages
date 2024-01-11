@@ -9,9 +9,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +26,7 @@ Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
-  server.forEach((HttpRequest request) {
+  unawaited(server.forEach((HttpRequest request) {
     if (request.uri.path == '/hello.txt') {
       request.response.writeln('Hello, world.');
     } else if (request.uri.path == '/secondary.txt') {
@@ -42,7 +39,7 @@ Future<void> main() async {
       fail('unexpected request: ${request.method} ${request.uri}');
     }
     request.response.close();
-  });
+  }));
   final String prefixUrl = 'http://${server.address.address}:${server.port}';
   final String primaryUrl = '$prefixUrl/hello.txt';
   final String secondaryUrl = '$prefixUrl/secondary.txt';
@@ -173,11 +170,9 @@ Future<void> main() async {
       'test_header': 'flutter_test_header'
     };
     await controller.loadUrl(headersUrl, headers: headers);
-    final String? currentUrl = await controller.currentUrl();
-    expect(currentUrl, headersUrl);
 
-    await pageStarts.stream.firstWhere((String url) => url == currentUrl);
-    await pageLoads.stream.firstWhere((String url) => url == currentUrl);
+    await pageStarts.stream.firstWhere((String url) => url == headersUrl);
+    await pageLoads.stream.firstWhere((String url) => url == headersUrl);
 
     final String content = await controller
         .runJavascriptReturningResult('document.documentElement.innerText');
@@ -1209,8 +1204,7 @@ Future<String> _getUserAgent(WebViewController controller) async {
 
 class ResizableWebView extends StatefulWidget {
   const ResizableWebView(
-      {Key? key, required this.onResize, required this.onPageFinished})
-      : super(key: key);
+      {super.key, required this.onResize, required this.onPageFinished});
 
   final JavascriptMessageHandler onResize;
   final VoidCallback onPageFinished;
@@ -1294,7 +1288,7 @@ class CopyableObjectWithCallback with Copyable {
 class ClassWithCallbackClass {
   ClassWithCallbackClass() {
     callbackClass = CopyableObjectWithCallback(
-      withWeakRefenceTo(
+      withWeakReferenceTo(
         this,
         (WeakReference<ClassWithCallbackClass> weakReference) {
           return () {

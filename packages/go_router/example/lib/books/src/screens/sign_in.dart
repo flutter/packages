@@ -21,8 +21,8 @@ class SignInScreen extends StatefulWidget {
   /// Creates a sign-in screen.
   const SignInScreen({
     required this.onSignIn,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// Called when users sign in with [Credentials].
   final ValueChanged<Credentials> onSignIn;

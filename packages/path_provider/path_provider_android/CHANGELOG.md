@@ -1,3 +1,44 @@
+## 2.2.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates annotations lib to 1.7.1.
+
+## 2.2.1
+
+* Updates annotations lib to 1.7.0.
+
+## 2.2.0
+
+* Adds implementation of `getDownloadsDirectory()`.
+
+## 2.1.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.1.0
+
+* Adds getApplicationCachePath() for storing app-specific cache files.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.0.27
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.0.26
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 2.0.25
+
+* Fixes Java warnings.
+
+## 2.0.24
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
+
 ## 2.0.23
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -55,8 +53,8 @@ public class MainActivityTest {
     }
 
     test('fails if gcloud auth fails', () async {
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(exitCode: 1)
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['auth'])
       ];
 
       const String javaTestFileRelativePath =
@@ -70,8 +68,11 @@ public class MainActivityTest {
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
       Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['firebase-test-lab'], errorHandler: (Error e) {
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'firebase-test-lab',
+        '--results-bucket=a_bucket',
+        '--service-key=/path/to/key',
+      ], errorHandler: (Error e) {
         commandError = e;
       });
 
@@ -84,9 +85,9 @@ public class MainActivityTest {
     });
 
     test('retries gcloud set', () async {
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(), // auth
-        MockProcess(exitCode: 1), // config
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['auth']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['config']),
       ];
 
       const String javaTestFileRelativePath =
@@ -99,8 +100,12 @@ public class MainActivityTest {
       ]);
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['firebase-test-lab']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'firebase-test-lab',
+        '--results-bucket=a_bucket',
+        '--service-key=/path/to/key',
+        '--project=a-project'
+      ]);
 
       expect(
           output,
@@ -132,6 +137,9 @@ public class MainActivityTest {
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
+        '--project=a-project',
+        '--service-key=/path/to/key',
         '--device',
         'model=redfin,version=30',
         '--device',
@@ -158,11 +166,11 @@ public class MainActivityTest {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               'gcloud',
-              'auth activate-service-account --key-file=${Platform.environment['HOME']}/gcloud-service-key.json'
+              'auth activate-service-account --key-file=/path/to/key'
                   .split(' '),
               null),
           ProcessCall(
-              'gcloud', 'config set project flutter-cirrus'.split(' '), null),
+              'gcloud', 'config set project a-project'.split(' '), null),
           ProcessCall(
               '/packages/plugin1/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -174,7 +182,7 @@ public class MainActivityTest {
               '/packages/plugin1/example/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin1/buildId/testRunId/example/0/ --device model=redfin,version=30 --device model=seoul,version=26'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin1/buildId/testRunId/example/0/ --device model=redfin,version=30 --device model=seoul,version=26'
                   .split(' '),
               '/packages/plugin1/example'),
           ProcessCall(
@@ -188,7 +196,7 @@ public class MainActivityTest {
               '/packages/plugin2/example/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin2/buildId/testRunId/example/0/ --device model=redfin,version=30 --device model=seoul,version=26'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin2/buildId/testRunId/example/0/ --device model=redfin,version=30 --device model=seoul,version=26'
                   .split(' '),
               '/packages/plugin2/example'),
         ]),
@@ -211,6 +219,7 @@ public class MainActivityTest {
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
         '--device',
         'model=redfin,version=30',
         '--device',
@@ -225,7 +234,6 @@ public class MainActivityTest {
         output,
         containsAllInOrder(<Matcher>[
           contains('Running for plugin'),
-          contains('Firebase project configured.'),
           contains('Testing example/integration_test/bar_test.dart...'),
           contains('Testing example/integration_test/foo_test.dart...'),
         ]),
@@ -238,13 +246,6 @@ public class MainActivityTest {
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall(
-              'gcloud',
-              'auth activate-service-account --key-file=${Platform.environment['HOME']}/gcloud-service-key.json'
-                  .split(' '),
-              null),
-          ProcessCall(
-              'gcloud', 'config set project flutter-cirrus'.split(' '), null),
-          ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
               '/packages/plugin/example/android'),
@@ -255,7 +256,7 @@ public class MainActivityTest {
               '/packages/plugin/example/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin/buildId/testRunId/example/0/ --device model=redfin,version=30 --device model=seoul,version=26'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin/buildId/testRunId/example/0/ --device model=redfin,version=30 --device model=seoul,version=26'
                   .split(' '),
               '/packages/plugin/example'),
           ProcessCall(
@@ -265,7 +266,7 @@ public class MainActivityTest {
               '/packages/plugin/example/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin/buildId/testRunId/example/1/ --device model=redfin,version=30 --device model=seoul,version=26'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin/buildId/testRunId/example/1/ --device model=redfin,version=30 --device model=seoul,version=26'
                   .split(' '),
               '/packages/plugin/example'),
         ]),
@@ -292,6 +293,7 @@ public class MainActivityTest {
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
         '--device',
         'model=redfin,version=30',
         '--device',
@@ -320,7 +322,7 @@ public class MainActivityTest {
               '/packages/plugin/example/example1/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin/buildId/testRunId/example1/0/ --device model=redfin,version=30 --device model=seoul,version=26'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin/buildId/testRunId/example1/0/ --device model=redfin,version=30 --device model=seoul,version=26'
                   .split(' '),
               '/packages/plugin/example/example1'),
           ProcessCall(
@@ -330,7 +332,7 @@ public class MainActivityTest {
               '/packages/plugin/example/example2/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin/buildId/testRunId/example2/0/ --device model=redfin,version=30 --device model=seoul,version=26'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin/buildId/testRunId/example2/0/ --device model=redfin,version=30 --device model=seoul,version=26'
                   .split(' '),
               '/packages/plugin/example/example2'),
         ]),
@@ -349,12 +351,13 @@ public class MainActivityTest {
       ]);
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(), // auth
-        MockProcess(), // config
-        MockProcess(exitCode: 1), // integration test #1
-        MockProcess(exitCode: 1), // integration test #1 retry
-        MockProcess(), // integration test #2
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1),
+            <String>['firebase', 'test']), // integration test #1
+        FakeProcessInfo(MockProcess(exitCode: 1),
+            <String>['firebase', 'test']), // integration test #1 retry
+        FakeProcessInfo(
+            MockProcess(), <String>['firebase', 'test']), // integration test #2
       ];
 
       Error? commandError;
@@ -362,6 +365,7 @@ public class MainActivityTest {
         runner,
         <String>[
           'firebase-test-lab',
+          '--results-bucket=a_bucket',
           '--device',
           'model=redfin,version=30',
         ],
@@ -395,16 +399,18 @@ public class MainActivityTest {
       ]);
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(), // auth
-        MockProcess(), // config
-        MockProcess(exitCode: 1), // integration test #1
-        MockProcess(), // integration test #1 retry
-        MockProcess(), // integration test #2
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1),
+            <String>['firebase', 'test']), // integration test #1
+        FakeProcessInfo(MockProcess(),
+            <String>['firebase', 'test']), // integration test #1 retry
+        FakeProcessInfo(
+            MockProcess(), <String>['firebase', 'test']), // integration test #2
       ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
         '--device',
         'model=redfin,version=30',
       ]);
@@ -431,6 +437,7 @@ public class MainActivityTest {
         runner,
         <String>[
           'firebase-test-lab',
+          '--results-bucket=a_bucket',
           '--device',
           'model=redfin,version=30',
         ],
@@ -461,6 +468,7 @@ public class MainActivityTest {
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
         '--device',
         'model=redfin,version=30',
       ]);
@@ -491,6 +499,7 @@ public class MainActivityTest {
         runner,
         <String>[
           'firebase-test-lab',
+          '--results-bucket=a_bucket',
           '--device',
           'model=redfin,version=30',
         ],
@@ -533,6 +542,7 @@ public class MainActivityTest {
         runner,
         <String>[
           'firebase-test-lab',
+          '--results-bucket=a_bucket',
           '--device',
           'model=redfin,version=30',
         ],
@@ -561,6 +571,7 @@ public class MainActivityTest {
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
         '--device',
         'model=redfin,version=30',
       ]);
@@ -593,6 +604,7 @@ public class MainActivityTest {
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
         '--device',
         'model=redfin,version=30',
         '--test-run-id',
@@ -606,7 +618,6 @@ public class MainActivityTest {
         containsAllInOrder(<Matcher>[
           contains('Running for plugin'),
           contains('Running flutter build apk...'),
-          contains('Firebase project configured.'),
           contains('Testing example/integration_test/foo_test.dart...'),
         ]),
       );
@@ -616,16 +627,9 @@ public class MainActivityTest {
         orderedEquals(<ProcessCall>[
           ProcessCall(
             'flutter',
-            'build apk'.split(' '),
+            'build apk --config-only'.split(' '),
             '/packages/plugin/example/android',
           ),
-          ProcessCall(
-              'gcloud',
-              'auth activate-service-account --key-file=${Platform.environment['HOME']}/gcloud-service-key.json'
-                  .split(' '),
-              null),
-          ProcessCall(
-              'gcloud', 'config set project flutter-cirrus'.split(' '), null),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -637,7 +641,7 @@ public class MainActivityTest {
               '/packages/plugin/example/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin/buildId/testRunId/example/0/ --device model=redfin,version=30'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin/buildId/testRunId/example/0/ --device model=redfin,version=30'
                   .split(' '),
               '/packages/plugin/example'),
         ]),
@@ -654,8 +658,8 @@ public class MainActivityTest {
       ]);
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      processRunner.mockProcessesForExecutable['flutter'] = <Process>[
-        MockProcess(exitCode: 1) // flutter build
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['build'])
       ];
 
       Error? commandError;
@@ -663,6 +667,7 @@ public class MainActivityTest {
         runner,
         <String>[
           'firebase-test-lab',
+          '--results-bucket=a_bucket',
           '--device',
           'model=redfin,version=30',
         ],
@@ -695,8 +700,9 @@ public class MainActivityTest {
           .platformDirectory(FlutterPlatform.android)
           .childFile('gradlew')
           .path;
-      processRunner.mockProcessesForExecutable[gradlewPath] = <Process>[
-        MockProcess(exitCode: 1)
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['app:assembleAndroidTest']),
       ];
 
       Error? commandError;
@@ -704,6 +710,7 @@ public class MainActivityTest {
         runner,
         <String>[
           'firebase-test-lab',
+          '--results-bucket=a_bucket',
           '--device',
           'model=redfin,version=30',
         ],
@@ -736,9 +743,9 @@ public class MainActivityTest {
           .platformDirectory(FlutterPlatform.android)
           .childFile('gradlew')
           .path;
-      processRunner.mockProcessesForExecutable[gradlewPath] = <Process>[
-        MockProcess(), // assembleAndroidTest
-        MockProcess(exitCode: 1), // assembleDebug
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['app:assembleAndroidTest']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['app:assembleDebug'])
       ];
 
       Error? commandError;
@@ -746,6 +753,7 @@ public class MainActivityTest {
         runner,
         <String>[
           'firebase-test-lab',
+          '--results-bucket=a_bucket',
           '--device',
           'model=redfin,version=30',
         ],
@@ -778,6 +786,7 @@ public class MainActivityTest {
 
       await runCapturingPrint(runner, <String>[
         'firebase-test-lab',
+        '--results-bucket=a_bucket',
         '--device',
         'model=redfin,version=30',
         '--test-run-id',
@@ -791,13 +800,6 @@ public class MainActivityTest {
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall(
-              'gcloud',
-              'auth activate-service-account --key-file=${Platform.environment['HOME']}/gcloud-service-key.json'
-                  .split(' '),
-              null),
-          ProcessCall(
-              'gcloud', 'config set project flutter-cirrus'.split(' '), null),
-          ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true -Pextra-front-end-options=--enable-experiment%3Dexp1 -Pextra-gen-snapshot-options=--enable-experiment%3Dexp1'
                   .split(' '),
@@ -809,7 +811,7 @@ public class MainActivityTest {
               '/packages/plugin/example/android'),
           ProcessCall(
               'gcloud',
-              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://flutter_cirrus_testlab --results-dir=plugins_android_test/plugin/buildId/testRunId/example/0/ --device model=redfin,version=30'
+              'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin/buildId/testRunId/example/0/ --device model=redfin,version=30'
                   .split(' '),
               '/packages/plugin/example'),
         ]),

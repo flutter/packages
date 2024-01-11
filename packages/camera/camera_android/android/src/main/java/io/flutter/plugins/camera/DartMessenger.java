@@ -19,14 +19,14 @@ import java.util.Map;
 /** Utility class that facilitates communication to the Flutter client */
 public class DartMessenger {
   @NonNull private final Handler handler;
-  @Nullable private MethodChannel cameraChannel;
-  @Nullable private MethodChannel deviceChannel;
+  @Nullable MethodChannel cameraChannel;
+  @Nullable MethodChannel deviceChannel;
 
   /** Specifies the different device related message types. */
   enum DeviceEventType {
     /** Indicates the device's orientation has changed. */
     ORIENTATION_CHANGED("orientation_changed");
-    private final String method;
+    final String method;
 
     DeviceEventType(String method) {
       this.method = method;
@@ -42,7 +42,7 @@ public class DartMessenger {
     /** Indicates that the camera is initialized. */
     INITIALIZED("initialized");
 
-    private final String method;
+    final String method;
 
     /**
      * Converts the supplied method name to the matching {@link CameraEventType}.
@@ -75,8 +75,8 @@ public class DartMessenger {
    *
    * @param orientation specifies the new orientation of the device.
    */
-  public void sendDeviceOrientationChangeEvent(PlatformChannel.DeviceOrientation orientation) {
-    assert (orientation != null);
+  public void sendDeviceOrientationChangeEvent(
+      @NonNull PlatformChannel.DeviceOrientation orientation) {
     this.send(
         DeviceEventType.ORIENTATION_CHANGED,
         new HashMap<String, Object>() {
@@ -171,13 +171,7 @@ public class DartMessenger {
       return;
     }
 
-    handler.post(
-        new Runnable() {
-          @Override
-          public void run() {
-            deviceChannel.invokeMethod(eventType.method, args);
-          }
-        });
+    handler.post(() -> deviceChannel.invokeMethod(eventType.method, args));
   }
 
   /**
@@ -185,7 +179,7 @@ public class DartMessenger {
    *
    * @param payload The payload to send.
    */
-  public void finish(MethodChannel.Result result, Object payload) {
+  public void finish(@NonNull MethodChannel.Result result, @Nullable Object payload) {
     handler.post(() -> result.success(payload));
   }
 
@@ -197,8 +191,8 @@ public class DartMessenger {
    * @param errorDetails error details.
    */
   public void error(
-      MethodChannel.Result result,
-      String errorCode,
+      @NonNull MethodChannel.Result result,
+      @NonNull String errorCode,
       @Nullable String errorMessage,
       @Nullable Object errorDetails) {
     handler.post(() -> result.error(errorCode, errorMessage, errorDetails));

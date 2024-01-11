@@ -1,13 +1,18 @@
 # google_maps_flutter_web
 
-This is an implementation of the [google_maps_flutter](https://pub.dev/packages/google_maps_flutter) plugin for web. Behind the scenes, it uses a14n's [google_maps](https://pub.dev/packages/google_maps) dart JS interop layer.
+The web implementation of [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
+
+Powered by [a14n](https://github.com/a14n)'s [google_maps](https://pub.dev/packages/google_maps) Dart JS interop layer.
 
 ## Usage
 
-### Depend on the package
+This package is [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
+which means you can simply use `google_maps_flutter` normally. This package will
+be automatically included in your app when you do, so you do not need to add it
+to your `pubspec.yaml`.
 
-This package is not an endorsed implementation of the google_maps_flutter plugin yet, so you'll need to 
-[add it explicitly](https://pub.dev/packages/google_maps_flutter_web/install).
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
 
 ### Modify web/index.html
 
@@ -22,6 +27,25 @@ Modify the `<head>` tag of your `web/index.html` to load the Google Maps JavaScr
 
   <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
 </head>
+```
+
+The Google Maps Web SDK splits some of its functionality in [separate libraries](https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import).
+
+If your app needs the `drawing` library (to draw polygons, rectangles, polylines,
+circles or markers on a map), include it like this:
+
+```html
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
+</script>
+```
+
+To request multiple libraries, separate them with commas:
+
+```html
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,visualization,places">
+</script>
 ```
 
 Now you should be able to use the Google Maps plugin normally.

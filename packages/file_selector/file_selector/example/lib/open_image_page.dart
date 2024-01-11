@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 /// Screen that shows an example of openFiles
 class OpenImagePage extends StatelessWidget {
   /// Default Constructor
-  const OpenImagePage({Key? key}) : super(key: key);
+  const OpenImagePage({super.key});
 
   Future<void> _openImageFile(BuildContext context) async {
     // #docregion SingleOpen
@@ -49,11 +49,8 @@ class OpenImagePage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                // ignore: deprecated_member_use
-                primary: Colors.blue,
-                // ignore: deprecated_member_use
-                onPrimary: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               child: const Text('Press to open an image file(png, jpg)'),
               onPressed: () => _openImageFile(context),
@@ -68,8 +65,7 @@ class OpenImagePage extends StatelessWidget {
 /// Widget that displays a text file in a dialog
 class ImageDisplay extends StatelessWidget {
   /// Default Constructor
-  const ImageDisplay(this.fileName, this.filePath, {Key? key})
-      : super(key: key);
+  const ImageDisplay(this.fileName, this.filePath, {super.key});
 
   /// Image's name
   final String fileName;

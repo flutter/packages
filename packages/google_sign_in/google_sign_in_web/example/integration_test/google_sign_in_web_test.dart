@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -11,9 +13,9 @@ import 'package:google_sign_in_web/src/people.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart' as mockito;
+import 'package:web/web.dart' as web;
 
 import 'google_sign_in_web_test.mocks.dart';
-import 'src/dom.dart';
 import 'src/person.dart';
 
 // Mock GisSdkClient so we can simulate any response from the JS side.
@@ -34,12 +36,12 @@ void main() {
       expect(plugin.autoDetectedClientId, isNull);
 
       // Add it to the test page now, and try again
-      final DomHtmlMetaElement meta =
-          document.createElement('meta') as DomHtmlMetaElement
+      final web.HTMLMetaElement meta =
+          web.document.createElement('meta') as web.HTMLMetaElement
             ..name = clientIdMetaName
             ..content = expectedClientId;
 
-      document.head.appendChild(meta);
+      web.document.head!.appendChild(meta);
 
       final GoogleSignInPlugin another = GoogleSignInPlugin(
         debugOverrideLoader: true,
@@ -57,10 +59,11 @@ void main() {
     late MockGisSdkClient mockGis;
 
     setUp(() {
+      mockGis = MockGisSdkClient();
       plugin = GoogleSignInPlugin(
         debugOverrideLoader: true,
+        debugOverrideGisSdkClient: mockGis,
       );
-      mockGis = MockGisSdkClient();
     });
 
     testWidgets('initializes if all is OK', (_) async {
@@ -69,7 +72,6 @@ void main() {
           clientId: 'some-non-null-client-id',
           scopes: <String>['ok1', 'ok2', 'ok3'],
         ),
-        overrideClient: mockGis,
       );
 
       expect(plugin.initialized, completes);
@@ -79,7 +81,6 @@ void main() {
       expect(() async {
         await plugin.initWithParams(
           const SignInInitParameters(),
-          overrideClient: mockGis,
         );
       }, throwsAssertionError);
     });
@@ -91,7 +92,6 @@ void main() {
             clientId: 'some-non-null-client-id',
             serverClientId: 'unexpected-non-null-client-id',
           ),
-          overrideClient: mockGis,
         );
       }, throwsAssertionError);
     });
@@ -103,7 +103,6 @@ void main() {
             clientId: 'some-non-null-client-id',
             scopes: <String>['ok1', 'ok2', 'not ok', 'ok3'],
           ),
-          overrideClient: mockGis,
         );
       }, throwsAssertionError);
     });
@@ -140,6 +139,10 @@ void main() {
       expect(() async {
         await plugin.requestScopes(<String>[]);
       }, throwsStateError);
+
+      expect(() async {
+        await plugin.canAccessScopes(<String>[]);
+      }, throwsStateError);
     });
   });
 
@@ -152,37 +155,38 @@ void main() {
     );
 
     setUp(() {
+      mockGis = MockGisSdkClient();
       plugin = GoogleSignInPlugin(
         debugOverrideLoader: true,
+        debugOverrideGisSdkClient: mockGis,
       );
-      mockGis = MockGisSdkClient();
     });
 
     group('signInSilently', () {
       setUp(() {
-        plugin.initWithParams(options, overrideClient: mockGis);
+        plugin.initWithParams(options);
       });
 
-      testWidgets('always returns null, regardless of GIS response', (_) async {
+      testWidgets('returns the GIS response', (_) async {
         final GoogleSignInUserData someUser = extractUserData(person)!;
 
         mockito
             .when(mockGis.signInSilently())
-            .thenAnswer((_) => Future<GoogleSignInUserData>.value(someUser));
+            .thenAnswer((_) => Future<GoogleSignInUserData?>.value(someUser));
 
-        expect(plugin.signInSilently(), completion(isNull));
+        expect(await plugin.signInSilently(), someUser);
 
         mockito
             .when(mockGis.signInSilently())
             .thenAnswer((_) => Future<GoogleSignInUserData?>.value());
 
-        expect(plugin.signInSilently(), completion(isNull));
+        expect(await plugin.signInSilently(), isNull);
       });
     });
 
     group('signIn', () {
       setUp(() {
-        plugin.initWithParams(options, overrideClient: mockGis);
+        plugin.initWithParams(options);
       });
 
       testWidgets('returns the signed-in user', (_) async {
@@ -214,6 +218,84 @@ void main() {
           expect((exception as PlatformException).code, 'popup_closed');
         }
       });
+    });
+
+    group('canAccessScopes', () {
+      const String someAccessToken = '50m3_4cc35_70k3n';
+      const List<String> scopes = <String>['scope1', 'scope2'];
+
+      setUp(() {
+        plugin.initWithParams(options);
+      });
+
+      testWidgets('passes-through call to gis client', (_) async {
+        mockito
+            .when(
+              mockGis.canAccessScopes(mockito.captureAny, mockito.captureAny),
+            )
+            .thenAnswer((_) => Future<bool>.value(true));
+
+        final bool canAccess =
+            await plugin.canAccessScopes(scopes, accessToken: someAccessToken);
+
+        final List<Object?> arguments = mockito
+            .verify(
+              mockGis.canAccessScopes(mockito.captureAny, mockito.captureAny),
+            )
+            .captured;
+
+        expect(canAccess, isTrue);
+
+        expect(arguments.first, scopes);
+        expect(arguments.elementAt(1), someAccessToken);
+      });
+    });
+
+    group('requestServerAuthCode', () {
+      const String someAuthCode = '50m3_4u7h_c0d3';
+
+      setUp(() {
+        plugin.initWithParams(options);
+      });
+
+      testWidgets('passes-through call to gis client', (_) async {
+        mockito
+            .when(mockGis.requestServerAuthCode())
+            .thenAnswer((_) => Future<String>.value(someAuthCode));
+
+        final String? serverAuthCode = await plugin.requestServerAuthCode();
+
+        expect(serverAuthCode, someAuthCode);
+      });
+    });
+  });
+
+  group('userDataEvents', () {
+    final StreamController<GoogleSignInUserData?> controller =
+        StreamController<GoogleSignInUserData?>.broadcast();
+    late GoogleSignInPlugin plugin;
+
+    setUp(() {
+      plugin = GoogleSignInPlugin(
+        debugOverrideLoader: true,
+        debugOverrideUserDataController: controller,
+      );
+    });
+
+    testWidgets('accepts async user data events from GIS.', (_) async {
+      final Future<GoogleSignInUserData?> data = plugin.userDataEvents!.first;
+
+      final GoogleSignInUserData expected = extractUserData(person)!;
+      controller.add(expected);
+
+      expect(await data, expected,
+          reason: 'Sign-in events should be propagated');
+
+      final Future<GoogleSignInUserData?> more = plugin.userDataEvents!.first;
+      controller.add(null);
+
+      expect(await more, isNull,
+          reason: 'Sign-out events can also be propagated');
     });
   });
 }

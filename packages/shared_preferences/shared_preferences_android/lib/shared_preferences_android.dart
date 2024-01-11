@@ -2,52 +2,101 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
-const MethodChannel _kChannel =
-    MethodChannel('plugins.flutter.io/shared_preferences_android');
+import 'src/messages.g.dart';
 
 /// The Android implementation of [SharedPreferencesStorePlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for Android.
 class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
+  /// Creates a new plugin implementation instance.
+  SharedPreferencesAndroid({
+    @visibleForTesting SharedPreferencesApi? api,
+  }) : _api = api ?? SharedPreferencesApi();
+
+  final SharedPreferencesApi _api;
+
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid();
   }
 
+  static const String _defaultPrefix = 'flutter.';
+
   @override
   Future<bool> remove(String key) async {
-    return (await _kChannel.invokeMethod<bool>(
-      'remove',
-      <String, dynamic>{'key': key},
-    ))!;
+    return _api.remove(key);
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
-    return (await _kChannel.invokeMethod<bool>(
-      'set$valueType',
-      <String, dynamic>{'key': key, 'value': value},
-    ))!;
+    switch (valueType) {
+      case 'String':
+        return _api.setString(key, value as String);
+      case 'Bool':
+        return _api.setBool(key, value as bool);
+      case 'Int':
+        return _api.setInt(key, value as int);
+      case 'Double':
+        return _api.setDouble(key, value as double);
+      case 'StringList':
+        return _api.setStringList(key, value as List<String>);
+    }
+    // TODO(tarrinneal): change to ArgumentError across all platforms.
+    throw PlatformException(
+        code: 'InvalidOperation',
+        message: '"$valueType" is not a supported type.');
   }
 
   @override
   Future<bool> clear() async {
-    return (await _kChannel.invokeMethod<bool>('clear'))!;
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    return _api.clear(
+      filter.prefix,
+      filter.allowList?.toList(),
+    );
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    final Map<String, Object>? preferences =
-        await _kChannel.invokeMapMethod<String, Object>('getAll');
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
 
-    if (preferences == null) {
-      return <String, Object>{};
-    }
-    return preferences;
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    final Map<String?, Object?> data =
+        await _api.getAll(filter.prefix, filter.allowList?.toList());
+    return data.cast<String, Object>();
   }
 }

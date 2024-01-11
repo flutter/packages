@@ -2,16 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// Key for APK.
@@ -39,20 +36,23 @@ const String _flutterBuildTypeMacOS = 'macos';
 const String _flutterBuildTypeWeb = 'web';
 const String _flutterBuildTypeWindows = 'windows';
 
+const String _flutterBuildTypeAndroidAlias = 'android';
+
 /// A command to build the example applications for packages.
 class BuildExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the build command.
   BuildExamplesCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addFlag(platformLinux);
     argParser.addFlag(platformMacOS);
     argParser.addFlag(platformWeb);
     argParser.addFlag(platformWindows);
     argParser.addFlag(platformIOS);
-    argParser.addFlag(_platformFlagApk);
+    argParser.addFlag(_platformFlagApk,
+        aliases: const <String>[_flutterBuildTypeAndroidAlias]);
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
@@ -176,9 +176,8 @@ class BuildExamplesCommand extends PackageLoopingCommand {
         // supported platforms. For packages, just log and skip any requested
         // platform that a package doesn't have set up.
         if (!isPlugin &&
-            !example.directory
-                .childDirectory(platform.flutterPlatformDirectory)
-                .existsSync()) {
+            !example.appSupportsPlatform(
+                getPlatformByName(platform.pluginPlatform))) {
           print('Skipping ${platform.label} for $packageName; not supported.');
           continue;
         }
@@ -303,11 +302,6 @@ class _PlatformDetails {
 
   /// The `flutter build` build type.
   final String flutterBuildType;
-
-  /// The Flutter platform directory name.
-  // In practice, this is the same as the plugin platform key for all platforms.
-  // If that changes, this can be adjusted.
-  String get flutterPlatformDirectory => pluginPlatform;
 
   /// Any extra flags to pass to `flutter build`.
   final List<String> extraBuildFlags;

@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:math';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#106316)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -221,8 +218,7 @@ void main() {
         );
 
         verify(mockWebViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<
-                WKAudiovisualMediaType>{
+            .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
           WKAudiovisualMediaType.all,
         }));
       });
@@ -240,8 +236,7 @@ void main() {
         );
 
         verify(mockWebViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<
-                WKAudiovisualMediaType>{
+            .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
           WKAudiovisualMediaType.none,
         }));
       });
@@ -658,7 +653,7 @@ void main() {
         // objects to strings before returning them to Dart. This verifies
         // double is represented the way it is in Objective-C. If a double
         // doesn't contain any decimal values, it gets truncated to an int.
-        // This should be happenning because NSNumber convertes float values
+        // This should be happening because NSNumber converts float values
         // with no decimals to an int when using `NSNumber.description`.
         expect(
           testController.evaluateJavascript('runJavaScript'),
@@ -779,7 +774,6 @@ void main() {
           details: const NSError(
             code: WKErrorCode.javaScriptResultTypeIsUnsupported,
             domain: '',
-            localizedDescription: '',
           ),
         ));
         expect(
@@ -1051,7 +1045,9 @@ void main() {
           const NSError(
             code: WKErrorCode.webViewInvalidated,
             domain: 'domain',
-            localizedDescription: 'my desc',
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+            },
           ),
         );
 
@@ -1088,7 +1084,9 @@ void main() {
           const NSError(
             code: WKErrorCode.webContentProcessTerminated,
             domain: 'domain',
-            localizedDescription: 'my desc',
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+            },
           ),
         );
 

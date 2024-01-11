@@ -1,3 +1,110 @@
+## 0.3.0+17
+
+* Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.
+
+## 0.3.0+16
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 0.3.0+15
+
+* Adds missing network error response code to BillingResponse enum.
+
+## 0.3.0+14
+
+* Updates annotations lib to 1.7.0.
+
+## 0.3.0+13
+
+* Updates example code for current versions of Flutter.
+
+## 0.3.0+12
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.0+11
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
+## 0.3.0+10
+
+* Bumps com.android.billingclient:billing from 6.0.0 to 6.0.1.
+
+## 0.3.0+9
+
+* Bumps com.android.billingclient:billing from 5.2.0 to 6.0.0.
+
+## 0.3.0+8
+
+* Adds a [guide for migrating](migration_guide.md) to [0.3.0](#0.3.0).
+
+## 0.3.0+7
+
+* Bumps org.mockito:mockito-core from 4.7.0 to 5.3.1.
+
+## 0.3.0+6
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.21 to 1.8.22.
+
+## 0.3.0+5
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.0 to 1.8.21.
+
+## 0.3.0+4
+
+* Fixes unawaited_futures violations.
+
+## 0.3.0+3
+
+* Fixes Java lint issues.
+
+## 0.3.0+2
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.3.0+1
+
+* Fixes misaligned method signature strings.
+
+## 0.3.0
+
+* **BREAKING CHANGE**: Removes `launchPriceChangeConfirmationFlow` from `InAppPurchaseAndroidPlatform`. Price changes are now [handled by Google Play](https://developer.android.com/google/play/billing/subscriptions#price-change).
+* Returns both base plans and offers when `queryProductDetailsAsync` is called.
+
+## 0.2.5+5
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 0.2.5+4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.2.5+3
+
+* Updates com.android.billingclient:billing from 5.1.0 to 5.2.0.
+
+## 0.2.5+2
+
+* Updates androidx.annotation:annotation from 1.5.0 to 1.6.0.
+
+## 0.2.5+1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 0.2.5
+
+* Fixes the management of `BillingClient` connection by handling `BillingResponse.serviceDisconnected`.
+* Introduces `BillingClientManager`.
+* Updates minimum Flutter version to 3.3.
+
+## 0.2.4+3
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
+
 ## 0.2.4+2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

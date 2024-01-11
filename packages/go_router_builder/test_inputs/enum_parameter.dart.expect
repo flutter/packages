@@ -1,0 +1,34 @@
+RouteBase get $enumParam => GoRouteData.$route(
+      path: '/:y',
+      factory: $EnumParamExtension._fromState,
+    );
+
+extension $EnumParamExtension on EnumParam {
+  static EnumParam _fromState(GoRouterState state) => EnumParam(
+        y: _$EnumTestEnumMap._$fromName(state.pathParameters['y']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/${Uri.encodeComponent(_$EnumTestEnumMap[y]!)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+const _$EnumTestEnumMap = {
+  EnumTest.a: 'a',
+  EnumTest.b: 'b',
+  EnumTest.c: 'c',
+};
+
+extension<T extends Enum> on Map<T, String> {
+  T _$fromName(String value) =>
+      entries.singleWhere((element) => element.value == value).key;
+}

@@ -5,6 +5,7 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:path_provider_foundation/path_provider_foundation.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 void main() {
@@ -28,6 +29,12 @@ void main() {
     _verifySampleFile(result, 'applicationSupport');
   });
 
+  testWidgets('getApplicationCacheDirectory', (WidgetTester tester) async {
+    final PathProviderPlatform provider = PathProviderPlatform.instance;
+    final String? result = await provider.getApplicationCachePath();
+    _verifySampleFile(result, 'applicationCache');
+  });
+
   testWidgets('getLibraryDirectory', (WidgetTester tester) async {
     final PathProviderPlatform provider = PathProviderPlatform.instance;
     final String? result = await provider.getLibraryPath();
@@ -40,6 +47,15 @@ void main() {
     // _verifySampleFile causes hangs in driver for some reason, so just
     // validate that a non-empty path was returned.
     expect(result, isNotEmpty);
+  });
+
+  testWidgets('getContainerDirectory', (WidgetTester tester) async {
+    if (Platform.isIOS) {
+      final PathProviderFoundation provider = PathProviderFoundation();
+      final String? result = await provider.getContainerPath(
+          appGroupIdentifier: 'group.flutter.appGroupTest');
+      _verifySampleFile(result, 'appGroup');
+    }
   });
 }
 

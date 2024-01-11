@@ -30,17 +30,16 @@ void main() {
 
     // Setting up a handler requires bindings to be initialized, and since
     // registerWith is called very early in initialization the bindings won't
-    // have been initialized. While registerWith could intialize them, that
+    // have been initialized. While registerWith could initialize them, that
     // could slow down startup, so instead the handler should be set up lazily.
-    final ByteData? response =
-        await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
-            .handlePlatformMessage(
-                AndroidCamera.deviceEventChannelName,
-                const StandardMethodCodec().encodeMethodCall(const MethodCall(
-                    'orientation_changed',
-                    <String, Object>{'orientation': 'portraitDown'})),
-                (ByteData? data) {});
+    final ByteData? response = await TestDefaultBinaryMessengerBinding
+        .instance.defaultBinaryMessenger
+        .handlePlatformMessage(
+            AndroidCamera.deviceEventChannelName,
+            const StandardMethodCodec().encodeMethodCall(const MethodCall(
+                'orientation_changed',
+                <String, Object>{'orientation': 'portraitDown'})),
+            (ByteData? data) {});
     expect(response, null);
   });
 
@@ -422,8 +421,7 @@ void main() {
       const DeviceOrientationChangedEvent event =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (int i = 0; i < 3; i++) {
-        await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .handlePlatformMessage(
                 AndroidCamera.deviceEventChannelName,
                 const StandardMethodCodec().encodeMethodCall(
@@ -697,6 +695,29 @@ void main() {
         isMethodCall('resumeVideoRecording', arguments: <String, Object?>{
           'cameraId': cameraId,
         }),
+      ]);
+    });
+
+    test('Should set the description while recording', () async {
+      // Arrange
+      final MethodChannelMock channel = MethodChannelMock(
+        channelName: _channelName,
+        methods: <String, dynamic>{'setDescriptionWhileRecording': null},
+      );
+      const CameraDescription camera2Description = CameraDescription(
+          name: 'Test2',
+          lensDirection: CameraLensDirection.front,
+          sensorOrientation: 0);
+
+      // Act
+      await camera.setDescriptionWhileRecording(camera2Description);
+
+      // Assert
+      expect(channel.log, <Matcher>[
+        isMethodCall('setDescriptionWhileRecording',
+            arguments: <String, Object?>{
+              'cameraName': camera2Description.name,
+            }),
       ]);
     });
 
@@ -1096,7 +1117,7 @@ void main() {
         isMethodCall('startImageStream', arguments: null),
       ]);
 
-      subscription.cancel();
+      await subscription.cancel();
     });
 
     test('Should stop streaming', () async {
@@ -1113,7 +1134,7 @@ void main() {
       final StreamSubscription<CameraImageData> subscription = camera
           .onStreamedFrameAvailable(cameraId)
           .listen((CameraImageData imageData) {});
-      subscription.cancel();
+      await subscription.cancel();
 
       // Assert
       expect(channel.log, <Matcher>[
@@ -1123,9 +1144,3 @@ void main() {
     });
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

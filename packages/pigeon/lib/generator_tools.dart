@@ -6,12 +6,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
 
+import 'package:yaml/yaml.dart' as yaml;
+
 import 'ast.dart';
 
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '9.0.1';
+const String pigeonVersion = '16.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -74,11 +76,12 @@ class Indent {
     for (int i = 0; i < lines.length; ++i) {
       final String line = lines[i];
       if (i == 0 && !leadingSpace) {
-        addln(line.replaceAll('\t', tab));
-      } else if (i == lines.length - 1 && !trailingNewline) {
+        add(line.replaceAll('\t', tab));
+      } else if (line.isNotEmpty) {
         write(line.replaceAll('\t', tab));
-      } else {
-        writeln(line.replaceAll('\t', tab));
+      }
+      if (trailingNewline || i < lines.length - 1) {
+        addln('');
       }
     }
   }
@@ -162,9 +165,11 @@ class Indent {
 }
 
 /// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func) {
-  return 'dev.flutter.pigeon.${api.name}.${func.name}';
+String makeChannelName(Api api, Method func, String dartPackageName) {
+  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
 }
+
+// TODO(tarrinneal): Determine whether HostDataType is needed.
 
 /// Represents the mapping of a Dart datatype to a Host datatype.
 class HostDatatype {
@@ -173,6 +178,7 @@ class HostDatatype {
     required this.datatype,
     required this.isBuiltin,
     required this.isNullable,
+    required this.isEnum,
   });
 
   /// The [String] that can be printed into host code to represent the type.
@@ -183,6 +189,9 @@ class HostDatatype {
 
   /// `true` if the type corresponds to a nullable Dart datatype.
   final bool isNullable;
+
+  /// `true if the type is a custom enum.
+  final bool isEnum;
 }
 
 /// Calculates the [HostDatatype] for the provided [NamedType].
@@ -192,10 +201,10 @@ class HostDatatype {
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getFieldHostDatatype(
+    NamedType field, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(field.type, classes, enums, builtinResolver,
+  return _getHostDatatype(field.type, builtinResolver,
       customResolver: customResolver, fieldName: field.name);
 }
 
@@ -206,45 +215,71 @@ HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(type, classes, enums, builtinResolver,
+  return _getHostDatatype(type, builtinResolver,
       customResolver: customResolver);
 }
 
-HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype _getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver, String? fieldName}) {
   final String? datatype = builtinResolver(type);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(type.baseName)) {
+    if (type.isClass) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
       return HostDatatype(
-          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
-    } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: false,
+      );
+    } else if (type.isEnum) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
       return HostDatatype(
-          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: true,
+      );
     } else {
       throw Exception(
           'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
     }
   } else {
     return HostDatatype(
-        datatype: datatype, isBuiltin: true, isNullable: type.isNullable);
+      datatype: datatype,
+      isBuiltin: true,
+      isNullable: type.isNullable,
+      isEnum: false,
+    );
   }
 }
 
+/// Whether or not to include the version in the generated warning.
+///
+/// This is a global rather than an option because it's only intended to be
+/// used internally, to avoid churn in Pigeon test files.
+bool includeVersionInGeneratedWarning = true;
+
 /// Warning printed at the top of all generated code.
+@Deprecated('Use getGeneratedCodeWarning() instead')
 const String generatedCodeWarning =
     'Autogenerated from Pigeon (v$pigeonVersion), do not edit directly.';
 
-/// String to be printed after `generatedCodeWarning`.
+/// Warning printed at the top of all generated code.
+String getGeneratedCodeWarning() {
+  final String versionString =
+      includeVersionInGeneratedWarning ? ' (v$pigeonVersion)' : '';
+  return 'Autogenerated from Pigeon$versionString, do not edit directly.';
+}
+
+/// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
 /// Collection of keys used in dictionaries across generators.
@@ -379,7 +414,7 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   final _Bag<TypeDeclaration, int> references = _Bag<TypeDeclaration, int>();
   for (final Api api in apis) {
     for (final Method method in api.methods) {
-      for (final NamedType field in method.arguments) {
+      for (final NamedType field in method.parameters) {
         references.addMany(_getTypeArguments(field.type), field.offset);
       }
       references.addMany(_getTypeArguments(method.returnType), method.offset);
@@ -445,10 +480,6 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   }
 }
 
-/// Returns true if the [TypeDeclaration] represents an enum.
-bool isEnum(Root root, TypeDeclaration type) =>
-    root.enums.map((Enum e) => e.name).contains(type.baseName);
-
 /// Describes how to format a document comment.
 class DocumentCommentSpecification {
   /// Constructor for [DocumentationCommentSpecification]
@@ -508,10 +539,62 @@ void addDocumentationComments(
   }
 }
 
-/// Returns an ordered list of fields to provide consistent serialisation order.
-Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+/// Returns an ordered list of fields to provide consistent serialization order.
+Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
   // This returns the fields in the order they are declared in the pigeon file.
-  return klass.fields;
+  return classDefinition.fields;
+}
+
+/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
+/// parent directory and returns its path.
+String? _findPubspecPath(String dartFilePath) {
+  try {
+    Directory dir = File(dartFilePath).parent;
+    String? pubspecPath;
+    while (pubspecPath == null) {
+      if (dir.existsSync()) {
+        final Iterable<String> pubspecPaths = dir
+            .listSync()
+            .map((FileSystemEntity e) => e.path)
+            .where((String path) => path.endsWith('pubspec.yaml'));
+        if (pubspecPaths.isNotEmpty) {
+          pubspecPath = pubspecPaths.first;
+        } else {
+          dir = dir.parent;
+        }
+      } else {
+        break;
+      }
+    }
+    return pubspecPath;
+  } catch (ex) {
+    return null;
+  }
+}
+
+/// Given the path of a Dart file, [mainDartFile], the name of the package will
+/// be deduced by locating and parsing its associated pubspec.yaml.
+String? deducePackageName(String mainDartFile) {
+  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  try {
+    final String text = File(pubspecPath).readAsStringSync();
+    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'] as String?;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Enum to specify api type when generating code.
+enum ApiType {
+  /// Flutter api.
+  flutter,
+
+  /// Host api.
+  host,
 }
 
 /// Enum to specify which file will be generated for multi-file generators

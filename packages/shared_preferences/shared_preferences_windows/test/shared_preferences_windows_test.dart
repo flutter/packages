@@ -2,20 +2,55 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_windows/shared_preferences_windows.dart';
 
 void main() {
-  late MemoryFileSystem fileSystem;
+  late MemoryFileSystem fs;
   late PathProviderWindows pathProvider;
 
+  SharedPreferencesWindows.registerWith();
+
+  const Map<String, Object> flutterTestValues = <String, Object>{
+    'flutter.String': 'hello world',
+    'flutter.Bool': true,
+    'flutter.Int': 42,
+    'flutter.Double': 3.14159,
+    'flutter.StringList': <String>['foo', 'bar'],
+  };
+
+  const Map<String, Object> prefixTestValues = <String, Object>{
+    'prefix.String': 'hello world',
+    'prefix.Bool': true,
+    'prefix.Int': 42,
+    'prefix.Double': 3.14159,
+    'prefix.StringList': <String>['foo', 'bar'],
+  };
+
+  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    'String': 'hello world',
+    'Bool': true,
+    'Int': 42,
+    'Double': 3.14159,
+    'StringList': <String>['foo', 'bar'],
+  };
+
+  final Map<String, Object> allTestValues = <String, Object>{};
+
+  allTestValues.addAll(flutterTestValues);
+  allTestValues.addAll(prefixTestValues);
+  allTestValues.addAll(nonPrefixTestValues);
+
   setUp(() {
-    fileSystem = MemoryFileSystem.test();
+    fs = MemoryFileSystem.test();
     pathProvider = FakePathProviderWindows();
   });
 
@@ -25,18 +60,18 @@ void main() {
   }
 
   Future<void> writeTestFile(String value) async {
-    fileSystem.file(await getFilePath())
+    fs.file(await getFilePath())
       ..createSync(recursive: true)
       ..writeAsStringSync(value);
   }
 
   Future<String> readTestFile() async {
-    return fileSystem.file(await getFilePath()).readAsStringSync();
+    return fs.file(await getFilePath()).readAsStringSync();
   }
 
   SharedPreferencesWindows getPreferences() {
     final SharedPreferencesWindows prefs = SharedPreferencesWindows();
-    prefs.fs = fileSystem;
+    prefs.fs = fs;
     prefs.pathProvider = pathProvider;
     return prefs;
   }
@@ -48,13 +83,50 @@ void main() {
   });
 
   test('getAll', () async {
-    await writeTestFile('{"key1": "one", "key2": 2}');
+    await writeTestFile(json.encode(allTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
     final Map<String, Object> values = await prefs.getAll();
-    expect(values, hasLength(2));
-    expect(values['key1'], 'one');
-    expect(values['key2'], 2);
+    expect(values, hasLength(5));
+    expect(values, flutterTestValues);
+  });
+
+  test('getAllWithPrefix', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithPrefix('prefix.');
+    expect(values, hasLength(5));
+    expect(values, prefixTestValues);
+  });
+
+  test('getAllWithParameters with Prefix', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(values, hasLength(5));
+    expect(values, prefixTestValues);
+  });
+
+  test('getAllWithParameters with Prefix with allow list', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String?, Object?> all = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.Bool'},
+        ),
+      ),
+    );
+    expect(all.length, 1);
+    expect(all['prefix.Bool'], prefixTestValues['prefix.Bool']);
   });
 
   test('remove', () async {
@@ -77,11 +149,110 @@ void main() {
   });
 
   test('clear', () async {
-    await writeTestFile('{"key1":"one","key2":2}');
+    await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
+    expect(await readTestFile(), json.encode(flutterTestValues));
     await prefs.clear();
     expect(await readTestFile(), '{}');
+  });
+
+  test('clearWithPrefix', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithPrefix('prefix.');
+    final Map<String, Object> noValues =
+        await prefs.getAllWithPrefix('prefix.');
+    expect(noValues, hasLength(0));
+
+    final Map<String, Object> values = await prefs.getAll();
+    expect(values, hasLength(5));
+    expect(values, flutterTestValues);
+  });
+
+  test('getAllWithNoPrefix', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithPrefix('');
+    expect(values, hasLength(15));
+    expect(values, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithPrefix('');
+    final Map<String, Object> noValues = await prefs.getAllWithPrefix('');
+    expect(noValues, hasLength(0));
+  });
+
+  test('clearWithParameters with Prefix', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(noValues, hasLength(0));
+
+    final Map<String, Object> values = await prefs.getAll();
+    expect(values, hasLength(5));
+    expect(values, flutterTestValues);
+  });
+
+  test('clearWithParameters with allow list', () async {
+    await writeTestFile(json.encode(prefixTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.StringList'},
+        ),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(noValues, hasLength(4));
+  });
+
+  test('getAllWithNoPrefix', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(values, hasLength(15));
+    expect(values, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(noValues, hasLength(0));
   });
 }
 

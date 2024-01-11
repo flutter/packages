@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// This class manages a set of [MarkerController]s associated to a [GoogleMapController].
 class MarkersController extends GeometryController {
@@ -30,10 +30,6 @@ class MarkersController extends GeometryController {
   }
 
   void _addMarker(Marker marker) {
-    if (marker == null) {
-      return;
-    }
-
     final gmaps.InfoWindowOptions? infoWindowOptions =
         _infoWindowOptionsFromMarker(marker);
     gmaps.InfoWindow? gmInfoWindow;

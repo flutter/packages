@@ -65,18 +65,12 @@ class FadeScaleTransitionConfiguration extends ModalConfiguration {
   /// a dismissible barrier. [barrierDismissible] cannot be null. If
   /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
   const FadeScaleTransitionConfiguration({
-    Color barrierColor = Colors.black54,
-    bool barrierDismissible = true,
-    Duration transitionDuration = const Duration(milliseconds: 150),
-    Duration reverseTransitionDuration = const Duration(milliseconds: 75),
-    String barrierLabel = 'Dismiss',
-  }) : super(
-          barrierColor: barrierColor,
-          barrierDismissible: barrierDismissible,
-          barrierLabel: barrierLabel,
-          transitionDuration: transitionDuration,
-          reverseTransitionDuration: reverseTransitionDuration,
-        );
+    super.barrierColor = Colors.black54,
+    super.barrierDismissible = true,
+    super.transitionDuration = const Duration(milliseconds: 150),
+    super.reverseTransitionDuration = const Duration(milliseconds: 75),
+    String super.barrierLabel = 'Dismiss',
+  });
 
   @override
   Widget transitionBuilder(
@@ -115,10 +109,10 @@ class FadeScaleTransition extends StatelessWidget {
   /// [animation] is typically an [AnimationController] that drives the transition
   /// animation. [animation] cannot be null.
   const FadeScaleTransition({
-    Key? key,
+    super.key,
     required this.animation,
     this.child,
-  }) : super(key: key);
+  });
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -140,7 +134,7 @@ class FadeScaleTransition extends StatelessWidget {
   static final Animatable<double> _scaleInTransition = Tween<double>(
     begin: 0.80,
     end: 1.00,
-  ).chain(CurveTween(curve: decelerateEasing));
+  ).chain(CurveTween(curve: Easing.legacyDecelerate));
   static final Animatable<double> _fadeOutTransition = Tween<double>(
     begin: 1.0,
     end: 0.0,

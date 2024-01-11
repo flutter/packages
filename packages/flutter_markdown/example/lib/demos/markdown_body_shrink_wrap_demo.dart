@@ -17,22 +17,22 @@ const String _data = '''
 ''';
 
 const String _notes = '''
-# Shrink wrap demo 
+# Shrink wrap demo
 ---
 
 ## Overview
 
 This example demonstrates how `MarkdownBody`'s `shrinkWrap` property works.
 
-- If `shrinkWrap` is `true`, `MarkdownBody` will take the minimum height that 
+- If `shrinkWrap` is `true`, `MarkdownBody` will take the minimum height that
   wraps its content.
-- If `shrinkWrap` is `false`, `MarkdownBody` will expand to the maximum allowed 
+- If `shrinkWrap` is `false`, `MarkdownBody` will expand to the maximum allowed
   height.
 ''';
 
 class MarkdownBodyShrinkWrapDemo extends StatefulWidget
     implements MarkdownDemoWidget {
-  const MarkdownBodyShrinkWrapDemo({Key? key}) : super(key: key);
+  const MarkdownBodyShrinkWrapDemo({super.key});
 
   static const String _title = 'Shrink wrap demo';
 

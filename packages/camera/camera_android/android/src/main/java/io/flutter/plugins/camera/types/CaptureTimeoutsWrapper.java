@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.camera.types;
 
+import androidx.annotation.NonNull;
+
 /**
  * Wrapper class that provides a container for all {@link Timeout} instances that are required for
  * the capture flow.
@@ -24,6 +26,8 @@ public class CaptureTimeoutsWrapper {
       long preCaptureFocusingTimeoutMs, long preCaptureMeteringTimeoutMs) {
     this.preCaptureFocusingTimeoutMs = preCaptureFocusingTimeoutMs;
     this.preCaptureMeteringTimeoutMs = preCaptureMeteringTimeoutMs;
+    this.preCaptureFocusing = Timeout.create(preCaptureFocusingTimeoutMs);
+    this.preCaptureMetering = Timeout.create(preCaptureMeteringTimeoutMs);
   }
 
   /** Reset all timeouts to the current timestamp. */
@@ -37,6 +41,7 @@ public class CaptureTimeoutsWrapper {
    *
    * @return - The timeout object
    */
+  @NonNull
   public Timeout getPreCaptureFocusing() {
     return preCaptureFocusing;
   }
@@ -46,6 +51,7 @@ public class CaptureTimeoutsWrapper {
    *
    * @return - The timeout object
    */
+  @NonNull
   public Timeout getPreCaptureMetering() {
     return preCaptureMetering;
   }

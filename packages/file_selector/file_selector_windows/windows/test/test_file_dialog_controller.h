@@ -56,6 +56,7 @@ class TestFileDialogController : public FileDialogController {
   HRESULT SetOkButtonLabel(const wchar_t* text) override;
   HRESULT Show(HWND parent) override;
   HRESULT GetResult(IShellItem** out_item) const override;
+  HRESULT GetFileTypeIndex(UINT* out_index) const override;
   HRESULT GetResults(IShellItemArray** out_items) const override;
 
   // Accessors for validating IFileDialogController setter calls.

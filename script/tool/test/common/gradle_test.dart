@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/gradle.dart';
@@ -176,8 +174,8 @@ void main() {
       );
 
       processRunner.mockProcessesForExecutable[project.gradleWrapper.path] =
-          <io.Process>[
-        MockProcess(exitCode: 1),
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       final int exitCode = await project.runCommand('foo');

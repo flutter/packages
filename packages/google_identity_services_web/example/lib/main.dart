@@ -8,8 +8,8 @@ import 'package:google_identity_services_web/id.dart';
 // #docregion use-loader
 import 'package:google_identity_services_web/loader.dart' as gis;
 // #enddocregion use-loader
-import 'package:js/js.dart' show allowInterop;
-import 'package:jwt_decoder/jwt_decoder.dart' as jwt;
+
+import 'src/jwt.dart' as jwt;
 
 // #docregion use-loader
 void main() async {
@@ -19,12 +19,13 @@ void main() async {
   id.setLogLevel('debug');
 
   final IdConfiguration config = IdConfiguration(
-    client_id: 'your-client_id.apps.googleusercontent.com',
-    callback: allowInterop(onCredentialResponse),
+    client_id: 'your-google-client-id-goes-here.apps.googleusercontent.com',
+    callback: onCredentialResponse,
+    use_fedcm_for_prompt: true,
   );
 
   id.initialize(config);
-  id.prompt(allowInterop(onPromptMoment));
+  id.prompt(onPromptMoment);
 // #docregion use-loader
 }
 // #enddocregion use-loader
@@ -32,7 +33,7 @@ void main() async {
 /// Handles the ID token returned from the One Tap prompt.
 /// See: https://developers.google.com/identity/gsi/web/reference/js-reference#callback
 void onCredentialResponse(CredentialResponse o) {
-  final Map<String, dynamic>? payload = jwt.JwtDecoder.tryDecode(o.credential!);
+  final Map<String, dynamic>? payload = jwt.decodePayload(o.credential);
   if (payload != null) {
     print('Hello, ${payload["name"]}');
     print(o.select_by);

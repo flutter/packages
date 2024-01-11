@@ -18,6 +18,7 @@ class WrapExample extends StatelessWidget {
       ),
       body: DynamicGridView.builder(
         gridDelegate: const SliverGridDelegateWithWrapping(),
+        itemCount: 20,
         itemBuilder: (BuildContext context, int index) {
           return Container(
             height: index.isEven ? index % 7 * 50 + 150 : index % 4 * 50 + 100,

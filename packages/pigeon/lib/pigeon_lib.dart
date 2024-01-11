@@ -21,6 +21,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
+import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
 
 import 'ast.dart';
@@ -168,27 +169,30 @@ class Error {
 /// Options used when running the code generator.
 class PigeonOptions {
   /// Creates a instance of PigeonOptions
-  const PigeonOptions(
-      {this.input,
-      this.dartOut,
-      this.dartTestOut,
-      this.objcHeaderOut,
-      this.objcSourceOut,
-      this.objcOptions,
-      this.javaOut,
-      this.javaOptions,
-      this.swiftOut,
-      this.swiftOptions,
-      this.kotlinOut,
-      this.kotlinOptions,
-      this.cppHeaderOut,
-      this.cppSourceOut,
-      this.cppOptions,
-      this.dartOptions,
-      this.copyrightHeader,
-      this.oneLanguage,
-      this.astOut,
-      this.debugGenerators});
+  const PigeonOptions({
+    this.input,
+    this.dartOut,
+    this.dartTestOut,
+    this.objcHeaderOut,
+    this.objcSourceOut,
+    this.objcOptions,
+    this.javaOut,
+    this.javaOptions,
+    this.swiftOut,
+    this.swiftOptions,
+    this.kotlinOut,
+    this.kotlinOptions,
+    this.cppHeaderOut,
+    this.cppSourceOut,
+    this.cppOptions,
+    this.dartOptions,
+    this.copyrightHeader,
+    this.oneLanguage,
+    this.astOut,
+    this.debugGenerators,
+    this.basePath,
+    String? dartPackageName,
+  }) : _dartPackageName = dartPackageName;
 
   /// Path to the file which will be processed.
   final String? input;
@@ -250,6 +254,12 @@ class PigeonOptions {
   /// True means print out line number of generators in comments at newlines.
   final bool? debugGenerators;
 
+  /// A base path to be prepended to all provided output paths.
+  final String? basePath;
+
+  /// The name of the package the pigeon files will be used in.
+  final String? _dartPackageName;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -286,6 +296,8 @@ class PigeonOptions {
       oneLanguage: map['oneLanguage'] as bool?,
       astOut: map['astOut'] as String?,
       debugGenerators: map['debugGenerators'] as bool?,
+      basePath: map['basePath'] as String?,
+      dartPackageName: map['dartPackageName'] as String?,
     );
   }
 
@@ -313,6 +325,8 @@ class PigeonOptions {
       if (astOut != null) 'astOut': astOut!,
       if (oneLanguage != null) 'oneLanguage': oneLanguage!,
       if (debugGenerators != null) 'debugGenerators': debugGenerators!,
+      if (basePath != null) 'basePath': basePath!,
+      if (_dartPackageName != null) 'dartPackageName': _dartPackageName!,
     };
     return result;
   }
@@ -321,6 +335,19 @@ class PigeonOptions {
   /// [PigeonOptions].
   PigeonOptions merge(PigeonOptions options) {
     return PigeonOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  }
+
+  /// Returns provided or deduced package name, throws `Exception` if none found.
+  String getPackageName() {
+    final String? name = _dartPackageName ?? deducePackageName(dartOut ?? '');
+    if (name == null) {
+      throw Exception(
+        'Unable to deduce package name, and no package name supplied.\n'
+        'Add a `dartPackageName` property to your `PigeonOptions` config,\n'
+        'or add --dartPackageName={name_of_package} to your command line pigeon call.',
+      );
+    }
+    return name;
   }
 }
 
@@ -353,7 +380,7 @@ Iterable<String> _lineReader(String path) sync* {
   }
 }
 
-IOSink? _openSink(String? output) {
+IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == null) {
     return null;
   }
@@ -362,7 +389,8 @@ IOSink? _openSink(String? output) {
   if (output == 'stdout') {
     sink = stdout;
   } else {
-    file = File(output);
+    file = File(path.posix.join(basePath, output));
+    file.createSync(recursive: true);
     sink = file.openWrite();
   }
   return sink;
@@ -394,14 +422,20 @@ abstract class GeneratorAdapter {
 }
 
 DartOptions _dartOptionsWithCopyrightHeader(
-    DartOptions? dartOptions, String? copyrightHeader,
-    {String? dartOutPath, String? testOutPath}) {
+  DartOptions? dartOptions,
+  String? copyrightHeader, {
+  String? dartOutPath,
+  String? testOutPath,
+  String basePath = '',
+}) {
   dartOptions = dartOptions ?? const DartOptions();
   return dartOptions.merge(DartOptions(
-      sourceOutPath: dartOutPath,
-      testOutPath: testOutPath,
-      copyrightHeader:
-          copyrightHeader != null ? _lineReader(copyrightHeader) : null));
+    sourceOutPath: dartOutPath,
+    testOutPath: testOutPath,
+    copyrightHeader: copyrightHeader != null
+        ? _lineReader(path.posix.join(basePath, copyrightHeader))
+        : null,
+  ));
 }
 
 /// A [GeneratorAdapter] that generates the AST.
@@ -420,7 +454,7 @@ class AstGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
-      _openSink(options.astOut);
+      _openSink(options.astOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -438,14 +472,22 @@ class DartGeneratorAdapter implements GeneratorAdapter {
   void generate(
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
-        options.dartOptions, options.copyrightHeader);
+      options.dartOptions,
+      options.copyrightHeader,
+      basePath: options.basePath ?? '',
+    );
     const DartGenerator generator = DartGenerator();
-    generator.generate(dartOptionsWithHeader, root, sink);
+    generator.generate(
+      dartOptionsWithHeader,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
-      _openSink(options.dartOut);
+      _openSink(options.dartOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -467,15 +509,26 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
       options.copyrightHeader,
       dartOutPath: options.dartOut,
       testOutPath: options.dartTestOut,
+      basePath: options.basePath ?? '',
     );
     const DartGenerator testGenerator = DartGenerator();
-    testGenerator.generateTest(dartOptionsWithHeader, root, sink);
+    // The test code needs the actual package name of the Dart output, even if
+    // the package name has been overridden for other uses.
+    final String outputPackageName =
+        deducePackageName(options.dartOut ?? '') ?? options.getPackageName();
+    testGenerator.generateTest(
+      dartOptionsWithHeader,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+      dartOutputPackageName: outputPackageName,
+    );
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType _) {
     if (options.dartTestOut != null) {
-      return _openSink(options.dartTestOut);
+      return _openSink(options.dartTestOut, basePath: options.basePath ?? '');
     } else {
       return null;
     }
@@ -500,22 +553,28 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
       copyrightHeader: options.copyrightHeader != null
-          ? _lineReader(options.copyrightHeader!)
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
     ));
     final OutputFileOptions<ObjcOptions> outputFileOptions =
         OutputFileOptions<ObjcOptions>(
             fileType: fileType, languageOptions: objcOptionsWithHeader);
     const ObjcGenerator generator = ObjcGenerator();
-    generator.generate(outputFileOptions, root, sink);
+    generator.generate(
+      outputFileOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
     if (fileType == FileType.source) {
-      return _openSink(options.objcSourceOut);
+      return _openSink(options.objcSourceOut, basePath: options.basePath ?? '');
     } else {
-      return _openSink(options.objcHeaderOut);
+      return _openSink(options.objcHeaderOut, basePath: options.basePath ?? '');
     }
   }
 
@@ -536,18 +595,25 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     JavaOptions javaOptions = options.javaOptions ?? const JavaOptions();
     javaOptions = javaOptions.merge(JavaOptions(
-        className: javaOptions.className ??
-            path.basenameWithoutExtension(options.javaOut!),
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
+      className: javaOptions.className ??
+          path.basenameWithoutExtension(options.javaOut!),
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
+          : null,
+    ));
     const JavaGenerator generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
-      _openSink(options.javaOut);
+      _openSink(options.javaOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -566,16 +632,23 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
+          : null,
+    ));
     const SwiftGenerator generator = SwiftGenerator();
-    generator.generate(swiftOptions, root, sink);
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
-      _openSink(options.swiftOut);
+      _openSink(options.swiftOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -596,22 +669,28 @@ class CppGeneratorAdapter implements GeneratorAdapter {
     final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
     final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
       copyrightHeader: options.copyrightHeader != null
-          ? _lineReader(options.copyrightHeader!)
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
     ));
     final OutputFileOptions<CppOptions> outputFileOptions =
         OutputFileOptions<CppOptions>(
             fileType: fileType, languageOptions: cppOptionsWithHeader);
     const CppGenerator generator = CppGenerator();
-    generator.generate(outputFileOptions, root, sink);
+    generator.generate(
+      outputFileOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
     if (fileType == FileType.source) {
-      return _openSink(options.cppSourceOut);
+      return _openSink(options.cppSourceOut, basePath: options.basePath ?? '');
     } else {
-      return _openSink(options.cppHeaderOut);
+      return _openSink(options.cppHeaderOut, basePath: options.basePath ?? '');
     }
   }
 
@@ -633,16 +712,24 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     KotlinOptions kotlinOptions =
         options.kotlinOptions ?? const KotlinOptions();
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
-        copyrightHeader: options.copyrightHeader != null
-            ? _lineReader(options.copyrightHeader!)
-            : null));
+      errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
+          : null,
+    ));
     const KotlinGenerator generator = KotlinGenerator();
-    generator.generate(kotlinOptions, root, sink);
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
   }
 
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
-      _openSink(options.kotlinOut);
+      _openSink(options.kotlinOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -670,24 +757,23 @@ List<Error> _validateAst(Root root, String source) {
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
-  for (final Class klass in root.classes) {
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-      if (field.type.typeArguments != null) {
-        for (final TypeDeclaration typeArgument in field.type.typeArguments) {
-          if (!typeArgument.isNullable) {
-            result.add(Error(
-              message:
-                  'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ));
-          }
-          if (customEnums.contains(typeArgument.baseName)) {
-            result.add(Error(
-              message:
-                  'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ));
-          }
+  for (final Class classDefinition in root.classes) {
+    for (final NamedType field
+        in getFieldsInSerializationOrder(classDefinition)) {
+      for (final TypeDeclaration typeArgument in field.type.typeArguments) {
+        if (!typeArgument.isNullable) {
+          result.add(Error(
+            message:
+                'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
+            lineNumber: _calculateLineNumberNullable(source, field.offset),
+          ));
+        }
+        if (customEnums.contains(typeArgument.baseName)) {
+          result.add(Error(
+            message:
+                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
+            lineNumber: _calculateLineNumberNullable(source, field.offset),
+          ));
         }
       }
       if (!(validTypes.contains(field.type.baseName) ||
@@ -695,7 +781,7 @@ List<Error> _validateAst(Root root, String source) {
           customEnums.contains(field.type.baseName))) {
         result.add(Error(
           message:
-              'Unsupported datatype:"${field.type.baseName}" in class "${klass.name}".',
+              'Unsupported datatype:"${field.type.baseName}" in class "${classDefinition.name}".',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
@@ -703,47 +789,59 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      if (api.location == ApiLocation.flutter &&
-          method.arguments.isNotEmpty &&
-          method.arguments.any((NamedType element) =>
-              customEnums.contains(element.type.baseName))) {
-        result.add(Error(
-          message:
-              'Enums aren\'t yet supported for primitive arguments in FlutterApis: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
-          lineNumber: _calculateLineNumberNullable(source, method.offset),
-        ));
-      }
-      if (customEnums.contains(method.returnType.baseName)) {
-        result.add(Error(
-          message:
-              'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
-        ));
-      }
-      for (final NamedType unnamedType in method.arguments
-          .where((NamedType element) => element.type.baseName.isEmpty)) {
-        result.add(Error(
-          message:
-              'Arguments must specify their type in method "${method.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, unnamedType.offset),
-        ));
+      for (final Parameter param in method.parameters) {
+        if (param.type.baseName.isEmpty) {
+          result.add(Error(
+            message:
+                'Parameters must specify their type in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        } else if (param.name.startsWith('__pigeon_')) {
+          result.add(Error(
+            message:
+                'Parameter name must not begin with "__pigeon_" in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        } else if (param.name == 'pigeonChannelCodec') {
+          result.add(Error(
+            message:
+                'Parameter name must not be "pigeonChannelCodec" in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        }
+        if (api.location == ApiLocation.flutter) {
+          if (!param.isPositional) {
+            result.add(Error(
+              message:
+                  'FlutterApi method parameters must be positional, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          } else if (param.isOptional) {
+            result.add(Error(
+              message:
+                  'FlutterApi method parameters must not be optional, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          }
+        }
       }
       if (method.objcSelector.isNotEmpty) {
         if (':'.allMatches(method.objcSelector).length !=
-            method.arguments.length) {
+            method.parameters.length) {
           result.add(Error(
             message:
-                'Invalid selector, expected ${method.arguments.length} arguments.',
+                'Invalid selector, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
       }
       if (method.swiftFunction.isNotEmpty) {
         final RegExp signatureRegex =
-            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+            RegExp('\\w+ *\\((\\w+:){${method.parameters.length}}\\)');
         if (!signatureRegex.hasMatch(method.swiftFunction)) {
           result.add(Error(
             message:
-                'Invalid function signature, expected ${method.arguments.length} arguments.',
+                'Invalid function signature, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
@@ -782,6 +880,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   final String source;
 
   Class? _currentClass;
+  Map<String, String> _currentClassDefaultValues = <String, String>{};
   Api? _currentApi;
   Map<String, Object>? _pigeonOptions;
 
@@ -796,6 +895,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentClass != null) {
       _classes.add(_currentClass!);
       _currentClass = null;
+      _currentClassDefaultValues = <String, String>{};
     }
   }
 
@@ -840,6 +940,24 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
+    for (final Class classDefinition in referencedClasses) {
+      final List<NamedType> fields = <NamedType>[];
+      for (final NamedType field in classDefinition.fields) {
+        fields.add(field.copyWithType(_attachClassesAndEnums(field.type)));
+      }
+      classDefinition.fields = fields;
+    }
+
+    for (final Api api in _apis) {
+      for (final Method func in api.methods) {
+        final List<Parameter> paramList = <Parameter>[];
+        for (final Parameter param in func.parameters) {
+          paramList.add(param.copyWithType(_attachClassesAndEnums(param.type)));
+        }
+        func.parameters = paramList;
+        func.returnType = _attachClassesAndEnums(func.returnType);
+      }
+    }
 
     return ParseResults(
       root: totalErrors.isEmpty
@@ -848,6 +966,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
+  }
+
+  TypeDeclaration _attachClassesAndEnums(TypeDeclaration type) {
+    final Enum? assocEnum = _enums.firstWhereOrNull(
+        (Enum enumDefinition) => enumDefinition.name == type.baseName);
+    final Class? assocClass = _classes.firstWhereOrNull(
+        (Class classDefinition) => classDefinition.name == type.baseName);
+    if (assocClass != null) {
+      return type.copyWithClass(assocClass);
+    } else if (assocEnum != null) {
+      return type.copyWithEnum(assocEnum);
+    }
+    return type;
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {
@@ -888,7 +1019,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else {
       _errors.add(Error(
         message:
-            'unrecongized expression type ${expression.runtimeType} $expression',
+            'unrecognized expression type ${expression.runtimeType} $expression',
         lineNumber: _calculateLineNumber(source, expression.offset),
       ));
       return 0;
@@ -991,26 +1122,56 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         <String>[];
   }
 
-  NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.NamedType? namedType =
-        getFirstChildOfType<dart_ast.NamedType>(parameter);
-    if (namedType != null) {
-      final String argTypeBaseName = namedType.name.name;
-      final bool isNullable = namedType.question != null;
+  Parameter formalParameterToPigeonParameter(
+    dart_ast.FormalParameter formalParameter, {
+    bool? isNamed,
+    bool? isOptional,
+    bool? isPositional,
+    bool? isRequired,
+    String? defaultValue,
+  }) {
+    final dart_ast.NamedType? parameter =
+        getFirstChildOfType<dart_ast.NamedType>(formalParameter);
+    final dart_ast.SimpleFormalParameter? simpleFormalParameter =
+        getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
+    if (parameter != null) {
+      final String argTypeBaseName = _getNamedTypeQualifiedName(parameter);
+      final bool isNullable = parameter.question != null;
       final List<TypeDeclaration> argTypeArguments =
-          typeAnnotationsToTypeArguments(namedType.typeArguments);
-      return NamedType(
-          type: TypeDeclaration(
-              baseName: argTypeBaseName,
-              isNullable: isNullable,
-              typeArguments: argTypeArguments),
-          name: parameter.name?.lexeme ?? '',
-          offset: parameter.offset);
+          typeAnnotationsToTypeArguments(parameter.typeArguments);
+      return Parameter(
+        type: TypeDeclaration(
+          baseName: argTypeBaseName,
+          isNullable: isNullable,
+          typeArguments: argTypeArguments,
+        ),
+        name: formalParameter.name?.lexeme ?? '',
+        offset: formalParameter.offset,
+        isNamed: isNamed ?? formalParameter.isNamed,
+        isOptional: isOptional ?? formalParameter.isOptional,
+        isPositional: isPositional ?? formalParameter.isPositional,
+        isRequired: isRequired ?? formalParameter.isRequired,
+        defaultValue: defaultValue,
+      );
+    } else if (simpleFormalParameter != null) {
+      String? defaultValue;
+      if (formalParameter is dart_ast.DefaultFormalParameter) {
+        defaultValue = formalParameter.defaultValue?.toString();
+      }
+
+      return formalParameterToPigeonParameter(
+        simpleFormalParameter,
+        isNamed: simpleFormalParameter.isNamed,
+        isOptional: simpleFormalParameter.isOptional,
+        isPositional: simpleFormalParameter.isPositional,
+        isRequired: simpleFormalParameter.isRequired,
+        defaultValue: defaultValue,
+      );
     } else {
-      return NamedType(
+      return Parameter(
         name: '',
         type: const TypeDeclaration(baseName: '', isNullable: false),
-        offset: parameter.offset,
+        offset: formalParameter.offset,
       );
     }
   }
@@ -1040,8 +1201,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    final List<NamedType> arguments =
-        parameters.parameters.map(formalParameterToField).toList();
+    final List<Parameter> arguments =
+        parameters.parameters.map(formalParameterToPigeonParameter).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
             ?.arguments
@@ -1072,17 +1233,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
-      final dart_ast.SimpleIdentifier returnTypeIdentifier =
-          getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
+      returnType as dart_ast.NamedType;
       _currentApi!.methods.add(
         Method(
           name: node.name.lexeme,
           returnType: TypeDeclaration(
-              baseName: returnTypeIdentifier.name,
-              typeArguments: typeAnnotationsToTypeArguments(
-                  (returnType as dart_ast.NamedType).typeArguments),
+              baseName: _getNamedTypeQualifiedName(returnType),
+              typeArguments:
+                  typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
-          arguments: arguments,
+          parameters: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,
@@ -1127,7 +1287,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.NamedType) {
           result.add(TypeDeclaration(
-              baseName: x.name.name,
+              baseName: _getNamedTypeQualifiedName(x),
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
         }
@@ -1155,17 +1315,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: _calculateLineNumber(source, node.offset)));
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          _currentClass!.fields.add(NamedType(
+          final String name = node.fields.variables[0].name.lexeme;
+          final NamedType field = NamedType(
             type: TypeDeclaration(
-              baseName: type.name.name,
+              baseName: _getNamedTypeQualifiedName(type),
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             ),
-            name: node.fields.variables[0].name.lexeme,
+            name: name,
             offset: node.offset,
+            defaultValue: _currentClassDefaultValues[name],
             documentationComments:
                 _documentationCommentsParser(node.documentationComment?.tokens),
-          ));
+          );
+          _currentClass!.fields.add(field);
         }
       } else {
         _errors.add(Error(
@@ -1198,10 +1361,28 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             message:
                 'Constructor initializers aren\'t supported in data classes (use "this.fieldName") ("$node").',
             lineNumber: _calculateLineNumber(source, node.offset)));
+      } else {
+        for (final dart_ast.FormalParameter param
+            in node.parameters.parameters) {
+          if (param is dart_ast.DefaultFormalParameter) {
+            if (param.name != null && param.defaultValue != null) {
+              _currentClassDefaultValues[param.name!.toString()] =
+                  param.defaultValue!.toString();
+            }
+          }
+        }
       }
     }
     node.visitChildren(this);
     return null;
+  }
+
+  static String _getNamedTypeQualifiedName(dart_ast.NamedType node) {
+    final dart_ast.ImportPrefixReference? importPrefix = node.importPrefix;
+    if (importPrefix != null) {
+      return '${importPrefix.name.lexeme}.${node.name2.lexeme}';
+    }
+    return node.name2.lexeme;
   }
 }
 
@@ -1300,17 +1481,31 @@ ${_argParser.usage}''';
         help: 'The package that generated Java code will be in.')
     ..addFlag('java_use_generated_annotation',
         help: 'Adds the java.annotation.Generated annotation to the output.')
-    ..addOption('experimental_swift_out',
-        help: 'Path to generated Swift file (.swift).')
-    ..addOption('experimental_kotlin_out',
-        help: 'Path to generated Kotlin file (.kt). (experimental)')
-    ..addOption('experimental_kotlin_package',
-        help:
-            'The package that generated Kotlin code will be in. (experimental)')
-    ..addOption('experimental_cpp_header_out',
-        help: 'Path to generated C++ header file (.h). (experimental)')
-    ..addOption('experimental_cpp_source_out',
-        help: 'Path to generated C++ classes file (.cpp). (experimental)')
+    ..addOption(
+      'swift_out',
+      help: 'Path to generated Swift file (.swift).',
+      aliases: const <String>['experimental_swift_out'],
+    )
+    ..addOption(
+      'kotlin_out',
+      help: 'Path to generated Kotlin file (.kt).',
+      aliases: const <String>['experimental_kotlin_out'],
+    )
+    ..addOption(
+      'kotlin_package',
+      help: 'The package that generated Kotlin code will be in.',
+      aliases: const <String>['experimental_kotlin_package'],
+    )
+    ..addOption(
+      'cpp_header_out',
+      help: 'Path to generated C++ header file (.h).',
+      aliases: const <String>['experimental_cpp_header_out'],
+    )
+    ..addOption(
+      'cpp_source_out',
+      help: 'Path to generated C++ classes file (.cpp).',
+      aliases: const <String>['experimental_cpp_source_out'],
+    )
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
     ..addOption('objc_header_out',
@@ -1326,14 +1521,19 @@ ${_argParser.usage}''';
         help:
             'Path to generated AST debugging info. (Warning: format subject to change)')
     ..addFlag('debug_generators',
+        help: 'Print the line number of the generator in comments at newlines.')
+    ..addOption('base_path',
         help:
-            'Print the line number of the generator in comments at newlines.');
+            'A base path to be prefixed to all outputs and copyright header path. Generally used for testing',
+        hide: true)
+    ..addOption('package_name',
+        help: 'The package that generated code will be in.');
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
     // Note: This function shouldn't perform any logic, just translate the args
     // to PigeonOptions.  Synthesized values inside of the PigeonOption should
-    // get set in the `run` function to accomodate users that are using the
+    // get set in the `run` function to accommodate users that are using the
     // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
 
@@ -1352,13 +1552,13 @@ ${_argParser.usage}''';
         useGeneratedAnnotation:
             results['java_use_generated_annotation'] as bool?,
       ),
-      swiftOut: results['experimental_swift_out'] as String?,
-      kotlinOut: results['experimental_kotlin_out'] as String?,
+      swiftOut: results['swift_out'] as String?,
+      kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
-        package: results['experimental_kotlin_package'] as String?,
+        package: results['kotlin_package'] as String?,
       ),
-      cppHeaderOut: results['experimental_cpp_header_out'] as String?,
-      cppSourceOut: results['experimental_cpp_source_out'] as String?,
+      cppHeaderOut: results['cpp_header_out'] as String?,
+      cppSourceOut: results['cpp_source_out'] as String?,
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'] as String?,
       ),
@@ -1366,6 +1566,8 @@ ${_argParser.usage}''';
       oneLanguage: results['one_language'] as bool?,
       astOut: results['ast_out'] as String?,
       debugGenerators: results['debug_generators'] as bool?,
+      basePath: results['base_path'] as String?,
+      dartPackageName: results['package_name'] as String?,
     );
     return opts;
   }
@@ -1472,14 +1674,16 @@ ${_argParser.usage}''';
 
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          objcOptions: options.objcOptions!.merge(ObjcOptions(
-              headerIncludePath: path.basename(options.objcHeaderOut!)))));
+          objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
+              ObjcOptions(
+                  headerIncludePath: path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          cppOptions: options.cppOptions!.merge(CppOptions(
-              headerIncludePath: path.basename(options.cppHeaderOut!)))));
+          cppOptions: (options.cppOptions ?? const CppOptions()).merge(
+              CppOptions(
+                  headerIncludePath: path.basename(options.cppHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {

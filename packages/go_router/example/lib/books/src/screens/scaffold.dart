@@ -25,8 +25,8 @@ class BookstoreScaffold extends StatelessWidget {
   const BookstoreScaffold({
     required this.selectedTab,
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// Which tab of the scaffold to display.
   final ScaffoldTab selectedTab;
@@ -43,13 +43,10 @@ class BookstoreScaffold extends StatelessWidget {
             switch (ScaffoldTab.values[idx]) {
               case ScaffoldTab.books:
                 context.go('/books');
-                break;
               case ScaffoldTab.authors:
                 context.go('/authors');
-                break;
               case ScaffoldTab.settings:
                 context.go('/settings');
-                break;
             }
           },
           destinations: const <AdaptiveScaffoldDestination>[

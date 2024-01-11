@@ -13,7 +13,7 @@
 
 @implementation FWFDataConvertersTests
 - (void)testFWFNSURLRequestFromRequestData {
-  NSURLRequest *request = FWFNSURLRequestFromRequestData([FWFNSUrlRequestData
+  NSURLRequest *request = FWFNativeNSURLRequestFromRequestData([FWFNSUrlRequestData
               makeWithUrl:@"https://flutter.dev"
                httpMethod:@"post"
                  httpBody:[FlutterStandardTypedData typedDataWithBytes:[NSData data]]
@@ -27,16 +27,16 @@
 
 - (void)testFWFNSURLRequestFromRequestDataDoesNotOverrideDefaultValuesWithNull {
   NSURLRequest *request =
-      FWFNSURLRequestFromRequestData([FWFNSUrlRequestData makeWithUrl:@"https://flutter.dev"
-                                                           httpMethod:nil
-                                                             httpBody:nil
-                                                  allHttpHeaderFields:@{}]);
+      FWFNativeNSURLRequestFromRequestData([FWFNSUrlRequestData makeWithUrl:@"https://flutter.dev"
+                                                                 httpMethod:nil
+                                                                   httpBody:nil
+                                                        allHttpHeaderFields:@{}]);
 
   XCTAssertEqualObjects(request.HTTPMethod, @"GET");
 }
 
 - (void)testFWFNSHTTPCookieFromCookieData {
-  NSHTTPCookie *cookie = FWFNSHTTPCookieFromCookieData([FWFNSHttpCookieData
+  NSHTTPCookie *cookie = FWFNativeNSHTTPCookieFromCookieData([FWFNSHttpCookieData
       makeWithPropertyKeys:@[ [FWFNSHttpCookiePropertyKeyEnumData
                                makeWithValue:FWFNSHttpCookiePropertyKeyEnumName] ]
             propertyValues:@[ @"cookieName" ]]);
@@ -45,11 +45,11 @@
 }
 
 - (void)testFWFWKUserScriptFromScriptData {
-  WKUserScript *userScript = FWFWKUserScriptFromScriptData([FWFWKUserScriptData
+  WKUserScript *userScript = FWFNativeWKUserScriptFromScriptData([FWFWKUserScriptData
        makeWithSource:@"mySource"
         injectionTime:[FWFWKUserScriptInjectionTimeEnumData
                           makeWithValue:FWFWKUserScriptInjectionTimeEnumAtDocumentStart]
-      isMainFrameOnly:@NO]);
+      isMainFrameOnly:NO]);
 
   XCTAssertEqualObjects(userScript.source, @"mySource");
   XCTAssertEqual(userScript.injectionTime, WKUserScriptInjectionTimeAtDocumentStart);
@@ -70,7 +70,7 @@
   OCMStub([mockNavigationAction targetFrame]).andReturn(mockFrameInfo);
 
   FWFWKNavigationActionData *data =
-      FWFWKNavigationActionDataFromNavigationAction(mockNavigationAction);
+      FWFWKNavigationActionDataFromNativeWKNavigationAction(mockNavigationAction);
   XCTAssertNotNil(data);
   XCTAssertEqual(data.navigationType, FWFWKNavigationTypeReload);
 }
@@ -82,7 +82,7 @@
   request.HTTPBody = [@"aString" dataUsingEncoding:NSUTF8StringEncoding];
   request.allHTTPHeaderFields = @{@"a" : @"field"};
 
-  FWFNSUrlRequestData *data = FWFNSUrlRequestDataFromNSURLRequest(request);
+  FWFNSUrlRequestData *data = FWFNSUrlRequestDataFromNativeNSURLRequest(request);
   XCTAssertEqualObjects(data.url, @"https://www.flutter.dev/");
   XCTAssertEqualObjects(data.httpMethod, @"POST");
   XCTAssertEqualObjects(data.httpBody.data, [@"aString" dataUsingEncoding:NSUTF8StringEncoding]);
@@ -93,19 +93,25 @@
   WKFrameInfo *mockFrameInfo = OCMClassMock([WKFrameInfo class]);
   OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
 
-  FWFWKFrameInfoData *targetFrameData = FWFWKFrameInfoDataFromWKFrameInfo(mockFrameInfo);
-  XCTAssertEqualObjects(targetFrameData.isMainFrame, @YES);
+  FWFWKFrameInfoData *targetFrameData = FWFWKFrameInfoDataFromNativeWKFrameInfo(mockFrameInfo);
+  XCTAssertEqual(targetFrameData.isMainFrame, YES);
 }
 
 - (void)testFWFNSErrorDataFromNSError {
+  NSObject *unsupportedType = [[NSObject alloc] init];
   NSError *error = [NSError errorWithDomain:@"domain"
                                        code:23
-                                   userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+                                   userInfo:@{@"a" : @"b", @"c" : unsupportedType}];
 
-  FWFNSErrorData *data = FWFNSErrorDataFromNSError(error);
-  XCTAssertEqualObjects(data.code, @23);
+  FWFNSErrorData *data = FWFNSErrorDataFromNativeNSError(error);
+  XCTAssertEqual(data.code, 23);
   XCTAssertEqualObjects(data.domain, @"domain");
-  XCTAssertEqualObjects(data.localizedDescription, @"description");
+
+  NSDictionary *userInfo = @{
+    @"a" : @"b",
+    @"c" : [NSString stringWithFormat:@"Unsupported Type: %@", unsupportedType.description]
+  };
+  XCTAssertEqualObjects(data.userInfo, userInfo);
 }
 
 - (void)testFWFWKScriptMessageDataFromWKScriptMessage {
@@ -113,8 +119,56 @@
   OCMStub([mockScriptMessage name]).andReturn(@"name");
   OCMStub([mockScriptMessage body]).andReturn(@"message");
 
-  FWFWKScriptMessageData *data = FWFWKScriptMessageDataFromWKScriptMessage(mockScriptMessage);
+  FWFWKScriptMessageData *data = FWFWKScriptMessageDataFromNativeWKScriptMessage(mockScriptMessage);
   XCTAssertEqualObjects(data.name, @"name");
   XCTAssertEqualObjects(data.body, @"message");
+}
+
+- (void)testFWFWKSecurityOriginDataFromWKSecurityOrigin {
+  WKSecurityOrigin *mockSecurityOrigin = OCMClassMock([WKSecurityOrigin class]);
+  OCMStub([mockSecurityOrigin host]).andReturn(@"host");
+  OCMStub([mockSecurityOrigin port]).andReturn(2);
+  OCMStub([mockSecurityOrigin protocol]).andReturn(@"protocol");
+
+  FWFWKSecurityOriginData *data =
+      FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(mockSecurityOrigin);
+  XCTAssertEqualObjects(data.host, @"host");
+  XCTAssertEqual(data.port, 2);
+  XCTAssertEqualObjects(data.protocol, @"protocol");
+}
+
+- (void)testFWFWKPermissionDecisionFromData API_AVAILABLE(ios(15.0)) {
+  XCTAssertEqual(FWFNativeWKPermissionDecisionFromData(
+                     [FWFWKPermissionDecisionData makeWithValue:FWFWKPermissionDecisionDeny]),
+                 WKPermissionDecisionDeny);
+  XCTAssertEqual(FWFNativeWKPermissionDecisionFromData(
+                     [FWFWKPermissionDecisionData makeWithValue:FWFWKPermissionDecisionGrant]),
+                 WKPermissionDecisionGrant);
+  XCTAssertEqual(FWFNativeWKPermissionDecisionFromData(
+                     [FWFWKPermissionDecisionData makeWithValue:FWFWKPermissionDecisionPrompt]),
+                 WKPermissionDecisionPrompt);
+}
+
+- (void)testFWFWKMediaCaptureTypeDataFromWKMediaCaptureType API_AVAILABLE(ios(15.0)) {
+  XCTAssertEqual(
+      FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(WKMediaCaptureTypeCamera).value,
+      FWFWKMediaCaptureTypeCamera);
+  XCTAssertEqual(
+      FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(WKMediaCaptureTypeMicrophone).value,
+      FWFWKMediaCaptureTypeMicrophone);
+  XCTAssertEqual(
+      FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(WKMediaCaptureTypeCameraAndMicrophone)
+          .value,
+      FWFWKMediaCaptureTypeCameraAndMicrophone);
+}
+
+- (void)testNSKeyValueChangeKeyConversionReturnsUnknownIfUnrecognized {
+  XCTAssertEqual(
+      FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(@"SomeUnknownValue").value,
+      FWFNSKeyValueChangeKeyEnumUnknown);
+}
+
+- (void)testWKNavigationTypeConversionReturnsUnknownIfUnrecognized {
+  XCTAssertEqual(FWFWKNavigationTypeFromNativeWKNavigationType(-15), FWFWKNavigationTypeUnknown);
 }
 @end

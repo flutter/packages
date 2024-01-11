@@ -44,20 +44,24 @@ class FileSelectorIOS extends FileSelectorPlatform {
   // Converts the type group list into a list of all allowed UTIs, since
   // iOS doesn't support filter groups.
   List<String> _allowedUtiListFromTypeGroups(List<XTypeGroup>? typeGroups) {
+    // iOS requires a list of allowed types, so allowing all is expressed via
+    // a root type rather than an empty list.
+    const List<String> allowAny = <String>['public.data'];
+
     if (typeGroups == null || typeGroups.isEmpty) {
-      return <String>[];
+      return allowAny;
     }
     final List<String> allowedUTIs = <String>[];
     for (final XTypeGroup typeGroup in typeGroups) {
       // If any group allows everything, no filtering should be done.
       if (typeGroup.allowsAny) {
-        return <String>[];
+        return allowAny;
       }
-      if (typeGroup.macUTIs?.isEmpty ?? true) {
+      if (typeGroup.uniformTypeIdentifiers?.isEmpty ?? true) {
         throw ArgumentError('The provided type group $typeGroup should either '
-            'allow all files, or have a non-empty "macUTIs"');
+            'allow all files, or have a non-empty "uniformTypeIdentifiers"');
       }
-      allowedUTIs.addAll(typeGroup.macUTIs!);
+      allowedUTIs.addAll(typeGroup.uniformTypeIdentifiers!);
     }
     return allowedUTIs;
   }

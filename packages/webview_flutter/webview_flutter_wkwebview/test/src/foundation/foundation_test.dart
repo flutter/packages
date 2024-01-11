@@ -17,6 +17,8 @@ import 'foundation_test.mocks.dart';
 
 @GenerateMocks(<Type>[
   TestNSObjectHostApi,
+  TestNSUrlCredentialHostApi,
+  TestNSUrlHostApi,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -137,7 +139,9 @@ void main() {
           <NSKeyValueChangeKeyEnumData>[
             NSKeyValueChangeKeyEnumData(value: NSKeyValueChangeKeyEnum.oldValue)
           ],
-          <Object?>['value'],
+          <ObjectOrIdentifier?>[
+            ObjectOrIdentifier(isIdentifier: false, value: 'value'),
+          ],
         );
 
         expect(
@@ -147,6 +151,55 @@ void main() {
             object,
             <NSKeyValueChangeKey, Object?>{
               NSKeyValueChangeKey.oldValue: 'value',
+            },
+          ]),
+        );
+      });
+
+      test('observeValue returns object in an `InstanceManager`', () async {
+        final Completer<List<Object?>> argsCompleter =
+            Completer<List<Object?>>();
+
+        FoundationFlutterApis.instance = FoundationFlutterApis(
+          instanceManager: instanceManager,
+        );
+
+        object = NSObject.detached(
+          instanceManager: instanceManager,
+          observeValue: (
+            String keyPath,
+            NSObject object,
+            Map<NSKeyValueChangeKey, Object?> change,
+          ) {
+            argsCompleter.complete(<Object?>[keyPath, object, change]);
+          },
+        );
+        instanceManager.addHostCreatedInstance(object, 1);
+
+        final NSObject returnedObject = NSObject.detached(
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(returnedObject, 2);
+
+        FoundationFlutterApis.instance.object.observeValue(
+          1,
+          'keyPath',
+          1,
+          <NSKeyValueChangeKeyEnumData>[
+            NSKeyValueChangeKeyEnumData(value: NSKeyValueChangeKeyEnum.oldValue)
+          ],
+          <ObjectOrIdentifier?>[
+            ObjectOrIdentifier(isIdentifier: true, value: 2),
+          ],
+        );
+
+        expect(
+          argsCompleter.future,
+          completion(<Object?>[
+            'keyPath',
+            object,
+            <NSKeyValueChangeKey, Object?>{
+              NSKeyValueChangeKey.oldValue: returnedObject,
             },
           ]),
         );
@@ -166,5 +219,171 @@ void main() {
         expect(instanceManager.containsIdentifier(1), isFalse);
       });
     });
+
+    group('NSUrl', () {
+      // Ensure the test host api is removed after each test run.
+      tearDown(() => TestNSUrlHostApi.setup(null));
+
+      test('getAbsoluteString', () async {
+        final MockTestNSUrlHostApi mockApi = MockTestNSUrlHostApi();
+        TestNSUrlHostApi.setup(mockApi);
+
+        final NSUrl url = NSUrl.detached(instanceManager: instanceManager);
+        instanceManager.addHostCreatedInstance(url, 0);
+
+        when(mockApi.getAbsoluteString(0)).thenReturn('myString');
+
+        expect(await url.getAbsoluteString(), 'myString');
+      });
+
+      test('Flutter API create', () {
+        final NSUrlFlutterApi flutterApi = NSUrlFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        flutterApi.create(0);
+
+        expect(instanceManager.getInstanceWithWeakReference(0), isA<NSUrl>());
+      });
+    });
+
+    group('NSUrlCredential', () {
+      tearDown(() {
+        TestNSUrlCredentialHostApi.setup(null);
+      });
+
+      test('HostApi createWithUser', () {
+        final MockTestNSUrlCredentialHostApi mockApi =
+            MockTestNSUrlCredentialHostApi();
+        TestNSUrlCredentialHostApi.setup(mockApi);
+
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const String user = 'testString';
+        const String password = 'testString2';
+
+        const NSUrlCredentialPersistence persistence =
+            NSUrlCredentialPersistence.permanent;
+
+        final NSUrlCredential instance = NSUrlCredential.withUser(
+          user: user,
+          password: password,
+          persistence: persistence,
+          instanceManager: instanceManager,
+        );
+
+        verify(mockApi.createWithUser(
+          instanceManager.getIdentifier(instance),
+          user,
+          password,
+          persistence,
+        ));
+      });
+    });
+
+    group('NSUrlProtectionSpace', () {
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final NSUrlProtectionSpaceFlutterApiImpl api =
+            NSUrlProtectionSpaceFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+
+        api.create(
+          instanceIdentifier,
+          'testString',
+          'testString',
+          'testAuthenticationMethod',
+        );
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<NSUrlProtectionSpace>(),
+        );
+      });
+    });
+
+    group('NSUrlAuthenticationChallenge', () {
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final NSUrlAuthenticationChallengeFlutterApiImpl api =
+            NSUrlAuthenticationChallengeFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+
+        const int protectionSpaceIdentifier = 1;
+        instanceManager.addHostCreatedInstance(
+          NSUrlProtectionSpace.detached(
+            host: null,
+            realm: null,
+            authenticationMethod: null,
+            instanceManager: instanceManager,
+          ),
+          protectionSpaceIdentifier,
+        );
+
+        api.create(instanceIdentifier, protectionSpaceIdentifier);
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<NSUrlAuthenticationChallenge>(),
+        );
+      });
+    });
+  });
+
+  test('NSError', () {
+    expect(
+      const NSError(
+        code: 0,
+        domain: 'domain',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: 'desc',
+        },
+      ).toString(),
+      'desc (domain:0:{NSLocalizedDescription: desc})',
+    );
+    expect(
+      const NSError(
+        code: 0,
+        domain: 'domain',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: '',
+        },
+      ).toString(),
+      'Error domain:0:{NSLocalizedDescription: }',
+    );
+    expect(
+      const NSError(
+        code: 255,
+        domain: 'bar',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: 'baz',
+        },
+      ).toString(),
+      'baz (bar:255:{NSLocalizedDescription: baz})',
+    );
+    expect(
+      const NSError(
+        code: 255,
+        domain: 'bar',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: '',
+        },
+      ).toString(),
+      'Error bar:255:{NSLocalizedDescription: }',
+    );
   });
 }

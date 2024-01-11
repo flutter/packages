@@ -20,7 +20,7 @@ class MoveCameraPage extends GoogleMapExampleAppPage {
 }
 
 class MoveCamera extends StatefulWidget {
-  const MoveCamera({Key? key}) : super(key: key);
+  const MoveCamera({super.key});
   @override
   State createState() => MoveCameraState();
 }

@@ -41,3 +41,10 @@ class NeverOnBreakpoint extends Breakpoint {
     return false;
   }
 }
+
+class AppBarAlwaysOnBreakpoint extends Breakpoint {
+  @override
+  bool isActive(BuildContext context) {
+    return true;
+  }
+}

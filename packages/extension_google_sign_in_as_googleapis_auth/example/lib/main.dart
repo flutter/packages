@@ -4,7 +4,9 @@
 
 import 'dart:async';
 
+// #docregion Import
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
+// #enddocregion Import
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/people/v1.dart';
@@ -28,7 +30,7 @@ void main() {
 /// The main widget of this demo.
 class SignInDemo extends StatefulWidget {
   /// Creates the main widget of this demo.
-  const SignInDemo({Key? key}) : super(key: key);
+  const SignInDemo({super.key});
 
   @override
   State createState() => SignInDemoState();
@@ -58,6 +60,7 @@ class SignInDemoState extends State<SignInDemo> {
       _contactText = 'Loading contact info...';
     });
 
+// #docregion CreateAPIClient
     // Retrieve an [auth.AuthClient] from the current [GoogleSignIn] instance.
     final auth.AuthClient? client = await _googleSignIn.authenticatedClient();
 
@@ -71,6 +74,7 @@ class SignInDemoState extends State<SignInDemo> {
       'people/me',
       personFields: 'names',
     );
+    // #enddocregion CreateAPIClient
 
     final String? firstNamedContactName =
         _pickFirstNamedContact(response.connections);

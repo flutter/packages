@@ -27,7 +27,10 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        expect(widgets.whereType<SingleChildScrollView>(), isNotEmpty);
+        final Iterable<SingleChildScrollView> scrollViews =
+            widgets.whereType<SingleChildScrollView>();
+        expect(scrollViews, isNotEmpty);
+        expect(scrollViews.first.controller, isNotNull);
       },
     );
 

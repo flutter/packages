@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -10,6 +9,7 @@ import 'package:file_selector_web/file_selector_web.dart';
 import 'package:file_selector_web/src/dom_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/helpers.dart';
 
 void main() {
   group('FileSelectorWeb', () {
@@ -33,13 +33,29 @@ void main() {
           webWildCards: <String>['image/*'],
         );
 
-        final XFile file =
+        final XFile? file =
             await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
 
-        expect(file.name, mockFile.name);
+        expect(file, isNotNull);
+        expect(file!.name, mockFile.name);
         expect(await file.length(), 4);
         expect(await file.readAsString(), '1001');
         expect(await file.lastModified(), isNotNull);
+      });
+
+      testWidgets('returns null when getFiles returns an empty list',
+          (WidgetTester _) async {
+        // Simulate returning an empty list of files from the DomHelper...
+        final MockDomHelper mockDomHelper = MockDomHelper(
+          files: <XFile>[],
+        );
+
+        final FileSelectorWeb plugin =
+            FileSelectorWeb(domHelper: mockDomHelper);
+
+        final XFile? file = await plugin.openFile();
+
+        expect(file, isNull);
       });
     });
 
@@ -105,7 +121,7 @@ class MockDomHelper implements DomHelper {
   Future<List<XFile>> getFiles({
     String accept = '',
     bool multiple = false,
-    FileUploadInputElement? input,
+    HTMLInputElement? input,
   }) {
     expect(accept, _expectedAccept,
         reason: 'Expected "accept" value does not match.');

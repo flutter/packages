@@ -29,9 +29,10 @@ public final class CameraRegionUtils {
    * @param requestBuilder - The request builder for the current capture request.
    * @return The boundaries for the current camera device.
    */
+  @NonNull
   public static Size getCameraBoundaries(
       @NonNull CameraProperties cameraProperties, @NonNull CaptureRequest.Builder requestBuilder) {
-    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+    if (SdkCapabilityChecker.supportsDistortionCorrection()
         && supportsDistortionCorrection(cameraProperties)) {
       // Get the current distortion correction mode.
       Integer distortionCorrectionMode =
@@ -69,6 +70,7 @@ public final class CameraRegionUtils {
    * @return The dimensions of the metering rectangle based on the supplied coordinates and
    *     boundaries.
    */
+  @NonNull
   public static MeteringRectangle convertPointToMeteringRectangle(
       @NonNull Size boundaries,
       double x,

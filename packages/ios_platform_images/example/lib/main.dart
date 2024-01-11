@@ -10,7 +10,7 @@ void main() => runApp(const MyApp());
 /// Main widget for the example app.
 class MyApp extends StatefulWidget {
   /// Default Constructor
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -28,17 +28,20 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // #docregion Usage
+    // "flutter" is a resource in Assets.xcassets.
+    final Image xcassetImage = Image(
+      image: IosPlatformImages.load('flutter'),
+      semanticLabel: 'Flutter logo',
+    );
+    // #enddocregion Usage
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          // "flutter" is a resource in Assets.xcassets.
-          child: Image(
-            image: IosPlatformImages.load('flutter'),
-            semanticLabel: 'Flutter logo',
-          ),
+          child: xcassetImage,
         ),
       ),
     );

@@ -57,8 +57,8 @@
 
   FlutterError *error;
   [hostAPI
-      addObserverForObjectWithIdentifier:@0
-                      observerIdentifier:@1
+      addObserverForObjectWithIdentifier:0
+                      observerIdentifier:1
                                  keyPath:@"myKey"
                                  options:@[
                                    [FWFNSKeyValueObservingOptionsEnumData
@@ -88,8 +88,8 @@
   [instanceManager addDartCreatedInstance:observerObject withIdentifier:1];
 
   FlutterError *error;
-  [hostAPI removeObserverForObjectWithIdentifier:@0
-                              observerIdentifier:@1
+  [hostAPI removeObserverForObjectWithIdentifier:0
+                              observerIdentifier:1
                                          keyPath:@"myKey"
                                            error:&error];
   OCMVerify([mockObject removeObserver:observerObject forKeyPath:@"myKey"]);
@@ -106,7 +106,7 @@
       [[FWFObjectHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI disposeObjectWithIdentifier:@0 error:&error];
+  [hostAPI disposeObjectWithIdentifier:0 error:&error];
   // Only the strong reference is removed, so the weak reference will remain until object is set to
   // nil.
   object = nil;
@@ -130,16 +130,51 @@
                               change:@{NSKeyValueChangeOldKey : @"key"}
                              context:nil];
   OCMVerify([mockFlutterAPI
-      observeValueForObjectWithIdentifier:@0
+      observeValueForObjectWithIdentifier:0
                                   keyPath:@"keyPath"
-                         objectIdentifier:@1
+                         objectIdentifier:1
                                changeKeys:[OCMArg checkWithBlock:^BOOL(
                                                       NSArray<FWFNSKeyValueChangeKeyEnumData *>
                                                           *value) {
                                  return value[0].value == FWFNSKeyValueChangeKeyEnumOldValue;
                                }]
                              changeValues:[OCMArg checkWithBlock:^BOOL(id value) {
-                               return [@"key" isEqual:value[0]];
+                               FWFObjectOrIdentifier *object = (FWFObjectOrIdentifier *)value[0];
+                               return !object.isIdentifier && [@"key" isEqual:object.value];
+                             }]
+                               completion:OCMOCK_ANY]);
+}
+
+- (void)testObserveValueForKeyPathWithIdentifier {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  FWFObject *mockObject = [self mockObjectWithManager:instanceManager identifier:0];
+  FWFObjectFlutterApiImpl *mockFlutterAPI = [self mockFlutterApiWithManager:instanceManager];
+
+  OCMStub([mockObject objectApi]).andReturn(mockFlutterAPI);
+
+  NSObject *object = [[NSObject alloc] init];
+  [instanceManager addDartCreatedInstance:object withIdentifier:1];
+
+  NSObject *returnedObject = [[NSObject alloc] init];
+  [instanceManager addDartCreatedInstance:returnedObject withIdentifier:2];
+
+  [mockObject observeValueForKeyPath:@"keyPath"
+                            ofObject:object
+                              change:@{NSKeyValueChangeOldKey : returnedObject}
+                             context:nil];
+  OCMVerify([mockFlutterAPI
+      observeValueForObjectWithIdentifier:0
+                                  keyPath:@"keyPath"
+                         objectIdentifier:1
+                               changeKeys:[OCMArg checkWithBlock:^BOOL(
+                                                      NSArray<FWFNSKeyValueChangeKeyEnumData *>
+                                                          *value) {
+                                 return value[0].value == FWFNSKeyValueChangeKeyEnumOldValue;
+                               }]
+                             changeValues:[OCMArg checkWithBlock:^BOOL(id value) {
+                               FWFObjectOrIdentifier *object = (FWFObjectOrIdentifier *)value[0];
+                               return object.isIdentifier && [@(2) isEqual:object.value];
                              }]
                                completion:OCMOCK_ANY]);
 }

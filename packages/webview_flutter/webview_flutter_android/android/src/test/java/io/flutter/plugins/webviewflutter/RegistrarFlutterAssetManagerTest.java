@@ -11,8 +11,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.res.AssetManager;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
-import io.flutter.plugins.webviewflutter.FlutterAssetManager.RegistrarFlutterAssetManager;
 import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,17 +19,19 @@ import org.mockito.Mock;
 @SuppressWarnings("deprecation")
 public class RegistrarFlutterAssetManagerTest {
   @Mock AssetManager mockAssetManager;
-  @Mock Registrar mockRegistrar;
+  @Mock io.flutter.plugin.common.PluginRegistry.Registrar mockRegistrar;
 
-  RegistrarFlutterAssetManager testRegistrarFlutterAssetManager;
+  io.flutter.plugins.webviewflutter.FlutterAssetManager.RegistrarFlutterAssetManager
+      testRegistrarFlutterAssetManager;
 
   @Before
   public void setUp() {
     mockAssetManager = mock(AssetManager.class);
-    mockRegistrar = mock(Registrar.class);
+    mockRegistrar = mock(io.flutter.plugin.common.PluginRegistry.Registrar.class);
 
     testRegistrarFlutterAssetManager =
-        new RegistrarFlutterAssetManager(mockAssetManager, mockRegistrar);
+        new io.flutter.plugins.webviewflutter.FlutterAssetManager.RegistrarFlutterAssetManager(
+            mockAssetManager, mockRegistrar);
   }
 
   @Test

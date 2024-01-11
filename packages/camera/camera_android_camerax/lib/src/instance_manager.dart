@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
-
 /// Maintains instances used to communicate with the native objects they
 /// represent.
 ///
@@ -23,7 +21,6 @@ class InstanceManager {
   /// Constructs an [InstanceManager].
   InstanceManager({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
-      debugPrint('Releasing weak reference with identifier: $identifier');
       _weakInstances.remove(identifier);
       onWeakReferenceRemoved(identifier);
     };
@@ -68,8 +65,6 @@ class InstanceManager {
     T instance, {
     required T Function(T original) onCopy,
   }) {
-    assert(getIdentifier(instance) == null);
-
     final int identifier = _nextUniqueIdentifier();
     _addInstanceWithIdentifier(instance, identifier, onCopy: onCopy);
     return identifier;
@@ -106,7 +101,6 @@ class InstanceManager {
   /// This does not remove the the weak referenced instance associtated with
   /// [identifier]. This can be done with [removeWeakReference].
   T? remove<T extends Object>(int identifier) {
-    debugPrint('Releasing strong reference with identifier: $identifier');
     _copyCallbacks.remove(identifier);
     return _strongInstances.remove(identifier) as T?;
   }
@@ -129,14 +123,14 @@ class InstanceManager {
     if (weakInstance == null) {
       final T? strongInstance = _strongInstances[identifier] as T?;
       if (strongInstance != null) {
-        // This cast is safe since it matches the argument type for
-        // _addInstanceWithIdentifier, which is the only place _copyCallbacks
-        // is populated.
-        final T Function(T) copyCallback =
-            _copyCallbacks[identifier]! as T Function(T);
-        final T copy = copyCallback(strongInstance);
+        final Function copyCallback = _copyCallbacks[identifier]!;
+        // This avoid_dynamic_calls is safe since the type of strongInstance
+        // matches the argument type for _addInstanceWithIdentifier, which is
+        // the only place _copyCallbacks is populated.
+        // ignore: avoid_dynamic_calls
+        final T copy = copyCallback(strongInstance) as T;
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] = WeakReference<T>(copy);
+        _weakInstances[identifier] = WeakReference<Object>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy;
       }
@@ -165,9 +159,6 @@ class InstanceManager {
     int identifier, {
     required T Function(T original) onCopy,
   }) {
-    assert(!containsIdentifier(identifier));
-    assert(getIdentifier(instance) == null);
-    assert(identifier >= 0);
     _addInstanceWithIdentifier(instance, identifier, onCopy: onCopy);
   }
 
@@ -176,6 +167,9 @@ class InstanceManager {
     int identifier, {
     required T Function(T original) onCopy,
   }) {
+    assert(!containsIdentifier(identifier));
+    assert(getIdentifier(instance) == null);
+    assert(identifier >= 0);
     _identifiers[instance] = identifier;
     _weakInstances[identifier] = WeakReference<Object>(instance);
     _finalizer.attach(instance, identifier, detach: instance);

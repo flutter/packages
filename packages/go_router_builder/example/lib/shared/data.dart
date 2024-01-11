@@ -54,6 +54,13 @@ enum SportDetails {
   final bool hasNet;
 }
 
+/// An enum used only in iterables.
+enum CookingRecipe {
+  burger,
+  pizza,
+  tacos,
+}
+
 /// sample Person class
 class Person {
   Person({

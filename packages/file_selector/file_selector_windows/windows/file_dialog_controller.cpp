@@ -51,6 +51,10 @@ HRESULT FileDialogController::GetResult(IShellItem** out_item) const {
   return dialog_->GetResult(out_item);
 }
 
+HRESULT FileDialogController::GetFileTypeIndex(UINT* out_index) const {
+  return dialog_->GetFileTypeIndex(out_index);
+}
+
 HRESULT FileDialogController::GetResults(IShellItemArray** out_items) const {
   IFileOpenDialogPtr open_dialog;
   HRESULT result = dialog_->QueryInterface(IID_PPV_ARGS(&open_dialog));

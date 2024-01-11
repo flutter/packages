@@ -41,7 +41,7 @@ const double _fabDimension = 56.0;
 /// The demo page for [OpenContainerTransform].
 class OpenContainerTransformDemo extends StatefulWidget {
   /// Creates the demo page for [OpenContainerTransform].
-  const OpenContainerTransformDemo({Key? key}) : super(key: key);
+  const OpenContainerTransformDemo({super.key});
 
   @override
   State<OpenContainerTransformDemo> createState() {
@@ -312,7 +312,7 @@ class _ExampleCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
-            child: Container(
+            child: ColoredBox(
               color: Colors.black38,
               child: Center(
                 child: Image.asset(

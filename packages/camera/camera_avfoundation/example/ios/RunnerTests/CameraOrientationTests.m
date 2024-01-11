@@ -28,11 +28,11 @@
       expectedChannelOrientation:@"portraitUp"
                     cameraPlugin:cameraPlugin
                        messenger:mockMessenger];
-  [self rotate:UIDeviceOrientationLandscapeRight
+  [self rotate:UIDeviceOrientationLandscapeLeft
       expectedChannelOrientation:@"landscapeLeft"
                     cameraPlugin:cameraPlugin
                        messenger:mockMessenger];
-  [self rotate:UIDeviceOrientationLandscapeLeft
+  [self rotate:UIDeviceOrientationLandscapeRight
       expectedChannelOrientation:@"landscapeRight"
                     cameraPlugin:cameraPlugin
                        messenger:mockMessenger];

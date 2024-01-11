@@ -3,12 +3,14 @@
 // found in the LICENSE file.
 
 @Timeout(Duration(seconds: 3600))
+library;
 
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:gcloud/storage.dart';
-import 'package:googleapis/storage/v1.dart' show DetailedApiRequestError;
+import 'package:googleapis/storage/v1.dart'
+    show DetailedApiRequestError, StorageApi;
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:metrics_center/metrics_center.dart';
 import 'package:metrics_center/src/gcs_lock.dart';
@@ -426,7 +428,7 @@ Future<void> main() async {
 
     assert(await storage.bucketExists(kTestBucketName));
     testBucket = storage.bucket(kTestBucketName);
-    testLock = GcsLock(client, kTestBucketName);
+    testLock = GcsLock(StorageApi(client), kTestBucketName);
   }
 
   Future<void> skiaPerfGcsAdapterIntegrationTest() async {

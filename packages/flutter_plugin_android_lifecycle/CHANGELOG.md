@@ -1,3 +1,47 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.0.17
+
+* Updates annotations lib to 1.7.0.
+
+## 2.0.16
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.0.15
+
+* Fixes Java lints.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.0.14
+
+* Fixes compatibility with ActivityPluginBinding.
+
+## 2.0.13
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.0.12
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 2.0.11
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 2.0.10
+
+* Sets an explicit Java compatibility version.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.0.9
+
+* Updates annotation and espresso dependencies.
+* Updates compileSdkVersion to 33.
+
 ## 2.0.8
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

@@ -20,6 +20,6 @@ abstract class UserDefaultsApi {
   void setValue(String key, Object value);
   // TODO(stuartmorgan): Make these non-nullable once
   // https://github.com/flutter/flutter/issues/97848 is fixed.
-  Map<String?, Object?> getAll();
-  void clear();
+  Map<String?, Object?> getAll(String prefix, List<String>? allowList);
+  bool clear(String prefix, List<String>? allowList);
 }

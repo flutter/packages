@@ -5,6 +5,7 @@
 @import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
+@import webview_flutter_wkwebview.Test;
 
 #import <OCMock/OCMock.h>
 
@@ -50,7 +51,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:0 error:&error];
   FWFUIDelegate *delegate = (FWFUIDelegate *)[instanceManager instanceForIdentifier:0];
 
   XCTAssertTrue([delegate conformsToProtocol:@protocol(WKUIDelegate)]);
@@ -70,12 +71,8 @@
 
   WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
   id mockConfigurationFlutterApi = OCMPartialMock(mockFlutterAPI.webViewConfigurationFlutterApi);
-  NSNumber *__block configurationIdentifier;
-  OCMStub([mockConfigurationFlutterApi createWithIdentifier:[OCMArg checkWithBlock:^BOOL(id value) {
-                                         configurationIdentifier = value;
-                                         return YES;
-                                       }]
-                                                 completion:OCMOCK_ANY]);
+  OCMStub([mockConfigurationFlutterApi createWithIdentifier:0 completion:OCMOCK_ANY])
+      .ignoringNonObjectArgs();
 
   WKNavigationAction *mockNavigationAction = OCMClassMock([WKNavigationAction class]);
   OCMStub([mockNavigationAction request])
@@ -85,16 +82,60 @@
   OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
   OCMStub([mockNavigationAction targetFrame]).andReturn(mockFrameInfo);
 
+  // Creating the webview will create a configuration on the host side, using the next available
+  // identifier, so save that for checking against later.
+  NSInteger configurationIdentifier = instanceManager.nextIdentifier;
   [mockDelegate webView:mockWebView
       createWebViewWithConfiguration:configuration
                  forNavigationAction:mockNavigationAction
                       windowFeatures:OCMClassMock([WKWindowFeatures class])];
   OCMVerify([mockFlutterAPI
-      onCreateWebViewForDelegateWithIdentifier:@0
-                             webViewIdentifier:@1
+      onCreateWebViewForDelegateWithIdentifier:0
+                             webViewIdentifier:1
                        configurationIdentifier:configurationIdentifier
                               navigationAction:[OCMArg
                                                    isKindOfClass:[FWFWKNavigationActionData class]]
                                     completion:OCMOCK_ANY]);
+}
+
+- (void)testRequestMediaCapturePermissionForOrigin API_AVAILABLE(ios(15.0)) {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  FWFUIDelegate *mockDelegate = [self mockDelegateWithManager:instanceManager identifier:0];
+  FWFUIDelegateFlutterApiImpl *mockFlutterAPI = [self mockFlutterApiWithManager:instanceManager];
+
+  OCMStub([mockDelegate UIDelegateAPI]).andReturn(mockFlutterAPI);
+
+  WKWebView *mockWebView = OCMClassMock([WKWebView class]);
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
+
+  WKSecurityOrigin *mockSecurityOrigin = OCMClassMock([WKSecurityOrigin class]);
+  OCMStub([mockSecurityOrigin host]).andReturn(@"");
+  OCMStub([mockSecurityOrigin port]).andReturn(0);
+  OCMStub([mockSecurityOrigin protocol]).andReturn(@"");
+
+  WKFrameInfo *mockFrameInfo = OCMClassMock([WKFrameInfo class]);
+  OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
+
+  [mockDelegate webView:mockWebView
+      requestMediaCapturePermissionForOrigin:mockSecurityOrigin
+                            initiatedByFrame:mockFrameInfo
+                                        type:WKMediaCaptureTypeMicrophone
+                             decisionHandler:^(WKPermissionDecision decision){
+                             }];
+
+  OCMVerify([mockFlutterAPI
+      requestMediaCapturePermissionForDelegateWithIdentifier:0
+                                           webViewIdentifier:1
+                                                      origin:[OCMArg isKindOfClass:
+                                                                         [FWFWKSecurityOriginData
+                                                                             class]]
+                                                       frame:[OCMArg
+                                                                 isKindOfClass:[FWFWKFrameInfoData
+                                                                                   class]]
+                                                        type:[OCMArg isKindOfClass:
+                                                                         [FWFWKMediaCaptureTypeData
+                                                                             class]]
+                                                  completion:OCMOCK_ANY]);
 }
 @end

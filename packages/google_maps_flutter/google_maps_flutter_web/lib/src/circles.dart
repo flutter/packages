@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// This class manages all the [CircleController]s associated to a [GoogleMapController].
 class CirclesController extends GeometryController {
@@ -30,10 +30,6 @@ class CirclesController extends GeometryController {
   }
 
   void _addCircle(Circle circle) {
-    if (circle == null) {
-      return;
-    }
-
     final gmaps.CircleOptions circleOptions = _circleOptionsFromCircle(circle);
     final gmaps.Circle gmCircle = gmaps.Circle(circleOptions)..map = googleMap;
     final CircleController controller = CircleController(

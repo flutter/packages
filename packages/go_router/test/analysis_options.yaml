@@ -1,0 +1,12 @@
+# This custom rule set only exists to allow very targeted changes
+# relative to the default repo settings, for specific use cases.
+# Please do NOT add more changes here without consulting with
+# #hackers-ecosystem on Discord.
+
+include: ../../../analysis_options.yaml
+
+linter:
+  rules:
+    # Matches flutter/flutter, which disables this rule due to false positives
+    # from navigator APIs.
+    unawaited_futures: false

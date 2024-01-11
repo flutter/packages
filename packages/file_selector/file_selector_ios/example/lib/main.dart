@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
+import 'open_any_page.dart';
 import 'open_image_page.dart';
 import 'open_multiple_images_page.dart';
 import 'open_text_page.dart';
@@ -16,7 +17,7 @@ void main() {
 /// MyApp is the Main Application.
 class MyApp extends StatelessWidget {
   /// Default Constructor
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/open/images': (BuildContext context) =>
             const OpenMultipleImagesPage(),
         '/open/text': (BuildContext context) => const OpenTextPage(),
+        '/open/any': (BuildContext context) => const OpenAnyPage(),
       },
     );
   }

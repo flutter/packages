@@ -1,3 +1,65 @@
+## 4.4.4
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 4.4.3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 4.4.2
+
+* Fixes `use_build_context_synchronously` lint violations in the example app.
+
+## 4.4.1
+
+* Exposes `JavaScriptLogLevel` from platform interface.
+
+## 4.4.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebViewController.setOnConsoleMessage`.
+
+## 4.3.0
+
+* Adds support to retrieve the user agent. See `WebViewController.getUserAgent`.
+
+## 4.2.4
+
+* Adds pub topics to package metadata.
+
+## 4.2.3
+
+* Fixes the code sample in the dartdocs for `WebViewController.addJavaScriptChannel`.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 4.2.2
+
+* Fixes documentation typo.
+
+## 4.2.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 4.2.0
+
+* Adds support to receive permission requests. See `WebViewController(onPermissionRequest)`.
+
+## 4.1.0
+
+* Adds support to track URL changes. See `NavigationDelegate(onUrlChange)`.
+* Updates minimum Flutter version to 3.3.
+* Fixes common typos in tests and documentation.
+* Fixes documentation for `WebViewController` and `WebViewCookieManager`.
+
+## 4.0.7
+
+* Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on
+  Android.
+
+## 4.0.6
+
+* Updates iOS minimum version in README.
+
 ## 4.0.5
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// The web implementation of [GoogleMapsFlutterPlatform].
 ///
@@ -26,7 +26,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   // Convenience getter for a stream of events filtered by their mapId.
   Stream<MapEvent<Object?>> _events(int mapId) => _map(mapId).events;
 
-  // Convenience getter for a map controller by its mapId.
+  /// Retrieve a map controller by its mapId.
   GoogleMapController _map(int mapId) {
     final GoogleMapController? controller = _mapById[mapId];
     assert(controller != null,
@@ -39,7 +39,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     // The internal instance of our controller is initialized eagerly in `buildView`,
     // so we don't have to do anything in this method, which is left intentionally
     // blank.
-    assert(_map(mapId) != null, 'Must call buildWidget before init!');
+    assert(_mapById[mapId] != null, 'Must call buildWidget before init!');
   }
 
   /// Updates the options of a given `mapId`.
@@ -95,7 +95,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
   }) async {
-    return; // Noop for now!
+    _map(mapId).updateTileOverlays(newTileOverlays);
   }
 
   @override
@@ -103,7 +103,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     TileOverlayId tileOverlayId, {
     required int mapId,
   }) async {
-    return; // Noop for now!
+    _map(mapId).clearTileCache(tileOverlayId);
   }
 
   /// Applies the given `cameraUpdate` to the current viewport (with animation).
@@ -326,5 +326,14 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
         'The widget of a GoogleMapController cannot be null before calling dispose on it.');
 
     return mapController.widget!;
+  }
+
+  /// Populates [GoogleMapsFlutterInspectorPlatform.instance] to allow
+  /// inspecting the platform map state.
+  @override
+  void enableDebugInspection() {
+    GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorWeb(
+      (int mapId) => _map(mapId).configuration,
+    );
   }
 }

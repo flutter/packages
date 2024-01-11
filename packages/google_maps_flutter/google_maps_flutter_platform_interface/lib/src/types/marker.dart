@@ -5,7 +5,7 @@
 import 'dart:ui' show Offset;
 
 import 'package:flutter/foundation.dart'
-    show immutable, ValueChanged, VoidCallback;
+    show ValueChanged, VoidCallback, immutable;
 
 import 'types.dart';
 
@@ -109,7 +109,7 @@ class InfoWindow {
 @immutable
 class MarkerId extends MapsObjectId<Marker> {
   /// Creates an immutable identifier for a [Marker].
-  const MarkerId(String value) : super(value);
+  const MarkerId(super.value);
 }
 
 /// Marks a geographical location on the map.
@@ -155,7 +155,7 @@ class Marker implements MapsObject<Marker> {
     this.onDrag,
     this.onDragStart,
     this.onDragEnd,
-  }) : assert(alpha == null || (0.0 <= alpha && alpha <= 1.0));
+  }) : assert(0.0 <= alpha && alpha <= 1.0);
 
   /// Uniquely identifies a [Marker].
   final MarkerId markerId;

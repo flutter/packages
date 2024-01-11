@@ -365,4 +365,69 @@ void main() {
       mockPlatformNavigationDelegate,
     ));
   });
+
+  test('onPermissionRequest', () async {
+    bool permissionRequestCallbackCalled = false;
+
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+    WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+      onPermissionRequest: (WebViewPermissionRequest request) {
+        permissionRequestCallbackCalled = true;
+      },
+    );
+
+    final void Function(PlatformWebViewPermissionRequest request)
+        requestCallback = verify(mockPlatformWebViewController
+                .setOnPlatformPermissionRequest(captureAny))
+            .captured
+            .single as void Function(PlatformWebViewPermissionRequest request);
+
+    requestCallback(const TestPlatformWebViewPermissionRequest());
+    expect(permissionRequestCallbackCalled, isTrue);
+  });
+
+  test('setConsoleLogCallback', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    void onConsoleMessage(JavaScriptConsoleMessage message) {}
+
+    await webViewController.setOnConsoleMessage(onConsoleMessage);
+
+    verify(mockPlatformWebViewController.setOnConsoleMessage(onConsoleMessage));
+  });
+
+  test('getUserAgent', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    const String userAgent = 'str';
+
+    when(mockPlatformWebViewController.getUserAgent()).thenAnswer(
+      (_) => Future<String?>.value(userAgent),
+    );
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+    await expectLater(webViewController.getUserAgent(), completion(userAgent));
+  });
+}
+
+class TestPlatformWebViewPermissionRequest
+    extends PlatformWebViewPermissionRequest {
+  const TestPlatformWebViewPermissionRequest()
+      : super(types: const <WebViewPermissionResourceType>{});
+
+  @override
+  Future<void> grant() async {}
+
+  @override
+  Future<void> deny() async {}
 }

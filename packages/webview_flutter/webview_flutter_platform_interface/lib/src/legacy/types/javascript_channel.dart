@@ -17,9 +17,7 @@ class JavascriptChannel {
   JavascriptChannel({
     required this.name,
     required this.onMessageReceived,
-  })  : assert(name != null),
-        assert(onMessageReceived != null),
-        assert(_validChannelNames.hasMatch(name));
+  }) : assert(_validChannelNames.hasMatch(name));
 
   /// The channel's name.
   ///
@@ -29,7 +27,7 @@ class JavascriptChannel {
   /// The name must start with a letter or underscore(_), followed by any combination of those
   /// characters plus digits.
   ///
-  /// Note that any JavaScript existing `window` property with this name will be overriden.
+  /// Note that any JavaScript existing `window` property with this name will be overridden.
   ///
   /// See also [WebView.javascriptChannels] for more details on the channel registration mechanism.
   final String name;

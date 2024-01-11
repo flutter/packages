@@ -1,3 +1,37 @@
+## 6.2.3
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 6.2.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
+
+## 6.2.1
+
+* Migrates plugin from Objective-C to Swift.
+
+## 6.2.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
+
+## 6.1.5
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 6.1.4
+
+* Updates pigeon to fix warnings with clang 15.
+
+## 6.1.3
+
+* Switches to Pigeon for internal implementation.
+
+## 6.1.2
+
+* Clarifies explanation of endorsement in README.
+
 ## 6.1.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

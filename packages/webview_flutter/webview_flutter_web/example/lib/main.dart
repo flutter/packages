@@ -16,7 +16,7 @@ void main() {
 }
 
 class _WebViewExample extends StatefulWidget {
-  const _WebViewExample({Key? key}) : super(key: key);
+  const _WebViewExample();
 
   @override
   _WebViewExampleState createState() => _WebViewExampleState();
@@ -63,7 +63,6 @@ class _SampleMenu extends StatelessWidget {
         switch (value) {
           case _MenuOptions.doPostRequest:
             _onDoPostRequest(controller);
-            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<_MenuOptions>>[

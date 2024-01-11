@@ -3,13 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Screen that shows an example of openFile
 class OpenTextPage extends StatelessWidget {
   /// Default Constructor
-  const OpenTextPage({Key? key}) : super(key: key);
+  const OpenTextPage({super.key});
 
   Future<void> _openTextFile(BuildContext context) async {
     const XTypeGroup typeGroup = XTypeGroup(
@@ -19,8 +20,8 @@ class OpenTextPage extends StatelessWidget {
     // This demonstrates using an initial directory for the prompt, which should
     // only be done in cases where the application can likely predict where the
     // file would be. In most cases, this parameter should not be provided.
-    final String initialDirectory =
-        (await getApplicationDocumentsDirectory()).path;
+    final String? initialDirectory =
+        kIsWeb ? null : (await getApplicationDocumentsDirectory()).path;
     final XFile? file = await openFile(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
       initialDirectory: initialDirectory,
@@ -52,11 +53,8 @@ class OpenTextPage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                // ignore: deprecated_member_use
-                primary: Colors.blue,
-                // ignore: deprecated_member_use
-                onPrimary: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               child: const Text('Press to open a text file (json, txt)'),
               onPressed: () => _openTextFile(context),
@@ -71,8 +69,7 @@ class OpenTextPage extends StatelessWidget {
 /// Widget that displays a text file in a dialog
 class TextDisplay extends StatelessWidget {
   /// Default Constructor
-  const TextDisplay(this.fileName, this.fileContent, {Key? key})
-      : super(key: key);
+  const TextDisplay(this.fileName, this.fileContent, {super.key});
 
   /// File's name
   final String fileName;

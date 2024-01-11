@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.webkit.WebView;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.FlutterAssetManagerHostApi;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,12 +21,13 @@ public class FlutterAssetManagerHostApiImpl implements FlutterAssetManagerHostAp
   final FlutterAssetManager flutterAssetManager;
 
   /** Constructs a new instance of {@link FlutterAssetManagerHostApiImpl}. */
-  public FlutterAssetManagerHostApiImpl(FlutterAssetManager flutterAssetManager) {
+  public FlutterAssetManagerHostApiImpl(@NonNull FlutterAssetManager flutterAssetManager) {
     this.flutterAssetManager = flutterAssetManager;
   }
 
+  @NonNull
   @Override
-  public List<String> list(String path) {
+  public List<String> list(@NonNull String path) {
     try {
       String[] paths = flutterAssetManager.list(path);
 
@@ -39,8 +41,9 @@ public class FlutterAssetManagerHostApiImpl implements FlutterAssetManagerHostAp
     }
   }
 
+  @NonNull
   @Override
-  public String getAssetFilePathByName(String name) {
+  public String getAssetFilePathByName(@NonNull String name) {
     return flutterAssetManager.getAssetFilePathByName(name);
   }
 }

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -10,7 +12,8 @@ import '../common/web_kit.g.dart';
 import '../foundation/foundation.dart';
 import 'web_kit.dart';
 
-export '../common/web_kit.g.dart' show WKNavigationType;
+export '../common/web_kit.g.dart'
+    show WKMediaCaptureType, WKNavigationType, WKPermissionDecision;
 
 Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     Iterable<WKWebsiteDataType> types) {
@@ -19,28 +22,20 @@ Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     switch (type) {
       case WKWebsiteDataType.cookies:
         value = WKWebsiteDataTypeEnum.cookies;
-        break;
       case WKWebsiteDataType.memoryCache:
         value = WKWebsiteDataTypeEnum.memoryCache;
-        break;
       case WKWebsiteDataType.diskCache:
         value = WKWebsiteDataTypeEnum.diskCache;
-        break;
       case WKWebsiteDataType.offlineWebApplicationCache:
         value = WKWebsiteDataTypeEnum.offlineWebApplicationCache;
-        break;
       case WKWebsiteDataType.localStorage:
         value = WKWebsiteDataTypeEnum.localStorage;
-        break;
       case WKWebsiteDataType.sessionStorage:
         value = WKWebsiteDataTypeEnum.sessionStorage;
-        break;
       case WKWebsiteDataType.webSQLDatabases:
         value = WKWebsiteDataTypeEnum.webSQLDatabases;
-        break;
       case WKWebsiteDataType.indexedDBDatabases:
         value = WKWebsiteDataTypeEnum.indexedDBDatabases;
-        break;
     }
 
     return WKWebsiteDataTypeEnumData(value: value);
@@ -79,46 +74,32 @@ extension _NSHttpCookiePropertyKeyConverter on NSHttpCookiePropertyKey {
     switch (this) {
       case NSHttpCookiePropertyKey.comment:
         value = NSHttpCookiePropertyKeyEnum.comment;
-        break;
       case NSHttpCookiePropertyKey.commentUrl:
         value = NSHttpCookiePropertyKeyEnum.commentUrl;
-        break;
       case NSHttpCookiePropertyKey.discard:
         value = NSHttpCookiePropertyKeyEnum.discard;
-        break;
       case NSHttpCookiePropertyKey.domain:
         value = NSHttpCookiePropertyKeyEnum.domain;
-        break;
       case NSHttpCookiePropertyKey.expires:
         value = NSHttpCookiePropertyKeyEnum.expires;
-        break;
       case NSHttpCookiePropertyKey.maximumAge:
         value = NSHttpCookiePropertyKeyEnum.maximumAge;
-        break;
       case NSHttpCookiePropertyKey.name:
         value = NSHttpCookiePropertyKeyEnum.name;
-        break;
       case NSHttpCookiePropertyKey.originUrl:
         value = NSHttpCookiePropertyKeyEnum.originUrl;
-        break;
       case NSHttpCookiePropertyKey.path:
         value = NSHttpCookiePropertyKeyEnum.path;
-        break;
       case NSHttpCookiePropertyKey.port:
         value = NSHttpCookiePropertyKeyEnum.port;
-        break;
       case NSHttpCookiePropertyKey.sameSitePolicy:
         value = NSHttpCookiePropertyKeyEnum.sameSitePolicy;
-        break;
       case NSHttpCookiePropertyKey.secure:
         value = NSHttpCookiePropertyKeyEnum.secure;
-        break;
       case NSHttpCookiePropertyKey.value:
         value = NSHttpCookiePropertyKeyEnum.value;
-        break;
       case NSHttpCookiePropertyKey.version:
         value = NSHttpCookiePropertyKeyEnum.version;
-        break;
     }
 
     return NSHttpCookiePropertyKeyEnumData(value: value);
@@ -131,10 +112,8 @@ extension _WKUserScriptInjectionTimeConverter on WKUserScriptInjectionTime {
     switch (this) {
       case WKUserScriptInjectionTime.atDocumentStart:
         value = WKUserScriptInjectionTimeEnum.atDocumentStart;
-        break;
       case WKUserScriptInjectionTime.atDocumentEnd:
         value = WKUserScriptInjectionTimeEnum.atDocumentEnd;
-        break;
     }
 
     return WKUserScriptInjectionTimeEnumData(value: value);
@@ -150,16 +129,12 @@ Iterable<WKAudiovisualMediaTypeEnumData> _toWKAudiovisualMediaTypeEnumData(
     switch (type) {
       case WKAudiovisualMediaType.none:
         value = WKAudiovisualMediaTypeEnum.none;
-        break;
       case WKAudiovisualMediaType.audio:
         value = WKAudiovisualMediaTypeEnum.audio;
-        break;
       case WKAudiovisualMediaType.video:
         value = WKAudiovisualMediaTypeEnum.video;
-        break;
       case WKAudiovisualMediaType.all:
         value = WKAudiovisualMediaTypeEnum.all;
-        break;
     }
 
     return WKAudiovisualMediaTypeEnumData(value: value);
@@ -198,7 +173,7 @@ extension _WKNSErrorDataConverter on NSErrorData {
     return NSError(
       domain: domain,
       code: code,
-      localizedDescription: localizedDescription,
+      userInfo: userInfo?.cast<String, Object?>() ?? <String, Object?>{},
     );
   }
 }
@@ -227,6 +202,12 @@ extension _NSUrlRequestConverter on NSUrlRequest {
       httpBody: httpBody,
       allHttpHeaderFields: allHttpHeaderFields,
     );
+  }
+}
+
+extension _WKSecurityOriginConverter on WKSecurityOriginData {
+  WKSecurityOrigin toWKSecurityOrigin() {
+    return WKSecurityOrigin(host: host, port: port, protocol: protocol);
   }
 }
 
@@ -622,6 +603,17 @@ class WKWebViewConfigurationHostApiImpl extends WKWebViewConfigurationHostApi {
     );
   }
 
+  /// Calls [setLimitsNavigationsToAppBoundDomains] with the ids of the provided object instances.
+  Future<void> setLimitsNavigationsToAppBoundDomainsForInstances(
+    WKWebViewConfiguration instance,
+    bool limit,
+  ) {
+    return setLimitsNavigationsToAppBoundDomains(
+      instanceManager.getIdentifier(instance)!,
+      limit,
+    );
+  }
+
   /// Calls [setMediaTypesRequiringUserActionForPlayback] with the ids of the provided object instances.
   Future<void> setMediaTypesRequiringUserActionForPlaybackForInstances(
     WKWebViewConfiguration instance,
@@ -718,6 +710,36 @@ class WKUIDelegateFlutterApiImpl extends WKUIDelegateFlutterApi {
           as WKWebViewConfiguration,
       navigationAction.toNavigationAction(),
     );
+  }
+
+  @override
+  Future<WKPermissionDecisionData> requestMediaCapturePermission(
+    int identifier,
+    int webViewIdentifier,
+    WKSecurityOriginData origin,
+    WKFrameInfoData frame,
+    WKMediaCaptureTypeData type,
+  ) async {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+
+    late final WKPermissionDecision decision;
+    if (instance.requestMediaCapturePermission != null) {
+      decision = await instance.requestMediaCapturePermission!(
+        instance,
+        instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+            as WKWebView,
+        origin.toWKSecurityOrigin(),
+        frame.toWKFrameInfo(),
+        type.value,
+      );
+    } else {
+      // The default response for iOS is to prompt. See
+      // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
+      decision = WKPermissionDecision.prompt;
+    }
+
+    return WKPermissionDecisionData(value: decision);
   }
 }
 
@@ -855,6 +877,53 @@ class WKNavigationDelegateFlutterApiImpl
       instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
           as WKWebView,
     );
+  }
+
+  @override
+  Future<AuthenticationChallengeResponse> didReceiveAuthenticationChallenge(
+    int identifier,
+    int webViewIdentifier,
+    int challengeIdentifier,
+  ) async {
+    final void Function(
+      WKWebView webView,
+      NSUrlAuthenticationChallenge challenge,
+      void Function(
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ),
+    )? function = _getDelegate(identifier).didReceiveAuthenticationChallenge;
+
+    if (function == null) {
+      return AuthenticationChallengeResponse(
+        disposition: NSUrlSessionAuthChallengeDisposition.rejectProtectionSpace,
+      );
+    }
+
+    final Completer<AuthenticationChallengeResponse> responseCompleter =
+        Completer<AuthenticationChallengeResponse>();
+
+    function.call(
+      instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+          as WKWebView,
+      instanceManager.getInstanceWithWeakReference(challengeIdentifier)!
+          as NSUrlAuthenticationChallenge,
+      (
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ) {
+        responseCompleter.complete(
+          AuthenticationChallengeResponse(
+            disposition: disposition,
+            credentialIdentifier: credential != null
+                ? instanceManager.getIdentifier(credential)
+                : null,
+          ),
+        );
+      },
+    );
+
+    return responseCompleter.future;
   }
 }
 
@@ -1017,6 +1086,22 @@ class WKWebViewHostApiImpl extends WKWebViewHostApi {
         details: (exception.details as NSErrorData).toNSError(),
       );
     }
+  }
+
+  /// Calls [setInspectable] with the ids of the provided object instances.
+  Future<void> setInspectableForInstances(
+    WKWebView instance,
+    bool inspectable,
+  ) async {
+    return setInspectable(
+      instanceManager.getIdentifier(instance)!,
+      inspectable,
+    );
+  }
+
+  /// Calls [getCustomUserAgent] with the ids of the provided object instances.
+  Future<String?> getCustomUserAgentForInstances(WKWebView instance) {
+    return getCustomUserAgent(instanceManager.getIdentifier(instance)!);
   }
 
   /// Calls [setNavigationDelegate] with the ids of the provided object instances.

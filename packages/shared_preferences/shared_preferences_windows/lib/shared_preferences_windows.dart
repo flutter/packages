@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import 'package:path/path.dart' as path;
 import 'package:path_provider_windows/path_provider_windows.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 /// The Windows implementation of [SharedPreferencesStorePlatform].
 ///
@@ -25,6 +26,8 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesWindows();
   }
+
+  static const String _defaultPrefix = 'flutter.';
 
   /// File system used to store to disk. Exposed for testing only.
   @visibleForTesting
@@ -55,10 +58,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 
   /// Gets the preferences from the stored file. Once read, the preferences are
   /// maintained in memory.
-  Future<Map<String, Object>> _readPreferences() async {
-    if (_cachedPreferences != null) {
-      return _cachedPreferences!;
-    }
+  Future<Map<String, Object>> _reload() async {
     Map<String, Object> preferences = <String, Object>{};
     final File? localDataFile = await _getLocalDataFile();
     if (localDataFile != null && localDataFile.existsSync()) {
@@ -72,6 +72,10 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
     }
     _cachedPreferences = preferences;
     return preferences;
+  }
+
+  Future<Map<String, Object>> _readPreferences() async {
+    return _cachedPreferences ?? await _reload();
   }
 
   /// Writes the cached preferences to disk. Returns [true] if the operation
@@ -97,14 +101,53 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> preferences = await _readPreferences();
-    preferences.clear();
+    preferences.removeWhere((String key, _) =>
+        key.startsWith(filter.prefix) &&
+        (filter.allowList == null || filter.allowList!.contains(key)));
     return _writePreferences(preferences);
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    return _readPreferences();
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    final Map<String, Object> withPrefix =
+        Map<String, Object>.from(await _readPreferences());
+    withPrefix.removeWhere((String key, _) => !(key.startsWith(filter.prefix) &&
+        (filter.allowList?.contains(key) ?? true)));
+    return withPrefix;
   }
 
   @override

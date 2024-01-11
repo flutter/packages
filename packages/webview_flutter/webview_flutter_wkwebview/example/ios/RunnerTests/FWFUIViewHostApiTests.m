@@ -22,7 +22,7 @@
       [[FWFUIViewHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setBackgroundColorForViewWithIdentifier:@0 toValue:@123 error:&error];
+  [hostAPI setBackgroundColorForViewWithIdentifier:0 toValue:@123 error:&error];
 
   OCMVerify([mockUIView setBackgroundColor:[UIColor colorWithRed:(123 >> 16 & 0xff) / 255.0
                                                            green:(123 >> 8 & 0xff) / 255.0
@@ -41,7 +41,7 @@
       [[FWFUIViewHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setOpaqueForViewWithIdentifier:@0 isOpaque:@YES error:&error];
+  [hostAPI setOpaqueForViewWithIdentifier:0 isOpaque:YES error:&error];
   OCMVerify([mockUIView setOpaque:YES]);
   XCTAssertNil(error);
 }

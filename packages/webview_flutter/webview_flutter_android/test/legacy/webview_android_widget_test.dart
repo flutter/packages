@@ -61,9 +61,7 @@ void main() {
       when(mockWebView.settings).thenReturn(mockWebSettings);
 
       mockWebViewProxy = MockWebViewProxy();
-      when(mockWebViewProxy.createWebView(
-        useHybridComposition: anyNamed('useHybridComposition'),
-      )).thenReturn(mockWebView);
+      when(mockWebViewProxy.createWebView()).thenReturn(mockWebView);
       when(mockWebViewProxy.createWebViewClient(
         onPageStarted: anyNamed('onPageStarted'),
         onPageFinished: anyNamed('onPageFinished'),
@@ -86,7 +84,6 @@ void main() {
       bool useHybridComposition = false,
     }) async {
       await tester.pumpWidget(WebViewAndroidWidget(
-        useHybridComposition: useHybridComposition,
         creationParams: creationParams ??
             CreationParams(
                 webSettings: WebSettings(
@@ -132,7 +129,7 @@ void main() {
       'Create Widget with Hybrid Composition',
       (WidgetTester tester) async {
         await buildWidget(tester, useHybridComposition: true);
-        verify(mockWebViewProxy.createWebView(useHybridComposition: true));
+        verify(mockWebViewProxy.createWebView());
       },
     );
 
@@ -396,7 +393,7 @@ void main() {
       });
 
       testWidgets(
-          'loadFlutterAsset throws ArgumentError when asset does not exists',
+          'loadFlutterAsset throws ArgumentError when asset does not exist',
           (WidgetTester tester) async {
         await buildWidget(tester);
         const String assetKey = 'test_assets/index.html';
@@ -727,7 +724,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(android_webview.WebView, String);
+        )).captured.single as void Function(android_webview.WebView, String);
 
         onPageStarted(mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onPageStarted('https://google.com'));
@@ -744,7 +741,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(android_webview.WebView, String);
+        )).captured.single as void Function(android_webview.WebView, String);
 
         onPageFinished(mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onPageFinished('https://google.com'));
@@ -762,7 +759,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(
+        )).captured.single as void Function(
                 android_webview.WebView, int, String, String);
 
         onReceivedError(
@@ -798,7 +795,7 @@ void main() {
           onReceivedRequestError: captureAnyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(
+        )).captured.single as void Function(
           android_webview.WebView,
           android_webview.WebResourceRequest,
           android_webview.WebResourceError,
@@ -847,7 +844,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: captureAnyNamed('urlLoading'),
-        )).captured.single as Function(android_webview.WebView, String);
+        )).captured.single as void Function(android_webview.WebView, String);
 
         urlLoading(mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onNavigationRequest(
@@ -875,7 +872,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: captureAnyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(
+        )).captured.single as void Function(
           android_webview.WebView,
           android_webview.WebResourceRequest,
         );

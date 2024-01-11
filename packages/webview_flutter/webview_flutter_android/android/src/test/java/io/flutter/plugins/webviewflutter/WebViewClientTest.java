@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCompatImpl;
 import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCreator;
 import java.util.HashMap;
@@ -41,14 +42,14 @@ public class WebViewClientTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
-
-    instanceManager.addDartCreatedInstance(mockWebView, 0L);
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final WebViewClientCreator webViewClientCreator =
         new WebViewClientCreator() {
           @Override
-          public WebViewClient createWebViewClient(WebViewClientFlutterApiImpl flutterApi) {
+          @NonNull
+          public WebViewClient createWebViewClient(
+              @NonNull WebViewClientFlutterApiImpl flutterApi) {
             webViewClient = (WebViewClientCompatImpl) super.createWebViewClient(flutterApi);
             return webViewClient;
           }
@@ -61,7 +62,7 @@ public class WebViewClientTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
@@ -113,16 +114,26 @@ public class WebViewClientTest {
         new WebViewClientHostApiImpl(
             instanceManager,
             new WebViewClientCreator() {
+              @NonNull
               @Override
-              public WebViewClient createWebViewClient(WebViewClientFlutterApiImpl flutterApi) {
+              public WebViewClient createWebViewClient(
+                  @NonNull WebViewClientFlutterApiImpl flutterApi) {
                 return mockWebViewClient;
               }
             },
             mockFlutterApi);
 
-    instanceManager.addDartCreatedInstance(mockWebViewClient, 0);
-    webViewClientHostApi.setSynchronousReturnValueForShouldOverrideUrlLoading(0L, false);
+    instanceManager.addDartCreatedInstance(mockWebViewClient, 2);
+    webViewClientHostApi.setSynchronousReturnValueForShouldOverrideUrlLoading(2L, false);
 
     verify(mockWebViewClient).setReturnValueForShouldOverrideUrlLoading(false);
+  }
+
+  @Test
+  public void doUpdateVisitedHistory() {
+    webViewClient.doUpdateVisitedHistory(mockWebView, "https://www.google.com", true);
+    verify(mockFlutterApi)
+        .doUpdateVisitedHistory(
+            eq(webViewClient), eq(mockWebView), eq("https://www.google.com"), eq(true), any());
   }
 }

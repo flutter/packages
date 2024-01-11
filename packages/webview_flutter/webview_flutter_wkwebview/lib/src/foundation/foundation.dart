@@ -2,16 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../common/instance_manager.dart';
 import '../common/weak_reference_utils.dart';
 import 'foundation_api_impls.dart';
+
+export 'foundation_api_impls.dart'
+    show NSUrlCredentialPersistence, NSUrlSessionAuthChallengeDisposition;
 
 /// The values that can be returned in a change map.
 ///
@@ -91,6 +90,12 @@ enum NSKeyValueChangeKey {
   ///
   /// See https://developer.apple.com/documentation/foundation/nskeyvaluechangeoldkey?language=objc.
   oldValue,
+
+  /// An unknown change key.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 /// The supported keys in a cookie attributes dictionary.
@@ -199,6 +204,23 @@ class NSUrlRequest {
   final Map<String, String> allHttpHeaderFields;
 }
 
+/// Keys that may exist in the user info map of `NSError`.
+class NSErrorUserInfoKey {
+  NSErrorUserInfoKey._();
+
+  /// The corresponding value is a localized string representation of the error
+  /// that, if present, will be returned by [NSError.localizedDescription].
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nslocalizeddescriptionkey.
+  static const String NSLocalizedDescription = 'NSLocalizedDescription';
+
+  /// The URL which caused a load to fail.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
+  static const String NSURLErrorFailingURLStringError =
+      'NSErrorFailingURLStringKey';
+}
+
 /// Information about an error condition.
 ///
 /// Wraps [NSError](https://developer.apple.com/documentation/foundation/nserror?language=objc).
@@ -208,19 +230,35 @@ class NSError {
   const NSError({
     required this.code,
     required this.domain,
-    required this.localizedDescription,
+    this.userInfo = const <String, Object?>{},
   });
 
   /// The error code.
   ///
-  /// Note that errors are domain-specific.
+  /// Error codes are [domain]-specific.
   final int code;
 
   /// A string containing the error domain.
   final String domain;
 
+  /// Map of arbitrary data.
+  ///
+  /// See [NSErrorUserInfoKey] for possible keys (non-exhaustive).
+  ///
+  /// This currently only supports values that are a String.
+  final Map<String, Object?> userInfo;
+
   /// A string containing the localized description of the error.
-  final String localizedDescription;
+  String? get localizedDescription =>
+      userInfo[NSErrorUserInfoKey.NSLocalizedDescription] as String?;
+
+  @override
+  String toString() {
+    if (localizedDescription?.isEmpty ?? true) {
+      return 'Error $domain:$code:$userInfo';
+    }
+    return '$localizedDescription ($domain:$code:$userInfo)';
+  }
 }
 
 /// A representation of an HTTP cookie.
@@ -233,6 +271,42 @@ class NSHttpCookie {
 
   /// Properties of the new cookie object.
   final Map<NSHttpCookiePropertyKey, Object> properties;
+}
+
+/// An object that represents the location of a resource, such as an item on a
+/// remote server or the path to a local file.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+class NSUrl extends NSObject {
+  /// Instantiates a [NSUrl] without creating and attaching to an instance
+  /// of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  NSUrl.detached({super.binaryMessenger, super.instanceManager})
+      : _nsUrlHostApi = NSUrlHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  final NSUrlHostApiImpl _nsUrlHostApi;
+
+  /// The URL string for the receiver as an absolute URL. (read-only)
+  ///
+  /// Represents [NSURL.absoluteString](https://developer.apple.com/documentation/foundation/nsurl/1409868-absolutestring?language=objc).
+  Future<String?> getAbsoluteString() {
+    return _nsUrlHostApi.getAbsoluteStringFromInstances(this);
+  }
+
+  @override
+  NSObject copy() {
+    return NSUrl.detached(
+      binaryMessenger: _nsUrlHostApi.binaryMessenger,
+      instanceManager: _nsUrlHostApi.instanceManager,
+    );
+  }
 }
 
 /// The root class of most Objective-C class hierarchies.
@@ -279,7 +353,7 @@ class NSObject with Copyable {
   /// Otherwise, use [NSObject.dispose] to release the associated Objective-C
   /// object manually.
   ///
-  /// See [withWeakRefenceTo].
+  /// See [withWeakReferenceTo].
   /// {@endtemplate}
   final void Function(
     String keyPath,
@@ -313,6 +387,134 @@ class NSObject with Copyable {
       observeValue: observeValue,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
+    );
+  }
+}
+
+/// An authentication credential consisting of information specific to the type
+/// of credential and the type of persistent storage to use, if any.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
+class NSUrlCredential extends NSObject {
+  /// Creates a URL credential instance for internet password authentication
+  /// with a given user name and password, using a given persistence setting.
+  NSUrlCredential.withUser({
+    required String user,
+    required String password,
+    required NSUrlCredentialPersistence persistence,
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  })  : _urlCredentialApi = NSUrlCredentialHostApiImpl(
+            binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+        super.detached() {
+    // Ensures Flutter Apis are setup.
+    FoundationFlutterApis.instance.ensureSetUp();
+    _urlCredentialApi.createWithUserFromInstances(
+      this,
+      user,
+      password,
+      persistence,
+    );
+  }
+
+  /// Instantiates a [NSUrlCredential] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  NSUrlCredential.detached({super.binaryMessenger, super.instanceManager})
+      : _urlCredentialApi = NSUrlCredentialHostApiImpl(
+            binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+        super.detached();
+
+  final NSUrlCredentialHostApiImpl _urlCredentialApi;
+
+  @override
+  NSObject copy() {
+    return NSUrlCredential.detached(
+      binaryMessenger: _urlCredentialApi.binaryMessenger,
+      instanceManager: _urlCredentialApi.instanceManager,
+    );
+  }
+}
+
+/// A server or an area on a server, commonly referred to as a realm, that
+/// requires authentication.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlprotectionspace?language=objc.
+class NSUrlProtectionSpace extends NSObject {
+  /// Instantiates a [NSUrlProtectionSpace] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  NSUrlProtectionSpace.detached({
+    required this.host,
+    required this.realm,
+    required this.authenticationMethod,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// The receiver’s host.
+  final String? host;
+
+  /// The receiver’s authentication realm.
+  final String? realm;
+
+  /// The authentication method used by the receiver.
+  final String? authenticationMethod;
+
+  @override
+  NSUrlProtectionSpace copy() {
+    return NSUrlProtectionSpace.detached(
+      host: host,
+      realm: realm,
+      authenticationMethod: authenticationMethod,
+    );
+  }
+}
+
+/// The authentication method used by the receiver.
+class NSUrlAuthenticationMethod {
+  /// Use the default authentication method for a protocol.
+  static const String default_ = 'NSURLAuthenticationMethodDefault';
+
+  /// Use HTML form authentication for this protection space.
+  static const String htmlForm = 'NSURLAuthenticationMethodHTMLForm';
+
+  /// Use HTTP basic authentication for this protection space.
+  static const String httpBasic = 'NSURLAuthenticationMethodHTTPBasic';
+
+  /// Use HTTP digest authentication for this protection space.
+  static const String httpDigest = 'NSURLAuthenticationMethodHTTPDigest';
+}
+
+/// A challenge from a server requiring authentication from the client.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
+class NSUrlAuthenticationChallenge extends NSObject {
+  /// Instantiates a [NSUrlAuthenticationChallenge] without creating and
+  /// attaching to an instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  NSUrlAuthenticationChallenge.detached({
+    required this.protectionSpace,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// The receiver’s protection space.
+  late final NSUrlProtectionSpace protectionSpace;
+
+  @override
+  NSUrlAuthenticationChallenge copy() {
+    return NSUrlAuthenticationChallenge.detached(
+      protectionSpace: protectionSpace,
     );
   }
 }

@@ -54,7 +54,7 @@ class WebView extends StatefulWidget {
   ///
   /// The `javascriptMode` and `autoMediaPlaybackPolicy` parameters must not be null.
   const WebView({
-    Key? key,
+    super.key,
     this.onWebViewCreated,
     this.initialUrl,
     this.initialCookies = const <WebViewCookie>[],
@@ -74,10 +74,7 @@ class WebView extends StatefulWidget {
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
     this.allowsInlineMediaPlayback = false,
     this.backgroundColor,
-  })  : assert(javascriptMode != null),
-        assert(initialMediaPlaybackPolicy != null),
-        assert(allowsInlineMediaPlayback != null),
-        super(key: key);
+  });
 
   /// The WebView platform that's used by this WebView.
   static final WebViewPlatform platform = CupertinoWebView();
@@ -309,7 +306,7 @@ class WebViewController {
     this._widget,
     this._webViewPlatformController,
     this._javascriptChannelRegistry,
-  ) : assert(_webViewPlatformController != null) {
+  ) {
     _settings = _webSettingsFromWidget(_widget);
   }
 
@@ -370,7 +367,6 @@ class WebViewController {
     String url, {
     Map<String, String>? headers,
   }) async {
-    assert(url != null);
     _validateUrlString(url);
     return _webViewPlatformController.loadUrl(url, headers);
   }
@@ -561,11 +557,9 @@ class WebViewController {
     assert(currentValue.hasNavigationDelegate != null);
     assert(currentValue.hasProgressTracking != null);
     assert(currentValue.debuggingEnabled != null);
-    assert(currentValue.userAgent != null);
     assert(newValue.javascriptMode != null);
     assert(newValue.hasNavigationDelegate != null);
     assert(newValue.debuggingEnabled != null);
-    assert(newValue.userAgent != null);
 
     JavascriptMode? javascriptMode;
     bool? hasNavigationDelegate;

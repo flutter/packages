@@ -1,3 +1,60 @@
+## 0.5.4+3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 0.5.4+2
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 0.5.4+1
+
+* Adds pub topics to package metadata.
+
+## 0.5.4
+
+* Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.5.3
+
+* Initial support for custom overlays. [#98596](https://github.com/flutter/flutter/issues/98596).
+
+## 0.5.2
+
+* Adds options for gesture handling and tilt controls.
+
+## 0.5.1
+
+* Adds padding support to `CameraUpdate.newLatLngBounds`. Issue [#122192](https://github.com/flutter/flutter/issues/122192).
+
+## 0.5.0+1
+
+* Updates the README to mention that this package is the endorsed implementation
+  of `google_maps_flutter` for the web platform.
+
+## 0.5.0
+
+* **BREAKING CHANGE:** Fires a `MapStyleException` when an invalid JSON is used
+  in `setMapStyle` (was `FormatException` previously).
+* Implements a `GoogleMapsInspectorPlatform` to allow integration tests to inspect
+  parts of the internal state of a map.
+
+## 0.4.0+9
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.4.0+8
+
+* Updates minimum Flutter version to 3.3.
+* Allows marker position updates. Issue [#83467](https://github.com/flutter/flutter/issues/83467).
+
+## 0.4.0+7
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.4.0+6
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

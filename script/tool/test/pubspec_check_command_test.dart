@@ -58,8 +58,8 @@ ${publishable ? '' : "publish_to: 'none'"}
 }
 
 String _environmentSection({
-  String dartConstraint = '>=2.12.0 <3.0.0',
-  String? flutterConstraint = '>=2.0.0',
+  String dartConstraint = '>=2.17.0 <4.0.0',
+  String? flutterConstraint = '>=3.0.0',
 }) {
   return <String>[
     'environment:',
@@ -99,19 +99,30 @@ ${isPlugin ? pluginEntry : ''}
 ''';
 }
 
-String _dependenciesSection() {
+String _dependenciesSection(
+    [List<String> extraDependencies = const <String>[]]) {
   return '''
 dependencies:
   flutter:
     sdk: flutter
+${extraDependencies.map((String dep) => '  $dep').join('\n')}
 ''';
 }
 
-String _devDependenciesSection() {
+String _devDependenciesSection(
+    [List<String> extraDependencies = const <String>[]]) {
   return '''
 dev_dependencies:
   flutter_test:
     sdk: flutter
+${extraDependencies.map((String dep) => '  $dep').join('\n')}
+''';
+}
+
+String _topicsSection([List<String> topics = const <String>['a-topic']]) {
+  return '''
+topics:
+${topics.map((String topic) => '  - $topic').join('\n')}
 ''';
 }
 
@@ -156,6 +167,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection()}
 ${_falseSecretsSection()}
 ''');
 
@@ -195,6 +207,7 @@ ${_environmentSection()}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
 ${_flutterSection()}
+${_topicsSection()}
 ${_falseSecretsSection()}
 ''');
 
@@ -232,6 +245,7 @@ ${_flutterSection()}
 ${_headerSection('package')}
 ${_environmentSection()}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -532,6 +546,357 @@ ${_devDependenciesSection()}
       );
     });
 
+    test('fails when topics section is missing', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('A published package should include "topics".'),
+        ]),
+      );
+    });
+
+    test('fails when topics section is empty', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>[])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('A published package should include "topics".'),
+        ]),
+      );
+    });
+
+    test('fails when federated plugin topics do not include plugin name',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin(
+          'some_plugin_ios', packagesDir.childDirectory('some_plugin'),
+          examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'A federated plugin package should include its plugin name as a topic. '
+              'Add "some-plugin" to the "topics" section.'),
+        ]),
+      );
+    });
+
+    test('fails when topic name contains a space', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): plugin a in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails when topic a topic name contains double dash', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin--a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): plugin--a in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails when topic a topic name starts with a number', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['1plugin-a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): 1plugin-a in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails when topic a topic name contains uppercase', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-A'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): plugin-A in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails when there are more than 5 topics', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>[
+            'plugin-a',
+            'plugin-a',
+            'plugin-a',
+            'plugin-a',
+            'plugin-a',
+            'plugin-a'
+          ])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              '  A published package should have maximum 5 topics. See https://dart.dev/tools/pub/pubspec#topics.'),
+        ]),
+      );
+    });
+
+    test('fails if a topic name is longer than 32 characters', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['foobarfoobarfoobarfoobarfoobarfoobarfoo'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Invalid topic(s): foobarfoobarfoobarfoobarfoobarfoobarfoo in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails if a topic name is longer than 2 characters', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): a in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails if a topic name ends in a dash', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): plugin- in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('Invalid topics section has expected error message', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-A', 'Plugin-b'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): plugin-A, Plugin-b in "topics" section. '
+              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+              'start with a-z and ending with a-z or 0-9, have a minimum of 2 characters '
+              'and have a maximum of 32 characters.'),
+        ]),
+      );
+    });
+
     test('fails when environment section is out of order', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
@@ -654,6 +1019,7 @@ ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_falseSecretsSection()}
 ${_devDependenciesSection()}
+${_topicsSection()}
 ''');
 
       Error? commandError;
@@ -684,6 +1050,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection()}
 ''');
 
       Error? commandError;
@@ -713,6 +1080,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true, implementedPackage: 'plugin_a_foo')}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection()}
 ''');
 
       Error? commandError;
@@ -745,6 +1113,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true, implementedPackage: 'plugin_a')}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output =
@@ -778,6 +1147,7 @@ ${_flutterSection(
       )}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection()}
 ''');
 
       Error? commandError;
@@ -817,6 +1187,7 @@ ${_flutterSection(
       )}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection()}
 ''');
 
       Error? commandError;
@@ -849,6 +1220,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output =
@@ -879,6 +1251,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output =
@@ -966,6 +1339,7 @@ ${_devDependenciesSection()}
 ${_headerSection('a_package')}
 ${_environmentSection(flutterConstraint: '>=2.10.0')}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       Error? commandError;
@@ -995,12 +1369,13 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.0.0')}
+${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <4.0.0')}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner,
-          <String>['pubspec-check', '--min-min-flutter-version', '3.0.0']);
+          <String>['pubspec-check', '--min-min-flutter-version', '3.3.0']);
 
       expect(
         output,
@@ -1020,12 +1395,13 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0')}
+${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <4.0.0')}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner,
-          <String>['pubspec-check', '--min-min-flutter-version', '3.0.0']);
+          <String>['pubspec-check', '--min-min-flutter-version', '3.3.0']);
 
       expect(
         output,
@@ -1043,14 +1419,17 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.14.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.14.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['pubspec-check', '--min-min-dart-version', '2.17.0'],
-          errorHandler: (Error e) {
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'pubspec-check',
+        '--min-min-flutter-version',
+        '3.0.0'
+      ], errorHandler: (Error e) {
         commandError = e;
       });
 
@@ -1072,12 +1451,13 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.17.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner,
-          <String>['pubspec-check', '--min-min-dart-version', '2.17.0']);
+          <String>['pubspec-check', '--min-min-flutter-version', '3.3.0']);
 
       expect(
         output,
@@ -1097,12 +1477,13 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner,
-          <String>['pubspec-check', '--min-min-dart-version', '2.17.0']);
+          <String>['pubspec-check', '--min-min-flutter-version', '3.0.0']);
 
       expect(
         output,
@@ -1111,6 +1492,248 @@ ${_dependenciesSection()}
           contains('No issues found!'),
         ]),
       );
+    });
+
+    test('fails when a Flutter->Dart SDK version mapping is missing', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+      package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'pubspec-check',
+        '--min-min-flutter-version',
+        '2.0.0'
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Dart SDK version for Fluter SDK version 2.0.0 is unknown'),
+        ]),
+      );
+    });
+
+    test(
+        'fails when a Flutter package has a too-low minimum Dart version for '
+        'the corresponding minimum Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+          'a_package', packagesDir,
+          isFlutter: true, examples: <String>[]);
+
+      package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.16.0 <4.0.0')}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'pubspec-check',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The minimum Dart version is 2.16.0, but the '
+              'minimum Flutter version of 3.3.0 shipped with '
+              'Dart 2.18.0. Please use consistent lower SDK '
+              'bounds'),
+        ]),
+      );
+    });
+
+    group('dependency check', () {
+      test('passes for local dependencies', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+        final RepositoryPackage dependencyPackage =
+            createFakePackage('local_dependency', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['local_dependency: ^1.0.0'])}
+${_topicsSection()}
+''');
+        dependencyPackage.pubspecFile.writeAsStringSync('''
+${_headerSection('local_dependency')}
+${_environmentSection()}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['pubspec-check']);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test('fails when an unexpected dependency is found', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['bad_dependency: ^1.0.0'])}
+${_topicsSection()}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  bad_dependency\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
+
+      test('fails when an unexpected dev dependency is found', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection()}
+${_devDependenciesSection(<String>['bad_dependency: ^1.0.0'])}
+${_topicsSection()}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  bad_dependency\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
+
+      test('passes when a dependency is on the allow list', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allowed: ^1.0.0'])}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner,
+            <String>['pubspec-check', '--allow-dependencies', 'allowed']);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test('passes when a pinned dependency is on the pinned allow list',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test('fails when an allowed-when-pinned dependency is unpinned',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: ^1.0.0'])}
+${_topicsSection()}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  allow_pinned\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
     });
   });
 
@@ -1146,6 +1769,7 @@ ${_dependenciesSection()}
 ${_headerSection('package')}
 ${_environmentSection()}
 ${_dependenciesSection()}
+${_topicsSection()}
 ''');
 
       final List<String> output =

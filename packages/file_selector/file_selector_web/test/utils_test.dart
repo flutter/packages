@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@TestOn('chrome') // web-only package.
+library;
+
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:file_selector_web/src/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,7 +59,8 @@ void main() {
 
       test('throws for a type group that does not support web', () {
         const List<XTypeGroup> acceptedTypes = <XTypeGroup>[
-          XTypeGroup(label: 'text', macUTIs: <String>['public.text']),
+          XTypeGroup(
+              label: 'text', uniformTypeIdentifiers: <String>['public.text']),
         ];
         expect(() => acceptedTypesToString(acceptedTypes), throwsArgumentError);
       });

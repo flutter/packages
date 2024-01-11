@@ -4,64 +4,173 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.QueryProductDetailsParams;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-/** Handles serialization of {@link com.android.billingclient.api.BillingClient} related objects. */
+/**
+ * Handles serialization and deserialization of {@link com.android.billingclient.api.BillingClient}
+ * related objects.
+ */
 /*package*/ class Translator {
-  static HashMap<String, Object> fromSkuDetail(SkuDetails detail) {
+  static HashMap<String, Object> fromProductDetail(ProductDetails detail) {
     HashMap<String, Object> info = new HashMap<>();
     info.put("title", detail.getTitle());
     info.put("description", detail.getDescription());
-    info.put("freeTrialPeriod", detail.getFreeTrialPeriod());
-    info.put("introductoryPrice", detail.getIntroductoryPrice());
-    info.put("introductoryPriceAmountMicros", detail.getIntroductoryPriceAmountMicros());
-    info.put("introductoryPriceCycles", detail.getIntroductoryPriceCycles());
-    info.put("introductoryPricePeriod", detail.getIntroductoryPricePeriod());
-    info.put("price", detail.getPrice());
-    info.put("priceAmountMicros", detail.getPriceAmountMicros());
-    info.put("priceCurrencyCode", detail.getPriceCurrencyCode());
-    info.put("priceCurrencySymbol", currencySymbolFromCode(detail.getPriceCurrencyCode()));
-    info.put("sku", detail.getSku());
-    info.put("type", detail.getType());
-    info.put("subscriptionPeriod", detail.getSubscriptionPeriod());
-    info.put("originalPrice", detail.getOriginalPrice());
-    info.put("originalPriceAmountMicros", detail.getOriginalPriceAmountMicros());
+    info.put("productId", detail.getProductId());
+    info.put("productType", detail.getProductType());
+    info.put("name", detail.getName());
+
+    @Nullable
+    ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails =
+        detail.getOneTimePurchaseOfferDetails();
+    if (oneTimePurchaseOfferDetails != null) {
+      info.put(
+          "oneTimePurchaseOfferDetails",
+          fromOneTimePurchaseOfferDetails(oneTimePurchaseOfferDetails));
+    }
+
+    @Nullable
+    List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList =
+        detail.getSubscriptionOfferDetails();
+    if (subscriptionOfferDetailsList != null) {
+      info.put(
+          "subscriptionOfferDetails",
+          fromSubscriptionOfferDetailsList(subscriptionOfferDetailsList));
+    }
+
     return info;
   }
 
-  static List<HashMap<String, Object>> fromSkuDetailsList(
-      @Nullable List<SkuDetails> skuDetailsList) {
-    if (skuDetailsList == null) {
+  static List<QueryProductDetailsParams.Product> toProductList(List<Object> serialized) {
+    List<QueryProductDetailsParams.Product> products = new ArrayList<>();
+    for (Object productSerialized : serialized) {
+      @SuppressWarnings(value = "unchecked")
+      Map<String, Object> productMap = (Map<String, Object>) productSerialized;
+      products.add(toProduct(productMap));
+    }
+    return products;
+  }
+
+  static QueryProductDetailsParams.Product toProduct(Map<String, Object> serialized) {
+    String productId = (String) serialized.get("productId");
+    String productType = (String) serialized.get("productType");
+    return QueryProductDetailsParams.Product.newBuilder()
+        .setProductId(productId)
+        .setProductType(productType)
+        .build();
+  }
+
+  static List<HashMap<String, Object>> fromProductDetailsList(
+      @Nullable List<ProductDetails> productDetailsList) {
+    if (productDetailsList == null) {
       return Collections.emptyList();
     }
 
     ArrayList<HashMap<String, Object>> output = new ArrayList<>();
-    for (SkuDetails detail : skuDetailsList) {
-      output.add(fromSkuDetail(detail));
+    for (ProductDetails detail : productDetailsList) {
+      output.add(fromProductDetail(detail));
     }
     return output;
   }
 
+  static HashMap<String, Object> fromOneTimePurchaseOfferDetails(
+      @Nullable ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails) {
+    HashMap<String, Object> serialized = new HashMap<>();
+    if (oneTimePurchaseOfferDetails == null) {
+      return serialized;
+    }
+
+    serialized.put("priceAmountMicros", oneTimePurchaseOfferDetails.getPriceAmountMicros());
+    serialized.put("priceCurrencyCode", oneTimePurchaseOfferDetails.getPriceCurrencyCode());
+    serialized.put("formattedPrice", oneTimePurchaseOfferDetails.getFormattedPrice());
+
+    return serialized;
+  }
+
+  static List<HashMap<String, Object>> fromSubscriptionOfferDetailsList(
+      @Nullable List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList) {
+    if (subscriptionOfferDetailsList == null) {
+      return Collections.emptyList();
+    }
+
+    ArrayList<HashMap<String, Object>> serialized = new ArrayList<>();
+
+    for (ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails :
+        subscriptionOfferDetailsList) {
+      serialized.add(fromSubscriptionOfferDetails(subscriptionOfferDetails));
+    }
+
+    return serialized;
+  }
+
+  static HashMap<String, Object> fromSubscriptionOfferDetails(
+      @Nullable ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails) {
+    HashMap<String, Object> serialized = new HashMap<>();
+    if (subscriptionOfferDetails == null) {
+      return serialized;
+    }
+
+    serialized.put("offerId", subscriptionOfferDetails.getOfferId());
+    serialized.put("basePlanId", subscriptionOfferDetails.getBasePlanId());
+    serialized.put("offerTags", subscriptionOfferDetails.getOfferTags());
+    serialized.put("offerIdToken", subscriptionOfferDetails.getOfferToken());
+
+    ProductDetails.PricingPhases pricingPhases = subscriptionOfferDetails.getPricingPhases();
+    serialized.put("pricingPhases", fromPricingPhases(pricingPhases));
+
+    return serialized;
+  }
+
+  static List<HashMap<String, Object>> fromPricingPhases(
+      @NonNull ProductDetails.PricingPhases pricingPhases) {
+    ArrayList<HashMap<String, Object>> serialized = new ArrayList<>();
+
+    for (ProductDetails.PricingPhase pricingPhase : pricingPhases.getPricingPhaseList()) {
+      serialized.add(fromPricingPhase(pricingPhase));
+    }
+    return serialized;
+  }
+
+  static HashMap<String, Object> fromPricingPhase(
+      @Nullable ProductDetails.PricingPhase pricingPhase) {
+    HashMap<String, Object> serialized = new HashMap<>();
+
+    if (pricingPhase == null) {
+      return serialized;
+    }
+
+    serialized.put("formattedPrice", pricingPhase.getFormattedPrice());
+    serialized.put("priceCurrencyCode", pricingPhase.getPriceCurrencyCode());
+    serialized.put("priceAmountMicros", pricingPhase.getPriceAmountMicros());
+    serialized.put("billingCycleCount", pricingPhase.getBillingCycleCount());
+    serialized.put("billingPeriod", pricingPhase.getBillingPeriod());
+    serialized.put("recurrenceMode", pricingPhase.getRecurrenceMode());
+
+    return serialized;
+  }
+
   static HashMap<String, Object> fromPurchase(Purchase purchase) {
     HashMap<String, Object> info = new HashMap<>();
-    List<String> skus = purchase.getSkus();
+    List<String> products = purchase.getProducts();
     info.put("orderId", purchase.getOrderId());
     info.put("packageName", purchase.getPackageName());
     info.put("purchaseTime", purchase.getPurchaseTime());
     info.put("purchaseToken", purchase.getPurchaseToken());
     info.put("signature", purchase.getSignature());
-    info.put("skus", skus);
+    info.put("products", products);
     info.put("isAutoRenewing", purchase.isAutoRenewing());
     info.put("originalJson", purchase.getOriginalJson());
     info.put("developerPayload", purchase.getDeveloperPayload());
@@ -79,11 +188,11 @@ import java.util.Locale;
   static HashMap<String, Object> fromPurchaseHistoryRecord(
       PurchaseHistoryRecord purchaseHistoryRecord) {
     HashMap<String, Object> info = new HashMap<>();
-    List<String> skus = purchaseHistoryRecord.getSkus();
+    List<String> products = purchaseHistoryRecord.getProducts();
     info.put("purchaseTime", purchaseHistoryRecord.getPurchaseTime());
     info.put("purchaseToken", purchaseHistoryRecord.getPurchaseToken());
     info.put("signature", purchaseHistoryRecord.getSignature());
-    info.put("skus", skus);
+    info.put("products", products);
     info.put("developerPayload", purchaseHistoryRecord.getDeveloperPayload());
     info.put("originalJson", purchaseHistoryRecord.getOriginalJson());
     info.put("quantity", purchaseHistoryRecord.getQuantity());

@@ -22,6 +22,8 @@ PreferredLaunchMode convertLaunchMode(LaunchMode mode) {
   switch (mode) {
     case LaunchMode.platformDefault:
       return PreferredLaunchMode.platformDefault;
+    case LaunchMode.inAppBrowserView:
+      return PreferredLaunchMode.inAppBrowserView;
     case LaunchMode.inAppWebView:
       return PreferredLaunchMode.inAppWebView;
     case LaunchMode.externalApplication:

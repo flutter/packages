@@ -10,7 +10,11 @@ The web implementation of [`camera`][camera].
 
 This package is [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
 which means you can simply use `camera`
-normally. This package will be automatically included in your app when you do.
+normally. This package will be automatically included in your app when you do,
+so you do not need to add it to your `pubspec.yaml`.
+
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
 
 ## Example
 
@@ -76,21 +80,23 @@ URL pointing to a location within the browser (blob) and can be displayed using
 
 See the example below:
 
+<?code-excerpt "example/lib/readme_excerpts.dart (ImageFromXFile)"?>
 ```dart
+final Image image;
 if (kIsWeb) {
-  Image.network(capturedImage.path);
+  image = Image.network(capturedImage.path);
 } else {
-  Image.file(File(capturedImage.path));
+  image = Image.file(File(capturedImage.path));
 }
 ```
 
-### Video recording 
+### Video recording
 
 The video recording implementation is backed by [MediaRecorder Web API](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder) with the following [browser support](https://caniuse.com/mdn-api_mediarecorder):
 
 ![Data on support for the MediaRecorder feature across the major browsers from caniuse.com](https://caniuse.bitsofco.de/image/mediarecorder.png).
 
-A video is recorded in one of the following video MIME types: 
+A video is recorded in one of the following video MIME types:
 - video/webm (e.g. on Chrome or Firefox)
 - video/mp4 (e.g. on Safari)
 

@@ -1,3 +1,23 @@
+## 1.0.10
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.9
+
+* Updates to Pigeon 10.0.
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 1.0.8
+
+* Sets a cmake_policy compatibility version to fix build warnings.
+
+## 1.0.7
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 1.0.6
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

@@ -74,7 +74,7 @@ public class ImageSaver implements Runnable {
      *
      * @param absolutePath - The absolute path of the file that was saved.
      */
-    void onComplete(String absolutePath);
+    void onComplete(@NonNull String absolutePath);
 
     /**
      * Called when an error is encountered while saving the image file.
@@ -82,7 +82,7 @@ public class ImageSaver implements Runnable {
      * @param errorCode - The error code.
      * @param errorMessage - The human readable error message.
      */
-    void onError(String errorCode, String errorMessage);
+    void onError(@NonNull String errorCode, @NonNull String errorMessage);
   }
 
   /** Factory class that assists in creating a {@link FileOutputStream} instance. */

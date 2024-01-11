@@ -41,18 +41,15 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.asset:
         asset = dataSource.asset;
         packageName = dataSource.package;
-        break;
       case DataSourceType.network:
         uri = dataSource.uri;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
-        break;
       case DataSourceType.file:
         uri = dataSource.uri;
-        break;
+        httpHeaders = dataSource.httpHeaders;
       case DataSourceType.contentUri:
         uri = dataSource.uri;
-        break;
     }
     final CreateMessage message = CreateMessage(
       asset: asset,
@@ -147,6 +144,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
           return VideoEvent(eventType: VideoEventType.bufferingStart);
         case 'bufferingEnd':
           return VideoEvent(eventType: VideoEventType.bufferingEnd);
+        case 'isPlayingStateUpdate':
+          return VideoEvent(
+            eventType: VideoEventType.isPlayingStateUpdate,
+            isPlaying: map['isPlaying'] as bool,
+          );
         default:
           return VideoEvent(eventType: VideoEventType.unknown);
       }

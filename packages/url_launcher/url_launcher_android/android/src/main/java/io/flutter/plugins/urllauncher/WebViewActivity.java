@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.content.ContextCompat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class WebViewActivity extends Activity {
    * Use this to trigger a BroadcastReceiver inside WebViewActivity
    * that will request the current instance to finish.
    * */
-  public static String ACTION_CLOSE = "close action";
+  public static final String ACTION_CLOSE = "close action";
 
   private final BroadcastReceiver broadcastReceiver =
       new BroadcastReceiver() {
@@ -74,12 +75,13 @@ public class WebViewActivity extends Activity {
         }
       };
 
-  private WebView webview;
+  // Uses default (package-private) access since it's used by inner class implementations.
+  WebView webview;
 
-  private IntentFilter closeIntentFilter = new IntentFilter(ACTION_CLOSE);
+  private final IntentFilter closeIntentFilter = new IntentFilter(ACTION_CLOSE);
 
   // Verifies that a url opened by `Window.open` has a secure url.
-  private class FlutterWebChromeClient extends WebChromeClient {
+  class FlutterWebChromeClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(
         final WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
@@ -117,7 +119,7 @@ public class WebViewActivity extends Activity {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     webview = new WebView(this);
     setContentView(webview);
@@ -142,11 +144,12 @@ public class WebViewActivity extends Activity {
     webview.setWebChromeClient(new FlutterWebChromeClient());
 
     // Register receiver that may finish this Activity.
-    registerReceiver(broadcastReceiver, closeIntentFilter);
+    ContextCompat.registerReceiver(
+        this, broadcastReceiver, closeIntentFilter, ContextCompat.RECEIVER_EXPORTED);
   }
 
   @VisibleForTesting
-  public static Map<String, String> extractHeaders(@Nullable Bundle headersBundle) {
+  public static @NonNull Map<String, String> extractHeaders(@Nullable Bundle headersBundle) {
     if (headersBundle == null) {
       return Collections.emptyMap();
     }
@@ -165,7 +168,7 @@ public class WebViewActivity extends Activity {
   }
 
   @Override
-  public boolean onKeyDown(int keyCode, KeyEvent event) {
+  public boolean onKeyDown(int keyCode, @Nullable KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && webview.canGoBack()) {
       webview.goBack();
       return true;
@@ -173,17 +176,19 @@ public class WebViewActivity extends Activity {
     return super.onKeyDown(keyCode, event);
   }
 
-  private static String URL_EXTRA = "url";
-  private static String ENABLE_JS_EXTRA = "enableJavaScript";
-  private static String ENABLE_DOM_EXTRA = "enableDomStorage";
+  @VisibleForTesting static final String URL_EXTRA = "url";
+
+  @VisibleForTesting static final String ENABLE_JS_EXTRA = "enableJavaScript";
+
+  @VisibleForTesting static final String ENABLE_DOM_EXTRA = "enableDomStorage";
 
   /* Hides the constants used to forward data to the Activity instance. */
-  public static Intent createIntent(
-      Context context,
-      String url,
+  public static @NonNull Intent createIntent(
+      @NonNull Context context,
+      @NonNull String url,
       boolean enableJavaScript,
       boolean enableDomStorage,
-      Bundle headersBundle) {
+      @NonNull Bundle headersBundle) {
     return new Intent(context, WebViewActivity.class)
         .putExtra(URL_EXTRA, url)
         .putExtra(ENABLE_JS_EXTRA, enableJavaScript)

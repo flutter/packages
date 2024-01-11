@@ -2,14 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:file/file.dart';
-import 'package:platform/platform.dart';
-
 import 'common/core.dart';
 import 'common/gradle.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// Run 'gradlew lint'.
@@ -18,10 +15,10 @@ import 'common/repository_package.dart';
 class LintAndroidCommand extends PackageLoopingCommand {
   /// Creates an instance of the linter command.
   LintAndroidCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform);
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  });
 
   @override
   final String name = 'lint-android';
@@ -38,13 +35,20 @@ class LintAndroidCommand extends PackageLoopingCommand {
           'Plugin does not have an Android implementation.');
     }
 
-    bool failed = false;
     for (final RepositoryPackage example in package.getExamples()) {
       final GradleProject project = GradleProject(example,
           processRunner: processRunner, platform: platform);
 
       if (!project.isConfigured()) {
-        return PackageResult.fail(<String>['Build examples before linting']);
+        final int exitCode = await processRunner.runAndStream(
+          flutterCommand,
+          <String>['build', 'apk', '--config-only'],
+          workingDir: example.directory,
+        );
+        if (exitCode != 0) {
+          printError('Unable to configure Gradle project.');
+          return PackageResult.fail(<String>['Unable to configure Gradle.']);
+        }
       }
 
       final String packageName = package.directory.basename;
@@ -58,10 +62,10 @@ class LintAndroidCommand extends PackageLoopingCommand {
       // inline, and the rest have to be checked via the CI-uploaded artifact.
       final int exitCode = await project.runCommand('$packageName:lintDebug');
       if (exitCode != 0) {
-        failed = true;
+        return PackageResult.fail();
       }
     }
 
-    return failed ? PackageResult.fail() : PackageResult.success();
+    return PackageResult.success();
   }
 }

@@ -1,3 +1,95 @@
+## 6.2.3
+
+* Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.
+
+## 6.2.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 6.2.1
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
+
+## 6.2.0
+
+* Adds support for `inAppBrowserView` as a separate launch mode option from
+  `inAppWebView` mode. `inAppBrowserView` is the preferred in-app mode for most uses,
+  but does not support `closeInAppWebView`.
+* Implements `supportsMode` and `supportsCloseForMode`.
+
+## 6.1.1
+
+* Updates annotations lib to 1.7.0.
+
+## 6.1.0
+
+* Adds support for Android Custom Tabs.
+
+## 6.0.39
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 6.0.38
+
+* Updates android implementation to support api 34 broadcast receiver requirements.
+
+## 6.0.37
+
+* Sets android.defaults.buildfeatures.buildconfig to true for compatibility with AGP 8.0+.
+
+## 6.0.36
+
+* Bumps androidx.annotation:annotation from 1.2.0 to 1.6.0.
+* Adds a dependency on kotlin-bom to align versions of Kotlin transitive dependencies.
+
+## 6.0.35
+
+* Converts method channels to Pigeon.
+
+## 6.0.34
+
+* Reverts ContextCompat usage that caused flutter/flutter#127014
+
+## 6.0.33
+
+* Explicitly sets if reciever for close should be exported.
+
+## 6.0.32
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 6.0.31
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 6.0.30
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 6.0.29
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 6.0.28
+
+* Sets an explicit Java compatibility version.
+
+## 6.0.27
+
+* Fixes Java warnings.
+* Updates minimum Flutter version to 3.3.
+
+## 6.0.26
+
+* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+
+## 6.0.25
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 6.0.24
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

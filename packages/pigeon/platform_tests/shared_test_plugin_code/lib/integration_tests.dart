@@ -2,16 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
+
+const int _biggerThanBigInt = 3000000000;
+const int _regularInt = 42;
+const double _doublePi = 3.14159;
 
 /// Possible host languages that test can target.
 enum TargetGenerator {
@@ -35,35 +35,130 @@ enum TargetGenerator {
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
+    expect(allTypesOne == null, allTypesTwo == null);
+    if (allTypesOne == null || allTypesTwo == null) {
+      return;
+    }
+    expect(allTypesOne.aBool, allTypesTwo.aBool);
+    expect(allTypesOne.anInt, allTypesTwo.anInt);
+    expect(allTypesOne.anInt64, allTypesTwo.anInt64);
+    expect(allTypesOne.aDouble, allTypesTwo.aDouble);
+    expect(allTypesOne.aString, allTypesTwo.aString);
+    expect(allTypesOne.aByteArray, allTypesTwo.aByteArray);
+    expect(allTypesOne.a4ByteArray, allTypesTwo.a4ByteArray);
+    expect(allTypesOne.a8ByteArray, allTypesTwo.a8ByteArray);
+    expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
+    expect(listEquals(allTypesOne.aList, allTypesTwo.aList), true);
+    expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
+    expect(allTypesOne.anEnum, allTypesTwo.anEnum);
+    expect(allTypesOne.anObject, allTypesTwo.anObject);
+  }
+
+  void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
+      AllNullableTypes? allNullableTypesTwo) {
+    expect(allNullableTypesOne == null, allNullableTypesTwo == null);
+    if (allNullableTypesOne == null || allNullableTypesTwo == null) {
+      return;
+    }
+    expect(
+        allNullableTypesOne.aNullableBool, allNullableTypesTwo.aNullableBool);
+    expect(allNullableTypesOne.aNullableInt, allNullableTypesTwo.aNullableInt);
+    expect(
+        allNullableTypesOne.aNullableInt64, allNullableTypesTwo.aNullableInt64);
+    expect(allNullableTypesOne.aNullableDouble,
+        allNullableTypesTwo.aNullableDouble);
+    expect(allNullableTypesOne.aNullableString,
+        allNullableTypesTwo.aNullableString);
+    expect(allNullableTypesOne.aNullableByteArray,
+        allNullableTypesTwo.aNullableByteArray);
+    expect(allNullableTypesOne.aNullable4ByteArray,
+        allNullableTypesTwo.aNullable4ByteArray);
+    expect(allNullableTypesOne.aNullable8ByteArray,
+        allNullableTypesTwo.aNullable8ByteArray);
+    expect(allNullableTypesOne.aNullableFloatArray,
+        allNullableTypesTwo.aNullableFloatArray);
+    expect(
+        listEquals(allNullableTypesOne.aNullableList,
+            allNullableTypesTwo.aNullableList),
+        true);
+    expect(
+        mapEquals(
+            allNullableTypesOne.aNullableMap, allNullableTypesTwo.aNullableMap),
+        true);
+    expect(allNullableTypesOne.nullableNestedList?.length,
+        allNullableTypesTwo.nullableNestedList?.length);
+    // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
+    // https://github.com/flutter/flutter/issues/116117
+    //for (int i = 0; i < allNullableTypesOne.nullableNestedList!.length; i++) {
+    //  expect(listEquals(allNullableTypesOne.nullableNestedList![i], allNullableTypesTwo.nullableNestedList![i]),
+    //      true);
+    //}
+    expect(
+        mapEquals(allNullableTypesOne.nullableMapWithAnnotations,
+            allNullableTypesTwo.nullableMapWithAnnotations),
+        true);
+    expect(
+        mapEquals(allNullableTypesOne.nullableMapWithObject,
+            allNullableTypesTwo.nullableMapWithObject),
+        true);
+    expect(allNullableTypesOne.aNullableObject,
+        allNullableTypesTwo.aNullableObject);
+    expect(
+        allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
+  }
+
+  void compareAllClassesWrapper(
+      AllClassesWrapper? wrapperOne, AllClassesWrapper? wrapperTwo) {
+    expect(wrapperOne == null, wrapperTwo == null);
+    if (wrapperOne == null || wrapperTwo == null) {
+      return;
+    }
+
+    compareAllNullableTypes(
+        wrapperOne.allNullableTypes, wrapperTwo.allNullableTypes);
+    compareAllTypes(wrapperOne.allTypes, wrapperTwo.allTypes);
+  }
+
   final AllTypes genericAllTypes = AllTypes(
     aBool: true,
-    anInt: 42,
-    aDouble: 3.14159,
+    anInt: _regularInt,
+    anInt64: _biggerThanBigInt,
+    aDouble: _doublePi,
     aString: 'Hello host!',
     aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
     a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-    aFloatArray: Float64List.fromList(<double>[2.71828, 3.14159]),
-    aList: <Object?>['Thing 1', 2, true, 3.14],
-    aMap: <Object?, Object?>{'a': 1, 'b': 2.0, 'c': 'three', 'd': false},
+    aFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
+    aList: <Object?>['Thing 1', 2, true, 3.14, null],
+    aMap: <Object?, Object?>{
+      'a': 1,
+      'b': 2.0,
+      'c': 'three',
+      'd': false,
+      'e': null
+    },
     anEnum: AnEnum.two,
+    anObject: 1,
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
     aNullableBool: true,
-    aNullableInt: 42,
-    aNullableDouble: 3.14159,
+    aNullableInt: _regularInt,
+    aNullableInt64: _biggerThanBigInt,
+    aNullableDouble: _doublePi,
     aNullableString: 'Hello host!',
     aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
     aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-    aNullableFloatArray: Float64List.fromList(<double>[2.71828, 3.14159]),
-    aNullableList: <Object?>['Thing 1', 2, true, 3.14],
+    aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
+    aNullableList: <Object?>['Thing 1', 2, true, 3.14, null],
     aNullableMap: <Object?, Object?>{
       'a': 1,
       'b': 2.0,
       'c': 'three',
-      'd': false
+      'd': false,
+      'e': null
     },
     nullableNestedList: <List<bool>>[
       <bool>[true, false],
@@ -72,6 +167,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     nullableMapWithAnnotations: <String?, String?>{},
     nullableMapWithObject: <String?, Object?>{},
     aNullableEnum: AnEnum.two,
+    aNullableObject: 0,
   );
 
   group('Host sync API tests', () {
@@ -86,18 +182,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllTypes echoObject = await api.echoAllTypes(genericAllTypes);
-
-      expect(echoObject.aBool, genericAllTypes.aBool);
-      expect(echoObject.anInt, genericAllTypes.anInt);
-      expect(echoObject.aDouble, genericAllTypes.aDouble);
-      expect(echoObject.aString, genericAllTypes.aString);
-      expect(echoObject.aByteArray, genericAllTypes.aByteArray);
-      expect(echoObject.a4ByteArray, genericAllTypes.a4ByteArray);
-      expect(echoObject.a8ByteArray, genericAllTypes.a8ByteArray);
-      expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
-      expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
-      expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
-      expect(echoObject.anEnum, genericAllTypes.anEnum);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
@@ -106,45 +191,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoObject =
           await api.echoAllNullableTypes(genericAllNullableTypes);
-      expect(echoObject?.aNullableBool, genericAllNullableTypes.aNullableBool);
-      expect(echoObject?.aNullableInt, genericAllNullableTypes.aNullableInt);
-      expect(
-          echoObject?.aNullableDouble, genericAllNullableTypes.aNullableDouble);
-      expect(
-          echoObject?.aNullableString, genericAllNullableTypes.aNullableString);
-      expect(echoObject?.aNullableByteArray,
-          genericAllNullableTypes.aNullableByteArray);
-      expect(echoObject?.aNullable4ByteArray,
-          genericAllNullableTypes.aNullable4ByteArray);
-      expect(echoObject?.aNullable8ByteArray,
-          genericAllNullableTypes.aNullable8ByteArray);
-      expect(echoObject?.aNullableFloatArray,
-          genericAllNullableTypes.aNullableFloatArray);
-      expect(
-          listEquals(
-              echoObject?.aNullableList, genericAllNullableTypes.aNullableList),
-          true);
-      expect(
-          mapEquals(
-              echoObject?.aNullableMap, genericAllNullableTypes.aNullableMap),
-          true);
-      expect(echoObject?.nullableNestedList?.length,
-          genericAllNullableTypes.nullableNestedList?.length);
-      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-      // https://github.com/flutter/flutter/issues/116117
-      //for (int i = 0; i < echoObject?.nullableNestedList!.length; i++) {
-      //  expect(listEquals(echoObject?.nullableNestedList![i], genericAllNullableTypes.nullableNestedList![i]),
-      //      true);
-      //}
-      expect(
-          mapEquals(echoObject?.nullableMapWithAnnotations,
-              genericAllNullableTypes.nullableMapWithAnnotations),
-          true);
-      expect(
-          mapEquals(echoObject?.nullableMapWithObject,
-              genericAllNullableTypes.nullableMapWithObject),
-          true);
-      expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
+
+      compareAllNullableTypes(echoObject, genericAllNullableTypes);
     });
 
     testWidgets('all null datatypes serialize and deserialize correctly',
@@ -153,77 +201,36 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes allTypesNull = AllNullableTypes();
 
-      final AllNullableTypes? echoNullFilledObject =
+      final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(allTypesNull);
+      compareAllNullableTypes(allTypesNull, echoNullFilledClass);
+    });
 
-      expect(echoNullFilledObject?.aNullableBool, allTypesNull.aNullableBool);
-      expect(echoNullFilledObject?.aNullableBool, null);
+    testWidgets('Classes with list of null serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
-      expect(echoNullFilledObject?.aNullableInt, null);
+      final AllNullableTypes nullableListTypes =
+          AllNullableTypes(aNullableList: <String?>['String', null]);
 
-      expect(
-          echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
-      expect(echoNullFilledObject?.aNullableDouble, null);
+      final AllNullableTypes? echoNullFilledClass =
+          await api.echoAllNullableTypes(nullableListTypes);
 
-      expect(
-          echoNullFilledObject?.aNullableString, allTypesNull.aNullableString);
-      expect(echoNullFilledObject?.aNullableString, null);
+      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
+    });
 
-      expect(echoNullFilledObject?.aNullableByteArray,
-          allTypesNull.aNullableByteArray);
-      expect(echoNullFilledObject?.aNullableByteArray, null);
+    testWidgets('Classes with map of null serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      expect(echoNullFilledObject?.aNullable4ByteArray,
-          allTypesNull.aNullable4ByteArray);
-      expect(echoNullFilledObject?.aNullable4ByteArray, null);
+      final AllNullableTypes nullableListTypes = AllNullableTypes(
+          aNullableMap: <String?, String?>{'String': 'string', 'null': null});
 
-      expect(echoNullFilledObject?.aNullable8ByteArray,
-          allTypesNull.aNullable8ByteArray);
-      expect(echoNullFilledObject?.aNullable8ByteArray, null);
+      final AllNullableTypes? echoNullFilledClass =
+          await api.echoAllNullableTypes(nullableListTypes);
 
-      expect(echoNullFilledObject?.aNullableFloatArray,
-          allTypesNull.aNullableFloatArray);
-      expect(echoNullFilledObject?.aNullableFloatArray, null);
-
-      expect(
-          listEquals(
-              echoNullFilledObject?.aNullableList, allTypesNull.aNullableList),
-          true);
-      expect(echoNullFilledObject?.aNullableList, null);
-
-      expect(
-          mapEquals(
-              echoNullFilledObject?.aNullableMap, allTypesNull.aNullableMap),
-          true);
-      expect(echoNullFilledObject?.aNullableMap, null);
-
-      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-      // https://github.com/flutter/flutter/issues/116117
-      //for (int i = 0; i < echoNullFilledObject?.nullableNestedList!.length; i++) {
-      //  expect(listEquals(echoNullFilledObject?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
-      //      true);
-      //}
-      expect(echoNullFilledObject?.nullableNestedList, null);
-
-      expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithAnnotations,
-              allTypesNull.nullableMapWithAnnotations),
-          true);
-      expect(echoNullFilledObject?.nullableMapWithAnnotations, null);
-
-      expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithObject,
-              allTypesNull.nullableMapWithObject),
-          true);
-      expect(echoNullFilledObject?.nullableMapWithObject, null);
-
-      expect(echoNullFilledObject?.aNullableEnum, allTypesNull.aNullableEnum);
-      expect(echoNullFilledObject?.aNullableEnum, null);
-    },
-        // TODO(stuartmorgan): Fix and re-enable.
-        // See https://github.com/flutter/flutter/issues/118733
-        skip: targetGenerator == TargetGenerator.objc);
+      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
+    });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -238,19 +245,32 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       expect(() async {
-        await api.throwAsyncErrorFromVoid();
+        await api.throwErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets('flutter errors are returned correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(
+          () => api.throwFlutterError(),
+          throwsA((dynamic e) =>
+              e is PlatformException &&
+              e.code == 'code' &&
+              e.message == 'message' &&
+              e.details == 'details'));
     });
 
     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypesWrapper sentObject =
-          AllNullableTypesWrapper(values: genericAllNullableTypes);
+      final AllClassesWrapper sentObject = AllClassesWrapper(
+          allNullableTypes: genericAllNullableTypes, allTypes: genericAllTypes);
 
       final String? receivedString =
           await api.extractNestedNullableString(sentObject);
-      expect(receivedString, sentObject.values.aNullableString);
+      expect(receivedString, sentObject.allNullableTypes.aNullableString);
     });
 
     testWidgets('nested objects can be received correctly',
@@ -258,9 +278,33 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const String sentString = 'Some string';
-      final AllNullableTypesWrapper receivedObject =
+      final AllClassesWrapper receivedObject =
           await api.createNestedNullableString(sentString);
-      expect(receivedObject.values.aNullableString, sentString);
+      expect(receivedObject.allNullableTypes.aNullableString, sentString);
+    });
+
+    testWidgets('nested classes can serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllClassesWrapper sentWrapper = AllClassesWrapper(
+          allNullableTypes: AllNullableTypes(), allTypes: genericAllTypes);
+
+      final AllClassesWrapper receivedClassWrapper =
+          await api.echoClassWrapper(sentWrapper);
+      compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
+    });
+
+    testWidgets('nested null classes can serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllClassesWrapper sentWrapper =
+          AllClassesWrapper(allNullableTypes: AllNullableTypes());
+
+      final AllClassesWrapper receivedClassWrapper =
+          await api.echoClassWrapper(sentWrapper);
+      compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
     });
 
     testWidgets(
@@ -269,7 +313,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
       const String aNullableString = 'this is a String';
       const bool aNullableBool = false;
-      const int aNullableInt = 42;
+      const int aNullableInt = _regularInt;
 
       final AllNullableTypes echoObject = await api.sendMultipleNullableTypes(
           aNullableBool, aNullableInt, aNullableString);
@@ -283,18 +327,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypes echoNullFilledObject =
+      final AllNullableTypes echoNullFilledClass =
           await api.sendMultipleNullableTypes(null, null, null);
-      expect(echoNullFilledObject.aNullableInt, null);
-      expect(echoNullFilledObject.aNullableBool, null);
-      expect(echoNullFilledObject.aNullableString, null);
+      expect(echoNullFilledClass.aNullableInt, null);
+      expect(echoNullFilledClass.aNullableBool, null);
+      expect(echoNullFilledClass.aNullableString, null);
     });
 
-    testWidgets('Ints serialize and deserialize correctly',
+    testWidgets('Int serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const int sentInt = _regularInt;
+      final int receivedInt = await api.echoInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Int64 serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const int sentInt = _biggerThanBigInt;
       final int receivedInt = await api.echoInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -321,7 +373,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('strings serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-      const String sentString = "I'm a computer";
+      const String sentString = 'default';
       final String receivedString = await api.echoString(sentString);
       expect(receivedString, sentString);
     });
@@ -355,7 +407,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object receivedInt = await api.echoObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -382,11 +434,72 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('Nullable Ints serialize and deserialize correctly',
+    testWidgets('enums serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const AnEnum sentEnum = AnEnum.two;
+      final AnEnum receivedEnum = await api.echoEnum(sentEnum);
+      expect(receivedEnum, sentEnum);
+    });
+
+    testWidgets('required named parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This number corresponds with the default value of this method.
+      const int sentInt = _regularInt;
+      final int receivedInt = await api.echoRequiredInt(anInt: sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('optional default parameter no arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      // This number corresponds with the default value of this method.
+      const double sentDouble = 3.14;
+      final double receivedDouble = await api.echoOptionalDefaultDouble();
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('optional default parameter with arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 3.15;
+      final double receivedDouble =
+          await api.echoOptionalDefaultDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('named default parameter no arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This string corresponds with the default value of this method.
+      const String sentString = 'default';
+      final String receivedString = await api.echoNamedDefaultString();
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('named default parameter with arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This string corresponds with the default value of this method.
+      const String sentString = 'notDefault';
+      final String receivedString =
+          await api.echoNamedDefaultString(aString: sentString);
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('Nullable Int serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _regularInt;
+      final int? receivedInt = await api.echoNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Nullable Int64 serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _biggerThanBigInt;
       final int? receivedInt = await api.echoNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -489,7 +602,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object? receivedInt = await api.echoNullableObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -506,7 +619,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      const List<Object?> sentObject = <Object?>[7, 'Hello Dart!', null];
       final List<Object?>? echoObject = await api.echoNullableList(sentObject);
       expect(listEquals(echoObject, sentObject), true);
     });
@@ -519,10 +632,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         'a': 1,
         'b': 2.3,
         'c': 'four',
+        'd': null,
       };
       final Map<String?, Object?>? echoObject =
           await api.echoNullableMap(sentObject);
       expect(mapEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('nullable enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
     });
 
     testWidgets('null lists serialize and deserialize correctly',
@@ -539,6 +662,45 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final Map<String?, Object?>? echoObject = await api.echoNullableMap(null);
       expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('null enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum? sentEnum = null;
+      final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
+    testWidgets('optional nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _regularInt;
+      final int? receivedInt = await api.echoOptionalNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Null optional nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final int? receivedNullInt = await api.echoOptionalNullableInt();
+      expect(receivedNullInt, null);
+    });
+
+    testWidgets('named nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentString = "I'm a computer";
+      final String? receivedString =
+          await api.echoNamedNullableString(aNullableString: sentString);
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('Null named nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final String? receivedNullString = await api.echoNamedNullableString();
+      expect(receivedNullString, null);
     });
   });
 
@@ -567,23 +729,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }, throwsA(isA<PlatformException>()));
     });
 
+    testWidgets(
+        'async flutter errors are returned from non void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(
+          () => api.throwAsyncFlutterError(),
+          throwsA((dynamic e) =>
+              e is PlatformException &&
+              e.code == 'code' &&
+              e.message == 'message' &&
+              e.details == 'details'));
+    });
+
     testWidgets('all datatypes async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllTypes echoObject = await api.echoAsyncAllTypes(genericAllTypes);
 
-      expect(echoObject.aBool, genericAllTypes.aBool);
-      expect(echoObject.anInt, genericAllTypes.anInt);
-      expect(echoObject.aDouble, genericAllTypes.aDouble);
-      expect(echoObject.aString, genericAllTypes.aString);
-      expect(echoObject.aByteArray, genericAllTypes.aByteArray);
-      expect(echoObject.a4ByteArray, genericAllTypes.a4ByteArray);
-      expect(echoObject.a8ByteArray, genericAllTypes.a8ByteArray);
-      expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
-      expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
-      expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
-      expect(echoObject.anEnum, genericAllTypes.anEnum);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets(
@@ -593,45 +759,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoObject =
           await api.echoAsyncNullableAllNullableTypes(genericAllNullableTypes);
-      expect(echoObject?.aNullableBool, genericAllNullableTypes.aNullableBool);
-      expect(echoObject?.aNullableInt, genericAllNullableTypes.aNullableInt);
-      expect(
-          echoObject?.aNullableDouble, genericAllNullableTypes.aNullableDouble);
-      expect(
-          echoObject?.aNullableString, genericAllNullableTypes.aNullableString);
-      expect(echoObject?.aNullableByteArray,
-          genericAllNullableTypes.aNullableByteArray);
-      expect(echoObject?.aNullable4ByteArray,
-          genericAllNullableTypes.aNullable4ByteArray);
-      expect(echoObject?.aNullable8ByteArray,
-          genericAllNullableTypes.aNullable8ByteArray);
-      expect(echoObject?.aNullableFloatArray,
-          genericAllNullableTypes.aNullableFloatArray);
-      expect(
-          listEquals(
-              echoObject?.aNullableList, genericAllNullableTypes.aNullableList),
-          true);
-      expect(
-          mapEquals(
-              echoObject?.aNullableMap, genericAllNullableTypes.aNullableMap),
-          true);
-      expect(echoObject?.nullableNestedList?.length,
-          genericAllNullableTypes.nullableNestedList?.length);
-      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-      // https://github.com/flutter/flutter/issues/116117
-      //for (int i = 0; i < echoObject?.nullableNestedList!.length; i++) {
-      //  expect(listEquals(echoObject?.nullableNestedList![i], genericAllNullableTypes.nullableNestedList![i]),
-      //      true);
-      //}
-      expect(
-          mapEquals(echoObject?.nullableMapWithAnnotations,
-              genericAllNullableTypes.nullableMapWithAnnotations),
-          true);
-      expect(
-          mapEquals(echoObject?.nullableMapWithObject,
-              genericAllNullableTypes.nullableMapWithObject),
-          true);
-      expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
+
+      compareAllNullableTypes(echoObject, genericAllNullableTypes);
     });
 
     testWidgets('all null datatypes async serialize and deserialize correctly',
@@ -640,83 +769,25 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes allTypesNull = AllNullableTypes();
 
-      final AllNullableTypes? echoNullFilledObject =
+      final AllNullableTypes? echoNullFilledClass =
           await api.echoAsyncNullableAllNullableTypes(allTypesNull);
+      compareAllNullableTypes(echoNullFilledClass, allTypesNull);
+    });
 
-      expect(echoNullFilledObject?.aNullableBool, allTypesNull.aNullableBool);
-      expect(echoNullFilledObject?.aNullableBool, null);
-
-      expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
-      expect(echoNullFilledObject?.aNullableInt, null);
-
-      expect(
-          echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
-      expect(echoNullFilledObject?.aNullableDouble, null);
-
-      expect(
-          echoNullFilledObject?.aNullableString, allTypesNull.aNullableString);
-      expect(echoNullFilledObject?.aNullableString, null);
-
-      expect(echoNullFilledObject?.aNullableByteArray,
-          allTypesNull.aNullableByteArray);
-      expect(echoNullFilledObject?.aNullableByteArray, null);
-
-      expect(echoNullFilledObject?.aNullable4ByteArray,
-          allTypesNull.aNullable4ByteArray);
-      expect(echoNullFilledObject?.aNullable4ByteArray, null);
-
-      expect(echoNullFilledObject?.aNullable8ByteArray,
-          allTypesNull.aNullable8ByteArray);
-      expect(echoNullFilledObject?.aNullable8ByteArray, null);
-
-      expect(echoNullFilledObject?.aNullableFloatArray,
-          allTypesNull.aNullableFloatArray);
-      expect(echoNullFilledObject?.aNullableFloatArray, null);
-
-      expect(
-          listEquals(
-              echoNullFilledObject?.aNullableList, allTypesNull.aNullableList),
-          true);
-      expect(echoNullFilledObject?.aNullableList, null);
-
-      expect(
-          mapEquals(
-              echoNullFilledObject?.aNullableMap, allTypesNull.aNullableMap),
-          true);
-      expect(echoNullFilledObject?.aNullableMap, null);
-
-      // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
-      // https://github.com/flutter/flutter/issues/116117
-      //for (int i = 0; i < echoNullFilledObject?.nullableNestedList!.length; i++) {
-      //  expect(listEquals(echoNullFilledObject?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
-      //      true);
-      //}
-      expect(echoNullFilledObject?.nullableNestedList, null);
-
-      expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithAnnotations,
-              allTypesNull.nullableMapWithAnnotations),
-          true);
-      expect(echoNullFilledObject?.nullableMapWithAnnotations, null);
-
-      expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithObject,
-              allTypesNull.nullableMapWithObject),
-          true);
-      expect(echoNullFilledObject?.nullableMapWithObject, null);
-
-      expect(echoNullFilledObject?.aNullableEnum, allTypesNull.aNullableEnum);
-      expect(echoNullFilledObject?.aNullableEnum, null);
-    },
-        // TODO(stuartmorgan): Fix and re-enable.
-        // See https://github.com/flutter/flutter/issues/118733
-        skip: targetGenerator == TargetGenerator.objc);
-
-    testWidgets('Ints async serialize and deserialize correctly',
+    testWidgets('Int async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const int sentInt = _regularInt;
+      final int receivedInt = await api.echoAsyncInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Int64 async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _biggerThanBigInt;
       final int receivedInt = await api.echoAsyncInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -744,7 +815,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const String sentObject = 'Hello, asyncronously!';
+      const String sentObject = 'Hello, asynchronously!';
 
       final String echoObject = await api.echoAsyncString(sentObject);
       expect(echoObject, sentObject);
@@ -779,7 +850,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object receivedInt = await api.echoAsyncObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -807,11 +878,29 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('nullable Ints async serialize and deserialize correctly',
+    testWidgets('enums serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum echoEnum = await api.echoAsyncEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
+    testWidgets('nullable Int async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _regularInt;
+      final int? receivedInt = await api.echoAsyncNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('nullable Int64 async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _biggerThanBigInt;
       final int? receivedInt = await api.echoAsyncNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -840,7 +929,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const String sentObject = 'Hello, asyncronously!';
+      const String sentObject = 'Hello, asynchronously!';
 
       final String? echoObject = await api.echoAsyncNullableString(sentObject);
       expect(echoObject, sentObject);
@@ -877,7 +966,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object? receivedInt = await api.echoAsyncNullableObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -904,6 +993,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Map<String?, Object?>? echoObject =
           await api.echoAsyncNullableMap(sentObject);
       expect(mapEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('nullable enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum? echoEnum = await api.echoAsyncNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
     });
 
     testWidgets('null Ints async serialize and deserialize correctly',
@@ -971,6 +1069,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.echoAsyncNullableMap(null);
       expect(mapEquals(echoObject, null), true);
     });
+
+    testWidgets('null enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum? sentEnum = null;
+      final AnEnum? echoEnum = await api.echoAsyncNullableEnum(null);
+      expect(echoEnum, sentEnum);
+    });
   });
 
   // These tests rely on the async Dart->host calls to work correctly, since
@@ -995,10 +1102,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowError();
       }, throwsA(isA<PlatformException>()));
-    },
-        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
-        // See: https://github.com/flutter/flutter/issues/118243
-        skip: true);
+    });
 
     testWidgets('errors are returned from void methods correctly',
         (WidgetTester _) async {
@@ -1007,10 +1111,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
-    },
-        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
-        // See: https://github.com/flutter/flutter/issues/118243
-        skip: true);
+    });
 
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1019,21 +1120,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllTypes echoObject =
           await api.callFlutterEchoAllTypes(genericAllTypes);
 
-      expect(echoObject.aBool, genericAllTypes.aBool);
-      expect(echoObject.anInt, genericAllTypes.anInt);
-      expect(echoObject.aDouble, genericAllTypes.aDouble);
-      expect(echoObject.aString, genericAllTypes.aString);
-      expect(echoObject.aByteArray, genericAllTypes.aByteArray);
-      expect(echoObject.a4ByteArray, genericAllTypes.a4ByteArray);
-      expect(echoObject.a8ByteArray, genericAllTypes.a8ByteArray);
-      expect(echoObject.aFloatArray, genericAllTypes.aFloatArray);
-      expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
-      expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
-      expect(echoObject.anEnum, genericAllTypes.anEnum);
-    },
-        // TODO(stuartmorgan): Fix and re-enable.
-        // See https://github.com/flutter/flutter/issues/118739
-        skip: targetGenerator == TargetGenerator.cpp);
+      compareAllTypes(echoObject, genericAllTypes);
+    });
 
     testWidgets(
         'Arguments of multiple types serialize and deserialize correctly',
@@ -1041,7 +1129,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
       const String aNullableString = 'this is a String';
       const bool aNullableBool = false;
-      const int aNullableInt = 42;
+      const int aNullableInt = _regularInt;
 
       final AllNullableTypes compositeObject =
           await api.callFlutterSendMultipleNullableTypes(
@@ -1077,7 +1165,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentObject = -13;
+      const int sentObject = _regularInt;
       final int echoObject = await api.callFlutterEchoInt(sentObject);
       expect(echoObject, sentObject);
     });
@@ -1146,6 +1234,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
+    testWidgets('enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
     testWidgets('nullable booleans serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -1171,7 +1268,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentObject = -13;
+      const int sentObject = _regularInt;
+      final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('nullable big ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentObject = _biggerThanBigInt;
       final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
       expect(echoObject, sentObject);
     });
@@ -1291,6 +1397,24 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.callFlutterEchoNullableMap(null);
       expect(mapEquals(echoObject, null), true);
     });
+
+    testWidgets('nullable enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
+    testWidgets('null enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum? sentEnum = null;
+      final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
   });
 }
 
@@ -1301,7 +1425,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   }
 
   @override
-  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything) {
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything) {
     return everything;
   }
 
@@ -1349,6 +1473,9 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap) => aMap;
 
   @override
+  AnEnum echoEnum(AnEnum anEnum) => anEnum;
+
+  @override
   bool? echoNullableBool(bool? aBool) => aBool;
 
   @override
@@ -1368,6 +1495,9 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
 
   @override
   Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
+
+  @override
+  AnEnum? echoNullableEnum(AnEnum? anEnum) => anEnum;
 
   @override
   Future<void> noopAsync() async {}

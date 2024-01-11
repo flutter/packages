@@ -34,10 +34,12 @@ class TestScaffold extends StatefulWidget {
     super.key,
     this.initialIndex = 0,
     this.isAnimated = true,
+    this.appBarBreakpoint,
   });
 
   final int? initialIndex;
   final bool isAnimated;
+  final Breakpoint? appBarBreakpoint;
 
   static const List<NavigationDestination> destinations =
       <NavigationDestination>[
@@ -75,6 +77,7 @@ class TestScaffoldState extends State<TestScaffold> {
         });
       },
       drawerBreakpoint: NeverOnBreakpoint(),
+      appBarBreakpoint: widget.appBarBreakpoint,
       internalAnimations: widget.isAnimated,
       smallBreakpoint: TestBreakpoint0(),
       mediumBreakpoint: TestBreakpoint800(),
@@ -107,18 +110,40 @@ enum SimulatedLayout {
   final double _height = 800;
   final String navSlotKey;
 
+  static const Color navigationRailThemeBgColor = Colors.white;
+  static const IconThemeData selectedIconThemeData = IconThemeData(
+    color: Colors.red,
+    size: 32.0,
+  );
+  static const IconThemeData unSelectedIconThemeData = IconThemeData(
+    color: Colors.black,
+    size: 24.0,
+  );
+
   Size get size => Size(_width, _height);
 
   MaterialApp app({
     int? initialIndex,
     bool animations = true,
+    Breakpoint? appBarBreakpoint,
   }) {
     return MaterialApp(
+      theme: ThemeData.light().copyWith(
+        navigationRailTheme: const NavigationRailThemeData(
+          backgroundColor: navigationRailThemeBgColor,
+          selectedIconTheme: selectedIconThemeData,
+          unselectedIconTheme: unSelectedIconThemeData,
+        ),
+      ),
       home: MediaQuery(
-        data: MediaQueryData(size: size),
+        data: MediaQueryData(
+          size: size,
+          padding: const EdgeInsets.only(top: 30),
+        ),
         child: TestScaffold(
           initialIndex: initialIndex,
           isAnimated: animations,
+          appBarBreakpoint: appBarBreakpoint,
         ),
       ),
     );

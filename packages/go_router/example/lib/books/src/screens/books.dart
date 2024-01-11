@@ -11,7 +11,7 @@ import '../widgets/book_list.dart';
 /// A screen that displays a list of books.
 class BooksScreen extends StatefulWidget {
   /// Creates a [BooksScreen].
-  const BooksScreen(this.kind, {Key? key}) : super(key: key);
+  const BooksScreen(this.kind, {super.key});
 
   /// Which tab to display.
   final String kind;
@@ -37,15 +37,12 @@ class _BooksScreenState extends State<BooksScreen>
     switch (widget.kind) {
       case 'popular':
         _tabController.index = 0;
-        break;
 
       case 'new':
         _tabController.index = 1;
-        break;
 
       case 'all':
         _tabController.index = 2;
-        break;
     }
   }
 
@@ -105,10 +102,8 @@ class _BooksScreenState extends State<BooksScreen>
     switch (index) {
       case 1:
         context.go('/books/new');
-        break;
       case 2:
         context.go('/books/all');
-        break;
       case 0:
       default:
         context.go('/books/popular');

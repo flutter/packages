@@ -9,29 +9,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$SharedPreferences', () {
-    const String testString = 'hello world';
-    const bool testBool = true;
-    const int testInt = 42;
-    const double testDouble = 3.14159;
-    const List<String> testList = <String>['foo', 'bar'];
+  const String testString = 'hello world';
+  const bool testBool = true;
+  const int testInt = 42;
+  const double testDouble = 3.14159;
+  const List<String> testList = <String>['foo', 'bar'];
 
-    const String testString2 = 'goodbye world';
-    const bool testBool2 = false;
-    const int testInt2 = 1337;
-    const double testDouble2 = 2.71828;
-    const List<String> testList2 = <String>['baz', 'quox'];
+  const String testString2 = 'goodbye world';
+  const bool testBool2 = false;
+  const int testInt2 = 1337;
+  const double testDouble2 = 2.71828;
+  const List<String> testList2 = <String>['baz', 'quox'];
 
-    late SharedPreferences preferences;
+  late SharedPreferences preferences;
 
-    setUp(() async {
-      preferences = await SharedPreferences.getInstance();
-    });
-
-    tearDown(() {
-      preferences.clear();
-    });
-
+  void runAllTests() {
     testWidgets('reading', (WidgetTester _) async {
       expect(preferences.get('String'), isNull);
       expect(preferences.get('bool'), isNull);
@@ -97,5 +89,77 @@ void main() {
       // The last write should win.
       expect(preferences.getInt('int'), writeCount);
     });
+  }
+
+  group('SharedPreferences', () {
+    setUp(() async {
+      preferences = await SharedPreferences.getInstance();
+    });
+
+    tearDown(() async {
+      await preferences.clear();
+      SharedPreferences.resetStatic();
+    });
+
+    runAllTests();
+  });
+
+  group('setPrefix', () {
+    setUp(() async {
+      SharedPreferences.resetStatic();
+      SharedPreferences.setPrefix('prefix.');
+      preferences = await SharedPreferences.getInstance();
+    });
+
+    tearDown(() async {
+      await preferences.clear();
+      SharedPreferences.resetStatic();
+    });
+
+    runAllTests();
+  });
+
+  group('setNoPrefix', () {
+    setUp(() async {
+      SharedPreferences.resetStatic();
+      SharedPreferences.setPrefix('');
+      preferences = await SharedPreferences.getInstance();
+    });
+
+    tearDown(() async {
+      await preferences.clear();
+      SharedPreferences.resetStatic();
+    });
+
+    runAllTests();
+  });
+
+  testWidgets('allowList only gets allowed items', (WidgetTester _) async {
+    const String allowedString = 'stringKey';
+    const String allowedBool = 'boolKey';
+    const String notAllowedDouble = 'doubleKey';
+    const String resultString = 'resultString';
+
+    const Set<String> allowList = <String>{allowedString, allowedBool};
+
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix('', allowList: allowList);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(allowedString, resultString);
+    await prefs.setBool(allowedBool, true);
+    await prefs.setDouble(notAllowedDouble, 3.14);
+
+    await prefs.reload();
+
+    final String? testString = prefs.getString(allowedString);
+    expect(testString, resultString);
+
+    final bool? testBool = prefs.getBool(allowedBool);
+    expect(testBool, true);
+
+    final double? testDouble = prefs.getDouble(notAllowedDouble);
+    expect(testDouble, null);
   });
 }

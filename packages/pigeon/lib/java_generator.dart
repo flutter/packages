@@ -92,20 +92,34 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeFilePrologue(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.newln();
   }
 
   @override
   void writeFileImports(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package};');
+      indent.newln();
+    }
+    if (root.classes.isNotEmpty) {
+      indent.writeln('import static java.lang.annotation.ElementType.METHOD;');
+      indent
+          .writeln('import static java.lang.annotation.RetentionPolicy.CLASS;');
       indent.newln();
     }
     indent.writeln('import android.util.Log;');
@@ -116,6 +130,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('import io.flutter.plugin.common.MessageCodec;');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec;');
     indent.writeln('import java.io.ByteArrayOutputStream;');
+    if (root.classes.isNotEmpty) {
+      indent.writeln('import java.lang.annotation.Retention;');
+      indent.writeln('import java.lang.annotation.Target;');
+    }
     indent.writeln('import java.nio.ByteBuffer;');
     indent.writeln('import java.util.ArrayList;');
     indent.writeln('import java.util.Arrays;');
@@ -128,11 +146,15 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeOpenNamespace(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
     indent.writeln(
-        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})');
     if (generatorOptions.useGeneratedAnnotation ?? false) {
       indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
     }
@@ -142,7 +164,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeEnum(
-      JavaOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Enum anEnum, {
+    required String dartPackageName,
+  }) {
     String camelToSnake(String camelCase) {
       final RegExp regex = RegExp('([a-z])([A-Z]+)');
       return camelCase
@@ -163,7 +190,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
       });
       indent.newln();
-      indent.writeln('private final int index;');
+      // This uses default access (package-private), because private causes
+      // SyntheticAccessor warnings in the serialization code.
+      indent.writeln('final int index;');
       indent.newln();
       indent.write('private ${anEnum.name}(final int index) ');
       indent.addScoped('{', '}', () {
@@ -174,48 +203,59 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeDataClass(
-      JavaOptions generatorOptions, Root root, Indent indent, Class klass) {
-    final Set<String> customClassNames =
-        root.classes.map((Class x) => x.name).toSet();
-    final Set<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toSet();
-
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
     indent.newln();
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
+        indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
-    indent.write('public static final class ${klass.name} ');
+    indent.write('public static final class ${classDefinition.name} ');
     indent.addScoped('{', '}', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         _writeClassField(generatorOptions, root, indent, field);
         indent.newln();
       }
 
-      if (getFieldsInSerializationOrder(klass)
+      if (getFieldsInSerializationOrder(classDefinition)
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
-            '$_docCommentPrefix Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
-        indent.writeln('private ${klass.name}() {}');
+            '$_docCommentPrefix Constructor is non-public to enforce null safety; use Builder.$_docCommentSuffix');
+        indent.writeln('${classDefinition.name}() {}');
         indent.newln();
       }
 
-      _writeClassBuilder(generatorOptions, root, indent, klass);
-      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
-      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
+      _writeClassBuilder(generatorOptions, root, indent, classDefinition);
+      writeClassEncode(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
+      writeClassDecode(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
   void _writeClassField(
       JavaOptions generatorOptions, Root root, Indent indent, NamedType field) {
-    final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
-        root.enums, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+    final HostDatatype hostDatatype = getFieldHostDatatype(
+        field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
     final String nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
     addDocumentationComments(
         indent, field.documentationComments, _docCommentSpec);
@@ -246,22 +286,21 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
+    Class classDefinition,
   ) {
     indent.write('public static final class Builder ');
     indent.addScoped('{', '}', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+            field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
         final String nullability =
             field.type.isNullable ? '@Nullable' : '@NonNull';
         indent.newln();
         indent.writeln(
             'private @Nullable ${hostDatatype.datatype} ${field.name};');
         indent.newln();
+        indent.writeln('@CanIgnoreReturnValue');
         indent.writeScoped(
             'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
             '}', () {
@@ -270,11 +309,13 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         });
       }
       indent.newln();
-      indent.write('public @NonNull ${klass.name} build() ');
+      indent.write('public @NonNull ${classDefinition.name} build() ');
       indent.addScoped('{', '}', () {
         const String returnVal = 'pigeonReturn';
-        indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        indent.writeln(
+            '${classDefinition.name} $returnVal = new ${classDefinition.name}();');
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
           indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
         }
         indent.writeln('return $returnVal;');
@@ -287,29 +328,22 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
     indent.newln();
     indent.writeln('@NonNull');
     indent.write('ArrayList<Object> toList() ');
     indent.addScoped('{', '}', () {
       indent.writeln(
-          'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+          'ArrayList<Object> toListResult = new ArrayList<Object>(${classDefinition.fields.length});');
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         String toWriteValue = '';
         final String fieldName = field.name;
-        if (!hostDatatype.isBuiltin &&
-            customClassNames.contains(field.type.baseName)) {
+        if (field.type.isClass) {
           toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
-        } else if (!hostDatatype.isBuiltin &&
-            customEnumNames.contains(field.type.baseName)) {
+        } else if (field.type.isEnum) {
           toWriteValue = '$fieldName == null ? null : $fieldName.index';
         } else {
           toWriteValue = field.name;
@@ -325,27 +359,27 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
     indent.newln();
     indent.write(
-        'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
+        'static @NonNull ${classDefinition.name} fromList(@NonNull ArrayList<Object> list) ');
     indent.addScoped('{', '}', () {
       const String result = 'pigeonResult';
-      indent.writeln('${klass.name} $result = new ${klass.name}();');
-      enumerate(getFieldsInSerializationOrder(klass),
+      indent.writeln(
+          '${classDefinition.name} $result = new ${classDefinition.name}();');
+      enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final String fieldVariable = field.name;
         final String setter = _makeSetter(field);
         indent.writeln('Object $fieldVariable = list.get($index);');
-        if (customEnumNames.contains(field.type.baseName)) {
+        if (field.type.isEnum) {
           indent.writeln(
-              '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
+              '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName, field.type.isNullable)});');
         } else {
           indent.writeln(
-              '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
+              '$result.$setter(${_castObject(field, fieldVariable)});');
         }
       });
       indent.writeln('return $result;');
@@ -356,18 +390,30 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Example:
   /// public static final class Foo {
   ///   public Foo(BinaryMessenger argBinaryMessenger) {...}
-  ///   public interface Reply<T> {
+  ///   public interface Result<T> {
   ///     void reply(T reply);
   ///   }
-  ///   public int add(int x, int y, Reply<int> callback) {...}
+  ///   public int add(int x, int y, Result<int> result) {...}
   /// }
   @override
   void writeFlutterApi(
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String dartPackageName,
+  }) {
+    /// Returns an argument name that can be used in a context where it is possible to collide
+    /// and append `.index` to enums.
+    String getEnumSafeArgumentExpression(int count, NamedType argument) {
+      if (argument.type.isEnum) {
+        return argument.type.isNullable
+            ? '${_getArgumentName(count, argument)}Arg == null ? null : ${_getArgumentName(count, argument)}Arg.index'
+            : '${_getArgumentName(count, argument)}Arg.index';
+      }
+      return '${_getArgumentName(count, argument)}Arg';
+    }
+
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
@@ -380,21 +426,18 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
     indent.write('public static class ${api.name} ');
     indent.addScoped('{', '}', () {
-      indent.writeln('private final BinaryMessenger binaryMessenger;');
+      indent.writeln('private final @NonNull BinaryMessenger binaryMessenger;');
       indent.newln();
-      indent.write('public ${api.name}(BinaryMessenger argBinaryMessenger) ');
+      indent.write(
+          'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger) ');
       indent.addScoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
       });
       indent.newln();
-      indent.write('/** Public interface for sending reply. */ ');
-      indent.write('public interface Reply<T> ');
-      indent.addScoped('{', '}', () {
-        indent.writeln('void reply(T reply);');
-      });
+      indent.writeln('/** Public interface for sending reply. */ ');
       final String codecName = _getCodecName(api);
       indent.writeln('/** The codec used by ${api.name}. */');
-      indent.write('static MessageCodec<Object> getCodec() ');
+      indent.write('static @NonNull MessageCodec<Object> getCodec() ');
       indent.addScoped('{', '}', () {
         indent.write('return ');
         if (getCodecClasses(api, root).isNotEmpty) {
@@ -405,64 +448,100 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
 
       for (final Method func in api.methods) {
-        final String channelName = makeChannelName(api, func);
+        final String resultType = _getResultType(func.returnType);
         final String returnType = func.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(func.returnType);
         String sendArgument;
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
-        if (func.arguments.isEmpty) {
+        if (func.parameters.isEmpty) {
           indent
-              .write('public void ${func.name}(Reply<$returnType> callback) ');
+              .write('public void ${func.name}(@NonNull $resultType result) ');
           sendArgument = 'null';
         } else {
-          final Iterable<String> argTypes = func.arguments
+          final Iterable<String> argTypes = func.parameters
               .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
           final Iterable<String> argNames =
-              indexMap(func.arguments, _getSafeArgumentName);
-          if (func.arguments.length == 1) {
+              indexMap(func.parameters, _getSafeArgumentName);
+          final Iterable<String> enumSafeArgNames =
+              indexMap(func.parameters, getEnumSafeArgumentExpression);
+          if (func.parameters.length == 1) {
             sendArgument =
-                'new ArrayList<Object>(Collections.singletonList(${argNames.first}))';
+                'new ArrayList<Object>(Collections.singletonList(${enumSafeArgNames.first}))';
           } else {
             sendArgument =
-                'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+                'new ArrayList<Object>(Arrays.asList(${enumSafeArgNames.join(', ')}))';
           }
           final String argsSignature =
               map2(argTypes, argNames, (String x, String y) => '$x $y')
                   .join(', ');
           indent.write(
-              'public void ${func.name}($argsSignature, Reply<$returnType> callback) ');
+              'public void ${func.name}($argsSignature, @NonNull $resultType result) ');
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
+          indent.writeln(
+              'final String channelName = "${makeChannelName(api, func, dartPackageName)}";');
           indent.writeln('BasicMessageChannel<Object> $channel =');
           indent.nest(2, () {
             indent.writeln('new BasicMessageChannel<>(');
             indent.nest(2, () {
-              indent.writeln('binaryMessenger, "$channelName", getCodec());');
+              indent.writeln('binaryMessenger, channelName, getCodec());');
             });
           });
           indent.writeln('$channel.send(');
           indent.nest(2, () {
             indent.writeln('$sendArgument,');
             indent.write('channelReply -> ');
-            if (func.returnType.isVoid) {
-              indent.addln('callback.reply(null));');
-            } else {
-              indent.addScoped('{', '});', () {
-                const String output = 'output';
-                indent.writeln('@SuppressWarnings("ConstantConditions")');
-                if (func.returnType.baseName == 'int') {
+            indent.addScoped('{', '});', () {
+              indent.writeScoped('if (channelReply instanceof List) {', '} ',
+                  () {
+                indent.writeln(
+                    'List<Object> listReply = (List<Object>) channelReply;');
+                indent.writeScoped('if (listReply.size() > 1) {', '} ', () {
                   indent.writeln(
-                      '$returnType $output = channelReply == null ? null : ((Number) channelReply).longValue();');
-                } else {
-                  indent.writeln(
-                      '$returnType $output = ($returnType) channelReply;');
+                      'result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));');
+                }, addTrailingNewline: false);
+                if (!func.returnType.isNullable && !func.returnType.isVoid) {
+                  indent.addScoped('else if (listReply.get(0) == null) {', '} ',
+                      () {
+                    indent.writeln(
+                        'result.error(new FlutterError("null-error", "Flutter api returned null value for non-null return value.", ""));');
+                  }, addTrailingNewline: false);
                 }
-                indent.writeln('callback.reply($output);');
+                indent.addScoped('else {', '}', () {
+                  if (func.returnType.isVoid) {
+                    indent.writeln('result.success();');
+                  } else {
+                    const String output = 'output';
+                    final String outputExpression;
+                    indent.writeln('@SuppressWarnings("ConstantConditions")');
+                    if (func.returnType.baseName == 'int') {
+                      outputExpression =
+                          'listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();';
+                    } else if (func.returnType.isEnum) {
+                      if (func.returnType.isNullable) {
+                        outputExpression =
+                            'listReply.get(0) == null ? null : $returnType.values()[(int) listReply.get(0)];';
+                      } else {
+                        outputExpression =
+                            '$returnType.values()[(int) listReply.get(0)];';
+                      }
+                    } else {
+                      outputExpression =
+                          '${_cast('listReply.get(0)', javaType: returnType)};';
+                    }
+                    indent.writeln('$returnType $output = $outputExpression');
+                    indent.writeln('result.success($output);');
+                  }
+                });
+              }, addTrailingNewline: false);
+              indent.addScoped(' else {', '} ', () {
+                indent.writeln(
+                    'result.error(createConnectionError(channelName));');
               });
-            }
+            });
           });
         });
       }
@@ -470,25 +549,37 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void writeApis(JavaOptions generatorOptions, Root root, Indent indent) {
+  void writeApis(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
-        api.methods.any((Method it) => it.isAsynchronous))) {
+            api.methods.any((Method it) => it.isAsynchronous) ||
+        api.location == ApiLocation.flutter)) {
       indent.newln();
-      _writeResultInterface(indent);
+      _writeResultInterfaces(indent);
     }
-    super.writeApis(generatorOptions, root, indent);
+    super.writeApis(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
   }
 
   /// Write the java code that represents a host [Api], [api].
   /// Example:
   /// public interface Foo {
   ///   int add(int x, int y);
-  ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
+  ///   static void setUp(BinaryMessenger binaryMessenger, Foo api) {...}
   /// }
   @override
   void writeHostApi(
-      JavaOptions generatorOptions, Root root, Indent indent, Api api) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Api api, {
+    required String dartPackageName,
+  }) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
@@ -507,7 +598,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.newln();
       final String codecName = _getCodecName(api);
       indent.writeln('/** The codec used by ${api.name}. */');
-      indent.write('static MessageCodec<Object> getCodec() ');
+      indent.write('static @NonNull MessageCodec<Object> getCodec() ');
       indent.addScoped('{', '}', () {
         indent.write('return ');
         if (getCodecClasses(api, root).isNotEmpty) {
@@ -520,10 +611,17 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.writeln(
           '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
       indent.write(
-          'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
+          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
-          _writeMethodSetup(generatorOptions, root, indent, api, method);
+          _writeMethodSetUp(
+            generatorOptions,
+            root,
+            indent,
+            api,
+            method,
+            dartPackageName: dartPackageName,
+          );
         }
       });
     });
@@ -534,6 +632,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   ///   int add(int x, int y);
   void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
       Indent indent, Api api, final Method method) {
+    final String resultType = _getResultType(method.returnType);
     final String nullableType = method.isAsynchronous
         ? ''
         : _nullabilityAnnotationFromType(method.returnType);
@@ -541,21 +640,18 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         ? 'void'
         : _javaTypeForDartType(method.returnType);
     final List<String> argSignature = <String>[];
-    if (method.arguments.isNotEmpty) {
-      final Iterable<String> argTypes = method.arguments
+    if (method.parameters.isNotEmpty) {
+      final Iterable<String> argTypes = method.parameters
           .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
       final Iterable<String> argNames =
-          method.arguments.map((NamedType e) => e.name);
+          method.parameters.map((NamedType e) => e.name);
       argSignature
           .addAll(map2(argTypes, argNames, (String argType, String argName) {
         return '$argType $argName';
       }));
     }
     if (method.isAsynchronous) {
-      final String resultType = method.returnType.isVoid
-          ? 'Void'
-          : _javaTypeForDartType(method.returnType);
-      argSignature.add('Result<$resultType> result');
+      argSignature.add('@NonNull $resultType result');
     }
     if (method.documentationComments.isNotEmpty) {
       addDocumentationComments(
@@ -569,12 +665,18 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
 
-  /// Write a static setup function in the interface.
+  /// Write a static setUp function in the interface.
   /// Example:
-  ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
-  void _writeMethodSetup(JavaOptions generatorOptions, Root root, Indent indent,
-      Api api, final Method method) {
-    final String channelName = makeChannelName(api, method);
+  ///   static void setUp(BinaryMessenger binaryMessenger, Foo api) {...}
+  void _writeMethodSetUp(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Api api,
+    final Method method, {
+    required String dartPackageName,
+  }) {
+    final String channelName = makeChannelName(api, method, dartPackageName);
     indent.write('');
     indent.addScoped('{', '}', () {
       String? taskQueue;
@@ -601,55 +703,57 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.nest(2, () {
           indent.write('(message, reply) -> ');
           indent.addScoped('{', '});', () {
+            String enumTag = '';
             final String returnType = method.returnType.isVoid
                 ? 'Void'
                 : _javaTypeForDartType(method.returnType);
             indent.writeln(
                 'ArrayList<Object> wrapped = new ArrayList<Object>();');
-            indent.write('try ');
-            indent.addScoped('{', '}', () {
-              final List<String> methodArgument = <String>[];
-              if (method.arguments.isNotEmpty) {
-                indent.writeln(
-                    'ArrayList<Object> args = (ArrayList<Object>) message;');
-                indent.writeln('assert args != null;');
-                enumerate(method.arguments, (int index, NamedType arg) {
-                  // The StandardMessageCodec can give us [Integer, Long] for
-                  // a Dart 'int'.  To keep things simple we just use 64bit
-                  // longs in Pigeon with Java.
-                  final bool isInt = arg.type.baseName == 'int';
-                  final String argType =
-                      isInt ? 'Number' : _javaTypeForDartType(arg.type);
-                  final String argName = _getSafeArgumentName(index, arg);
-                  final String argExpression = isInt
-                      ? '($argName == null) ? null : $argName.longValue()'
-                      : argName;
-                  String accessor = 'args.get($index)';
-                  if (isEnum(root, arg.type)) {
-                    accessor = _intToEnum(accessor, arg.type.baseName);
-                  } else if (argType != 'Object') {
-                    accessor = '($argType) $accessor';
-                  }
-                  indent.writeln('$argType $argName = $accessor;');
-                  if (!arg.type.isNullable) {
-                    indent.write('if ($argName == null) ');
-                    indent.addScoped('{', '}', () {
-                      indent.writeln(
-                          'throw new NullPointerException("$argName unexpectedly null.");');
-                    });
-                  }
-                  methodArgument.add(argExpression);
-                });
+            final List<String> methodArgument = <String>[];
+            if (method.parameters.isNotEmpty) {
+              indent.writeln(
+                  'ArrayList<Object> args = (ArrayList<Object>) message;');
+              enumerate(method.parameters, (int index, NamedType arg) {
+                // The StandardMessageCodec can give us [Integer, Long] for
+                // a Dart 'int'.  To keep things simple we just use 64bit
+                // longs in Pigeon with Java.
+                final bool isInt = arg.type.baseName == 'int';
+                final String argType =
+                    isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                final String argName = _getSafeArgumentName(index, arg);
+                final String argExpression = isInt
+                    ? '($argName == null) ? null : $argName.longValue()'
+                    : argName;
+                String accessor = 'args.get($index)';
+                if (arg.type.isEnum) {
+                  accessor = _intToEnum(
+                      accessor, arg.type.baseName, arg.type.isNullable);
+                } else if (argType != 'Object') {
+                  accessor = _cast(accessor, javaType: argType);
+                }
+                indent.writeln('$argType $argName = $accessor;');
+                methodArgument.add(argExpression);
+              });
+            }
+            if (method.isAsynchronous) {
+              final String resultValue =
+                  method.returnType.isVoid ? 'null' : 'result';
+              if (method.returnType.isEnum) {
+                enumTag = method.returnType.isNullable
+                    ? ' == null ? null : $resultValue.index'
+                    : '.index';
               }
-              if (method.isAsynchronous) {
-                final String resultValue =
-                    method.returnType.isVoid ? 'null' : 'result';
-                const String resultName = 'resultCallback';
-                indent.format('''
-Result<$returnType> $resultName = 
-\t\tnew Result<$returnType>() {
-\t\t\tpublic void success($returnType result) {
-\t\t\t\twrapped.add(0, $resultValue);
+              final String resultType = _getResultType(method.returnType);
+              final String resultParam =
+                  method.returnType.isVoid ? '' : '$returnType result';
+              final String addResultArg =
+                  method.returnType.isVoid ? 'null' : '$resultValue$enumTag';
+              const String resultName = 'resultCallback';
+              indent.format('''
+$resultType $resultName =
+\t\tnew $resultType() {
+\t\t\tpublic void success($resultParam) {
+\t\t\t\twrapped.add(0, $addResultArg);
 \t\t\t\treply.reply(wrapped);
 \t\t\t}
 
@@ -659,31 +763,38 @@ Result<$returnType> $resultName =
 \t\t\t}
 \t\t};
 ''');
-                methodArgument.add(resultName);
-              }
-              final String call =
-                  'api.${method.name}(${methodArgument.join(', ')})';
-              if (method.isAsynchronous) {
-                indent.writeln('$call;');
-              } else if (method.returnType.isVoid) {
-                indent.writeln('$call;');
-                indent.writeln('wrapped.add(0, null);');
-              } else {
-                indent.writeln('$returnType output = $call;');
-                indent.writeln('wrapped.add(0, output);');
-              }
-            }, addTrailingNewline: false);
-            indent.add(' catch (Error | RuntimeException exception) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  'ArrayList<Object> wrappedError = wrapError(exception);');
-              if (method.isAsynchronous) {
-                indent.writeln('reply.reply(wrappedError);');
-              } else {
-                indent.writeln('wrapped = wrappedError;');
-              }
-            });
-            if (!method.isAsynchronous) {
+              methodArgument.add(resultName);
+            }
+            final String call =
+                'api.${method.name}(${methodArgument.join(', ')})';
+            if (method.isAsynchronous) {
+              indent.writeln('$call;');
+            } else {
+              indent.write('try ');
+              indent.addScoped('{', '}', () {
+                if (method.returnType.isVoid) {
+                  indent.writeln('$call;');
+                  indent.writeln('wrapped.add(0, null);');
+                } else {
+                  if (method.returnType.isEnum) {
+                    enumTag = method.returnType.isNullable
+                        ? ' == null ? null : output.index'
+                        : '.index';
+                  }
+                  indent.writeln('$returnType output = $call;');
+                  indent.writeln('wrapped.add(0, output$enumTag);');
+                }
+              });
+              indent.add(' catch (Throwable exception) ');
+              indent.addScoped('{', '}', () {
+                indent.writeln(
+                    'ArrayList<Object> wrappedError = wrapError(exception);');
+                if (method.isAsynchronous) {
+                  indent.writeln('reply.reply(wrappedError);');
+                } else {
+                  indent.writeln('wrapped = wrappedError;');
+                }
+              });
               indent.writeln('reply.reply(wrapped);');
             }
           });
@@ -756,37 +867,145 @@ Result<$returnType> $resultName =
     indent.newln();
   }
 
-  void _writeResultInterface(Indent indent) {
+  void _writeResultInterfaces(Indent indent) {
+    indent.writeln(
+        '/** Asynchronous error handling return type for non-nullable API method returns. */');
     indent.write('public interface Result<T> ');
     indent.addScoped('{', '}', () {
-      indent.writeln('void success(T result);');
+      indent
+          .writeln('/** Success case callback method for handling returns. */');
+      indent.writeln('void success(@NonNull T result);');
       indent.newln();
-      indent.writeln('void error(Throwable error);');
+      indent
+          .writeln('/** Failure case callback method for handling errors. */');
+      indent.writeln('void error(@NonNull Throwable error);');
+    });
+
+    indent.writeln(
+        '/** Asynchronous error handling return type for nullable API method returns. */');
+    indent.write('public interface NullableResult<T> ');
+    indent.addScoped('{', '}', () {
+      indent
+          .writeln('/** Success case callback method for handling returns. */');
+      indent.writeln('void success(@Nullable T result);');
+      indent.newln();
+      indent
+          .writeln('/** Failure case callback method for handling errors. */');
+      indent.writeln('void error(@NonNull Throwable error);');
+    });
+
+    indent.writeln(
+        '/** Asynchronous error handling return type for void API method returns. */');
+    indent.write('public interface VoidResult ');
+    indent.addScoped('{', '}', () {
+      indent
+          .writeln('/** Success case callback method for handling returns. */');
+      indent.writeln('void success();');
+      indent.newln();
+      indent
+          .writeln('/** Failure case callback method for handling errors. */');
+      indent.writeln('void error(@NonNull Throwable error);');
+    });
+  }
+
+  void _writeErrorClass(Indent indent) {
+    indent.writeln(
+        '/** Error class for passing custom error details to Flutter via a thrown PlatformException. */');
+    indent.write('public static class FlutterError extends RuntimeException ');
+    indent.addScoped('{', '}', () {
+      indent.newln();
+      indent.writeln('/** The error code. */');
+      indent.writeln('public final String code;');
+      indent.newln();
+      indent.writeln(
+          '/** The error details. Must be a datatype supported by the api codec. */');
+      indent.writeln('public final Object details;');
+      indent.newln();
+      indent.writeln(
+          'public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) ');
+      indent.writeScoped('{', '}', () {
+        indent.writeln('super(message);');
+        indent.writeln('this.code = code;');
+        indent.writeln('this.details = details;');
+      });
     });
   }
 
   void _writeWrapError(Indent indent) {
     indent.format('''
 @NonNull
-private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \tArrayList<Object> errorList = new ArrayList<Object>(3);
-\terrorList.add(exception.toString());
-\terrorList.add(exception.getClass().getSimpleName());
-\terrorList.add(
-\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\tif (exception instanceof FlutterError) {
+\t\tFlutterError error = (FlutterError) exception;
+\t\terrorList.add(error.code);
+\t\terrorList.add(error.getMessage());
+\t\terrorList.add(error.details);
+\t} else {
+\t\terrorList.add(exception.toString());
+\t\terrorList.add(exception.getClass().getSimpleName());
+\t\terrorList.add(
+\t\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\t}
 \treturn errorList;
 }''');
   }
 
+  void _writeCreateConnectionError(Indent indent) {
+    indent.writeln('@NonNull');
+    indent.writeScoped(
+        'protected static FlutterError createConnectionError(@NonNull String channelName) {',
+        '}', () {
+      indent.writeln(
+          'return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");');
+    });
+  }
+
+  // We are emitting our own definition of [@CanIgnoreReturnValue] to support
+  // clients who use CheckReturnValue, without having to force Pigeon clients
+  // to take a new dependency on error_prone_annotations.
+  void _writeCanIgnoreReturnValueAnnotation(
+      JavaOptions opt, Root root, Indent indent) {
+    indent.newln();
+    indent.writeln('@Target(METHOD)');
+    indent.writeln('@Retention(CLASS)');
+    indent.writeln('@interface CanIgnoreReturnValue {}');
+  }
+
   @override
   void writeGeneralUtilities(
-      JavaOptions generatorOptions, Root root, Indent indent) {
-    _writeWrapError(indent);
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    final bool hasHostApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.host);
+    final bool hasFlutterApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+
+    indent.newln();
+    _writeErrorClass(indent);
+    if (hasHostApi) {
+      indent.newln();
+      _writeWrapError(indent);
+    }
+    if (hasFlutterApi) {
+      indent.newln();
+      _writeCreateConnectionError(indent);
+    }
+    if (root.classes.isNotEmpty) {
+      _writeCanIgnoreReturnValueAnnotation(generatorOptions, root, indent);
+    }
   }
 
   @override
   void writeCloseNamespace(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.dec();
     indent.addln('}');
   }
@@ -797,8 +1016,9 @@ String _getCodecName(Api api) => '${api.name}Codec';
 
 /// Converts an expression that evaluates to an nullable int to an expression
 /// that evaluates to a nullable enum.
-String _intToEnum(String expression, String enumName) =>
-    '$expression == null ? null : $enumName.values()[(int) $expression]';
+String _intToEnum(String expression, String enumName, bool nullable) => nullable
+    ? '$expression == null ? null : $enumName.values()[(int) $expression]'
+    : '$enumName.values()[(int) $expression]';
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
@@ -846,6 +1066,7 @@ String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
     'Int32List': 'int[]',
     'Int64List': 'long[]',
     'Float64List': 'double[]',
+    'Object': 'Object',
   };
   if (javaTypeForDartTypeMap.containsKey(type.baseName)) {
     return javaTypeForDartTypeMap[type.baseName];
@@ -871,19 +1092,35 @@ String _nullsafeJavaTypeForDartType(TypeDeclaration type) {
   return '$nullSafe${_javaTypeForDartType(type)}';
 }
 
+/// Returns an expression to cast [variable] to [javaType].
+String _cast(String variable, {required String javaType}) {
+  // Special-case Object, since casting to Object doesn't do anything, and
+  // causes a warning.
+  return javaType == 'Object' ? variable : '($javaType) $variable';
+}
+
 /// Casts variable named [varName] to the correct host datatype for [field].
 /// This is for use in codecs where we may have a map representation of an
 /// object.
-String _castObject(
-    NamedType field, List<Class> classes, List<Enum> enums, String varName) {
-  final HostDatatype hostDatatype = getFieldHostDatatype(field, classes, enums,
-      (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+String _castObject(NamedType field, String varName) {
+  final HostDatatype hostDatatype = getFieldHostDatatype(
+      field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
   if (field.type.baseName == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer) $varName : (${hostDatatype.datatype}) $varName)';
-  } else if (!hostDatatype.isBuiltin &&
-      classes.map((Class x) => x.name).contains(field.type.baseName)) {
+  } else if (field.type.isClass) {
     return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>) $varName)';
   } else {
-    return '(${hostDatatype.datatype}) $varName';
+    return _cast(varName, javaType: hostDatatype.datatype);
   }
+}
+
+/// Returns string of Result class type for method based on [TypeDeclaration].
+String _getResultType(TypeDeclaration type) {
+  if (type.isVoid) {
+    return 'VoidResult';
+  }
+  if (type.isNullable) {
+    return 'NullableResult<${_javaTypeForDartType(type)}>';
+  }
+  return 'Result<${_javaTypeForDartType(type)}>';
 }

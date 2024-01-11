@@ -1,3 +1,27 @@
+## 1.0.7
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 1.0.6
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.5
+
+* Updates iOS quick action documentation in README.
+
+## 1.0.4
+
+* Removes obsolete null checks on non-nullable values.
+
+## 1.0.3
+
+* Updates iOS minimum version in README.
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 1.0.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

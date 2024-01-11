@@ -27,7 +27,6 @@ class FlutterProjectFactory {
   /// Returns a [FlutterProject] view of the given directory or a ToolExit error,
   /// if `pubspec.yaml` or `example/pubspec.yaml` is invalid.
   FlutterProject fromDirectory(Directory directory) {
-    assert(directory != null);
     return projects.putIfAbsent(directory.path, () {
       return FlutterProject(directory);
     });
@@ -36,7 +35,7 @@ class FlutterProjectFactory {
 
 /// Represents the contents of a Flutter project at the specified [directory].
 class FlutterProject {
-  FlutterProject(this.directory) : assert(directory != null);
+  FlutterProject(this.directory);
 
   /// Returns a [FlutterProject] view of the current directory or a ToolExit error,
   /// if `pubspec.yaml` or `example/pubspec.yaml` is invalid.

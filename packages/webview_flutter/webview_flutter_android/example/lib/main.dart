@@ -73,8 +73,42 @@ const String kTransparentBackgroundPage = '''
 </html>
 ''';
 
+const String kLogExamplePage = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Load file or HTML string example</title>
+</head>
+<body onload="console.log('Logging that the page is loading.')">
+
+<h1>Local demo page</h1>
+<p>
+  This page is used to test the forwarding of console logs to Dart.
+</p>
+
+<style>
+    .btn-group button {
+      padding: 24px; 24px;
+      display: block;
+      width: 25%;
+      margin: 5px 0px 0px 0px;
+    }
+</style>
+
+<div class="btn-group">
+    <button onclick="console.error('This is an error message.')">Error</button>
+    <button onclick="console.warn('This is a warning message.')">Warning</button>
+    <button onclick="console.info('This is a info message.')">Info</button>
+    <button onclick="console.debug('This is a debug message.')">Debug</button>
+    <button onclick="console.log('This is a log message.')">Log</button>
+</div>
+
+</body>
+</html>
+''';
+
 class WebViewExample extends StatefulWidget {
-  const WebViewExample({Key? key, this.cookieManager}) : super(key: key);
+  const WebViewExample({super.key, this.cookieManager});
 
   final PlatformWebViewCookieManager? cookieManager;
 
@@ -114,15 +148,22 @@ Page resource error:
   description: ${error.description}
   errorType: ${error.errorType}
   isForMainFrame: ${error.isForMainFrame}
+  url: ${error.url}
           ''');
           })
           ..setOnNavigationRequest((NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
+            if (request.url.contains('pub.dev')) {
               debugPrint('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
+          })
+          ..setOnUrlChange((UrlChange change) {
+            debugPrint('url change to ${change.url}');
+          })
+          ..setOnHttpAuthRequest((HttpAuthRequest request) {
+            openDialog(request);
           }),
       )
       ..addJavaScriptChannel(JavaScriptChannelParams(
@@ -133,9 +174,19 @@ Page resource error:
           );
         },
       ))
-      ..loadRequest(LoadRequestParams(
-        uri: Uri.parse('https://flutter.dev'),
-      ));
+      ..setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) {
+          debugPrint(
+            'requesting permissions for ${request.types.map((WebViewPermissionResourceType type) => type.name)}',
+          );
+          request.grant();
+        },
+      )
+      ..loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse('https://flutter.dev'),
+        ),
+      );
   }
 
   @override
@@ -164,13 +215,57 @@ Page resource error:
     return FloatingActionButton(
       onPressed: () async {
         final String? url = await _controller.currentUrl();
-        if (context.mounted) {
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Favorited $url')),
           );
         }
       },
       child: const Icon(Icons.favorite),
+    );
+  }
+
+  Future<void> openDialog(HttpAuthRequest httpRequest) async {
+    final TextEditingController usernameTextController =
+        TextEditingController();
+    final TextEditingController passwordTextController =
+        TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('${httpRequest.host}: ${httpRequest.realm ?? '-'}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                decoration: const InputDecoration(labelText: 'Username'),
+                autofocus: true,
+                controller: usernameTextController,
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Password'),
+                controller: passwordTextController,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                httpRequest.onProceed(
+                  WebViewCredential(
+                    user: usernameTextController.text,
+                    password: passwordTextController.text,
+                  ),
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Authenticate'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -189,18 +284,20 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  videoExample,
+  logExample,
+  basicAuthentication,
 }
 
 class SampleMenu extends StatelessWidget {
   SampleMenu({
-    Key? key,
+    super.key,
     required this.webViewController,
     PlatformWebViewCookieManager? cookieManager,
-  })  : cookieManager = cookieManager ??
+  }) : cookieManager = cookieManager ??
             PlatformWebViewCookieManager(
               const PlatformWebViewCookieManagerCreationParams(),
-            ),
-        super(key: key);
+            );
 
   final PlatformWebViewController webViewController;
   late final PlatformWebViewCookieManager cookieManager;
@@ -213,43 +310,36 @@ class SampleMenu extends StatelessWidget {
         switch (value) {
           case MenuOptions.showUserAgent:
             _onShowUserAgent();
-            break;
           case MenuOptions.listCookies:
             _onListCookies(context);
-            break;
           case MenuOptions.clearCookies:
             _onClearCookies(context);
-            break;
           case MenuOptions.addToCache:
             _onAddToCache(context);
-            break;
           case MenuOptions.listCache:
             _onListCache();
-            break;
           case MenuOptions.clearCache:
             _onClearCache(context);
-            break;
           case MenuOptions.navigationDelegate:
             _onNavigationDelegateExample();
-            break;
           case MenuOptions.doPostRequest:
             _onDoPostRequest();
-            break;
           case MenuOptions.loadLocalFile:
             _onLoadLocalFileExample();
-            break;
           case MenuOptions.loadFlutterAsset:
             _onLoadFlutterAssetExample();
-            break;
           case MenuOptions.loadHtmlString:
             _onLoadHtmlStringExample();
-            break;
           case MenuOptions.transparentBackground:
             _onTransparentBackground();
-            break;
           case MenuOptions.setCookie:
             _onSetCookie();
-            break;
+          case MenuOptions.videoExample:
+            _onVideoExample(context);
+          case MenuOptions.logExample:
+            _onLogExample();
+          case MenuOptions.basicAuthentication:
+            _promptForUrl(context);
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -305,6 +395,18 @@ class SampleMenu extends StatelessWidget {
           key: ValueKey<String>('ShowTransparentBackgroundExample'),
           value: MenuOptions.transparentBackground,
           child: Text('Transparent background example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.logExample,
+          child: Text('Log example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.videoExample,
+          child: Text('Video example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.basicAuthentication,
+          child: Text('Basic Authentication Example'),
         ),
       ],
     );
@@ -401,6 +503,30 @@ class SampleMenu extends StatelessWidget {
     ));
   }
 
+  Future<void> _onVideoExample(BuildContext context) {
+    final AndroidWebViewController androidController =
+        webViewController as AndroidWebViewController;
+    // #docregion fullscreen_example
+    androidController.setCustomWidgetCallbacks(
+      onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
+        Navigator.of(context).push(MaterialPageRoute<void>(
+          builder: (BuildContext context) => widget,
+          fullscreenDialog: true,
+        ));
+      },
+      onHideCustomWidget: () {
+        Navigator.of(context).pop();
+      },
+    );
+    // #enddocregion fullscreen_example
+
+    return androidController.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse('https://www.youtube.com/watch?v=4AoFA19gbLo'),
+      ),
+    );
+  }
+
   Future<void> _onDoPostRequest() {
     return webViewController.loadRequest(LoadRequestParams(
       uri: Uri.parse('https://httpbin.org/post'),
@@ -431,7 +557,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Widget _getCookieList(String cookies) {
-    if (cookies == null || cookies == '""') {
+    if (cookies == '""') {
       return Container();
     }
     final List<String> cookieList = cookies.split(';');
@@ -454,11 +580,53 @@ class SampleMenu extends StatelessWidget {
 
     return indexFile.path;
   }
+
+  Future<void> _onLogExample() {
+    webViewController
+        .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+      debugPrint(
+          '== JS == ${consoleMessage.level.name}: ${consoleMessage.message}');
+    });
+    return webViewController.loadHtmlString(kLogExamplePage);
+  }
+
+  Future<void> _promptForUrl(BuildContext context) {
+    final TextEditingController urlTextController = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Input URL to visit'),
+          content: TextField(
+            decoration: const InputDecoration(labelText: 'URL'),
+            autofocus: true,
+            controller: urlTextController,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                if (urlTextController.text.isNotEmpty) {
+                  final Uri? uri = Uri.tryParse(urlTextController.text);
+                  if (uri != null && uri.scheme.isNotEmpty) {
+                    webViewController.loadRequest(
+                      LoadRequestParams(uri: uri),
+                    );
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              child: const Text('Visit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class NavigationControls extends StatelessWidget {
-  const NavigationControls({Key? key, required this.webViewController})
-      : super(key: key);
+  const NavigationControls({super.key, required this.webViewController});
 
   final PlatformWebViewController webViewController;
 

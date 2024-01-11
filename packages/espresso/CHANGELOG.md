@@ -1,3 +1,49 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.3.0+6
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.0+5
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Bumps okhttp version to 4.11.0.
+
+## 0.3.0+4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.3.0+3
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 0.3.0+2
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 0.3.0+1
+
+* Sets an explicit Java compatibility version.
+
+## 0.3.0
+
+* **BREAKING CHANGE**: Migrates uses of the deprecated `@Beta` annotation to the new `@ExperimentalApi` annotation.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.2.1
+
+* Updates the version of com.google.truth:truth to 1.1.3.
+
+## 0.2.0+10
+
+* Updates espresso dependencies.
+* Fixes example app to compile with multidex.
+* Updates compileSdkVersion to 33.
+
 ## 0.2.0+9
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

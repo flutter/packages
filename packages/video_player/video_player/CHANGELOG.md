@@ -1,3 +1,44 @@
+## 2.8.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 2.8.1
+
+* Updates the example app: replaces `ButtonBar` with `OverflowBar` widget.
+
+## 2.8.0
+
+* Adds support for macOS.
+
+## 2.7.2
+
+* Adds `isCompleted` event to `VideoPlayerEvent`.
+
+## 2.7.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.7.0
+
+* Adds an `Uri` typed factory method `VideoPlayerController.networkUrl` to avoid common mistakes with `String` URIs. The method
+receives an`Uri` instead of a `String` url.
+* Deprecates `VideoPlayerController.network` factory method.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+## 2.6.1
+
+* Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
+
+## 2.6.0
+
+* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.5.3
+
+* Updates iOS minimum version in README.
+
 ## 2.5.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

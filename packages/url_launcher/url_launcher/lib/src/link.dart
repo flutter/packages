@@ -25,7 +25,7 @@ Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction =
 /// ```dart
 /// Link(
 ///   uri: Uri.parse('https://flutter.dev'),
-///   builder: (BuildContext context, FollowLink followLink) => ElevatedButton(
+///   builder: (BuildContext context, FollowLink? followLink) => ElevatedButton(
 ///     onPressed: followLink,
 ///     // ... other properties here ...
 ///   )},
@@ -37,7 +37,7 @@ Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction =
 /// ```dart
 /// Link(
 ///   uri: Uri.parse('/home'),
-///   builder: (BuildContext context, FollowLink followLink) => ElevatedButton(
+///   builder: (BuildContext context, FollowLink? followLink) => ElevatedButton(
 ///     onPressed: followLink,
 ///     // ... other properties here ...
 ///   )},
@@ -47,11 +47,11 @@ class Link extends StatelessWidget implements LinkInfo {
   /// Creates a widget that renders a real link on the web, and uses WebViews in
   /// native platforms to open links.
   const Link({
-    Key? key,
+    super.key,
     required this.uri,
     this.target = LinkTarget.defaultTarget,
     required this.builder,
-  }) : super(key: key);
+  });
 
   /// Called at build time to construct the widget tree under the link.
   @override
@@ -86,7 +86,7 @@ class Link extends StatelessWidget implements LinkInfo {
 /// event channel messages to instruct the framework to push the route name.
 class DefaultLinkDelegate extends StatelessWidget {
   /// Creates a delegate for the given [link].
-  const DefaultLinkDelegate(this.link, {Key? key}) : super(key: key);
+  const DefaultLinkDelegate(this.link, {super.key});
 
   /// Given a [link], creates an instance of [DefaultLinkDelegate].
   ///
@@ -121,14 +121,18 @@ class DefaultLinkDelegate extends StatelessWidget {
 
     // At this point, we know that the link is external. So we use the
     // `launchUrl` API to open the link.
-    if (await canLaunchUrl(url)) {
-      await launchUrl(
+    bool success;
+    try {
+      success = await launchUrl(
         url,
         mode: _useWebView
-            ? LaunchMode.inAppWebView
+            ? LaunchMode.inAppBrowserView
             : LaunchMode.externalApplication,
       );
-    } else {
+    } on PlatformException {
+      success = false;
+    }
+    if (!success) {
       FlutterError.reportError(FlutterErrorDetails(
         exception: 'Could not launch link $url',
         stack: StackTrace.current,

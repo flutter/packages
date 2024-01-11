@@ -4,10 +4,13 @@
 
 import 'dart:async';
 import 'dart:convert' show json;
-import 'dart:html' as html;
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
+import 'package:web/web.dart' as html;
+
+import 'src/keys_extension.dart';
 
 /// The web implementation of [SharedPreferencesStorePlatform].
 ///
@@ -18,51 +21,79 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     SharedPreferencesStorePlatform.instance = SharedPreferencesPlugin();
   }
 
+  static const String _defaultPrefix = 'flutter.';
+
   @override
   Future<bool> clear() async {
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
-    //            "flutter."
-    _storedFlutterKeys.forEach(html.window.localStorage.remove);
+    //            _prefix
+    _getFilteredKeys(filter.prefix, allowList: filter.allowList)
+        .forEach(remove);
     return true;
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> allData = <String, Object>{};
-    for (final String key in _storedFlutterKeys) {
-      allData[key] = _decodeValue(html.window.localStorage[key]!);
+    for (final String key
+        in _getFilteredKeys(filter.prefix, allowList: filter.allowList)) {
+      allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
     }
     return allData;
   }
 
   @override
   Future<bool> remove(String key) async {
-    _checkPrefix(key);
-    html.window.localStorage.remove(key);
+    html.window.localStorage.removeItem(key);
     return true;
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object? value) async {
-    _checkPrefix(key);
-    html.window.localStorage[key] = _encodeValue(value);
+    html.window.localStorage.setItem(key, _encodeValue(value));
     return true;
   }
 
-  void _checkPrefix(String key) {
-    if (!key.startsWith('flutter.')) {
-      throw FormatException(
-        'Shared preferences keys must start with prefix "flutter.".',
-        key,
-        0,
-      );
-    }
-  }
-
-  Iterable<String> get _storedFlutterKeys {
-    return html.window.localStorage.keys
-        .where((String key) => key.startsWith('flutter.'));
+  Iterable<String> _getFilteredKeys(
+    String prefix, {
+    Set<String>? allowList,
+  }) {
+    return html.window.localStorage.keys.where((String key) =>
+        key.startsWith(prefix) && (allowList?.contains(key) ?? true));
   }
 
   String _encodeValue(Object? value) {

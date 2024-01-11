@@ -1,6 +1,6 @@
 # WebView for Flutter
 
-<?code-excerpt path-base="excerpts/packages/webview_flutter_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/webview_flutter.svg)](https://pub.dev/packages/webview_flutter)
 
@@ -9,9 +9,9 @@ A Flutter plugin that provides a WebView widget.
 On iOS the WebView widget is backed by a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview).
 On Android the WebView widget is backed by a [WebView](https://developer.android.com/reference/android/webkit/WebView).
 
-|             | Android        | iOS  |
-|-------------|----------------|------|
-| **Support** | SDK 19+ or 20+ | 9.0+ |
+|             | Android        | iOS   |
+|-------------|----------------|-------|
+| **Support** | SDK 19+ or 20+ | 11.0+ |
 
 ## Usage
 Add `webview_flutter` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/webview_flutter/install).
@@ -175,10 +175,10 @@ for more details.
 
 ### PlatformView Implementation on Android
 
-The PlatformView implementation for Android is currently no longer configurable. It uses Texture
-Layer Hybrid Composition on versions 23+ and automatically fallbacks to Hybrid Composition for
-version 19-23. See https://github.com/flutter/flutter/issues/108106 for progress on manually
-switching to Hybrid Composition on versions 23+.
+The PlatformView implementation for Android uses Texture Layer Hybrid Composition on versions 23+
+and automatically fallbacks to Hybrid Composition for version 19-23. See section
+`Platform-Specific Features` and [AndroidWebViewWidgetCreationParams.displayWithHybridComposition](https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter_android/AndroidWebViewWidgetCreationParams/displayWithHybridComposition.html)
+to manually switch to Hybrid Composition on versions 23+.
 
 ### API Changes
 
@@ -194,6 +194,8 @@ Below is a non-exhaustive list of changes to the API:
   been replaced by `WebViewController.getScrollPosition`.
 * `WebViewController.runJavaScriptReturningResult` now returns an `Object` and not a `String`. This
   will attempt to return a `bool` or `num` if the return value can be parsed.
+* `WebView.initialCookies` has been removed. Use `WebViewCookieManager.setCookie` before calling
+  `WebViewController.loadRequest`.
 * `CookieManager` is replaced by `WebViewCookieManager`.
 * `NavigationDelegate.onWebResourceError` callback includes errors that are not from the main frame.
    Use the `WebResourceError.isForMainFrame` field to filter errors.

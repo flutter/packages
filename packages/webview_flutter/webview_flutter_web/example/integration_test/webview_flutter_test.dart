@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:html' as html;
 import 'dart:io';
 
@@ -20,23 +21,23 @@ Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
-  server.forEach((HttpRequest request) {
+  unawaited(server.forEach((HttpRequest request) {
     if (request.uri.path == '/hello.txt') {
       request.response.writeln('Hello, world.');
     } else {
       fail('unexpected request: ${request.method} ${request.uri}');
     }
     request.response.close();
-  });
+  }));
   final String prefixUrl = 'http://${server.address.address}:${server.port}';
   final String primaryUrl = '$prefixUrl/hello.txt';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
     final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams())
-          ..loadRequest(
-            LoadRequestParams(uri: Uri.parse(primaryUrl)),
-          );
+        WebWebViewController(const PlatformWebViewControllerCreationParams());
+    await controller.loadRequest(
+      LoadRequestParams(uri: Uri.parse(primaryUrl)),
+    );
 
     await tester.pumpWidget(
       Directionality(
@@ -58,10 +59,10 @@ Future<void> main() async {
 
   testWidgets('loadHtmlString', (WidgetTester tester) async {
     final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams())
-          ..loadHtmlString(
-            'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
-          );
+        WebWebViewController(const PlatformWebViewControllerCreationParams());
+    await controller.loadHtmlString(
+      'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
+    );
 
     await tester.pumpWidget(
       Directionality(

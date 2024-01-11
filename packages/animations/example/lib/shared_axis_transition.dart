@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// The demo page for [SharedAxisPageTransitionsBuilder].
 class SharedAxisTransitionDemo extends StatefulWidget {
   /// Creates the demo page for [SharedAxisPageTransitionsBuilder].
-  const SharedAxisTransitionDemo({Key? key}) : super(key: key);
+  const SharedAxisTransitionDemo({super.key});
 
   @override
   State<SharedAxisTransitionDemo> createState() {

@@ -157,8 +157,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
 }
 
 class _ControlsOverlay extends StatelessWidget {
-  const _ControlsOverlay({Key? key, required this.controller})
-      : super(key: key);
+  const _ControlsOverlay({required this.controller});
 
   static const List<double> _examplePlaybackRates = <double>[
     0.25,
@@ -182,9 +181,9 @@ class _ControlsOverlay extends StatelessWidget {
           reverseDuration: const Duration(milliseconds: 200),
           child: controller.value.isPlaying
               ? const SizedBox.shrink()
-              : Container(
+              : const ColoredBox(
                   color: Colors.black26,
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.play_arrow,
                       color: Colors.white,
