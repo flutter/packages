@@ -1,9 +1,9 @@
 ## 2.5.3
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
-    * Package clients on versions of Flutter that still support iOS 11 can
-      continue to support use this package with iOS 11, but will not receive any
-      further updates to the iOS implementation.
+    * Clients on versions of Flutter that still support iOS 11 can continue to
+      support use this package with iOS 11, but will not receive any further
+      updates to the iOS implementation.
 
 ## 2.5.2
 
