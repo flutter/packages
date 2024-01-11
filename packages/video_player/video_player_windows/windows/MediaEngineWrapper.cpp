@@ -3,11 +3,6 @@
 
 #include <windows.h>
 
-// Include ABI composition headers for interop with DCOMP surface handle from
-// MediaEngine
-#include <windows.ui.composition.h>
-#include <windows.ui.composition.interop.h>
-
 // Include prior to C++/WinRT Headers
 #include <wil/cppwinrt.h>
 
@@ -15,7 +10,6 @@
 #include <winrt/Windows.ApplicationModel.Core.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.UI.Input.h>
 
@@ -32,6 +26,7 @@
 #include <mfapi.h>
 #include <mferror.h>
 #include <mfmediaengine.h>
+#include <dxgi1_2.h>
 
 // STL headers
 #include <functional>
@@ -125,10 +120,9 @@ class MediaEngineCallbackHelper
 
 // Public methods
 
-void MediaEngineWrapper::Initialize(winrt::com_ptr<IDXGIAdapter> adapter, HWND window, IMFMediaSource* mediaSource) {
+void MediaEngineWrapper::Initialize(winrt::com_ptr<IDXGIAdapter> adapter, IMFMediaSource* mediaSource) {
   RunSyncInMTA([&]() {
     m_adapter = adapter;
-    m_window = window;
     InitializeVideo();
     CreateMediaEngine(mediaSource);
   });
@@ -242,7 +236,7 @@ void MediaEngineWrapper::GetNativeVideoSize(uint32_t& cx, uint32_t& cy) {
   });
 }
 
-void MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height)
+bool MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height)
 {
   bool shouldCreate = false;
   D3D11_TEXTURE2D_DESC desc;
@@ -273,28 +267,64 @@ void MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height)
 
     THROW_IF_FAILED(m_d3d11Device->CreateTexture2D(&desc, nullptr, m_pTexture.put()));
   }
+
+  return shouldCreate;
 }
 
-winrt::com_ptr<ID3D11Texture2D> MediaEngineWrapper::TransferVideoFrame()
-{
-    winrt::com_ptr<ID3D11Texture2D> returnTexture;
+void MediaEngineWrapper::UpdateSurfaceDescriptor(uint32_t width, uint32_t height, std::function<void()> callback, FlutterDesktopGpuSurfaceDescriptor& descriptor) {
+  if (descriptor.struct_size == 0) {
+    descriptor.struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
+    descriptor.format = kFlutterDesktopPixelFormatNone;
+  }
 
-    RunSyncInMTA(
+  if (EnsureTextureCreated(width, height)) {
+
+    UpdateDXTexture(width, height);
+
+    StartBackgroundThread(callback);
+
+    winrt::com_ptr<IDXGIResource1> spDXGIResource = m_pTexture.as<IDXGIResource1>();
+
+    if (spDXGIResource) {
+        THROW_IF_FAILED(spDXGIResource->GetSharedHandle(&m_videoSurfaceSharedHandle));
+    }
+
+    descriptor.handle = m_videoSurfaceSharedHandle;
+    D3D11_TEXTURE2D_DESC desc;
+    m_pTexture->GetDesc(&desc);
+    descriptor.width = descriptor.visible_width = desc.Width;
+    descriptor.height = descriptor.visible_height = desc.Height;
+    descriptor.release_context = m_pTexture.get();
+    descriptor.release_callback = [](void* release_context) {
+      auto texture = reinterpret_cast<ID3D11Texture2D*>(release_context);
+      texture->Release();
+    };
+  }
+  m_pTexture->AddRef();
+}
+
+void MediaEngineWrapper::StartBackgroundThread(std::function<void()> callback) {
+  if (m_backgroundThread.joinable()) {
+    return;
+  }
+
+  m_shouldExitLoop = false;
+  m_backgroundThread = std::thread([this, callback]() {
+    auto next = std::chrono::high_resolution_clock::now();
+    while (!m_shouldExitLoop) {
+      RunSyncInMTA(
         [&]()
         {
-            auto lock = m_lock.lock();
-
-            DWORD width, height;
-            m_mediaEngine->GetNativeVideoSize(&width, &height);
-            
-            EnsureTextureCreated(width, height);
-
-            if (UpdateDXTexture(width, height)) {
-              returnTexture = m_pTexture;
-            }
+          auto lock = m_lock.lock();
+          if (this->UpdateDXTexture()) {
+            callback();
+          }
         });
 
-    return returnTexture;
+      next += std::chrono::milliseconds(16);
+      std::this_thread::sleep_until(next);
+    }
+  });
 }
 
 bool MediaEngineWrapper::UpdateDXTexture() {
@@ -331,20 +361,6 @@ bool MediaEngineWrapper::UpdateDXTexture(DWORD width, DWORD height) {
   return false;
 }
 
-HANDLE MediaEngineWrapper::GetSurfaceHandle() {
-  HANDLE surfaceHandle = INVALID_HANDLE_VALUE;
-  RunSyncInMTA([&]() { surfaceHandle = m_dcompSurfaceHandle.get(); });
-  return surfaceHandle;
-}
-
-winrt::com_ptr<IDCompositionTarget> MediaEngineWrapper::GetCompositionTarget() {
-  return m_dcompTarget;
-}
-
-winrt::com_ptr<IDCompositionDevice2> MediaEngineWrapper::GetCompositionDevice() {
-  return m_dcompDevice;
-}
-
 void MediaEngineWrapper::OnWindowUpdate(uint32_t width, uint32_t height) {
   RunSyncInMTA([&]() {
     auto lock = m_lock.lock();
@@ -363,7 +379,6 @@ void MediaEngineWrapper::OnWindowUpdate(uint32_t width, uint32_t height) {
           mediaEngineEx->UpdateVideoStream(nullptr, &destRect, nullptr));
     }
   });
-  UpdateDXTexture();
 }
 
 // Internal methods
@@ -440,15 +455,6 @@ void MediaEngineWrapper::InitializeVideo() {
 
   winrt::com_ptr<IDXGIDevice> m_DXGIDevice = m_d3d11Device.as<IDXGIDevice>();
 
-  winrt::com_ptr<IDCompositionDevice> dcompDevice;
-  THROW_IF_FAILED(DCompositionCreateDevice2(m_DXGIDevice.get(), IID_PPV_ARGS(dcompDevice.put())));
-
-  m_dcompDevice = dcompDevice.as<IDCompositionDevice2>();
-
-  // Create target against HWND
-  winrt::com_ptr<IDCompositionDesktopDevice> desktopDevice = m_dcompDevice.as<IDCompositionDesktopDevice>();
-  THROW_IF_FAILED(desktopDevice->CreateTargetForHwnd(m_window, TRUE, m_dcompTarget.put()));
-
   winrt::com_ptr<ID3D10Multithread> multithreadedDevice = m_d3d11Device.as<ID3D10Multithread>();
   multithreadedDevice->SetMultithreadProtected(TRUE);
 
@@ -467,8 +473,6 @@ void MediaEngineWrapper::OnLoaded() {
   media::MFPutWorkItem([&, ref]() {
     {
       auto lock = m_lock.lock();
-      // Put media engine into DCOMP mode (as opposed to frame server mode) and
-      // obtain a handle to the DCOMP surface handle
       winrt::com_ptr<IMFMediaEngineEx> mediaEngineEx =
           m_mediaEngine.as<IMFMediaEngineEx>();
       THROW_IF_FAILED(mediaEngineEx->EnableWindowlessSwapchainMode(true));
@@ -478,8 +482,6 @@ void MediaEngineWrapper::OnLoaded() {
       uint32_t width = m_width != 0 ? m_width : 640;
       uint32_t height = m_height != 0 ? m_height : 480;
       OnWindowUpdate(width, height);
-      THROW_IF_FAILED(
-          mediaEngineEx->GetVideoSwapchainHandle(&m_dcompSurfaceHandle));
     }
     m_initializedCB();
   });
@@ -498,14 +500,12 @@ void MediaEngineWrapper::OnBufferingStateChange(BufferingState state) {
 }
 
 void MediaEngineWrapper::OnPlaybackEnded() {
-  UpdateDXTexture();
   if (m_playbackEndedCB) {
     m_playbackEndedCB();
   }
 }
 
 void MediaEngineWrapper::OnTimeUpdate() {
-  UpdateDXTexture();
   if (m_timeUpdateCB) {
     m_timeUpdateCB();
   }

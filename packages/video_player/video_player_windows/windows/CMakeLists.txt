@@ -40,8 +40,6 @@ add_library(${PLUGIN_NAME} SHARED
   "MediaEngineWrapper.cpp"
   "MediaEngineExtension.h"
   "MediaEngineExtension.cpp"
-  "DirectCompositionLayer.h"
-  "DirectCompositionLayer.cpp"
 )
 
 apply_standard_settings(${PLUGIN_NAME})
@@ -50,7 +48,7 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES
 
 target_link_libraries(${PLUGIN_NAME} PRIVATE ${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.ImplementationLibrary.${WIL_VERSION}/build/native/Microsoft.Windows.ImplementationLibrary.targets)
 
-target_link_libraries(${PLUGIN_NAME} PRIVATE d3d11 Dcomp Mfplat windowsapp)
+target_link_libraries(${PLUGIN_NAME} PRIVATE d3d11 Mfplat windowsapp)
 
 target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 target_include_directories(${PLUGIN_NAME} INTERFACE

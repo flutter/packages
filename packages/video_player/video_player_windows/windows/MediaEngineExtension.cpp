@@ -1,11 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Include ABI composition headers for interop with DCOMP surface handle from
-// MediaEngine
-#include <windows.ui.composition.h>
-#include <windows.ui.composition.interop.h>
-
 // Include prior to C++/WinRT Headers
 #include <wil/cppwinrt.h>
 
@@ -13,7 +8,6 @@
 #include <winrt/Windows.ApplicationModel.Core.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.UI.Input.h>
 

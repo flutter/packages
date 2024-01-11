@@ -8,19 +8,15 @@
 #include "MediaEngineExtension.h"
 #include "MediaFoundationHelpers.h"
 
-#include <Dcomp.h>
+#include <flutter/plugin_registrar_windows.h>
+
+#include <thread>
 
 namespace media {
 
 // This class handles creation and management of the MediaFoundation
-// MediaEngine.
-// - It uses the provided IMFMediaSource to feed media samples into the
-//   MediaEngine pipeline.
-// - A DirectComposition surface is exposed to the application layer to
-//   incorporate video from the MediaEngine in its visual tree.
-// - The application must provide a callback object (std::function) which
-//   is invoked after the media engine has loaded and the DirectComposition
-//   surface is available.
+// MediaEngine. It uses the provided IMFMediaSource to feed media 
+// samples into the MediaEngine pipeline.
 class MediaEngineWrapper
     : public winrt::implements<MediaEngineWrapper, IUnknown> {
  public:
@@ -41,10 +37,13 @@ class MediaEngineWrapper
     // The initialize callback is required
     THROW_HR_IF(E_INVALIDARG, !m_initializedCB);
   }
-  ~MediaEngineWrapper() {}
+  ~MediaEngineWrapper() {
+    m_shouldExitLoop = true;
+    m_backgroundThread.join();
+  }
 
   // Create the media engine with the provided media source
-  void Initialize(winrt::com_ptr<IDXGIAdapter> adapter, HWND window, IMFMediaSource* mediaSource);
+  void Initialize(winrt::com_ptr<IDXGIAdapter> adapter, IMFMediaSource* mediaSource);
 
   // Stop playback and cleanup resources
   void Pause();
@@ -66,12 +65,8 @@ class MediaEngineWrapper
 
   void GetNativeVideoSize(uint32_t& cx, uint32_t& cy);
 
-  winrt::com_ptr<ID3D11Texture2D> TransferVideoFrame();
-
-  // Get a handle to a DCOMP surface for integrating into a visual tree
-  HANDLE GetSurfaceHandle();
-  winrt::com_ptr<IDCompositionTarget> GetCompositionTarget();
-  winrt::com_ptr<IDCompositionDevice2> GetCompositionDevice();
+  void UpdateSurfaceDescriptor(uint32_t width, uint32_t height, std::function<void()> callback, FlutterDesktopGpuSurfaceDescriptor& descriptor);
+  void StartBackgroundThread(std::function<void()> callback);
 
   // Inform media engine of output window position & size changes
   void OnWindowUpdate(uint32_t width, uint32_t height);
@@ -88,18 +83,17 @@ class MediaEngineWrapper
   UINT m_deviceResetToken = 0;
   winrt::com_ptr<IDXGIAdapter> m_adapter;
   winrt::com_ptr<ID3D11Device> m_d3d11Device;
-  winrt::com_ptr<IDCompositionDevice2> m_dcompDevice;
-  winrt::com_ptr<IDCompositionTarget> m_dcompTarget;
   winrt::com_ptr<ID3D11Texture2D> m_pTexture;
-  HWND m_window;
   winrt::com_ptr<IMFDXGIDeviceManager> m_dxgiDeviceManager;
   winrt::com_ptr<MediaEngineExtension> m_mediaEngineExtension;
   winrt::com_ptr<IMFMediaEngineNotify> m_callbackHelper;
-  wil::unique_handle m_dcompSurfaceHandle;
+  std::thread m_backgroundThread;
+  std::atomic<bool> m_shouldExitLoop = false;
+  HANDLE m_videoSurfaceSharedHandle{0};
   uint32_t m_width = 0;
   uint32_t m_height = 0;
   bool m_hasSetSource = false;
-  void EnsureTextureCreated(DWORD width, DWORD height);
+  bool EnsureTextureCreated(DWORD width, DWORD height);
   bool UpdateDXTexture();
   bool UpdateDXTexture(DWORD width, DWORD height);
   void InitializeVideo();

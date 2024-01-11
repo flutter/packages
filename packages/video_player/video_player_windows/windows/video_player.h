@@ -20,11 +20,6 @@
 
 #include "winrt/Windows.System.h"
 
-// Include ABI composition headers for interop with DCOMP surface handle from
-// MediaEngine
-#include <windows.ui.composition.h>
-#include <windows.ui.composition.interop.h>
-
 // Include prior to C++/WinRT Headers
 #include <wil/cppwinrt.h>
 
@@ -32,7 +27,6 @@
 #include <winrt/Windows.ApplicationModel.Core.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Composition.h>
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.UI.Input.h>
 
@@ -68,14 +62,6 @@ using namespace Messages;
 
 using namespace winrt;
 
-namespace abi {
-using namespace ABI::Windows::UI::Composition;
-}
-
-namespace winrt {
-using namespace Windows::UI::Composition;
-}
-
 class VideoPlayer {
  public:
   VideoPlayer(flutter::FlutterView* view, std::string asset);
@@ -91,6 +77,7 @@ class VideoPlayer {
   void SendBufferingUpdate();
   void SeekTo(int64_t seek);
   int64_t GetTextureId();
+  bool IsValid();
 
   FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptorCallback(size_t width, size_t height);
 
@@ -108,17 +95,15 @@ class VideoPlayer {
   // Composition members
   wil::critical_section m_compositionLock;
   winrt::Windows::Foundation::Size m_windowSize{};
-  winrt::com_ptr<IDCompositionTarget> m_target;
-  winrt::com_ptr<IDCompositionVisual2> m_videoVisual{nullptr};
-
+  
+  std::atomic<bool> m_valid = true;
   int64_t _textureId;
 
-  FlutterDesktopGpuSurfaceDescriptor m_descriptor;
+  FlutterDesktopGpuSurfaceDescriptor m_descriptor{};
   std::mutex m_buffer_mutex;
-  HANDLE m_videoSurfaceHandle;
-  HANDLE m_videoSurfaceSharedHandle;
   winrt::com_ptr<IDXGIAdapter> m_adapter;
   HWND m_window;
+  flutter::TextureRegistrar* _textureRegistry;
 
   bool isInitialized = false;
 
@@ -130,7 +115,6 @@ class VideoPlayer {
   void OnMediaStateChange(
       media::MediaEngineWrapper::BufferingState bufferingState);
   void OnPlaybackEnded();
-  void SetupVideoVisual();
   void UpdateVideoSize();
 
   std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>> _eventChannel;
