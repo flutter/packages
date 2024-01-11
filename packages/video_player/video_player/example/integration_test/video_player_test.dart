@@ -135,12 +135,12 @@ void main() {
         await controller.seekTo(tenMillisBeforeEnd);
         print('reported position: ${controller.value.position}');
         print('actual position:   ${await controller.position}');
-        print('reported position: ${controller.value.duration}');
+        print('reported duration: ${controller.value.duration}');
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
         print('reported position: ${controller.value.position}');
         print('actual position:   ${await controller.position}');
-        print('reported position: ${controller.value.duration}');
+        print('reported duration: ${controller.value.duration}');
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
@@ -165,12 +165,12 @@ void main() {
             controller.value.duration - const Duration(milliseconds: 10));
         print('reported position: ${controller.value.position}');
         print('actual position:   ${await controller.position}');
-        print('reported position: ${controller.value.duration}');
+        print('reported duration: ${controller.value.duration}');
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
         print('reported position: ${controller.value.position}');
         print('actual position:   ${await controller.position}');
-        print('reported position: ${controller.value.duration}');
+        print('reported duration: ${controller.value.duration}');
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
