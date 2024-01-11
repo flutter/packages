@@ -9,6 +9,7 @@
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
+#import "messages.g.h"
 
 @interface InAppPurchasePlugin ()
 
@@ -40,8 +41,13 @@
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/in_app_purchase"
                                   binaryMessenger:[registrar messenger]];
-  InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
-  [registrar addMethodCallDelegate:instance channel:channel];
+  //  InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
+  //  SetUpInAppPurchaseAPI([registrar messenger], instance);
+
+    InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] init];
+    [registrar addMethodCallDelegate:instance channel:channel];
+    [registrar addApplicationDelegate:instance];
+    InAppPurchaseAPISetup([registrar messenger], instance);
 }
 
 - (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager {
@@ -464,6 +470,47 @@
 
 - (SKReceiptRefreshRequest *)getRefreshReceiptRequest:(NSDictionary *)properties {
   return [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:properties];
+}
+
+- (nullable NSNumber *)canMakePaymentsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+  return @([SKPaymentQueue canMakePayments]);
+}
+
+- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+  if (@available(iOS 13.0, macOS 10.15, *)) {
+    SKStorefront *storefront = self.paymentQueueHandler.storefront;
+    if (!storefront) {
+      return nil;
+    }
+    return NULL;
+//    return([self convertStorefrontToPigeon:storefront]);
+  }
+
+  NSLog(@"storefront is not avaialbe in iOS below 13.0 or macOS below 10.15.");
+  return nil;
+}
+
+- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+  NSArray<SKPaymentTransaction *> *transactions =
+      [self.paymentQueueHandler getUnfinishedTransactions];
+  NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];
+  for (SKPaymentTransaction *transaction in transactions) {
+    [transactionMaps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:transaction]];
+  }
+  return(transactionMaps);
+
+}
+
+- (nullable SKPaymentTransactionMessage *) convertTransactionToPigeon:(SKPaymentTransactionMessage *) transaction {
+  SKPaymentTransactionMessage *msg = [SKPaymentTransactionMessage init];
+  return NULL;
+}
+
+- (nullable SKStorefrontMessage *) convertStorefrontToPigeon:(SKStorefront *)storefront  API_AVAILABLE(ios(13.0)){
+  SKStorefrontMessage *msg = [SKStorefrontMessage init];
+  msg.identifier = storefront.identifier;
+  msg.countryCode = storefront.countryCode;
+  return msg;
 }
 
 @end
