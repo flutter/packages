@@ -658,8 +658,8 @@ class MarkdownStyleSheet {
   /// The text scale factor to use in textual elements
   final double? textScaleFactor;
 
-  // Custom font feature tag for font which does not support `sups'
-  // feature to create superscript in footnotes.
+  /// Custom font feature tag for font which does not support `sups'
+  /// feature to create superscript in footnotes.
   final String? superscriptFontFeatureTag;
 
   /// A [Map] from element name to the corresponding [TextStyle] object.
