@@ -1,3 +1,8 @@
+## 2.3.12
+
+* Adds error handling for `BehindLiveWindowException`
+* Fix missing switch case in example
+ 
 ## 2.3.11
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
