@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_web/src/link.dart';
-import 'package:web/helpers.dart' as html;
+import 'package:web/web.dart' as html;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

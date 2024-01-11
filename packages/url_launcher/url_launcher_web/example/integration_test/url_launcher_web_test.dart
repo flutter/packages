@@ -10,7 +10,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/mockito.dart' show Mock, any, verify, when;
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:url_launcher_web/url_launcher_web.dart';
-import 'package:web/helpers.dart' as html;
+import 'package:web/web.dart' as html;
 
 abstract class MyWindow {
   html.Window? open(Object? a, Object? b, Object? c);

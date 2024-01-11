@@ -7,7 +7,7 @@ import 'dart:convert' show json;
 import 'dart:js_interop';
 import 'dart:math' as math;
 
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 import 'src/common.dart';
 import 'src/recorder.dart';
@@ -159,6 +159,8 @@ void _printResultsToScreen(Profile profile) {
     body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
     // TODO(kevmoo): remove `NodeGlue` cast when we no longer need to support
     // pkg:web 0.3.0
+    // TODO(camsim99): Remove deprecated append usage.
+    // ignore: deprecated_member_use
     NodeGlue(body).append(TimeseriesVisualization(timeseries).render());
   });
 }
