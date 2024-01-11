@@ -46,8 +46,10 @@ void main() {
       final gmaps.Size size = controller.gmMapType.tileSize!;
       expect(size.width, TileOverlayController.logicalTileSize);
       expect(size.height, TileOverlayController.logicalTileSize);
-      expect(controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document),
-          null);
+      expect(
+        controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document),
+        null,
+      );
     });
 
     testWidgets('produces image tiles', (WidgetTester tester) async {

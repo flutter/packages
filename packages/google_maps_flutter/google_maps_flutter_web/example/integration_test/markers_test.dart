@@ -275,8 +275,8 @@ void main() {
       controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLElement? content = controller.markers[const MarkerId('1')]
-          ?.infoWindow?.content as HTMLElement?;
+      final HTMLElement? content = controller
+          .markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
       expect(content?.innerHTML, contains('title for test'));
       expect(
           content?.innerHTML,
@@ -300,8 +300,8 @@ void main() {
       controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLElement? content = controller.markers[const MarkerId('1')]
-          ?.infoWindow?.content as HTMLElement?;
+      final HTMLElement? content = controller
+          .markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
 
       content?.click();
 

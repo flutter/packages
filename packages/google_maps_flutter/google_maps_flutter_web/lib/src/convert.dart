@@ -207,9 +207,10 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final HTMLHeadingElement title = (document.createElement('h3') as HTMLHeadingElement)
-      ..className = 'infowindow-title'
-      ..innerText = markerTitle;
+    final HTMLHeadingElement title =
+        (document.createElement('h3') as HTMLHeadingElement)
+          ..className = 'infowindow-title'
+          ..innerText = markerTitle;
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
