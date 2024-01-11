@@ -1,3 +1,7 @@
+## 0.6.18+4
+
+* Allow for choosing custom font feature to create superscript in footnotes when the font does not support `supr` font feature. Use `superscriptFontFeatureTag` property in `MarkdownStyleSheet`. For example for `Roboto` font you can set `numr`.
+
 ## 0.6.18+3
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
