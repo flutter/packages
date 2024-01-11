@@ -241,6 +241,16 @@ final class VideoPlayer {
               eventSink.success(event);
             }
           }
+
+          @Override
+          public void onPlaybackSuppressionReasonChanged(@Player.PlaybackSuppressionReason int reason) {
+            if (eventSink != null) {
+              Map<String, Object> event = new HashMap<>();
+              event.put("event", "onPlaybackSuppressionReasonChanged");
+              event.put("reason", reason);
+              eventSink.success(event);
+            }
+          }
         });
   }
 

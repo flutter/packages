@@ -149,6 +149,10 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.isPlayingStateUpdate,
             isPlaying: map['isPlaying'] as bool,
           );
+        case 'onPlaybackSuppressionReasonChanged':
+          // ignore: avoid_print
+          print('### Got onPlaybackSuppressionReasonChanged: ${map['reason']}');
+          return VideoEvent(eventType: VideoEventType.unknown);
         default:
           return VideoEvent(eventType: VideoEventType.unknown);
       }
