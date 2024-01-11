@@ -146,6 +146,11 @@ void main() {
               'Skipping due to https://github.com/flutter/flutter/issues/141145');
           return;
         }
+        // ignore: avoid_print
+        print('${!kIsWeb && Platform.isAndroid} -- '
+            '${controller.value.isPlaying} -- '
+            '${controller.value.position} -- '
+            '$tenMillisBeforeEnd');
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
@@ -184,6 +189,11 @@ void main() {
               'Skipping due to https://github.com/flutter/flutter/issues/141145');
           return;
         }
+        // ignore: avoid_print
+        print('${!kIsWeb && Platform.isAndroid} -- '
+            '${controller.value.isPlaying} -- '
+            '${controller.value.position} -- '
+            '$tenMillisBeforeEnd');
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
