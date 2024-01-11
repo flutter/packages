@@ -26,6 +26,10 @@ dev_dependencies:
   path_provider: ^2.0.6
   test: any
 
+dependency_overrides:
+  video_player_android:
+    path: ../../video_player_android
+
 flutter:
   uses-material-design: true
   assets:
