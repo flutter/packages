@@ -51,6 +51,10 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   @Override
   @SuppressWarnings("unchecked")
   public void observe(@NonNull Long identifier, @NonNull Long observerIdentifier) {
+    if (lifecycleOwner == null) {
+      throw new IllegalStateException("LifecycleOwner must be set to observe a LiveData instance.");
+    }
+
     getLiveDataInstance(identifier)
         .observe(
             lifecycleOwner,
@@ -60,6 +64,10 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   /** Removes all observers of this instance that are tied to the {@link lifecycleOwner}. */
   @Override
   public void removeObservers(@NonNull Long identifier) {
+    if (lifecycleOwner == null) {
+      throw new IllegalStateException("LifecycleOwner must be set to remove LiveData observers.");
+    }
+
     getLiveDataInstance(identifier).removeObservers(lifecycleOwner);
   }
 

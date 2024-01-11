@@ -58,6 +58,10 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
    */
   @Override
   public void getInstance(@NonNull GeneratedCameraXLibrary.Result<Long> result) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to get ProcessCameraProvider instance.");
+    }
+
     ListenableFuture<ProcessCameraProvider> processCameraProviderFuture =
         ProcessCameraProvider.getInstance(context);
 
@@ -111,6 +115,10 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
       @NonNull Long identifier,
       @NonNull Long cameraSelectorIdentifier,
       @NonNull List<Long> useCaseIds) {
+    if (lifecycleOwner == null) {
+      throw new IllegalStateException("LifecycleOwner must be set to get ProcessCameraProvider instance.");
+    }
+
     ProcessCameraProvider processCameraProvider =
         (ProcessCameraProvider) Objects.requireNonNull(instanceManager.getInstance(identifier));
     CameraSelector cameraSelector =

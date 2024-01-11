@@ -60,6 +60,10 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   @Override
   public void requestCameraPermissions(
       @NonNull Boolean enableAudio, @NonNull Result<CameraPermissionsErrorData> result) {
+    if (activity == null) {
+      throw new IllegalStateException("Activity must be set to request camera permissions.");
+    }
+
     CameraPermissionsManager cameraPermissionsManager =
         cameraXProxy.createCameraPermissionsManager();
     cameraPermissionsManager.requestPermissions(
@@ -85,6 +89,10 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   @Override
   @NonNull
   public String getTempFilePath(@NonNull String prefix, @NonNull String suffix) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to create a temporary file.");
+    }
+
     try {
       File path = File.createTempFile(prefix, suffix, context.getCacheDir());
       return path.toString();

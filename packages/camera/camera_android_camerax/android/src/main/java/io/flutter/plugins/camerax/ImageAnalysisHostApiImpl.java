@@ -65,6 +65,10 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
    */
   @Override
   public void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to set an Analyzer.");
+    }
+
     getImageAnalysisInstance(identifier)
         .setAnalyzer(
             ContextCompat.getMainExecutor(context),

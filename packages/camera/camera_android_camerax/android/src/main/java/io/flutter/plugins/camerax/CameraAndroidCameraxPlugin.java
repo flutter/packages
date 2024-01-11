@@ -20,14 +20,14 @@ import io.flutter.view.TextureRegistry;
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
-  private PendingRecordingHostApiImpl pendingRecordingHostApiImpl;
-  private RecorderHostApiImpl recorderHostApiImpl;
-  private VideoCaptureHostApiImpl videoCaptureHostApiImpl;
-  private ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
-  private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
-  private CameraControlHostApiImpl cameraControlHostApiImpl;
-  public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
-  public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
+  @VisibleForTesting public PendingRecordingHostApiImpl pendingRecordingHostApiImpl;
+  @VisibleForTesting public RecorderHostApiImpl recorderHostApiImpl;
+  @VisibleForTesting public VideoCaptureHostApiImpl videoCaptureHostApiImpl;
+  @VisibleForTesting public ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
+  @VisibleForTesting public ImageCaptureHostApiImpl imageCaptureHostApiImpl;
+  @VisibleForTesting public CameraControlHostApiImpl cameraControlHostApiImpl;
+  @VisibleForTesting public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
+  @VisibleForTesting public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
 
   @VisibleForTesting
   public @Nullable ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
@@ -209,12 +209,12 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     }
   }
 
-  /**
-   * Sets {@code LifecycleOwner} that is used to control the lifecycle
-   * of the camera by CameraX.
-   */
+  /** Sets {@code LifecycleOwner} that is used to control the lifecycle of the camera by CameraX. */
   public void updateLifecycleOwner(@Nullable Activity activity) {
-    if (activity instanceof LifecycleOwner) {
+    if (activity == null) {
+      processCameraProviderHostApiImpl.setLifecycleOwner(null);
+      liveDataHostApiImpl.setLifecycleOwner(null);
+    } else if (activity instanceof LifecycleOwner) {
       processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
       liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
     } else {
@@ -225,8 +225,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   }
 
   /**
-   * Updates {@code Activity} that is used for requesting camera permissions
-   * and tracking the orientation of the device.
+   * Updates {@code Activity} that is used for requesting camera permissions and tracking the
+   * orientation of the device.
    */
   public void updateActivity(@Nullable Activity activity) {
     if (systemServicesHostApiImpl != null) {
