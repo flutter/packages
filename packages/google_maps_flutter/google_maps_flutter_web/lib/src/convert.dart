@@ -273,7 +273,7 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
     //
     // Create a Blob from bytes, but let the browser figure out the encoding
     final Blob blob = Blob(bytes.map((int byte) => byte.toJS).toList().toJS);
-    icon = gmaps.Icon()..url = URL.createObjectURL(blob);
+    icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
     if (size != null) {

@@ -58,7 +58,7 @@ class TileOverlayController {
       final String src = URL.createObjectURL(
         // TODO(ditman): Improve Blob creation
         // See https://github.com/dart-lang/web/issues/91
-        Blob(tile.data!.map((int byte) => byte.toJS).toList().toJS),
+        Blob(tile.data!.map((int byte) => byte.toJS).toList().toJS) as JSObject,
       );
       img.src = src;
       img.addEventListener(
