@@ -20,13 +20,13 @@ import io.flutter.view.TextureRegistry;
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
-  @VisibleForTesting public PendingRecordingHostApiImpl pendingRecordingHostApiImpl;
-  @VisibleForTesting public RecorderHostApiImpl recorderHostApiImpl;
-  @VisibleForTesting public VideoCaptureHostApiImpl videoCaptureHostApiImpl;
-  @VisibleForTesting public ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
-  @VisibleForTesting public ImageCaptureHostApiImpl imageCaptureHostApiImpl;
-  @VisibleForTesting public CameraControlHostApiImpl cameraControlHostApiImpl;
-  @VisibleForTesting public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
+  @VisibleForTesting @Nullable public PendingRecordingHostApiImpl pendingRecordingHostApiImpl;
+  @VisibleForTesting @Nullable public RecorderHostApiImpl recorderHostApiImpl;
+  @VisibleForTesting @Nullable public VideoCaptureHostApiImpl videoCaptureHostApiImpl;
+  @VisibleForTesting @Nullable public ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
+  @VisibleForTesting @Nullable public ImageCaptureHostApiImpl imageCaptureHostApiImpl;
+  @VisibleForTesting @Nullable public CameraControlHostApiImpl cameraControlHostApiImpl;
+  @VisibleForTesting @Nullable public SystemServicesHostApiImpl systemServicesHostApiImpl;
 
   @VisibleForTesting
   public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
