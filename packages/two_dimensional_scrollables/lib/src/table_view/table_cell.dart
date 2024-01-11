@@ -67,6 +67,21 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
 
   ///
   int? columnMergeSpan;
+
+  @override
+  String toString() {
+    String mergeDetails = '';
+    if (rowMergeStart != null || columnMergeStart != null) {
+      mergeDetails += ', merged';
+    }
+    if (rowMergeStart != null) {
+      mergeDetails += ', rowMergeStart=$rowMergeStart, rowMergeSpan=$rowMergeSpan';
+    }
+    if (columnMergeStart != null) {
+      mergeDetails += ', columnMergeStart=$columnMergeStart, columnMergeSpan=$columnMergeSpan';
+    }
+    return super.toString() + mergeDetails;
+  }
 }
 
 ///

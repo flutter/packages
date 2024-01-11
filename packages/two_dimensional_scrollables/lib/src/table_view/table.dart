@@ -966,6 +966,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
   }
 
+  @override
+  RenderBox? getChildFor(ChildVicinity vicinity, { bool allowMerged = true, }) {
+    return super.getChildFor(vicinity)
+        ?? (allowMerged ? _getMergedChildFor(vicinity as TableVicinity) : null);
+  }
+
   RenderBox _getMergedChildFor(TableVicinity vicinity) {
     // A merged cell spans multiple vicinities, but only lays out one child for
     // the full area. Returns the child that has been laid out to span the given
@@ -981,7 +987,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required TableVicinity trailing,
     required Offset offset,
   }) {
-    print('paint cells');
     // Column decorations
     final LinkedHashMap<Rect, TableSpanDecoration> foregroundColumns =
         LinkedHashMap<Rect, TableSpanDecoration>();
@@ -996,7 +1001,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         final List<(RenderBox, RenderBox)> decorationCells = <(RenderBox, RenderBox)>[];
         late RenderBox? leadingCell;
         late RenderBox? trailingCell;
-        if ((_mergedColumns.isEmpty || !_mergedColumns.contains(column)) && _mergedRows.isEmpty) {
+        if (_mergedColumns.isEmpty || !_mergedColumns.contains(column)) {
           // One decoration across the whole column.
           decorationCells.add((
             getChildFor(TableVicinity(column: column, row: leading.row,))!, // leading
@@ -1006,26 +1011,29 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           // Walk through the rows to separate merged cells for decorating. A
           // merged column takes the decoration of its leading column.
           int currentRow = leading.row;
-          print('column: $column trailing.row: ${trailing.row}');
           while (currentRow <= trailing.row) {
-            print('currentRow: $currentRow');
             TableVicinity vicinity = TableVicinity(column: column, row: currentRow,);
-            leadingCell = getChildFor(vicinity) ?? _getMergedChildFor(vicinity);
-            if (parentDataOf(leadingCell).columnMergeStart != null) {
-              // Merged cell decorated individually.
-              print('column $column is merged');
+            leadingCell = getChildFor(vicinity);
+            if (parentDataOf(leadingCell!).columnMergeStart != null) {
+              // Merged portion decorated individually.
               decorationCells.add((leadingCell, leadingCell));
-              currentRow ++;
+              currentRow++;
               continue;
             }
             RenderBox? nextCell = leadingCell;
-            while (nextCell != null && parentDataOf(nextCell).columnMergeStart == null) {
+            while (nextCell != null &&
+                parentDataOf(nextCell).columnMergeStart == null) {
+              final TableViewParentData parentData = parentDataOf(nextCell);
+              if (parentData.rowMergeStart != null) {
+                currentRow = parentData.rowMergeStart! + parentData.rowMergeSpan!;
+              } else {
+                currentRow += 1;
+              }
               trailingCell = nextCell;
-              vicinity = vicinity.copyWith(row: currentRow++);
-              nextCell = getChildFor(vicinity);
+              vicinity = vicinity.copyWith(row: currentRow);
+              nextCell = getChildFor(vicinity, allowMerged: false);
             }
             decorationCells.add((leadingCell, trailingCell!));
-            currentRow--;
           }
         }
 
@@ -1085,8 +1093,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       }
     }
 
-    print('columns sorted');
-
     // Row decorations
     final LinkedHashMap<Rect, TableSpanDecoration> foregroundRows =
         LinkedHashMap<Rect, TableSpanDecoration>();
@@ -1105,10 +1111,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         if (_mergedRows.isEmpty || !_mergedRows.contains(row)) {
           // One decoration across the whole row.
           decorationCells.add((
-            getChildFor(
-                TableVicinity(column: leading.column, row: row,))!, // leading
-            getChildFor(
-                TableVicinity(column: trailing.column, row: row,))!, // trailing
+            getChildFor(TableVicinity(column: leading.column, row: row,))!, // leading
+            getChildFor(TableVicinity(column: trailing.column, row: row,))!, // trailing
           ));
         } else {
           // Walk through the columns to separate merged cells for decorating. A
@@ -1119,9 +1123,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               column: currentColumn,
               row: row,
             );
-            leadingCell = getChildFor(vicinity) ?? _getMergedChildFor(vicinity);
-            if (parentDataOf(leadingCell).rowMergeStart != null) {
-              // Merged cell decorated individually.
+            leadingCell = getChildFor(vicinity);
+            if (parentDataOf(leadingCell!).rowMergeStart != null) {
+              // Merged portion decorated individually.
               decorationCells.add((leadingCell, leadingCell));
               currentColumn++;
               continue;
@@ -1129,12 +1133,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             RenderBox? nextCell = leadingCell;
             while (nextCell != null &&
                 parentDataOf(nextCell).rowMergeStart == null) {
+              final TableViewParentData parentData = parentDataOf(nextCell);
+              if (parentData.columnMergeStart != null) {
+                currentColumn = parentData.columnMergeStart! + parentData.columnMergeSpan!;
+              } else {
+                currentColumn += 1;
+              }
               trailingCell = nextCell;
-              vicinity = vicinity.copyWith(column: currentColumn++);
-              nextCell = getChildFor(vicinity);
+              vicinity = vicinity.copyWith(column: currentColumn);
+              nextCell = getChildFor(vicinity, allowMerged: false);
             }
             decorationCells.add((leadingCell, trailingCell!));
-            currentColumn--;
           }
         }
 
@@ -1193,7 +1202,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         }
       }
     }
-    print('rows sorted');
 
     // Get to painting.
     // Painting is done in row or column major ordering according to the main
@@ -1248,7 +1256,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     for (int column = leading.column; column <= trailing.column; column++) {
       for (int row = leading.row; row <= trailing.row; row++) {
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-        final RenderBox? cell = getChildFor(vicinity);
+        final RenderBox? cell = getChildFor(vicinity, allowMerged: false);
         if (cell == null) {
           // Covered by a merged cell
           assert(_mergedVicinities.keys.contains(vicinity));
