@@ -134,23 +134,17 @@ void main() {
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
         // Android emulators in our CI have frequent flake where the video
-        // reports as still playing, but doesn't advance at all; if that
+        // reports as still playing (usually without having advanced at all
+        // past the seek position, but sometimes having advanced some); if that
         // happens, the thing being tested hasn't even had a chance to happen
         // due to CI issues, so just report it as skipped.
         // TODO(stuartmorgan): Remove once
         // https://github.com/flutter/flutter/issues/141145 is fixed.
-        if ((!kIsWeb && Platform.isAndroid) &&
-            controller.value.isPlaying &&
-            controller.value.position == tenMillisBeforeEnd) {
+        if ((!kIsWeb && Platform.isAndroid) && controller.value.isPlaying) {
           markTestSkipped(
               'Skipping due to https://github.com/flutter/flutter/issues/141145');
           return;
         }
-        // ignore: avoid_print
-        print('${!kIsWeb && Platform.isAndroid} -- '
-            '${controller.value.isPlaying} -- '
-            '${controller.value.position} -- '
-            '$tenMillisBeforeEnd');
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
@@ -171,29 +165,22 @@ void main() {
         // Mute to allow playing without DOM interaction on Web.
         // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
         await controller.setVolume(0);
-        final Duration tenMillisBeforeEnd =
-            controller.value.duration - const Duration(milliseconds: 10);
-        await controller.seekTo(tenMillisBeforeEnd);
+        await controller.seekTo(
+            controller.value.duration - const Duration(milliseconds: 10));
         await controller.play();
         await tester.pumpAndSettle(_playDuration);
         // Android emulators in our CI have frequent flake where the video
-        // reports as still playing, but doesn't advance at all; if that
+        // reports as still playing (usually without having advanced at all
+        // past the seek position, but sometimes having advanced some); if that
         // happens, the thing being tested hasn't even had a chance to happen
         // due to CI issues, so just report it as skipped.
         // TODO(stuartmorgan): Remove once
         // https://github.com/flutter/flutter/issues/141145 is fixed.
-        if ((!kIsWeb && Platform.isAndroid) &&
-            controller.value.isPlaying &&
-            controller.value.position == tenMillisBeforeEnd) {
+        if ((!kIsWeb && Platform.isAndroid) && controller.value.isPlaying) {
           markTestSkipped(
               'Skipping due to https://github.com/flutter/flutter/issues/141145');
           return;
         }
-        // ignore: avoid_print
-        print('${!kIsWeb && Platform.isAndroid} -- '
-            '${controller.value.isPlaying} -- '
-            '${controller.value.position} -- '
-            '$tenMillisBeforeEnd');
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, controller.value.duration);
 
