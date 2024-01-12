@@ -37,7 +37,6 @@ void main() {
                 ),
                 name: 'input')
           ],
-          isRequired: true,
           location: ApiLocation.host,
           returnType: TypeDeclaration(
             baseName: 'Output',
