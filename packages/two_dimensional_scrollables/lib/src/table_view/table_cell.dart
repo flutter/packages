@@ -75,10 +75,12 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
       mergeDetails += ', merged';
     }
     if (rowMergeStart != null) {
-      mergeDetails += ', rowMergeStart=$rowMergeStart, rowMergeSpan=$rowMergeSpan';
+      mergeDetails +=
+          ', rowMergeStart=$rowMergeStart, rowMergeSpan=$rowMergeSpan';
     }
     if (columnMergeStart != null) {
-      mergeDetails += ', columnMergeStart=$columnMergeStart, columnMergeSpan=$columnMergeSpan';
+      mergeDetails +=
+          ', columnMergeStart=$columnMergeStart, columnMergeSpan=$columnMergeSpan';
     }
     return super.toString() + mergeDetails;
   }

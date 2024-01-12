@@ -745,13 +745,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         xPaintOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-        final RenderBox? cell = _mergedVicinities.keys.contains(vicinity) ? null : buildOrObtainChildFor(vicinity);
+        final RenderBox? cell = _mergedVicinities.keys.contains(vicinity)
+            ? null
+            : buildOrObtainChildFor(vicinity);
 
         if (cell != null) {
           final TableViewParentData cellParentData = parentDataOf(cell);
 
           // Merged cell handling
-          if (cellParentData.rowMergeStart != null || cellParentData.columnMergeStart != null) {
+          if (cellParentData.rowMergeStart != null ||
+              cellParentData.columnMergeStart != null) {
             late final int rowMergeStart;
             late final int lastRow;
             if (cellParentData.rowMergeStart != null) {
@@ -776,7 +779,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             late final int lastColumn;
             if (cellParentData.columnMergeStart != null) {
               columnMergeStart = cellParentData.columnMergeStart!;
-              lastColumn = columnMergeStart + cellParentData.columnMergeSpan! - 1;
+              lastColumn =
+                  columnMergeStart + cellParentData.columnMergeSpan! - 1;
               _mergedColumns.add(columnMergeStart);
             } else {
               columnMergeStart = column;
@@ -808,14 +812,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             int currentRow = rowMergeStart;
             while (currentRow <= lastRow) {
               _mergedRows.add(currentRow);
-              mergedRowHeight = mergedRowHeight! + _rowMetrics[currentRow]!.extent;
+              mergedRowHeight =
+                  mergedRowHeight! + _rowMetrics[currentRow]!.extent;
               int currentColumn = columnMergeStart;
               while (currentColumn <= lastColumn) {
                 _mergedColumns.add(currentColumn);
                 mergedColumnWidth =
                     mergedColumnWidth! + _columnMetrics[currentColumn]!.extent;
-                _mergedVicinities[TableVicinity(row: currentRow, column: currentColumn,)] =
-                    vicinity;
+                _mergedVicinities[TableVicinity(
+                  row: currentRow,
+                  column: currentColumn,
+                )] = vicinity;
                 currentColumn++;
               }
               currentRow++;
@@ -974,9 +981,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   @override
-  RenderBox? getChildFor(ChildVicinity vicinity, { bool allowMerged = true, }) {
-    return super.getChildFor(vicinity)
-        ?? (allowMerged ? _getMergedChildFor(vicinity as TableVicinity) : null);
+  RenderBox? getChildFor(
+    ChildVicinity vicinity, {
+    bool allowMerged = true,
+  }) {
+    return super.getChildFor(vicinity) ??
+        (allowMerged ? _getMergedChildFor(vicinity as TableVicinity) : null);
   }
 
   RenderBox _getMergedChildFor(TableVicinity vicinity) {
@@ -1004,22 +1014,33 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     for (int column = leading.column; column <= trailing.column; column++) {
       TableSpan columnSpan = _columnMetrics[column]!.configuration;
       if (columnSpan.backgroundDecoration != null ||
-          columnSpan.foregroundDecoration != null || _mergedColumns.contains(column)) {
-        final List<(RenderBox, RenderBox)> decorationCells = <(RenderBox, RenderBox)>[];
+          columnSpan.foregroundDecoration != null ||
+          _mergedColumns.contains(column)) {
+        final List<(RenderBox, RenderBox)> decorationCells =
+            <(RenderBox, RenderBox)>[];
         late RenderBox? leadingCell;
         late RenderBox? trailingCell;
         if (_mergedColumns.isEmpty || !_mergedColumns.contains(column)) {
           // One decoration across the whole column.
           decorationCells.add((
-            getChildFor(TableVicinity(column: column, row: leading.row,))!, // leading
-            getChildFor(TableVicinity(column: column, row: trailing.row,))!, // trailing
+            getChildFor(TableVicinity(
+              column: column,
+              row: leading.row,
+            ))!, // leading
+            getChildFor(TableVicinity(
+              column: column,
+              row: trailing.row,
+            ))!, // trailing
           ));
         } else {
           // Walk through the rows to separate merged cells for decorating. A
           // merged column takes the decoration of its leading column.
           int currentRow = leading.row;
           while (currentRow <= trailing.row) {
-            TableVicinity vicinity = TableVicinity(column: column, row: currentRow,);
+            TableVicinity vicinity = TableVicinity(
+              column: column,
+              row: currentRow,
+            );
             leadingCell = getChildFor(vicinity);
             if (parentDataOf(leadingCell!).columnMergeStart != null) {
               // Merged portion decorated individually.
@@ -1032,7 +1053,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 parentDataOf(nextCell).columnMergeStart == null) {
               final TableViewParentData parentData = parentDataOf(nextCell);
               if (parentData.rowMergeStart != null) {
-                currentRow = parentData.rowMergeStart! + parentData.rowMergeSpan!;
+                currentRow =
+                    parentData.rowMergeStart! + parentData.rowMergeSpan!;
               } else {
                 currentRow += 1;
               }
@@ -1074,11 +1096,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           (leadingCell, trailingCell) = span;
           // If this was a merged cell, the decoration is defined by the leading
           // cell, which may come from a different column.
-          final int columnIndex = parentDataOf(leadingCell).columnMergeStart ?? parentDataOf(leadingCell).tableVicinity.column;
+          final int columnIndex = parentDataOf(leadingCell).columnMergeStart ??
+              parentDataOf(leadingCell).tableVicinity.column;
           columnSpan = _columnMetrics[columnIndex]!.configuration;
           if (columnSpan.backgroundDecoration != null) {
-            final Rect rect =
-            getColumnRect(columnSpan.backgroundDecoration!.consumeSpanPadding);
+            final Rect rect = getColumnRect(
+                columnSpan.backgroundDecoration!.consumeSpanPadding);
             // We could have already added this rect if it came from another
             // vicinity contained by the merged
             // cell.
@@ -1087,8 +1110,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             }
           }
           if (columnSpan.foregroundDecoration != null) {
-            final Rect rect =
-            getColumnRect(columnSpan.foregroundDecoration!.consumeSpanPadding);
+            final Rect rect = getColumnRect(
+                columnSpan.foregroundDecoration!.consumeSpanPadding);
             // We could have already added this rect if it came from another
             // vicinity contained by the merged
             // cell.
@@ -1118,8 +1141,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         if (_mergedRows.isEmpty || !_mergedRows.contains(row)) {
           // One decoration across the whole row.
           decorationCells.add((
-            getChildFor(TableVicinity(column: leading.column, row: row,))!, // leading
-            getChildFor(TableVicinity(column: trailing.column, row: row,))!, // trailing
+            getChildFor(TableVicinity(
+              column: leading.column,
+              row: row,
+            ))!, // leading
+            getChildFor(TableVicinity(
+              column: trailing.column,
+              row: row,
+            ))!, // trailing
           ));
         } else {
           // Walk through the columns to separate merged cells for decorating. A
@@ -1142,7 +1171,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 parentDataOf(nextCell).rowMergeStart == null) {
               final TableViewParentData parentData = parentDataOf(nextCell);
               if (parentData.columnMergeStart != null) {
-                currentColumn = parentData.columnMergeStart! + parentData.columnMergeSpan!;
+                currentColumn =
+                    parentData.columnMergeStart! + parentData.columnMergeSpan!;
               } else {
                 currentColumn += 1;
               }
