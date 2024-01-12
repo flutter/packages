@@ -1,6 +1,6 @@
 ## 0.3.3+9
 
-* Pins `package:web` to `>=0.3.0 <0.4.0`.
+* Pins `package:web` to `>=0.3.0 <0.4.1`.
 
 ## 0.3.3+8
 

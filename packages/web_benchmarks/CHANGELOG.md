@@ -1,6 +1,6 @@
 ## 1.1.2
 
-* Pins `package:web` to `>=0.3.0 <0.4.0`.
+* Pins `package:web` to `>=0.3.0 <0.4.1`.
 
 ## 1.1.1
 

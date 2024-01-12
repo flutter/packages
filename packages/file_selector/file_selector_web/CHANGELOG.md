@@ -1,7 +1,7 @@
 ## 0.9.3+1
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Pins `package:web` to `>=0.3.0 <0.4.0`.
+* Pins `package:web` to `>=0.3.0 <0.4.1`.
 
 ## 0.9.3
 
