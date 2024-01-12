@@ -974,34 +974,34 @@ List<Error> _validateProxyApi(
     result.add(Error(message: error.toString()));
   }
 
-  // Validate that the api does not inherit a non attached field from its super class.
-  if (superClassChain != null &&
-      superClassChain.isNotEmpty &&
-      superClassChain.first.unattachedFields.isNotEmpty) {
+  // Validate that the api does not inherit an unattached field from its super class.
+  final AstProxyApi? directSuperClass = superClassChain?.firstOrNull;
+  if (directSuperClass != null &&
+      directSuperClass.unattachedFields.isNotEmpty) {
     result.add(Error(
       message:
-          'Non attached fields can not be inherited. Non attached field found for parent class ${api.unattachedFields.first.name}',
+          'Unattached fields can not be inherited. Unattached field found for parent class: ${directSuperClass.unattachedFields.first.name}',
       lineNumber: _calculateLineNumberNullable(
         source,
-        api.unattachedFields.first.offset,
+        directSuperClass.unattachedFields.first.offset,
       ),
     ));
   }
 
+  final bool hasUnattachedField = api.unattachedFields.isNotEmpty;
+  final bool hasRequiredFlutterMethod =
+      api.flutterMethods.any((Method method) => method.required);
   for (final AstProxyApi proxyApi in proxyApis) {
     // Validate this api is not used as an attached field while either:
     // 1. Having an unattached field.
     // 2. Having a required Flutter method.
-    final bool hasUnattachedField = api.unattachedFields.isNotEmpty;
-    final bool hasRequiredFlutterMethod =
-        api.flutterMethods.any((Method method) => method.required);
     if (hasUnattachedField || hasRequiredFlutterMethod) {
       for (final Field field in proxyApi.attachedFields) {
         if (field.type.baseName == api.name) {
           if (hasUnattachedField) {
             result.add(Error(
               message:
-                  'ProxyApis with fields can not be used as attached fields: ${field.name}',
+                  'ProxyApis with unattached fields can not be used as attached fields: ${field.name}',
               lineNumber: _calculateLineNumberNullable(
                 source,
                 field.offset,
@@ -1032,7 +1032,7 @@ List<Error> _validateProxyApi(
         if (interfaceName == api.name) {
           result.add(Error(
             message:
-                'ProxyApis used as interfaces can only have callback methods: ${proxyApi.name}',
+                'ProxyApis used as interfaces can only have callback methods: `${proxyApi.name}` implements `${api.name}`',
           ));
         }
       }
@@ -1139,28 +1139,27 @@ List<Error> _validateProxyApi(
       if (!isProxyApi(field)) {
         result.add(Error(
           message:
-              'Static fields are considered attached fields and must be a ProxyApi: ${field.type.baseName}.',
+              'Static fields are considered attached fields and must be a ProxyApi: ${field.type.baseName}',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       } else if (field.type.isNullable) {
         result.add(Error(
           message:
-              'Static fields are considered attached fields and must not be nullable: ${field.type.baseName}.',
+              'Static fields are considered attached fields and must not be nullable: ${field.type.baseName}?',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
     } else if (field.isAttached) {
       if (!isProxyApi(field)) {
         result.add(Error(
-          message:
-              'Attached fields must be a ProxyApi: ${field.type.baseName}.',
+          message: 'Attached fields must be a ProxyApi: ${field.type.baseName}',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
       if (field.type.isNullable) {
         result.add(Error(
           message:
-              'Attached fields must not be nullable: ${field.type.baseName}.',
+              'Attached fields must not be nullable: ${field.type.baseName}?',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }

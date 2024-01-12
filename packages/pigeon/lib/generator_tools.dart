@@ -437,6 +437,19 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
       }
       references.addMany(_getTypeArguments(method.returnType), method.offset);
     }
+    if (api is AstProxyApi) {
+      for (final Constructor constructor in api.constructors) {
+        for (final NamedType parameter in constructor.parameters) {
+          references.addMany(
+            _getTypeArguments(parameter.type),
+            parameter.offset,
+          );
+        }
+      }
+      for (final Field field in api.fields) {
+        references.addMany(_getTypeArguments(field.type), field.offset);
+      }
+    }
   }
 
   final Set<String> referencedTypeNames =
