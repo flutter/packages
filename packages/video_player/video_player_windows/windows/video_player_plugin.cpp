@@ -88,7 +88,8 @@ ErrorOr<TextureMessage> VideoPlayerPlugin::Create(const CreateMessage& input) {
     std::string assetPath;
     if (input.package_name() && !input.package_name()->empty()) {
       // TODO: Not supported on Windows
-      // assetPath = [_registrar lookupKeyForAsset:input.asset fromPackage:input.packageName];
+      // assetPath = [_registrar lookupKeyForAsset:input.asset
+      // fromPackage:input.packageName];
       assetPath = *input.asset();
     } else {
       assetPath = *input.asset();
