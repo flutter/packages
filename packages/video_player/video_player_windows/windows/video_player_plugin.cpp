@@ -37,18 +37,23 @@ class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
   VideoPlayerPlugin(flutter::PluginRegistrarWindows* registrar);
 
   std::optional<FlutterError> Initialize() override;
-  ErrorOr<TextureMessage> Create(const CreateMessage& arg) override;
-  std::optional<FlutterError> Dispose(const TextureMessage& arg) override;
-  std::optional<FlutterError> SetLooping(const LoopingMessage& arg) override;
-  std::optional<FlutterError> SetVolume(const VolumeMessage& arg) override;
-  std::optional<FlutterError> SetPlaybackSpeed(
-      const PlaybackSpeedMessage& arg) override;
-  std::optional<FlutterError> Play(const TextureMessage& arg) override;
-  ErrorOr<PositionMessage> Position(const TextureMessage& arg) override;
-  std::optional<FlutterError> SeekTo(const PositionMessage& arg) override;
-  std::optional<FlutterError> Pause(const TextureMessage& arg) override;
-  std::optional<FlutterError> SetMixWithOthers(
-      const MixWithOthersMessage& arg) override;
+  ErrorOr<int64_t> Create(const std::string* asset, const std::string* uri,
+                          const std::string* package_name,
+                          const std::string* format_hint,
+                          const flutter::EncodableMap& http_headers) override;
+  std::optional<FlutterError> Dispose(int64_t texture_id) override;
+  std::optional<FlutterError> SetLooping(int64_t texture_id,
+                                         bool is_looping) override;
+  std::optional<FlutterError> SetVolume(int64_t texture_id,
+                                        double volume) override;
+  std::optional<FlutterError> SetPlaybackSpeed(int64_t texture_id,
+                                               double speed) override;
+  std::optional<FlutterError> Play(int64_t texture_id) override;
+  ErrorOr<int64_t> Position(int64_t texture_id) override;
+  std::optional<FlutterError> SeekTo(int64_t texture_id,
+                                     int64_t position) override;
+  std::optional<FlutterError> Pause(int64_t texture_id) override;
+  std::optional<FlutterError> SetMixWithOthers(bool mix_with_others) override;
 
   virtual ~VideoPlayerPlugin();
 
@@ -82,17 +87,20 @@ std::optional<FlutterError> VideoPlayerPlugin::Initialize() {
   return {};
 }
 
-ErrorOr<TextureMessage> VideoPlayerPlugin::Create(const CreateMessage& input) {
+ErrorOr<int64_t> VideoPlayerPlugin::Create(
+    const std::string* asset, const std::string* uri,
+    const std::string* package_name, const std::string* format_hint,
+    const flutter::EncodableMap& http_headers) {
   std::unique_ptr<VideoPlayer> player{nullptr};
-  if (input.asset() && !input.asset()->empty()) {
+  if (asset && !asset->empty()) {
     std::string assetPath;
-    if (input.package_name() && !input.package_name()->empty()) {
+    if (package_name && !package_name->empty()) {
       // TODO: Not supported on Windows
       // assetPath = [_registrar lookupKeyForAsset:input.asset
       // fromPackage:input.packageName];
-      assetPath = *input.asset();
+      assetPath = *asset;
     } else {
-      assetPath = *input.asset();
+      assetPath = *asset;
     }
 
     try {
@@ -101,21 +109,21 @@ ErrorOr<TextureMessage> VideoPlayerPlugin::Create(const CreateMessage& input) {
       size_t found = modulePath.find_last_of(L"/\\");
       modulePath = modulePath.substr(0, found);
 
-      std::wstring asset = modulePath + L"/data/flutter_assets/" +
-                           std::wstring(assetPath.begin(), assetPath.end());
+      std::wstring finalAssetPath =
+          modulePath + L"/data/flutter_assets/" +
+          std::wstring(assetPath.begin(), assetPath.end());
 
-      player = std::make_unique<VideoPlayer>(registrar_->GetView(), asset,
-                                             flutter::EncodableMap());
+      player = std::make_unique<VideoPlayer>(
+          registrar_->GetView(), finalAssetPath, flutter::EncodableMap());
     } catch (std::exception& e) {
       return FlutterError("asset_load_failed", e.what());
     }
-  } else if (input.uri() && !input.uri()->empty()) {
+  } else if (uri && !uri->empty()) {
     try {
-      std::string assetPath = *input.uri();
+      std::string assetPath = *uri;
       player = std::make_unique<VideoPlayer>(
           registrar_->GetView(),
-          std::wstring(assetPath.begin(), assetPath.end()),
-          input.http_headers());
+          std::wstring(assetPath.begin(), assetPath.end()), http_headers);
     } catch (std::exception& e) {
       return FlutterError("uri_load_failed", e.what());
     }
@@ -130,65 +138,63 @@ ErrorOr<TextureMessage> VideoPlayerPlugin::Create(const CreateMessage& input) {
   videoPlayers.insert(
       std::make_pair(player->GetTextureId(), std::move(player)));
 
-  TextureMessage textureMessage = TextureMessage(textureId);
-  return textureMessage;
+  return textureId;
 }
 
-std::optional<FlutterError> VideoPlayerPlugin::Dispose(
-    const TextureMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
+std::optional<FlutterError> VideoPlayerPlugin::Dispose(int64_t texture_id) {
+  auto searchPlayer = videoPlayers.find(texture_id);
   if (searchPlayer == videoPlayers.end()) {
     return FlutterError("player_not_found", "This player ID was not found");
   }
   if (searchPlayer->second->IsValid()) {
     searchPlayer->second->Dispose();
-    videoPlayers.erase(arg.texture_id());
+    videoPlayers.erase(texture_id);
   }
 
   return {};
 }
 
-std::optional<FlutterError> VideoPlayerPlugin::SetLooping(
-    const LoopingMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
+std::optional<FlutterError> VideoPlayerPlugin::SetLooping(int64_t texture_id,
+                                                          bool is_looping) {
+  auto searchPlayer = videoPlayers.find(texture_id);
   if (searchPlayer == videoPlayers.end()) {
     return FlutterError("player_not_found", "This player ID was not found");
   }
   if (searchPlayer->second->IsValid()) {
-    searchPlayer->second->SetLooping(arg.is_looping());
+    searchPlayer->second->SetLooping(is_looping);
   }
 
   return {};
 }
 
-std::optional<FlutterError> VideoPlayerPlugin::SetVolume(
-    const VolumeMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
+std::optional<FlutterError> VideoPlayerPlugin::SetVolume(int64_t texture_id,
+                                                         double volume) {
+  auto searchPlayer = videoPlayers.find(texture_id);
   if (searchPlayer == videoPlayers.end()) {
     return FlutterError("player_not_found", "This player ID was not found");
   }
   if (searchPlayer->second->IsValid()) {
-    searchPlayer->second->SetVolume(arg.volume());
+    searchPlayer->second->SetVolume(volume);
   }
 
   return {};
 }
 
 std::optional<FlutterError> VideoPlayerPlugin::SetPlaybackSpeed(
-    const PlaybackSpeedMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
+    int64_t texture_id, double speed) {
+  auto searchPlayer = videoPlayers.find(texture_id);
   if (searchPlayer == videoPlayers.end()) {
     return FlutterError("player_not_found", "This player ID was not found");
   }
   if (searchPlayer->second->IsValid()) {
-    searchPlayer->second->SetPlaybackSpeed(arg.speed());
+    searchPlayer->second->SetPlaybackSpeed(speed);
   }
 
   return {};
 }
 
-std::optional<FlutterError> VideoPlayerPlugin::Play(const TextureMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
+std::optional<FlutterError> VideoPlayerPlugin::Play(int64_t texture_id) {
+  auto searchPlayer = videoPlayers.find(texture_id);
   if (searchPlayer == videoPlayers.end()) {
     return FlutterError("player_not_found", "This player ID was not found");
   }
@@ -199,36 +205,34 @@ std::optional<FlutterError> VideoPlayerPlugin::Play(const TextureMessage& arg) {
   return {};
 }
 
-ErrorOr<PositionMessage> VideoPlayerPlugin::Position(
-    const TextureMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
-  PositionMessage result = PositionMessage(arg.texture_id(), 0);
+ErrorOr<int64_t> VideoPlayerPlugin::Position(int64_t texture_id) {
+  auto searchPlayer = videoPlayers.find(texture_id);
+  int64_t position = 0;
   if (searchPlayer != videoPlayers.end()) {
     auto& player = searchPlayer->second;
     if (player->IsValid()) {
-      result.set_position(player->GetPosition());
+      position = player->GetPosition();
       player->SendBufferingUpdate();
     }
   }
-  return result;
+  return position;
 }
 
-std::optional<FlutterError> VideoPlayerPlugin::SeekTo(
-    const PositionMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
+std::optional<FlutterError> VideoPlayerPlugin::SeekTo(int64_t texture_id,
+                                                      int64_t position) {
+  auto searchPlayer = videoPlayers.find(texture_id);
   if (searchPlayer == videoPlayers.end()) {
     return FlutterError("player_not_found", "This player ID was not found");
   }
   if (searchPlayer->second->IsValid()) {
-    searchPlayer->second->SeekTo(arg.position());
+    searchPlayer->second->SeekTo(position);
   }
 
   return {};
 }
 
-std::optional<FlutterError> VideoPlayerPlugin::Pause(
-    const TextureMessage& arg) {
-  auto searchPlayer = videoPlayers.find(arg.texture_id());
+std::optional<FlutterError> VideoPlayerPlugin::Pause(int64_t texture_id) {
+  auto searchPlayer = videoPlayers.find(texture_id);
   if (searchPlayer == videoPlayers.end()) {
     return FlutterError("player_not_found", "This player ID was not found");
   }
@@ -240,8 +244,8 @@ std::optional<FlutterError> VideoPlayerPlugin::Pause(
 }
 
 std::optional<FlutterError> VideoPlayerPlugin::SetMixWithOthers(
-    const MixWithOthersMessage& arg) {
-  mixWithOthers = arg.mix_with_others();
+    bool mix_with_others) {
+  mixWithOthers = mix_with_others;
 
   return {};
 }

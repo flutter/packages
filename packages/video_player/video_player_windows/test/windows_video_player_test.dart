@@ -12,25 +12,36 @@ import 'test_api.g.dart';
 
 class _ApiLogger implements TestHostVideoPlayerApi {
   final List<String> log = <String>[];
-  TextureMessage? textureMessage;
-  CreateMessage? createMessage;
-  PositionMessage? positionMessage;
-  LoopingMessage? loopingMessage;
-  VolumeMessage? volumeMessage;
-  PlaybackSpeedMessage? playbackSpeedMessage;
-  MixWithOthersMessage? mixWithOthersMessage;
+  int? textureId;
+
+  String? asset;
+  String? uri;
+  String? packageName;
+  String? formatHint;
+  Map<String?, String?>? httpHeaders;
+
+  int? positionValue;
+  bool? isLooping;
+  double? volume;
+  double? speed;
+  bool? mixWithOthers;
 
   @override
-  TextureMessage create(CreateMessage arg) {
+  int create(String? asset, String? uri, String? packageName,
+      String? formatHint, Map<String?, String?> httpHeaders) {
     log.add('create');
-    createMessage = arg;
-    return TextureMessage(textureId: 3);
+    this.asset = asset;
+    this.uri = uri;
+    this.packageName = packageName;
+    this.formatHint = formatHint;
+    this.httpHeaders = httpHeaders;
+    return 3;
   }
 
   @override
-  void dispose(TextureMessage arg) {
+  void dispose(int arg) {
     log.add('dispose');
-    textureMessage = arg;
+    textureId = arg;
   }
 
   @override
@@ -39,52 +50,56 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void pause(TextureMessage arg) {
+  void pause(int arg) {
     log.add('pause');
-    textureMessage = arg;
+    textureId = arg;
   }
 
   @override
-  void play(TextureMessage arg) {
+  void play(int arg) {
     log.add('play');
-    textureMessage = arg;
+    textureId = arg;
   }
 
   @override
-  void setMixWithOthers(MixWithOthersMessage arg) {
+  void setMixWithOthers(bool arg) {
     log.add('setMixWithOthers');
-    mixWithOthersMessage = arg;
+    mixWithOthers = arg;
   }
 
   @override
-  PositionMessage position(TextureMessage arg) {
+  int position(int arg) {
     log.add('position');
-    textureMessage = arg;
-    return PositionMessage(textureId: arg.textureId, position: 234);
+    textureId = arg;
+    return 234;
   }
 
   @override
-  void seekTo(PositionMessage arg) {
+  void seekTo(int textureId, int position) {
     log.add('seekTo');
-    positionMessage = arg;
+    this.textureId = textureId;
+    positionValue = position;
   }
 
   @override
-  void setLooping(LoopingMessage arg) {
+  void setLooping(int textureId, bool isLooping) {
     log.add('setLooping');
-    loopingMessage = arg;
+    this.textureId = textureId;
+    this.isLooping = isLooping;
   }
 
   @override
-  void setVolume(VolumeMessage arg) {
+  void setVolume(int textureId, double volume) {
     log.add('setVolume');
-    volumeMessage = arg;
+    this.textureId = textureId;
+    this.volume = volume;
   }
 
   @override
-  void setPlaybackSpeed(PlaybackSpeedMessage arg) {
+  void setPlaybackSpeed(int textureId, double speed) {
     log.add('setPlaybackSpeed');
-    playbackSpeedMessage = arg;
+    this.textureId = textureId;
+    this.speed = speed;
   }
 }
 
@@ -116,7 +131,7 @@ void main() {
     test('dispose', () async {
       await player.dispose(1);
       expect(log.log.last, 'dispose');
-      expect(log.textureMessage?.textureId, 1);
+      expect(log.textureId, 1);
     });
 
     test('create with asset', () async {
@@ -126,8 +141,8 @@ void main() {
         package: 'somePackage',
       ));
       expect(log.log.last, 'create');
-      expect(log.createMessage?.asset, 'someAsset');
-      expect(log.createMessage?.packageName, 'somePackage');
+      expect(log.asset, 'someAsset');
+      expect(log.packageName, 'somePackage');
       expect(textureId, 3);
     });
 
@@ -138,11 +153,11 @@ void main() {
         formatHint: VideoFormat.dash,
       ));
       expect(log.log.last, 'create');
-      expect(log.createMessage?.asset, null);
-      expect(log.createMessage?.uri, 'someUri');
-      expect(log.createMessage?.packageName, null);
-      expect(log.createMessage?.formatHint, 'dash');
-      expect(log.createMessage?.httpHeaders, <String, String>{});
+      expect(log.asset, null);
+      expect(log.uri, 'someUri');
+      expect(log.packageName, null);
+      expect(log.formatHint, 'dash');
+      expect(log.httpHeaders, <String, String>{});
       expect(textureId, 3);
     });
 
@@ -153,12 +168,12 @@ void main() {
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
       expect(log.log.last, 'create');
-      expect(log.createMessage?.asset, null);
-      expect(log.createMessage?.uri, 'someUri');
-      expect(log.createMessage?.packageName, null);
-      expect(log.createMessage?.formatHint, null);
-      expect(log.createMessage?.httpHeaders,
-          <String, String>{'Authorization': 'Bearer token'});
+      expect(log.asset, null);
+      expect(log.uri, 'someUri');
+      expect(log.packageName, null);
+      expect(log.formatHint, null);
+      expect(
+          log.httpHeaders, <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
     });
 
@@ -168,7 +183,7 @@ void main() {
         uri: 'someUri',
       ));
       expect(log.log.last, 'create');
-      expect(log.createMessage?.uri, 'someUri');
+      expect(log.uri, 'someUri');
       expect(textureId, 3);
     });
 
@@ -179,65 +194,65 @@ void main() {
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
       expect(log.log.last, 'create');
-      expect(log.createMessage?.uri, 'someUri');
-      expect(log.createMessage?.httpHeaders,
-          <String, String>{'Authorization': 'Bearer token'});
+      expect(log.uri, 'someUri');
+      expect(
+          log.httpHeaders, <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
     });
     test('setLooping', () async {
       await player.setLooping(1, true);
       expect(log.log.last, 'setLooping');
-      expect(log.loopingMessage?.textureId, 1);
-      expect(log.loopingMessage?.isLooping, true);
+      expect(log.textureId, 1);
+      expect(log.isLooping, true);
     });
 
     test('play', () async {
       await player.play(1);
       expect(log.log.last, 'play');
-      expect(log.textureMessage?.textureId, 1);
+      expect(log.textureId, 1);
     });
 
     test('pause', () async {
       await player.pause(1);
       expect(log.log.last, 'pause');
-      expect(log.textureMessage?.textureId, 1);
+      expect(log.textureId, 1);
     });
 
     test('setMixWithOthers', () async {
       await player.setMixWithOthers(true);
       expect(log.log.last, 'setMixWithOthers');
-      expect(log.mixWithOthersMessage?.mixWithOthers, true);
+      expect(log.mixWithOthers, true);
 
       await player.setMixWithOthers(false);
       expect(log.log.last, 'setMixWithOthers');
-      expect(log.mixWithOthersMessage?.mixWithOthers, false);
+      expect(log.mixWithOthers, false);
     });
 
     test('setVolume', () async {
       await player.setVolume(1, 0.7);
       expect(log.log.last, 'setVolume');
-      expect(log.volumeMessage?.textureId, 1);
-      expect(log.volumeMessage?.volume, 0.7);
+      expect(log.textureId, 1);
+      expect(log.volume, 0.7);
     });
 
     test('setPlaybackSpeed', () async {
       await player.setPlaybackSpeed(1, 1.5);
       expect(log.log.last, 'setPlaybackSpeed');
-      expect(log.playbackSpeedMessage?.textureId, 1);
-      expect(log.playbackSpeedMessage?.speed, 1.5);
+      expect(log.textureId, 1);
+      expect(log.speed, 1.5);
     });
 
     test('seekTo', () async {
       await player.seekTo(1, const Duration(milliseconds: 12345));
       expect(log.log.last, 'seekTo');
-      expect(log.positionMessage?.textureId, 1);
-      expect(log.positionMessage?.position, 12345);
+      expect(log.textureId, 1);
+      expect(log.position, 12345);
     });
 
     test('getPosition', () async {
       final Duration position = await player.getPosition(1);
       expect(log.log.last, 'position');
-      expect(log.textureMessage?.textureId, 1);
+      expect(log.textureId, 1);
       expect(position, const Duration(milliseconds: 234));
     });
 
