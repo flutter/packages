@@ -22,4 +22,5 @@ Pod::Spec.new do |s|
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.swift_version = '5.0'
+  s.resource_bundles = {'path_provider_foundation_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
