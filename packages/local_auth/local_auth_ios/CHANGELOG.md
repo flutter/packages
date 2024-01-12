@@ -1,3 +1,7 @@
+## 1.1.6
+
+* Adds privacy manifest.
+
 ## 1.1.5
 
 * Updates to Pigeon 13.
