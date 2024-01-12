@@ -691,6 +691,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required int pinnedSpanCount,
     required TableVicinity currentVicinity,
   }) {
+    if (spanMergeStart == spanMergeEnd) {
+      // Not merged
+      return true;
+    }
+
     final String lowerSpanOrientation = spanOrientation.toLowerCase();
     assert(
       spanMergeStart <= currentSpan,
@@ -740,22 +745,23 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         xPaintOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-        RenderBox? cell;
-        if (!_mergedVicinities.keys.contains(vicinity)) {
-          // We do not call build for vicinities that are already covered by a
-          // merged cell.
-          cell = buildOrObtainChildFor(vicinity);
-        }
+        final RenderBox? cell = _mergedVicinities.keys.contains(vicinity) ? null : buildOrObtainChildFor(vicinity);
 
         if (cell != null) {
           final TableViewParentData cellParentData = parentDataOf(cell);
 
-          // Merged row handling
-          if (cellParentData.rowMergeStart != null) {
-            final int rowMergeStart = cellParentData.rowMergeStart!;
-            _mergedRows.add(rowMergeStart);
-            final int lastRow =
-                rowMergeStart + cellParentData.rowMergeSpan! - 1;
+          // Merged cell handling
+          if (cellParentData.rowMergeStart != null || cellParentData.columnMergeStart != null) {
+            late final int rowMergeStart;
+            late final int lastRow;
+            if (cellParentData.rowMergeStart != null) {
+              rowMergeStart = cellParentData.rowMergeStart!;
+              lastRow = rowMergeStart + cellParentData.rowMergeSpan! - 1;
+              _mergedRows.add(rowMergeStart);
+            } else {
+              rowMergeStart = row;
+              lastRow = row;
+            }
             assert(_debugCheckMergeBounds(
               spanOrientation: 'Row',
               currentSpan: row,
@@ -765,28 +771,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               pinnedSpanCount: delegate.pinnedRowCount,
               currentVicinity: vicinity,
             ));
-            // Compute height and layout offset for merged rows.
-            final _Span firstRow = _rowMetrics[rowMergeStart]!;
-            mergedRowHeight = firstRow.extent;
-            mergedYPaintOffset = -verticalOffset.pixels +
-                firstRow.leadingOffset +
-                firstRow.configuration.padding.leading;
-            _mergedVicinities[vicinity.copyWith(row: rowMergeStart)] = vicinity;
-            int nextRow = rowMergeStart + 1;
-            while (nextRow <= lastRow) {
-              _mergedRows.add(nextRow);
-              _mergedVicinities[vicinity.copyWith(row: nextRow)] = vicinity;
-              mergedRowHeight = mergedRowHeight! + _rowMetrics[nextRow]!.extent;
-              nextRow++;
-            }
-          }
 
-          // Merged column handling.
-          if (cellParentData.columnMergeStart != null) {
-            final int columnMergeStart = cellParentData.columnMergeStart!;
-            _mergedColumns.add(columnMergeStart);
-            final int lastColumn =
-                columnMergeStart + cellParentData.columnMergeSpan! - 1;
+            late final int columnMergeStart;
+            late final int lastColumn;
+            if (cellParentData.columnMergeStart != null) {
+              columnMergeStart = cellParentData.columnMergeStart!;
+              lastColumn = columnMergeStart + cellParentData.columnMergeSpan! - 1;
+              _mergedColumns.add(columnMergeStart);
+            } else {
+              columnMergeStart = column;
+              lastColumn = column;
+            }
             assert(_debugCheckMergeBounds(
               spanOrientation: 'Column',
               currentSpan: column,
@@ -796,22 +791,34 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               pinnedSpanCount: delegate.pinnedColumnCount,
               currentVicinity: vicinity,
             ));
+
+            // Compute height and layout offset for merged rows.
+            final _Span firstRow = _rowMetrics[rowMergeStart]!;
+            mergedRowHeight = firstRow.extent;
+            mergedYPaintOffset = -verticalOffset.pixels +
+                firstRow.leadingOffset +
+                firstRow.configuration.padding.leading;
             // Compute width and layout offset for merged columns.
             final _Span firstColumn = _columnMetrics[columnMergeStart]!;
             mergedColumnWidth = firstColumn.extent;
             mergedXPaintOffset = -horizontalOffset.pixels +
                 firstColumn.leadingOffset +
                 firstColumn.configuration.padding.leading;
-            _mergedVicinities[vicinity.copyWith(column: columnMergeStart)] =
-                vicinity;
-            int nextColumn = columnMergeStart + 1;
-            while (nextColumn <= lastColumn) {
-              _mergedColumns.add(nextColumn);
-              _mergedVicinities[vicinity.copyWith(column: nextColumn)] =
-                  vicinity;
-              mergedColumnWidth =
-                  mergedColumnWidth! + _columnMetrics[nextColumn]!.extent;
-              nextColumn++;
+
+            int currentRow = rowMergeStart;
+            while (currentRow <= lastRow) {
+              _mergedRows.add(currentRow);
+              mergedRowHeight = mergedRowHeight! + _rowMetrics[currentRow]!.extent;
+              int currentColumn = columnMergeStart;
+              while (currentColumn <= lastColumn) {
+                _mergedColumns.add(currentColumn);
+                mergedColumnWidth =
+                    mergedColumnWidth! + _columnMetrics[currentColumn]!.extent;
+                _mergedVicinities[TableVicinity(row: currentRow, column: currentColumn,)] =
+                    vicinity;
+                currentColumn++;
+              }
+              currentRow++;
             }
           }
 

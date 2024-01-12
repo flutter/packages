@@ -42,28 +42,28 @@ class TableExample extends StatefulWidget {
 
 class _TableExampleState extends State<TableExample> {
   final Map<TableVicinity, (int, int)> mergedRows = <TableVicinity, (int, int)>{
-    // TableVicinity in merged cell : (start, span)
-    // TableVicinity.zero : (0, 2),
-    // TableVicinity.zero.copyWith(row: 1) : (0, 2),
-    // const TableVicinity(row: 1, column: 1) : (1, 2),
-    // const TableVicinity(row: 2, column: 1) : (1, 2),
-    const TableVicinity(row: 2, column: 2) : (2, 2),
-    const TableVicinity(row: 2, column: 3) : (2, 2),
-    const TableVicinity(row: 3, column: 2) : (2, 2),
-    const TableVicinity(row: 3, column: 3) : (2, 2),
+    const TableVicinity(row: 0, column: 0) : (0, 3),
+    const TableVicinity(row: 1, column: 0) : (0, 3),
+    const TableVicinity(row: 2, column: 0) : (0, 3),
+    const TableVicinity(row: 0, column: 1) : (0, 3),
+    const TableVicinity(row: 1, column: 1) : (0, 3),
+    const TableVicinity(row: 2, column: 1) : (0, 3),
+    const TableVicinity(row: 0, column: 2) : (0, 3),
+    const TableVicinity(row: 1, column: 2) : (0, 3),
+    const TableVicinity(row: 2, column: 2) : (0, 3),
   };
 
-  final Map<TableVicinity, (int, int)> mergedColumns = <TableVicinity, (int, int)>{
-    // TableVicinity in merged cell : (start, span)
-    // TableVicinity.zero.copyWith(column: 2) : (2, 2),
-    // TableVicinity.zero.copyWith(column: 3) : (2, 2),
-    // const TableVicinity(row: 3, column: 0) : (0, 2),
-    // const TableVicinity(row: 3, column: 1) : (0, 2),
-    const TableVicinity(row: 2, column: 2) : (2, 2),
-    const TableVicinity(row: 2, column: 3) : (2, 2),
-    const TableVicinity(row: 3, column: 2) : (2, 2),
-    const TableVicinity(row: 3, column: 3) : (2, 2),
-  };
+  // final Map<TableVicinity, (int, int)> mergedColumns = <TableVicinity, (int, int)>{
+  //   // TableVicinity in merged cell : (start, span)
+  //   // TableVicinity.zero.copyWith(column: 2) : (2, 2),
+  //   // TableVicinity.zero.copyWith(column: 3) : (2, 2),
+  //   // const TableVicinity(row: 3, column: 0) : (0, 2),
+  //   // const TableVicinity(row: 3, column: 1) : (0, 2),
+  //   const TableVicinity(row: 2, column: 2) : (2, 2),
+  //   const TableVicinity(row: 2, column: 3) : (2, 2),
+  //   const TableVicinity(row: 3, column: 2) : (2, 2),
+  //   const TableVicinity(row: 3, column: 3) : (2, 2),
+  // };
 
   @override
   Widget build(BuildContext context) {
@@ -73,21 +73,22 @@ class _TableExampleState extends State<TableExample> {
       ),
       body: TableView.builder(
         cellBuilder: _buildCell,
-        columnCount: 4,
+        columnCount: 3,
         columnBuilder: _buildColumnSpan,
-        rowCount: 4,
+        rowCount: 3,
         rowBuilder: _buildRowSpan,
       ),
     );
   }
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    if (mergedColumns.keys.contains(vicinity) || mergedRows.keys.contains(vicinity)) {
+    print('build called');
+    if (mergedRows.keys.contains(vicinity)) { // || mergedRows.keys.contains(vicinity)) {
       return TableViewCell(
         rowMergeStart: mergedRows[vicinity]?.$1,
         rowMergeSpan: mergedRows[vicinity]?.$2,
-        columnMergeStart: mergedColumns[vicinity]?.$1,
-        columnMergeSpan: mergedColumns[vicinity]?.$2,
+        columnMergeStart: mergedRows[vicinity]?.$1,
+        columnMergeSpan: mergedRows[vicinity]?.$2,
         child: const Center(
           child: Text('Merged'),
         ),
