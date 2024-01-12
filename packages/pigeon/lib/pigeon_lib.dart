@@ -52,14 +52,14 @@ const Object async = _Asynchronous();
 
 /// Metadata to annotate the field of a ProxyApi as an Attached Field.
 ///
-/// Attached fields provide a synchronous [AstProxyApi] instance as a field
-/// for another [AstProxyApi].
+/// Attached fields provide a synchronous [ProxyApi] instance as a field for
+/// another [ProxyApi].
 ///
 /// Attached fields:
 /// * Must be nonnull.
-/// * Must be a ProxyApi type.
-/// * Must be a ProxyApi that contains any fields.
-/// * Must be a ProxyApi that does not have a required Flutter method.
+/// * Must be a ProxyApi (a class annotated with `@ProxyApi()`).
+/// * Must not contain any unattached fields.
+/// * Must not have a required callback Flutter method.
 ///
 /// Example generated code:
 ///
@@ -74,7 +74,10 @@ const Object async = _Asynchronous();
 /// to how constructors are implemented.
 const Object attached = _Attached();
 
-/// Metadata to annotate an method or an Attached Field of a ProxyApi as static.
+/// Metadata to annotate a field of a ProxyApi as static.
+///
+/// Static fields are the same as [attached] fields except the field is static
+/// and not attached to any instance of the ProxyApi.
 const Object static = _Static();
 
 /// Metadata annotation used to configure how Pigeon will generate code.
@@ -129,10 +132,10 @@ class FlutterApi {
 /// constructors, fields, methods and host↔Dart methods used to wrap a native
 /// class.
 ///
-/// The generated Dart class acts as a proxy to a native type and
-/// maintains instances automatically with an `InstanceManager`. The generated
-/// host language class implements methods to interact with class instances
-/// or static methods.
+/// The generated Dart class acts as a proxy to a native type and maintains
+/// instances automatically with an `InstanceManager`. The generated host
+/// language class implements methods to interact with class instances or static
+/// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
   const ProxyApi({this.superClass});

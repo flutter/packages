@@ -175,7 +175,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.addScoped('{', '};', () {
-      enumerate(anEnum.members, (int index, EnumMember member) {
+      enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
@@ -784,7 +784,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       final Iterable<_IndexedField> indexedFields = indexMap(
           getFieldsInSerializationOrder(classDefinition),
           (int index, NamedType field) => _IndexedField(index, field));
-
       final Iterable<_IndexedField> nullableFields = indexedFields
           .where((_IndexedField field) => field.field.type.isNullable);
       final Iterable<_IndexedField> nonNullableFields = indexedFields
