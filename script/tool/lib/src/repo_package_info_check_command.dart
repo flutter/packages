@@ -10,7 +10,7 @@ import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 
 const int _exitBadTableEntry = 3;
-const int _exitUknownPackageEntry = 4;
+const int _exitUnknownPackageEntry = 4;
 
 /// A command to verify repository-level metadata about packages, such as
 /// repo README and CODEOWNERS entries.
@@ -69,7 +69,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         if (!(packagesDir.childDirectory(name).existsSync() ||
             thirdPartyPackagesDir.childDirectory(name).existsSync())) {
           printError('Unknown package "$name" in root README.md table.');
-          throw ToolExit(_exitUknownPackageEntry);
+          throw ToolExit(_exitUnknownPackageEntry);
         }
       }
     }
@@ -87,7 +87,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       final String name = match.group(2)!;
       if (!_repoRoot.childDirectory(path).existsSync()) {
         printError('Unknown directory "$path" in CODEOWNERS');
-        throw ToolExit(_exitUknownPackageEntry);
+        throw ToolExit(_exitUnknownPackageEntry);
       }
       _ownedPackages.add(name);
     }
