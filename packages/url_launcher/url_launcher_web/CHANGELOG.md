@@ -1,7 +1,3 @@
-## 2.2.4
-
-* Updates `package:web` to `^0.4.1`.
-
 ## 2.2.3
 
 * Fixes new lint warnings.

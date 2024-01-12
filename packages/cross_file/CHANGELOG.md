@@ -1,7 +1,3 @@
-## 0.3.3+9
-
-* Updates `package:web` to `^0.4.1`.
-
 ## 0.3.3+8
 
 * Now supports `dart2wasm` compilation.
