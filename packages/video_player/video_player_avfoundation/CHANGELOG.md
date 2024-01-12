@@ -1,3 +1,7 @@
+## 2.5.6
+
+* Adds privacy manifest.
+
 ## 2.5.5
 
 * Fixes display of initial frame when paused.

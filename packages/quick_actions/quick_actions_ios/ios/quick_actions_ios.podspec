@@ -23,4 +23,5 @@ Downloaded by pub (not CocoaPods).
   s.dependency 'Flutter'
   s.platform = :ios, '11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.resource_bundles = {'quick_actions_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
