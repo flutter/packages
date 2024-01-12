@@ -990,7 +990,7 @@ List<Error> _validateProxyApi(
 
   final bool hasUnattachedField = api.unattachedFields.isNotEmpty;
   final bool hasRequiredFlutterMethod =
-      api.flutterMethods.any((Method method) => method.required);
+      api.flutterMethods.any((Method method) => method.isRequired);
   for (final AstProxyApi proxyApi in proxyApis) {
     // Validate this api is not used as an attached field while either:
     // 1. Having an unattached field.
@@ -1881,7 +1881,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             isNullable: returnType.question != null,
           ),
           location: ApiLocation.flutter,
-          required: type.question == null,
+          isRequired: type.question == null,
           isStatic: isStatic,
           parameters: parameters,
           isAsynchronous: _hasMetadata(node.metadata, 'async'),

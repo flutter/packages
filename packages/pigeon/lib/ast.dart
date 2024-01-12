@@ -30,7 +30,7 @@ class Method extends Node {
     required this.returnType,
     required this.parameters,
     required this.location,
-    this.required = true,
+    this.isRequired = true,
     this.isAsynchronous = false,
     this.isStatic = false,
     this.offset,
@@ -78,7 +78,7 @@ class Method extends Node {
   ///
   /// This flag is typically used to determine whether a callback method for
   /// a `ProxyApi` is nullable or not.
-  bool required;
+  bool isRequired;
 
   /// Whether this is a static method of a ProxyApi.
   bool isStatic;
