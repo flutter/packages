@@ -373,4 +373,97 @@ void main() {
 
     expect(dartPackageName, 'pigeon');
   });
+
+  test('recursiveGetSuperClassApisChain', () {
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+      superClassName: 'Api2',
+    );
+    final AstProxyApi superClassApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+      superClassName: 'Api3',
+    );
+    final AstProxyApi superClassOfSuperClassApi = AstProxyApi(
+      name: 'Api3',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+    );
+
+    final List<AstProxyApi> apiChain = recursiveGetSuperClassApisChain(
+      api,
+      <AstProxyApi>[superClassOfSuperClassApi, api, superClassApi],
+    );
+
+    expect(
+      apiChain,
+      containsAllInOrder(<AstProxyApi>[
+        superClassApi,
+        superClassOfSuperClassApi,
+      ]),
+    );
+  });
+
+  test('recursiveFindAllInterfacesApis', () {
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+      interfacesNames: <String>{'Api2', 'Api3'},
+    );
+    final AstProxyApi interfaceApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+      interfacesNames: <String>{'Api4', 'Api5'},
+    );
+    final AstProxyApi interfaceApi2 = AstProxyApi(
+      name: 'Api3',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+      interfacesNames: <String>{'Api5'},
+    );
+    final AstProxyApi interfaceOfInterfaceApi = AstProxyApi(
+      name: 'Api4',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+    );
+    final AstProxyApi interfaceOfInterfaceApi2 = AstProxyApi(
+      name: 'Api5',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <Field>[],
+    );
+
+    final Set<AstProxyApi> allInterfaces = recursiveFindAllInterfacesApis(
+      api,
+      <AstProxyApi>[
+        api,
+        interfaceApi,
+        interfaceApi2,
+        interfaceOfInterfaceApi,
+        interfaceOfInterfaceApi2,
+      ],
+    );
+
+    expect(
+      allInterfaces,
+      containsAll(<AstProxyApi>[
+        interfaceApi,
+        interfaceApi2,
+        interfaceOfInterfaceApi,
+        interfaceOfInterfaceApi2,
+      ]),
+    );
+  });
 }
