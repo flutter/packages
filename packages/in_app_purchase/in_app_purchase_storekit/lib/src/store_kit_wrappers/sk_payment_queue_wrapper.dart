@@ -54,11 +54,19 @@ class SKPaymentQueueWrapper {
   ///
   /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
   Future<SKStorefrontWrapper?> storefront() async {
+    final Map<String, dynamic>? storefrontMap = await channel
+        .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
+    if (storefrontMap == null) {
+      return null;
+    }
+    return SKStorefrontWrapper.fromJson(storefrontMap);
     return SKStorefrontWrapper.convertFromPigeon(await _hostApi.storefront());
   }
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
+    return _getTransactionList((await channel
+        .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
     final List<SKPaymentTransactionMessage?> pigeonMsgs = await _hostApi.transactions();
     return pigeonMsgs.map((SKPaymentTransactionMessage? msg) => SKPaymentTransactionWrapper.convertFromPigeon(msg!)).toList();
   }
