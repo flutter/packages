@@ -19,4 +19,5 @@ Displays the native iOS document picker.
   s.platform = :ios, '11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
+  s.resource_bundles = {'file_selector_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
