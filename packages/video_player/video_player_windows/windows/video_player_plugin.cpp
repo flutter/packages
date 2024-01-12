@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "include/video_player_windows/video_player_plugin.h"
 
 #include <flutter/event_channel.h>
@@ -7,6 +11,8 @@
 #include <flutter/standard_codec_serializer.h>
 #include <flutter/standard_method_codec.h>
 #include <shobjidl.h>
+#include <wil/stl.h>
+#include <wil/win32_helpers.h>
 #include <wincodec.h>
 #include <windows.h>
 
@@ -38,8 +44,7 @@ class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
   std::optional<FlutterError> SetPlaybackSpeed(
       const PlaybackSpeedMessage& arg) override;
   std::optional<FlutterError> Play(const TextureMessage& arg) override;
-  ErrorOr<PositionMessage> Position(
-      const TextureMessage& arg) override;
+  ErrorOr<PositionMessage> Position(const TextureMessage& arg) override;
   std::optional<FlutterError> SeekTo(const PositionMessage& arg) override;
   std::optional<FlutterError> Pause(const TextureMessage& arg) override;
   std::optional<FlutterError> SetMixWithOthers(
@@ -77,23 +82,42 @@ std::optional<FlutterError> VideoPlayerPlugin::Initialize() {
   return {};
 }
 
-ErrorOr<TextureMessage> VideoPlayerPlugin::Create(
-    const CreateMessage& input) {
+ErrorOr<TextureMessage> VideoPlayerPlugin::Create(const CreateMessage& input) {
   std::unique_ptr<VideoPlayer> player{nullptr};
   if (input.asset() && !input.asset()->empty()) {
     std::string assetPath;
     if (input.package_name() && !input.package_name()->empty()) {
-      // TODO
-      // assetPath = [_registrar lookupKeyForAsset:input.asset
-      // fromPackage:input.packageName];
+      // TODO: Not supported on Windows
+      // assetPath = [_registrar lookupKeyForAsset:input.asset fromPackage:input.packageName];
       assetPath = *input.asset();
     } else {
       assetPath = *input.asset();
     }
 
-    player = std::make_unique<VideoPlayer>(registrar_->GetView(), assetPath);
+    try {
+      auto modulePath = wil::GetModuleFileNameW<std::wstring>(nullptr);
+
+      size_t found = modulePath.find_last_of(L"/\\");
+      modulePath = modulePath.substr(0, found);
+
+      std::wstring asset = modulePath + L"/data/flutter_assets/" +
+                           std::wstring(assetPath.begin(), assetPath.end());
+
+      player = std::make_unique<VideoPlayer>(registrar_->GetView(), asset,
+                                             flutter::EncodableMap());
+    } catch (std::exception& e) {
+      return FlutterError("asset_load_failed", e.what());
+    }
   } else if (input.uri() && !input.uri()->empty()) {
-    player = std::make_unique<VideoPlayer>(registrar_->GetView(), *input.uri(), input.http_headers());
+    try {
+      std::string assetPath = *input.uri();
+      player = std::make_unique<VideoPlayer>(
+          registrar_->GetView(),
+          std::wstring(assetPath.begin(), assetPath.end()),
+          input.http_headers());
+    } catch (std::exception& e) {
+      return FlutterError("uri_load_failed", e.what());
+    }
   } else {
     return FlutterError("not_implemented", "Set either an asset or a uri");
   }
@@ -181,8 +205,8 @@ ErrorOr<PositionMessage> VideoPlayerPlugin::Position(
   if (searchPlayer != videoPlayers.end()) {
     auto& player = searchPlayer->second;
     if (player->IsValid()) {
-        result.set_position(player->GetPosition());
-        player->SendBufferingUpdate();
+      result.set_position(player->GetPosition());
+      player->SendBufferingUpdate();
     }
   }
   return result;

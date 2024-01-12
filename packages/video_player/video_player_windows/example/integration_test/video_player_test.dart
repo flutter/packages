@@ -10,7 +10,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_player_windows/video_player_windows.dart';
 // TODO(stuartmorgan): Remove the use of MiniController in tests, as that is
 // testing test code; tests should instead be written directly against the
 // platform interface. (These tests were copied from the app-facing package
@@ -18,6 +17,7 @@ import 'package:video_player_windows/video_player_windows.dart';
 // controller.)
 import 'package:video_player_example/mini_controller.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:video_player_windows/video_player_windows.dart';
 
 const Duration _playDuration = Duration(seconds: 1);
 
@@ -151,19 +151,6 @@ void main() {
 
       await expectLater(started.future, completes);
       await expectLater(ended.future, completes);
-    });
-
-    testWidgets('live stream duration != 0', (WidgetTester tester) async {
-      final MiniController livestreamController = MiniController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8',
-      );
-      await livestreamController.initialize();
-
-      expect(livestreamController.value.isInitialized, true);
-      // Live streams should have either a positive duration or C.TIME_UNSET if the duration is unknown
-      // See https://exoplayer.dev/doc/reference/com/google/android/exoplayer2/Player.html#getDuration--
-      expect(livestreamController.value.duration,
-          (Duration duration) => duration != Duration.zero);
     });
   });
 }

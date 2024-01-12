@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #include <windows.h>
 
@@ -23,10 +24,10 @@
 // MediaFoundation headers
 #include <Audioclient.h>
 #include <d3d11.h>
+#include <dxgi1_2.h>
 #include <mfapi.h>
 #include <mferror.h>
 #include <mfmediaengine.h>
-#include <dxgi1_2.h>
 
 // STL headers
 #include <functional>
@@ -120,7 +121,8 @@ class MediaEngineCallbackHelper
 
 // Public methods
 
-void MediaEngineWrapper::Initialize(winrt::com_ptr<IDXGIAdapter> adapter, IMFMediaSource* mediaSource) {
+void MediaEngineWrapper::Initialize(winrt::com_ptr<IDXGIAdapter> adapter,
+                                    IMFMediaSource* mediaSource) {
   RunSyncInMTA([&]() {
     m_adapter = adapter;
     InitializeVideo();
@@ -145,7 +147,7 @@ void MediaEngineWrapper::Shutdown() {
 void MediaEngineWrapper::StartPlayingFrom(uint64_t timeStamp) {
   RunSyncInMTA([&]() {
     auto lock = m_lock.lock();
-    const double timestampInSeconds = ConvertHnsToSeconds(timeStamp);
+    const double timestampInSeconds = ConvertMsToSeconds(timeStamp);
     THROW_IF_FAILED(m_mediaEngine->SetCurrentTime(timestampInSeconds));
     THROW_IF_FAILED(m_mediaEngine->Play());
   });
@@ -175,29 +177,29 @@ void MediaEngineWrapper::SetLooping(bool isLooping) {
 void MediaEngineWrapper::SeekTo(uint64_t timeStamp) {
   RunSyncInMTA([&]() {
     auto lock = m_lock.lock();
-    const double timestampInSeconds = ConvertHnsToSeconds(timeStamp);
+    const double timestampInSeconds = ConvertMsToSeconds(timeStamp);
     THROW_IF_FAILED(m_mediaEngine->SetCurrentTime(timestampInSeconds));
   });
 }
 
 uint64_t MediaEngineWrapper::GetMediaTime() {
-  uint64_t currentTimeInHns = 0;
+  uint64_t currentTimeInMs = 0;
   RunSyncInMTA([&]() {
     auto lock = m_lock.lock();
     double currentTimeInSeconds = m_mediaEngine->GetCurrentTime();
-    currentTimeInHns = ConvertSecondsToHns(currentTimeInSeconds);
+    currentTimeInMs = ConvertSecondsToMs(currentTimeInSeconds);
   });
-  return currentTimeInHns;
+  return currentTimeInMs;
 }
 
 uint64_t MediaEngineWrapper::GetDuration() {
-  uint64_t durationInHns = 0;
+  uint64_t durationInMs = 0;
   RunSyncInMTA([&]() {
     auto lock = m_lock.lock();
     double durationInSeconds = m_mediaEngine->GetDuration();
-    durationInHns = ConvertSecondsToHns(durationInSeconds);
+    durationInMs = ConvertSecondsToMs(durationInSeconds);
   });
-  return durationInHns;
+  return durationInMs;
 }
 
 std::vector<std::tuple<uint64_t, uint64_t>>
@@ -214,8 +216,8 @@ MediaEngineWrapper::GetBufferedRanges() {
     for (uint32_t i = 0; i < mediaTimeRange->GetLength(); i++) {
       mediaTimeRange->GetStart(i, &start);
       mediaTimeRange->GetEnd(i, &end);
-      result.push_back(std::make_tuple(ConvertSecondsToHns(start),
-                                       ConvertSecondsToHns(end)));
+      result.push_back(
+          std::make_tuple(ConvertSecondsToMs(start), ConvertSecondsToMs(end)));
     }
   });
   return result;
@@ -236,57 +238,59 @@ void MediaEngineWrapper::GetNativeVideoSize(uint32_t& cx, uint32_t& cy) {
   });
 }
 
-bool MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height)
-{
+bool MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height) {
   bool shouldCreate = false;
   D3D11_TEXTURE2D_DESC desc;
 
-  if(!m_pTexture) {
+  if (!m_pTexture) {
     shouldCreate = true;
   } else {
     m_pTexture->GetDesc(&desc);
-    if(desc.Width != width || desc.Height != height) {
+    if (desc.Width != width || desc.Height != height) {
       shouldCreate = true;
     }
   }
 
-  if(shouldCreate)
-  {
+  if (shouldCreate) {
     RtlZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
-    desc.Width     = width;
-    desc.Height    = height;
+    desc.Width = width;
+    desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
-    desc.Format    = DXGI_FORMAT_B8G8R8A8_UNORM;
+    desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 
     desc.SampleDesc.Count = 1;
-    desc.Usage            = D3D11_USAGE_DEFAULT;
-    desc.BindFlags        = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    desc.CPUAccessFlags   = 0;
-    desc.MiscFlags        = D3D11_RESOURCE_MISC_SHARED;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
 
-    THROW_IF_FAILED(m_d3d11Device->CreateTexture2D(&desc, nullptr, m_pTexture.put()));
+    THROW_IF_FAILED(
+        m_d3d11Device->CreateTexture2D(&desc, nullptr, m_pTexture.put()));
   }
 
   return shouldCreate;
 }
 
-void MediaEngineWrapper::UpdateSurfaceDescriptor(uint32_t width, uint32_t height, std::function<void()> callback, FlutterDesktopGpuSurfaceDescriptor& descriptor) {
+void MediaEngineWrapper::UpdateSurfaceDescriptor(
+    uint32_t width, uint32_t height, std::function<void()> callback,
+    FlutterDesktopGpuSurfaceDescriptor& descriptor) {
   if (descriptor.struct_size == 0) {
     descriptor.struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
     descriptor.format = kFlutterDesktopPixelFormatNone;
   }
 
   if (EnsureTextureCreated(width, height)) {
-
     UpdateDXTexture(width, height);
 
     StartBackgroundThread(callback);
 
-    winrt::com_ptr<IDXGIResource1> spDXGIResource = m_pTexture.as<IDXGIResource1>();
+    winrt::com_ptr<IDXGIResource1> spDXGIResource =
+        m_pTexture.as<IDXGIResource1>();
 
     if (spDXGIResource) {
-        THROW_IF_FAILED(spDXGIResource->GetSharedHandle(&m_videoSurfaceSharedHandle));
+      THROW_IF_FAILED(
+          spDXGIResource->GetSharedHandle(&m_videoSurfaceSharedHandle));
     }
 
     descriptor.handle = m_videoSurfaceSharedHandle;
@@ -312,14 +316,12 @@ void MediaEngineWrapper::StartBackgroundThread(std::function<void()> callback) {
   m_backgroundThread = std::thread([this, callback]() {
     auto next = std::chrono::high_resolution_clock::now();
     while (!m_shouldExitLoop) {
-      RunSyncInMTA(
-        [&]()
-        {
-          auto lock = m_lock.lock();
-          if (this->UpdateDXTexture()) {
-            callback();
-          }
-        });
+      RunSyncInMTA([&]() {
+        auto lock = m_lock.lock();
+        if (this->UpdateDXTexture()) {
+          callback();
+        }
+      });
 
       next += std::chrono::milliseconds(16);
       std::this_thread::sleep_until(next);
@@ -330,7 +332,7 @@ void MediaEngineWrapper::StartBackgroundThread(std::function<void()> callback) {
 bool MediaEngineWrapper::UpdateDXTexture() {
   D3D11_TEXTURE2D_DESC desc;
 
-  if(!m_pTexture) {
+  if (!m_pTexture) {
     return false;
   }
 
@@ -342,20 +344,19 @@ bool MediaEngineWrapper::UpdateDXTexture(DWORD width, DWORD height) {
   auto rcNormalized = MFVideoNormalizedRect();
 
   RECT rect;
-  rect.top    = 0;
-  rect.left   = 0;
+  rect.top = 0;
+  rect.left = 0;
   rect.bottom = height;
-  rect.right  = width;
+  rect.right = width;
 
   LONGLONG pts;
-  if (m_mediaEngine->OnVideoStreamTick(&pts) == S_OK)
-  {
-      HRESULT hr = m_mediaEngine->TransferVideoFrame(m_pTexture.get(), &rcNormalized, &rect, nullptr);
+  if (m_mediaEngine->OnVideoStreamTick(&pts) == S_OK) {
+    HRESULT hr = m_mediaEngine->TransferVideoFrame(
+        m_pTexture.get(), &rcNormalized, &rect, nullptr);
 
-      if (hr == S_OK)
-      {
-          return true;
-      }
+    if (hr == S_OK) {
+      return true;
+    }
   }
 
   return false;
@@ -445,8 +446,7 @@ void MediaEngineWrapper::InitializeVideo() {
       MFLockDXGIDeviceManager(&m_deviceResetToken, m_dxgiDeviceManager.put()));
 
   UINT creationFlags = 0;
-  constexpr D3D_FEATURE_LEVEL featureLevels[] = {
-      D3D_FEATURE_LEVEL_10_0};
+  constexpr D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_10_0};
 
   THROW_IF_FAILED(D3D11CreateDevice(m_adapter.get(), D3D_DRIVER_TYPE_UNKNOWN, 0,
                                     creationFlags, featureLevels,
@@ -455,11 +455,12 @@ void MediaEngineWrapper::InitializeVideo() {
 
   winrt::com_ptr<IDXGIDevice> m_DXGIDevice = m_d3d11Device.as<IDXGIDevice>();
 
-  winrt::com_ptr<ID3D10Multithread> multithreadedDevice = m_d3d11Device.as<ID3D10Multithread>();
+  winrt::com_ptr<ID3D10Multithread> multithreadedDevice =
+      m_d3d11Device.as<ID3D10Multithread>();
   multithreadedDevice->SetMultithreadProtected(TRUE);
 
-  THROW_IF_FAILED(
-      m_dxgiDeviceManager->ResetDevice(m_d3d11Device.get(), m_deviceResetToken));
+  THROW_IF_FAILED(m_dxgiDeviceManager->ResetDevice(m_d3d11Device.get(),
+                                                   m_deviceResetToken));
 }
 
 // Callback methods

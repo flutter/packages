@@ -1,21 +1,21 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #pragma once
 
+#include <flutter/plugin_registrar_windows.h>
+
+#include <thread>
 #include <tuple>
 
 #include "MediaEngineExtension.h"
 #include "MediaFoundationHelpers.h"
 
-#include <flutter/plugin_registrar_windows.h>
-
-#include <thread>
-
 namespace media {
 
 // This class handles creation and management of the MediaFoundation
-// MediaEngine. It uses the provided IMFMediaSource to feed media 
+// MediaEngine. It uses the provided IMFMediaSource to feed media
 // samples into the MediaEngine pipeline.
 class MediaEngineWrapper
     : public winrt::implements<MediaEngineWrapper, IUnknown> {
@@ -39,11 +39,14 @@ class MediaEngineWrapper
   }
   ~MediaEngineWrapper() {
     m_shouldExitLoop = true;
-    m_backgroundThread.join();
+    if (m_backgroundThread.joinable()) {
+      m_backgroundThread.join();
+    }
   }
 
   // Create the media engine with the provided media source
-  void Initialize(winrt::com_ptr<IDXGIAdapter> adapter, IMFMediaSource* mediaSource);
+  void Initialize(winrt::com_ptr<IDXGIAdapter> adapter,
+                  IMFMediaSource* mediaSource);
 
   // Stop playback and cleanup resources
   void Pause();
@@ -65,7 +68,9 @@ class MediaEngineWrapper
 
   void GetNativeVideoSize(uint32_t& cx, uint32_t& cy);
 
-  void UpdateSurfaceDescriptor(uint32_t width, uint32_t height, std::function<void()> callback, FlutterDesktopGpuSurfaceDescriptor& descriptor);
+  void UpdateSurfaceDescriptor(uint32_t width, uint32_t height,
+                               std::function<void()> callback,
+                               FlutterDesktopGpuSurfaceDescriptor& descriptor);
   void StartBackgroundThread(std::function<void()> callback);
 
   // Inform media engine of output window position & size changes

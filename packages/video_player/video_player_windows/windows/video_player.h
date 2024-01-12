@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #pragma once
 
 #include <flutter/event_channel.h>
@@ -38,12 +42,11 @@
 #include <wil/result_macros.h>
 
 // MediaFoundation headers
+#include <Audioclient.h>
+#include <d3d11.h>
 #include <mfapi.h>
 #include <mferror.h>
 #include <mfmediaengine.h>
-
-#include <Audioclient.h>
-#include <d3d11.h>
 #include <wincodec.h>
 
 // STL headers
@@ -64,8 +67,8 @@ using namespace winrt;
 
 class VideoPlayer {
  public:
-  VideoPlayer(flutter::FlutterView* view, std::string asset);
-  VideoPlayer(flutter::FlutterView* view, std::string uri, flutter::EncodableMap httpHeaders);
+  VideoPlayer(flutter::FlutterView* view, std::wstring uri,
+              flutter::EncodableMap httpHeaders);
 
   void Dispose();
   void SetLooping(bool isLooping);
@@ -79,7 +82,8 @@ class VideoPlayer {
   int64_t GetTextureId();
   bool IsValid();
 
-  FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptorCallback(size_t width, size_t height);
+  FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptorCallback(size_t width,
+                                                               size_t height);
 
   void Init(flutter::PluginRegistrarWindows* registrar, int64_t textureId);
 
@@ -95,7 +99,7 @@ class VideoPlayer {
   // Composition members
   wil::critical_section m_compositionLock;
   winrt::Windows::Foundation::Size m_windowSize{};
-  
+
   std::atomic<bool> m_valid = true;
   int64_t _textureId;
 

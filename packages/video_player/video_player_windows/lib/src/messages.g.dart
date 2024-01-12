@@ -172,7 +172,8 @@ class CreateMessage {
       uri: result[1] as String?,
       packageName: result[2] as String?,
       formatHint: result[3] as String?,
-      httpHeaders: (result[4] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      httpHeaders:
+          (result[4] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -231,19 +232,19 @@ class _WindowsVideoPlayerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return CreateMessage.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return LoopingMessage.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return MixWithOthersMessage.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return PlaybackSpeedMessage.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return PositionMessage.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return TextureMessage.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return VolumeMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -265,8 +266,7 @@ class WindowsVideoPlayerApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.WindowsVideoPlayerApi.initialize', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

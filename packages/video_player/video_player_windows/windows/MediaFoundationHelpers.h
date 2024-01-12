@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #pragma once
 
@@ -130,16 +131,16 @@ inline void RunSyncInMTA(std::function<void()> callback) {
   }
 }
 
-constexpr uint64_t c_hnsPerSecond = 10000000;
+constexpr uint64_t c_msPerSecond = 1000;
 
 template <typename SecondsT>
-inline uint64_t ConvertSecondsToHns(SecondsT seconds) {
-  return static_cast<uint64_t>(seconds) * c_hnsPerSecond;
+inline uint64_t ConvertSecondsToMs(SecondsT seconds) {
+  return static_cast<uint64_t>(seconds * c_msPerSecond);
 }
 
-template <typename HnsT>
-inline double ConvertHnsToSeconds(HnsT hns) {
-  return static_cast<double>(hns) / c_hnsPerSecond;
+template <typename MsT>
+inline double ConvertMsToSeconds(MsT ms) {
+  return static_cast<double>(ms) / c_msPerSecond;
 }
 
 }  // namespace media

@@ -27,9 +27,9 @@ if (NOT ret EQUAL 0)
     message(FATAL_ERROR "Failed to install nuget package Microsoft.Windows.ImplementationLibrary.${WIL_VERSION}")
 endif()
 
-include(ExternalProject)
+include_directories(BEFORE SYSTEM ${CMAKE_BINARY_DIR}/include)
 
-add_library(${PLUGIN_NAME} SHARED
+list(APPEND PLUGIN_SOURCES
   "video_player_plugin.cpp"
   "video_player.h"
   "video_player.cpp"
@@ -40,6 +40,11 @@ add_library(${PLUGIN_NAME} SHARED
   "MediaEngineWrapper.cpp"
   "MediaEngineExtension.h"
   "MediaEngineExtension.cpp"
+)
+
+add_library(${PLUGIN_NAME} SHARED
+  "include/video_player_windows/video_player_plugin.h"
+  ${PLUGIN_SOURCES}
 )
 
 apply_standard_settings(${PLUGIN_NAME})

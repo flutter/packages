@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "video_player.h"
 
 #include <flutter/event_channel.h>
@@ -6,47 +10,17 @@
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 #include <shobjidl.h>
-#include <wil/stl.h>
-#include <wil/win32_helpers.h>
 #include <windows.h>
 
 #undef GetCurrentTime
 
 using namespace winrt;
 
-VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::string asset) : VideoPlayer(view) {
-  // Create a source resolver to create an IMFMediaSource for the content URL.
-  // This will create an instance of an inbuilt OS media source for playback.
-  // An application can skip this step and instantiate a custom IMFMediaSource
-  // implementation instead.
-  winrt::com_ptr<IMFSourceResolver> sourceResolver;
-  THROW_IF_FAILED(MFCreateSourceResolver(sourceResolver.put()));
-  constexpr uint32_t sourceResolutionFlags =
-      MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_READ;
-  MF_OBJECT_TYPE objectType = {};
-
-  asset = "/data/flutter_assets/" + asset;
-
-  auto modulePath = wil::GetModuleFileNameW<std::wstring>(nullptr);
-
-  size_t found = modulePath.find_last_of(L"/\\");
-  modulePath = modulePath.substr(0, found);
-
-  winrt::com_ptr<IMFMediaSource> mediaSource;
-  THROW_IF_FAILED(sourceResolver->CreateObjectFromURL(
-      ((modulePath + std::wstring(asset.begin(), asset.end()))).c_str(),
-      sourceResolutionFlags, nullptr, &objectType,
-      reinterpret_cast<IUnknown**>(mediaSource.put_void())));
-
-  m_mediaEngineWrapper->Initialize(m_adapter, mediaSource.get());
-}
-
-VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::string uri, flutter::EncodableMap httpHeaders)
+VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::wstring uri,
+                         flutter::EncodableMap httpHeaders)
     : VideoPlayer(view) {
   // Create a source resolver to create an IMFMediaSource for the content URL.
   // This will create an instance of an inbuilt OS media source for playback.
-  // An application can skip this step and instantiate a custom IMFMediaSource
-  // implementation instead.
   winrt::com_ptr<IMFSourceResolver> sourceResolver;
   THROW_IF_FAILED(MFCreateSourceResolver(sourceResolver.put()));
   constexpr uint32_t sourceResolutionFlags =
@@ -55,18 +29,18 @@ VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::string uri, flutter::E
 
   winrt::com_ptr<IMFMediaSource> mediaSource;
   THROW_IF_FAILED(sourceResolver->CreateObjectFromURL(
-      winrt::to_hstring(uri).c_str(), sourceResolutionFlags, nullptr,
-      &objectType, reinterpret_cast<IUnknown**>(mediaSource.put_void())));
+      uri.c_str(), sourceResolutionFlags, nullptr, &objectType,
+      reinterpret_cast<IUnknown**>(mediaSource.put_void())));
 
   m_mediaEngineWrapper->Initialize(m_adapter, mediaSource.get());
 }
 
 VideoPlayer::VideoPlayer(flutter::FlutterView* view)
     : texture(flutter::GpuSurfaceTexture(
-          FlutterDesktopGpuSurfaceType::kFlutterDesktopGpuSurfaceTypeDxgiSharedHandle,
+          FlutterDesktopGpuSurfaceType::
+              kFlutterDesktopGpuSurfaceTypeDxgiSharedHandle,
           std::bind(&VideoPlayer::ObtainDescriptorCallback, this,
                     std::placeholders::_1, std::placeholders::_2))) {
-
   m_adapter.attach(view->GetGraphicsAdapter());
   m_window = view->GetNativeWindow();
 
@@ -120,23 +94,17 @@ void VideoPlayer::Init(flutter::PluginRegistrarWindows* registrar,
 
 VideoPlayer::~VideoPlayer() { m_valid = false; }
 
-bool VideoPlayer::IsValid() {
-  return m_valid;
-}
+bool VideoPlayer::IsValid() { return m_valid; }
 
-FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(size_t width,
-                                                           size_t height) {
-
+FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(
+    size_t width, size_t height) {
   // Lock buffer mutex to protect texture processing
   std::lock_guard<std::mutex> buffer_lock(m_buffer_mutex);
 
   m_mediaEngineWrapper->UpdateSurfaceDescriptor(
-    static_cast<uint32_t>(width),
-    static_cast<uint32_t>(height),
-    [&]() {
-      _textureRegistry->MarkTextureFrameAvailable(_textureId);
-    },
-    m_descriptor);
+      static_cast<uint32_t>(width), static_cast<uint32_t>(height),
+      [&]() { _textureRegistry->MarkTextureFrameAvailable(_textureId); },
+      m_descriptor);
 
   UpdateVideoSize();
 
@@ -145,15 +113,18 @@ FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(size_t
 
 void VideoPlayer::OnMediaInitialized() {
   // Start playback
-  m_mediaEngineWrapper->StartPlayingFrom(0);
+  m_mediaEngineWrapper->SeekTo(0);
+  if (!this->isInitialized) {
+    this->isInitialized = true;
+    this->SendInitialized();
+  }
 }
 
 void VideoPlayer::UpdateVideoSize() {
   auto lock = m_compositionLock.lock();
 
   RECT rect;
-  if(GetWindowRect(m_window, &rect))
-  {
+  if (GetWindowRect(m_window, &rect)) {
     int width = rect.right - rect.left;
     int height = rect.bottom - rect.top;
     m_windowSize = {static_cast<float>(width), static_cast<float>(height)};
@@ -216,22 +187,12 @@ void VideoPlayer::SendInitialized() {
         {{flutter::EncodableValue("event"),
           flutter::EncodableValue("initialized")},
          {flutter::EncodableValue("duration"),
-          flutter::EncodableValue((int64_t)m_mediaEngineWrapper->GetDuration() *
-                                  1000)}});
+          flutter::EncodableValue(
+              (int64_t)m_mediaEngineWrapper->GetDuration())}});
 
     uint32_t width;
     uint32_t height;
     m_mediaEngineWrapper->GetNativeVideoSize(width, height);
-    // TODO
-    // auto rotationDegrees = session.PlaybackRotation();
-    // Switch the width/height if video was taken in portrait mode
-    // if (rotationDegrees ==
-    // Windows::Media::MediaProperties::MediaRotation::Clockwise90Degrees ||
-    //     rotationDegrees ==
-    //     Windows::Media::MediaProperties::MediaRotation::Clockwise270Degrees)
-    //     { width = session.NaturalVideoHeight(); height =
-    //     session.NaturalVideoWidth();
-    // }
     event.insert({flutter::EncodableValue("width"),
                   flutter::EncodableValue((int32_t)width)});
     event.insert({flutter::EncodableValue("height"),
@@ -247,17 +208,7 @@ void VideoPlayer::Dispose() {
   if (isInitialized) {
     m_mediaEngineWrapper->Pause();
   }
-  // textureEntry.release();
   _eventChannel = nullptr;
-  /*if (surface != null) {
-      surface.release();
-  }
-  */
-  /*if (mediaPlayerElement != nullptr) {
-      mediaPlayerElement = nullptr;
-      desktopSource = nullptr;
-  }
-  */
 }
 
 void VideoPlayer::SetLooping(bool isLooping) {
@@ -279,7 +230,7 @@ void VideoPlayer::Play() {
 void VideoPlayer::Pause() { m_mediaEngineWrapper->Pause(); }
 
 int64_t VideoPlayer::GetPosition() {
-  return m_mediaEngineWrapper->GetMediaTime() * 1000;
+  return m_mediaEngineWrapper->GetMediaTime();
 }
 
 void VideoPlayer::SendBufferingUpdate() {
@@ -287,9 +238,9 @@ void VideoPlayer::SendBufferingUpdate() {
   auto ranges = m_mediaEngineWrapper->GetBufferedRanges();
   for (uint32_t i = 0; i < ranges.size(); i++) {
     auto [start, end] = ranges.at(i);
-    values.push_back(flutter::EncodableList(
-        {flutter::EncodableValue((int64_t)(start * 1000)),
-         flutter::EncodableValue((int64_t)(end * 1000))}));
+    values.push_back(
+        flutter::EncodableList({flutter::EncodableValue((int64_t)(start)),
+                                flutter::EncodableValue((int64_t)(end))}));
   }
 
   if (this->_eventSink) {
@@ -300,8 +251,6 @@ void VideoPlayer::SendBufferingUpdate() {
   }
 }
 
-void VideoPlayer::SeekTo(int64_t seek) {
-  m_mediaEngineWrapper->SeekTo(seek / 1000);
-}
+void VideoPlayer::SeekTo(int64_t seek) { m_mediaEngineWrapper->SeekTo(seek); }
 
 int64_t VideoPlayer::GetTextureId() { return _textureId; }
