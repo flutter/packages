@@ -1,3 +1,7 @@
+## 1.1.2
+
+* Updates `package:web` to `^0.4.1`.
+
 ## 1.1.1
 
 * Fixes new lint warnings.

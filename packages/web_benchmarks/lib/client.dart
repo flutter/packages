@@ -157,11 +157,7 @@ void _printResultsToScreen(Profile profile) {
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
     body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    // TODO(kevmoo): remove `NodeGlue` cast when we no longer need to support
-    // pkg:web 0.3.0
-    // TODO(camsim99): Remove deprecated append usage.
-    // ignore: deprecated_member_use
-    NodeGlue(body).append(TimeseriesVisualization(timeseries).render());
+    body.appendChild(TimeseriesVisualization(timeseries).render());
   });
 }
 
