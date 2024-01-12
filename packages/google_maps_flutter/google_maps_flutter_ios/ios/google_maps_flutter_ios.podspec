@@ -26,4 +26,5 @@ Downloaded by pub (not CocoaPods).
   s.platform = :ios, '11.0'
   # GoogleMaps does not support arm64 simulators.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
