@@ -22,4 +22,5 @@ Enables Google Sign-In in Flutter apps.
   s.ios.deployment_target = '11.0'
   s.osx.deployment_target = '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.resource_bundles = {'google_sign_in_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
