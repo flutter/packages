@@ -1,3 +1,7 @@
+## 0.8.9+3
+
+* Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.
+
 ## 0.8.9+2
 
 * Fixes new lint warnings.
