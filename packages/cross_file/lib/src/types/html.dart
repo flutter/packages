@@ -8,7 +8,7 @@ import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:web/web.dart';
+import 'package:web/helpers.dart';
 
 import '../web_helpers/web_helpers.dart';
 import 'base.dart';

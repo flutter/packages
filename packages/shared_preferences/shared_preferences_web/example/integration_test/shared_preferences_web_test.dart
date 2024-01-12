@@ -10,7 +10,7 @@ import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
 import 'package:shared_preferences_web/src/keys_extension.dart';
 
-import 'package:web/web.dart' as html;
+import 'package:web/helpers.dart' as html;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

@@ -11,7 +11,7 @@ import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:test/test.dart';
-import 'package:web/web.dart' as html;
+import 'package:web/helpers.dart' as html;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));

@@ -9,7 +9,7 @@ import 'package:file_selector_web/file_selector_web.dart';
 import 'package:file_selector_web/src/dom_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/web.dart';
+import 'package:web/helpers.dart';
 
 void main() {
   group('FileSelectorWeb', () {
