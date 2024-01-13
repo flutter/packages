@@ -288,7 +288,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   final Map<TableVicinity, TableVicinity> _mergedVicinities =
       <TableVicinity, TableVicinity>{};
   // Used to optimize decorating when there are no merged cells in a given
-  // frame.
+  // span.
   final List<int> _mergedRows = <int>[];
   final List<int> _mergedColumns = <int>[];
 
@@ -809,6 +809,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 firstColumn.leadingOffset +
                 firstColumn.configuration.padding.leading;
 
+            // Collect all of the vicinities that will not need to be built now.
             int currentRow = rowMergeStart;
             while (currentRow <= lastRow) {
               _mergedRows.add(currentRow);
