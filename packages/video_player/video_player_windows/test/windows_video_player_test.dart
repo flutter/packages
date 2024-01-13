@@ -5,7 +5,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
-import 'package:video_player_windows/src/messages.g.dart';
 import 'package:video_player_windows/video_player_windows.dart';
 
 import 'test_api.g.dart';
@@ -246,7 +245,7 @@ void main() {
       await player.seekTo(1, const Duration(milliseconds: 12345));
       expect(log.log.last, 'seekTo');
       expect(log.textureId, 1);
-      expect(log.position, 12345);
+      expect(log.positionValue, 12345);
     });
 
     test('getPosition', () async {
