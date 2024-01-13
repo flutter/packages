@@ -1156,7 +1156,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                         '  channel.setMessageHandler { _, reply ->\n'
                         '    reply.reply(wrapError(\n'
                         '      UnsupportedOperationException(\n'
-                        '        "Member references class `$className`, which requires api version $apiRequirement.")))\n'
+                        '        "Call references class `$className`, which requires api version $apiRequirement.")))\n'
                         '  }\n'
                         '} else {\n'
                         '  channel.setMessageHandler(null)\n'
