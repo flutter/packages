@@ -167,7 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ];
 
-
     // #docregion Example
     // AdaptiveLayout has a number of slots that take SlotLayouts and these
     // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
