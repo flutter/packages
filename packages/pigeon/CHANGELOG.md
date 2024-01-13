@@ -1,3 +1,7 @@
+## 16.0.1
+
+* Separates message call code generation into separate methods in the `KotlinGenerator`.
+
 ## 16.0.0
 
 * [java] Adds `VoidResult` type for `Void` returns.
