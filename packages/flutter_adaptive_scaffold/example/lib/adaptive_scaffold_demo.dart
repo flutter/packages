@@ -82,9 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
         )
     ];
     return AdaptiveScaffold(
+      // An option to override the default transition duration.
+      transitionDuration: Duration(milliseconds: _transTime),
       // An option to override the default breakpoints used for small, medium,
       // and large.
-      transitionDuration: Duration(milliseconds: _transTime),
       smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
       mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
       largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
