@@ -1,4 +1,4 @@
-## NEXT
+## 2.5.0
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates dependencies to require `analyzer` 5.2.0 or later.
