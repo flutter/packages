@@ -755,6 +755,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required String errorClassName,
     required String dartPackageName,
     List<String> documentationComments = const <String>[],
+    int? minApiRequirement,
     void Function(
       Indent indent, {
       required List<Parameter> parameters,
@@ -762,7 +763,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       required String channelName,
       required String errorClassName,
     }) onWriteBody = _writeFlutterMethodMessageCall,
-    int? requiresApi,
   }) {
     _writeMethodDeclaration(
       indent,
@@ -771,7 +771,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       parameters: parameters,
       documentationComments: documentationComments,
       isAsynchronous: true,
-      minApiRequirement: requiresApi,
+      minApiRequirement: minApiRequirement,
       getArgumentName: _getSafeArgumentName,
     );
 
