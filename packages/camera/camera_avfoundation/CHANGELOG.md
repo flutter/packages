@@ -2,6 +2,10 @@
 
 * Adds support to HEIF format.
 
+## 0.9.13+10
+
+* Adds privacy manifest.
+
 ## 0.9.13+9
 
 * Fixes new lint warnings.
