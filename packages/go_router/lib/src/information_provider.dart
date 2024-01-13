@@ -105,16 +105,9 @@ class GoRouteInformationProvider extends RouteInformationProvider
     final bool replace;
     switch (type) {
       case RouteInformationReportingType.none:
-        const DeepCollectionEquality deepCollectionEquality =
-            DeepCollectionEquality();
-        if (deepCollectionEquality.equals(
-                _valueInEngine.uri.path, routeInformation.uri.path) &&
-            deepCollectionEquality.equals(_valueInEngine.uri.queryParameters,
-                routeInformation.uri.queryParameters) &&
-            deepCollectionEquality.equals(
-                _valueInEngine.uri.fragment, routeInformation.uri.fragment) &&
-            deepCollectionEquality.equals(
-                _valueInEngine.state, routeInformation.state)) {
+        if (!_valueHasChanged(
+            newLocationUri: routeInformation.uri,
+            newState: routeInformation.state)) {
           return;
         }
         replace = _valueInEngine == _kEmptyRouteInformation;
@@ -143,14 +136,9 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   void _setValue(String location, Object state) {
     final Uri uri = Uri.parse(location);
-    const DeepCollectionEquality deepCollectionEquality =
-        DeepCollectionEquality();
+
     final bool shouldNotify =
-        !deepCollectionEquality.equals(_value.uri.path, uri.path) ||
-            !deepCollectionEquality.equals(
-                _value.uri.queryParameters, uri.queryParameters) ||
-            !deepCollectionEquality.equals(_value.uri.fragment, uri.fragment) ||
-            !deepCollectionEquality.equals(_value.state, state);
+        _valueHasChanged(newLocationUri: uri, newState: state);
     _value = RouteInformation(uri: Uri.parse(location), state: state);
     if (shouldNotify) {
       notifyListeners();
@@ -245,6 +233,19 @@ class GoRouteInformationProvider extends RouteInformationProvider
       _valueInEngine = _kEmptyRouteInformation;
     }
     notifyListeners();
+  }
+
+  bool _valueHasChanged(
+      {required Uri newLocationUri, required Object? newState}) {
+    const DeepCollectionEquality deepCollectionEquality =
+        DeepCollectionEquality();
+    return !deepCollectionEquality.equals(
+            _value.uri.path, newLocationUri.path) ||
+        !deepCollectionEquality.equals(
+            _value.uri.queryParameters, newLocationUri.queryParameters) ||
+        !deepCollectionEquality.equals(
+            _value.uri.fragment, newLocationUri.fragment) ||
+        !deepCollectionEquality.equals(_value.state, newState);
   }
 
   @override
