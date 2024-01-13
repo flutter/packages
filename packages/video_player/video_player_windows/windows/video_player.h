@@ -7,7 +7,6 @@
 #include <flutter/event_channel.h>
 #include <flutter/event_stream_handler.h>
 #include <flutter/event_stream_handler_functions.h>
-#include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 #include <windows.h>
 #undef GetCurrentTime
@@ -67,7 +66,7 @@ using namespace winrt;
 
 class VideoPlayer {
  public:
-  VideoPlayer(flutter::FlutterView* view, std::wstring uri,
+  VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
               flutter::EncodableMap httpHeaders);
 
   void Dispose();
@@ -85,7 +84,9 @@ class VideoPlayer {
   FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptorCallback(size_t width,
                                                                size_t height);
 
-  void Init(flutter::PluginRegistrarWindows* registrar, int64_t textureId);
+  void Init(flutter::BinaryMessenger* messenger,
+            std::function<void()> textureFrameAvailableCallback,
+            int64_t textureId);
 
   virtual ~VideoPlayer();
 
@@ -101,13 +102,13 @@ class VideoPlayer {
   winrt::Windows::Foundation::Size m_windowSize{};
 
   std::atomic<bool> m_valid = true;
-  int64_t _textureId;
+  int64_t m_textureId;
 
   FlutterDesktopGpuSurfaceDescriptor m_descriptor{};
   std::mutex m_buffer_mutex;
   winrt::com_ptr<IDXGIAdapter> m_adapter;
   HWND m_window;
-  flutter::TextureRegistrar* _textureRegistry;
+  std::function<void()> m_textureFrameAvailableCallback;
 
   bool isInitialized = false;
 
@@ -125,5 +126,5 @@ class VideoPlayer {
 
   std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> _eventSink;
 
-  VideoPlayer(flutter::FlutterView* view);
+  VideoPlayer(IDXGIAdapter* adapter, HWND window);
 };

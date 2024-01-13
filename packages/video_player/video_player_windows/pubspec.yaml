@@ -14,7 +14,7 @@ flutter:
     platforms:
       windows:
         dartPluginClass: WindowsVideoPlayer
-        pluginClass: VideoPlayerPlugin
+        pluginClass: VideoPlayerWindows
 
 dependencies:
   flutter:

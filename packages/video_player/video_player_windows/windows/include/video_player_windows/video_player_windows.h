@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void VideoPlayerPluginRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void VideoPlayerWindowsRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)

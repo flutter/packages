@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "include/video_player_windows/video_player_plugin.h"
+#include "video_player_plugin.h"
 
 #include <flutter/event_channel.h>
 #include <flutter/event_stream_handler.h>
@@ -21,6 +21,7 @@
 #include <sstream>
 #include <string>
 
+#include "include/video_player_windows/video_player_windows.h"
 #include "messages.h"
 #include "video_player.h"
 
@@ -28,55 +29,28 @@
 
 using namespace Messages;
 
-namespace {
-
-class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
- public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
-
-  VideoPlayerPlugin(flutter::PluginRegistrarWindows* registrar);
-
-  std::optional<FlutterError> Initialize() override;
-  ErrorOr<int64_t> Create(const std::string* asset, const std::string* uri,
-                          const std::string* package_name,
-                          const std::string* format_hint,
-                          const flutter::EncodableMap& http_headers) override;
-  std::optional<FlutterError> Dispose(int64_t texture_id) override;
-  std::optional<FlutterError> SetLooping(int64_t texture_id,
-                                         bool is_looping) override;
-  std::optional<FlutterError> SetVolume(int64_t texture_id,
-                                        double volume) override;
-  std::optional<FlutterError> SetPlaybackSpeed(int64_t texture_id,
-                                               double speed) override;
-  std::optional<FlutterError> Play(int64_t texture_id) override;
-  ErrorOr<int64_t> Position(int64_t texture_id) override;
-  std::optional<FlutterError> SeekTo(int64_t texture_id,
-                                     int64_t position) override;
-  std::optional<FlutterError> Pause(int64_t texture_id) override;
-  std::optional<FlutterError> SetMixWithOthers(bool mix_with_others) override;
-
-  virtual ~VideoPlayerPlugin();
-
- private:
-  std::map<int64_t, std::unique_ptr<VideoPlayer>> videoPlayers;
-  bool mixWithOthers;
-
-  flutter::TextureRegistrar* _textureRegistry;
-  flutter::PluginRegistrarWindows* registrar_;
-};
+namespace video_player_windows {
 
 // static
 void VideoPlayerPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto plugin = std::make_unique<VideoPlayerPlugin>(registrar);
+  flutter::BinaryMessenger* messenger = registrar->messenger();
+  HWND window = registrar->GetView()->GetNativeWindow();
+  IDXGIAdapter* adapter = registrar->GetView()->GetGraphicsAdapter();
+
+  auto plugin = std::make_unique<VideoPlayerPlugin>(
+      messenger, window, adapter, registrar->texture_registrar());
+  WindowsVideoPlayerApi::SetUp(messenger, plugin.get());
   registrar->AddPlugin(std::move(plugin));
 }
 
-VideoPlayerPlugin::VideoPlayerPlugin(flutter::PluginRegistrarWindows* registrar)
-    : registrar_(registrar) {
-  _textureRegistry = registrar->texture_registrar();
-  WindowsVideoPlayerApi::SetUp(registrar->messenger(), this);
-}
+VideoPlayerPlugin::VideoPlayerPlugin(flutter::BinaryMessenger* messenger,
+                                     HWND window, IDXGIAdapter* adapter,
+                                     flutter::TextureRegistrar* textureRegistry)
+    : m_messenger(messenger),
+      m_window(window),
+      m_adapter(adapter),
+      m_textureRegistry(textureRegistry) {}
 
 std::optional<FlutterError> VideoPlayerPlugin::Initialize() {
   for (int i = 0; i < videoPlayers.size(); i++) {
@@ -114,7 +88,7 @@ ErrorOr<int64_t> VideoPlayerPlugin::Create(
           std::wstring(assetPath.begin(), assetPath.end());
 
       player = std::make_unique<VideoPlayer>(
-          registrar_->GetView(), finalAssetPath, flutter::EncodableMap());
+          m_adapter, m_window, finalAssetPath, flutter::EncodableMap());
     } catch (std::exception& e) {
       return FlutterError("asset_load_failed", e.what());
     }
@@ -122,8 +96,8 @@ ErrorOr<int64_t> VideoPlayerPlugin::Create(
     try {
       std::string assetPath = *uri;
       player = std::make_unique<VideoPlayer>(
-          registrar_->GetView(),
-          std::wstring(assetPath.begin(), assetPath.end()), http_headers);
+          m_adapter, m_window, std::wstring(assetPath.begin(), assetPath.end()),
+          http_headers);
     } catch (std::exception& e) {
       return FlutterError("uri_load_failed", e.what());
     }
@@ -131,9 +105,16 @@ ErrorOr<int64_t> VideoPlayerPlugin::Create(
     return FlutterError("not_implemented", "Set either an asset or a uri");
   }
 
-  auto textureId = _textureRegistry->RegisterTexture(&player->texture);
+  auto textureId = m_textureRegistry->RegisterTexture(&player->texture);
 
-  player->Init(registrar_, textureId);
+  player->Init(
+      m_messenger,
+      [this, textureId]() {
+        auto player = videoPlayers.at(textureId).get();
+        auto currentTextureId = player->GetTextureId();
+        m_textureRegistry->MarkTextureFrameAvailable(currentTextureId);
+      },
+      textureId);
 
   videoPlayers.insert(
       std::make_pair(player->GetTextureId(), std::move(player)));
@@ -252,11 +233,4 @@ std::optional<FlutterError> VideoPlayerPlugin::SetMixWithOthers(
 
 VideoPlayerPlugin::~VideoPlayerPlugin() {}
 
-}  // namespace
-
-void VideoPlayerPluginRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar) {
-  VideoPlayerPlugin::RegisterWithRegistrar(
-      flutter::PluginRegistrarManager::GetInstance()
-          ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
-}
+}  // namespace video_player_windows

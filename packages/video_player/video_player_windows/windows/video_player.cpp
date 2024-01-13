@@ -7,7 +7,6 @@
 #include <flutter/event_channel.h>
 #include <flutter/event_stream_handler.h>
 #include <flutter/event_stream_handler_functions.h>
-#include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 #include <shobjidl.h>
 #include <windows.h>
@@ -16,9 +15,9 @@
 
 using namespace winrt;
 
-VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::wstring uri,
+VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
                          flutter::EncodableMap httpHeaders)
-    : VideoPlayer(view) {
+    : VideoPlayer(adapter, window) {
   // Create a source resolver to create an IMFMediaSource for the content URL.
   // This will create an instance of an inbuilt OS media source for playback.
   winrt::com_ptr<IMFSourceResolver> sourceResolver;
@@ -35,14 +34,14 @@ VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::wstring uri,
   m_mediaEngineWrapper->Initialize(m_adapter, mediaSource.get());
 }
 
-VideoPlayer::VideoPlayer(flutter::FlutterView* view)
+VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, HWND window)
     : texture(flutter::GpuSurfaceTexture(
           FlutterDesktopGpuSurfaceType::
               kFlutterDesktopGpuSurfaceTypeDxgiSharedHandle,
           std::bind(&VideoPlayer::ObtainDescriptorCallback, this,
                     std::placeholders::_1, std::placeholders::_2))) {
-  m_adapter.attach(view->GetGraphicsAdapter());
-  m_window = view->GetNativeWindow();
+  m_adapter.attach(adapter);
+  m_window = window;
 
   m_mfPlatform.Startup();
 
@@ -60,13 +59,15 @@ VideoPlayer::VideoPlayer(flutter::FlutterView* view)
       nullptr);
 }
 
-void VideoPlayer::Init(flutter::PluginRegistrarWindows* registrar,
+void VideoPlayer::Init(flutter::BinaryMessenger* messenger,
+                       std::function<void()> textureFrameAvailableCallback,
                        int64_t textureId) {
-  _textureId = textureId;
+  m_textureId = textureId;
+  m_textureFrameAvailableCallback = textureFrameAvailableCallback;
 
   _eventChannel =
       std::make_unique<flutter::EventChannel<flutter::EncodableValue>>(
-          registrar->messenger(),
+          messenger,
           std::string("flutter.io/videoPlayer/videoEvents") +
               std::to_string(textureId),
           &flutter::StandardMethodCodec::GetInstance());
@@ -88,8 +89,6 @@ void VideoPlayer::Init(flutter::PluginRegistrarWindows* registrar,
             this->_eventSink = nullptr;
             return nullptr;
           }));
-
-  _textureRegistry = registrar->texture_registrar();
 }
 
 VideoPlayer::~VideoPlayer() { m_valid = false; }
@@ -103,8 +102,7 @@ FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(
 
   m_mediaEngineWrapper->UpdateSurfaceDescriptor(
       static_cast<uint32_t>(width), static_cast<uint32_t>(height),
-      [&]() { _textureRegistry->MarkTextureFrameAvailable(_textureId); },
-      m_descriptor);
+      m_textureFrameAvailableCallback, m_descriptor);
 
   UpdateVideoSize();
 
@@ -253,4 +251,4 @@ void VideoPlayer::SendBufferingUpdate() {
 
 void VideoPlayer::SeekTo(int64_t seek) { m_mediaEngineWrapper->SeekTo(seek); }
 
-int64_t VideoPlayer::GetTextureId() { return _textureId; }
+int64_t VideoPlayer::GetTextureId() { return m_textureId; }
