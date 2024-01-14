@@ -110,6 +110,9 @@
     if (@available(iOS 13.0, *)) {
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
     }
+    if(@available(iOS 17.0, *)) {
+      [discoveryDevices addObject:AVCaptureDeviceTypeExternal]
+    }
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
         discoverySessionWithDeviceTypes:discoveryDevices
                               mediaType:AVMediaTypeVideo
