@@ -73,6 +73,77 @@
     XCTAssertTrue([dictionaryResult count] == 3);
   }
 }
+- (void)testAvailableCamerasShouldReturnExternalCameraIfAvailable {
+  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  XCTestExpectation *expectation =
+      [[XCTestExpectation alloc] initWithDescription:@"Result finished"];
+
+  // iPhone 13 Cameras:
+  AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([wideAngleCamera uniqueID]).andReturn(@"0");
+  OCMStub([wideAngleCamera position]).andReturn(AVCaptureDevicePositionBack);
+
+  AVCaptureDevice *frontFacingCamera = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([frontFacingCamera uniqueID]).andReturn(@"1");
+  OCMStub([frontFacingCamera position]).andReturn(AVCaptureDevicePositionFront);
+
+  AVCaptureDevice *ultraWideCamera = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([ultraWideCamera uniqueID]).andReturn(@"2");
+  OCMStub([ultraWideCamera position]).andReturn(AVCaptureDevicePositionBack);
+
+  AVCaptureDevice *telephotoCamera = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([telephotoCamera uniqueID]).andReturn(@"3");
+  OCMStub([telephotoCamera position]).andReturn(AVCaptureDevicePositionBack);
+
+  // iPad External Camera
+  AVCaptureDevice *externalCamera = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([externalCamera uniqueID]).andReturn(@"4");
+  OCMStub([externalCamera position]).andReturn(AVCaptureDevicePositionUnspecified);
+
+  NSMutableArray *requiredTypes =
+      [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
+          mutableCopy];
+  if (@available(iOS 13.0, *)) {
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+  }
+  if (@available(iOS 17.0, *)) {
+    [requiredTypes addObject:AVCaptureDeviceTypeExternal];
+  }
+  id discoverySessionMock = OCMClassMock([AVCaptureDeviceDiscoverySession class]);
+  OCMStub([discoverySessionMock discoverySessionWithDeviceTypes:requiredTypes
+                                                      mediaType:AVMediaTypeVideo
+                                                       position:AVCaptureDevicePositionUnspecified])
+      .andReturn(discoverySessionMock);
+
+  NSMutableArray *cameras = [NSMutableArray array];
+  [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera, telephotoCamera ]];
+  if (@available(iOS 13.0, *)) {
+    [cameras addObject:ultraWideCamera];
+  }
+  if (@available(iOS 17.0, *)) {
+    [cameras addObject:externalCamera];
+  }
+  OCMStub([discoverySessionMock devices]).andReturn([NSArray arrayWithArray:cameras]);
+
+  MockFLTThreadSafeFlutterResult *resultObject =
+      [[MockFLTThreadSafeFlutterResult alloc] initWithExpectation:expectation];
+
+  // Set up method call
+  FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"availableCameras"
+                                                              arguments:nil];
+
+  [camera handleMethodCallAsync:call result:resultObject];
+
+  // Verify the result
+  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
+  if (@available(iOS 17.0, *)) {
+    XCTAssertTrue([dictionaryResult count] == 5);
+  } else if (@available(iOS 13.0, *)) {
+    XCTAssertTrue([dictionaryResult count] == 4);
+  } else {
+    XCTAssertTrue([dictionaryResult count] == 3);
+  }
+}
 - (void)testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone {
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
   XCTestExpectation *expectation =
