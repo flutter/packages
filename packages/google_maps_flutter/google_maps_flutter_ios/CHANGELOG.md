@@ -1,3 +1,13 @@
+## 2.4.0
+
+* Adds support for arm64 simulators.
+* Updates minimum supported SDK version to Flutter 3.16.6.
+* Removes support for iOS 11.
+
+## 2.3.6
+
+* Adds privacy manifest.
+
 ## 2.3.5
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

@@ -40,6 +40,10 @@ tasks:
     script: script/tool_runner.sh
     args: ["gradle-check"]
     always: true
+  - name: Repository-level package metadata validation
+    script: script/tool_runner.sh
+    args: ["check-repo-package-info"]
+    always: true
   - name: Dependabot coverage validation
     script: script/tool_runner.sh
     args: ["dependabot-check"]
