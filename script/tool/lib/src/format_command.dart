@@ -33,7 +33,6 @@ const int _exitGitFailed = 6;
 const int _exitDependencyMissing = 7;
 const int _exitSwiftFormatFailed = 8;
 const int _exitKotlinFormatFailed = 9;
-const int _exitUnsupportedPlatform = 10;
 
 final Uri _javaFormatterUrl = Uri.https('github.com',
     '/google/google-java-format/releases/download/google-java-format-1.3/google-java-format-1.3-all-deps.jar');
@@ -106,11 +105,6 @@ class FormatCommand extends PackageCommand {
       await _formatCppAndObjectiveC(files);
     }
     if (getBoolArg(_swiftArg)) {
-      /// swift-format can run on Linux, but in CI it is only built for macOS.
-      if (!platform.isMacOS) {
-        printError('swift-format is only supported on macOS');
-        throw ToolExit(_exitUnsupportedPlatform);
-      }
       await _formatSwift(files);
     }
 
