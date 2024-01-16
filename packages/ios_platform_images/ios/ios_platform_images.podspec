@@ -25,4 +25,5 @@ Downloaded by pub (not CocoaPods).
      'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.swift_version = '5.0'
+  s.resource_bundles = {'ios_platform_images_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

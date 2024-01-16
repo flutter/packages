@@ -1,3 +1,9 @@
+## 1.0.17
+
+* Adds support for tracking source locations of `BlobNode`s and
+  finding `BlobNode`s from the widget tree (`BlobNode.source` and
+  `Runtime.blobNodeFor` respectively).
+
 ## 1.0.16
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

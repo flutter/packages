@@ -23,4 +23,5 @@ This Flutter plugin provides means to prevent gestures from being swallowed by P
     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
+  s.resource_bundles = {'pointer_interceptor_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

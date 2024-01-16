@@ -1,3 +1,7 @@
+## 0.2.3+2
+
+* Adds privacy manifest.
+
 ## 0.2.3+1
 
 * Improves example code in README.

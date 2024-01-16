@@ -192,4 +192,9 @@ class RepositoryPackage {
     }
     return null;
   }
+
+  /// Returns true if the package is not marked as "publish_to: none".
+  bool isPublishable() {
+    return parsePubspec().publishTo != 'none';
+  }
 }
