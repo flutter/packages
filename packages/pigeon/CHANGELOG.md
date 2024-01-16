@@ -1,6 +1,6 @@
-## NEXT
+## 16.0.1
 
-* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+* [dart] Fixes test generation for missing wrapResponse method if only host Api.
 
 ## 16.0.0
 
