@@ -23,5 +23,6 @@ Wraps NSUserDefaults, providing a persistent store for simple key-value pairs.
      'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.swift_version = '5.0'
+  s.resource_bundles = {'shared_preferences_foundation_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 
 end
