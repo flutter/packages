@@ -1,3 +1,0 @@
-# Incredibly flaky, see https://github.com/flutter/flutter/issues/141136
-# TODO(stuartmorgan): Remove once the flake is fixed.
-- quick_actions_android

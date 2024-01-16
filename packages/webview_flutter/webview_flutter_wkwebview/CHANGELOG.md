@@ -1,3 +1,7 @@
+## 3.10.2
+
+* Adds privacy manifest.
+
 ## 3.10.1
 
 * Fixes new lint warnings.
