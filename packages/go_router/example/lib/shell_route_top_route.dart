@@ -47,11 +47,7 @@ class ShellRouteExampleApp extends StatelessWidget {
             'c.details' => 'C Details',
             _ => 'Unknown',
           };
-          return ScaffoldWithNavBar(
-            title: title,
-            routeName: routeName,
-            child: child,
-          );
+          return ScaffoldWithNavBar(title: title, child: child);
         },
         routes: <RouteBase>[
           /// The first screen to display in the bottom navigation bar.
@@ -142,17 +138,13 @@ class ShellRouteExampleApp extends StatelessWidget {
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
-    required this.title,
-    this.routeName,
-    required this.child,
     super.key,
+    required this.title,
+    required this.child,
   });
 
   /// The title to display in the AppBar.
   final String title;
-
-  /// The name of the current route.
-  final String? routeName;
 
   /// The widget to display in the body of the Scaffold.
   /// In this sample, it is a Navigator.
@@ -160,10 +152,12 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PreferredSizeWidget leadingButton = _buildAppBar(context);
     return Scaffold(
       body: child,
-      appBar: leadingButton,
+      appBar: AppBar(
+        title: Text(title),
+        leading: _buildLeadingButton(context),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -181,21 +175,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
         ],
         currentIndex: _calculateSelectedIndex(context),
         onTap: (int idx) => _onItemTapped(idx, context),
-      ),
-    );
-  }
-
-  /// Animates the AppBar title and leading button when it changes.
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 120),
-        child: AppBar(
-          key: routeName == null ? UniqueKey() : ValueKey<String>(routeName!),
-          title: Text(title),
-          leading: _buildLeadingButton(context),
-        ),
       ),
     );
   }
