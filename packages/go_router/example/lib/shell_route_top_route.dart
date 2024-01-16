@@ -179,7 +179,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
     );
   }
 
-  /// Builds the app bar leading button using the current location Uri
+  /// Builds the app bar leading button using the current location [Uri].
+  ///
+  /// The [Scaffold]'s default back button cannot be used because it doesn't
+  /// have the context of the current child.
   Widget _buildLeadingButton(BuildContext context) {
     final RouteMatchList currentConfiguration =
         GoRouter.of(context).routerDelegate.currentConfiguration;
