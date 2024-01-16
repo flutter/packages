@@ -1,3 +1,7 @@
+## 5.7.3
+
+* Adds privacy manifest.
+
 ## 5.7.2
 
 * Updates `clearAuthCache` override to match base class declaration.
