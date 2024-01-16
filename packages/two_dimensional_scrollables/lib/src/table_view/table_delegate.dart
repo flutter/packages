@@ -116,6 +116,11 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
 
 /// A delegate that supplies children for a [TableViewport] on demand using a
 /// builder callback.
+///
+/// The [addRepaintBoundaries] of the super class is overridden to false here.
+/// This is handled by [TableViewCell.addRepaintBoundaries]. This allows
+/// [ParentData] to be written to children of the [TableView] for features like
+/// merged cells.
 class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     with TableCellDelegateMixin {
   /// Creates a lazy building delegate to use with a [TableView].
@@ -143,7 +148,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
               cellBuilder(context, vicinity as TableVicinity),
           maxXIndex: columnCount - 1,
           maxYIndex: rowCount - 1,
-          addRepaintBoundaries: false,
+          addRepaintBoundaries: false, // repaintBoundaries handled by TableViewCell
         );
 
   @override
@@ -209,6 +214,11 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
 /// The [children] are accessed for each [TableVicinity.row] and
 /// [TableVicinity.column] of the [TwoDimensionalViewport] as
 /// `children[vicinity.row][vicinity.column]`.
+///
+/// The [addRepaintBoundaries] of the super class is overridden to false here.
+/// This is handled by [TableViewCell.addRepaintBoundaries]. This allows
+/// [ParentData] to be written to children of the [TableView] for features like
+/// merged cells.
 class TableCellListDelegate extends TwoDimensionalChildListDelegate
     with TableCellDelegateMixin {
   /// Creates a delegate that supplies children for a [TableView].
@@ -227,7 +237,7 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
         _pinnedRowCount = pinnedRowCount,
         super(
           children: cells,
-          addRepaintBoundaries: false,
+          addRepaintBoundaries: false, // repaintBoundaries handled by TableViewCell
         ) {
     // Even if there are merged cells, they should be represented by the same
     // child in each cell location. This ensures that no matter which direction

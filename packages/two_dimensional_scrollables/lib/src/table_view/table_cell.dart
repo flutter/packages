@@ -56,16 +56,28 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
   /// Converts the [ChildVicinity] to a [TableVicinity] for ease of use.
   TableVicinity get tableVicinity => vicinity as TableVicinity;
 
+  /// Represents the row index where a merged cell in the table begins.
   ///
+  /// Defaults to null, meaning a non-merged cell. A value must be provided if
+  /// a value is provided for [rowMergeSpan].
   int? rowMergeStart;
 
+  /// Represents the number of rows spanned by a merged cell.
   ///
+  /// Defaults to null, meaning the cell is not merged. A value must be provided
+  /// if a value is provided for [rowMergeStart].
   int? rowMergeSpan;
 
+  /// Represents the column index where a merged cell in the table begins.
   ///
+  /// Defaults to null, meaning a non-merged cell. A value must be provided if
+  /// a value is provided for [columnMergeSpan].
   int? columnMergeStart;
 
+  /// Represents the number of columns spanned by a merged cell.
   ///
+  /// Defaults to null, meaning the cell is not merged. A value must be provided
+  /// if a value is provided for [columnMergeStart].
   int? columnMergeSpan;
 
   @override
@@ -75,12 +87,12 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
       mergeDetails += ', merged';
     }
     if (rowMergeStart != null) {
-      mergeDetails +=
-          ', rowMergeStart=$rowMergeStart, rowMergeSpan=$rowMergeSpan';
+      mergeDetails += ', rowMergeStart=$rowMergeStart, '
+          'rowMergeSpan=$rowMergeSpan';
     }
     if (columnMergeStart != null) {
-      mergeDetails +=
-          ', columnMergeStart=$columnMergeStart, columnMergeSpan=$columnMergeSpan';
+      mergeDetails += ', columnMergeStart=$columnMergeStart, '
+          'columnMergeSpan=$columnMergeSpan';
     }
     return super.toString() + mergeDetails;
   }
@@ -109,22 +121,42 @@ class TableViewCell extends StatelessWidget {
           'Column merge start and span must both be set, or both unset.',
         );
 
-  ///
+  /// The child contained in this cell of the [TableView].
   final Widget child;
 
+  /// Represents the row index where a merged cell in the table begins.
   ///
+  /// Defaults to null, meaning a non-merged cell. A value must be provided if
+  /// a value is provided for [rowMergeSpan].
   final int? rowMergeStart;
 
+  /// Represents the number of rows spanned by a merged cell.
   ///
+  /// Defaults to null, meaning the cell is not merged. A value must be provided
+  /// if a value is provided for [rowMergeStart].
   final int? rowMergeSpan;
 
+  /// Represents the column index where a merged cell in the table begins.
   ///
+  /// Defaults to null, meaning a non-merged cell. A value must be provided if
+  /// a value is provided for [columnMergeSpan].
   final int? columnMergeStart;
 
+  /// Represents the number of columns spanned by a merged cell.
   ///
+  /// Defaults to null, meaning the cell is not merged. A value must be provided
+  /// if a value is provided for [columnMergeStart].
   final int? columnMergeSpan;
 
+  /// Whether to wrap each child in a [RepaintBoundary].
   ///
+  /// Typically, children in a scrolling container are wrapped in repaint
+  /// boundaries so that they do not need to be repainted as the list scrolls.
+  /// If the children are easy to repaint (e.g., solid color blocks or a short
+  /// snippet of text), it might be more efficient to not add a repaint boundary
+  /// and instead always repaint the children during scrolling.
+  ///
+  /// Defaults to true.
   final bool addRepaintBoundaries;
 
   @override

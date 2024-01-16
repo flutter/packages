@@ -1036,6 +1036,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         } else {
           // Walk through the rows to separate merged cells for decorating. A
           // merged column takes the decoration of its leading column.
+          // +---------+-------+-------+
+          // | leading |       |       |
+          // | 1 rect  |       |       |
+          // +---------+-------+-------+
+          // | merged          |       |
+          // | 1 rect          |       |
+          // +---------+-------+-------+
+          // | 1 rect  |       |       |
+          // |         |       |       |
+          // +---------+-------+-------+
           int currentRow = leading.row;
           while (currentRow <= trailing.row) {
             TableVicinity vicinity = TableVicinity(
@@ -1102,23 +1112,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           columnSpan = _columnMetrics[columnIndex]!.configuration;
           if (columnSpan.backgroundDecoration != null) {
             final Rect rect = getColumnRect(
-                columnSpan.backgroundDecoration!.consumeSpanPadding);
-            // We could have already added this rect if it came from another
-            // vicinity contained by the merged
-            // cell.
-            if (!backgroundColumns.keys.contains(rect)) {
-              backgroundColumns[rect] = columnSpan.backgroundDecoration!;
-            }
+                columnSpan.backgroundDecoration!.consumeSpanPadding,);
+            backgroundColumns[rect] = columnSpan.backgroundDecoration!;
           }
           if (columnSpan.foregroundDecoration != null) {
             final Rect rect = getColumnRect(
-                columnSpan.foregroundDecoration!.consumeSpanPadding);
-            // We could have already added this rect if it came from another
-            // vicinity contained by the merged
-            // cell.
-            if (!foregroundColumns.keys.contains(rect)) {
-              foregroundColumns[rect] = columnSpan.foregroundDecoration!;
-            }
+                columnSpan.foregroundDecoration!.consumeSpanPadding,);
+            foregroundColumns[rect] = columnSpan.foregroundDecoration!;
           }
         }
       }
@@ -1154,6 +1154,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         } else {
           // Walk through the columns to separate merged cells for decorating. A
           // merged row takes the decoration of its leading row.
+          // +---------+--------+--------+
+          // | leading | merged | 1 rect |
+          // | 1 rect  | 1 rect |        |
+          // +---------+        +--------+
+          // |         |        |        |
+          // |         |        |        |
+          // +---------+--------+--------+
+          // |         |        |        |
+          // |         |        |        |
+          // +---------+--------+--------+
           int currentColumn = leading.column;
           while (currentColumn <= trailing.column) {
             TableVicinity vicinity = TableVicinity(
@@ -1219,23 +1229,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           rowSpan = _rowMetrics[rowIndex]!.configuration;
           if (rowSpan.backgroundDecoration != null) {
             final Rect rect =
-                getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding);
-            // We could have already added this rect if it came from another
-            // vicinity contained by the merged
-            // cell.
-            if (!backgroundRows.keys.contains(rect)) {
-              backgroundRows[rect] = rowSpan.backgroundDecoration!;
-            }
+                getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding,);
+            backgroundRows[rect] = rowSpan.backgroundDecoration!;
           }
           if (rowSpan.foregroundDecoration != null) {
             final Rect rect =
-                getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding);
-            // We could have already added this rect if it came from another
-            // vicinity contained by the merged
-            // cell.
-            if (!foregroundRows.keys.contains(rect)) {
-              foregroundRows[rect] = rowSpan.foregroundDecoration!;
-            }
+                getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding,);
+            foregroundRows[rect] = rowSpan.foregroundDecoration!;
           }
         }
       }
