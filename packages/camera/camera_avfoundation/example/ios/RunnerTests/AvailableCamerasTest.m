@@ -19,7 +19,6 @@
   XCTestExpectation *expectation =
       [[XCTestExpectation alloc] initWithDescription:@"Result finished"];
 
-  // iPhone 13 Cameras:
   AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
   OCMStub([wideAngleCamera uniqueID]).andReturn(@"0");
   OCMStub([wideAngleCamera position]).andReturn(AVCaptureDevicePositionBack);
@@ -135,9 +134,12 @@
   [camera handleMethodCallAsync:call result:resultObject];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
+  NSArray *dictionaryResult = (NSArray *)resultObject.receivedResult;
   if (@available(iOS 17.0, *)) {
     XCTAssertTrue([dictionaryResult count] == 5);
+    NSDictionary *externalCameraResult = dictionaryResult[4];
+    XCTAssertEqualObjects(externalCameraResult[@"name"], @"4");
+    XCTAssertEqualObjects(externalCameraResult[@"lensFacing"], @"external");
   } else if (@available(iOS 13.0, *)) {
     XCTAssertTrue([dictionaryResult count] == 4);
   } else {

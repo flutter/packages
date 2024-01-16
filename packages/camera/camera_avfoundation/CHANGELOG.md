@@ -1,6 +1,6 @@
 ## 0.9.13+11
 
-* Added ability to discover external cameras for ios 17 and up.
+* Adds ability to discover external cameras for ios 17 and up.
 
 ## 0.9.13+10
 
