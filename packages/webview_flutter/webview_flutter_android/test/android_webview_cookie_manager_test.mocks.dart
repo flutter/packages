@@ -584,19 +584,6 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> setOnJavaScriptTextInputDialog(
-          _i5.Future<String> Function(_i3.JavaScriptTextInputDialogRequest)?
-              onJavaScriptTextInputDialog) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnJavaScriptTextInputDialog,
-          [onJavaScriptTextInputDialog],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].

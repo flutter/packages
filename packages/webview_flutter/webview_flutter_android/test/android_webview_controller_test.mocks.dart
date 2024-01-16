@@ -870,19 +870,6 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> setOnJavaScriptTextInputDialog(
-          _i9.Future<String> Function(_i3.JavaScriptTextInputDialogRequest)?
-              onJavaScriptTextInputDialog) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnJavaScriptTextInputDialog,
-          [onJavaScriptTextInputDialog],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewProxy].
