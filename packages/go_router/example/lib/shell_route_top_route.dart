@@ -16,7 +16,7 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 // pages along with other UI components such as a BottomNavigationBar.
 //
 // This example demonstrates how use topRoute in a ShellRoute to create the
-// title in the AppBar, which could be different for each GoRoute.
+// title in the AppBar above the child, which is different for each GoRoute.
 
 void main() {
   runApp(ShellRouteExampleApp());
