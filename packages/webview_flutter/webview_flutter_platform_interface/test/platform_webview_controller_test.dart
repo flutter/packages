@@ -457,6 +457,20 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test('setOnJavaScriptTextInputDialog should support returning a null value',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setOnJavaScriptTextInputDialog((_) async {
+        return null;
+      }),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform

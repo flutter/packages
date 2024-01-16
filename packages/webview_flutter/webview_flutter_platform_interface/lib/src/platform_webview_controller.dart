@@ -318,7 +318,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript prompt() dialog.
   Future<void> setOnJavaScriptTextInputDialog(
-      Future<String> Function(JavaScriptTextInputDialogRequest request)
+      Future<String?> Function(JavaScriptTextInputDialogRequest request)
           onJavaScriptTextInputDialog) async {
     throw UnimplementedError(
       'setOnJavaScriptTextInputDialog is not implemented on the current platform',

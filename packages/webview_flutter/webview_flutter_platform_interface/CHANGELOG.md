@@ -1,3 +1,7 @@
+## 2.9.2
+
+* Add support to return a `null` in `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
+
 ## 2.9.1
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.
