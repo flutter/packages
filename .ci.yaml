@@ -1071,7 +1071,11 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: macos_check_podspecs.yaml
+      target_file: macos_repo_checks.yaml
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
+        ]
 
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
