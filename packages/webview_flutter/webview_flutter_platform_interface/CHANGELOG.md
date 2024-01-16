@@ -1,6 +1,6 @@
 ## 2.9.2
 
-* Add support to return a `null` in `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
+* Adds support to return `null` in `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
 
 ## 2.9.1
 
