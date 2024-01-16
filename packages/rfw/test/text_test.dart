@@ -193,7 +193,9 @@ void main() {
     expect(parseDataFile('{ "a": -1e-16 }'), <String, Object?>{ 'a': -0.0000000000000001 });
     expect(parseDataFile('{ "a": -1e-17 }'), <String, Object?>{ 'a': -0.00000000000000001 });
     expect(parseDataFile('{ "a": -1e-18 }'), <String, Object?>{ 'a': -0.000000000000000001 });
-    expect(parseDataFile('{ "a": -1e-19 }'), <String, Object?>{ 'a': -0.0000000000000000001 });
+    expect(parseDataFile('{ "a": infinity }'), <String, Object?>{ 'a': double.infinity });
+    expect(parseDataFile('{ "a": negativeInfinity }'), <String, Object?>{ 'a': double.negativeInfinity });
+    expect(parseDataFile('{ "a": nan }')['a'], isNaN);
     expect(parseDataFile('{ "a": 0x0 }'), <String, Object?>{ 'a': 0 });
     expect(parseDataFile('{ "a": 0x1 }'), <String, Object?>{ 'a': 1 });
     expect(parseDataFile('{ "a": 0x01 }'), <String, Object?>{ 'a': 1 });

@@ -40,6 +40,9 @@ import 'model.dart';
 ///    expressed as hex literals. Numbers are explicitly 64 bit precision;
 ///    specifically, signed 64 bit integers, or binary64 floating point numbers.
 ///
+///  * three keywords, "infinity", "negativeInfinity", and "nan", allow one
+///    to express the non-finite values of the binary64 format.
+///
 ///  * files are always rooted at a map. (Different versions of JSON are
 ///    ambiguous or contradictory about this.)
 ///
@@ -141,15 +144,20 @@ import 'model.dart';
 ///
 /// ```
 /// double ::= "-"? digit+ ("." digit+)? (("e" | "E") "-"? digit+)?
+///            | "infinity" | "negativeInfinity" | "nan"
 /// ```
 ///
-/// Floating point numbers are represented by an optional negative sign
+/// Finite floating point numbers are represented by an optional negative sign
 /// indicating the number is negative, a significand with optional fractional
 /// component in the form of digits in base ten giving the integer component
 /// followed optionally by a decimal point and further base ten digits giving
 /// the fractional component, and an exponent which itself is represented by an
 /// optional negative sign indicating a negative exponent and a sequence of
 /// digits giving the base ten exponent itself.
+///
+/// Infinity, negative infinity, and one arbitrary "not-a-number" value are
+/// represented by the keywords "infinity", "negativeInfinity", and "nan"
+/// respectively.
 ///
 /// The numbers represented must be values that can be expressed in the IEEE754
 /// binary64 format.
@@ -2214,6 +2222,18 @@ class _Parser {
       if (identifier == 'false') {
         _advance();
         return false;
+      }
+      if (identifier == 'infinity') {
+        _advance();
+        return double.infinity;
+      }
+      if (identifier == 'negativeInfinity') {
+        _advance();
+        return double.negativeInfinity;
+      }
+      if (identifier == 'nan') {
+        _advance();
+        return double.nan;
       }
       if (identifier == 'null' && nullOk) {
         _advance();

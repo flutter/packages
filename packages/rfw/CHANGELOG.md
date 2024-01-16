@@ -1,3 +1,7 @@
+## 1.0.19
+
+* Add "infinity", "negativeInfinity", and "nan" keywords to rfwtxt.
+
 ## 1.0.16
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
