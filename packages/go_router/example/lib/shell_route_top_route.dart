@@ -15,8 +15,8 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 // to be used instead of the root navigator. This allows deep-links to display
 // pages along with other UI components such as a BottomNavigationBar.
 //
-// This example demonstrates how to display a route within a ShellRoute and also
-// using the current topRoute to determine the title of the AppBar.
+// This example demonstrates how use topRoute in a ShellRoute to create the
+// title in the AppBar, which could be different for each GoRoute.
 
 void main() {
   runApp(ShellRouteExampleApp());
@@ -37,7 +37,7 @@ class ShellRouteExampleApp extends StatelessWidget {
         navigatorKey: _shellNavigatorKey,
         builder: (BuildContext context, GoRouterState state, Widget child) {
           final String? routeName = GoRouterState.of(context).topRoute?.name;
-          // Could also use an enum/constant strings for route names.
+          // This title could also be created using a route's path parameters in GoRouterState
           final String title = switch (routeName) {
             'a' => 'A Screen',
             'a.details' => 'A Details',
