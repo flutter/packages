@@ -1,3 +1,7 @@
+## 6.2.4
+
+* Adds privacy manifest.
+
 ## 6.2.3
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.
