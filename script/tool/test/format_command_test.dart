@@ -17,22 +17,31 @@ import 'util.dart';
 void main() {
   late FileSystem fileSystem;
   late MockPlatform mockPlatform;
+  late MockPlatform mockMacOSPlatform;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
   late FormatCommand analyzeCommand;
+  late FormatCommand macOSAnalyzeCommand;
   late CommandRunner<void> runner;
+  late CommandRunner<void> macOSRunner;
   late String javaFormatPath;
   late String kotlinFormatPath;
 
   setUp(() {
     fileSystem = MemoryFileSystem();
     mockPlatform = MockPlatform();
+    mockMacOSPlatform = MockPlatform(isMacOS: true);
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     processRunner = RecordingProcessRunner();
     analyzeCommand = FormatCommand(
       packagesDir,
       processRunner: processRunner,
       platform: mockPlatform,
+    );
+    macOSAnalyzeCommand = FormatCommand(
+      packagesDir,
+      processRunner: processRunner,
+      platform: mockMacOSPlatform,
     );
 
     // Create the Java and Kotlin formatter files that the command checks for,
@@ -48,6 +57,10 @@ void main() {
 
     runner = CommandRunner<void>('format_command', 'Test for format_command');
     runner.addCommand(analyzeCommand);
+
+    macOSRunner = CommandRunner<void>(
+        'format_command', 'Test for format_command on macOS');
+    macOSRunner.addCommand(macOSAnalyzeCommand);
   });
 
   /// Returns a modified version of a list of [relativePaths] that are relative
@@ -220,7 +233,7 @@ void main() {
         containsAllInOrder(<Matcher>[
           contains(
               'Unable to run "java". Make sure that it is in your path, or '
-              'provide a full path with --java.'),
+              'provide a full path with --java-path.'),
         ]));
   });
 
@@ -261,7 +274,8 @@ void main() {
       extraFiles: files,
     );
 
-    await runCapturingPrint(runner, <String>['format', '--java=/path/to/java']);
+    await runCapturingPrint(
+        runner, <String>['format', '--java-path=/path/to/java']);
 
     expect(
         processRunner.recordedCalls,
@@ -332,7 +346,7 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Unable to run "clang-format". Make sure that it is in your '
-              'path, or provide a full path with --clang-format.'),
+              'path, or provide a full path with --clang-format-path.'),
         ]));
   });
 
@@ -386,8 +400,8 @@ void main() {
       extraFiles: files,
     );
 
-    await runCapturingPrint(
-        runner, <String>['format', '--clang-format=/path/to/clang-format']);
+    await runCapturingPrint(runner,
+        <String>['format', '--clang-format-path=/path/to/clang-format']);
 
     expect(
         processRunner.recordedCalls,
@@ -490,6 +504,21 @@ void main() {
   });
 
   group('swift-format', () {
+    test('fails formatting Swift on non-macOS platforms', () async {
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['format', '--swift'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('swift-format is only supported on macOS'),
+          ]));
+    });
+
     test('formats Swift if --swift-format flag is provided', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
@@ -500,12 +529,17 @@ void main() {
         extraFiles: files,
       );
 
-      await runCapturingPrint(
-          runner, <String>['format', '--swift-format=/path/to/swift-format']);
+      await runCapturingPrint(macOSRunner, <String>[
+        'format',
+        '--swift',
+        '--swift-format-path=/path/to/swift-format'
+      ]);
 
       expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
+            const ProcessCall(
+                '/path/to/swift-format', <String>['--version'], null),
             ProcessCall(
                 '/path/to/swift-format',
                 <String>['-i', ...getPackagesDirRelativePaths(plugin, files)],
@@ -513,7 +547,7 @@ void main() {
           ]));
     });
 
-    test('skips Swift if --swift-format flag is not provided', () async {
+    test('skips Swift if --swift flag is not provided', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
       ];
@@ -523,9 +557,36 @@ void main() {
         extraFiles: files,
       );
 
-      await runCapturingPrint(runner, <String>['format']);
+      await runCapturingPrint(macOSRunner, <String>['format']);
 
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('fails with a clear message if swift-format is not in the path',
+        () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['--version']),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          macOSRunner, <String>['format', '--swift'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'Unable to run "swift-format". Make sure that it is in your path, or '
+                'provide a full path with --swift-format-path.'),
+          ]));
     });
 
     test('fails if swift-format fails', () async {
@@ -536,12 +597,16 @@ void main() {
 
       processRunner.mockProcessesForExecutable['swift-format'] =
           <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(),
+            <String>['--version']), // check for working swift-format
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['-i']),
       ];
       Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['format', '--swift-format=swift-format'],
-          errorHandler: (Error e) {
+      final List<String> output = await runCapturingPrint(macOSRunner, <String>[
+        'format',
+        '--swift',
+        '--swift-format-path=swift-format'
+      ], errorHandler: (Error e) {
         commandError = e;
       });
 

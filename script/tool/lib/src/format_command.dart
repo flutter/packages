@@ -33,6 +33,7 @@ const int _exitGitFailed = 6;
 const int _exitDependencyMissing = 7;
 const int _exitSwiftFormatFailed = 8;
 const int _exitKotlinFormatFailed = 9;
+const int _exitUnsupportedPlatform = 10;
 
 final Uri _javaFormatterUrl = Uri.https('github.com',
     '/google/google-java-format/releases/download/google-java-format-1.3/google-java-format-1.3-all-deps.jar');
@@ -48,17 +49,29 @@ class FormatCommand extends PackageCommand {
     super.platform,
   }) {
     argParser.addFlag('fail-on-change', hide: true);
-    argParser.addOption(_clangFormatArg,
+    argParser.addFlag(_dartArg, help: 'Format Dart files', defaultsTo: true);
+    argParser.addFlag(_clangFormatArg,
+        help: 'Format with "clang-format"', defaultsTo: true);
+    argParser.addFlag(_kotlinArg,
+        help: 'Format Kotlin files', defaultsTo: true);
+    argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
+    argParser.addFlag(_swiftArg, help: 'Format Swift files');
+    argParser.addOption(_clangFormatPathArg,
         defaultsTo: 'clang-format', help: 'Path to "clang-format" executable.');
-    argParser.addOption(_javaArg,
+    argParser.addOption(_javaPathArg,
         defaultsTo: 'java', help: 'Path to "java" executable.');
-    argParser.addOption(_swiftFormatArg,
-        help: 'Path to "swift-format" executable.');
+    argParser.addOption(_swiftFormatPathArg,
+        defaultsTo: 'swift-format', help: 'Path to "swift-format" executable.');
   }
 
+  static const String _dartArg = 'dart';
   static const String _clangFormatArg = 'clang-format';
+  static const String _kotlinArg = 'kotlin';
   static const String _javaArg = 'java';
-  static const String _swiftFormatArg = 'swift-format';
+  static const String _swiftArg = 'swift';
+  static const String _clangFormatPathArg = 'clang-format-path';
+  static const String _javaPathArg = 'java-path';
+  static const String _swiftFormatPathArg = 'swift-format-path';
 
   @override
   final String name = 'format';
@@ -80,13 +93,25 @@ class FormatCommand extends PackageCommand {
     // due to the startup overhead of the formatters.
     final Iterable<String> files =
         await _getFilteredFilePaths(getFiles(), relativeTo: packagesDir);
-    await _formatDart(files);
-    await _formatJava(files, javaFormatterPath);
-    await _formatKotlin(files, kotlinFormatterPath);
-    await _formatCppAndObjectiveC(files);
-    final String? swiftFormat = getNullableStringArg(_swiftFormatArg);
-    if (swiftFormat != null) {
-      await _formatSwift(swiftFormat, files);
+    if (getBoolArg(_dartArg)) {
+      await _formatDart(files);
+    }
+    if (getBoolArg(_javaArg)) {
+      await _formatJava(files, javaFormatterPath);
+    }
+    if (getBoolArg(_kotlinArg)) {
+      await _formatKotlin(files, kotlinFormatterPath);
+    }
+    if (getBoolArg(_clangFormatArg)) {
+      await _formatCppAndObjectiveC(files);
+    }
+    if (getBoolArg(_swiftArg)) {
+      /// swift-format can run on Linux, but in CI it is only built for macOS.
+      if (!platform.isMacOS) {
+        printError('swift-format is only supported on macOS');
+        throw ToolExit(_exitUnsupportedPlatform);
+      }
+      await _formatSwift(files);
     }
 
     if (getBoolArg('fail-on-change')) {
@@ -158,7 +183,8 @@ class FormatCommand extends PackageCommand {
     }
   }
 
-  Future<void> _formatSwift(String swiftFormat, Iterable<String> files) async {
+  Future<void> _formatSwift(Iterable<String> files) async {
+    final String swiftFormat = await _findValidSwiftFormat();
     final Iterable<String> swiftFiles =
         _getPathsWithExtensions(files, <String>{'.swift'});
     if (swiftFiles.isNotEmpty) {
@@ -173,7 +199,7 @@ class FormatCommand extends PackageCommand {
   }
 
   Future<String> _findValidClangFormat() async {
-    final String clangFormat = getStringArg(_clangFormatArg);
+    final String clangFormat = getStringArg(_clangFormatPathArg);
     if (await _hasDependency(clangFormat)) {
       return clangFormat;
     }
@@ -188,7 +214,18 @@ class FormatCommand extends PackageCommand {
       }
     }
     printError('Unable to run "clang-format". Make sure that it is in your '
-        'path, or provide a full path with --clang-format.');
+        'path, or provide a full path with --$_clangFormatPathArg.');
+    throw ToolExit(_exitDependencyMissing);
+  }
+
+  Future<String> _findValidSwiftFormat() async {
+    final String swiftFormat = getStringArg(_swiftFormatPathArg);
+    if (await _hasDependency(swiftFormat)) {
+      return swiftFormat;
+    }
+
+    printError('Unable to run "swift-format". Make sure that it is in your '
+        'path, or provide a full path with --$_swiftFormatPathArg.');
     throw ToolExit(_exitDependencyMissing);
   }
 
@@ -196,11 +233,11 @@ class FormatCommand extends PackageCommand {
     final Iterable<String> javaFiles =
         _getPathsWithExtensions(files, <String>{'.java'});
     if (javaFiles.isNotEmpty) {
-      final String java = getStringArg('java');
+      final String java = getStringArg(_javaPathArg);
       if (!await _hasDependency(java)) {
         printError(
             'Unable to run "java". Make sure that it is in your path, or '
-            'provide a full path with --java.');
+            'provide a full path with --$_javaPathArg.');
         throw ToolExit(_exitDependencyMissing);
       }
 
@@ -220,11 +257,11 @@ class FormatCommand extends PackageCommand {
     final Iterable<String> kotlinFiles =
         _getPathsWithExtensions(files, <String>{'.kt'});
     if (kotlinFiles.isNotEmpty) {
-      final String java = getStringArg('java');
+      final String java = getStringArg(_javaPathArg);
       if (!await _hasDependency(java)) {
         printError(
             'Unable to run "java". Make sure that it is in your path, or '
-            'provide a full path with --java.');
+            'provide a full path with --$_javaPathArg.');
         throw ToolExit(_exitDependencyMissing);
       }
 
