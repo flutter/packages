@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
 ## 16.0.0
 
 * [java] Adds `VoidResult` type for `Void` returns.
