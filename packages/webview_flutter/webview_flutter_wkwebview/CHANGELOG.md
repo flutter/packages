@@ -1,3 +1,8 @@
+## 3.10.3
+
+* Adds a check that throws an `ArgumentError` when `WebKitWebViewController.addJavaScriptChannel`
+  receives a `JavaScriptChannelParams` with a name that is not unique.
+
 ## 3.10.2
 
 * Adds privacy manifest.
