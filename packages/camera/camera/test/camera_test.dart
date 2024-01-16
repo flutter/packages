@@ -124,7 +124,13 @@ void main() {
       expect(cameraController.value.previewSize, const Size(75, 75));
       expect(cameraController.value.isInitialized, isTrue);
 
-      await cameraController.dispose();
+      expect(cameraController.isDisposed, isFalse);
+
+      final Future<void> disposeFuture = cameraController.dispose();
+
+      expect(cameraController.isDisposed, isTrue);
+
+      await disposeFuture;
 
       verify(CameraPlatform.instance.dispose(13)).called(1);
     });

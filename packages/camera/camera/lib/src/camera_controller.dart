@@ -279,6 +279,9 @@ class CameraController extends ValueNotifier<CameraValue> {
     assert(_isDisposed);
   }
 
+  /// Whether [CameraController.dispose] has been called.
+  bool get isDisposed => _isDisposed;
+
   /// The camera identifier with which the controller is associated.
   int get cameraId => _cameraId;
 

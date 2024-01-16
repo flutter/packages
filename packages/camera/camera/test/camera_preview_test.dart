@@ -27,6 +27,9 @@ class FakeController extends ValueNotifier<CameraValue>
   }
 
   @override
+  bool get isDisposed => false;
+
+  @override
   int get cameraId => CameraController.kUninitializedCameraId;
 
   @override
