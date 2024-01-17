@@ -16,7 +16,8 @@ Displays the native iOS document picker.
   s.source_files = 'Classes/**/*.{h,m}'
   s.module_map = 'Classes/FileSelectorPlugin.modulemap'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
+  s.resource_bundles = {'file_selector_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

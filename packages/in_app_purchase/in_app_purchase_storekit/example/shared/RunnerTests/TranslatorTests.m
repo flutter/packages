@@ -57,17 +57,12 @@
     @"localizedTitle" : @"title",
     @"localizedDescription" : @"des",
   }];
-  if (@available(iOS 11.2, *)) {
-    self.productMap[@"subscriptionPeriod"] = self.periodMap;
-    self.productMap[@"introductoryPrice"] = self.discountMap;
-  }
+  self.productMap[@"subscriptionPeriod"] = self.periodMap;
+  self.productMap[@"introductoryPrice"] = self.discountMap;
   if (@available(iOS 12.2, *)) {
     self.productMap[@"discounts"] = @[ self.discountMap ];
   }
-
-  if (@available(iOS 12.0, *)) {
-    self.productMap[@"subscriptionGroupIdentifier"] = @"com.group";
-  }
+  self.productMap[@"subscriptionGroupIdentifier"] = @"com.group";
 
   self.productResponseMap =
       @{@"products" : @[ self.productMap ], @"invalidProductIdentifiers" : @[]};
@@ -124,20 +119,16 @@
 }
 
 - (void)testSKProductSubscriptionPeriodStubToMap {
-  if (@available(iOS 11.2, *)) {
-    SKProductSubscriptionPeriodStub *period =
-        [[SKProductSubscriptionPeriodStub alloc] initWithMap:self.periodMap];
-    NSDictionary *map = [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:period];
-    XCTAssertEqualObjects(map, self.periodMap);
-  }
+  SKProductSubscriptionPeriodStub *period =
+      [[SKProductSubscriptionPeriodStub alloc] initWithMap:self.periodMap];
+  NSDictionary *map = [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:period];
+  XCTAssertEqualObjects(map, self.periodMap);
 }
 
 - (void)testSKProductDiscountStubToMap {
-  if (@available(iOS 11.2, *)) {
-    SKProductDiscountStub *discount = [[SKProductDiscountStub alloc] initWithMap:self.discountMap];
-    NSDictionary *map = [FIAObjectTranslator getMapFromSKProductDiscount:discount];
-    XCTAssertEqualObjects(map, self.discountMap);
-  }
+  SKProductDiscountStub *discount = [[SKProductDiscountStub alloc] initWithMap:self.discountMap];
+  NSDictionary *map = [FIAObjectTranslator getMapFromSKProductDiscount:discount];
+  XCTAssertEqualObjects(map, self.discountMap);
 }
 
 - (void)testProductToMap {

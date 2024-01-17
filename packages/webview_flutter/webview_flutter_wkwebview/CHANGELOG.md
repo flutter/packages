@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 3.10.2
+
+* Adds privacy manifest.
+
 ## 3.10.1
 
 * Fixes new lint warnings.
