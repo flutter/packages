@@ -24,10 +24,16 @@ import 'table_span.dart';
 /// vertically. If there is not enough space for all the columns, it will
 /// scroll horizontally.
 ///
-/// Each child [Widget] can belong to exactly one row and one column as
-/// represented by its [TableVicinity]. The table supports lazy rendering and
-/// will only instantiate those cells that are currently visible in the table's
-/// viewport and those that extend into the [cacheExtent].
+/// Each child [TableViewCell] can belong to exactly one row and one column as
+/// represented by its [TableVicinity], or it can span multiple rows and columns
+/// through merging. The table supports lazy rendering and will only instantiate
+/// those cells that are currently visible in the table's viewport and those
+/// that extend into the [cacheExtent]. Therefore, when merging cells in a
+/// [TableView], the same child should be returned from every vicinity the
+/// merged cell contains. The `build` method will only be called once for a
+/// merged cell, but since the table's children are lazily laid out, returning
+/// the same child ensures the merged cell can be built no matter which part of
+/// it is visible.
 ///
 /// The layout of the table (e.g. how many rows/columns there are and their
 /// extents) as well as the content of the individual cells is defined by
@@ -751,6 +757,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
         if (cell != null) {
           final TableViewParentData cellParentData = parentDataOf(cell);
+          if (vicinity == TableVicinity.zero) {
+            print(cellParentData);
+          }
 
           // Merged cell handling
           if (cellParentData.rowMergeStart != null ||
@@ -817,6 +826,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                   mergedRowHeight! + _rowMetrics[currentRow]!.extent;
               int currentColumn = columnMergeStart;
               while (currentColumn <= lastColumn) {
+                if (vicinity == TableVicinity.zero) {
+                  print(TableVicinity(
+                    row: currentRow,
+                    column: currentColumn,
+                  ));
+                }
                 _mergedColumns.add(currentColumn);
                 mergedColumnWidth =
                     mergedColumnWidth! + _columnMetrics[currentColumn]!.extent;
@@ -828,6 +843,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               }
               currentRow++;
             }
+          }
+
+          if (vicinity == TableVicinity.zero) {
+            print('mergedColumnWidth $mergedColumnWidth');
+            print('mergedRowHeight $mergedRowHeight');
           }
 
           final BoxConstraints cellConstraints = BoxConstraints.tightFor(
@@ -1112,12 +1132,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           columnSpan = _columnMetrics[columnIndex]!.configuration;
           if (columnSpan.backgroundDecoration != null) {
             final Rect rect = getColumnRect(
-                columnSpan.backgroundDecoration!.consumeSpanPadding,);
+              columnSpan.backgroundDecoration!.consumeSpanPadding,
+            );
             backgroundColumns[rect] = columnSpan.backgroundDecoration!;
           }
           if (columnSpan.foregroundDecoration != null) {
             final Rect rect = getColumnRect(
-                columnSpan.foregroundDecoration!.consumeSpanPadding,);
+              columnSpan.foregroundDecoration!.consumeSpanPadding,
+            );
             foregroundColumns[rect] = columnSpan.foregroundDecoration!;
           }
         }
@@ -1228,13 +1250,15 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               parentDataOf(leadingCell).tableVicinity.row;
           rowSpan = _rowMetrics[rowIndex]!.configuration;
           if (rowSpan.backgroundDecoration != null) {
-            final Rect rect =
-                getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding,);
+            final Rect rect = getRowRect(
+              rowSpan.backgroundDecoration!.consumeSpanPadding,
+            );
             backgroundRows[rect] = rowSpan.backgroundDecoration!;
           }
           if (rowSpan.foregroundDecoration != null) {
-            final Rect rect =
-                getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding,);
+            final Rect rect = getRowRect(
+              rowSpan.foregroundDecoration!.consumeSpanPadding,
+            );
             foregroundRows[rect] = rowSpan.foregroundDecoration!;
           }
         }

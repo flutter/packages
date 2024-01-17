@@ -163,10 +163,11 @@ void main() {
         cellBuilder: (_, __) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
-        columnCount: 5,
-        rowCount: 6,
+        columnCount: 1,
+        rowCount: 1,
       );
-      expect(delegate.addRepaintBoundaries, isTrue);
+      expect(delegate.addRepaintBoundaries, isFalse);
+      expect(cell.addRepaintBoundaries, isTrue);
     });
 
     test('Notifies listeners & rebuilds', () {

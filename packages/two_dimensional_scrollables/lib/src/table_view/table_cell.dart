@@ -32,10 +32,10 @@ class TableVicinity extends ChildVicinity {
   /// Equivalent to the [xIndex].
   int get column => xIndex;
 
-  ///
+  /// The origin vicinity of the [TableView], (0,0).
   static const TableVicinity zero = TableVicinity(row: 0, column: 0);
 
-  /// Returns a new TableVicinity, copying over the row and column fields with
+  /// Returns a new [TableVicinity], copying over the row and column fields with
   /// those provided, or maintaining the original values.
   TableVicinity copyWith({
     int? row,
@@ -98,7 +98,14 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
   }
 }
 
+/// Creates a cell of the [TableView], along with information regarding merged
+/// cells and [RepaintBoundary]s.
 ///
+/// When merging cells in a [TableView], the same child should be returned from
+/// every vicinity the merged cell contains. The `build` method will only be
+/// called once for a merged cell, but since the table's children are lazily
+/// laid out, returning the same child ensures the merged cell can be built no
+/// matter which part of it is visible.
 class TableViewCell extends StatelessWidget {
   /// Creates a widget that controls how a child of a [TableView] spans across
   /// multiple rows or columns.
@@ -115,11 +122,15 @@ class TableViewCell extends StatelessWidget {
               (rowMergeStart != null && rowMergeSpan != null),
           'Row merge start and span must both be set, or both unset.',
         ),
+        assert(rowMergeStart == null || rowMergeStart >= 0),
+        assert(rowMergeSpan == null || rowMergeSpan > 0),
         assert(
           (columnMergeStart == null && columnMergeSpan == null) ||
               (columnMergeStart != null && columnMergeSpan != null),
           'Column merge start and span must both be set, or both unset.',
-        );
+        ),
+        assert(columnMergeStart == null || columnMergeStart >= 0),
+        assert(columnMergeSpan == null || columnMergeSpan > 0);
 
   /// The child contained in this cell of the [TableView].
   final Widget child;
@@ -184,16 +195,7 @@ class _TableViewCell extends ParentDataWidget<TableViewParentData> {
     this.columnMergeStart,
     this.columnMergeSpan,
     required super.child,
-  })  : assert(
-          (rowMergeStart == null && rowMergeSpan == null) ||
-              (rowMergeStart != null && rowMergeSpan != null),
-          'Row merge start and span must both be set, or both unset.',
-        ),
-        assert(
-          (columnMergeStart == null && columnMergeSpan == null) ||
-              (columnMergeStart != null && columnMergeSpan != null),
-          'Column merge start and span must both be set, or both unset.',
-        );
+  });
 
   final int? rowMergeStart;
   final int? rowMergeSpan;
@@ -206,18 +208,22 @@ class _TableViewCell extends ParentDataWidget<TableViewParentData> {
         renderObject.parentData! as TableViewParentData;
     bool needsLayout = false;
     if (parentData.rowMergeStart != rowMergeStart) {
+      assert(rowMergeStart == null || rowMergeStart! >= 0);
       parentData.rowMergeStart = rowMergeStart;
       needsLayout = true;
     }
     if (parentData.rowMergeSpan != rowMergeSpan) {
+      assert(rowMergeSpan == null || rowMergeSpan! > 0);
       parentData.rowMergeSpan = rowMergeSpan;
       needsLayout = true;
     }
     if (parentData.columnMergeStart != columnMergeStart) {
+      assert(columnMergeStart == null || columnMergeStart! >= 0);
       parentData.columnMergeStart = columnMergeStart;
       needsLayout = true;
     }
     if (parentData.columnMergeSpan != columnMergeSpan) {
+      assert(columnMergeSpan == null || columnMergeSpan! > 0);
       parentData.columnMergeSpan = columnMergeSpan;
       needsLayout = true;
     }

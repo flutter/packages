@@ -148,7 +148,8 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
               cellBuilder(context, vicinity as TableVicinity),
           maxXIndex: columnCount - 1,
           maxYIndex: rowCount - 1,
-          addRepaintBoundaries: false, // repaintBoundaries handled by TableViewCell
+          addRepaintBoundaries:
+              false, // repaintBoundaries handled by TableViewCell
         );
 
   @override
@@ -237,7 +238,8 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
         _pinnedRowCount = pinnedRowCount,
         super(
           children: cells,
-          addRepaintBoundaries: false, // repaintBoundaries handled by TableViewCell
+          addRepaintBoundaries:
+              false, // repaintBoundaries handled by TableViewCell
         ) {
     // Even if there are merged cells, they should be represented by the same
     // child in each cell location. This ensures that no matter which direction
