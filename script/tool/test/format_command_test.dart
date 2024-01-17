@@ -169,6 +169,16 @@ void main() {
         ]));
   });
 
+  test('skips dart if --no-dart flag is provided', () async {
+    const List<String> files = <String>[
+      'lib/a.dart',
+    ];
+    createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+    await runCapturingPrint(runner, <String>['format', '--no-dart']);
+    expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+  });
+
   test('formats .java files', () async {
     const List<String> files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
@@ -250,7 +260,7 @@ void main() {
         ]));
   });
 
-  test('honors --java flag', () async {
+  test('honors --java-path flag', () async {
     const List<String> files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
       'android/src/main/java/io/flutter/plugins/a_plugin/b.java',
@@ -278,6 +288,16 @@ void main() {
               ],
               packagesDir.path),
         ]));
+  });
+
+  test('skips Java if --no-java flag is provided', () async {
+    const List<String> files = <String>[
+      'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
+    ];
+    createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+    await runCapturingPrint(runner, <String>['format', '--no-java']);
+    expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
   });
 
   test('formats c-ish files', () async {
@@ -377,7 +397,7 @@ void main() {
         ]));
   });
 
-  test('honors --clang-format flag', () async {
+  test('honors --clang-format-path flag', () async {
     const List<String> files = <String>[
       'windows/foo_plugin.cpp',
     ];
@@ -434,6 +454,16 @@ void main() {
         ]));
   });
 
+  test('skips clang-format if --no-clang-format flag is provided', () async {
+    const List<String> files = <String>[
+      'linux/foo_plugin.cc',
+    ];
+    createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+    await runCapturingPrint(runner, <String>['format', '--no-clang-format']);
+    expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+  });
+
   group('kotlin-format', () {
     test('formats .kt files', () async {
       const List<String> files = <String>[
@@ -487,6 +517,16 @@ void main() {
           containsAllInOrder(<Matcher>[
             contains('Failed to format Kotlin files: exit code 1.'),
           ]));
+    });
+
+    test('skips Kotlin if --no-kotlin flag is provided', () async {
+      const List<String> files = <String>[
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      await runCapturingPrint(runner, <String>['format', '--no-kotlin']);
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
   });
 
