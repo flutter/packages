@@ -704,7 +704,7 @@ if (${_varNamePrefix}replyList == null) {
     if (hasHostApi) {
       _writeCreateConnectionError(indent);
     }
-    if (hasFlutterApi) {
+    if (hasFlutterApi || generatorOptions.testOutPath != null) {
       _writeWrapResponse(generatorOptions, root, indent);
     }
   }
