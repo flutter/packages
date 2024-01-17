@@ -27,8 +27,8 @@ import 'runtime.dart';
 ///  * [Align]
 ///  * [AspectRatio]
 ///  * [Center]
-///  * [ColoredBox]
 ///  * [ClipRRect]
+///  * [ColoredBox]
 ///  * [Column]
 ///  * [Container] (actually uses [AnimatedContainer])
 ///  * [DefaultTextStyle]
@@ -273,7 +273,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
   'ClipRRect': (BuildContext context, DataSource source) {
     return ClipRRect(
       borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']) ?? BorderRadius.zero,
-      // clipper,
+      // CustomClipper<RRect> clipper,
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.antiAlias,
       child: source.optionalChild(['child']),
     );
@@ -384,7 +384,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
     return GridView.builder(
       scrollDirection: ArgumentDecoders.enumValue<Axis>(Axis.values, source, ['scrollDirection']) ?? Axis.vertical,
       reverse: source.v<bool>(['reverse']) ?? false,
-      // controller,
+      //  controller,
       primary: source.v<bool>(['primary']),
       // physics,
       shrinkWrap: source.v<bool>(['shrinkWrap']) ?? false,
