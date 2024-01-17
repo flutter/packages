@@ -685,47 +685,45 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<bool> _showConfirm(BuildContext context, String message) async {
-    final dynamic result = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop(false);
-                  },
-                  child: const Text('Cancel')),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop(true);
-                  },
-                  child: const Text('OK')),
-            ],
-          );
-        });
-
-    return result.runtimeType == bool && result as bool;
+    return await showDialog<bool>(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                content: Text(message),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop(false);
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop(true);
+                      },
+                      child: const Text('OK')),
+                ],
+              );
+            }) ??
+        false;
   }
 
   Future<String> _showTextInput(
       BuildContext context, String message, String? defaultText) async {
-    final dynamic result = await showDialog<String>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop('Text test');
-                  },
-                  child: const Text('Enter')),
-            ],
-          );
-        });
-
-    return result.runtimeType == String ? result as String : '';
+    return await showDialog<String>(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                content: Text(message),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop('Text test');
+                      },
+                      child: const Text('Enter')),
+                ],
+              );
+            }) ??
+        '';
   }
 }
 
