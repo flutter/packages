@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
@@ -200,7 +199,6 @@ void main() {
     TableSpan buildSpan(bool isColumn) {
       return TableSpan(
         extent: const FixedTableSpanExtent(100),
-        // Do with background as well
         foregroundDecoration: TableSpanDecoration(
           color: isColumn ? const Color(0xFFE1BEE7) : const Color(0xFFBBDEFB),
         ),
