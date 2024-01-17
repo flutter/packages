@@ -26,10 +26,10 @@ class MyApp extends StatelessWidget {
 /// [AdaptiveLayout].
 class MyHomePage extends StatefulWidget {
   /// Creates a const [MyHomePage].
-  const MyHomePage({super.key, this.transTime = 1000});
+  const MyHomePage({super.key, this.transitionDuration = 1000});
 
   /// Declare transition duration.
-  final int transTime;
+  final int transitionDuration;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -37,14 +37,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selectedNavigation = 0;
-  int _transTime = 1000;
+  int _transitionDuration = 1000;
 
   // Initialize transition time variable.
   @override
   void initState() {
     super.initState();
     setState(() {
-      _transTime = widget.transTime;
+      _transitionDuration = widget.transitionDuration;
     });
   }
 
@@ -172,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
     return AdaptiveLayout(
       // An option to override the default transition duration.
-      transitionDuration: Duration(milliseconds: _transTime),
+      transitionDuration: Duration(milliseconds: _transitionDuration),
       // Primary navigation config has nothing from 0 to 600 dp screen width,
       // then an unextended NavigationRail with no labels and just icons then an
       // extended NavigationRail with both icons and labels.

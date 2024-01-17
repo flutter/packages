@@ -50,7 +50,7 @@ Widget build(BuildContext context) {
   ];
   return AdaptiveScaffold(
     // An option to override the default transition duration.
-    transitionDuration: Duration(milliseconds: _transTime),
+    transitionDuration: Duration(milliseconds: _transitionDuration),
     // An option to override the default breakpoints used for small, medium,
     // and large.
     smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
@@ -141,7 +141,7 @@ displayed and the entrance animation and exit animation.
 // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
 return AdaptiveLayout(
   // An option to override the default transition duration.
-  transitionDuration: Duration(milliseconds: _transTime),
+  transitionDuration: Duration(milliseconds: _transitionDuration),
   // Primary navigation config has nothing from 0 to 600 dp screen width,
   // then an unextended NavigationRail with no labels and just icons then an
   // extended NavigationRail with both icons and labels.
