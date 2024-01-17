@@ -1,6 +1,6 @@
 ## 16.0.1
 
-* Separates message call code generation into separate methods in the `KotlinGenerator`.
+* [kotlin] Separates message call code generation into separate methods.
 
 ## 16.0.0
 
