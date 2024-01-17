@@ -329,7 +329,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     final String channelName = javaScriptChannelParams.name;
     if (_javaScriptChannelParams.containsKey(channelName)) {
       throw ArgumentError(
-        'A JavaScriptChannel with name `$channelName` has already been added.',
+        'A JavaScriptChannel with name `$channelName` already exists.',
       );
     }
 
