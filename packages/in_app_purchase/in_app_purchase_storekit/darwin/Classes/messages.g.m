@@ -373,4 +373,23 @@ void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment"
+        binaryMessenger:binaryMessenger
+        codec:InAppPurchaseAPIGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(addPayment:error:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(addPayment:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSDictionary<NSString *, id> *arg_paymentMap = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        [api addPayment:arg_paymentMap error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }

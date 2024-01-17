@@ -135,6 +135,7 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 - (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (void)addPayment:(NSDictionary<NSString *, id> *)paymentMap error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *_Nullable api);

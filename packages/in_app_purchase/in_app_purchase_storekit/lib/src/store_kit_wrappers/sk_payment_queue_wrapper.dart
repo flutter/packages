@@ -54,19 +54,19 @@ class SKPaymentQueueWrapper {
   ///
   /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
   Future<SKStorefrontWrapper?> storefront() async {
-    final Map<String, dynamic>? storefrontMap = await channel
-        .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
-    if (storefrontMap == null) {
-      return null;
-    }
-    return SKStorefrontWrapper.fromJson(storefrontMap);
+    // final Map<String, dynamic>? storefrontMap = await channel
+    //     .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
+    // if (storefrontMap == null) {
+    //   return null;
+    // }
+    // return SKStorefrontWrapper.fromJson(storefrontMap);
     return SKStorefrontWrapper.convertFromPigeon(await _hostApi.storefront());
   }
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    return _getTransactionList((await channel
-        .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
+    // return _getTransactionList((await channel
+    //     .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
     final List<SKPaymentTransactionMessage?> pigeonMsgs = await _hostApi.transactions();
     return pigeonMsgs.map((SKPaymentTransactionMessage? msg) => SKPaymentTransactionWrapper.convertFromPigeon(msg!)).toList();
   }
@@ -148,11 +148,12 @@ class SKPaymentQueueWrapper {
   Future<void> addPayment(SKPaymentWrapper payment) async {
     assert(_observer != null,
         '[in_app_purchase]: Trying to add a payment without an observer. One must be set using `SkPaymentQueueWrapper.setTransactionObserver` before the app launches.');
-    final Map<String, dynamic> requestMap = payment.toMap();
-    await channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin addPayment:result:]',
-      requestMap,
-    );
+
+    await _hostApi.addPayment(payment.toMap());
+    // await channel.invokeMethod<void>(
+    //   '-[InAppPurchasePlugin addPayment:result:]',
+    //   requestMap,
+    // );
   }
 
   /// Finishes a transaction and removes it from the queue.

@@ -44,7 +44,7 @@
   //  InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
   //  SetUpInAppPurchaseAPI([registrar messenger], instance);
 
-    InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] init];
+    InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
     InAppPurchaseAPISetup([registrar messenger], instance);
@@ -91,16 +91,8 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"-[SKPaymentQueue canMakePayments:]" isEqualToString:call.method]) {
-    [self canMakePayments:result];
-  } else if ([@"-[SKPaymentQueue transactions]" isEqualToString:call.method]) {
-    [self getPendingTransactions:result];
-  } else if ([@"-[SKPaymentQueue storefront]" isEqualToString:call.method]) {
-    [self getStorefront:result];
-  } else if ([@"-[InAppPurchasePlugin startProductRequest:result:]" isEqualToString:call.method]) {
+  if ([@"-[InAppPurchasePlugin startProductRequest:result:]" isEqualToString:call.method]) {
     [self handleProductRequestMethodCall:call result:result];
-  } else if ([@"-[InAppPurchasePlugin addPayment:result:]" isEqualToString:call.method]) {
-    [self addPayment:call result:result];
   } else if ([@"-[InAppPurchasePlugin finishTransaction:result:]" isEqualToString:call.method]) {
     [self finishTransaction:call result:result];
   } else if ([@"-[InAppPurchasePlugin restoreTransactions:result:]" isEqualToString:call.method]) {
@@ -199,69 +191,69 @@
   }];
 }
 
-- (void)addPayment:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if (![call.arguments isKindOfClass:[NSDictionary class]]) {
-    result([FlutterError errorWithCode:@"storekit_invalid_argument"
-                               message:@"Argument type of addPayment is not a Dictionary"
-                               details:call.arguments]);
-    return;
-  }
-  NSDictionary *paymentMap = (NSDictionary *)call.arguments;
-  NSString *productID = [paymentMap objectForKey:@"productIdentifier"];
-  // When a product is already fetched, we create a payment object with
-  // the product to process the payment.
-  SKProduct *product = [self getProduct:productID];
-  if (!product) {
-    result([FlutterError
-        errorWithCode:@"storekit_invalid_payment_object"
-              message:
-                  @"You have requested a payment for an invalid product. Either the "
-                  @"`productIdentifier` of the payment is not valid or the product has not been "
-                  @"fetched before adding the payment to the payment queue."
-              details:call.arguments]);
-    return;
-  }
-  SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
-  payment.applicationUsername = [paymentMap objectForKey:@"applicationUsername"];
-  NSNumber *quantity = [paymentMap objectForKey:@"quantity"];
-  payment.quantity = (quantity != nil) ? quantity.integerValue : 1;
-  NSNumber *simulatesAskToBuyInSandbox = [paymentMap objectForKey:@"simulatesAskToBuyInSandbox"];
-  payment.simulatesAskToBuyInSandbox = (id)simulatesAskToBuyInSandbox == (id)[NSNull null]
-                                           ? NO
-                                           : [simulatesAskToBuyInSandbox boolValue];
-
-  if (@available(iOS 12.2, *)) {
-    NSDictionary *paymentDiscountMap = [self getNonNullValueFromDictionary:paymentMap
-                                                                    forKey:@"paymentDiscount"];
-    NSString *error = nil;
-    SKPaymentDiscount *paymentDiscount =
-        [FIAObjectTranslator getSKPaymentDiscountFromMap:paymentDiscountMap withError:&error];
-
-    if (error) {
-      result([FlutterError
-          errorWithCode:@"storekit_invalid_payment_discount_object"
-                message:[NSString stringWithFormat:@"You have requested a payment and specified a "
-                                                   @"payment discount with invalid properties. %@",
-                                                   error]
-                details:call.arguments]);
-      return;
-    }
-
-    payment.paymentDiscount = paymentDiscount;
-  }
-
-  if (![self.paymentQueueHandler addPayment:payment]) {
-    result([FlutterError
-        errorWithCode:@"storekit_duplicate_product_object"
-              message:@"There is a pending transaction for the same product identifier. Please "
-                      @"either wait for it to be finished or finish it manually using "
-                      @"`completePurchase` to avoid edge cases."
-
-              details:call.arguments]);
-    return;
-  }
-  result(nil);
-}
+//- (void)addPayment:(FlutterMethodCall *)call result:(FlutterResult)result {
+//  if (![call.arguments isKindOfClass:[NSDictionary class]]) {
+//    result([FlutterError errorWithCode:@"storekit_invalid_argument"
+//                               message:@"Argument type of addPayment is not a Dictionary"
+//                               details:call.arguments]);
+//    return;
+//  }
+//  NSDictionary *paymentMap = (NSDictionary *)call.arguments;
+//  NSString *productID = [paymentMap objectForKey:@"productIdentifier"];
+//  // When a product is already fetched, we create a payment object with
+//  // the product to process the payment.
+//  SKProduct *product = [self getProduct:productID];
+//  if (!product) {
+//    result([FlutterError
+//        errorWithCode:@"storekit_invalid_payment_object"
+//              message:
+//                  @"You have requested a payment for an invalid product. Either the "
+//                  @"`productIdentifier` of the payment is not valid or the product has not been "
+//                  @"fetched before adding the payment to the payment queue."
+//              details:call.arguments]);
+//    return;
+//  }
+//  SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+//  payment.applicationUsername = [paymentMap objectForKey:@"applicationUsername"];
+//  NSNumber *quantity = [paymentMap objectForKey:@"quantity"];
+//  payment.quantity = (quantity != nil) ? quantity.integerValue : 1;
+//  NSNumber *simulatesAskToBuyInSandbox = [paymentMap objectForKey:@"simulatesAskToBuyInSandbox"];
+//  payment.simulatesAskToBuyInSandbox = (id)simulatesAskToBuyInSandbox == (id)[NSNull null]
+//                                           ? NO
+//                                           : [simulatesAskToBuyInSandbox boolValue];
+//
+//  if (@available(iOS 12.2, *)) {
+//    NSDictionary *paymentDiscountMap = [self getNonNullValueFromDictionary:paymentMap
+//                                                                    forKey:@"paymentDiscount"];
+//    NSString *error = nil;
+//    SKPaymentDiscount *paymentDiscount =
+//        [FIAObjectTranslator getSKPaymentDiscountFromMap:paymentDiscountMap withError:&error];
+//
+//    if (error) {
+//      result([FlutterError
+//          errorWithCode:@"storekit_invalid_payment_discount_object"
+//                message:[NSString stringWithFormat:@"You have requested a payment and specified a "
+//                                                   @"payment discount with invalid properties. %@",
+//                                                   error]
+//                details:call.arguments]);
+//      return;
+//    }
+//
+//    payment.paymentDiscount = paymentDiscount;
+//  }
+//
+//  if (![self.paymentQueueHandler addPayment:payment]) {
+//    result([FlutterError
+//        errorWithCode:@"storekit_duplicate_product_object"
+//              message:@"There is a pending transaction for the same product identifier. Please "
+//                      @"either wait for it to be finished or finish it manually using "
+//                      @"`completePurchase` to avoid edge cases."
+//
+//              details:call.arguments]);
+//    return;
+//  }
+//  result(nil);
+//}
 
 - (void)finishTransaction:(FlutterMethodCall *)call result:(FlutterResult)result {
   if (![call.arguments isKindOfClass:[NSDictionary class]]) {
@@ -476,41 +468,83 @@
   return @([SKPaymentQueue canMakePayments]);
 }
 
-- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error {
   if (@available(iOS 13.0, macOS 10.15, *)) {
     SKStorefront *storefront = self.paymentQueueHandler.storefront;
     if (!storefront) {
       return nil;
     }
-    return NULL;
-//    return([self convertStorefrontToPigeon:storefront]);
+    return[FIAObjectTranslator convertStorefrontToPigeon:storefront];
+  } else {
+    NSLog(@"storefront is not avaialbe in iOS below 13.0 or macOS below 10.15.");
+    return nil;
   }
-
-  NSLog(@"storefront is not avaialbe in iOS below 13.0 or macOS below 10.15.");
-  return nil;
 }
 
-- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error {
   NSArray<SKPaymentTransaction *> *transactions =
       [self.paymentQueueHandler getUnfinishedTransactions];
   NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];
   for (SKPaymentTransaction *transaction in transactions) {
-    [transactionMaps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:transaction]];
+    [transactionMaps addObject:[FIAObjectTranslator convertTransactionToPigeon:transaction]];
   }
   return(transactionMaps);
-
 }
 
-- (nullable SKPaymentTransactionMessage *) convertTransactionToPigeon:(SKPaymentTransactionMessage *) transaction {
-  SKPaymentTransactionMessage *msg = [SKPaymentTransactionMessage init];
-  return NULL;
-}
+- (void)addPayment:(nonnull NSDictionary *)paymentMap error:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+  NSLog(@"Here");
+  NSString *productID = [paymentMap objectForKey:@"productIdentifier"];
+  // When a product is already fetched, we create a payment object with
+  // the product to process the payment.
+  SKProduct *product = [self getProduct:productID];
+  if (!product) {
+    *error = [FlutterError
+     errorWithCode:@"storekit_invalid_payment_object"
+     message:
+       @"You have requested a payment for an invalid product. Either the "
+     @"`productIdentifier` of the payment is not valid or the product has not been "
+     @"fetched before adding the payment to the payment queue."
+     details:paymentMap];
+    return;
+  }
+  
+  SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+  payment.applicationUsername = [paymentMap objectForKey:@"applicationUsername"];
+  NSNumber *quantity = [paymentMap objectForKey:@"quantity"];
+  payment.quantity = (quantity != nil) ? quantity.integerValue : 1;
+  NSNumber *simulatesAskToBuyInSandbox = [paymentMap objectForKey:@"simulatesAskToBuyInSandbox"];
+  payment.simulatesAskToBuyInSandbox = (id)simulatesAskToBuyInSandbox == (id)[NSNull null]
+  ? NO
+  : [simulatesAskToBuyInSandbox boolValue];
+  
+  if (@available(iOS 12.2, *)) {
+    NSDictionary *paymentDiscountMap = [self getNonNullValueFromDictionary:paymentMap
+                                                                    forKey:@"paymentDiscount"];
+    NSString *errorMsg = nil;
+    SKPaymentDiscount *paymentDiscount =
+    [FIAObjectTranslator getSKPaymentDiscountFromMap:paymentDiscountMap withError:&errorMsg];
+    
+    if (errorMsg) {
+      *error = [FlutterError
+       errorWithCode:@"storekit_invalid_payment_discount_object"
+       message:[NSString stringWithFormat:@"You have requested a payment and specified a "
+                @"payment discount with invalid properties. %@",
+                errorMsg]
+       details:paymentMap];
+      return;
+    }
+    
+    payment.paymentDiscount = paymentDiscount;
+  }
+  if (![self.paymentQueueHandler addPayment:payment]) {
+    *error = [FlutterError
+        errorWithCode:@"storekit_duplicate_product_object"
+              message:@"There is a pending transaction for the same product identifier. Please "
+                      @"either wait for it to be finished or finish it manually using "
+                      @"`completePurchase` to avoid edge cases."
 
-- (nullable SKStorefrontMessage *) convertStorefrontToPigeon:(SKStorefront *)storefront  API_AVAILABLE(ios(13.0)){
-  SKStorefrontMessage *msg = [SKStorefrontMessage init];
-  msg.identifier = storefront.identifier;
-  msg.countryCode = storefront.countryCode;
-  return msg;
+              details:paymentMap];
+    return;
+  }
 }
-
 @end

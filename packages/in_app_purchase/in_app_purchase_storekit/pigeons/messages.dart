@@ -143,6 +143,9 @@ abstract class InAppPurchaseAPI {
 
   // @ObjCSelector('storefront')
   SKStorefrontMessage storefront();
+
+  @ObjCSelector('addPayment:')
+  void addPayment(Map<String, Object?> paymentMap);
 }
 
 

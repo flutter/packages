@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FIAObjectTranslator.h"
+#import "messages.g.h"
 
 #pragma mark - SKProduct Coders
 
@@ -292,6 +293,61 @@
                                           timestamp:timestamp];
 
   return discount;
+}
+
++ (nullable SKPaymentTransactionMessage *) convertTransactionToPigeon:(SKPaymentTransaction *) transaction {
+  SKPaymentTransactionMessage *msg = [SKPaymentTransactionMessage makeWithPayment:[self convertPaymentToPigeon:transaction.payment] transactionState:[self convertTransactionStateToPigeon:transaction.transactionState] originalTransaction:transaction.originalTransaction ? [self convertTransactionToPigeon:transaction.originalTransaction] : nil transactionTimeStamp:[NSNumber numberWithDouble:[transaction.transactionDate timeIntervalSince1970]] transactionIdentifier:transaction.transactionIdentifier
+      error:[self convertSKErrorToPigeon:transaction.error]];
+  return msg;
+}
+
++ (nullable SKErrorMessage *) convertSKErrorToPigeon:(NSError *) error {
+  SKErrorMessage *msg = [SKErrorMessage makeWithCode:@(error.code) domain:error.domain userInfo:error.userInfo];
+  return msg;
+}
+
++ (SKPaymentTransactionStateMessage) convertTransactionStateToPigeon:(SKPaymentTransactionState) state {
+  switch (state) {
+    case SKPaymentTransactionStatePurchasing:
+      return SKPaymentTransactionStateMessagePurchasing;
+      break;
+    case SKPaymentTransactionStatePurchased:
+      return SKPaymentTransactionStateMessagePurchased;
+      break;
+    case SKPaymentTransactionStateFailed:
+      return SKPaymentTransactionStateMessageFailed;
+      break;
+    case SKPaymentTransactionStateRestored:
+      return SKPaymentTransactionStateMessageRestored;
+      break;
+    case SKPaymentTransactionStateDeferred:
+      return SKPaymentTransactionStateMessageDeferred;
+      break;
+  }
+}
+
++ (nullable SKPaymentMessage *) convertPaymentToPigeon:(SKPayment *) payment {
+  if (@available(iOS 12.2, *)) {
+    SKPaymentMessage *msg = [SKPaymentMessage makeWithProductIdentifier:payment.productIdentifier applicationUsername:payment.applicationUsername
+        requestData:[[NSString alloc] initWithData:payment.requestData encoding:NSUTF8StringEncoding]
+        quantity:@(payment.quantity)
+        simulatesAskToBuyInSandbox:@(payment.simulatesAskToBuyInSandbox)
+        paymentDiscount:[self convertPaymentDiscountToPigeon: payment.paymentDiscount]];
+    return msg;
+  }
+  return nil;
+}
+
++ (nullable SKPaymentDiscountMessage *) convertPaymentDiscountToPigeon:(SKPaymentDiscount *) discount  API_AVAILABLE(ios(12.2)){
+  SKPaymentDiscountMessage *msg = [SKPaymentDiscountMessage makeWithIdentifier:discount.identifier keyIdentifier:discount.keyIdentifier nonce:[discount.nonce UUIDString] signature:discount.signature timestamp:discount.timestamp];
+
+  return msg;
+}
+
++ (nullable SKStorefrontMessage *) convertStorefrontToPigeon:(SKStorefront *)storefront  API_AVAILABLE(ios(13.0)){
+  SKStorefrontMessage *msg = [SKStorefrontMessage makeWithCountryCode:storefront.countryCode
+      identifier:storefront.identifier];
+  return msg;
 }
 
 @end
