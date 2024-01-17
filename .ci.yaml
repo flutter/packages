@@ -1062,19 +1062,12 @@ targets:
         }
 
   ### iOS+macOS tasks ###
-  # TODO(jmagman): Remove when repo_checks is no longer in bringup.
+  # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
+  # support. `pod lint` makes a synthetic target that doesn't respect the
+  # pod's arch exclusions, so fails to build.
   - name: Mac_x64 check_podspecs
     recipe: packages/packages
     timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: macos_check_podspecs.yaml
-
-  - name: Mac_arm64 repo_checks
-    recipe: packages/packages
-    timeout: 30
-    bringup: true
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
