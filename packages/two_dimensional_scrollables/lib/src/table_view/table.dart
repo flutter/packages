@@ -761,9 +761,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           // Merged cell handling
           if (cellParentData.rowMergeStart != null ||
               cellParentData.columnMergeStart != null) {
-
             final int firstRow = cellParentData.rowMergeStart ?? row;
-            final int lastRow = cellParentData.rowMergeStart == null ? row : firstRow + cellParentData.rowMergeSpan! - 1;
+            final int lastRow = cellParentData.rowMergeStart == null
+                ? row
+                : firstRow + cellParentData.rowMergeSpan! - 1;
             assert(_debugCheckMergeBounds(
               spanOrientation: 'Row',
               currentSpan: row,
@@ -775,7 +776,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             ));
 
             final int firstColumn = cellParentData.columnMergeStart ?? column;
-            final int lastColumn = cellParentData.columnMergeStart == null ? column : firstColumn + cellParentData.columnMergeSpan! - 1;
+            final int lastColumn = cellParentData.columnMergeStart == null
+                ? column
+                : firstColumn + cellParentData.columnMergeSpan! - 1;
             assert(_debugCheckMergeBounds(
               spanOrientation: 'Column',
               currentSpan: column,
