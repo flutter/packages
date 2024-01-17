@@ -128,6 +128,19 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     final String podspecBasename = podspec.basename;
     print('Linting $podspecBasename');
 
+    // Hack the google_maps_flutter plugin's podspec to require iOS 13+, so that
+    // it gets a version of GoogleMaps that supports arm64 simulators, allowing
+    // linting to work on arm64 machines without forcing all plugin clients off
+    // of arm64 simulators.
+    // TODO(stuartmorgan): Remove this hack once
+    // https://github.com/flutter/flutter/issues/94491 is done.
+    String? originalPodspec;
+    if (podspecBasename == 'google_maps_flutter_ios.podspec') {
+      originalPodspec = podspec.readAsStringSync();
+      podspec.writeAsStringSync(
+          originalPodspec.replaceAll(":ios, '12.0'", ":ios, '13.0'"));
+    }
+
     // Lint plugin as framework (use_frameworks!).
     final ProcessResult frameworkResult =
         await _runPodLint(podspecPath, libraryLint: true);
@@ -139,6 +152,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
         await _runPodLint(podspecPath, libraryLint: false);
     print(libraryResult.stdout);
     print(libraryResult.stderr);
+
+    if (originalPodspec != null) {
+      podspec.writeAsStringSync(originalPodspec);
+    }
 
     return frameworkResult.exitCode == 0 && libraryResult.exitCode == 0;
   }
