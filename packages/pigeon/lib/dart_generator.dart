@@ -344,7 +344,8 @@ $resultAt != null
         final String returnType = isAsync
             ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
             : _addGenericTypesNullable(func.returnType);
-        final String argSignature = _getMethodParameterSignature(func);
+        final String argSignature =
+            _getMethodParameterSignature(func.parameters);
         indent.writeln('$returnType ${func.name}($argSignature);');
         indent.newln();
       }
@@ -352,115 +353,17 @@ $resultAt != null
           'static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger}) ');
       indent.addScoped('{', '}', () {
         for (final Method func in api.methods) {
-          indent.write('');
-          indent.addScoped('{', '}', () {
-            indent.writeln(
-              'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
-            );
-            final String channelName = channelNameFunc == null
+          _writeFlutterMethodMessageHandler(
+            indent,
+            name: func.name,
+            parameters: func.parameters,
+            returnType: func.returnType,
+            channelName: channelNameFunc == null
                 ? makeChannelName(api, func, dartPackageName)
-                : channelNameFunc(func);
-            indent.nest(2, () {
-              indent.writeln("'$channelName', $_pigeonChannelCodec,");
-              indent.writeln(
-                'binaryMessenger: binaryMessenger);',
-              );
-            });
-            final String messageHandlerSetterWithOpeningParentheses = isMockHandler
-                ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${_varNamePrefix}channel, '
-                : '${_varNamePrefix}channel.setMessageHandler(';
-            indent.write('if (api == null) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  '${messageHandlerSetterWithOpeningParentheses}null);');
-            }, addTrailingNewline: false);
-            indent.add(' else ');
-            indent.addScoped('{', '}', () {
-              indent.write(
-                '$messageHandlerSetterWithOpeningParentheses(Object? message) async ',
-              );
-              indent.addScoped('{', '});', () {
-                final String returnType =
-                    _addGenericTypesNullable(func.returnType);
-                final bool isAsync = func.isAsynchronous;
-                const String emptyReturnStatement =
-                    'return wrapResponse(empty: true);';
-                String call;
-                if (func.parameters.isEmpty) {
-                  call = 'api.${func.name}()';
-                } else {
-                  indent.writeln('assert(message != null,');
-                  indent.writeln("'Argument for $channelName was null.');");
-                  const String argsArray = 'args';
-                  indent.writeln(
-                      'final List<Object?> $argsArray = (message as List<Object?>?)!;');
-                  String argNameFunc(int index, NamedType type) =>
-                      _getSafeArgumentName(index, type);
-                  enumerate(func.parameters, (int count, NamedType arg) {
-                    final String argType = _addGenericTypes(arg.type);
-                    final String argName = argNameFunc(count, arg);
-                    final String genericArgType =
-                        _makeGenericTypeArguments(arg.type);
-                    final String castCall = _makeGenericCastCall(arg.type);
-
-                    final String leftHandSide = 'final $argType? $argName';
-                    if (arg.type.isEnum) {
-                      indent.writeln(
-                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
-                    } else {
-                      indent.writeln(
-                          '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
-                    }
-                    if (!arg.type.isNullable) {
-                      indent.writeln('assert($argName != null,');
-                      indent.writeln(
-                          "    'Argument for $channelName was null, expected non-null $argType.');");
-                    }
-                  });
-                  final Iterable<String> argNames =
-                      indexMap(func.parameters, (int index, Parameter field) {
-                    final String name = _getSafeArgumentName(index, field);
-                    return '${field.isNamed ? '${field.name}: ' : ''}$name${field.type.isNullable ? '' : '!'}';
-                  });
-                  call = 'api.${func.name}(${argNames.join(', ')})';
-                }
-                indent.writeScoped('try {', '} ', () {
-                  if (func.returnType.isVoid) {
-                    if (isAsync) {
-                      indent.writeln('await $call;');
-                    } else {
-                      indent.writeln('$call;');
-                    }
-                    indent.writeln(emptyReturnStatement);
-                  } else {
-                    if (isAsync) {
-                      indent.writeln('final $returnType output = await $call;');
-                    } else {
-                      indent.writeln('final $returnType output = $call;');
-                    }
-
-                    const String returnExpression = 'output';
-                    final String nullability =
-                        func.returnType.isNullable ? '?' : '';
-                    final String valueExtraction =
-                        func.returnType.isEnum ? '$nullability.index' : '';
-                    final String returnStatement = isMockHandler
-                        ? 'return <Object?>[$returnExpression$valueExtraction];'
-                        : 'return wrapResponse(result: $returnExpression$valueExtraction);';
-                    indent.writeln(returnStatement);
-                  }
-                }, addTrailingNewline: false);
-                indent.addScoped('on PlatformException catch (e) {', '}', () {
-                  indent.writeln('return wrapResponse(error: e);');
-                }, addTrailingNewline: false);
-
-                indent.writeScoped('catch (e) {', '}', () {
-                  indent.writeln(
-                      "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));");
-                });
-              });
-            });
-          });
+                : channelNameFunc(func),
+            isMockHandler: isMockHandler,
+            isAsynchronous: func.isAsynchronous,
+          );
         }
       });
     });
@@ -521,88 +424,14 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
         } else {
           first = false;
         }
-        addDocumentationComments(
-            indent, func.documentationComments, _docCommentSpec);
-        String argSignature = '';
-        String sendArgument = 'null';
-        if (func.parameters.isNotEmpty) {
-          final Iterable<String> argExpressions =
-              indexMap(func.parameters, (int index, NamedType type) {
-            final String name = _getParameterName(index, type);
-            if (type.type.isEnum) {
-              return '$name${type.type.isNullable ? '?' : ''}.index';
-            } else {
-              return name;
-            }
-          });
-          sendArgument = '<Object?>[${argExpressions.join(', ')}]';
-          argSignature = _getMethodParameterSignature(func);
-        }
-        indent.write(
-          'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
+        _writeHostMethod(
+          indent,
+          name: func.name,
+          parameters: func.parameters,
+          returnType: func.returnType,
+          documentationComments: func.documentationComments,
+          channelName: makeChannelName(api, func, dartPackageName),
         );
-        indent.addScoped('{', '}', () {
-          indent.writeln(
-              "const String ${_varNamePrefix}channelName = '${makeChannelName(api, func, dartPackageName)}';");
-          indent.writeScoped(
-              'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
-              ');', () {
-            indent.writeln('${_varNamePrefix}channelName,');
-            indent.writeln('$_pigeonChannelCodec,');
-            indent
-                .writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
-          });
-          final String returnType = _makeGenericTypeArguments(func.returnType);
-          final String genericCastCall = _makeGenericCastCall(func.returnType);
-          const String accessor = '${_varNamePrefix}replyList[0]';
-          // Avoid warnings from pointlessly casting to `Object?`.
-          final String nullablyTypedAccessor =
-              returnType == 'Object' ? accessor : '($accessor as $returnType?)';
-          final String nullHandler = func.returnType.isNullable
-              ? (genericCastCall.isEmpty ? '' : '?')
-              : '!';
-          String returnStatement = 'return';
-          if (func.returnType.isEnum) {
-            if (func.returnType.isNullable) {
-              returnStatement =
-                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
-            } else {
-              returnStatement =
-                  '$returnStatement $returnType.values[$accessor! as int]';
-            }
-          } else if (!func.returnType.isVoid) {
-            returnStatement =
-                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
-          }
-          returnStatement = '$returnStatement;';
-
-          indent.format('''
-final List<Object?>? ${_varNamePrefix}replyList =
-\t\tawait ${_varNamePrefix}channel.send($sendArgument) as List<Object?>?;
-if (${_varNamePrefix}replyList == null) {
-\tthrow _createConnectionError(${_varNamePrefix}channelName);
-} else if (${_varNamePrefix}replyList.length > 1) {
-\tthrow PlatformException(
-\t\tcode: ${_varNamePrefix}replyList[0]! as String,
-\t\tmessage: ${_varNamePrefix}replyList[1] as String?,
-\t\tdetails: ${_varNamePrefix}replyList[2],
-\t);''');
-          // On iOS we can return nil from functions to accommodate error
-          // handling.  Returning a nil value and not returning an error is an
-          // exception.
-          if (!func.returnType.isNullable && !func.returnType.isVoid) {
-            indent.format('''
-} else if (${_varNamePrefix}replyList[0] == null) {
-\tthrow PlatformException(
-\t\tcode: 'null-error',
-\t\tmessage: 'Host platform returned null value for non-null return value.',
-\t);''');
-          }
-          indent.format('''
-} else {
-\t$returnStatement
-}''');
-        });
       }
     });
   }
@@ -736,6 +565,236 @@ PlatformException _createConnectionError(String channelName) {
 \t);
 }''');
   }
+
+  void _writeHostMethod(
+    Indent indent, {
+    required String name,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required List<String> documentationComments,
+    required String channelName,
+  }) {
+    addDocumentationComments(indent, documentationComments, _docCommentSpec);
+    String argSignature = '';
+    if (parameters.isNotEmpty) {
+      argSignature = _getMethodParameterSignature(parameters);
+    }
+    indent.write(
+      'Future<${_addGenericTypesNullable(returnType)}> $name($argSignature) async ',
+    );
+    indent.addScoped('{', '}', () {
+      _writeHostMethodMessageCall(
+        indent,
+        channelName: channelName,
+        parameters: parameters,
+        returnType: returnType,
+      );
+    });
+  }
+
+  void _writeHostMethodMessageCall(
+    Indent indent, {
+    required String channelName,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+  }) {
+    String sendArgument = 'null';
+    if (parameters.isNotEmpty) {
+      final Iterable<String> argExpressions =
+          indexMap(parameters, (int index, NamedType type) {
+        final String name = _getParameterName(index, type);
+        if (type.type.isEnum) {
+          return '$name${type.type.isNullable ? '?' : ''}.index';
+        } else {
+          return name;
+        }
+      });
+      sendArgument = '<Object?>[${argExpressions.join(', ')}]';
+    }
+
+    indent
+        .writeln("const String ${_varNamePrefix}channelName = '$channelName';");
+    indent.writeScoped(
+        'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
+        ');', () {
+      indent.writeln('${_varNamePrefix}channelName,');
+      indent.writeln('$_pigeonChannelCodec,');
+      indent.writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
+    });
+    final String returnTypeName = _makeGenericTypeArguments(returnType);
+    final String genericCastCall = _makeGenericCastCall(returnType);
+    const String accessor = '${_varNamePrefix}replyList[0]';
+    // Avoid warnings from pointlessly casting to `Object?`.
+    final String nullablyTypedAccessor = returnTypeName == 'Object'
+        ? accessor
+        : '($accessor as $returnTypeName?)';
+    final String nullHandler =
+        returnType.isNullable ? (genericCastCall.isEmpty ? '' : '?') : '!';
+    String returnStatement = 'return';
+    if (returnType.isEnum) {
+      if (returnType.isNullable) {
+        returnStatement =
+            '$returnStatement ($accessor as int?) == null ? null : $returnTypeName.values[$accessor! as int]';
+      } else {
+        returnStatement =
+            '$returnStatement $returnTypeName.values[$accessor! as int]';
+      }
+    } else if (!returnType.isVoid) {
+      returnStatement =
+          '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+    }
+    returnStatement = '$returnStatement;';
+
+    indent.format('''
+final List<Object?>? ${_varNamePrefix}replyList =
+\t\tawait ${_varNamePrefix}channel.send($sendArgument) as List<Object?>?;
+if (${_varNamePrefix}replyList == null) {
+\tthrow _createConnectionError(${_varNamePrefix}channelName);
+} else if (${_varNamePrefix}replyList.length > 1) {
+\tthrow PlatformException(
+\t\tcode: ${_varNamePrefix}replyList[0]! as String,
+\t\tmessage: ${_varNamePrefix}replyList[1] as String?,
+\t\tdetails: ${_varNamePrefix}replyList[2],
+\t);''');
+    // On iOS we can return nil from functions to accommodate error
+    // handling.  Returning a nil value and not returning an error is an
+    // exception.
+    if (!returnType.isNullable && !returnType.isVoid) {
+      indent.format('''
+} else if (${_varNamePrefix}replyList[0] == null) {
+\tthrow PlatformException(
+\t\tcode: 'null-error',
+\t\tmessage: 'Host platform returned null value for non-null return value.',
+\t);''');
+    }
+    indent.format('''
+} else {
+\t$returnStatement
+}''');
+  }
+
+  void _writeFlutterMethodMessageHandler(
+    Indent indent, {
+    required String name,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required String channelName,
+    required bool isMockHandler,
+    required bool isAsynchronous,
+    String nullHandlerExpression = 'api == null',
+    String Function(String methodName, Iterable<String> safeArgumentNames)
+        onCreateApiCall = _createFlutterApiMethodCall,
+  }) {
+    indent.write('');
+    indent.addScoped('{', '}', () {
+      indent.writeln(
+        'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
+      );
+      indent.nest(2, () {
+        indent.writeln("'$channelName', $_pigeonChannelCodec,");
+        indent.writeln(
+          'binaryMessenger: binaryMessenger);',
+        );
+      });
+      final String messageHandlerSetterWithOpeningParentheses = isMockHandler
+          ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${_varNamePrefix}channel, '
+          : '${_varNamePrefix}channel.setMessageHandler(';
+      indent.write('if ($nullHandlerExpression) ');
+      indent.addScoped('{', '}', () {
+        indent.writeln('${messageHandlerSetterWithOpeningParentheses}null);');
+      }, addTrailingNewline: false);
+      indent.add(' else ');
+      indent.addScoped('{', '}', () {
+        indent.write(
+          '$messageHandlerSetterWithOpeningParentheses(Object? message) async ',
+        );
+        indent.addScoped('{', '});', () {
+          final String returnTypeString = _addGenericTypesNullable(returnType);
+          final bool isAsync = isAsynchronous;
+          const String emptyReturnStatement =
+              'return wrapResponse(empty: true);';
+          String call;
+          if (parameters.isEmpty) {
+            call = 'api.$name()';
+          } else {
+            indent.writeln('assert(message != null,');
+            indent.writeln("'Argument for $channelName was null.');");
+            const String argsArray = 'args';
+            indent.writeln(
+                'final List<Object?> $argsArray = (message as List<Object?>?)!;');
+            String argNameFunc(int index, NamedType type) =>
+                _getSafeArgumentName(index, type);
+            enumerate(parameters, (int count, NamedType arg) {
+              final String argType = _addGenericTypes(arg.type);
+              final String argName = argNameFunc(count, arg);
+              final String genericArgType = _makeGenericTypeArguments(arg.type);
+              final String castCall = _makeGenericCastCall(arg.type);
+
+              final String leftHandSide = 'final $argType? $argName';
+              if (arg.type.isEnum) {
+                indent.writeln(
+                    '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
+              } else {
+                indent.writeln(
+                    '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
+              }
+              if (!arg.type.isNullable) {
+                indent.writeln('assert($argName != null,');
+                indent.writeln(
+                    "    'Argument for $channelName was null, expected non-null $argType.');");
+              }
+            });
+            final Iterable<String> argNames =
+                indexMap(parameters, (int index, Parameter field) {
+              final String name = _getSafeArgumentName(index, field);
+              return '${field.isNamed ? '${field.name}: ' : ''}$name${field.type.isNullable ? '' : '!'}';
+            });
+            call = onCreateApiCall(name, argNames);
+          }
+          indent.writeScoped('try {', '} ', () {
+            if (returnType.isVoid) {
+              if (isAsync) {
+                indent.writeln('await $call;');
+              } else {
+                indent.writeln('$call;');
+              }
+              indent.writeln(emptyReturnStatement);
+            } else {
+              if (isAsync) {
+                indent.writeln('final $returnTypeString output = await $call;');
+              } else {
+                indent.writeln('final $returnTypeString output = $call;');
+              }
+
+              const String returnExpression = 'output';
+              final String nullability = returnType.isNullable ? '?' : '';
+              final String valueExtraction =
+                  returnType.isEnum ? '$nullability.index' : '';
+              final String returnStatement = isMockHandler
+                  ? 'return <Object?>[$returnExpression$valueExtraction];'
+                  : 'return wrapResponse(result: $returnExpression$valueExtraction);';
+              indent.writeln(returnStatement);
+            }
+          }, addTrailingNewline: false);
+          indent.addScoped('on PlatformException catch (e) {', '}', () {
+            indent.writeln('return wrapResponse(error: e);');
+          }, addTrailingNewline: false);
+
+          indent.writeScoped('catch (e) {', '}', () {
+            indent.writeln(
+                "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));");
+          });
+        });
+      });
+    });
+  }
+
+  static String _createFlutterApiMethodCall(
+    String methodName,
+    Iterable<String> safeArgumentNames,
+  ) {
+    return 'api.$methodName(${safeArgumentNames.join(', ')})';
+  }
 }
 
 String _escapeForDartSingleQuotedString(String raw) {
@@ -824,20 +883,20 @@ String _getParameterName(int count, NamedType field) =>
 
 /// Generates the parameters code for [func]
 /// Example: (func, _getParameterName) -> 'String? foo, int bar'
-String _getMethodParameterSignature(Method func) {
+String _getMethodParameterSignature(Iterable<Parameter> parameters) {
   String signature = '';
-  if (func.parameters.isEmpty) {
+  if (parameters.isEmpty) {
     return signature;
   }
 
-  final List<Parameter> requiredPositionalParams = func.parameters
+  final List<Parameter> requiredPositionalParams = parameters
       .where((Parameter p) => p.isPositional && !p.isOptional)
       .toList();
-  final List<Parameter> optionalPositionalParams = func.parameters
+  final List<Parameter> optionalPositionalParams = parameters
       .where((Parameter p) => p.isPositional && p.isOptional)
       .toList();
   final List<Parameter> namedParams =
-      func.parameters.where((Parameter p) => !p.isPositional).toList();
+      parameters.where((Parameter p) => !p.isPositional).toList();
 
   String getParameterString(Parameter p) {
     final String required = p.isRequired && !p.isPositional ? 'required ' : '';
