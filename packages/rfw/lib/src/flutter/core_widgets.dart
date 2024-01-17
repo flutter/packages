@@ -29,6 +29,7 @@ import 'runtime.dart';
 ///  * [Center]
 ///  * [ClipRRect]
 ///  * [ColoredBox]
+///  * [ClipRRect]
 ///  * [Column]
 ///  * [Container] (actually uses [AnimatedContainer])
 ///  * [DefaultTextStyle]
