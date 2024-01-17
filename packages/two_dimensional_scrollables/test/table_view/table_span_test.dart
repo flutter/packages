@@ -192,8 +192,8 @@ void main() {
       horizontalController.dispose();
     });
 
-    Widget buildCell(BuildContext context, TableVicinity vicinity) {
-      return const SizedBox.shrink();
+    TableViewCell buildCell(BuildContext context, TableVicinity vicinity) {
+      return const TableViewCell(child: SizedBox.shrink());
     }
 
     TableSpan buildSpan(bool isColumn) {
@@ -846,6 +846,58 @@ void main() {
       );
     });
   });
+
+  // TODO(Piinks): Add cases for reversed axes once
+  //  https://github.com/flutter/flutter/issues/141704 is fixed.
+  testWidgets('merged cell decorations', (WidgetTester tester) async {
+    // Cluster of merged rows (M) surrounded by regular cells (...).
+    // This tiered scenario verifies that the correct decoration is applied
+    // from leading cells for column decorations.
+    // +---------+--------+--------+
+    // | M(0,0)//|////////|////////|
+    // |/////////|////////|////////|
+    // +/////////+--------+--------+
+    // |/////////| M(1,1) |        |
+    // |/////////|        |        |
+    // +---------+        +--------+
+    // |         |        | M(2,2) |
+    // |         |        |        |
+    // +---------+--------+        +
+    // |*********|********|        |
+    // |*********|********|        |
+    // +---------+--------+--------+
+
+    // Cluster of merged cells (M) surrounded by regular cells (...).
+    // This tiered scenario verifies that the correct decoration is applied
+    // from leading cells for column decorations.
+    // +--------+--------+--------+--------+
+    // | M(0,0)//////////|********|        |
+    // |/////////////////|********|        |
+    // +--------+--------+--------+--------+
+    // |////////| M(1,1)          |        |
+    // |////////|                 |        |
+    // +--------+--------+--------+--------+
+    // |////////|        |M(2,2)***********|
+    // |////////|        |*****************|
+    // +--------+--------+--------+--------+
+
+    // Cluster of merged cells (M) surrounded by regular cells (...).
+    // This tiered scenario verifies that the correct decoration is applied
+    // from leading cells for column decorations.
+    // +--------+--------+--------+--------+
+    // | M(0,0)//////////|////////|////////|
+    // |/////////////////|////////|////////|
+    // +/////////////////+--------+--------+
+    // |/////////////////| M(1,2)          |
+    // |/////////////////|                 |
+    // +--------+--------+                 |
+    // |********|********|                 |
+    // |********|********|                 |
+    // +--------+--------+--------+--------+
+  });
+
+  testWidgets('merged cells account for row/column padding',
+      (WidgetTester tester) async {});
 }
 
 class TestCanvas implements Canvas {
