@@ -734,21 +734,21 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required Offset offset,
   }) {
     _Span colSpan, rowSpan;
-    double yPaintOffset = -offset.dy;
+    double rowOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
-      double xPaintOffset = -offset.dx;
+      double columnOffset = -offset.dx;
       rowSpan = _rowMetrics[row]!;
       final double standardRowHeight = rowSpan.extent;
       double? mergedRowHeight;
-      double? mergedYPaintOffset;
-      yPaintOffset += rowSpan.configuration.padding.leading;
+      double? mergedRowOffset;
+      rowOffset += rowSpan.configuration.padding.leading;
 
       for (int column = start.column; column <= end.column; column += 1) {
         colSpan = _columnMetrics[column]!;
         final double standardColumnWidth = colSpan.extent;
         double? mergedColumnWidth;
-        double? mergedXPaintOffset;
-        xPaintOffset += colSpan.configuration.padding.leading;
+        double? mergedColumnOffset;
+        columnOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
         final RenderBox? cell = _mergedVicinities.keys.contains(vicinity)
@@ -757,84 +757,73 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
         if (cell != null) {
           final TableViewParentData cellParentData = parentDataOf(cell);
-          if (vicinity == TableVicinity.zero) {
-            print(cellParentData);
-          }
 
           // Merged cell handling
           if (cellParentData.rowMergeStart != null ||
               cellParentData.columnMergeStart != null) {
-            late final int rowMergeStart;
-            late final int lastRow;
-            if (cellParentData.rowMergeStart != null) {
-              rowMergeStart = cellParentData.rowMergeStart!;
-              lastRow = rowMergeStart + cellParentData.rowMergeSpan! - 1;
-              _mergedRows.add(rowMergeStart);
-            } else {
-              rowMergeStart = row;
-              lastRow = row;
-            }
+
+            final int firstRow = cellParentData.rowMergeStart ?? row;
+            final int lastRow = cellParentData.rowMergeStart == null ? row : firstRow + cellParentData.rowMergeSpan! - 1;
             assert(_debugCheckMergeBounds(
               spanOrientation: 'Row',
               currentSpan: row,
-              spanMergeStart: rowMergeStart,
+              spanMergeStart: firstRow,
               spanMergeEnd: lastRow,
               spanCount: delegate.rowCount,
               pinnedSpanCount: delegate.pinnedRowCount,
               currentVicinity: vicinity,
             ));
 
-            late final int columnMergeStart;
-            late final int lastColumn;
-            if (cellParentData.columnMergeStart != null) {
-              columnMergeStart = cellParentData.columnMergeStart!;
-              lastColumn =
-                  columnMergeStart + cellParentData.columnMergeSpan! - 1;
-              _mergedColumns.add(columnMergeStart);
-            } else {
-              columnMergeStart = column;
-              lastColumn = column;
-            }
+            final int firstColumn = cellParentData.columnMergeStart ?? column;
+            final int lastColumn = cellParentData.columnMergeStart == null ? column : firstColumn + cellParentData.columnMergeSpan! - 1;
             assert(_debugCheckMergeBounds(
               spanOrientation: 'Column',
               currentSpan: column,
-              spanMergeStart: columnMergeStart,
+              spanMergeStart: firstColumn,
               spanMergeEnd: lastColumn,
               spanCount: delegate.columnCount,
               pinnedSpanCount: delegate.pinnedColumnCount,
               currentVicinity: vicinity,
             ));
 
+            // Leading padding on the leading cell, and trailing padding on the
+            // trailing cell should be excluded. Interim leading/trailing
+            // paddings are consumed by the merged cell.
+            // Example: This is one whole cell spanning 2 merged columns.
+            // l indicates leading padding, t trailing padding
+            // +---------------------------------------------------------+
+            // |  l  |  column extent  |  t  |  l  | column extent |  t  |
+            // +---------------------------------------------------------+
+            //       | <--------- extent of merged cell ---------> |
+
             // Compute height and layout offset for merged rows.
-            final _Span firstRow = _rowMetrics[rowMergeStart]!;
-            mergedRowHeight = firstRow.extent;
-            mergedYPaintOffset = -verticalOffset.pixels +
-                firstRow.leadingOffset +
-                firstRow.configuration.padding.leading;
+            mergedRowOffset = -verticalOffset.pixels +
+                _rowMetrics[firstRow]!.leadingOffset +
+                _rowMetrics[firstRow]!.configuration.padding.leading;
+            mergedRowHeight = _rowMetrics[lastRow]!.trailingOffset -
+                _rowMetrics[firstRow]!.leadingOffset -
+                _rowMetrics[lastRow]!.configuration.padding.trailing -
+                _rowMetrics[firstRow]!.configuration.padding.leading;
             // Compute width and layout offset for merged columns.
-            final _Span firstColumn = _columnMetrics[columnMergeStart]!;
-            mergedColumnWidth = firstColumn.extent;
-            mergedXPaintOffset = -horizontalOffset.pixels +
-                firstColumn.leadingOffset +
-                firstColumn.configuration.padding.leading;
+            mergedColumnOffset = -horizontalOffset.pixels +
+                _columnMetrics[firstColumn]!.leadingOffset +
+                _columnMetrics[firstColumn]!.configuration.padding.leading;
+            mergedColumnWidth = _columnMetrics[lastColumn]!.trailingOffset -
+                _columnMetrics[firstColumn]!.leadingOffset -
+                _columnMetrics[lastColumn]!.configuration.padding.trailing -
+                _columnMetrics[firstColumn]!.configuration.padding.leading;
 
             // Collect all of the vicinities that will not need to be built now.
-            int currentRow = rowMergeStart;
+            int currentRow = firstRow;
             while (currentRow <= lastRow) {
-              _mergedRows.add(currentRow);
-              mergedRowHeight =
-                  mergedRowHeight! + _rowMetrics[currentRow]!.extent;
-              int currentColumn = columnMergeStart;
+              if (cellParentData.rowMergeStart != null) {
+                _mergedRows.add(currentRow);
+              }
+              int currentColumn = firstColumn;
               while (currentColumn <= lastColumn) {
-                if (vicinity == TableVicinity.zero) {
-                  print(TableVicinity(
-                    row: currentRow,
-                    column: currentColumn,
-                  ));
+                if (cellParentData.columnMergeStart != null) {
+                  _mergedColumns.add(currentColumn);
                 }
-                _mergedColumns.add(currentColumn);
-                mergedColumnWidth =
-                    mergedColumnWidth! + _columnMetrics[currentColumn]!.extent;
                 _mergedVicinities[TableVicinity(
                   row: currentRow,
                   column: currentColumn,
@@ -845,29 +834,24 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             }
           }
 
-          if (vicinity == TableVicinity.zero) {
-            print('mergedColumnWidth $mergedColumnWidth');
-            print('mergedRowHeight $mergedRowHeight');
-          }
-
           final BoxConstraints cellConstraints = BoxConstraints.tightFor(
             width: mergedColumnWidth ?? standardColumnWidth,
             height: mergedRowHeight ?? standardRowHeight,
           );
           cell.layout(cellConstraints);
           cellParentData.layoutOffset = Offset(
-            mergedXPaintOffset ?? xPaintOffset,
-            mergedYPaintOffset ?? yPaintOffset,
+            mergedColumnOffset ?? columnOffset,
+            mergedRowOffset ?? rowOffset,
           );
-          mergedYPaintOffset = null;
+          mergedRowOffset = null;
           mergedRowHeight = null;
-          mergedXPaintOffset = null;
+          mergedColumnOffset = null;
           mergedColumnWidth = null;
         }
-        xPaintOffset += standardColumnWidth +
+        columnOffset += standardColumnWidth +
             _columnMetrics[column]!.configuration.padding.trailing;
       }
-      yPaintOffset +=
+      rowOffset +=
           standardRowHeight + _rowMetrics[row]!.configuration.padding.trailing;
     }
   }
