@@ -29,7 +29,6 @@ import 'runtime.dart';
 ///  * [Center]
 ///  * [ClipRRect]
 ///  * [ColoredBox]
-///  * [ClipRRect]
 ///  * [Column]
 ///  * [Container] (actually uses [AnimatedContainer])
 ///  * [DefaultTextStyle]
@@ -385,7 +384,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
     return GridView.builder(
       scrollDirection: ArgumentDecoders.enumValue<Axis>(Axis.values, source, ['scrollDirection']) ?? Axis.vertical,
       reverse: source.v<bool>(['reverse']) ?? false,
-      //  controller,
+      // controller,
       primary: source.v<bool>(['primary']),
       // physics,
       shrinkWrap: source.v<bool>(['shrinkWrap']) ?? false,

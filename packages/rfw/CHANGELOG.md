@@ -1,3 +1,6 @@
+## 1.0.18
+* Add `DropdownButton` and `ClipRRect` widgets to rfw widget library.
+
 ## 1.0.17
 
 * Adds support for tracking source locations of `BlobNode`s and
@@ -8,7 +11,6 @@
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 * Fixes lint warnings.
-* Add one core widget and one material widget.
 
 ## 1.0.15
 
