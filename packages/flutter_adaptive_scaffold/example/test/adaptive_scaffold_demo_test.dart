@@ -108,7 +108,7 @@ void main() {
     final Finder sBody = find.byKey(const Key('sBody'));
 
     await updateScreen(400, tester, transitionDuration: 500);
-    await updateScreen(800, tester, transitionDurationn: 500);
+    await updateScreen(800, tester, transitionDuration: 500);
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
