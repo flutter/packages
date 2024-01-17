@@ -196,9 +196,7 @@
   [self.UIDelegateAPI runJavaScriptAlertPanelForDelegateWithIdentifier:self
                                                                message:message
                                                                  frame:frame
-                                                     completionHandler:^{
-                                                       completionHandler();
-                                                     }];
+                                                     completionHandler:completionHandler];
 }
 
 - (void)webView:(WKWebView *)webView
@@ -208,9 +206,7 @@
   [self.UIDelegateAPI runJavaScriptConfirmPanelForDelegateWithIdentifier:self
                                                                  message:message
                                                                    frame:frame
-                                                       completionHandler:^(BOOL isConfirmed) {
-                                                         completionHandler(isConfirmed);
-                                                       }];
+                                                       completionHandler:completionHandler];
 }
 
 - (void)webView:(WKWebView *)webView
@@ -223,9 +219,7 @@
                                                     prompt:prompt
                                                defaultText:defaultText
                                                      frame:frame
-                                         completionHandler:^(NSString *_Nullable inputMessage) {
-                                           completionHandler(inputMessage);
-                                         }];
+                                         completionHandler:completionHandler];
 }
 
 @end
