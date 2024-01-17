@@ -326,6 +326,13 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<void> addJavaScriptChannel(
     JavaScriptChannelParams javaScriptChannelParams,
   ) {
+    final String channelName = javaScriptChannelParams.name;
+    if (_javaScriptChannelParams.containsKey(channelName)) {
+      throw ArgumentError(
+        'A JavaScriptChannel with name `$channelName` already exists.',
+      );
+    }
+
     final WebKitJavaScriptChannelParams webKitParams =
         javaScriptChannelParams is WebKitJavaScriptChannelParams
             ? javaScriptChannelParams
