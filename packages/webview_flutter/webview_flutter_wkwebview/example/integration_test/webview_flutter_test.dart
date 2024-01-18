@@ -1303,6 +1303,98 @@ Future<void> main() async {
     },
   );
 
+  testWidgets('can receive JavaScript alert dialogs',
+      (WidgetTester tester) async {
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    final Completer<String> alertMessage = Completer<String>();
+    unawaited(controller.setOnJavaScriptAlertDialog(
+      (JavaScriptAlertDialogRequest request) async {
+        alertMessage.complete(request.message);
+      },
+    ));
+
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    unawaited(
+      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    await controller.runJavaScript('alert("alert message")');
+    await expectLater(alertMessage.future, completion('alert message'));
+  });
+
+  testWidgets('can receive JavaScript confirm dialogs',
+      (WidgetTester tester) async {
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    final Completer<String> confirmMessage = Completer<String>();
+    unawaited(controller.setOnJavaScriptConfirmDialog(
+      (JavaScriptConfirmDialogRequest request) async {
+        confirmMessage.complete(request.message);
+        return true;
+      },
+    ));
+
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    unawaited(
+      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    await controller.runJavaScript('confirm("confirm message")');
+    await expectLater(confirmMessage.future, completion('confirm message'));
+  });
+
+  testWidgets('can receive JavaScript prompt dialogs',
+      (WidgetTester tester) async {
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    unawaited(controller.setOnJavaScriptTextInputDialog(
+      (JavaScriptTextInputDialogRequest request) async {
+        return 'return message';
+      },
+    ));
+
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    unawaited(
+      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    final Object promptResponse = await controller.runJavaScriptReturningResult(
+      'prompt("input message", "default text")',
+    );
+    expect(promptResponse, 'return message');
+  });
+
   group('Logging', () {
     testWidgets('can receive console log messages',
         (WidgetTester tester) async {
