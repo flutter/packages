@@ -17,7 +17,7 @@
 #include <optional>
 #include <string>
 
-namespace Messages {
+namespace video_player_windows {
 using flutter::BasicMessageChannel;
 using flutter::CustomEncodableValue;
 using flutter::EncodableList;
@@ -85,13 +85,7 @@ void WindowsVideoPlayerApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& encodable_uri_arg = args.at(1);
               const auto* uri_arg =
                   std::get_if<std::string>(&encodable_uri_arg);
-              const auto& encodable_package_name_arg = args.at(2);
-              const auto* package_name_arg =
-                  std::get_if<std::string>(&encodable_package_name_arg);
-              const auto& encodable_format_hint_arg = args.at(3);
-              const auto* format_hint_arg =
-                  std::get_if<std::string>(&encodable_format_hint_arg);
-              const auto& encodable_http_headers_arg = args.at(4);
+              const auto& encodable_http_headers_arg = args.at(2);
               if (encodable_http_headers_arg.IsNull()) {
                 reply(WrapError("http_headers_arg unexpectedly null."));
                 return;
@@ -99,8 +93,7 @@ void WindowsVideoPlayerApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& http_headers_arg =
                   std::get<EncodableMap>(encodable_http_headers_arg);
               ErrorOr<int64_t> output =
-                  api->Create(asset_arg, uri_arg, package_name_arg,
-                              format_hint_arg, http_headers_arg);
+                  api->Create(asset_arg, uri_arg, http_headers_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
@@ -421,42 +414,6 @@ void WindowsVideoPlayerApi::SetUp(flutter::BinaryMessenger* binary_messenger,
       channel->SetMessageHandler(nullptr);
     }
   }
-  {
-    auto channel = std::make_unique<BasicMessageChannel<>>(
-        binary_messenger,
-        "dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi."
-        "setMixWithOthers",
-        &GetCodec());
-    if (api != nullptr) {
-      channel->SetMessageHandler(
-          [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
-            try {
-              const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_mix_with_others_arg = args.at(0);
-              if (encodable_mix_with_others_arg.IsNull()) {
-                reply(WrapError("mix_with_others_arg unexpectedly null."));
-                return;
-              }
-              const auto& mix_with_others_arg =
-                  std::get<bool>(encodable_mix_with_others_arg);
-              std::optional<FlutterError> output =
-                  api->SetMixWithOthers(mix_with_others_arg);
-              if (output.has_value()) {
-                reply(WrapError(output.value()));
-                return;
-              }
-              EncodableList wrapped;
-              wrapped.push_back(EncodableValue());
-              reply(EncodableValue(std::move(wrapped)));
-            } catch (const std::exception& exception) {
-              reply(WrapError(exception.what()));
-            }
-          });
-    } else {
-      channel->SetMessageHandler(nullptr);
-    }
-  }
 }
 
 EncodableValue WindowsVideoPlayerApi::WrapError(
@@ -472,4 +429,4 @@ EncodableValue WindowsVideoPlayerApi::WrapError(const FlutterError& error) {
                                       error.details()});
 }
 
-}  // namespace Messages
+}  // namespace video_player_windows

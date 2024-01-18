@@ -5,19 +5,8 @@
 // Include prior to C++/WinRT Headers
 #include <wil/cppwinrt.h>
 
-// C++/WinRT Headers
-#include <winrt/Windows.ApplicationModel.Core.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Core.h>
-#include <winrt/Windows.UI.Input.h>
-
-// Direct3D
-#include <d3d11.h>
-
 // Windows Implementation Library
 #include <wil/resource.h>
-#include <wil/result_macros.h>
 
 // MediaFoundation headers
 #include <Audioclient.h>
@@ -36,37 +25,37 @@
 
 using namespace Microsoft::WRL;
 
-namespace media {
+namespace video_player_windows {
 
 IFACEMETHODIMP MediaEngineExtension::CanPlayType(
-    BOOL /*isAudioOnly*/, BSTR /*mimeType*/,
+    BOOL /*is_audio_only*/, BSTR /*mime_type*/,
     MF_MEDIA_ENGINE_CANPLAY* result) noexcept {
   *result = MF_MEDIA_ENGINE_CANPLAY_NOT_SUPPORTED;
   return S_OK;
 }
 
 IFACEMETHODIMP MediaEngineExtension::BeginCreateObject(
-    BSTR /*url*/, IMFByteStream* /*byteStream*/, MF_OBJECT_TYPE type,
-    IUnknown** cancelCookie, IMFAsyncCallback* callback,
+    BSTR /*url*/, IMFByteStream* /*byte_stream*/, MF_OBJECT_TYPE type,
+    IUnknown** cancel_cookie, IMFAsyncCallback* callback,
     IUnknown* state) noexcept try {
-  if (cancelCookie) {
-    *cancelCookie = nullptr;
+  if (cancel_cookie) {
+    *cancel_cookie = nullptr;
   }
-  winrt::com_ptr<IUnknown> localSource;
+  winrt::com_ptr<IUnknown> local_source;
   {
-    auto lock = m_lock.lock();
-    THROW_HR_IF(MF_E_SHUTDOWN, m_hasShutdown);
-    localSource = m_mfMediaSource;
+    auto lock = lock_.lock();
+    THROW_HR_IF(MF_E_SHUTDOWN, has_shutdown_);
+    local_source = mf_media_source_;
   }
 
-  if (type == MF_OBJECT_MEDIASOURCE && localSource != nullptr) {
-    winrt::com_ptr<IMFAsyncResult> asyncResult;
-    THROW_IF_FAILED(MFCreateAsyncResult(localSource.get(), callback, state,
-                                        asyncResult.put()));
-    THROW_IF_FAILED(asyncResult->SetStatus(S_OK));
-    m_uriType = ExtensionUriType::CustomSource;
+  if (type == MF_OBJECT_MEDIASOURCE && local_source != nullptr) {
+    winrt::com_ptr<IMFAsyncResult> async_result;
+    THROW_IF_FAILED(MFCreateAsyncResult(local_source.get(), callback, state,
+                                        async_result.put()));
+    THROW_IF_FAILED(async_result->SetStatus(S_OK));
+    uri_type_ = ExtensionUriType::kCustomSource;
     // Invoke the callback synchronously since no outstanding work is required.
-    THROW_IF_FAILED(callback->Invoke(asyncResult.get()));
+    THROW_IF_FAILED(callback->Invoke(async_result.get()));
   } else {
     THROW_HR(MF_E_UNEXPECTED);
   }
@@ -76,7 +65,7 @@ IFACEMETHODIMP MediaEngineExtension::BeginCreateObject(
 CATCH_RETURN();
 
 STDMETHODIMP MediaEngineExtension::CancelObjectCreation(
-    _In_ IUnknown* /*cancelCookie*/) noexcept {
+    _In_ IUnknown* /*cancel_cookie*/) noexcept {
   // Cancellation not supported
   return E_NOTIMPL;
 }
@@ -85,10 +74,10 @@ STDMETHODIMP MediaEngineExtension::EndCreateObject(IMFAsyncResult* result,
                                                    IUnknown** object) noexcept
     try {
   *object = nullptr;
-  if (m_uriType == ExtensionUriType::CustomSource) {
+  if (uri_type_ == ExtensionUriType::kCustomSource) {
     THROW_IF_FAILED(result->GetStatus());
     THROW_IF_FAILED(result->GetObject(object));
-    m_uriType = ExtensionUriType::Unknown;
+    uri_type_ = ExtensionUriType::kUnknown;
   } else {
     THROW_HR(MF_E_UNEXPECTED);
   }
@@ -96,19 +85,19 @@ STDMETHODIMP MediaEngineExtension::EndCreateObject(IMFAsyncResult* result,
 }
 CATCH_RETURN();
 
-void MediaEngineExtension::SetMediaSource(IUnknown* mfMediaSource) {
-  auto lock = m_lock.lock();
-  THROW_HR_IF(MF_E_SHUTDOWN, m_hasShutdown);
-  m_mfMediaSource.copy_from(mfMediaSource);
+void MediaEngineExtension::SetMediaSource(IUnknown* mf_media_source) {
+  auto lock = lock_.lock();
+  THROW_HR_IF(MF_E_SHUTDOWN, has_shutdown_);
+  mf_media_source_.copy_from(mf_media_source);
 }
 
 // Break circular references.
 void MediaEngineExtension::Shutdown() {
-  auto lock = m_lock.lock();
-  if (!m_hasShutdown) {
-    m_mfMediaSource = nullptr;
-    m_hasShutdown = true;
+  auto lock = lock_.lock();
+  if (!has_shutdown_) {
+    mf_media_source_ = nullptr;
+    has_shutdown_ = true;
   }
 }
 
-}  // namespace media
+}  // namespace video_player_windows

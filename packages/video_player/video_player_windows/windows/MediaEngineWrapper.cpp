@@ -7,19 +7,8 @@
 // Include prior to C++/WinRT Headers
 #include <wil/cppwinrt.h>
 
-// C++/WinRT Headers
-#include <winrt/Windows.ApplicationModel.Core.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Core.h>
-#include <winrt/Windows.UI.Input.h>
-
-// Direct3D
-#include <d3d11.h>
-
 // Windows Implementation Library
 #include <wil/resource.h>
-#include <wil/result_macros.h>
 
 // MediaFoundation headers
 #include <Audioclient.h>
@@ -34,11 +23,8 @@
 #include <memory>
 
 #include "MediaEngineWrapper.h"
-#include "MediaFoundationHelpers.h"
 
-using namespace Microsoft::WRL;
-
-namespace media {
+namespace video_player_windows {
 
 namespace {
 class MediaEngineCallbackHelper
@@ -46,59 +32,60 @@ class MediaEngineCallbackHelper
                                IMFMediaEngineNotify> {
  public:
   MediaEngineCallbackHelper(
-      std::function<void()> onLoadedCB, MediaEngineWrapper::ErrorCB errorCB,
-      MediaEngineWrapper::BufferingStateChangeCB bufferingStateChangeCB,
-      std::function<void()> playbackEndedCB, std::function<void()> timeUpdateCB)
-      : m_onLoadedCB(onLoadedCB),
-        m_errorCB(errorCB),
-        m_bufferingStateChangeCB(bufferingStateChangeCB),
-        m_playbackEndedCB(playbackEndedCB),
-        m_timeUpdateCB(timeUpdateCB) {
+      std::function<void()> on_loaded_cb, MediaEngineWrapper::ErrorCB error_cb,
+      MediaEngineWrapper::BufferingStateChangeCB buffering_state_change_cb,
+      std::function<void()> playback_ended_cb,
+      std::function<void()> time_update_cb)
+      : on_loaded_cb_(on_loaded_cb),
+        error_cb_(error_cb),
+        buffering_state_change_cb_(buffering_state_change_cb),
+        playback_ended_cb_(playback_ended_cb),
+        time_update_cb_(time_update_cb) {
     // Ensure that callbacks are valid
-    THROW_HR_IF(E_INVALIDARG, !m_onLoadedCB);
-    THROW_HR_IF(E_INVALIDARG, !m_errorCB);
-    THROW_HR_IF(E_INVALIDARG, !m_bufferingStateChangeCB);
-    THROW_HR_IF(E_INVALIDARG, !m_playbackEndedCB);
-    THROW_HR_IF(E_INVALIDARG, !m_timeUpdateCB);
+    THROW_HR_IF(E_INVALIDARG, !on_loaded_cb_);
+    THROW_HR_IF(E_INVALIDARG, !error_cb_);
+    THROW_HR_IF(E_INVALIDARG, !buffering_state_change_cb_);
+    THROW_HR_IF(E_INVALIDARG, !playback_ended_cb_);
+    THROW_HR_IF(E_INVALIDARG, !time_update_cb_);
   }
   virtual ~MediaEngineCallbackHelper() = default;
 
   void DetachParent() {
-    auto lock = m_lock.lock();
-    m_detached = true;
-    m_onLoadedCB = nullptr;
-    m_errorCB = nullptr;
-    m_bufferingStateChangeCB = nullptr;
-    m_playbackEndedCB = nullptr;
-    m_timeUpdateCB = nullptr;
+    auto lock = lock_.lock();
+    detached_ = true;
+    on_loaded_cb_ = nullptr;
+    error_cb_ = nullptr;
+    buffering_state_change_cb_ = nullptr;
+    playback_ended_cb_ = nullptr;
+    time_update_cb_ = nullptr;
   }
 
   // IMFMediaEngineNotify
-  IFACEMETHODIMP EventNotify(DWORD eventCode, DWORD_PTR param1,
-                             DWORD param2) noexcept override try {
-    auto lock = m_lock.lock();
-    THROW_HR_IF(MF_E_SHUTDOWN, m_detached);
+  IFACEMETHODIMP EventNotify(DWORD event_code, DWORD_PTR param_1,
+                             DWORD param_2) noexcept override try {
+    auto lock = lock_.lock();
+    THROW_HR_IF(MF_E_SHUTDOWN, detached_);
 
-    switch ((MF_MEDIA_ENGINE_EVENT)eventCode) {
+    switch ((MF_MEDIA_ENGINE_EVENT)event_code) {
       case MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA:
-        m_onLoadedCB();
+        on_loaded_cb_();
         break;
       case MF_MEDIA_ENGINE_EVENT_ERROR:
-        m_errorCB((MF_MEDIA_ENGINE_ERR)param1, (HRESULT)param2);
+        error_cb_((MF_MEDIA_ENGINE_ERR)param_1, (HRESULT)param_2);
         break;
       case MF_MEDIA_ENGINE_EVENT_PLAYING:
-        m_bufferingStateChangeCB(
-            MediaEngineWrapper::BufferingState::HAVE_ENOUGH);
+        buffering_state_change_cb_(
+            MediaEngineWrapper::BufferingState::kHaveEnough);
         break;
       case MF_MEDIA_ENGINE_EVENT_WAITING:
-        m_bufferingStateChangeCB(
-            MediaEngineWrapper::BufferingState::HAVE_NOTHING);
+        buffering_state_change_cb_(
+            MediaEngineWrapper::BufferingState::kHaveNothing);
         break;
       case MF_MEDIA_ENGINE_EVENT_ENDED:
-        m_playbackEndedCB();
+        playback_ended_cb_();
         break;
       case MF_MEDIA_ENGINE_EVENT_TIMEUPDATE:
-        m_timeUpdateCB();
+        time_update_cb_();
         break;
       default:
         break;
@@ -109,113 +96,120 @@ class MediaEngineCallbackHelper
   CATCH_RETURN();
 
  private:
-  wil::critical_section m_lock;
-  std::function<void()> m_onLoadedCB;
-  MediaEngineWrapper::ErrorCB m_errorCB;
-  MediaEngineWrapper::BufferingStateChangeCB m_bufferingStateChangeCB;
-  std::function<void()> m_playbackEndedCB;
-  std::function<void()> m_timeUpdateCB;
-  bool m_detached = false;
+  wil::critical_section lock_;
+  std::function<void()> on_loaded_cb_;
+  MediaEngineWrapper::ErrorCB error_cb_;
+  MediaEngineWrapper::BufferingStateChangeCB buffering_state_change_cb_;
+  std::function<void()> playback_ended_cb_;
+  std::function<void()> time_update_cb_;
+  bool detached_ = false;
 };
 }  // namespace
 
 // Public methods
 
+MediaEngineWrapper::~MediaEngineWrapper() {
+  should_exit_loop_ = true;
+  if (background_thread_.joinable()) {
+    background_thread_.join();
+  }
+}
+
 void MediaEngineWrapper::Initialize(winrt::com_ptr<IDXGIAdapter> adapter,
-                                    IMFMediaSource* mediaSource) {
+                                    IMFMediaSource* media_source) {
   RunSyncInMTA([&]() {
-    m_adapter = adapter;
+    adapter_ = adapter;
     InitializeVideo();
-    CreateMediaEngine(mediaSource);
+    CreateMediaEngine(media_source);
   });
 }
 
 void MediaEngineWrapper::Pause() {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    THROW_IF_FAILED(m_mediaEngine->Pause());
+    auto lock = lock_.lock();
+    THROW_IF_FAILED(media_engine_->Pause());
   });
 }
 
 void MediaEngineWrapper::Shutdown() {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    THROW_IF_FAILED(m_mediaEngine->Shutdown());
+    auto lock = lock_.lock();
+    THROW_IF_FAILED(media_engine_->Shutdown());
   });
 }
 
-void MediaEngineWrapper::StartPlayingFrom(uint64_t timeStamp) {
+void MediaEngineWrapper::StartPlayingFrom(uint64_t time_stamp) {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    const double timestampInSeconds = ConvertMsToSeconds(timeStamp);
-    THROW_IF_FAILED(m_mediaEngine->SetCurrentTime(timestampInSeconds));
-    THROW_IF_FAILED(m_mediaEngine->Play());
+    auto lock = lock_.lock();
+    const double time_stamp_in_seconds = ConvertMsToSeconds(time_stamp);
+    THROW_IF_FAILED(media_engine_->SetCurrentTime(time_stamp_in_seconds));
+    THROW_IF_FAILED(media_engine_->Play());
   });
 }
 
-void MediaEngineWrapper::SetPlaybackRate(double playbackRate) {
+void MediaEngineWrapper::SetPlaybackRate(double playback_rate) {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    THROW_IF_FAILED(m_mediaEngine->SetPlaybackRate(playbackRate));
+    auto lock = lock_.lock();
+    THROW_IF_FAILED(media_engine_->SetPlaybackRate(playback_rate));
   });
 }
 
 void MediaEngineWrapper::SetVolume(float volume) {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    THROW_IF_FAILED(m_mediaEngine->SetVolume(volume));
+    auto lock = lock_.lock();
+    THROW_IF_FAILED(media_engine_->SetVolume(volume));
   });
 }
 
-void MediaEngineWrapper::SetLooping(bool isLooping) {
+void MediaEngineWrapper::SetLooping(bool is_looping) {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    THROW_IF_FAILED(m_mediaEngine->SetLoop(isLooping));
+    auto lock = lock_.lock();
+    THROW_IF_FAILED(media_engine_->SetLoop(is_looping));
   });
 }
 
-void MediaEngineWrapper::SeekTo(uint64_t timeStamp) {
+void MediaEngineWrapper::SeekTo(uint64_t time_stamp) {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    const double timestampInSeconds = ConvertMsToSeconds(timeStamp);
-    THROW_IF_FAILED(m_mediaEngine->SetCurrentTime(timestampInSeconds));
+    auto lock = lock_.lock();
+    const double time_stamp_in_seconds = ConvertMsToSeconds(time_stamp);
+    THROW_IF_FAILED(media_engine_->SetCurrentTime(time_stamp_in_seconds));
   });
 }
 
 uint64_t MediaEngineWrapper::GetMediaTime() {
-  uint64_t currentTimeInMs = 0;
+  uint64_t current_time_in_ms = 0;
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    double currentTimeInSeconds = m_mediaEngine->GetCurrentTime();
-    currentTimeInMs = ConvertSecondsToMs(currentTimeInSeconds);
+    auto lock = lock_.lock();
+    double current_time_in_seconds = media_engine_->GetCurrentTime();
+    current_time_in_ms = ConvertSecondsToMs(current_time_in_seconds);
   });
-  return currentTimeInMs;
+  return current_time_in_ms;
 }
 
 uint64_t MediaEngineWrapper::GetDuration() {
-  uint64_t durationInMs = 0;
+  uint64_t duration_in_ms = 0;
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
-    double durationInSeconds = m_mediaEngine->GetDuration();
-    durationInMs = ConvertSecondsToMs(durationInSeconds);
+    auto lock = lock_.lock();
+    double duration_in_seconds = media_engine_->GetDuration();
+    duration_in_ms = ConvertSecondsToMs(duration_in_seconds);
   });
-  return durationInMs;
+  return duration_in_ms;
 }
 
 std::vector<std::tuple<uint64_t, uint64_t>>
 MediaEngineWrapper::GetBufferedRanges() {
   std::vector<std::tuple<uint64_t, uint64_t>> result;
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
+    auto lock = lock_.lock();
 
-    winrt::com_ptr<IMFMediaTimeRange> mediaTimeRange;
-    THROW_IF_FAILED(m_mediaEngine->GetBuffered(mediaTimeRange.put()));
+    winrt::com_ptr<IMFMediaTimeRange> media_time_range;
+    THROW_IF_FAILED(media_engine_->GetBuffered(media_time_range.put()));
 
     double start;
     double end;
-    for (uint32_t i = 0; i < mediaTimeRange->GetLength(); i++) {
-      mediaTimeRange->GetStart(i, &start);
-      mediaTimeRange->GetEnd(i, &end);
+    for (uint32_t i = 0; i < media_time_range->GetLength(); i++) {
+      media_time_range->GetStart(i, &start);
+      media_time_range->GetEnd(i, &end);
       result.push_back(
           std::make_tuple(ConvertSecondsToMs(start), ConvertSecondsToMs(end)));
     }
@@ -228,10 +222,10 @@ void MediaEngineWrapper::GetNativeVideoSize(uint32_t& cx, uint32_t& cy) {
   cy = 0;
 
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
+    auto lock = lock_.lock();
 
     DWORD x, y;
-    m_mediaEngine->GetNativeVideoSize(&x, &y);
+    media_engine_->GetNativeVideoSize(&x, &y);
 
     cx = x;
     cy = y;
@@ -239,19 +233,19 @@ void MediaEngineWrapper::GetNativeVideoSize(uint32_t& cx, uint32_t& cy) {
 }
 
 bool MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height) {
-  bool shouldCreate = false;
+  bool should_create = false;
   D3D11_TEXTURE2D_DESC desc;
 
-  if (!m_pTexture) {
-    shouldCreate = true;
+  if (!texture_) {
+    should_create = true;
   } else {
-    m_pTexture->GetDesc(&desc);
+    texture_->GetDesc(&desc);
     if (desc.Width != width || desc.Height != height) {
-      shouldCreate = true;
+      should_create = true;
     }
   }
 
-  if (shouldCreate) {
+  if (should_create) {
     RtlZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
     desc.Width = width;
     desc.Height = height;
@@ -266,10 +260,10 @@ bool MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height) {
     desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
 
     THROW_IF_FAILED(
-        m_d3d11Device->CreateTexture2D(&desc, nullptr, m_pTexture.put()));
+        d3d11_device_->CreateTexture2D(&desc, nullptr, texture_.put()));
   }
 
-  return shouldCreate;
+  return should_create;
 }
 
 void MediaEngineWrapper::UpdateSurfaceDescriptor(
@@ -285,40 +279,40 @@ void MediaEngineWrapper::UpdateSurfaceDescriptor(
 
     StartBackgroundThread(callback);
 
-    winrt::com_ptr<IDXGIResource1> spDXGIResource =
-        m_pTexture.as<IDXGIResource1>();
+    winrt::com_ptr<IDXGIResource1> sp_dxgi_resource =
+        texture_.as<IDXGIResource1>();
 
-    if (spDXGIResource) {
+    if (sp_dxgi_resource) {
       THROW_IF_FAILED(
-          spDXGIResource->GetSharedHandle(&m_videoSurfaceSharedHandle));
+          sp_dxgi_resource->GetSharedHandle(&video_surface_shared_handle_));
     }
 
-    descriptor.handle = m_videoSurfaceSharedHandle;
+    descriptor.handle = video_surface_shared_handle_;
     D3D11_TEXTURE2D_DESC desc;
-    m_pTexture->GetDesc(&desc);
+    texture_->GetDesc(&desc);
     descriptor.width = descriptor.visible_width = desc.Width;
     descriptor.height = descriptor.visible_height = desc.Height;
-    descriptor.release_context = m_pTexture.get();
+    descriptor.release_context = texture_.get();
     descriptor.release_callback = [](void* release_context) {
       auto texture = reinterpret_cast<ID3D11Texture2D*>(release_context);
       texture->Release();
     };
   }
-  m_pTexture->AddRef();
+  texture_->AddRef();
 }
 
 void MediaEngineWrapper::StartBackgroundThread(std::function<void()> callback) {
-  if (m_backgroundThread.joinable()) {
+  if (background_thread_.joinable()) {
     return;
   }
 
-  m_shouldExitLoop = false;
-  m_backgroundThread = std::thread([this, callback]() {
+  should_exit_loop_ = false;
+  background_thread_ = std::thread([this, callback]() {
     auto next = std::chrono::high_resolution_clock::now();
-    while (!m_shouldExitLoop) {
+    while (!should_exit_loop_) {
       RunSyncInMTA([&]() {
-        auto lock = m_lock.lock();
-        if (this->UpdateDXTexture()) {
+        auto lock = lock_.lock();
+        if (UpdateDXTexture()) {
           callback();
         }
       });
@@ -332,16 +326,16 @@ void MediaEngineWrapper::StartBackgroundThread(std::function<void()> callback) {
 bool MediaEngineWrapper::UpdateDXTexture() {
   D3D11_TEXTURE2D_DESC desc;
 
-  if (!m_pTexture) {
+  if (!texture_) {
     return false;
   }
 
-  m_pTexture->GetDesc(&desc);
+  texture_->GetDesc(&desc);
   return UpdateDXTexture(desc.Width, desc.Height);
 }
 
 bool MediaEngineWrapper::UpdateDXTexture(DWORD width, DWORD height) {
-  auto rcNormalized = MFVideoNormalizedRect();
+  auto rc_normalized = MFVideoNormalizedRect();
 
   RECT rect;
   rect.top = 0;
@@ -350,9 +344,9 @@ bool MediaEngineWrapper::UpdateDXTexture(DWORD width, DWORD height) {
   rect.right = width;
 
   LONGLONG pts;
-  if (m_mediaEngine->OnVideoStreamTick(&pts) == S_OK) {
-    HRESULT hr = m_mediaEngine->TransferVideoFrame(
-        m_pTexture.get(), &rcNormalized, &rect, nullptr);
+  if (media_engine_->OnVideoStreamTick(&pts) == S_OK) {
+    HRESULT hr = media_engine_->TransferVideoFrame(
+        texture_.get(), &rc_normalized, &rect, nullptr);
 
     if (hr == S_OK) {
       return true;
@@ -364,103 +358,101 @@ bool MediaEngineWrapper::UpdateDXTexture(DWORD width, DWORD height) {
 
 void MediaEngineWrapper::OnWindowUpdate(uint32_t width, uint32_t height) {
   RunSyncInMTA([&]() {
-    auto lock = m_lock.lock();
+    auto lock = lock_.lock();
 
-    if (width != m_width || height != m_height) {
-      m_width = width;
-      m_height = height;
+    if (width != width_ || height != height_) {
+      width_ = width;
+      height_ = height;
     }
 
-    if (m_mediaEngine) {
-      RECT destRect{0, 0, static_cast<LONG>(m_width),
-                    static_cast<LONG>(m_height)};
-      winrt::com_ptr<IMFMediaEngineEx> mediaEngineEx =
-          m_mediaEngine.as<IMFMediaEngineEx>();
+    if (media_engine_) {
+      RECT dest_rect{0, 0, static_cast<LONG>(width_),
+                     static_cast<LONG>(height_)};
+      winrt::com_ptr<IMFMediaEngineEx> media_engine_ex =
+          media_engine_.as<IMFMediaEngineEx>();
       THROW_IF_FAILED(
-          mediaEngineEx->UpdateVideoStream(nullptr, &destRect, nullptr));
+          media_engine_ex->UpdateVideoStream(nullptr, &dest_rect, nullptr));
     }
   });
 }
 
 // Internal methods
 
-void MediaEngineWrapper::CreateMediaEngine(IMFMediaSource* mediaSource) {
-  winrt::com_ptr<IMFMediaEngineClassFactory> classFactory;
-  winrt::com_ptr<IMFAttributes> creationAttributes;
+void MediaEngineWrapper::CreateMediaEngine(IMFMediaSource* media_source) {
+  winrt::com_ptr<IMFMediaEngineClassFactory> class_factory;
+  winrt::com_ptr<IMFAttributes> creation_attributes;
 
-  m_platformRef.Startup();
+  platform_ref_.Startup();
 
   InitializeVideo();
 
-  THROW_IF_FAILED(MFCreateAttributes(creationAttributes.put(), 7));
-  m_callbackHelper = winrt::make<MediaEngineCallbackHelper>(
-      [&]() { this->OnLoaded(); },
-      [&](MF_MEDIA_ENGINE_ERR error, HRESULT hr) { this->OnError(error, hr); },
-      [&](BufferingState state) { this->OnBufferingStateChange(state); },
-      [&]() { this->OnPlaybackEnded(); }, [&]() { this->OnTimeUpdate(); });
-  THROW_IF_FAILED(creationAttributes->SetUnknown(MF_MEDIA_ENGINE_CALLBACK,
-                                                 m_callbackHelper.get()));
+  THROW_IF_FAILED(MFCreateAttributes(creation_attributes.put(), 7));
+  callback_helper_ = winrt::make<MediaEngineCallbackHelper>(
+      [&]() { OnLoaded(); },
+      [&](MF_MEDIA_ENGINE_ERR error, HRESULT hr) { OnError(error, hr); },
+      [&](BufferingState state) { OnBufferingStateChange(state); },
+      [&]() { OnPlaybackEnded(); }, [&]() { OnTimeUpdate(); });
+  THROW_IF_FAILED(creation_attributes->SetUnknown(MF_MEDIA_ENGINE_CALLBACK,
+                                                  callback_helper_.get()));
   THROW_IF_FAILED(
-      creationAttributes->SetUINT32(MF_MEDIA_ENGINE_CONTENT_PROTECTION_FLAGS,
-                                    MF_MEDIA_ENGINE_ENABLE_PROTECTED_CONTENT));
-  THROW_IF_FAILED(creationAttributes->SetGUID(
+      creation_attributes->SetUINT32(MF_MEDIA_ENGINE_CONTENT_PROTECTION_FLAGS,
+                                     MF_MEDIA_ENGINE_ENABLE_PROTECTED_CONTENT));
+  THROW_IF_FAILED(creation_attributes->SetGUID(
       MF_MEDIA_ENGINE_BROWSER_COMPATIBILITY_MODE,
       MF_MEDIA_ENGINE_BROWSER_COMPATIBILITY_MODE_IE_EDGE));
-  THROW_IF_FAILED(creationAttributes->SetUINT32(MF_MEDIA_ENGINE_AUDIO_CATEGORY,
-                                                AudioCategory_Media));
+  THROW_IF_FAILED(creation_attributes->SetUINT32(MF_MEDIA_ENGINE_AUDIO_CATEGORY,
+                                                 AudioCategory_Media));
 
-  if (m_dxgiDeviceManager != nullptr) {
-    THROW_IF_FAILED(creationAttributes->SetUnknown(MF_MEDIA_ENGINE_DXGI_MANAGER,
-                                                   m_dxgiDeviceManager.get()));
+  if (dxgi_device_manager_ != nullptr) {
+    THROW_IF_FAILED(creation_attributes->SetUnknown(
+        MF_MEDIA_ENGINE_DXGI_MANAGER, dxgi_device_manager_.get()));
   }
 
-  m_mediaEngineExtension = winrt::make_self<MediaEngineExtension>();
-  THROW_IF_FAILED(creationAttributes->SetUnknown(MF_MEDIA_ENGINE_EXTENSION,
-                                                 m_mediaEngineExtension.get()));
+  media_engine_extension_ = winrt::make_self<MediaEngineExtension>();
+  THROW_IF_FAILED(creation_attributes->SetUnknown(
+      MF_MEDIA_ENGINE_EXTENSION, media_engine_extension_.get()));
 
   THROW_IF_FAILED(CoCreateInstance(CLSID_MFMediaEngineClassFactory, nullptr,
                                    CLSCTX_INPROC_SERVER,
-                                   IID_PPV_ARGS(classFactory.put())));
-  THROW_IF_FAILED(classFactory->CreateInstance(0, creationAttributes.get(),
-                                               m_mediaEngine.put()));
+                                   IID_PPV_ARGS(class_factory.put())));
+  THROW_IF_FAILED(class_factory->CreateInstance(0, creation_attributes.get(),
+                                                media_engine_.put()));
 
-  winrt::com_ptr<IUnknown> sourceUnknown;
+  winrt::com_ptr<IUnknown> source_unknown;
   THROW_IF_FAILED(
-      mediaSource->QueryInterface(IID_PPV_ARGS(sourceUnknown.put())));
-  m_mediaEngineExtension->SetMediaSource(sourceUnknown.get());
+      media_source->QueryInterface(IID_PPV_ARGS(source_unknown.put())));
+  media_engine_extension_->SetMediaSource(source_unknown.get());
 
-  winrt::com_ptr<IMFMediaEngineEx> mediaEngineEx =
-      m_mediaEngine.as<IMFMediaEngineEx>();
-  if (!m_hasSetSource) {
+  winrt::com_ptr<IMFMediaEngineEx> media_engine_ex =
+      media_engine_.as<IMFMediaEngineEx>();
+  if (!has_set_source_) {
     wil::unique_bstr source = wil::make_bstr(L"customSrc");
-    THROW_IF_FAILED(mediaEngineEx->SetSource(source.get()));
-    m_hasSetSource = true;
+    THROW_IF_FAILED(media_engine_ex->SetSource(source.get()));
+    has_set_source_ = true;
   } else {
-    THROW_IF_FAILED(mediaEngineEx->Load());
+    THROW_IF_FAILED(media_engine_ex->Load());
   }
 }
 
 void MediaEngineWrapper::InitializeVideo() {
-  m_dxgiDeviceManager = nullptr;
-  THROW_IF_FAILED(
-      MFLockDXGIDeviceManager(&m_deviceResetToken, m_dxgiDeviceManager.put()));
+  dxgi_device_manager_ = nullptr;
+  THROW_IF_FAILED(MFLockDXGIDeviceManager(&device_reset_token_,
+                                          dxgi_device_manager_.put()));
 
-  UINT creationFlags = 0;
-  constexpr D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_10_0};
+  UINT creation_flags = 0;
+  constexpr D3D_FEATURE_LEVEL feature_levels[] = {D3D_FEATURE_LEVEL_10_0};
 
-  THROW_IF_FAILED(D3D11CreateDevice(m_adapter.get(), D3D_DRIVER_TYPE_UNKNOWN, 0,
-                                    creationFlags, featureLevels,
-                                    ARRAYSIZE(featureLevels), D3D11_SDK_VERSION,
-                                    m_d3d11Device.put(), nullptr, nullptr));
+  THROW_IF_FAILED(D3D11CreateDevice(
+      adapter_.get(), D3D_DRIVER_TYPE_UNKNOWN, 0, creation_flags,
+      feature_levels, ARRAYSIZE(feature_levels), D3D11_SDK_VERSION,
+      d3d11_device_.put(), nullptr, nullptr));
 
-  winrt::com_ptr<IDXGIDevice> m_DXGIDevice = m_d3d11Device.as<IDXGIDevice>();
+  winrt::com_ptr<ID3D10Multithread> multithreaded_device =
+      d3d11_device_.as<ID3D10Multithread>();
+  multithreaded_device->SetMultithreadProtected(TRUE);
 
-  winrt::com_ptr<ID3D10Multithread> multithreadedDevice =
-      m_d3d11Device.as<ID3D10Multithread>();
-  multithreadedDevice->SetMultithreadProtected(TRUE);
-
-  THROW_IF_FAILED(m_dxgiDeviceManager->ResetDevice(m_d3d11Device.get(),
-                                                   m_deviceResetToken));
+  THROW_IF_FAILED(dxgi_device_manager_->ResetDevice(d3d11_device_.get(),
+                                                    device_reset_token_));
 }
 
 // Callback methods
@@ -471,45 +463,45 @@ void MediaEngineWrapper::OnLoaded() {
   // that it isn't destroyed while there is a pending callback
   winrt::com_ptr<MediaEngineWrapper> ref;
   ref.copy_from(this);
-  media::MFPutWorkItem([&, ref]() {
+  MFPutWorkItem([&, ref]() {
     {
-      auto lock = m_lock.lock();
-      winrt::com_ptr<IMFMediaEngineEx> mediaEngineEx =
-          m_mediaEngine.as<IMFMediaEngineEx>();
-      THROW_IF_FAILED(mediaEngineEx->EnableWindowlessSwapchainMode(true));
+      auto lock = lock_.lock();
+      winrt::com_ptr<IMFMediaEngineEx> media_engine_ex =
+          media_engine_.as<IMFMediaEngineEx>();
+      THROW_IF_FAILED(media_engine_ex->EnableWindowlessSwapchainMode(true));
 
       // If the wrapper has been notified of the actual window width / height,
       // use the correct values, otherwise, use a default size of 640x480
-      uint32_t width = m_width != 0 ? m_width : 640;
-      uint32_t height = m_height != 0 ? m_height : 480;
+      uint32_t width = width_ != 0 ? width_ : 640;
+      uint32_t height = height_ != 0 ? height_ : 480;
       OnWindowUpdate(width, height);
     }
-    m_initializedCB();
+    initialized_cb_();
   });
 }
 
 void MediaEngineWrapper::OnError(MF_MEDIA_ENGINE_ERR error, HRESULT hr) {
-  if (m_errorCB) {
-    m_errorCB(error, hr);
+  if (error_cb_) {
+    error_cb_(error, hr);
   }
 }
 
 void MediaEngineWrapper::OnBufferingStateChange(BufferingState state) {
-  if (m_bufferingStateChangeCB) {
-    m_bufferingStateChangeCB(state);
+  if (buffering_state_change_cb_) {
+    buffering_state_change_cb_(state);
   }
 }
 
 void MediaEngineWrapper::OnPlaybackEnded() {
-  if (m_playbackEndedCB) {
-    m_playbackEndedCB();
+  if (playback_ended_cb_) {
+    playback_ended_cb_();
   }
 }
 
 void MediaEngineWrapper::OnTimeUpdate() {
-  if (m_timeUpdateCB) {
-    m_timeUpdateCB();
+  if (time_update_cb_) {
+    time_update_cb_();
   }
 }
 
-}  // namespace media
+}  // namespace video_player_windows

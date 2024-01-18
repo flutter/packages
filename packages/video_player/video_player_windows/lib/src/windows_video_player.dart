@@ -33,17 +33,18 @@ class WindowsVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<int?> create(DataSource dataSource) async {
     String? asset;
-    String? packageName;
     String? uri;
-    String? formatHint;
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         asset = dataSource.asset;
-        packageName = dataSource.package;
+        if (dataSource.package != null) {
+          // TODO(azchohfi): Support package names, https://github.com/flutter/flutter/issues/103199.
+          throw UnimplementedError(
+              'Loading an asset from a package is not supported on Windows');
+        }
       case DataSourceType.network:
         uri = dataSource.uri;
-        formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
       case DataSourceType.file:
         uri = dataSource.uri;
@@ -55,8 +56,6 @@ class WindowsVideoPlayer extends VideoPlayerPlatform {
     final int textureId = await _api.create(
       asset,
       uri,
-      packageName,
-      formatHint,
       httpHeaders,
     );
     return textureId;
@@ -147,21 +146,11 @@ class WindowsVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setMixWithOthers(bool mixWithOthers) {
-    return _api.setMixWithOthers(mixWithOthers);
-  }
+  Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
 
   EventChannel _eventChannelFor(int textureId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
   }
-
-  static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
-    VideoFormat.ss: 'ss',
-    VideoFormat.hls: 'hls',
-    VideoFormat.dash: 'dash',
-    VideoFormat.other: 'other',
-  };
 
   DurationRange _toDurationRange(dynamic value) {
     final List<dynamic> pair = value as List<dynamic>;

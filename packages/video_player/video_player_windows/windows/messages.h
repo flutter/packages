@@ -15,7 +15,7 @@
 #include <optional>
 #include <string>
 
-namespace Messages {
+namespace video_player_windows {
 
 // Generated class from Pigeon.
 
@@ -68,7 +68,6 @@ class WindowsVideoPlayerApi {
   virtual std::optional<FlutterError> Initialize() = 0;
   virtual ErrorOr<int64_t> Create(
       const std::string* asset, const std::string* uri,
-      const std::string* package_name, const std::string* format_hint,
       const flutter::EncodableMap& http_headers) = 0;
   virtual std::optional<FlutterError> Dispose(int64_t texture_id) = 0;
   virtual std::optional<FlutterError> SetLooping(int64_t texture_id,
@@ -82,8 +81,6 @@ class WindowsVideoPlayerApi {
   virtual std::optional<FlutterError> SeekTo(int64_t texture_id,
                                              int64_t position) = 0;
   virtual std::optional<FlutterError> Pause(int64_t texture_id) = 0;
-  virtual std::optional<FlutterError> SetMixWithOthers(
-      bool mix_with_others) = 0;
 
   // The codec used by WindowsVideoPlayerApi.
   static const flutter::StandardMessageCodec& GetCodec();
@@ -97,5 +94,5 @@ class WindowsVideoPlayerApi {
  protected:
   WindowsVideoPlayerApi() = default;
 };
-}  // namespace Messages
+}  // namespace video_player_windows
 #endif  // PIGEON_MESSAGES_H_

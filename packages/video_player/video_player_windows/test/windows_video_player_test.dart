@@ -15,24 +15,18 @@ class _ApiLogger implements TestHostVideoPlayerApi {
 
   String? asset;
   String? uri;
-  String? packageName;
-  String? formatHint;
   Map<String?, String?>? httpHeaders;
 
   int? positionValue;
   bool? isLooping;
   double? volume;
   double? speed;
-  bool? mixWithOthers;
 
   @override
-  int create(String? asset, String? uri, String? packageName,
-      String? formatHint, Map<String?, String?> httpHeaders) {
+  int create(String? asset, String? uri, Map<String?, String?> httpHeaders) {
     log.add('create');
     this.asset = asset;
     this.uri = uri;
-    this.packageName = packageName;
-    this.formatHint = formatHint;
     this.httpHeaders = httpHeaders;
     return 3;
   }
@@ -58,12 +52,6 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   void play(int arg) {
     log.add('play');
     textureId = arg;
-  }
-
-  @override
-  void setMixWithOthers(bool arg) {
-    log.add('setMixWithOthers');
-    mixWithOthers = arg;
   }
 
   @override
@@ -137,25 +125,30 @@ void main() {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.asset,
         asset: 'someAsset',
-        package: 'somePackage',
       ));
       expect(log.log.last, 'create');
       expect(log.asset, 'someAsset');
-      expect(log.packageName, 'somePackage');
       expect(textureId, 3);
+    });
+
+    test('create with asset from package', () async {
+      await expectLater(
+          () => player.create(DataSource(
+                sourceType: DataSourceType.asset,
+                asset: 'someAsset',
+                package: 'somePackage',
+              )),
+          throwsA(isA<UnimplementedError>()));
     });
 
     test('create with network', () async {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
-        formatHint: VideoFormat.dash,
       ));
       expect(log.log.last, 'create');
       expect(log.asset, null);
       expect(log.uri, 'someUri');
-      expect(log.packageName, null);
-      expect(log.formatHint, 'dash');
       expect(log.httpHeaders, <String, String>{});
       expect(textureId, 3);
     });
@@ -169,8 +162,6 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.asset, null);
       expect(log.uri, 'someUri');
-      expect(log.packageName, null);
-      expect(log.formatHint, null);
       expect(
           log.httpHeaders, <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
@@ -215,16 +206,6 @@ void main() {
       await player.pause(1);
       expect(log.log.last, 'pause');
       expect(log.textureId, 1);
-    });
-
-    test('setMixWithOthers', () async {
-      await player.setMixWithOthers(true);
-      expect(log.log.last, 'setMixWithOthers');
-      expect(log.mixWithOthers, true);
-
-      await player.setMixWithOthers(false);
-      expect(log.log.last, 'setMixWithOthers');
-      expect(log.mixWithOthers, false);
     });
 
     test('setVolume', () async {

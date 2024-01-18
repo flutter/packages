@@ -1,10 +1,10 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+#ifndef PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_MEDIA_FOUNDATION_HELPERS_H_
+#define PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_MEDIA_FOUNDATION_HELPERS_H_
 
-#pragma once
-
-namespace media {
+namespace video_player_windows {
 
 class MFPlatformRef {
  public:
@@ -13,21 +13,21 @@ class MFPlatformRef {
   virtual ~MFPlatformRef() { Shutdown(); }
 
   void Startup() {
-    if (!m_started) {
+    if (!started_) {
       THROW_IF_FAILED(MFStartup(MF_VERSION, MFSTARTUP_FULL));
-      m_started = true;
+      started_ = true;
     }
   }
 
   void Shutdown() {
-    if (m_started) {
+    if (started_) {
       THROW_IF_FAILED(MFShutdown());
-      m_started = false;
+      started_ = false;
     }
   }
 
  private:
-  bool m_started = false;
+  bool started_ = false;
 };
 
 class MFCallbackBase
@@ -35,47 +35,47 @@ class MFCallbackBase
  public:
   MFCallbackBase(DWORD flags = 0,
                  DWORD queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED)
-      : m_flags(flags), m_queue(queue) {}
+      : flags_(flags), queue_(queue) {}
 
-  DWORD GetQueue() const { return m_queue; }
-  DWORD GetFlags() const { return m_flags; }
+  DWORD GetQueue() const { return queue_; }
+  DWORD GetFlags() const { return flags_; }
 
   // IMFAsyncCallback methods
   IFACEMETHODIMP GetParameters(_Out_ DWORD* flags, _Out_ DWORD* queue) {
-    *flags = m_flags;
-    *queue = m_queue;
+    *flags = flags_;
+    *queue = queue_;
     return S_OK;
   }
 
  private:
-  DWORD m_flags = 0;
-  DWORD m_queue = 0;
+  DWORD flags_ = 0;
+  DWORD queue_ = 0;
 };
 
 class SyncMFCallback : public MFCallbackBase {
  public:
-  SyncMFCallback() { m_invokeEvent.create(); }
+  SyncMFCallback() { invoke_event_.create(); }
 
   void Wait(uint32_t timeout = INFINITE) {
-    if (!m_invokeEvent.wait(timeout)) {
+    if (!invoke_event_.wait(timeout)) {
       THROW_HR(ERROR_TIMEOUT);
     }
   }
 
-  IMFAsyncResult* GetResult() { return m_result.get(); }
+  IMFAsyncResult* GetResult() { return result_.get(); }
 
   // IMFAsyncCallback methods
 
   IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* result) noexcept override try {
-    m_result.copy_from(result);
-    m_invokeEvent.SetEvent();
+    result_.copy_from(result);
+    invoke_event_.SetEvent();
     return S_OK;
   }
   CATCH_RETURN();
 
  private:
-  wil::unique_event m_invokeEvent;
-  winrt::com_ptr<IMFAsyncResult> m_result;
+  wil::unique_event invoke_event_;
+  winrt::com_ptr<IMFAsyncResult> result_;
 };
 
 class MFWorkItem : public MFCallbackBase {
@@ -83,38 +83,38 @@ class MFWorkItem : public MFCallbackBase {
   MFWorkItem(std::function<void()> callback, DWORD flags = 0,
              DWORD queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED)
       : MFCallbackBase(flags, queue) {
-    m_callback = callback;
+    callback_ = callback;
   }
 
   // IMFAsyncCallback methods
 
   IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* /*result*/) noexcept override
       try {
-    m_callback();
+    callback_();
     return S_OK;
   }
   CATCH_RETURN();
 
  private:
-  std::function<void()> m_callback;
+  std::function<void()> callback_;
 };
 
 inline void MFPutWorkItem(std::function<void()> callback) {
-  winrt::com_ptr<MFWorkItem> workItem = winrt::make_self<MFWorkItem>(callback);
+  winrt::com_ptr<MFWorkItem> work_item = winrt::make_self<MFWorkItem>(callback);
   THROW_IF_FAILED(
-      MFPutWorkItem2(workItem->GetQueue(), 0, workItem.get(), nullptr));
+      MFPutWorkItem2(work_item->GetQueue(), 0, work_item.get(), nullptr));
 }
 
 // Helper function for ensuring that the provided callback runs synchronously on
 // a MTA thread. All MediaFoundation calls should be made on a MTA thread to
 // avoid subtle deadlock bugs due to objects inadvertedly being created in a STA
 inline void RunSyncInMTA(std::function<void()> callback) {
-  APTTYPE apartmentType = {};
+  APTTYPE apartment_type = {};
   APTTYPEQUALIFIER qualifier = {};
 
-  THROW_IF_FAILED(CoGetApartmentType(&apartmentType, &qualifier));
+  THROW_IF_FAILED(CoGetApartmentType(&apartment_type, &qualifier));
 
-  if (apartmentType == APTTYPE_MTA) {
+  if (apartment_type == APTTYPE_MTA) {
     wil::unique_couninitialize_call unique_coinit;
     if (qualifier == APTTYPEQUALIFIER_IMPLICIT_MTA) {
       unique_coinit = wil::CoInitializeEx_failfast(COINIT_MULTITHREADED);
@@ -131,16 +131,18 @@ inline void RunSyncInMTA(std::function<void()> callback) {
   }
 }
 
-constexpr uint64_t c_msPerSecond = 1000;
+constexpr uint64_t kMSPerSecond = 1000;
 
 template <typename SecondsT>
 inline uint64_t ConvertSecondsToMs(SecondsT seconds) {
-  return static_cast<uint64_t>(seconds * c_msPerSecond);
+  return static_cast<uint64_t>(seconds * kMSPerSecond);
 }
 
 template <typename MsT>
 inline double ConvertMsToSeconds(MsT ms) {
-  return static_cast<double>(ms) / c_msPerSecond;
+  return static_cast<double>(ms) / kMSPerSecond;
 }
 
-}  // namespace media
+}  // namespace video_player_windows
+
+#endif  // PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_MEDIA_FOUNDATION_HELPERS_H_

@@ -1,8 +1,8 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-#pragma once
+#ifndef PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_MEDIA_ENGINE_WRAPPER_H_
+#define PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_MEDIA_ENGINE_WRAPPER_H_
 
 #include <flutter/plugin_registrar_windows.h>
 
@@ -12,7 +12,7 @@
 #include "MediaEngineExtension.h"
 #include "MediaFoundationHelpers.h"
 
-namespace media {
+namespace video_player_windows {
 
 // This class handles creation and management of the MediaFoundation
 // MediaEngine. It uses the provided IMFMediaSource to feed media
@@ -22,42 +22,37 @@ class MediaEngineWrapper
  public:
   using ErrorCB = std::function<void(MF_MEDIA_ENGINE_ERR, HRESULT)>;
 
-  enum class BufferingState { HAVE_NOTHING = 0, HAVE_ENOUGH = 1 };
+  enum class BufferingState { kHaveNothing = 0, kHaveEnough = 1 };
   using BufferingStateChangeCB = std::function<void(BufferingState)>;
 
-  MediaEngineWrapper(std::function<void()> initializedCB, ErrorCB errorCB,
-                     BufferingStateChangeCB bufferingStateChangeCB,
-                     std::function<void()> playbackEndedCB,
-                     std::function<void()> timeUpdateCB)
-      : m_initializedCB(initializedCB),
-        m_errorCB(errorCB),
-        m_bufferingStateChangeCB(bufferingStateChangeCB),
-        m_playbackEndedCB(playbackEndedCB),
-        m_timeUpdateCB(timeUpdateCB) {
+  MediaEngineWrapper(std::function<void()> initialized_cb, ErrorCB error_cb,
+                     BufferingStateChangeCB buffering_state_change_cb,
+                     std::function<void()> playback_ended_cb,
+                     std::function<void()> time_update_cb)
+      : initialized_cb_(initialized_cb),
+        error_cb_(error_cb),
+        buffering_state_change_cb_(buffering_state_change_cb),
+        playback_ended_cb_(playback_ended_cb),
+        time_update_cb_(time_update_cb) {
     // The initialize callback is required
-    THROW_HR_IF(E_INVALIDARG, !m_initializedCB);
+    THROW_HR_IF(E_INVALIDARG, !initialized_cb_);
   }
-  ~MediaEngineWrapper() {
-    m_shouldExitLoop = true;
-    if (m_backgroundThread.joinable()) {
-      m_backgroundThread.join();
-    }
-  }
+  ~MediaEngineWrapper();
 
   // Create the media engine with the provided media source
   void Initialize(winrt::com_ptr<IDXGIAdapter> adapter,
-                  IMFMediaSource* mediaSource);
+                  IMFMediaSource* media_source);
 
   // Stop playback and cleanup resources
   void Pause();
   void Shutdown();
 
   // Control various aspects of playback
-  void StartPlayingFrom(uint64_t timeStamp);
-  void SetPlaybackRate(double playbackRate);
+  void StartPlayingFrom(uint64_t time_stamp);
+  void SetPlaybackRate(double playback_rate);
   void SetVolume(float volume);
-  void SetLooping(bool isLooping);
-  void SeekTo(uint64_t timeStamp);
+  void SetLooping(bool is_looping);
+  void SeekTo(uint64_t time_stamp);
 
   // Query the current playback position
   uint64_t GetMediaTime();
@@ -77,32 +72,32 @@ class MediaEngineWrapper
   void OnWindowUpdate(uint32_t width, uint32_t height);
 
  private:
-  wil::critical_section m_lock;
-  std::function<void()> m_initializedCB;
-  ErrorCB m_errorCB;
-  BufferingStateChangeCB m_bufferingStateChangeCB;
-  std::function<void()> m_playbackEndedCB;
-  std::function<void()> m_timeUpdateCB;
-  MFPlatformRef m_platformRef;
-  winrt::com_ptr<IMFMediaEngine> m_mediaEngine;
-  UINT m_deviceResetToken = 0;
-  winrt::com_ptr<IDXGIAdapter> m_adapter;
-  winrt::com_ptr<ID3D11Device> m_d3d11Device;
-  winrt::com_ptr<ID3D11Texture2D> m_pTexture;
-  winrt::com_ptr<IMFDXGIDeviceManager> m_dxgiDeviceManager;
-  winrt::com_ptr<MediaEngineExtension> m_mediaEngineExtension;
-  winrt::com_ptr<IMFMediaEngineNotify> m_callbackHelper;
-  std::thread m_backgroundThread;
-  std::atomic<bool> m_shouldExitLoop = false;
-  HANDLE m_videoSurfaceSharedHandle{0};
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
-  bool m_hasSetSource = false;
+  wil::critical_section lock_;
+  std::function<void()> initialized_cb_;
+  ErrorCB error_cb_;
+  BufferingStateChangeCB buffering_state_change_cb_;
+  std::function<void()> playback_ended_cb_;
+  std::function<void()> time_update_cb_;
+  MFPlatformRef platform_ref_;
+  winrt::com_ptr<IMFMediaEngine> media_engine_;
+  UINT device_reset_token_ = 0;
+  winrt::com_ptr<IDXGIAdapter> adapter_;
+  winrt::com_ptr<ID3D11Device> d3d11_device_;
+  winrt::com_ptr<ID3D11Texture2D> texture_;
+  winrt::com_ptr<IMFDXGIDeviceManager> dxgi_device_manager_;
+  winrt::com_ptr<MediaEngineExtension> media_engine_extension_;
+  winrt::com_ptr<IMFMediaEngineNotify> callback_helper_;
+  std::thread background_thread_;
+  std::atomic<bool> should_exit_loop_ = false;
+  HANDLE video_surface_shared_handle_{0};
+  uint32_t width_ = 0;
+  uint32_t height_ = 0;
+  bool has_set_source_ = false;
   bool EnsureTextureCreated(DWORD width, DWORD height);
   bool UpdateDXTexture();
   bool UpdateDXTexture(DWORD width, DWORD height);
   void InitializeVideo();
-  void CreateMediaEngine(IMFMediaSource* mediaSource);
+  void CreateMediaEngine(IMFMediaSource* media_source);
   void OnLoaded();
   void OnError(MF_MEDIA_ENGINE_ERR error, HRESULT hr);
   void OnBufferingStateChange(BufferingState state);
@@ -110,4 +105,6 @@ class MediaEngineWrapper
   void OnTimeUpdate();
 };
 
-}  // namespace media
+}  // namespace video_player_windows
+
+#endif  // PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_MEDIA_ENGINE_WRAPPER_H_

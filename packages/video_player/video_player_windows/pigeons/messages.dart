@@ -10,15 +10,14 @@ import 'package:pigeon/pigeon.dart';
   cppHeaderOut: 'windows/messages.h',
   cppSourceOut: 'windows/messages.cpp',
   cppOptions: CppOptions(
-    namespace: 'Messages',
+    namespace: 'video_player_windows',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
 abstract class WindowsVideoPlayerApi {
   void initialize();
-  int create(String? asset, String? uri, String? packageName,
-      String? formatHint, Map<String?, String?> httpHeaders);
+  int create(String? asset, String? uri, Map<String?, String?> httpHeaders);
   void dispose(int textureId);
   void setLooping(int textureId, bool isLooping);
   void setVolume(int textureId, double volume);
@@ -27,5 +26,4 @@ abstract class WindowsVideoPlayerApi {
   int position(int textureId);
   void seekTo(int textureId, int position);
   void pause(int textureId);
-  void setMixWithOthers(bool mixWithOthers);
 }

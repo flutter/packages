@@ -1,8 +1,8 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-#pragma once
+#ifndef PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_VIDEO_PLAYER_H_
+#define PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_VIDEO_PLAYER_H_
 
 #include <flutter/event_channel.h>
 #include <flutter/event_stream_handler.h>
@@ -13,34 +13,23 @@
 #include <shobjidl.h>
 #include <unknwn.h>
 #include <wincodec.h>
-#include <winrt/Windows.Foundation.Collections.h>
 
+// STL headers.
+#include <functional>
 #include <future>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <sstream>
 #include <string>
 
-#include "winrt/Windows.System.h"
-
-// Include prior to C++/WinRT Headers
+// Include prior to C++/WinRT Headers.
 #include <wil/cppwinrt.h>
 
-// C++/WinRT Headers
-#include <winrt/Windows.ApplicationModel.Core.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.Core.h>
-#include <winrt/Windows.UI.Input.h>
-
-// Direct3D
-#include <d3d11.h>
-
-// Windows Implementation Library
+// Windows Implementation Library.
 #include <wil/resource.h>
-#include <wil/result_macros.h>
 
-// MediaFoundation headers
+// MediaFoundation headers.
 #include <Audioclient.h>
 #include <d3d11.h>
 #include <mfapi.h>
@@ -48,31 +37,23 @@
 #include <mfmediaengine.h>
 #include <wincodec.h>
 
-// STL headers
-#include <functional>
-#include <map>
-#include <memory>
-#include <mutex>
-#include <sstream>
-#include <string>
-
 #include "MediaEngineWrapper.h"
 #include "MediaFoundationHelpers.h"
 #include "messages.h"
 
-using namespace Messages;
-
-using namespace winrt;
+namespace video_player_windows {
 
 class VideoPlayer {
  public:
   VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
-              flutter::EncodableMap httpHeaders);
+              flutter::EncodableMap http_headers);
+
+  virtual ~VideoPlayer();
 
   void Dispose();
-  void SetLooping(bool isLooping);
+  void SetLooping(bool is_looping);
   void SetVolume(double volume);
-  void SetPlaybackSpeed(double playbackSpeed);
+  void SetPlaybackSpeed(double speed);
   void Play();
   void Pause();
   int64_t GetPosition();
@@ -85,46 +66,46 @@ class VideoPlayer {
                                                                size_t height);
 
   void Init(flutter::BinaryMessenger* messenger,
-            std::function<void()> textureFrameAvailableCallback,
-            int64_t textureId);
-
-  virtual ~VideoPlayer();
-
-  flutter::TextureVariant texture;
+            std::function<void(int64_t)> texture_frame_available_callback,
+            flutter::TextureRegistrar* texture_registry);
 
  private:
-  // Media members
-  media::MFPlatformRef m_mfPlatform;
-  winrt::com_ptr<media::MediaEngineWrapper> m_mediaEngineWrapper;
-
-  // Composition members
-  wil::critical_section m_compositionLock;
-  winrt::Windows::Foundation::Size m_windowSize{};
-
-  std::atomic<bool> m_valid = true;
-  int64_t m_textureId;
-
-  FlutterDesktopGpuSurfaceDescriptor m_descriptor{};
-  std::mutex m_buffer_mutex;
-  winrt::com_ptr<IDXGIAdapter> m_adapter;
-  HWND m_window;
-  std::function<void()> m_textureFrameAvailableCallback;
-
-  bool isInitialized = false;
+  VideoPlayer(IDXGIAdapter* adapter, HWND window);
 
   void SendInitialized();
   void SetBuffering(bool buffering);
 
   void OnMediaInitialized();
   void OnMediaError(MF_MEDIA_ENGINE_ERR error, HRESULT hr);
-  void OnMediaStateChange(
-      media::MediaEngineWrapper::BufferingState bufferingState);
+  void OnMediaStateChange(MediaEngineWrapper::BufferingState state);
   void OnPlaybackEnded();
   void UpdateVideoSize();
 
-  std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>> _eventChannel;
+  // Media members.
+  MFPlatformRef mf_platform_;
+  winrt::com_ptr<MediaEngineWrapper> media_engine_wrapper_;
 
-  std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> _eventSink;
+  wil::critical_section lock_;
+  winrt::Windows::Foundation::Size window_size_{};
 
-  VideoPlayer(IDXGIAdapter* adapter, HWND window);
+  std::atomic<bool> valid_ = true;
+  flutter::TextureVariant texture_;
+  int64_t texture_id_;
+
+  FlutterDesktopGpuSurfaceDescriptor descriptor_{};
+  std::mutex buffer_mutex_;
+  winrt::com_ptr<IDXGIAdapter> adapter_;
+  HWND window_;
+  std::function<void(int64_t)> texture_frame_available_callback_;
+
+  bool is_initialized_ = false;
+
+  std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>>
+      event_channel_;
+
+  std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> event_sink_;
 };
+
+}  // namespace video_player_windows
+
+#endif  // PACKAGES_VIDEO_PLAYER_VIDEO_PLAYER_WINDOWS_WINDOWS_VIDEO_PLAYER_H_
