@@ -1,3 +1,7 @@
+## 0.0.5+2
+
+* Fixes must_call_super lint warning.
+
 ## 0.0.5+1
 
 * Fixes new lint warnings.
