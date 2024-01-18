@@ -40,14 +40,8 @@ enum AppleCaptureDeviceType {
   /// A Continuity Camera device type.
   continuityCamera,
 
-  /// A microphone device type.
-  microphone,
-
   /// An external device type.
   external,
-
-  /// A virtual overhead camera that captures a user’s desk.
-  deskViewCamera,
 
   /// A device that consists of two cameras, one LiDAR and one YUV.
   builtInLiDARDepthCamera,

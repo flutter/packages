@@ -114,7 +114,6 @@
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
-      [discoveryDevices addObject:AVCaptureDeviceTypeDeskViewCamera];
     }
     if (@available(iOS 15.4, *)) {
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
@@ -144,40 +143,28 @@
           break;
       }
       NSString *deviceType;
-      switch ([device deviceType]) {
-        case AVCaptureDeviceTypeBuiltInWideAngleCamera:
+      if ([device deviceType] == AVCaptureDeviceTypeBuiltInWideAngleCamera) {
           deviceType = @"builtInWideAngleCamera";
-          break;
-        case AVCaptureDeviceTypeBuiltInUltraWideCamera:
-          deviceType = @"builtInUltraWideCamera";
-          break;
-        case AVCaptureDeviceTypeBuiltInTelephotoCamera:
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInTelephotoCamera) {
           deviceType = @"builtInTelephotoCamera";
-          break;
-        case AVCaptureDeviceTypeBuiltInDualCamera:
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInUltraWideCamera) {
+          deviceType = @"builtInUltraWideCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInDualCamera) {
           deviceType = @"builtInDualCamera";
-          break;
-        case AVCaptureDeviceTypeBuiltInDualWideCamera:
-          deviceType = @"builtInDualWideCamera";
-          break;
-        case AVCaptureDeviceTypeBuiltInTripleCamera:
-          deviceType = @"builtInTripleCamera";
-          break;
-        case AVCaptureDeviceTypeContinuityCamera:
-          deviceType = @"continuityCamera";
-          break;
-        case AVCaptureDeviceTypeExternal:
-          deviceType = @"external";
-          break;
-        case AVCaptureDeviceTypeDeskViewCamera:
-          deviceType = @"deskViewCamera";
-          break;
-        case AVCaptureDeviceTypeBuiltInLiDARDepthCamera:
-          deviceType = @"builtInLiDARDepthCamera";
-          break;
-        case AVCaptureDeviceTypeBuiltInTrueDepthCamera:
-          deviceType = @"builtInTrueDepthCamera";
-          break;
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInDualWideCamera) {
+        deviceType = @"builtInDualWideCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInTripleCamera) {
+        deviceType = @"builtInTripleCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeContinuityCamera) {
+        deviceType = @"continuityCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeExternal) {
+        deviceType = @"external";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInLiDARDepthCamera) {
+        deviceType = @"builtInLiDARDepthCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInTrueDepthCamera) {
+        deviceType = @"builtInTrueDepthCamera";
+      } else {
+        deviceType = @"unknown";
       }
       [reply addObject:@{
         @"name" : [device uniqueID],
