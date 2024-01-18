@@ -714,8 +714,8 @@ void main() {
   test('header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final SwiftOptions swiftOptions = SwiftOptions(
-      copyrightHeader: makeIterable('hello world'),
+    const SwiftOptions swiftOptions = SwiftOptions(
+      copyrightHeader: ['hello world', ''],
     );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
@@ -726,6 +726,8 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
+    // There should be no trailing whitespace on generated comments.
+    expect(code, isNot(matches(RegExp(r'^//.* $', multiLine: true))));
   });
 
   test('generics - list', () {
