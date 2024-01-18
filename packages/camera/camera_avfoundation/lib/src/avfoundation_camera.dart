@@ -84,10 +84,33 @@ class AVFoundationCamera extends CameraPlatform {
           lensDirection:
               parseCameraLensDirection(camera['lensFacing']! as String),
           sensorOrientation: camera['sensorOrientation']! as int,
+          appleCaptureDeviceType:
+              parseAppleCaptureDeviceType(camera['deviceType']! as String),
         );
       }).toList();
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Parses the [type] into an [AppleCaptureDeviceType].
+  AppleCaptureDeviceType? parseAppleCaptureDeviceType(String type) {
+    for (final AppleCaptureDeviceType element
+        in AppleCaptureDeviceType.values) {
+      if (element.name == type) {
+        return element;
+      }
+    }
+    // catch deprecated types
+    switch (type) {
+      case 'builtInDuoCamera':
+        return AppleCaptureDeviceType.builtInDualCamera;
+      case 'builtInMicrophone':
+        return AppleCaptureDeviceType.microphone;
+      case 'externalUnknown':
+        return AppleCaptureDeviceType.external;
+      default:
+        return null;
     }
   }
 
