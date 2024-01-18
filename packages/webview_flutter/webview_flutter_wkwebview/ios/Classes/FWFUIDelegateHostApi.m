@@ -214,12 +214,11 @@
                               defaultText:(NSString *)defaultText
                          initiatedByFrame:(WKFrameInfo *)frame
                         completionHandler:(void (^)(NSString *_Nullable))completionHandler {
-  [self.UIDelegateAPI
-      runJavaScriptTextInputPanelForDelegateWithIdentifier:self
-                                                    prompt:prompt
-                                               defaultText:defaultText
-                                                     frame:frame
-                                         completionHandler:completionHandler];
+  [self.UIDelegateAPI runJavaScriptTextInputPanelForDelegateWithIdentifier:self
+                                                                    prompt:prompt
+                                                               defaultText:defaultText
+                                                                     frame:frame
+                                                         completionHandler:completionHandler];
 }
 
 @end
