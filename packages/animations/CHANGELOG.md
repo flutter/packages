@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes Swift format issues in example app.
+
 ## 2.0.11
 
 * Fixes new lint warnings.

@@ -1,5 +1,6 @@
 ## NEXT
 
+* Fixes Swift format issues in example app.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
 
 ## 0.5.1+8

@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes Swift format issues in example app.
+
 ## 1.0.17
 
 * Adds support for tracking source locations of `BlobNode`s and

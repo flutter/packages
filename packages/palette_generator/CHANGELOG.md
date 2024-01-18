@@ -1,5 +1,6 @@
 ## NEXT
 
+* Fixes Swift format issues in example app.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.3.3+3
