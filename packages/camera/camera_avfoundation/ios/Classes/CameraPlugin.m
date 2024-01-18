@@ -108,11 +108,20 @@
             [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
                 AVCaptureDeviceTypeBuiltInTelephotoCamera,
                 AVCaptureDeviceTypeBuiltInDualCamera,
-                AVCaptureDeviceTypeBuiltInDualWideCamera,
-                AVCaptureDeviceTypeBuiltInTripleCamera ]
+                AVCaptureDeviceTypeBuiltInTrueDepthCamera]
                     mutableCopy];
     if (@available(iOS 13.0, *)) {
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
+      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
+      [discoveryDevices addObject:AVCaptureDeviceTypeDeskViewCamera];
+    }
+    if (@available(iOS 15.4, *)) {
+      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
+    }
+    if (@available(iOS 17.0, *)) {
+      [discoveryDevices addObject:AVCaptureDeviceTypeExternal];
+      [discoveryDevices addObject:AVCaptureDeviceTypeContinuityCamera];
     }
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
         discoverySessionWithDeviceTypes:discoveryDevices
@@ -134,11 +143,47 @@
           lensFacing = @"external";
           break;
       }
+      NSString *deviceType;
+      switch ([device deviceType]) {
+        case AVCaptureDeviceTypeBuiltInWideAngleCamera:
+          deviceType = @"builtInWideAngleCamera";
+          break;
+        case AVCaptureDeviceTypeBuiltInUltraWideCamera:
+          deviceType = @"builtInUltraWideCamera";
+          break;
+        case AVCaptureDeviceTypeBuiltInTelephotoCamera:
+          deviceType = @"builtInTelephotoCamera";
+          break;
+        case AVCaptureDeviceTypeBuiltInDualCamera:
+          deviceType = @"builtInDualCamera";
+          break;
+        case AVCaptureDeviceTypeBuiltInDualWideCamera:
+          deviceType = @"builtInDualWideCamera";
+          break;
+        case AVCaptureDeviceTypeBuiltInTripleCamera:
+          deviceType = @"builtInTripleCamera";
+          break;
+        case AVCaptureDeviceTypeContinuityCamera:
+          deviceType = @"continuityCamera";
+          break;
+        case AVCaptureDeviceTypeExternal:
+          deviceType = @"external";
+          break;
+        case AVCaptureDeviceTypeDeskViewCamera:
+          deviceType = @"deskViewCamera";
+          break;
+        case AVCaptureDeviceTypeBuiltInLiDARDepthCamera:
+          deviceType = @"builtInLiDARDepthCamera";
+          break;
+        case AVCaptureDeviceTypeBuiltInTrueDepthCamera:
+          deviceType = @"builtInTrueDepthCamera";
+          break;
+      }
       [reply addObject:@{
         @"name" : [device uniqueID],
         @"lensFacing" : lensFacing,
         @"sensorOrientation" : @90,
-        @"deviceType" : [device deviceType],
+        @"deviceType" : deviceType,
       }];
     }
     [result sendSuccessWithData:reply];

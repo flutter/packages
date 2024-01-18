@@ -93,27 +93,6 @@ class AVFoundationCamera extends CameraPlatform {
     }
   }
 
-  /// Parses the [type] into an [AppleCaptureDeviceType].
-  AppleCaptureDeviceType? parseAppleCaptureDeviceType(String type) {
-    for (final AppleCaptureDeviceType element
-        in AppleCaptureDeviceType.values) {
-      if (element.name == type) {
-        return element;
-      }
-    }
-    // catch deprecated types
-    switch (type) {
-      case 'builtInDuoCamera':
-        return AppleCaptureDeviceType.builtInDualCamera;
-      case 'builtInMicrophone':
-        return AppleCaptureDeviceType.microphone;
-      case 'externalUnknown':
-        return AppleCaptureDeviceType.external;
-      default:
-        return null;
-    }
-  }
-
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,

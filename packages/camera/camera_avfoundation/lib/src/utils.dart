@@ -18,6 +18,37 @@ CameraLensDirection parseCameraLensDirection(String string) {
   throw ArgumentError('Unknown CameraLensDirection value');
 }
 
+/// Parses the [type] into an [AppleCaptureDeviceType].
+AppleCaptureDeviceType? parseAppleCaptureDeviceType(String type) {
+  switch (type) {
+    case 'builtInWideAngleCamera':
+      return AppleCaptureDeviceType.builtInWideAngleCamera;
+    case 'builtInUltraWideCamera':
+      return AppleCaptureDeviceType.builtInUltraWideCamera;
+    case 'builtInTelephotoCamera':
+      return AppleCaptureDeviceType.builtInTelephotoCamera;
+    case 'builtInDualCamera':
+      return AppleCaptureDeviceType.builtInDualCamera;
+    case 'builtInDualWideCamera':
+      return AppleCaptureDeviceType.builtInDualWideCamera;
+    case 'builtInTripleCamera':
+      return AppleCaptureDeviceType.builtInTripleCamera;
+    case 'continuityCamera':
+      return AppleCaptureDeviceType.continuityCamera;
+    case 'microphone':
+      return AppleCaptureDeviceType.microphone;
+    case 'external':
+      return AppleCaptureDeviceType.external;
+    case 'deskViewCamera':
+      return AppleCaptureDeviceType.deskViewCamera;
+    case 'builtInLiDARDepthCamera':
+      return AppleCaptureDeviceType.builtInLiDARDepthCamera;
+    case 'builtInTrueDepthCamera':
+      return AppleCaptureDeviceType.builtInTrueDepthCamera;
+  }
+  throw ArgumentError('Unknown AppleCaptureDeviceType value');
+}
+
 /// Returns the device orientation as a String.
 String serializeDeviceOrientation(DeviceOrientation orientation) {
   switch (orientation) {
