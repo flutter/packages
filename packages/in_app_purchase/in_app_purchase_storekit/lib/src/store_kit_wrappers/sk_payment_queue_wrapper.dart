@@ -30,10 +30,12 @@ part 'sk_payment_queue_wrapper.g.dart';
 InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
 
 @visibleForTesting
+///
 void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
   _hostApi = api;
 }
 
+///
 class SKPaymentQueueWrapper {
   /// Returns the default payment queue.
   ///
@@ -54,19 +56,11 @@ class SKPaymentQueueWrapper {
   ///
   /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
   Future<SKStorefrontWrapper?> storefront() async {
-    // final Map<String, dynamic>? storefrontMap = await channel
-    //     .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
-    // if (storefrontMap == null) {
-    //   return null;
-    // }
-    // return SKStorefrontWrapper.fromJson(storefrontMap);
     return SKStorefrontWrapper.convertFromPigeon(await _hostApi.storefront());
   }
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    // return _getTransactionList((await channel
-    //     .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
     final List<SKPaymentTransactionMessage?> pigeonMsgs =
         await _hostApi.transactions();
     return pigeonMsgs
@@ -397,6 +391,7 @@ class SKError {
         userInfo,
       );
 
+  /// Converts [SKErrorMessage] into the dart equivalent
   static SKError convertFromPigeon(SKErrorMessage msg) {
     return SKError(code: msg.code, domain: msg.domain, userInfo: msg.userInfo);
   }
@@ -518,6 +513,7 @@ class SKPaymentWrapper {
   @override
   String toString() => _$SKPaymentWrapperToJson(this).toString();
 
+  /// Converts [SKPaymentMessage] into the dart equivalent
   static SKPaymentWrapper convertFromPigeon(SKPaymentMessage msg) {
     return SKPaymentWrapper(
         productIdentifier: msg.productIdentifier,
@@ -627,6 +623,7 @@ class SKPaymentDiscountWrapper {
   int get hashCode =>
       Object.hash(identifier, keyIdentifier, nonce, signature, timestamp);
 
+  /// Converts [SKPaymentDiscountMessage] into the dart equivalent
   static SKPaymentDiscountWrapper? convertFromPigeon(
       SKPaymentDiscountMessage? msg) {
     if (msg == null) {

@@ -16,6 +16,10 @@
 
 @end
 
+@interface SKPaymentTransactionMessage ()
+- (NSArray *)toList;
+@end
+
 @implementation InAppPurchasePluginTest
 
 - (void)setUp {
@@ -410,15 +414,9 @@
       [FIAObjectTranslator convertTransactionToPigeon:original];
   SKPaymentTransactionMessage *result = [self.plugin transactionsWithError:&error][0];
 
-
-  XCTAssertEqualObjects([result.payment encode], [originalPigeon.payment encode])
-  // How should I test this nicely without overriding isEquals?
-  //  XCTAssertEqualObjects(result.payment, originalPigeon.payment);
-  XCTAssertEqual(result.transactionState, originalPigeon.transactionState);
-  XCTAssertEqualObjects(result.originalTransaction, originalPigeon.originalTransaction);
-  XCTAssertEqualObjects(result.transactionTimeStamp, originalPigeon.transactionTimeStamp);
-  XCTAssertEqualObjects(result.transactionIdentifier, originalPigeon.transactionIdentifier);
-  //  XCTAssertEqualObjects(result.error, originalPigeon.error);
+  // Using a private pigeon method to avoid extraneous tests?
+  XCTAssertTrue([result respondsToSelector:@selector(toList)]);
+  XCTAssertEqualObjects([result toList], [originalPigeon toList]);
 }
 
 - (void)testStartObservingPaymentQueue {

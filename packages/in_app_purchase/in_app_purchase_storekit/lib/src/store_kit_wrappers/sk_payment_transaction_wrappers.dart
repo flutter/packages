@@ -93,7 +93,7 @@ enum SKPaymentTransactionStateWrapper {
   @JsonValue(-1)
   unspecified;
 
-  // TODO(louisehsu): maybe remove this lol
+  /// Converts [SKPaymentTransactionStateMessages] into the dart equivalent
   static SKPaymentTransactionStateWrapper convertFromPigeon(
       SKPaymentTransactionStateMessage msg) {
     switch (msg) {
@@ -220,6 +220,7 @@ class SKPaymentTransactionWrapper {
         'productIdentifier': payment.productIdentifier,
       };
 
+  /// Converts [SKPaymentTransactionMessages] into the dart equivalent
   static SKPaymentTransactionWrapper convertFromPigeon(
       SKPaymentTransactionMessage msg) {
     return SKPaymentTransactionWrapper(
