@@ -1,13 +1,9 @@
-## NEXT
-
-* Description of the change.
-
 ## 2.8.3
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
-* Fix infinite pause loop caused by on completed to call pause even when video is pause.
+* Fixes infinite pause loop caused by call to pause even when video is already paused.
 
 ## 2.8.2
 
