@@ -462,6 +462,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           // and seeks to the last frame of the video.
           if (value.isPlaying) {
             pause().then((void pauseResult) => seekTo(value.duration));
+          } else if (value.position != value.duration) {
+            seekTo(value.duration);
           }
           value = value.copyWith(isCompleted: true);
         case VideoEventType.bufferingUpdate:
