@@ -1,6 +1,6 @@
-## 0.10.2
+## 0.10.1+2
 
-* Remove warning related to width and height on web.
+* Fixes "width and height missing" warning on web.
 
 ## 0.10.1+1
 
