@@ -709,7 +709,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       'than the current $lowerSpanOrientation at $currentVicinity.',
     );
     assert(
-      spanMergeEnd <= spanCount,
+      spanMergeEnd < spanCount,
       '$spanOrientation merge configuration exceeds number of '
       '${lowerSpanOrientation}s in the table. $spanOrientation merge '
       'containing $currentVicinity starts at $spanMergeStart, and ends at '
@@ -1088,11 +1088,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           final ({double leading, double trailing}) offsetCorrection =
               axisDirectionIsReversed(verticalAxisDirection)
                   ? (
-                      leading: leadingCell.size.height,
-                      trailing: trailingCell.size.height,
+                      leading: leadingCell!.size.height,
+                      trailing: trailingCell!.size.height,
                     )
                   : (leading: 0.0, trailing: 0.0);
-
           return Rect.fromPoints(
             parentDataOf(leadingCell!).paintOffset! +
                 offset -
@@ -1208,8 +1207,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           final ({double leading, double trailing}) offsetCorrection =
               axisDirectionIsReversed(horizontalAxisDirection)
                   ? (
-                      leading: leadingCell.size.width,
-                      trailing: trailingCell.size.width,
+                      leading: leadingCell!.size.width,
+                      trailing: trailingCell!.size.width,
                     )
                   : (leading: 0.0, trailing: 0.0);
           return Rect.fromPoints(

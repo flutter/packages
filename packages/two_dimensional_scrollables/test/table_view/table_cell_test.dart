@@ -265,7 +265,7 @@ void main() {
         expect(exceptions.length, 2);
         expect(
           exceptions.first.toString(),
-          contains('spanMergeEnd <= spanCount'),
+          contains('spanMergeEnd < spanCount'),
         );
 
         await tester.pumpWidget(Container());
@@ -290,7 +290,7 @@ void main() {
         expect(exceptions.length, 2);
         expect(
           exceptions.first.toString(),
-          contains('spanMergeEnd <= spanCount'),
+          contains('spanMergeEnd < spanCount'),
         );
       });
 
