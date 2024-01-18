@@ -41,13 +41,11 @@
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/in_app_purchase"
                                   binaryMessenger:[registrar messenger]];
-  //  InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
-  //  SetUpInAppPurchaseAPI([registrar messenger], instance);
 
   InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
   [registrar addMethodCallDelegate:instance channel:channel];
   [registrar addApplicationDelegate:instance];
-  InAppPurchaseAPISetup([registrar messenger], instance);
+  InAppPurchaseAPISetup(registrar.messenger, instance);
 }
 
 - (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager {
@@ -125,18 +123,20 @@
   }
 }
 
-- (void)canMakePayments:(FlutterResult)result {
-  result(@([SKPaymentQueue canMakePayments]));
+- (nullable NSNumber *)canMakePaymentsWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @([SKPaymentQueue canMakePayments]);
 }
 
-- (void)getPendingTransactions:(FlutterResult)result {
+- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:
+    (FlutterError *_Nullable *_Nonnull)error {
   NSArray<SKPaymentTransaction *> *transactions =
       [self.paymentQueueHandler getUnfinishedTransactions];
   NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];
   for (SKPaymentTransaction *transaction in transactions) {
-    [transactionMaps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:transaction]];
+    [transactionMaps addObject:[FIAObjectTranslator convertTransactionToPigeon:transaction]];
   }
-  result(transactionMaps);
+  return (transactionMaps);
 }
 
 - (void)getStorefront:(FlutterResult)result {
@@ -400,38 +400,16 @@
   return [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:properties];
 }
 
-- (nullable NSNumber *)canMakePaymentsWithError:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @([SKPaymentQueue canMakePayments]);
-}
-
-- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error {
-  if (@available(iOS 13.0, macOS 10.15, *)) {
+- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error API_AVAILABLE(ios(13.0), macos(10.15)) {
     SKStorefront *storefront = self.paymentQueueHandler.storefront;
     if (!storefront) {
       return nil;
     }
     return [FIAObjectTranslator convertStorefrontToPigeon:storefront];
-  } else {
-    NSLog(@"storefront is not avaialbe in iOS below 13.0 or macOS below 10.15.");
-    return nil;
   }
-}
-
-- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:
-    (FlutterError *_Nullable *_Nonnull)error {
-  NSArray<SKPaymentTransaction *> *transactions =
-      [self.paymentQueueHandler getUnfinishedTransactions];
-  NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];
-  for (SKPaymentTransaction *transaction in transactions) {
-    [transactionMaps addObject:[FIAObjectTranslator convertTransactionToPigeon:transaction]];
-  }
-  return (transactionMaps);
-}
 
 - (void)addPayment:(nonnull NSDictionary *)paymentMap
              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  NSLog(@"Here");
   NSString *productID = [paymentMap objectForKey:@"productIdentifier"];
   // When a product is already fetched, we create a payment object with
   // the product to process the payment.

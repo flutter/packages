@@ -68,10 +68,10 @@
                                      transactionCache:OCMClassMock(FIATransactionCache.class)];
 
     FlutterError *error;
-    SKStorefrontMessage *resultMap = [self.plugin storefrontWithError:&error];
+    SKStorefrontMessage *result = [self.plugin storefrontWithError:&error];
 
-    XCTAssertEqualObjects(resultMap.countryCode, storefrontMap[@"countryCode"]);
-    XCTAssertEqualObjects(resultMap.identifier, storefrontMap[@"identifier"]);
+    XCTAssertEqualObjects(result.countryCode, storefrontMap[@"countryCode"]);
+    XCTAssertEqualObjects(result.identifier, storefrontMap[@"identifier"]);
     XCTAssertNil(error);
   } else {
     NSLog(@"Skip testPaymentQueueStorefront for iOS lower than 13.0 or macOS lower than 10.15.");
@@ -124,7 +124,7 @@
 }
 
 - (void)testAddPaymentShouldReturnFlutterErrorWhenPaymentFails {
-  NSDictionary *arguments = @{
+  NSDictionary *argument = @{
     @"productIdentifier" : @"123",
     @"quantity" : @(1),
     @"simulatesAskToBuyInSandbox" : @YES,
@@ -136,7 +136,7 @@
 
   FlutterError *error;
 
-  [self.plugin addPayment:arguments error:&error];
+  [self.plugin addPayment:argument error:&error];
 
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg any]]);
   XCTAssertEqualObjects(@"storekit_duplicate_product_object", error.code);
@@ -144,11 +144,11 @@
                         @"Please either wait for it to be finished or finish it manually "
                         @"using `completePurchase` to avoid edge cases.",
                         error.message);
-  XCTAssertEqualObjects(arguments, error.details);
+  XCTAssertEqualObjects(argument, error.details);
 }
 
 - (void)testAddPaymentSuccessWithoutPaymentDiscount {
-  NSDictionary *arguments = @{
+  NSDictionary *argument = @{
     @"productIdentifier" : @"123",
     @"quantity" : @(1),
     @"simulatesAskToBuyInSandbox" : @YES,
@@ -160,13 +160,13 @@
 
   FlutterError *error;
 
-  [self.plugin addPayment:arguments error:&error];
+  [self.plugin addPayment:argument error:&error];
   XCTAssertNil(error);
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg any]]);
 }
 
 - (void)testAddPaymentSuccessWithPaymentDiscount {
-  NSDictionary *arguments = @{
+  NSDictionary *argument = @{
     @"productIdentifier" : @"123",
     @"quantity" : @(1),
     @"simulatesAskToBuyInSandbox" : @YES,
@@ -185,7 +185,7 @@
 
   FlutterError *error;
 
-  [self.plugin addPayment:arguments error:&error];
+  [self.plugin addPayment:argument error:&error];
   XCTAssertNil(error);
   OCMVerify(
       times(1),
@@ -211,7 +211,7 @@
 - (void)testAddPaymentFailureWithInvalidPaymentDiscount {
   // Support for payment discount is only available on iOS 12.2 and higher.
   if (@available(iOS 12.2, *)) {
-    NSDictionary *arguments = @{
+    NSDictionary *argument = @{
       @"productIdentifier" : @"123",
       @"quantity" : @(1),
       @"simulatesAskToBuyInSandbox" : @YES,
@@ -234,19 +234,19 @@
     self.plugin.paymentQueueHandler = mockHandler;
     FlutterError *error;
 
-    [self.plugin addPayment:arguments error:&error];
+    [self.plugin addPayment:argument error:&error];
 
     XCTAssertEqualObjects(@"storekit_invalid_payment_discount_object", error.code);
     XCTAssertEqualObjects(@"You have requested a payment and specified a "
                           @"payment discount with invalid properties. Some error occurred",
                           error.message);
-    XCTAssertEqualObjects(arguments, error.details);
+    XCTAssertEqualObjects(argument, error.details);
     OCMVerify(never(), [mockHandler addPayment:[OCMArg any]]);
   }
 }
 
 - (void)testAddPaymentWithNullSandboxArgument {
-  NSDictionary *arguments = @{
+  NSDictionary *argument = @{
     @"productIdentifier" : @"123",
     @"quantity" : @(1),
     @"simulatesAskToBuyInSandbox" : [NSNull null],
@@ -257,7 +257,7 @@
   self.plugin.paymentQueueHandler = mockHandler;
   FlutterError *error;
 
-  [self.plugin addPayment:arguments error:&error];
+  [self.plugin addPayment:argument error:&error];
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
                                      SKPayment *payment = obj;
                                      return !payment.simulatesAskToBuyInSandbox;
@@ -393,7 +393,6 @@
   OCMStub(mockQueue.transactions).andReturn(@[ [[SKPaymentTransactionStub alloc]
       initWithMap:transactionMap] ]);
 
-  __block NSArray *resultArray;
   self.plugin.paymentQueueHandler =
       [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
                                 transactionsUpdated:nil
@@ -411,6 +410,8 @@
       [FIAObjectTranslator convertTransactionToPigeon:original];
   SKPaymentTransactionMessage *result = [self.plugin transactionsWithError:&error][0];
 
+
+  XCTAssertEqualObjects([result.payment encode], [originalPigeon.payment encode])
   // How should I test this nicely without overriding isEquals?
   //  XCTAssertEqualObjects(result.payment, originalPigeon.payment);
   XCTAssertEqual(result.transactionState, originalPigeon.transactionState);

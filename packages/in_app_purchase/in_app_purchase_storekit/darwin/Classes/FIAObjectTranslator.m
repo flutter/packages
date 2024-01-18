@@ -322,35 +322,28 @@
   switch (state) {
     case SKPaymentTransactionStatePurchasing:
       return SKPaymentTransactionStateMessagePurchasing;
-      break;
     case SKPaymentTransactionStatePurchased:
       return SKPaymentTransactionStateMessagePurchased;
-      break;
     case SKPaymentTransactionStateFailed:
       return SKPaymentTransactionStateMessageFailed;
-      break;
     case SKPaymentTransactionStateRestored:
       return SKPaymentTransactionStateMessageRestored;
-      break;
     case SKPaymentTransactionStateDeferred:
       return SKPaymentTransactionStateMessageDeferred;
-      break;
   }
 }
 
-+ (nullable SKPaymentMessage *)convertPaymentToPigeon:(SKPayment *)payment {
-  if (@available(iOS 12.2, *)) {
-    SKPaymentMessage *msg = [SKPaymentMessage
-         makeWithProductIdentifier:payment.productIdentifier
-               applicationUsername:payment.applicationUsername
-                       requestData:[[NSString alloc] initWithData:payment.requestData
-                                                         encoding:NSUTF8StringEncoding]
-                          quantity:@(payment.quantity)
-        simulatesAskToBuyInSandbox:@(payment.simulatesAskToBuyInSandbox)
-                   paymentDiscount:[self convertPaymentDiscountToPigeon:payment.paymentDiscount]];
-    return msg;
-  }
-  return nil;
++ (nullable SKPaymentMessage *)convertPaymentToPigeon:(SKPayment *)payment
+    API_AVAILABLE(ios(12.2)) {
+  SKPaymentMessage *msg = [SKPaymentMessage
+       makeWithProductIdentifier:payment.productIdentifier
+             applicationUsername:payment.applicationUsername
+                     requestData:[[NSString alloc] initWithData:payment.requestData
+                                                       encoding:NSUTF8StringEncoding]
+                        quantity:@(payment.quantity)
+      simulatesAskToBuyInSandbox:@(payment.simulatesAskToBuyInSandbox)
+                 paymentDiscount:[self convertPaymentDiscountToPigeon:payment.paymentDiscount]];
+  return msg;
 }
 
 + (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:(SKPaymentDiscount *)discount
