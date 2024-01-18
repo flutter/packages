@@ -35,8 +35,6 @@ AppleCaptureDeviceType? parseAppleCaptureDeviceType(String type) {
       return AppleCaptureDeviceType.builtInTripleCamera;
     case 'continuityCamera':
       return AppleCaptureDeviceType.continuityCamera;
-    case 'microphone':
-      return AppleCaptureDeviceType.microphone;
     case 'external':
       return AppleCaptureDeviceType.external;
     case 'builtInLiDARDepthCamera':
