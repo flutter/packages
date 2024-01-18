@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webview.dart'
     as android_webview;
@@ -15,7 +16,10 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'android_navigation_delegate_test.mocks.dart';
 import 'test_android_webview.g.dart';
 
-@GenerateMocks(<Type>[TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  TestInstanceManagerHostApi,
+  android_webview.HttpAuthHandler,
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -491,6 +495,21 @@ void main() {
 
       expect(callbackHost, expectedHost);
       expect(callbackRealm, expectedRealm);
+    });
+
+    test('onReceivedHttpAuthRequest calls cancel by default', () {
+      AndroidNavigationDelegate(_buildCreationParams());
+
+      final MockHttpAuthHandler mockAuthHandler = MockHttpAuthHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
+        android_webview.WebView.detached(),
+        mockAuthHandler,
+        'host',
+        'realm',
+      );
+
+      verify(mockAuthHandler.cancel());
     });
   });
 }

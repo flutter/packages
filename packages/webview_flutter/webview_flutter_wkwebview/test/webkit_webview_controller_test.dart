@@ -756,6 +756,45 @@ void main() {
       );
     });
 
+    test('addJavaScriptChannel requires channel with a unique name', () async {
+      final WebKitProxy webKitProxy = WebKitProxy(
+        createScriptMessageHandler: ({
+          required void Function(
+            WKUserContentController userContentController,
+            WKScriptMessage message,
+          ) didReceiveScriptMessage,
+        }) {
+          return WKScriptMessageHandler.detached(
+            didReceiveScriptMessage: didReceiveScriptMessage,
+          );
+        },
+      );
+      final MockWKUserContentController mockUserContentController =
+          MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      const String nonUniqueName = 'name';
+      final WebKitJavaScriptChannelParams javaScriptChannelParams =
+          WebKitJavaScriptChannelParams(
+        name: nonUniqueName,
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
+      await controller.addJavaScriptChannel(javaScriptChannelParams);
+
+      expect(
+        () => controller.addJavaScriptChannel(
+          JavaScriptChannelParams(
+            name: nonUniqueName,
+            onMessageReceived: (_) {},
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('removeJavaScriptChannel', () async {
       final WebKitProxy webKitProxy = WebKitProxy(
         createScriptMessageHandler: ({

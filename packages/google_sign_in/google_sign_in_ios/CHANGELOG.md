@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 5.7.3
+
+* Adds privacy manifest.
+
 ## 5.7.2
 
 * Updates `clearAuthCache` override to match base class declaration.
