@@ -67,13 +67,16 @@ class SKPaymentQueueWrapper {
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
     // return _getTransactionList((await channel
     //     .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
-    final List<SKPaymentTransactionMessage?> pigeonMsgs = await _hostApi.transactions();
-    return pigeonMsgs.map((SKPaymentTransactionMessage? msg) => SKPaymentTransactionWrapper.convertFromPigeon(msg!)).toList();
+    final List<SKPaymentTransactionMessage?> pigeonMsgs =
+        await _hostApi.transactions();
+    return pigeonMsgs
+        .map((SKPaymentTransactionMessage? msg) =>
+            SKPaymentTransactionWrapper.convertFromPigeon(msg!))
+        .toList();
   }
 
   /// Calls [`-[SKPaymentQueue canMakePayments:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506139-canmakepayments?language=objc).
-  static Future<bool> canMakePayments() async =>
-    _hostApi.canMakePayments();
+  static Future<bool> canMakePayments() async => _hostApi.canMakePayments();
 
   /// Sets an observer to listen to all incoming transaction events.
   ///
@@ -395,11 +398,7 @@ class SKError {
       );
 
   static SKError convertFromPigeon(SKErrorMessage msg) {
-    return SKError(
-        code: msg.code,
-        domain: msg.domain,
-        userInfo: msg.userInfo
-    );
+    return SKError(code: msg.code, domain: msg.domain, userInfo: msg.userInfo);
   }
 }
 
@@ -519,15 +518,15 @@ class SKPaymentWrapper {
   @override
   String toString() => _$SKPaymentWrapperToJson(this).toString();
 
-  static SKPaymentWrapper convertFromPigeon (SKPaymentMessage msg) {
+  static SKPaymentWrapper convertFromPigeon(SKPaymentMessage msg) {
     return SKPaymentWrapper(
-      productIdentifier: msg.productIdentifier,
-      applicationUsername: msg.applicationUsername,
-      quantity: msg.quantity,
-      simulatesAskToBuyInSandbox: msg.simulatesAskToBuyInSandbox,
-      requestData: msg.requestData,
-      paymentDiscount: SKPaymentDiscountWrapper.convertFromPigeon(msg.paymentDiscount)
-    );
+        productIdentifier: msg.productIdentifier,
+        applicationUsername: msg.applicationUsername,
+        quantity: msg.quantity,
+        simulatesAskToBuyInSandbox: msg.simulatesAskToBuyInSandbox,
+        requestData: msg.requestData,
+        paymentDiscount:
+            SKPaymentDiscountWrapper.convertFromPigeon(msg.paymentDiscount));
   }
 }
 
@@ -628,7 +627,8 @@ class SKPaymentDiscountWrapper {
   int get hashCode =>
       Object.hash(identifier, keyIdentifier, nonce, signature, timestamp);
 
-  static SKPaymentDiscountWrapper? convertFromPigeon(SKPaymentDiscountMessage? msg) {
+  static SKPaymentDiscountWrapper? convertFromPigeon(
+      SKPaymentDiscountMessage? msg) {
     if (msg == null) {
       return null;
     }

@@ -54,18 +54,18 @@
       @"countryCode" : @"USA",
       @"identifier" : @"unique_identifier",
     };
-    
+
     OCMStub(mockQueue.storefront).andReturn([[SKStorefrontStub alloc] initWithMap:storefrontMap]);
 
     self.plugin.paymentQueueHandler =
-    [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
-                              transactionsUpdated:nil
-                               transactionRemoved:nil
-                         restoreTransactionFailed:nil
-             restoreCompletedTransactionsFinished:nil
-                            shouldAddStorePayment:nil
-                                 updatedDownloads:nil
-                                 transactionCache:OCMClassMock(FIATransactionCache.class)];
+        [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
+                                  transactionsUpdated:nil
+                                   transactionRemoved:nil
+                             restoreTransactionFailed:nil
+                 restoreCompletedTransactionsFinished:nil
+                                shouldAddStorePayment:nil
+                                     updatedDownloads:nil
+                                     transactionCache:OCMClassMock(FIATransactionCache.class)];
 
     FlutterError *error;
     SKStorefrontMessage *resultMap = [self.plugin storefrontWithError:&error];
@@ -85,14 +85,14 @@
     OCMStub(mockQueue.storefront).andReturn(nil);
 
     self.plugin.paymentQueueHandler =
-    [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
-                              transactionsUpdated:nil
-                               transactionRemoved:nil
-                         restoreTransactionFailed:nil
-             restoreCompletedTransactionsFinished:nil
-                            shouldAddStorePayment:nil
-                                 updatedDownloads:nil
-                                 transactionCache:OCMClassMock(FIATransactionCache.class)];
+        [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
+                                  transactionsUpdated:nil
+                                   transactionRemoved:nil
+                             restoreTransactionFailed:nil
+                 restoreCompletedTransactionsFinished:nil
+                                shouldAddStorePayment:nil
+                                     updatedDownloads:nil
+                                     transactionCache:OCMClassMock(FIATransactionCache.class)];
 
     FlutterError *error;
     SKStorefrontMessage *resultMap = [self.plugin storefrontWithError:&error];
@@ -140,11 +140,10 @@
 
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg any]]);
   XCTAssertEqualObjects(@"storekit_duplicate_product_object", error.code);
-  XCTAssertEqualObjects(
-      @"There is a pending transaction for the same product identifier. "
-      @"Please either wait for it to be finished or finish it manually "
-      @"using `completePurchase` to avoid edge cases.",
-      error.message);
+  XCTAssertEqualObjects(@"There is a pending transaction for the same product identifier. "
+                        @"Please either wait for it to be finished or finish it manually "
+                        @"using `completePurchase` to avoid edge cases.",
+                        error.message);
   XCTAssertEqualObjects(arguments, error.details);
 }
 
@@ -189,26 +188,25 @@
   [self.plugin addPayment:arguments error:&error];
   XCTAssertNil(error);
   OCMVerify(
-            times(1),
-            [mockHandler
-             addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
-               SKPayment *payment = obj;
-               if (@available(iOS 12.2, *)) {
-                 SKPaymentDiscount *discount = payment.paymentDiscount;
+      times(1),
+      [mockHandler
+          addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
+            SKPayment *payment = obj;
+            if (@available(iOS 12.2, *)) {
+              SKPaymentDiscount *discount = payment.paymentDiscount;
 
-                 return [discount.identifier isEqual:@"test_identifier"] &&
-                 [discount.keyIdentifier isEqual:@"test_key_identifier"] &&
-                 [discount.nonce
-                  isEqual:[[NSUUID alloc]
-                           initWithUUIDString:@"4a11a9cc-3bc3-11ec-8d3d-0242ac130003"]] &&
-                 [discount.signature isEqual:@"test_signature"] &&
-                 [discount.timestamp isEqual:@(1635847102)];
-               }
+              return [discount.identifier isEqual:@"test_identifier"] &&
+                     [discount.keyIdentifier isEqual:@"test_key_identifier"] &&
+                     [discount.nonce
+                         isEqual:[[NSUUID alloc]
+                                     initWithUUIDString:@"4a11a9cc-3bc3-11ec-8d3d-0242ac130003"]] &&
+                     [discount.signature isEqual:@"test_signature"] &&
+                     [discount.timestamp isEqual:@(1635847102)];
+            }
 
-               return YES;
-             }]]);
+            return YES;
+          }]]);
 }
-
 
 - (void)testAddPaymentFailureWithInvalidPaymentDiscount {
   // Support for payment discount is only available on iOS 12.2 and higher.
@@ -239,10 +237,9 @@
     [self.plugin addPayment:arguments error:&error];
 
     XCTAssertEqualObjects(@"storekit_invalid_payment_discount_object", error.code);
-    XCTAssertEqualObjects(
-        @"You have requested a payment and specified a "
-        @"payment discount with invalid properties. Some error occurred",
-        error.message);
+    XCTAssertEqualObjects(@"You have requested a payment and specified a "
+                          @"payment discount with invalid properties. Some error occurred",
+                          error.message);
     XCTAssertEqualObjects(arguments, error.details);
     OCMVerify(never(), [mockHandler addPayment:[OCMArg any]]);
   }
@@ -407,18 +404,20 @@
                                    updatedDownloads:nil
                                    transactionCache:OCMClassMock(FIATransactionCache.class)];
   FlutterError *error;
-  SKPaymentTransactionStub *original = [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
-  
-  SKPaymentTransactionMessage *originalPigeon = [FIAObjectTranslator convertTransactionToPigeon:original];
+  SKPaymentTransactionStub *original =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+
+  SKPaymentTransactionMessage *originalPigeon =
+      [FIAObjectTranslator convertTransactionToPigeon:original];
   SKPaymentTransactionMessage *result = [self.plugin transactionsWithError:&error][0];
 
   // How should I test this nicely without overriding isEquals?
-//  XCTAssertEqualObjects(result.payment, originalPigeon.payment);
+  //  XCTAssertEqualObjects(result.payment, originalPigeon.payment);
   XCTAssertEqual(result.transactionState, originalPigeon.transactionState);
   XCTAssertEqualObjects(result.originalTransaction, originalPigeon.originalTransaction);
   XCTAssertEqualObjects(result.transactionTimeStamp, originalPigeon.transactionTimeStamp);
   XCTAssertEqualObjects(result.transactionIdentifier, originalPigeon.transactionIdentifier);
-//  XCTAssertEqualObjects(result.error, originalPigeon.error);
+  //  XCTAssertEqualObjects(result.error, originalPigeon.error);
 }
 
 - (void)testStartObservingPaymentQueue {

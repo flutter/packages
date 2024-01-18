@@ -94,7 +94,8 @@ enum SKPaymentTransactionStateWrapper {
   unspecified;
 
   // TODO(louisehsu): maybe remove this lol
-  static SKPaymentTransactionStateWrapper convertFromPigeon(SKPaymentTransactionStateMessage msg) {
+  static SKPaymentTransactionStateWrapper convertFromPigeon(
+      SKPaymentTransactionStateMessage msg) {
     switch (msg) {
       case SKPaymentTransactionStateMessage.purchased:
         return SKPaymentTransactionStateWrapper.purchased;
@@ -219,14 +220,18 @@ class SKPaymentTransactionWrapper {
         'productIdentifier': payment.productIdentifier,
       };
 
-  static SKPaymentTransactionWrapper convertFromPigeon(SKPaymentTransactionMessage msg) {
+  static SKPaymentTransactionWrapper convertFromPigeon(
+      SKPaymentTransactionMessage msg) {
     return SKPaymentTransactionWrapper(
-      payment: SKPaymentWrapper.convertFromPigeon(msg.payment),
-      transactionState: SKPaymentTransactionStateWrapper.convertFromPigeon(msg.transactionState),
-      originalTransaction: msg.originalTransaction == null ? null : convertFromPigeon(msg.originalTransaction!),
-      transactionTimeStamp: msg.transactionTimeStamp,
-      transactionIdentifier: msg.transactionIdentifier,
-      error: msg.error == null ? null : SKError.convertFromPigeon(msg.error!)
-    );
+        payment: SKPaymentWrapper.convertFromPigeon(msg.payment),
+        transactionState: SKPaymentTransactionStateWrapper.convertFromPigeon(
+            msg.transactionState),
+        originalTransaction: msg.originalTransaction == null
+            ? null
+            : convertFromPigeon(msg.originalTransaction!),
+        transactionTimeStamp: msg.transactionTimeStamp,
+        transactionIdentifier: msg.transactionIdentifier,
+        error:
+            msg.error == null ? null : SKError.convertFromPigeon(msg.error!));
   }
 }

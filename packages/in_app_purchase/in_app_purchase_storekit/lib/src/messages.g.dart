@@ -15,27 +15,32 @@ enum SKPaymentTransactionStateMessage {
   /// transaction to update to another state. Never complete a transaction that
   /// is still in a purchasing state.
   purchasing,
+
   /// The user's payment has been succesfully processed.
   ///
   /// You should provide the user the content that they purchased.
   purchased,
+
   /// The transaction failed.
   ///
   /// Check the [PaymentTransactionWrapper.error] property from
   /// [PaymentTransactionWrapper] for details.
   failed,
+
   /// This transaction is restoring content previously purchased by the user.
   ///
   /// The previous transaction information can be obtained in
   /// [PaymentTransactionWrapper.originalTransaction] from
   /// [PaymentTransactionWrapper].
   restored,
+
   /// The transaction is in the queue but pending external action. Wait for
   /// another callback to get the final state.
   ///
   /// You should update your UI to indicate that you are waiting for the
   /// transaction to update to another state.
   deferred,
+
   /// Indicates the transaction is in an unspecified state.
   unspecified,
 }
@@ -77,7 +82,8 @@ class SKPaymentTransactionMessage {
     result as List<Object?>;
     return SKPaymentTransactionMessage(
       payment: SKPaymentMessage.decode(result[0]! as List<Object?>),
-      transactionState: SKPaymentTransactionStateMessage.values[result[1]! as int],
+      transactionState:
+          SKPaymentTransactionStateMessage.values[result[1]! as int],
       originalTransaction: result[2] != null
           ? SKPaymentTransactionMessage.decode(result[2]! as List<Object?>)
           : null,
@@ -263,15 +269,15 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return SKErrorMessage.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return SKPaymentDiscountMessage.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return SKPaymentMessage.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return SKPaymentTransactionMessage.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return SKStorefrontMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -292,10 +298,10 @@ class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
   Future<bool> canMakePayments() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments', codec,
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -319,10 +325,10 @@ class InAppPurchaseAPI {
 
   Future<List<SKPaymentTransactionMessage?>> transactions() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions', codec,
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -340,16 +346,17 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<SKPaymentTransactionMessage?>();
+      return (replyList[0] as List<Object?>?)!
+          .cast<SKPaymentTransactionMessage?>();
     }
   }
 
   Future<SKStorefrontMessage> storefront() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront', codec,
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -373,7 +380,8 @@ class InAppPurchaseAPI {
 
   Future<void> addPayment(Map<String?, Object?> arg_paymentMap) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment', codec,
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_paymentMap]) as List<Object?>?;

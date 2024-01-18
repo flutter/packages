@@ -10,7 +10,6 @@ import 'package:pigeon/pigeon.dart';
   objcSourceOut: 'darwin/Classes/messages.g.m',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
-
 class SKPaymentTransactionMessage {
   SKPaymentTransactionMessage({
     required this.payment,
@@ -147,5 +146,3 @@ abstract class InAppPurchaseAPI {
   @ObjCSelector('addPayment:')
   void addPayment(Map<String, Object?> paymentMap);
 }
-
-
