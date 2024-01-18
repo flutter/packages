@@ -167,7 +167,7 @@ std::optional<FlutterError> VideoPlayerPlugin::Play(int64_t texture_id) {
   return std::nullopt;
 }
 
-ErrorOr<int64_t> VideoPlayerPlugin::Position(int64_t texture_id) {
+ErrorOr<int64_t> VideoPlayerPlugin::GetPosition(int64_t texture_id) {
   auto search_player = video_players_.find(texture_id);
   int64_t position = 0;
   if (search_player != video_players_.end()) {

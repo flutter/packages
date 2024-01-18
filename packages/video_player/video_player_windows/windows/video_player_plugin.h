@@ -43,7 +43,7 @@ class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
   std::optional<FlutterError> SetPlaybackSpeed(int64_t texture_id,
                                                double speed) override;
   std::optional<FlutterError> Play(int64_t texture_id) override;
-  ErrorOr<int64_t> Position(int64_t texture_id) override;
+  ErrorOr<int64_t> GetPosition(int64_t texture_id) override;
   std::optional<FlutterError> SeekTo(int64_t texture_id,
                                      int64_t position) override;
   std::optional<FlutterError> Pause(int64_t texture_id) override;

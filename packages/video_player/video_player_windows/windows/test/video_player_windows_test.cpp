@@ -53,8 +53,7 @@ TEST(VideoPlayerPlugin, CanInitializeSuccessTrue) {
 
   EXPECT_CALL(*texture_registrar_, RegisterTexture(_)).Times(1);
 
-  ErrorOr<int64_t> result =
-      plugin.Create(nullptr, &url, EncodableMap());
+  ErrorOr<int64_t> result = plugin.Create(nullptr, &url, EncodableMap());
 
   ASSERT_FALSE(result.has_error());
   EXPECT_EQ(result.value(), 1000);

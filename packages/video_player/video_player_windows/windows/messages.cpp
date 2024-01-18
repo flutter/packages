@@ -308,7 +308,7 @@ void WindowsVideoPlayerApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi."
-        "position",
+        "getPosition",
         &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
@@ -323,7 +323,7 @@ void WindowsVideoPlayerApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               }
               const int64_t texture_id_arg =
                   encodable_texture_id_arg.LongValue();
-              ErrorOr<int64_t> output = api->Position(texture_id_arg);
+              ErrorOr<int64_t> output = api->GetPosition(texture_id_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;

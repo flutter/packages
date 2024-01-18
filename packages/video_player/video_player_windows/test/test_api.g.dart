@@ -33,7 +33,7 @@ abstract class TestHostVideoPlayerApi {
 
   void play(int textureId);
 
-  int position(int textureId);
+  int getPosition(int textureId);
 
   void seekTo(int textureId, int position);
 
@@ -267,7 +267,7 @@ abstract class TestHostVideoPlayerApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.position',
+          'dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.getPosition',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -278,13 +278,13 @@ abstract class TestHostVideoPlayerApi {
             .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.position was null.');
+              'Argument for dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.getPosition was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_textureId = (args[0] as int?);
           assert(arg_textureId != null,
-              'Argument for dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.position was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.getPosition was null, expected non-null int.');
           try {
-            final int output = api.position(arg_textureId!);
+            final int output = api.getPosition(arg_textureId!);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

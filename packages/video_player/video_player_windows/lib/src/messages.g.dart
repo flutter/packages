@@ -214,9 +214,9 @@ class WindowsVideoPlayerApi {
     }
   }
 
-  Future<int> position(int textureId) async {
+  Future<int> getPosition(int textureId) async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.position';
+        'dev.flutter.pigeon.video_player_windows.WindowsVideoPlayerApi.getPosition';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

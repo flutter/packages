@@ -55,7 +55,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  int position(int arg) {
+  int getPosition(int arg) {
     log.add('position');
     textureId = arg;
     return 234;

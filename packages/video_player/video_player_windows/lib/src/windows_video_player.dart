@@ -95,7 +95,7 @@ class WindowsVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<Duration> getPosition(int textureId) async {
-    final int position = await _api.position(textureId);
+    final int position = await _api.getPosition(textureId);
     return Duration(milliseconds: position);
   }
 

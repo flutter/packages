@@ -23,7 +23,7 @@ abstract class WindowsVideoPlayerApi {
   void setVolume(int textureId, double volume);
   void setPlaybackSpeed(int textureId, double speed);
   void play(int textureId);
-  int position(int textureId);
+  int getPosition(int textureId);
   void seekTo(int textureId, int position);
   void pause(int textureId);
 }

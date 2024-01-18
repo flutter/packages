@@ -77,7 +77,7 @@ class WindowsVideoPlayerApi {
   virtual std::optional<FlutterError> SetPlaybackSpeed(int64_t texture_id,
                                                        double speed) = 0;
   virtual std::optional<FlutterError> Play(int64_t texture_id) = 0;
-  virtual ErrorOr<int64_t> Position(int64_t texture_id) = 0;
+  virtual ErrorOr<int64_t> GetPosition(int64_t texture_id) = 0;
   virtual std::optional<FlutterError> SeekTo(int64_t texture_id,
                                              int64_t position) = 0;
   virtual std::optional<FlutterError> Pause(int64_t texture_id) = 0;
