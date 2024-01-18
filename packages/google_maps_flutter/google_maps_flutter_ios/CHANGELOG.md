@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Restores the workaround to exclude arm64 simulator builds, as it is still necessary for applications targeting iOS 12.
+
 ## 2.4.0
 
 * Adds support for arm64 simulators.
