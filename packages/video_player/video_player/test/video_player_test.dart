@@ -1246,7 +1246,7 @@ void main() {
 
     bool currentIsCompleted = controller.value.isCompleted;
 
-    final void Function() isCompletedTest = expectAsync0(() {}, count: 2);
+    final void Function() isCompletedTest = expectAsync0(() {});
     final void Function() isNoLongerCompletedTest = expectAsync0(() {});
     bool hasLooped = false;
 
