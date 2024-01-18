@@ -329,7 +329,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   @override
   TableViewParentData parentDataOf(RenderBox child) =>
-      child.parentData! as TableViewParentData;
+      super.parentDataOf(child) as TableViewParentData;
 
   @override
   void setupParentData(RenderBox child) {
