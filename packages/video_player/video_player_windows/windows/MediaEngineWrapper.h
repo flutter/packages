@@ -43,29 +43,48 @@ class MediaEngineWrapper
   void Initialize(winrt::com_ptr<IDXGIAdapter> adapter,
                   IMFMediaSource* media_source);
 
-  // Stop playback and cleanup resources
+  // Stop playback.
   void Pause();
+  // Cleanup resources.
   void Shutdown();
 
-  // Control various aspects of playback
+  // Starts playing the media from the specified time stamp, in milliseconds.
   void StartPlayingFrom(uint64_t time_stamp);
+
+  // Sets the playback rate for the media. A rate of 1.0 means normal speed.
   void SetPlaybackRate(double playback_rate);
+
+  // Sets the volume for the media. The volume is a float value between 0.0 (mute) and 1.0 (maximum volume).
   void SetVolume(float volume);
+
+  // Sets whether the media should loop back to the beginning when it reaches the end.
   void SetLooping(bool is_looping);
+
+  // Seeks the media to the specified time stamp, in milliseconds.
   void SeekTo(uint64_t time_stamp);
 
-  // Query the current playback position
+  // Query the current playback position.
   uint64_t GetMediaTime();
 
+  // Query the current playback duration.
   uint64_t GetDuration();
-
+  
+  // Retrieves the buffered ranges of the media.
+  // It returns a vector of tuples, where each tuple represents a buffered range.
+  // The first element of the tuple is the start time of the range, and the second element is the end time.
+  // The times are in milliseconds.
   std::vector<std::tuple<uint64_t, uint64_t>> GetBufferedRanges();
 
+  // Retrieves the native video size of the media.
   void GetNativeVideoSize(uint32_t& cx, uint32_t& cy);
 
+  // Update the surface descriptor with the current video frame.
   void UpdateSurfaceDescriptor(uint32_t width, uint32_t height,
                                std::function<void()> callback,
                                FlutterDesktopGpuSurfaceDescriptor& descriptor);
+
+  // Starts a background thread that runs a given callback function.
+  // The callback function is called every 16 milliseconds if there is a new video frame available.
   void StartBackgroundThread(std::function<void()> callback);
 
   // Inform media engine of output window position & size changes
