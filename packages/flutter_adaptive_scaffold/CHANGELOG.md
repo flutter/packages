@@ -1,7 +1,3 @@
-## NEXT
-
-* Fixes Swift format issues in example app.
-
 ## 0.1.7+2
 
 * Fixes new lint warnings.

@@ -1,7 +1,3 @@
-## NEXT
-
-* Fixes Swift format issues in example app.
-
 ## 4.1.10
 
 * Fixes image asset link to use image within package.

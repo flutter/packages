@@ -1,7 +1,3 @@
-## NEXT
-
-* Fixes Swift format issues in example app.
-
 ## 0.0.5+2
 
 * Fixes must_call_super lint warning from pending framework change.

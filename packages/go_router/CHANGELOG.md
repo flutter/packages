@@ -1,7 +1,3 @@
-## NEXT
-
-* Fixes Swift format issues in example app.
-
 ## 13.0.1
 
 * Fixes new lint warnings.
