@@ -1797,4 +1797,34 @@ void main() {
     expect(code, contains(errorClassName));
     expect(code, isNot(contains('FlutterError')));
   });
+
+  test('gen screaming snake case enum', () {
+    final Enum anEnum = Enum(
+      name: 'Foobar',
+      members: <EnumMember>[
+        EnumMember(name: 'enumOne'),
+        EnumMember(name: 'EnumTWo'),
+        EnumMember(name: 'enumThreeWords'),
+      ],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[anEnum],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('enum class Foobar(val raw: Int) {'));
+    expect(code, contains('ENUM_ONE(0)'));
+    expect(code, contains('ENUM_TWO(1)'));
+    expect(code, contains('ENUM_THREE_WORDS(2)'));
+  });
 }

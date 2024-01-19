@@ -127,7 +127,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
-        indent.write('${member.name.toUpperCase()}($index)');
+        final RegExp exp = RegExp('[a-z][A-Z]');
+        final String snakedMemberName = member.name.replaceAllMapped(exp,
+            (Match match) => '${match.group(0)?[0]}_${match.group(0)?[1]}');
+        indent.write('${snakedMemberName.toUpperCase()}($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
         } else {
