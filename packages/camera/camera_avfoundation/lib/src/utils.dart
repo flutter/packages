@@ -42,7 +42,8 @@ AppleCaptureDeviceType? parseAppleCaptureDeviceType(String type) {
     case 'builtInTrueDepthCamera':
       return AppleCaptureDeviceType.builtInTrueDepthCamera;
   }
-  throw ArgumentError('Unknown AppleCaptureDeviceType value');
+  // unknown type
+  return null;
 }
 
 /// Returns the device orientation as a String.
