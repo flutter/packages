@@ -73,7 +73,8 @@ Future<void> _validateGeneratedFiles(
     };
   } else if (Platform.isMacOS) {
     languagesToValidate = <GeneratorLanguage>{
-      GeneratorLanguage.swift,
+      // TODO(stuartmorgan): Enable this in or after https://github.com/flutter/packages/pull/5928
+      // GeneratorLanguage.swift,
     };
   } else {
     return;
