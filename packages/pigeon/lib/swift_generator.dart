@@ -334,7 +334,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
             indent.writeScoped(
                 'guard let listResponse = response as? [Any?] else {', '}', () {
               indent.writeln(
-                  'completion(.failure(createConnectionError(withChannelName:channelName)))');
+                  'completion(.failure(createConnectionError(withChannelName: channelName)))');
               indent.writeln('return');
             });
             indent.writeScoped('if listResponse.count > 1 {', '} ', () {
