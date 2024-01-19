@@ -551,15 +551,45 @@ void main() {
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
             const ProcessCall(
-                '/path/to/swift-format', <String>['--version'], null),
+              '/path/to/swift-format',
+              <String>['--version'],
+              null,
+            ),
             ProcessCall(
-                '/path/to/swift-format',
-                <String>['-i', ...getPackagesDirRelativePaths(plugin, files)],
-                packagesDir.path),
+              '/path/to/swift-format',
+              <String>['-i', ...getPackagesDirRelativePaths(plugin, files)],
+              packagesDir.path,
+            ),
+            ProcessCall(
+              '/path/to/swift-format',
+              <String>[
+                'lint',
+                '--parallel',
+                '--strict',
+                ...getPackagesDirRelativePaths(plugin, files),
+              ],
+              packagesDir.path,
+            ),
           ]));
     });
 
-    test('skips Swift if --swift flag is not provided', () async {
+    test('skips generated Swift files', () async {
+      const List<String> files = <String>[
+        'macos/foo.gen.swift',
+        'macos/foo.g.swift',
+      ];
+      createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(runner, <String>['format', '--swift']);
+
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('skips Swift if --no-swift flag is provided', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
       ];
@@ -569,7 +599,7 @@ void main() {
         extraFiles: files,
       );
 
-      await runCapturingPrint(runner, <String>['format']);
+      await runCapturingPrint(runner, <String>['format', '--no-swift']);
 
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
@@ -598,6 +628,40 @@ void main() {
             contains(
                 'Unable to run "swift-format". Make sure that it is in your path, or '
                 'provide a full path with --swift-format-path.'),
+          ]));
+    });
+
+    test('fails if swift-format lint fails', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(),
+            <String>['--version']), // check for working swift-format
+        FakeProcessInfo(MockProcess(), <String>['-i']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'lint',
+          '--parallel',
+          '--strict',
+        ]),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'format',
+        '--swift',
+        '--swift-format-path=swift-format'
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to lint Swift files: exit code 1.'),
           ]));
     });
 

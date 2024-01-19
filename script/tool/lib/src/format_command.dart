@@ -54,7 +54,8 @@ class FormatCommand extends PackageCommand {
     argParser.addFlag(_kotlinArg,
         help: 'Format Kotlin files', defaultsTo: true);
     argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
-    argParser.addFlag(_swiftArg, help: 'Format Swift files');
+    argParser.addFlag(_swiftArg,
+        help: 'Format and lint Swift files', defaultsTo: true);
     argParser.addOption(_clangFormatPathArg,
         defaultsTo: 'clang-format', help: 'Path to "clang-format" executable.');
     argParser.addOption(_javaPathArg,
@@ -105,7 +106,7 @@ class FormatCommand extends PackageCommand {
       await _formatCppAndObjectiveC(files);
     }
     if (getBoolArg(_swiftArg)) {
-      await _formatSwift(files);
+      await _formatAndLintSwift(files);
     }
 
     if (getBoolArg('fail-on-change')) {
@@ -177,16 +178,32 @@ class FormatCommand extends PackageCommand {
     }
   }
 
-  Future<void> _formatSwift(Iterable<String> files) async {
-    final String swiftFormat = await _findValidSwiftFormat();
-    final Iterable<String> swiftFiles =
-        _getPathsWithExtensions(files, <String>{'.swift'});
+  Future<void> _formatAndLintSwift(Iterable<String> files) async {
+    // TODO(jmagman): Remove generated file filter when pigeon Swift generation matches swift-format.
+    // https://github.com/flutter/flutter/issues/141799
+    final Iterable<String> swiftFiles = _filterGeneratedFiles(
+        _getPathsWithExtensions(files, <String>{'.swift'}));
     if (swiftFiles.isNotEmpty) {
+      final String swiftFormat = await _findValidSwiftFormat();
       print('Formatting .swift files...');
-      final int exitCode =
+      final int formatExitCode =
           await _runBatched(swiftFormat, <String>['-i'], files: swiftFiles);
-      if (exitCode != 0) {
-        printError('Failed to format Swift files: exit code $exitCode.');
+      if (formatExitCode != 0) {
+        printError('Failed to format Swift files: exit code $formatExitCode.');
+        throw ToolExit(_exitSwiftFormatFailed);
+      }
+
+      print('Linting .swift files...');
+      final int lintExitCode = await _runBatched(
+          swiftFormat,
+          <String>[
+            'lint',
+            '--parallel',
+            '--strict',
+          ],
+          files: swiftFiles);
+      if (lintExitCode != 0) {
+        printError('Failed to lint Swift files: exit code $lintExitCode.');
         throw ToolExit(_exitSwiftFormatFailed);
       }
     }
@@ -340,6 +357,13 @@ class FormatCommand extends PackageCommand {
       Iterable<String> files, Set<String> extensions) {
     return files.where(
         (String filePath) => extensions.contains(path.extension(filePath)));
+  }
+
+  Iterable<String> _filterGeneratedFiles(Iterable<String> files) {
+    return files.where((String filePath) {
+      final String basename = path.basename(filePath);
+      return !basename.contains('.gen.') && !basename.contains('.g.');
+    });
   }
 
   Future<String> _getJavaFormatterPath() async {
