@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/swift_generator.dart';
+import 'package:test/expect.dart';
 import 'package:test/test.dart';
 
 import 'dart_generator_test.dart';
@@ -303,6 +304,7 @@ void main() {
     expect(code, contains('init(binaryMessenger: FlutterBinaryMessenger)'));
     expect(code, matches('func doSomething.*Input.*Output'));
     expect(code, isNot(contains('if (')));
+    expect(code, isNot(matches(RegExp(r';$', multiLine: true))));
   });
 
   test('gen host void api', () {

@@ -344,7 +344,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
               indent.writeln(
                   'let details: String? = nilOrValue(listResponse[2])');
               indent.writeln(
-                  'completion(.failure(FlutterError(code: code, message: message, details: details)));');
+                  'completion(.failure(FlutterError(code: code, message: message, details: details)))');
             }, addTrailingNewline: false);
             if (!func.returnType.isNullable && !func.returnType.isVoid) {
               indent.addScoped('else if listResponse[0] == nil {', '} ', () {
