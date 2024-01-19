@@ -52,6 +52,7 @@ void main() {
     expect(code, contains('var field1: Int64? = nil'));
     expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
     expect(code, contains('func toList() -> [Any?]'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen one enum', () {
@@ -80,6 +81,7 @@ void main() {
     expect(code, contains('enum Foobar: Int'));
     expect(code, contains('  case one = 0'));
     expect(code, contains('  case two = 1'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('primitive enum host', () {
@@ -116,6 +118,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
     expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)!'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen one host api', () {
@@ -170,6 +173,7 @@ void main() {
     expect(code, contains('protocol Api'));
     expect(code, matches('func doSomething.*Input.*Output'));
     expect(code, contains('doSomethingChannel.setMessageHandler'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('all the simple datatypes header', () {
@@ -298,6 +302,7 @@ void main() {
     expect(code, contains('class Api'));
     expect(code, contains('init(binaryMessenger: FlutterBinaryMessenger)'));
     expect(code, matches('func doSomething.*Input.*Output'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen host void api', () {
@@ -339,6 +344,7 @@ void main() {
     final String code = sink.toString();
     expect(code, isNot(matches('.*doSomething(.*) ->')));
     expect(code, matches('doSomething(.*)'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen flutter void return api', () {
@@ -381,6 +387,7 @@ void main() {
     expect(code,
         contains('completion: @escaping (Result<Void, FlutterError>) -> Void'));
     expect(code, contains('completion(.success(Void()))'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen host void argument api', () {
@@ -419,6 +426,7 @@ void main() {
     expect(code, contains('func doSomething() throws -> Output'));
     expect(code, contains('let result = try api.doSomething()'));
     expect(code, contains('reply(wrapResult(result))'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen flutter void argument api', () {
@@ -459,6 +467,7 @@ void main() {
         contains(
             'func doSomething(completion: @escaping (Result<Output, FlutterError>) -> Void)'));
     expect(code, contains('channel.sendMessage(nil'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen list', () {
@@ -484,6 +493,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: [Any?]? = nil'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen map', () {
@@ -509,6 +519,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: [AnyHashable: Any?]? = nil'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen nested', () {
@@ -556,6 +567,9 @@ void main() {
     expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
     expect(code, contains('nested = Nested.fromList(nestedList)'));
     expect(code, contains('func toList() -> [Any?]'));
+    expect(code, isNot(contains('if (')));
+    // Single-element list serializations should not have a trailing comma.
+    expect(code, matches(RegExp(r'return \[\s*data\s*]')));
   });
 
   test('gen one async Host Api', () {
@@ -611,6 +625,7 @@ void main() {
     expect(code, contains('protocol Api'));
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
     expect(code, contains('reply(wrapResult(res))'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen one async Flutter Api', () {
@@ -665,6 +680,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('func doSomething.*Input.*completion.*Output.*Void'));
+    expect(code, isNot(contains('if (')));
   });
 
   test('gen one enum class', () {
@@ -705,6 +721,7 @@ void main() {
     expect(code, contains('enum Enum1: Int'));
     expect(code, contains('case one = 0'));
     expect(code, contains('case two = 1'));
+    expect(code, isNot(contains('if (')));
   });
 
   Iterable<String> makeIterable(String string) sync* {
