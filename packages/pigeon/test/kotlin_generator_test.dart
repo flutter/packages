@@ -845,7 +845,7 @@ void main() {
     expect(code, matches('fun doSomething.*Input.*callback.*Output.*Unit'));
   });
 
-  test('gen one enum class with screaming snake case conversion', () {
+  test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'SampleEnum',
       members: <EnumMember>[
