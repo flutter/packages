@@ -242,6 +242,7 @@ Future<int> formatAllFiles({required String repositoryRoot}) {
         'run',
         'script/tool/bin/flutter_plugin_tools.dart',
         'format',
+        '--swift',
         '--packages=pigeon',
       ],
       workingDirectory: repositoryRoot,
