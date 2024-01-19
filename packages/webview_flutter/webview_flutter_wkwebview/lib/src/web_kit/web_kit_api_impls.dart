@@ -153,7 +153,10 @@ extension _NavigationActionDataConverter on WKNavigationActionData {
 
 extension _WKFrameInfoDataConverter on WKFrameInfoData {
   WKFrameInfo toWKFrameInfo() {
-    return WKFrameInfo(isMainFrame: isMainFrame);
+    return WKFrameInfo(
+      isMainFrame: isMainFrame,
+      request: request.toNSUrlRequest(),
+    );
   }
 }
 
@@ -740,6 +743,33 @@ class WKUIDelegateFlutterApiImpl extends WKUIDelegateFlutterApi {
     }
 
     return WKPermissionDecisionData(value: decision);
+  }
+
+  @override
+  Future<void> runJavaScriptAlertPanel(
+      int identifier, String message, WKFrameInfoData frame) {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+    return instance.runJavaScriptAlertDialog!
+        .call(message, frame.toWKFrameInfo());
+  }
+
+  @override
+  Future<bool> runJavaScriptConfirmPanel(
+      int identifier, String message, WKFrameInfoData frame) {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+    return instance.runJavaScriptConfirmDialog!
+        .call(message, frame.toWKFrameInfo());
+  }
+
+  @override
+  Future<String> runJavaScriptTextInputPanel(int identifier, String prompt,
+      String defaultText, WKFrameInfoData frame) {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+    return instance.runJavaScriptTextInputDialog!
+        .call(prompt, defaultText, frame.toWKFrameInfo());
   }
 }
 
