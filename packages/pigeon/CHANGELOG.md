@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes Swift format issues in example app.
+
 ## 16.0.3
 
 * [kotlin] Separates message call code generation into separate methods.
