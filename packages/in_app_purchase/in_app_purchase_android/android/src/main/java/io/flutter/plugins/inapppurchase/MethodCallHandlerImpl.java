@@ -20,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingConfigResponseListener;
+import com.android.billingclient.api.GetBillingConfigParams;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
@@ -61,7 +63,8 @@ class MethodCallHandlerImpl
     static final String ACKNOWLEDGE_PURCHASE =
         "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
-    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
+    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";;
+    static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
 
     private MethodNames() {}
   }
@@ -184,9 +187,23 @@ class MethodCallHandlerImpl
       case MethodNames.GET_CONNECTION_STATE:
         getConnectionState(result);
         break;
+      case MethodNames.GET_BILLING_CONFIG:
+        getBillingConfig(result);
+        break;
       default:
         result.notImplemented();
     }
+  }
+
+  private void getBillingConfig(final MethodChannel.Result result) {
+    billingClient.getBillingConfigAsync(
+        GetBillingConfigParams.newBuilder().build(),
+        (billingResult, billingConfig) -> {
+          final Map<String, Object> serialized = new HashMap<>();
+          serialized.put("billingResult", fromBillingResult(billingResult));
+          serialized.put("countryCode", billingConfig.getCountryCode());
+          result.success(serialized);
+        });
   }
 
   private void endConnection(final MethodChannel.Result result) {
