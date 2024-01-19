@@ -1,3 +1,7 @@
+## 16.0.4
+
+* Pigeon Kotlin generator generates screaming snake names for multi-word enums.
+
 ## 16.0.3
 
 * [kotlin] Separates message call code generation into separate methods.
