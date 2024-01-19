@@ -31,6 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_serializable: ^6.0.0
+  mockito: ^5.4.4
   pigeon: ^11.0.1
   test: ^1.16.0
 

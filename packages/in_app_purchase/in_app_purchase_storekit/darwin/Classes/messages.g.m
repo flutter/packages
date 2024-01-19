@@ -68,12 +68,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation SKPaymentTransactionMessage
 + (instancetype)makeWithPayment:(SKPaymentMessage *)payment
-               transactionState:(SKPaymentTransactionStateMessage)transactionState
-            originalTransaction:(nullable SKPaymentTransactionMessage *)originalTransaction
-           transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
-          transactionIdentifier:(nullable NSString *)transactionIdentifier
-                          error:(nullable SKErrorMessage *)error {
-  SKPaymentTransactionMessage *pigeonResult = [[SKPaymentTransactionMessage alloc] init];
+    transactionState:(SKPaymentTransactionStateMessage)transactionState
+    originalTransaction:(nullable SKPaymentTransactionMessage *)originalTransaction
+    transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
+    transactionIdentifier:(nullable NSString *)transactionIdentifier
+    error:(nullable SKErrorMessage *)error {
+  SKPaymentTransactionMessage* pigeonResult = [[SKPaymentTransactionMessage alloc] init];
   pigeonResult.payment = payment;
   pigeonResult.transactionState = transactionState;
   pigeonResult.originalTransaction = originalTransaction;
@@ -87,8 +87,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.payment = [SKPaymentMessage nullableFromList:(GetNullableObjectAtIndex(list, 0))];
   NSAssert(pigeonResult.payment != nil, @"");
   pigeonResult.transactionState = [GetNullableObjectAtIndex(list, 1) integerValue];
-  pigeonResult.originalTransaction =
-      [SKPaymentTransactionMessage nullableFromList:(GetNullableObjectAtIndex(list, 2))];
+  pigeonResult.originalTransaction = [SKPaymentTransactionMessage nullableFromList:(GetNullableObjectAtIndex(list, 2))];
   pigeonResult.transactionTimeStamp = GetNullableObjectAtIndex(list, 3);
   pigeonResult.transactionIdentifier = GetNullableObjectAtIndex(list, 4);
   pigeonResult.error = [SKErrorMessage nullableFromList:(GetNullableObjectAtIndex(list, 5))];
@@ -111,12 +110,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation SKPaymentMessage
 + (instancetype)makeWithProductIdentifier:(NSString *)productIdentifier
-                      applicationUsername:(nullable NSString *)applicationUsername
-                              requestData:(nullable NSString *)requestData
-                                 quantity:(NSNumber *)quantity
-               simulatesAskToBuyInSandbox:(NSNumber *)simulatesAskToBuyInSandbox
-                          paymentDiscount:(nullable SKPaymentDiscountMessage *)paymentDiscount {
-  SKPaymentMessage *pigeonResult = [[SKPaymentMessage alloc] init];
+    applicationUsername:(nullable NSString *)applicationUsername
+    requestData:(nullable NSString *)requestData
+    quantity:(NSNumber *)quantity
+    simulatesAskToBuyInSandbox:(NSNumber *)simulatesAskToBuyInSandbox
+    paymentDiscount:(nullable SKPaymentDiscountMessage *)paymentDiscount {
+  SKPaymentMessage* pigeonResult = [[SKPaymentMessage alloc] init];
   pigeonResult.productIdentifier = productIdentifier;
   pigeonResult.applicationUsername = applicationUsername;
   pigeonResult.requestData = requestData;
@@ -135,8 +134,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   NSAssert(pigeonResult.quantity != nil, @"");
   pigeonResult.simulatesAskToBuyInSandbox = GetNullableObjectAtIndex(list, 4);
   NSAssert(pigeonResult.simulatesAskToBuyInSandbox != nil, @"");
-  pigeonResult.paymentDiscount =
-      [SKPaymentDiscountMessage nullableFromList:(GetNullableObjectAtIndex(list, 5))];
+  pigeonResult.paymentDiscount = [SKPaymentDiscountMessage nullableFromList:(GetNullableObjectAtIndex(list, 5))];
   return pigeonResult;
 }
 + (nullable SKPaymentMessage *)nullableFromList:(NSArray *)list {
@@ -156,9 +154,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation SKErrorMessage
 + (instancetype)makeWithCode:(NSNumber *)code
-                      domain:(NSString *)domain
-                    userInfo:(NSDictionary<NSString *, id> *)userInfo {
-  SKErrorMessage *pigeonResult = [[SKErrorMessage alloc] init];
+    domain:(NSString *)domain
+    userInfo:(NSDictionary<NSString *, id> *)userInfo {
+  SKErrorMessage* pigeonResult = [[SKErrorMessage alloc] init];
   pigeonResult.code = code;
   pigeonResult.domain = domain;
   pigeonResult.userInfo = userInfo;
@@ -188,11 +186,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation SKPaymentDiscountMessage
 + (instancetype)makeWithIdentifier:(NSString *)identifier
-                     keyIdentifier:(NSString *)keyIdentifier
-                             nonce:(NSString *)nonce
-                         signature:(NSString *)signature
-                         timestamp:(NSNumber *)timestamp {
-  SKPaymentDiscountMessage *pigeonResult = [[SKPaymentDiscountMessage alloc] init];
+    keyIdentifier:(NSString *)keyIdentifier
+    nonce:(NSString *)nonce
+    signature:(NSString *)signature
+    timestamp:(NSNumber *)timestamp {
+  SKPaymentDiscountMessage* pigeonResult = [[SKPaymentDiscountMessage alloc] init];
   pigeonResult.identifier = identifier;
   pigeonResult.keyIdentifier = keyIdentifier;
   pigeonResult.nonce = nonce;
@@ -229,8 +227,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation SKStorefrontMessage
-+ (instancetype)makeWithCountryCode:(NSString *)countryCode identifier:(NSString *)identifier {
-  SKStorefrontMessage *pigeonResult = [[SKStorefrontMessage alloc] init];
++ (instancetype)makeWithCountryCode:(NSString *)countryCode
+    identifier:(NSString *)identifier {
+  SKStorefrontMessage* pigeonResult = [[SKStorefrontMessage alloc] init];
   pigeonResult.countryCode = countryCode;
   pigeonResult.identifier = identifier;
   return pigeonResult;
@@ -259,15 +258,15 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation InAppPurchaseAPICodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [SKErrorMessage fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [SKPaymentDiscountMessage fromList:[self readValue]];
-    case 130:
+    case 130: 
       return [SKPaymentMessage fromList:[self readValue]];
-    case 131:
+    case 131: 
       return [SKPaymentTransactionMessage fromList:[self readValue]];
-    case 132:
+    case 132: 
       return [SKStorefrontMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -315,27 +314,22 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    InAppPurchaseAPICodecReaderWriter *readerWriter =
-        [[InAppPurchaseAPICodecReaderWriter alloc] init];
+    InAppPurchaseAPICodecReaderWriter *readerWriter = [[InAppPurchaseAPICodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger,
-                           NSObject<InAppPurchaseAPI> *api) {
+void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *api) {
   /// Returns if the current device is able to make payments
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments"
         binaryMessenger:binaryMessenger
-                  codec:InAppPurchaseAPIGetCodec()];
+        codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(canMakePaymentsWithError:)],
-          @"InAppPurchaseAPI api (%@) doesn't respond to @selector(canMakePaymentsWithError:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(canMakePaymentsWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(canMakePaymentsWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api canMakePaymentsWithError:&error];
@@ -346,14 +340,13 @@ void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions"
         binaryMessenger:binaryMessenger
-                  codec:InAppPurchaseAPIGetCodec()];
+        codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(transactionsWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to @selector(transactionsWithError:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(transactionsWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(transactionsWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSArray<SKPaymentTransactionMessage *> *output = [api transactionsWithError:&error];
@@ -364,14 +357,13 @@ void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront"
         binaryMessenger:binaryMessenger
-                  codec:InAppPurchaseAPIGetCodec()];
+        codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(storefrontWithError:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to @selector(storefrontWithError:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(storefrontWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(storefrontWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         SKStorefrontMessage *output = [api storefrontWithError:&error];
@@ -382,13 +374,13 @@ void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment"
         binaryMessenger:binaryMessenger
-                  codec:InAppPurchaseAPIGetCodec()];
+        codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(addPayment:error:)],
-                @"InAppPurchaseAPI api (%@) doesn't respond to @selector(addPayment:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(addPayment:error:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(addPayment:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSDictionary<NSString *, id> *arg_paymentMap = GetNullableObjectAtIndex(args, 0);

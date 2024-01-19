@@ -58,68 +58,69 @@ typedef NS_ENUM(NSUInteger, SKPaymentTransactionStateMessage) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithPayment:(SKPaymentMessage *)payment
-               transactionState:(SKPaymentTransactionStateMessage)transactionState
-            originalTransaction:(nullable SKPaymentTransactionMessage *)originalTransaction
-           transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
-          transactionIdentifier:(nullable NSString *)transactionIdentifier
-                          error:(nullable SKErrorMessage *)error;
-@property(nonatomic, strong) SKPaymentMessage *payment;
+    transactionState:(SKPaymentTransactionStateMessage)transactionState
+    originalTransaction:(nullable SKPaymentTransactionMessage *)originalTransaction
+    transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
+    transactionIdentifier:(nullable NSString *)transactionIdentifier
+    error:(nullable SKErrorMessage *)error;
+@property(nonatomic, strong) SKPaymentMessage * payment;
 @property(nonatomic, assign) SKPaymentTransactionStateMessage transactionState;
-@property(nonatomic, strong, nullable) SKPaymentTransactionMessage *originalTransaction;
-@property(nonatomic, strong, nullable) NSNumber *transactionTimeStamp;
-@property(nonatomic, copy, nullable) NSString *transactionIdentifier;
-@property(nonatomic, strong, nullable) SKErrorMessage *error;
+@property(nonatomic, strong, nullable) SKPaymentTransactionMessage * originalTransaction;
+@property(nonatomic, strong, nullable) NSNumber * transactionTimeStamp;
+@property(nonatomic, copy, nullable) NSString * transactionIdentifier;
+@property(nonatomic, strong, nullable) SKErrorMessage * error;
 @end
 
 @interface SKPaymentMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithProductIdentifier:(NSString *)productIdentifier
-                      applicationUsername:(nullable NSString *)applicationUsername
-                              requestData:(nullable NSString *)requestData
-                                 quantity:(NSNumber *)quantity
-               simulatesAskToBuyInSandbox:(NSNumber *)simulatesAskToBuyInSandbox
-                          paymentDiscount:(nullable SKPaymentDiscountMessage *)paymentDiscount;
-@property(nonatomic, copy) NSString *productIdentifier;
-@property(nonatomic, copy, nullable) NSString *applicationUsername;
-@property(nonatomic, copy, nullable) NSString *requestData;
-@property(nonatomic, strong) NSNumber *quantity;
-@property(nonatomic, strong) NSNumber *simulatesAskToBuyInSandbox;
-@property(nonatomic, strong, nullable) SKPaymentDiscountMessage *paymentDiscount;
+    applicationUsername:(nullable NSString *)applicationUsername
+    requestData:(nullable NSString *)requestData
+    quantity:(NSNumber *)quantity
+    simulatesAskToBuyInSandbox:(NSNumber *)simulatesAskToBuyInSandbox
+    paymentDiscount:(nullable SKPaymentDiscountMessage *)paymentDiscount;
+@property(nonatomic, copy) NSString * productIdentifier;
+@property(nonatomic, copy, nullable) NSString * applicationUsername;
+@property(nonatomic, copy, nullable) NSString * requestData;
+@property(nonatomic, strong) NSNumber * quantity;
+@property(nonatomic, strong) NSNumber * simulatesAskToBuyInSandbox;
+@property(nonatomic, strong, nullable) SKPaymentDiscountMessage * paymentDiscount;
 @end
 
 @interface SKErrorMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCode:(NSNumber *)code
-                      domain:(NSString *)domain
-                    userInfo:(NSDictionary<NSString *, id> *)userInfo;
-@property(nonatomic, strong) NSNumber *code;
-@property(nonatomic, copy) NSString *domain;
-@property(nonatomic, strong) NSDictionary<NSString *, id> *userInfo;
+    domain:(NSString *)domain
+    userInfo:(NSDictionary<NSString *, id> *)userInfo;
+@property(nonatomic, strong) NSNumber * code;
+@property(nonatomic, copy) NSString * domain;
+@property(nonatomic, strong) NSDictionary<NSString *, id> * userInfo;
 @end
 
 @interface SKPaymentDiscountMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithIdentifier:(NSString *)identifier
-                     keyIdentifier:(NSString *)keyIdentifier
-                             nonce:(NSString *)nonce
-                         signature:(NSString *)signature
-                         timestamp:(NSNumber *)timestamp;
-@property(nonatomic, copy) NSString *identifier;
-@property(nonatomic, copy) NSString *keyIdentifier;
-@property(nonatomic, copy) NSString *nonce;
-@property(nonatomic, copy) NSString *signature;
-@property(nonatomic, strong) NSNumber *timestamp;
+    keyIdentifier:(NSString *)keyIdentifier
+    nonce:(NSString *)nonce
+    signature:(NSString *)signature
+    timestamp:(NSNumber *)timestamp;
+@property(nonatomic, copy) NSString * identifier;
+@property(nonatomic, copy) NSString * keyIdentifier;
+@property(nonatomic, copy) NSString * nonce;
+@property(nonatomic, copy) NSString * signature;
+@property(nonatomic, strong) NSNumber * timestamp;
 @end
 
 @interface SKStorefrontMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithCountryCode:(NSString *)countryCode identifier:(NSString *)identifier;
-@property(nonatomic, copy) NSString *countryCode;
-@property(nonatomic, copy) NSString *identifier;
++ (instancetype)makeWithCountryCode:(NSString *)countryCode
+    identifier:(NSString *)identifier;
+@property(nonatomic, copy) NSString * countryCode;
+@property(nonatomic, copy) NSString * identifier;
 @end
 
 /// The codec used by InAppPurchaseAPI.
@@ -131,15 +132,12 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)canMakePaymentsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<SKPaymentTransactionMessage *> *)transactionsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
-- (void)addPayment:(NSDictionary<NSString *, id> *)paymentMap
-             error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)addPayment:(NSDictionary<NSString *, id> *)paymentMap error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger,
-                                  NSObject<InAppPurchaseAPI> *_Nullable api);
+extern void InAppPurchaseAPISetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

@@ -6,6 +6,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
+  dartTestOut: 'test/test_api.g.dart',
   objcHeaderOut: 'darwin/Classes/messages.g.h',
   objcSourceOut: 'darwin/Classes/messages.g.m',
   copyrightHeader: 'pigeons/copyright.txt',
@@ -131,7 +132,7 @@ class SKStorefrontMessage {
   final String identifier;
 }
 
-@HostApi()
+@HostApi(dartHostTestHandler: 'TestInAppPurchaseApi')
 abstract class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
   // @ObjCSelector('canMakePayments')

@@ -147,10 +147,6 @@ class SKPaymentQueueWrapper {
         '[in_app_purchase]: Trying to add a payment without an observer. One must be set using `SkPaymentQueueWrapper.setTransactionObserver` before the app launches.');
 
     await _hostApi.addPayment(payment.toMap());
-    // await channel.invokeMethod<void>(
-    //   '-[InAppPurchasePlugin addPayment:result:]',
-    //   requestMap,
-    // );
   }
 
   /// Finishes a transaction and removes it from the queue.
