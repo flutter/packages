@@ -7,7 +7,7 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: Swift format
     script: script/tool_runner.sh
-    args: ["format", "--fail-on-change", "--swift", "--no-dart", "--no-clang-format", "--no-kotlin", "--no-java" ]
+    args: ["format", "--fail-on-change", "--no-dart", "--no-clang-format", "--no-kotlin", "--no-java" ]
     always: true
   - name: validate iOS and macOS podspecs
     script: script/tool_runner.sh
