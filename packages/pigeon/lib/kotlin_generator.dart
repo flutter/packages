@@ -129,8 +129,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             indent, member.documentationComments, _docCommentSpec);
         final String nameScreamingSnakeCase = member.name
             .replaceAllMapped(
-                RegExp(r'(?<=[a-z])[A-Z]'),
-                (Match m) => '_${m.group(0)}')
+                RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
             .toUpperCase();
         indent.write('$nameScreamingSnakeCase($index)');
         if (index != anEnum.members.length - 1) {

@@ -40,6 +40,9 @@ enum EnumState {
 
   /// This comment is to test enum member (Error) documentation comments.
   Error,
+
+  /// This comment is to test enum member (SnakeCase) documentation comments.
+  SnakeCase,
 }
 
 /// This comment is to test class documentation comments.
