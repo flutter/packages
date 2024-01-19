@@ -1,4 +1,4 @@
-## NEXT
+## 6.2.4
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
