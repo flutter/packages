@@ -1,3 +1,12 @@
+## NEXT
+
+* Remove development team from example app.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.9.13+10
+
+* Adds privacy manifest.
+
 ## 0.9.13+9
 
 * Fixes new lint warnings.

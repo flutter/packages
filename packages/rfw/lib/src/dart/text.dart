@@ -169,7 +169,7 @@ import 'model.dart';
 ///    Remote Flutter Widgets text library files.
 ///  * [decodeDataBlob], which decodes the binary variant of this format.
 DynamicMap parseDataFile(String file) {
-  final _Parser parser = _Parser(_tokenize(file));
+  final _Parser parser = _Parser(_tokenize(file), null);
   return parser.readDataFile();
 }
 
@@ -580,6 +580,14 @@ DynamicMap parseDataFile(String file) {
 /// );
 /// ```
 ///
+/// ## Source identifier
+///
+/// The optional `sourceIdentifier` parameter can be provided to cause the
+/// parser to track source locations for [BlobNode] subclasses included in the
+/// parsed subtree. If the value is null (the default), then source locations
+/// are not tracked. If the value is non-null, it is used as the value of the
+/// [SourceLocation.source] for each [SourceRange] of each [BlobNode.source].
+///
 /// See also:
 ///
 ///  * [encodeLibraryBlob], which encodes the output of this method
@@ -587,8 +595,8 @@ DynamicMap parseDataFile(String file) {
 ///  * [parseDataFile], which uses a subset of this format to decode
 ///    Remote Flutter Widgets text data files.
 ///  * [decodeLibraryBlob], which decodes the binary variant of this format.
-RemoteWidgetLibrary parseLibraryFile(String file) {
-  final _Parser parser = _Parser(_tokenize(file));
+RemoteWidgetLibrary parseLibraryFile(String file, { Object? sourceIdentifier }) {
+  final _Parser parser = _Parser(_tokenize(file), sourceIdentifier);
   return parser.readLibraryFile();
 }
 
@@ -602,14 +610,16 @@ const Set<String> _reservedWords = <String>{
   'true',
 };
 
-abstract class _Token {
-  _Token(this.line, this.column);
+sealed class _Token {
+  _Token(this.line, this.column, this.start, this.end);
   final int line;
   final int column;
+  final int start;
+  final int end;
 }
 
 class _SymbolToken extends _Token {
-  _SymbolToken(this.symbol, int line, int column): super(line, column);
+  _SymbolToken(this.symbol, int line, int column, int start, int end): super(line, column, start, end);
   final int symbol;
 
   static const int dot = 0x2E;
@@ -630,7 +640,7 @@ class _SymbolToken extends _Token {
 }
 
 class _IntegerToken extends _Token {
-  _IntegerToken(this.value, int line, int column): super(line, column);
+  _IntegerToken(this.value, int line, int column, int start, int end): super(line, column, start, end);
   final int value;
 
   @override
@@ -638,7 +648,7 @@ class _IntegerToken extends _Token {
 }
 
 class _DoubleToken extends _Token {
-  _DoubleToken(this.value, int line, int column): super(line, column);
+  _DoubleToken(this.value, int line, int column, int start, int end): super(line, column, start, end);
   final double value;
 
   @override
@@ -646,7 +656,7 @@ class _DoubleToken extends _Token {
 }
 
 class _IdentifierToken extends _Token {
-  _IdentifierToken(this.value, int line, int column): super(line, column);
+  _IdentifierToken(this.value, int line, int column, int start, int end): super(line, column, start, end);
   final String value;
 
   @override
@@ -654,7 +664,7 @@ class _IdentifierToken extends _Token {
 }
 
 class _StringToken extends _Token {
-  _StringToken(this.value, int line, int column): super(line, column);
+  _StringToken(this.value, int line, int column, int start, int end): super(line, column, start, end);
   final String value;
 
   @override
@@ -662,7 +672,7 @@ class _StringToken extends _Token {
 }
 
 class _EofToken extends _Token {
-  _EofToken(super.line, super.column);
+  _EofToken(super.line, super.column, super.start, super.end);
 
   @override
   String toString() => '<EOF>';
@@ -765,6 +775,7 @@ String _describeRune(int current) {
 
 Iterable<_Token> _tokenize(String file) sync* {
   final List<int> characters = file.runes.toList();
+  int start = 0;
   int index = 0;
   int line = 1;
   int column = 0;
@@ -784,16 +795,17 @@ Iterable<_Token> _tokenize(String file) sync* {
         column += 1;
       }
     }
+    index += 1;
     switch (mode) {
 
       case _TokenizerMode.main:
         switch (current) {
           case -1:
-            yield _EofToken(line, column);
+            yield _EofToken(line, column, start, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            break;
+            start = index;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
           case 0x2C: // U+002C COMMA character (,)
@@ -804,7 +816,8 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, start, index);
+            start = index;
           case 0x22: // U+0022 QUOTATION MARK character (")
             assert(buffer.isEmpty);
             mode = _TokenizerMode.doubleQuote;
@@ -920,13 +933,14 @@ Iterable<_Token> _tokenize(String file) sync* {
         assert(buffer.length == 1 && buffer[0] == 0x30);
         switch (current) {
           case -1:
-            yield _IntegerToken(0, line, column);
-            yield _EofToken(line, column);
+            yield _IntegerToken(0, line, column, start, index - 1);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _IntegerToken(0, line, column);
+            yield _IntegerToken(0, line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -938,9 +952,10 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _IntegerToken(0, line, column);
+            yield _IntegerToken(0, line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x2E: // U+002E FULL STOP character (.)
             mode = _TokenizerMode.numericDot;
@@ -972,13 +987,14 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.minusInteger: // "-0"
         switch (current) {
           case -1:
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
-            yield _EofToken(line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -990,9 +1006,10 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x2E: // U+002E FULL STOP character (.)
             mode = _TokenizerMode.numericDot;
@@ -1020,14 +1037,15 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.integer: // "00", "1", "-00"
         switch (current) {
           case -1:
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
-            yield _EofToken(line, column);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1039,9 +1057,10 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x2E: // U+002E FULL STOP character (.)
             mode = _TokenizerMode.numericDot;
@@ -1068,14 +1087,15 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.integerOnly:
         switch (current) {
           case -1:
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
-            yield _EofToken(line, column);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1087,13 +1107,15 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x2E: // U+002E FULL STOP character (.)
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 10), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.dot1;
           case 0x30: // U+0030 DIGIT ZERO character (0)
           case 0x31: // U+0031 DIGIT ONE character (1)
@@ -1133,13 +1155,14 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.fraction: // "0.0", "-0.0", "00.0", "1.0", "-00.0"
         switch (current) {
           case -1:
-            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column);
-            yield _EofToken(line, column);
+            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column, start, index - 1);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column);
+            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1151,9 +1174,10 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column);
+            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x30: // U+0030 DIGIT ZERO character (0)
           case 0x31: // U+0031 DIGIT ONE character (1)
@@ -1220,13 +1244,14 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.exponent: // "0e0", "-0e0", "00e0", "1e0", "-00e0", "0.0e0", "-0.0e0", "00.0e0", "1.0e0", "-00.0e0", "0e-0", "-0e-0", "00e-0", "1e-0", "-00e-0", "0.0e-0", "-0.0e-0", "00.0e-0", "1.0e-0", "-00.0e-0"
         switch (current) {
           case -1:
-            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column);
-            yield _EofToken(line, column);
+            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column, start, index - 1);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column);
+            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1238,9 +1263,10 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column);
+            yield _DoubleToken(double.parse(String.fromCharCodes(buffer)), line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x30: // U+0030 DIGIT ZERO character (0)
           case 0x31: // U+0031 DIGIT ONE character (1)
@@ -1292,13 +1318,14 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.hex:
         switch (current) {
           case -1:
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 16), line, column);
-            yield _EofToken(line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 16), line, column, start, index - 1);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 16), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 16), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1310,9 +1337,10 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 16), line, column);
+            yield _IntegerToken(int.parse(String.fromCharCodes(buffer), radix: 16), line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x30: // U+0030 DIGIT ZERO character (0)
           case 0x31: // U+0031 DIGIT ONE character (1)
@@ -1344,20 +1372,23 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.dot1: // "."
         switch (current) {
           case -1:
-            yield _SymbolToken(0x2E, line, column);
-            yield _EofToken(line, column);
+            yield _SymbolToken(0x2E, line, column, start, index - 1);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _SymbolToken(0x2E, line, column);
+            yield _SymbolToken(0x2E, line, column, start, index - 1);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x22: // U+0022 QUOTATION MARK character (")
-            yield _SymbolToken(0x2E, line, column);
+            yield _SymbolToken(0x2E, line, column, start, index);
             assert(buffer.isEmpty);
+            start = index;
             mode = _TokenizerMode.doubleQuote;
           case 0x27: // U+0027 APOSTROPHE character (')
-            yield _SymbolToken(0x2E, line, column);
+            yield _SymbolToken(0x2E, line, column, start, index);
             assert(buffer.isEmpty);
+            start = index;
             mode = _TokenizerMode.quote;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1369,8 +1400,10 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _SymbolToken(0x2E, line, column);
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(0x2E, line, column, start, index - 1);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
+            mode = _TokenizerMode.main;
           case 0x2E: // U+002E FULL STOP character (.)
             mode = _TokenizerMode.dot2;
           case 0x30: // U+0030 DIGIT ZERO character (0)
@@ -1383,8 +1416,9 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x37: // U+0037 DIGIT SEVEN character (7)
           case 0x38: // U+0038 DIGIT EIGHT character (8)
           case 0x39: // U+0039 DIGIT NINE character (9)
-            yield _SymbolToken(0x2E, line, column);
+            yield _SymbolToken(0x2E, line, column, start, index - 1);
             assert(buffer.isEmpty);
+            start = index - 1;
             mode = _TokenizerMode.integerOnly;
             buffer.add(current);
           case 0x41: // U+0041 LATIN CAPITAL LETTER A character
@@ -1440,8 +1474,9 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x79: // U+0079 LATIN SMALL LETTER Y character
           case 0x7A: // U+007A LATIN SMALL LETTER Z character
           case 0x5F: // U+005F LOW LINE character (_)
-            yield _SymbolToken(0x2E, line, column);
+            yield _SymbolToken(0x2E, line, column, start, index - 1);
             assert(buffer.isEmpty);
+            start = index - 1;
             mode = _TokenizerMode.identifier;
             buffer.add(current);
           default:
@@ -1453,7 +1488,8 @@ Iterable<_Token> _tokenize(String file) sync* {
           case -1:
             throw ParserException('Unexpected end of file inside "..." symbol', line, column);
           case 0x2E: // U+002E FULL STOP character (.)
-            yield _SymbolToken(_SymbolToken.tripleDot, line, column);
+            yield _SymbolToken(_SymbolToken.tripleDot, line, column, start, index);
+            start = index;
             mode = _TokenizerMode.main;
           default:
             throw ParserException('Unexpected character ${_describeRune(current)} inside "..." symbol', line, column);
@@ -1462,13 +1498,14 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.identifier:
         switch (current) {
           case -1:
-            yield _IdentifierToken(String.fromCharCodes(buffer), line, column);
-            yield _EofToken(line, column);
+            yield _IdentifierToken(String.fromCharCodes(buffer), line, column, start, index - 1);
+            yield _EofToken(line, column, index - 1, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
-            yield _IdentifierToken(String.fromCharCodes(buffer), line, column);
+            yield _IdentifierToken(String.fromCharCodes(buffer), line, column, start, index - 1);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1480,13 +1517,15 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _IdentifierToken(String.fromCharCodes(buffer), line, column);
+            yield _IdentifierToken(String.fromCharCodes(buffer), line, column, start, index - 1);
             buffer.clear();
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, index - 1, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x2E: // U+002E FULL STOP character (.)
-            yield _IdentifierToken(String.fromCharCodes(buffer), line, column);
+            yield _IdentifierToken(String.fromCharCodes(buffer), line, column, start, index);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.dot1;
           case 0x30: // U+0030 DIGIT ZERO character (0)
           case 0x31: // U+0031 DIGIT ONE character (1)
@@ -1563,8 +1602,9 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x0A: // U+000A LINE FEED (LF)
             throw ParserException('Unexpected end of line inside string', line, column);
           case 0x27: // U+0027 APOSTROPHE character (')
-            yield _StringToken(String.fromCharCodes(buffer), line, column);
+            yield _StringToken(String.fromCharCodes(buffer), line, column, start, index);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.endQuote;
           case 0x5C: // U+005C REVERSE SOLIDUS character (\)
             mode = _TokenizerMode.quoteEscape;
@@ -1741,8 +1781,9 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x0A: // U+000A LINE FEED (LF)
             throw ParserException('Unexpected end of line inside string', line, column);
           case 0x22: // U+0022 QUOTATION MARK character (")
-            yield _StringToken(String.fromCharCodes(buffer), line, column);
+            yield _StringToken(String.fromCharCodes(buffer), line, column, start, index);
             buffer.clear();
+            start = index;
             mode = _TokenizerMode.endQuote;
           case 0x5C: // U+005C REVERSE SOLIDUS character (\)
             mode = _TokenizerMode.doubleQuoteEscape;
@@ -1915,10 +1956,11 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.endQuote:
         switch (current) {
           case -1:
-            yield _EofToken(line, column);
+            yield _EofToken(line, column, start, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
           case 0x20: // U+0020 SPACE character
+            start = index;
             mode = _TokenizerMode.main;
           case 0x28: // U+0028 LEFT PARENTHESIS character (()
           case 0x29: // U+0029 RIGHT PARENTHESIS character ())
@@ -1930,7 +1972,8 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
           case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _SymbolToken(current, line, column);
+            yield _SymbolToken(current, line, column, start, index);
+            start = index;
             mode = _TokenizerMode.main;
           case 0x2E: // U+002E FULL STOP character (.)
             mode = _TokenizerMode.dot1;
@@ -1953,7 +1996,7 @@ Iterable<_Token> _tokenize(String file) sync* {
       case _TokenizerMode.comment:
         switch (current) {
           case -1:
-            yield _EofToken(line, column);
+            yield _EofToken(line, column, start, index);
             return;
           case 0x0A: // U+000A LINE FEED (LF)
             mode = _TokenizerMode.main;
@@ -1985,7 +2028,6 @@ Iterable<_Token> _tokenize(String file) sync* {
             break;
         }
     }
-    index += 1;
   }
 }
 
@@ -1996,14 +2038,35 @@ Iterable<_Token> _tokenize(String file) sync* {
 ///
 /// Test library files can be parsed by using [readLibraryFile].
 class _Parser {
-  _Parser(Iterable<_Token> source) : _source = source.iterator..moveNext();
+  _Parser(Iterable<_Token> source, this.sourceIdentifier) : _source = source.iterator..moveNext();
 
   final Iterator<_Token> _source;
+  final Object? sourceIdentifier;
+
+  int _previousEnd = 0;
 
   void _advance() {
     assert(_source.current is! _EofToken);
+    _previousEnd = _source.current.end;
     final bool advanced = _source.moveNext();
     assert(advanced);
+  }
+
+  SourceLocation? _getSourceLocation() {
+    if (sourceIdentifier != null) {
+      return SourceLocation(sourceIdentifier!, _source.current.start);
+    }
+    return null;
+  }
+
+  T _withSourceRange<T extends BlobNode>(T node, SourceLocation? start) {
+    if (sourceIdentifier != null && start != null) {
+      node.associateSource(SourceRange(
+        start,
+        SourceLocation(sourceIdentifier!, _previousEnd),
+      ));
+    }
+    return node;
   }
 
   bool _foundIdentifier(String identifier) {
@@ -2104,6 +2167,7 @@ class _Parser {
     _expectSymbol(_SymbolToken.openBracket);
     while (!_foundSymbol(_SymbolToken.closeBracket)) {
       if (extended && _foundSymbol(_SymbolToken.tripleDot)) {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
         _expectIdentifier('for');
         final _Token loopIdentifierToken = _source.current;
@@ -2118,7 +2182,7 @@ class _Parser {
         final Object template = _readValue(extended: extended);
         assert(_loopIdentifiers.last == loopIdentifier);
         _loopIdentifiers.removeLast();
-        results.add(Loop(collection, template));
+        results.add(_withSourceRange(Loop(collection, template), start));
       } else {
         final Object value = _readValue(extended: extended);
         results.add(value);
@@ -2133,7 +2197,7 @@ class _Parser {
     return results;
   }
 
-  Switch _readSwitch() {
+  Switch _readSwitch(SourceLocation? start) {
     final Object value = _readValue(extended: true);
     final Map<Object?, Object> cases = <Object?, Object>{};
     _expectSymbol(_SymbolToken.openBrace);
@@ -2161,7 +2225,7 @@ class _Parser {
       }
     }
     _expectSymbol(_SymbolToken.closeBrace);
-    return Switch(value, cases);
+    return _withSourceRange(Switch(value, cases), start);
   }
 
   List<Object> _readParts({ bool optional = false }) {
@@ -2223,37 +2287,45 @@ class _Parser {
         throw ParserException._unexpected(_source.current);
       }
       if (identifier == 'event') {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
-        return EventHandler(_readString(), _readMap(extended: true));
+        return _withSourceRange(EventHandler(_readString(), _readMap(extended: true)), start);
       }
       if (identifier == 'args') {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
-        return ArgsReference(_readParts());
+        return _withSourceRange(ArgsReference(_readParts()), start);
       }
       if (identifier == 'data') {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
-        return DataReference(_readParts());
+        return _withSourceRange(DataReference(_readParts()), start);
       }
       if (identifier == 'state') {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
-        return StateReference(_readParts());
+        return _withSourceRange(StateReference(_readParts()), start);
       }
       if (identifier == 'switch') {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
-        return _readSwitch();
+        return _readSwitch(start);
       }
       if (identifier == 'set') {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
+        final SourceLocation? innerStart = _getSourceLocation();
         _expectIdentifier('state');
-        final StateReference stateReference = StateReference(_readParts());
+        final StateReference stateReference = _withSourceRange(StateReference(_readParts()), innerStart);
         _expectSymbol(_SymbolToken.equals);
         final Object value = _readValue(extended: true);
-        return SetStateHandler(stateReference, value);
+        return _withSourceRange(SetStateHandler(stateReference, value), start);
       }
       final int index = _loopIdentifiers.lastIndexOf(identifier) + 1;
       if (index > 0) {
+        final SourceLocation? start = _getSourceLocation();
         _advance();
-        return LoopReference(_loopIdentifiers.length - index, _readParts(optional: true));
+        return _withSourceRange(LoopReference(_loopIdentifiers.length - index, _readParts(optional: true)), start);
       }
       return _readConstructorCall();
     }
@@ -2261,14 +2333,16 @@ class _Parser {
   }
 
   ConstructorCall _readConstructorCall() {
+    final SourceLocation? start = _getSourceLocation();
     final String name = _readIdentifier();
     _expectSymbol(_SymbolToken.openParen);
     final DynamicMap arguments = _readMapBody(extended: true);
     _expectSymbol(_SymbolToken.closeParen);
-    return ConstructorCall(name, arguments);
+    return _withSourceRange(ConstructorCall(name, arguments), start);
   }
 
   WidgetDeclaration _readWidgetDeclaration() {
+    final SourceLocation? start = _getSourceLocation();
     _expectIdentifier('widget');
     final String name = _readIdentifier();
     DynamicMap? initialState;
@@ -2278,13 +2352,14 @@ class _Parser {
     _expectSymbol(_SymbolToken.equals);
     final BlobNode root;
     if (_foundIdentifier('switch')) {
+      final SourceLocation? switchStart = _getSourceLocation();
       _advance();
-      root = _readSwitch();
+      root = _readSwitch(switchStart);
     } else {
       root = _readConstructorCall();
     }
     _expectSymbol(_SymbolToken.semicolon);
-    return WidgetDeclaration(name, initialState, root);
+    return _withSourceRange(WidgetDeclaration(name, initialState, root), start);
   }
 
   Iterable<WidgetDeclaration> _readWidgetDeclarations() sync* {
@@ -2294,13 +2369,14 @@ class _Parser {
   }
 
   Import _readImport() {
+    final SourceLocation? start = _getSourceLocation();
     _expectIdentifier('import');
     final List<String> parts = <String>[];
     do {
       parts.add(_readKey());
     } while (_maybeReadSymbol(_SymbolToken.dot));
     _expectSymbol(_SymbolToken.semicolon);
-    return Import(LibraryName(parts));
+    return _withSourceRange(Import(LibraryName(parts)), start);
   }
 
   Iterable<Import> _readImports() sync* {
