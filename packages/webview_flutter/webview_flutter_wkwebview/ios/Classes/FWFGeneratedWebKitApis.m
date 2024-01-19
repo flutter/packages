@@ -609,14 +609,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFWKFrameInfoData
-+ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame {
++ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame request:(FWFNSUrlRequestData *)request {
   FWFWKFrameInfoData *pigeonResult = [[FWFWKFrameInfoData alloc] init];
   pigeonResult.isMainFrame = isMainFrame;
+  pigeonResult.request = request;
   return pigeonResult;
 }
 + (FWFWKFrameInfoData *)fromList:(NSArray *)list {
   FWFWKFrameInfoData *pigeonResult = [[FWFWKFrameInfoData alloc] init];
   pigeonResult.isMainFrame = [GetNullableObjectAtIndex(list, 0) boolValue];
+  pigeonResult.request = [FWFNSUrlRequestData nullableFromList:(GetNullableObjectAtIndex(list, 1))];
   return pigeonResult;
 }
 + (nullable FWFWKFrameInfoData *)nullableFromList:(NSArray *)list {
@@ -625,6 +627,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     @(self.isMainFrame),
+    (self.request ? [self.request toList] : [NSNull null]),
   ];
 }
 @end
@@ -3097,6 +3100,99 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void) {
                                                details:@""]);
               }
             }];
+}
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
+                                                 message:(NSString *)arg_message
+                                                   frame:(FWFWKFrameInfoData *)arg_frame
+                                              completion:
+                                                  (void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
+                             @"runJavaScriptAlertPanel"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel
+      sendMessage:@[ @(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null] ]
+            reply:^(NSArray<id> *reply) {
+              if (reply != nil) {
+                if (reply.count > 1) {
+                  completion([FlutterError errorWithCode:reply[0]
+                                                 message:reply[1]
+                                                 details:reply[2]]);
+                } else {
+                  completion(nil);
+                }
+              } else {
+                completion([FlutterError errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+              }
+            }];
+}
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
+                                                   message:(NSString *)arg_message
+                                                     frame:(FWFWKFrameInfoData *)arg_frame
+                                                completion:
+                                                    (void (^)(NSNumber *_Nullable,
+                                                              FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
+                             @"runJavaScriptConfirmPanel"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel
+      sendMessage:@[ @(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null] ]
+            reply:^(NSArray<id> *reply) {
+              if (reply != nil) {
+                if (reply.count > 1) {
+                  completion(nil, [FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                } else {
+                  NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
+                  completion(output, nil);
+                }
+              } else {
+                completion(nil,
+                           [FlutterError errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+              }
+            }];
+}
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
+                                                      prompt:(NSString *)arg_prompt
+                                                 defaultText:(NSString *)arg_defaultText
+                                                       frame:(FWFWKFrameInfoData *)arg_frame
+                                                  completion:(void (^)(NSString *_Nullable,
+                                                                       FlutterError *_Nullable))
+                                                                 completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
+                             @"runJavaScriptTextInputPanel"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[
+    @(arg_identifier), arg_prompt ?: [NSNull null], arg_defaultText ?: [NSNull null],
+    arg_frame ?: [NSNull null]
+  ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+                   }
+                 }];
 }
 @end
 
