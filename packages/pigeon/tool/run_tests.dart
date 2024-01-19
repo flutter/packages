@@ -235,5 +235,5 @@ Future<void> main(List<String> args) async {
     exit(2);
   }
 
-  //await runTests(testsToRun);
+  await runTests(testsToRun);
 }
