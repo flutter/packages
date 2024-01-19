@@ -182,24 +182,22 @@ void VideoPlayer::SendInitialized() {
   if (!event_sink_) {
     return;
   }
-  if (is_initialized_) {
-    auto event = flutter::EncodableMap(
-        {{flutter::EncodableValue("event"),
-          flutter::EncodableValue("initialized")},
-         {flutter::EncodableValue("duration"),
-          flutter::EncodableValue(
-              (int64_t)media_engine_wrapper_->GetDuration())}});
+  auto event = flutter::EncodableMap(
+      {{flutter::EncodableValue("event"),
+        flutter::EncodableValue("initialized")},
+       {flutter::EncodableValue("duration"),
+        flutter::EncodableValue(
+            (int64_t)media_engine_wrapper_->GetDuration())}});
 
-    uint32_t width;
-    uint32_t height;
-    media_engine_wrapper_->GetNativeVideoSize(width, height);
-    event.insert({flutter::EncodableValue("width"),
-                  flutter::EncodableValue((int32_t)width)});
-    event.insert({flutter::EncodableValue("height"),
-                  flutter::EncodableValue((int32_t)height)});
+  uint32_t width;
+  uint32_t height;
+  media_engine_wrapper_->GetNativeVideoSize(width, height);
+  event.insert({flutter::EncodableValue("width"),
+                flutter::EncodableValue((int32_t)width)});
+  event.insert({flutter::EncodableValue("height"),
+                flutter::EncodableValue((int32_t)height)});
 
-    event_sink_->Success(event);
-  }
+  event_sink_->Success(event);
 }
 
 void VideoPlayer::Dispose() {

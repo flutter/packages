@@ -106,7 +106,9 @@ ErrorOr<int64_t> VideoPlayerPlugin::Create(
 std::optional<FlutterError> VideoPlayerPlugin::Dispose(int64_t texture_id) {
   auto search_player = video_players_.find(texture_id);
   if (search_player == video_players_.end()) {
-    return FlutterError("player_not_found", "This player ID was not found");
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
   if (search_player->second->IsValid()) {
     search_player->second->Dispose();
@@ -120,7 +122,9 @@ std::optional<FlutterError> VideoPlayerPlugin::SetLooping(int64_t texture_id,
                                                           bool is_looping) {
   auto search_player = video_players_.find(texture_id);
   if (search_player == video_players_.end()) {
-    return FlutterError("player_not_found", "This player ID was not found");
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
   if (search_player->second->IsValid()) {
     search_player->second->SetLooping(is_looping);
@@ -133,7 +137,9 @@ std::optional<FlutterError> VideoPlayerPlugin::SetVolume(int64_t texture_id,
                                                          double volume) {
   auto search_player = video_players_.find(texture_id);
   if (search_player == video_players_.end()) {
-    return FlutterError("player_not_found", "This player ID was not found");
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
   if (search_player->second->IsValid()) {
     search_player->second->SetVolume(volume);
@@ -146,7 +152,9 @@ std::optional<FlutterError> VideoPlayerPlugin::SetPlaybackSpeed(
     int64_t texture_id, double speed) {
   auto search_player = video_players_.find(texture_id);
   if (search_player == video_players_.end()) {
-    return FlutterError("player_not_found", "This player ID was not found");
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
   if (search_player->second->IsValid()) {
     search_player->second->SetPlaybackSpeed(speed);
@@ -158,7 +166,9 @@ std::optional<FlutterError> VideoPlayerPlugin::SetPlaybackSpeed(
 std::optional<FlutterError> VideoPlayerPlugin::Play(int64_t texture_id) {
   auto search_player = video_players_.find(texture_id);
   if (search_player == video_players_.end()) {
-    return FlutterError("player_not_found", "This player ID was not found");
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
   if (search_player->second->IsValid()) {
     search_player->second->Play();
@@ -184,7 +194,9 @@ std::optional<FlutterError> VideoPlayerPlugin::SeekTo(int64_t texture_id,
                                                       int64_t position) {
   auto search_player = video_players_.find(texture_id);
   if (search_player == video_players_.end()) {
-    return FlutterError("player_not_found", "This player ID was not found");
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
   if (search_player->second->IsValid()) {
     search_player->second->SeekTo(position);
@@ -196,7 +208,9 @@ std::optional<FlutterError> VideoPlayerPlugin::SeekTo(int64_t texture_id,
 std::optional<FlutterError> VideoPlayerPlugin::Pause(int64_t texture_id) {
   auto search_player = video_players_.find(texture_id);
   if (search_player == video_players_.end()) {
-    return FlutterError("player_not_found", "This player ID was not found");
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
   if (search_player->second->IsValid()) {
     search_player->second->Pause();
