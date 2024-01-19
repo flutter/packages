@@ -309,7 +309,7 @@ bool isVoid(TypeMirror type) {
 void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   final String prefix = linePrefix ?? '';
   for (final String line in lines) {
-    indent.writeln('$prefix$line'.trimRight());
+    indent.writeln(line.isNotEmpty ? '$prefix$line' : prefix.trimRight());
   }
 }
 
