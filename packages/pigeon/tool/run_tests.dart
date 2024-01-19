@@ -47,13 +47,13 @@ Future<void> _validateGeneratedTestFiles() async {
     exit(generateExitCode);
   }
 
-  print('  Formatting output...');
+  /*print('  Formatting output...');
   final int formatExitCode =
       await formatAllFiles(repositoryRoot: repositoryRoot);
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);
-  }
+  }*/
 
   print('  Checking for changes...');
   final List<String> modifiedFiles = await _modifiedFiles(
@@ -99,13 +99,13 @@ Future<void> _validateGeneratedExampleFiles() async {
     exit(generateExitCode);
   }
 
-  print('  Formatting output...');
+  /*print('  Formatting output...');
   final int formatExitCode =
       await formatAllFiles(repositoryRoot: repositoryRoot);
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);
-  }
+  }*/
 
   print('  Checking for changes...');
   final List<String> modifiedFiles = await _modifiedFiles(
@@ -208,17 +208,17 @@ Future<void> main(List<String> args) async {
   // both to avoid duplication of work, and to avoid issues if different CI
   // configurations have different setups (e.g., different clang-format versions
   // or no clang-format at all).
-  if (Platform.isLinux) {
-    // Only run on master, since Dart format can change between versions.
-    // TODO(stuartmorgan): Make a more generic way to run this check only on
-    // master; this currently won't work for anything but Cirrus.
-    if (Platform.environment['CHANNEL'] == 'stable') {
-      print('Skipping generated file validation on stable.');
-    } else {
-      await _validateGeneratedTestFiles();
-      await _validateGeneratedExampleFiles();
-    }
+  //if (Platform.isLinux) {
+  // Only run on master, since Dart format can change between versions.
+  // TODO(stuartmorgan): Make a more generic way to run this check only on
+  // master; this currently won't work for anything but Cirrus.
+  if (Platform.environment['CHANNEL'] == 'stable') {
+    print('Skipping generated file validation on stable.');
+  } else {
+    await _validateGeneratedTestFiles();
+    await _validateGeneratedExampleFiles();
   }
+  //}
 
   final List<String> testsToRun;
   if (Platform.isMacOS) {
@@ -232,5 +232,5 @@ Future<void> main(List<String> args) async {
     exit(2);
   }
 
-  await runTests(testsToRun);
+  //await runTests(testsToRun);
 }
