@@ -13,6 +13,7 @@ library;
 
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:path/path.dart' as p;
 
 import 'shared/generation.dart';
@@ -38,7 +39,7 @@ Future<void> _validateGeneratedTestFiles() async {
   await _validateGeneratedFiles(
     (String baseDir) => generateTestPigeons(baseDir: baseDir),
     generationMessage: 'Generating test output',
-    failureMessage:
+    incorrectFilesMessage:
         'The following files are not updated, or not formatted correctly:',
   );
 }
@@ -47,7 +48,7 @@ Future<void> _validateGeneratedExampleFiles() async {
   await _validateGeneratedFiles(
     (String _) => generateExamplePigeons(),
     generationMessage: 'Generating example output',
-    failureMessage:
+    incorrectFilesMessage:
         'Either messages.dart and messages_test.dart have non-matching definitions or\n'
         'the following files are not updated, or not formatted correctly:',
   );
@@ -56,23 +57,23 @@ Future<void> _validateGeneratedExampleFiles() async {
 Future<void> _validateGeneratedFiles(
   Future<int> Function(String baseDirectory) generator, {
   required String generationMessage,
-  required String failureMessage,
+  required String incorrectFilesMessage,
 }) async {
   // Generated file validation is split by platform, both to avoid duplication
   // of work, and to avoid issues if different CI configurations have different
   // setups (e.g., different clang-format versions or no clang-format at all).
-  final Set<GeneratorLanguages> languagesToValidate;
+  final Set<GeneratorLanguage> languagesToValidate;
   if (Platform.isLinux) {
-    languagesToValidate = <GeneratorLanguages>{
-      GeneratorLanguages.cpp,
-      GeneratorLanguages.dart,
-      GeneratorLanguages.java,
-      GeneratorLanguages.kotlin,
-      GeneratorLanguages.objc,
+    languagesToValidate = <GeneratorLanguage>{
+      GeneratorLanguage.cpp,
+      GeneratorLanguage.dart,
+      GeneratorLanguage.java,
+      GeneratorLanguage.kotlin,
+      GeneratorLanguage.objc,
     };
   } else if (Platform.isMacOS) {
-    languagesToValidate = <GeneratorLanguages>{
-      GeneratorLanguages.swift,
+    languagesToValidate = <GeneratorLanguage>{
+      GeneratorLanguage.swift,
     };
   } else {
     return;
@@ -92,31 +93,37 @@ Future<void> _validateGeneratedFiles(
     exit(generateExitCode);
   }
 
-  /*print('  Formatting output...');
-  final int formatExitCode =
-      await formatAllFiles(repositoryRoot: repositoryRoot);
+  print('  Formatting output...');
+  final int formatExitCode = await formatAllFiles(
+      repositoryRoot: repositoryRoot, languages: languagesToValidate);
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);
-  }*/
+  }
 
   print('  Checking for changes...');
   final List<String> modifiedFiles = await _modifiedFiles(
       repositoryRoot: repositoryRoot, relativePigeonPath: relativePigeonPath);
+  final Set<String> extensions = languagesToValidate
+      .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
+      .flattened
+      .toSet();
+  final Iterable<String> filteredFiles = modifiedFiles.where((String path) =>
+      extensions.contains(p.extension(path).replaceFirst('.', '')));
 
-  if (modifiedFiles.isEmpty) {
+  if (filteredFiles.isEmpty) {
     return;
   }
 
-  print(failureMessage);
-  modifiedFiles.map((String line) => '  $line').forEach(print);
+  print(incorrectFilesMessage);
+  filteredFiles.map((String line) => '  $line').forEach(print);
 
   print('\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
       'directory, or apply the diff with the command below.\n');
 
   final ProcessResult diffResult = await Process.run(
     'git',
-    <String>['diff', relativePigeonPath],
+    <String>['diff', ...filteredFiles],
     workingDirectory: repositoryRoot,
   );
   if (diffResult.exitCode != 0) {
@@ -127,6 +134,17 @@ Future<void> _validateGeneratedFiles(
   print(diffResult.stdout);
   print('DONE');
   exit(1);
+}
+
+Set<String> _extensionsForLanguage(GeneratorLanguage language) {
+  return switch (language) {
+    GeneratorLanguage.cpp => <String>{'cc', 'cpp', 'h'},
+    GeneratorLanguage.dart => <String>{'dart'},
+    GeneratorLanguage.java => <String>{'java'},
+    GeneratorLanguage.kotlin => <String>{'kt'},
+    GeneratorLanguage.swift => <String>{'swift'},
+    GeneratorLanguage.objc => <String>{'m', 'mm'},
+  };
 }
 
 Future<List<String>> _modifiedFiles(
