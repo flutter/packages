@@ -12,6 +12,7 @@ import 'process_utils.dart';
 
 enum GeneratorLanguages {
   cpp,
+  dart,
   java,
   kotlin,
   objc,
@@ -234,7 +235,17 @@ Future<int> runPigeon({
 /// This is intended for formatting generated output, but since there's no
 /// way to filter to specific files in with the repo tooling it runs over the
 /// entire package.
-Future<int> formatAllFiles({required String repositoryRoot}) {
+Future<int> formatAllFiles({
+  required String repositoryRoot,
+  Set<GeneratorLanguages> languages = const <GeneratorLanguages>{
+    GeneratorLanguages.cpp,
+    GeneratorLanguages.dart,
+    GeneratorLanguages.java,
+    GeneratorLanguages.kotlin,
+    GeneratorLanguages.objc,
+    GeneratorLanguages.swift,
+  },
+}) {
   final String dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
   return runProcess(
       dartCommand,
@@ -242,8 +253,28 @@ Future<int> formatAllFiles({required String repositoryRoot}) {
         'run',
         'script/tool/bin/flutter_plugin_tools.dart',
         'format',
-        '--swift',
         '--packages=pigeon',
+        if (languages.contains(GeneratorLanguages.cpp) ||
+            languages.contains(GeneratorLanguages.objc))
+          '--clang-format'
+        else
+          '--no-clang-format',
+        if (languages.contains(GeneratorLanguages.java))
+          '--java'
+        else
+          '--no-java',
+        if (languages.contains(GeneratorLanguages.dart))
+          '--dart'
+        else
+          '--no-dart',
+        if (languages.contains(GeneratorLanguages.kotlin))
+          '--kotlin'
+        else
+          '--no-kotlin',
+        if (languages.contains(GeneratorLanguages.swift))
+          '--swift'
+        else
+          '--no-swift',
       ],
       workingDirectory: repositoryRoot,
       streamOutput: false,
