@@ -54,7 +54,8 @@ class FormatCommand extends PackageCommand {
     argParser.addFlag(_kotlinArg,
         help: 'Format Kotlin files', defaultsTo: true);
     argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
-    argParser.addFlag(_swiftArg, help: 'Format and lint Swift files');
+    argParser.addFlag(_swiftArg,
+        help: 'Format and lint Swift files', defaultsTo: true);
     argParser.addOption(_clangFormatPathArg,
         defaultsTo: 'clang-format', help: 'Path to "clang-format" executable.');
     argParser.addOption(_javaPathArg,
@@ -178,8 +179,7 @@ class FormatCommand extends PackageCommand {
   }
 
   Future<void> _formatAndLintSwift(Iterable<String> files) async {
-    // Do not format generated files. Consider removing this filter
-    // when pigeon Swift generation matches swift-format.
+    // TODO(jmagman): Remove generated file filter when pigeon Swift generation matches swift-format.
     // https://github.com/flutter/flutter/issues/141799
     final Iterable<String> swiftFiles = _filterGeneratedFiles(
         _getPathsWithExtensions(files, <String>{'.swift'}));

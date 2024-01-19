@@ -589,7 +589,7 @@ void main() {
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
 
-    test('skips Swift if --swift flag is not provided', () async {
+    test('skips Swift if --no-swift flag is provided', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
       ];
@@ -599,7 +599,7 @@ void main() {
         extraFiles: files,
       );
 
-      await runCapturingPrint(runner, <String>['format']);
+      await runCapturingPrint(runner, <String>['format', '--no-swift']);
 
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });

@@ -1147,6 +1147,10 @@ targets:
         {
           "CHANNEL": "master"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   - name: Mac_arm64 custom_package_tests stable
     recipe: packages/packages
@@ -1160,6 +1164,10 @@ targets:
         {
           "CHANNEL": "stable"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   ### iOS tasks ###
   # ios_platform_tests builds all the packages on ARM, so this build is run
