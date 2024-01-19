@@ -26,10 +26,10 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace 'io.flutter.plugins.inapppurchase'
     }
-    compileSdkVersion 33
+    compileSdk 33
 
     defaultConfig {
-        minSdkVersion 19
+        minSdk 19
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {

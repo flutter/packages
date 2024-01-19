@@ -205,11 +205,13 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     final String expectedCountryCode = "US";
-    final HashMap<String,Object> expectedResult = fromBillingResult(billingResult);
+    final HashMap<String, Object> expectedResult = fromBillingResult(billingResult);
     expectedResult.put("countryCode", expectedCountryCode);
 
     when(mockBillingConfig.getCountryCode()).thenReturn(expectedCountryCode);
-    doNothing().when(mockBillingClient).getBillingConfigAsync(paramsCaptor.capture(), listenerCaptor.capture());
+    doNothing()
+        .when(mockBillingClient)
+        .getBillingConfigAsync(paramsCaptor.capture(), listenerCaptor.capture());
 
     methodChannelHandler.onMethodCall(billingCall, result);
     listenerCaptor.getValue().onBillingConfigResponse(billingResult, mockBillingConfig);
