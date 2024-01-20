@@ -143,7 +143,7 @@ Set<String> _extensionsForLanguage(GeneratorLanguage language) {
     GeneratorLanguage.java => <String>{'java'},
     GeneratorLanguage.kotlin => <String>{'kt'},
     GeneratorLanguage.swift => <String>{'swift'},
-    GeneratorLanguage.objc => <String>{'m', 'mm'},
+    GeneratorLanguage.objc => <String>{'h', 'm', 'mm'},
   };
 }
 
