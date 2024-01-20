@@ -4,7 +4,6 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/swift_generator.dart';
-import 'package:test/expect.dart';
 import 'package:test/test.dart';
 
 import 'dart_generator_test.dart';
@@ -726,15 +725,11 @@ void main() {
     expect(code, isNot(contains('if (')));
   });
 
-  Iterable<String> makeIterable(String string) sync* {
-    yield string;
-  }
-
   test('header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions(
-      copyrightHeader: ['hello world', ''],
+      copyrightHeader: <String>['hello world', ''],
     );
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
