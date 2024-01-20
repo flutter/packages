@@ -5,12 +5,13 @@
 // See also: https://pub.dev/packages/pigeon
 
 import Foundation
+
 #if os(iOS)
-import Flutter
+  import Flutter
 #elseif os(macOS)
-import FlutterMacOS
+  import FlutterMacOS
 #else
-#error("Unsupported platform.")
+  #error("Unsupported platform.")
 #endif
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -22,13 +23,13 @@ private func wrapError(_ error: Any) -> [Any?] {
     return [
       flutterError.code,
       flutterError.message,
-      flutterError.details
+      flutterError.details,
     ]
   }
   return [
     "\(error)",
     "\(type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)"
+    "Stacktrace: \(Thread.callStackSymbols)",
   ]
 }
 
@@ -83,10 +84,10 @@ struct MessageData {
 private class ExampleHostApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
-      case 128:
-        return MessageData.fromList(self.readValue() as! [Any?])
-      default:
-        return super.readValue(ofType: type)
+    case 128:
+      return MessageData.fromList(self.readValue() as! [Any?])
+    default:
+      return super.readValue(ofType: type)
     }
   }
 }
@@ -165,10 +166,10 @@ class ExampleHostApiSetup {
         let messageArg = args[0] as! MessageData
         api.sendMessage(message: messageArg) { result in
           switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
           }
         }
       }
@@ -183,7 +184,7 @@ protocol MessageFlutterApiProtocol {
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
-  init(binaryMessenger: FlutterBinaryMessenger){
+  init(binaryMessenger: FlutterBinaryMessenger) {
     self.binaryMessenger = binaryMessenger
   }
   func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) {
@@ -191,15 +192,15 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName:channelName)))
+        completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
-      if (listResponse.count > 1) {
+      if listResponse.count > 1 {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)));
-      } else if (listResponse[0] == nil) {
+        completion(.failure(FlutterError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
         completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! String
