@@ -179,10 +179,8 @@ class FormatCommand extends PackageCommand {
   }
 
   Future<void> _formatAndLintSwift(Iterable<String> files) async {
-    // TODO(jmagman): Remove generated file filter when pigeon Swift generation matches swift-format.
-    // https://github.com/flutter/flutter/issues/141799
-    final Iterable<String> swiftFiles = _filterGeneratedFiles(
-        _getPathsWithExtensions(files, <String>{'.swift'}));
+    final Iterable<String> swiftFiles =
+        _getPathsWithExtensions(files, <String>{'.swift'});
     if (swiftFiles.isNotEmpty) {
       final String swiftFormat = await _findValidSwiftFormat();
       print('Formatting .swift files...');
@@ -357,13 +355,6 @@ class FormatCommand extends PackageCommand {
       Iterable<String> files, Set<String> extensions) {
     return files.where(
         (String filePath) => extensions.contains(path.extension(filePath)));
-  }
-
-  Iterable<String> _filterGeneratedFiles(Iterable<String> files) {
-    return files.where((String filePath) {
-      final String basename = path.basename(filePath);
-      return !basename.contains('.gen.') && !basename.contains('.g.');
-    });
   }
 
   Future<String> _getJavaFormatterPath() async {
