@@ -34,7 +34,9 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> FlutterError {
-  return FlutterError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+  return FlutterError(
+    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
+    details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -130,7 +132,9 @@ class ExampleHostApiSetup {
   static var codec: FlutterStandardMessageCodec { ExampleHostApiCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?) {
-    let getHostLanguageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage", binaryMessenger: binaryMessenger, codec: codec)
+    let getHostLanguageChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
         do {
@@ -143,7 +147,9 @@ class ExampleHostApiSetup {
     } else {
       getHostLanguageChannel.setMessageHandler(nil)
     }
-    let addChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add", binaryMessenger: binaryMessenger, codec: codec)
+    let addChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -159,7 +165,9 @@ class ExampleHostApiSetup {
     } else {
       addChannel.setMessageHandler(nil)
     }
-    let sendMessageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage", binaryMessenger: binaryMessenger, codec: codec)
+    let sendMessageChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -180,15 +188,19 @@ class ExampleHostApiSetup {
 }
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
-  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void)
+  func flutterMethod(
+    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void)
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger) {
     self.binaryMessenger = binaryMessenger
   }
-  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+  func flutterMethod(
+    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
@@ -201,7 +213,11 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(FlutterError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
-        completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+        completion(
+          .failure(
+            FlutterError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! String
         completion(.success(result))
