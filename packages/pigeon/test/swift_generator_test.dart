@@ -1538,7 +1538,7 @@ void main() {
     expect(
         code,
         contains(
-            'completion(.failure(createConnectionError(withChannelName:channelName)))'));
+            'completion(.failure(createConnectionError(withChannelName: channelName)))'));
     expect(
         code,
         contains(
