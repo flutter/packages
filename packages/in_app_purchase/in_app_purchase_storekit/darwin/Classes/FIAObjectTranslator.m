@@ -296,7 +296,7 @@
 }
 
 + (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
-    (SKPaymentTransaction *)transaction {
+    (SKPaymentTransaction *)transaction API_AVAILABLE(ios(12.2)){
   SKPaymentTransactionMessage *msg = [SKPaymentTransactionMessage
             makeWithPayment:[self convertPaymentToPigeon:transaction.payment]
            transactionState:[self convertTransactionStateToPigeon:transaction.transactionState]
