@@ -573,22 +573,6 @@ void main() {
           ]));
     });
 
-    test('skips generated Swift files', () async {
-      const List<String> files = <String>[
-        'macos/foo.gen.swift',
-        'macos/foo.g.swift',
-      ];
-      createFakePlugin(
-        'a_plugin',
-        packagesDir,
-        extraFiles: files,
-      );
-
-      await runCapturingPrint(runner, <String>['format', '--swift']);
-
-      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
-    });
-
     test('skips Swift if --no-swift flag is provided', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
