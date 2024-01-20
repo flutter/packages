@@ -1,6 +1,7 @@
-## NEXT
+## 0.9.13+11
 
-* Remove development team from example app.
+* Fixes a memory leak of sample buffer when pause and resume the video recording.
+* Removes development team from example app.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
 
 ## 0.9.13+10
