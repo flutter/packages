@@ -253,7 +253,6 @@ Future<int> formatAllFiles({
         'run',
         'script/tool/bin/flutter_plugin_tools.dart',
         'format',
-        '--no-swift',
         '--packages=pigeon',
         if (languages.contains(GeneratorLanguage.cpp) ||
             languages.contains(GeneratorLanguage.objc))
