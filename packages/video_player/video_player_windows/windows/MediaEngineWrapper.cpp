@@ -27,6 +27,8 @@
 namespace video_player_windows {
 
 namespace {
+
+// Implementation of IMFMediaEngineNotify's interface, to handle MediaEngine events.
 class MediaEngineCallbackHelper
     : public winrt::implements<MediaEngineCallbackHelper,
                                IMFMediaEngineNotify> {
