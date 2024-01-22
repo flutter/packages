@@ -70,8 +70,6 @@ class VideoPlayer {
             flutter::TextureRegistrar* texture_registry);
 
  private:
-  VideoPlayer(IDXGIAdapter* adapter, HWND window);
-
   void SendInitialized();
   void SetBuffering(bool buffering);
 
@@ -94,7 +92,6 @@ class VideoPlayer {
 
   FlutterDesktopGpuSurfaceDescriptor descriptor_{};
   std::mutex buffer_mutex_;
-  winrt::com_ptr<IDXGIAdapter> adapter_;
   HWND window_;
   std::function<void(int64_t)> texture_frame_available_callback_;
 

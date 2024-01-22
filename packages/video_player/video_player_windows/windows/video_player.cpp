@@ -17,32 +17,12 @@ namespace video_player_windows {
 
 VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
                          flutter::EncodableMap http_headers)
-    : VideoPlayer(adapter, window) {
-  // Create a source resolver to create an IMFMediaSource for the content URL.
-  // This will create an instance of an inbuilt OS media source for playback.
-  winrt::com_ptr<IMFSourceResolver> source_resolver;
-  THROW_IF_FAILED(MFCreateSourceResolver(source_resolver.put()));
-  constexpr uint32_t source_resolution_flags =
-      MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_READ;
-  MF_OBJECT_TYPE object_type = {};
-
-  winrt::com_ptr<IMFMediaSource> media_source;
-  THROW_IF_FAILED(source_resolver->CreateObjectFromURL(
-      uri.c_str(), source_resolution_flags, nullptr, &object_type,
-      reinterpret_cast<IUnknown**>(media_source.put_void())));
-
-  media_engine_wrapper_->Initialize(adapter_, media_source.get());
-}
-
-VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, HWND window)
     : texture_(flutter::GpuSurfaceTexture(
           FlutterDesktopGpuSurfaceType::
               kFlutterDesktopGpuSurfaceTypeDxgiSharedHandle,
           std::bind(&VideoPlayer::ObtainDescriptorCallback, this,
-                    std::placeholders::_1, std::placeholders::_2))) {
-  adapter_.attach(adapter);
-  window_ = window;
-
+                    std::placeholders::_1, std::placeholders::_2))),
+      window_(window) {
   mf_platform_.Startup();
 
   // Callbacks invoked by the media engine wrapper.
@@ -57,6 +37,20 @@ VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, HWND window)
   media_engine_wrapper_ = winrt::make_self<MediaEngineWrapper>(
       on_initialized, on_error, on_buffering_state_changed,
       on_playback_ended_cb, nullptr);
+
+  // Create a source resolver to create an IMFMediaSource for the content URL.
+  // This will create an instance of an inbuilt OS media source for playback.
+  winrt::com_ptr<IMFSourceResolver> source_resolver;
+  THROW_IF_FAILED(MFCreateSourceResolver(source_resolver.put()));
+  constexpr uint32_t source_resolution_flags =
+      MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_READ;
+  MF_OBJECT_TYPE object_type = {};
+
+  winrt::com_ptr<IMFMediaSource> media_source;
+  THROW_IF_FAILED(source_resolver->CreateObjectFromURL(
+      uri.c_str(), source_resolution_flags, nullptr, &object_type,
+      reinterpret_cast<IUnknown**>(media_source.put_void())));
+  media_engine_wrapper_->Initialize(adapter, media_source.get());
 }
 
 void VideoPlayer::Init(

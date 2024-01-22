@@ -115,13 +115,9 @@ MediaEngineWrapper::~MediaEngineWrapper() {
   }
 }
 
-void MediaEngineWrapper::Initialize(winrt::com_ptr<IDXGIAdapter> adapter,
+void MediaEngineWrapper::Initialize(IDXGIAdapter* adapter,
                                     IMFMediaSource* media_source) {
-  RunSyncInMTA([&]() {
-    adapter_ = adapter;
-    InitializeVideo();
-    CreateMediaEngine(media_source);
-  });
+  RunSyncInMTA([&]() { CreateMediaEngine(adapter, media_source); });
 }
 
 void MediaEngineWrapper::Pause() {
@@ -378,13 +374,14 @@ void MediaEngineWrapper::OnWindowUpdate(uint32_t width, uint32_t height) {
 
 // Internal methods
 
-void MediaEngineWrapper::CreateMediaEngine(IMFMediaSource* media_source) {
+void MediaEngineWrapper::CreateMediaEngine(IDXGIAdapter* adapter,
+                                           IMFMediaSource* media_source) {
   winrt::com_ptr<IMFMediaEngineClassFactory> class_factory;
   winrt::com_ptr<IMFAttributes> creation_attributes;
 
   platform_ref_.Startup();
 
-  InitializeVideo();
+  InitializeVideo(adapter);
 
   THROW_IF_FAILED(MFCreateAttributes(creation_attributes.put(), 7));
   callback_helper_ = winrt::make<MediaEngineCallbackHelper>(
@@ -434,7 +431,7 @@ void MediaEngineWrapper::CreateMediaEngine(IMFMediaSource* media_source) {
   }
 }
 
-void MediaEngineWrapper::InitializeVideo() {
+void MediaEngineWrapper::InitializeVideo(IDXGIAdapter* adapter) {
   dxgi_device_manager_ = nullptr;
   THROW_IF_FAILED(MFLockDXGIDeviceManager(&device_reset_token_,
                                           dxgi_device_manager_.put()));
@@ -443,9 +440,9 @@ void MediaEngineWrapper::InitializeVideo() {
   constexpr D3D_FEATURE_LEVEL feature_levels[] = {D3D_FEATURE_LEVEL_10_0};
 
   THROW_IF_FAILED(D3D11CreateDevice(
-      adapter_.get(), D3D_DRIVER_TYPE_UNKNOWN, 0, creation_flags,
-      feature_levels, ARRAYSIZE(feature_levels), D3D11_SDK_VERSION,
-      d3d11_device_.put(), nullptr, nullptr));
+      adapter, D3D_DRIVER_TYPE_UNKNOWN, 0, creation_flags, feature_levels,
+      ARRAYSIZE(feature_levels), D3D11_SDK_VERSION, d3d11_device_.put(),
+      nullptr, nullptr));
 
   winrt::com_ptr<ID3D10Multithread> multithreaded_device =
       d3d11_device_.as<ID3D10Multithread>();

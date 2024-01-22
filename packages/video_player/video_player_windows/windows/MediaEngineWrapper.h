@@ -40,8 +40,7 @@ class MediaEngineWrapper
   ~MediaEngineWrapper();
 
   // Create the media engine with the provided media source
-  void Initialize(winrt::com_ptr<IDXGIAdapter> adapter,
-                  IMFMediaSource* media_source);
+  void Initialize(IDXGIAdapter* adapter, IMFMediaSource* media_source);
 
   // Stop playback.
   void Pause();
@@ -54,10 +53,12 @@ class MediaEngineWrapper
   // Sets the playback rate for the media. A rate of 1.0 means normal speed.
   void SetPlaybackRate(double playback_rate);
 
-  // Sets the volume for the media. The volume is a float value between 0.0 (mute) and 1.0 (maximum volume).
+  // Sets the volume for the media. The volume is a float value between 0.0
+  // (mute) and 1.0 (maximum volume).
   void SetVolume(float volume);
 
-  // Sets whether the media should loop back to the beginning when it reaches the end.
+  // Sets whether the media should loop back to the beginning when it reaches
+  // the end.
   void SetLooping(bool is_looping);
 
   // Seeks the media to the specified time stamp, in milliseconds.
@@ -68,11 +69,11 @@ class MediaEngineWrapper
 
   // Query the current playback duration.
   uint64_t GetDuration();
-  
+
   // Retrieves the buffered ranges of the media.
-  // It returns a vector of tuples, where each tuple represents a buffered range.
-  // The first element of the tuple is the start time of the range, and the second element is the end time.
-  // The times are in milliseconds.
+  // It returns a vector of tuples, where each tuple represents a buffered
+  // range. The first element of the tuple is the start time of the range, and
+  // the second element is the end time. The times are in milliseconds.
   std::vector<std::tuple<uint64_t, uint64_t>> GetBufferedRanges();
 
   // Retrieves the native video size of the media.
@@ -84,7 +85,8 @@ class MediaEngineWrapper
                                FlutterDesktopGpuSurfaceDescriptor& descriptor);
 
   // Starts a background thread that runs a given callback function.
-  // The callback function is called every 16 milliseconds if there is a new video frame available.
+  // The callback function is called every 16 milliseconds if there is a new
+  // video frame available.
   void StartBackgroundThread(std::function<void()> callback);
 
   // Inform media engine of output window position & size changes
@@ -100,7 +102,6 @@ class MediaEngineWrapper
   MFPlatformRef platform_ref_;
   winrt::com_ptr<IMFMediaEngine> media_engine_;
   UINT device_reset_token_ = 0;
-  winrt::com_ptr<IDXGIAdapter> adapter_;
   winrt::com_ptr<ID3D11Device> d3d11_device_;
   winrt::com_ptr<ID3D11Texture2D> texture_;
   winrt::com_ptr<IMFDXGIDeviceManager> dxgi_device_manager_;
@@ -115,8 +116,8 @@ class MediaEngineWrapper
   bool EnsureTextureCreated(DWORD width, DWORD height);
   bool UpdateDXTexture();
   bool UpdateDXTexture(DWORD width, DWORD height);
-  void InitializeVideo();
-  void CreateMediaEngine(IMFMediaSource* media_source);
+  void InitializeVideo(IDXGIAdapter* adapter);
+  void CreateMediaEngine(IDXGIAdapter* adapter, IMFMediaSource* media_source);
   void OnLoaded();
   void OnError(MF_MEDIA_ENGINE_ERR error, HRESULT hr);
   void OnBufferingStateChange(BufferingState state);
