@@ -704,43 +704,43 @@ class SampleMenu extends StatelessWidget {
 
   Future<bool> _showConfirm(BuildContext context, String message) async {
     return await showDialog<bool>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop(false);
-                  },
-                  child: const Text('Cancel')),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop(true);
-                  },
-                  child: const Text('OK')),
-            ],
-          );
-        }) ??
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                content: Text(message),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop(false);
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop(true);
+                      },
+                      child: const Text('OK')),
+                ],
+              );
+            }) ??
         false;
   }
 
   Future<String> _showTextInput(
       BuildContext context, String message, String? defaultText) async {
     return await showDialog<String>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop('Text test');
-                  },
-                  child: const Text('Enter')),
-            ],
-          );
-        }) ??
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                content: Text(message),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop('Text test');
+                      },
+                      child: const Text('Enter')),
+                ],
+              );
+            }) ??
         '';
   }
 }
