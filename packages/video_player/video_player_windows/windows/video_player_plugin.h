@@ -49,11 +49,20 @@ class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
   std::optional<FlutterError> Pause(int64_t texture_id) override;
 
  private:
+  // A list of all the video players instantiated by this plugin.
   std::map<int64_t, std::unique_ptr<VideoPlayer>> video_players_;
 
+  // The registrar for this plugin, for registering textures.
   flutter::TextureRegistrar* texture_registry_;
+
+  // The messenger for communicating with the Flutter engine.
   flutter::BinaryMessenger* messenger_;
+
+  // The window's HWND this plugin is bound to.
   HWND window_;
+
+  // A reference to Flutter's IDXGIAdapter, used to create the internal
+  // ID3D11Device.
   IDXGIAdapter* adapter_;
 };
 
