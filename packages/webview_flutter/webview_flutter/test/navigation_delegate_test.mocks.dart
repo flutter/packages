@@ -110,6 +110,7 @@ class MockWebViewPlatform extends _i1.Mock implements _i7.WebViewPlatform {
           ),
         ),
       ) as _i2.PlatformWebViewCookieManager);
+
   @override
   _i3.PlatformNavigationDelegate createPlatformNavigationDelegate(
           _i6.PlatformNavigationDelegateCreationParams? params) =>
@@ -126,6 +127,7 @@ class MockWebViewPlatform extends _i1.Mock implements _i7.WebViewPlatform {
           ),
         ),
       ) as _i3.PlatformNavigationDelegate);
+
   @override
   _i4.PlatformWebViewController createPlatformWebViewController(
           _i6.PlatformWebViewControllerCreationParams? params) =>
@@ -142,6 +144,7 @@ class MockWebViewPlatform extends _i1.Mock implements _i7.WebViewPlatform {
           ),
         ),
       ) as _i4.PlatformWebViewController);
+
   @override
   _i5.PlatformWebViewWidget createPlatformWebViewWidget(
           _i6.PlatformWebViewWidgetCreationParams? params) =>
@@ -178,6 +181,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
           Invocation.getter(#params),
         ),
       ) as _i6.PlatformNavigationDelegateCreationParams);
+
   @override
   _i8.Future<void> setOnNavigationRequest(
           _i3.NavigationRequestCallback? onNavigationRequest) =>
@@ -189,6 +193,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
   @override
   _i8.Future<void> setOnPageStarted(_i3.PageEventCallback? onPageStarted) =>
       (super.noSuchMethod(
@@ -199,6 +204,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
   @override
   _i8.Future<void> setOnPageFinished(_i3.PageEventCallback? onPageFinished) =>
       (super.noSuchMethod(
@@ -209,6 +215,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
   @override
   _i8.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
       (super.noSuchMethod(
@@ -219,6 +226,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
   @override
   _i8.Future<void> setOnProgress(_i3.ProgressCallback? onProgress) =>
       (super.noSuchMethod(
@@ -229,6 +237,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
   @override
   _i8.Future<void> setOnWebResourceError(
           _i3.WebResourceErrorCallback? onWebResourceError) =>
@@ -240,6 +249,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
   @override
   _i8.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
       (super.noSuchMethod(
@@ -250,6 +260,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
   @override
   _i8.Future<void> setOnHttpAuthRequest(
           _i3.HttpAuthRequestCallback? onHttpAuthRequest) =>

@@ -69,9 +69,11 @@ Future<void> main() async {
     unawaited(controller.setNavigationDelegate(
       NavigationDelegate(onPageFinished: (_) => pageFinished.complete()),
     ));
-    await tester.pumpWidget(WebViewWidget(controller: controller));
     unawaited(controller.loadRequest(Uri.parse(primaryUrl)));
+
+    await tester.pumpWidget(WebViewWidget(controller: controller));
     await pageFinished.future;
+
     final String? currentUrl = await controller.currentUrl();
     expect(currentUrl, primaryUrl);
   });

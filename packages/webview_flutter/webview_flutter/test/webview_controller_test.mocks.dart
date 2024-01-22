@@ -85,6 +85,7 @@ class MockPlatformWebViewController extends _i1.Mock
           Invocation.getter(#params),
         ),
       ) as _i2.PlatformWebViewControllerCreationParams);
+
   @override
   _i5.Future<void> loadFile(String? absoluteFilePath) => (super.noSuchMethod(
         Invocation.method(
@@ -94,6 +95,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> loadFlutterAsset(String? key) => (super.noSuchMethod(
         Invocation.method(
@@ -103,6 +105,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> loadHtmlString(
     String? html, {
@@ -117,6 +120,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> loadRequest(_i2.LoadRequestParams? params) =>
       (super.noSuchMethod(
@@ -127,6 +131,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<String?> currentUrl() => (super.noSuchMethod(
         Invocation.method(
@@ -135,6 +140,7 @@ class MockPlatformWebViewController extends _i1.Mock
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
+
   @override
   _i5.Future<bool> canGoBack() => (super.noSuchMethod(
         Invocation.method(
@@ -143,6 +149,7 @@ class MockPlatformWebViewController extends _i1.Mock
         ),
         returnValue: _i5.Future<bool>.value(false),
       ) as _i5.Future<bool>);
+
   @override
   _i5.Future<bool> canGoForward() => (super.noSuchMethod(
         Invocation.method(
@@ -151,6 +158,7 @@ class MockPlatformWebViewController extends _i1.Mock
         ),
         returnValue: _i5.Future<bool>.value(false),
       ) as _i5.Future<bool>);
+
   @override
   _i5.Future<void> goBack() => (super.noSuchMethod(
         Invocation.method(
@@ -160,6 +168,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> goForward() => (super.noSuchMethod(
         Invocation.method(
@@ -169,6 +178,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> reload() => (super.noSuchMethod(
         Invocation.method(
@@ -178,6 +188,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> clearCache() => (super.noSuchMethod(
         Invocation.method(
@@ -187,6 +198,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> clearLocalStorage() => (super.noSuchMethod(
         Invocation.method(
@@ -196,6 +208,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setPlatformNavigationDelegate(
           _i6.PlatformNavigationDelegate? handler) =>
@@ -207,6 +220,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> runJavaScript(String? javaScript) => (super.noSuchMethod(
         Invocation.method(
@@ -216,6 +230,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<Object> runJavaScriptReturningResult(String? javaScript) =>
       (super.noSuchMethod(
@@ -231,6 +246,7 @@ class MockPlatformWebViewController extends _i1.Mock
           ),
         )),
       ) as _i5.Future<Object>);
+
   @override
   _i5.Future<void> addJavaScriptChannel(
           _i4.JavaScriptChannelParams? javaScriptChannelParams) =>
@@ -242,6 +258,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> removeJavaScriptChannel(String? javaScriptChannelName) =>
       (super.noSuchMethod(
@@ -252,6 +269,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<String?> getTitle() => (super.noSuchMethod(
         Invocation.method(
@@ -260,6 +278,7 @@ class MockPlatformWebViewController extends _i1.Mock
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
+
   @override
   _i5.Future<void> scrollTo(
     int? x,
@@ -276,6 +295,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> scrollBy(
     int? x,
@@ -292,6 +312,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<_i3.Offset> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(
@@ -306,6 +327,7 @@ class MockPlatformWebViewController extends _i1.Mock
           ),
         )),
       ) as _i5.Future<_i3.Offset>);
+
   @override
   _i5.Future<void> enableZoom(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
@@ -315,6 +337,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setBackgroundColor(_i3.Color? color) => (super.noSuchMethod(
         Invocation.method(
@@ -324,6 +347,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setJavaScriptMode(_i2.JavaScriptMode? javaScriptMode) =>
       (super.noSuchMethod(
@@ -334,6 +358,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setUserAgent(String? userAgent) => (super.noSuchMethod(
         Invocation.method(
@@ -343,6 +368,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnPlatformPermissionRequest(
           void Function(_i2.PlatformWebViewPermissionRequest)?
@@ -355,6 +381,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<String?> getUserAgent() => (super.noSuchMethod(
         Invocation.method(
@@ -363,6 +390,7 @@ class MockPlatformWebViewController extends _i1.Mock
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
+
   @override
   _i5.Future<void> setOnConsoleMessage(
           void Function(_i2.JavaScriptConsoleMessage)? onConsoleMessage) =>
@@ -374,6 +402,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnScrollPositionChange(
           void Function(_i2.ScrollPositionChange)? onScrollPositionChange) =>
@@ -385,6 +414,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnJavaScriptAlertDialog(
           _i5.Future<void> Function(_i2.JavaScriptAlertDialogRequest)?
@@ -397,6 +427,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnJavaScriptConfirmDialog(
           _i5.Future<bool> Function(_i2.JavaScriptConfirmDialogRequest)?
@@ -409,6 +440,7 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnJavaScriptTextInputDialog(
           _i5.Future<String> Function(_i2.JavaScriptTextInputDialogRequest)?
@@ -441,6 +473,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
           Invocation.getter(#params),
         ),
       ) as _i2.PlatformNavigationDelegateCreationParams);
+
   @override
   _i5.Future<void> setOnNavigationRequest(
           _i6.NavigationRequestCallback? onNavigationRequest) =>
@@ -452,6 +485,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnPageStarted(_i6.PageEventCallback? onPageStarted) =>
       (super.noSuchMethod(
@@ -462,6 +496,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnPageFinished(_i6.PageEventCallback? onPageFinished) =>
       (super.noSuchMethod(
@@ -472,6 +507,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnHttpError(_i6.HttpResponseErrorCallback? onHttpError) =>
       (super.noSuchMethod(
@@ -482,6 +518,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnProgress(_i6.ProgressCallback? onProgress) =>
       (super.noSuchMethod(
@@ -492,6 +529,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnWebResourceError(
           _i6.WebResourceErrorCallback? onWebResourceError) =>
@@ -503,6 +541,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnUrlChange(_i6.UrlChangeCallback? onUrlChange) =>
       (super.noSuchMethod(
@@ -513,6 +552,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnHttpAuthRequest(
           _i6.HttpAuthRequestCallback? onHttpAuthRequest) =>

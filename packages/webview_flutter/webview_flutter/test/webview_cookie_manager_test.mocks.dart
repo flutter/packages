@@ -52,6 +52,7 @@ class MockPlatformWebViewCookieManager extends _i1.Mock
           Invocation.getter(#params),
         ),
       ) as _i2.PlatformWebViewCookieManagerCreationParams);
+
   @override
   _i4.Future<bool> clearCookies() => (super.noSuchMethod(
         Invocation.method(
@@ -60,6 +61,7 @@ class MockPlatformWebViewCookieManager extends _i1.Mock
         ),
         returnValue: _i4.Future<bool>.value(false),
       ) as _i4.Future<bool>);
+
   @override
   _i4.Future<void> setCookie(_i2.WebViewCookie? cookie) => (super.noSuchMethod(
         Invocation.method(
