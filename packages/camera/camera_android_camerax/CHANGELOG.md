@@ -1,3 +1,8 @@
+## 0.5.0+27
+
+* Removes or updates any references to an `ActivityPluginBinding` when the plugin is detached
+  or attached/re-attached, respectively, to an `Activity.`
+
 ## 0.5.0+26
 
 * Fixes new lint warnings.
