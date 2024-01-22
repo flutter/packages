@@ -4,12 +4,13 @@
 
 import Flutter
 import XCTest
+
 @testable import test_plugin
 
 class MockPrimitiveHostApi: PrimitiveHostApi {
   func anInt(value: Int64) -> Int64 { value }
   func aBool(value: Bool) -> Bool { value }
-  func aString(value: String) -> String { value  }
+  func aString(value: String) -> String { value }
   func aDouble(value: Double) -> Double { value }
   func aMap(value: [AnyHashable: Any?]) -> [AnyHashable: Any?] { value }
   func aList(value: [Any?]) -> [Any?] { value }
@@ -34,7 +35,7 @@ class PrimitiveTests: XCTestCase {
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputList)
-      
+
       let output = outputList!.first as? Int64
       XCTAssertEqual(1, output)
       XCTAssertTrue(outputList!.count == 1)
@@ -50,12 +51,12 @@ class PrimitiveTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
     api.anInt(value: 1) { result in
       switch result {
-        case .success(let res) :
-          XCTAssertEqual(1, res)
-          expectation.fulfill()
-        case .failure(_) :
-          return
-        
+      case .success(let res):
+        XCTAssertEqual(1, res)
+        expectation.fulfill()
+      case .failure(_):
+        return
+
       }
     }
     wait(for: [expectation], timeout: 1.0)
@@ -74,7 +75,7 @@ class PrimitiveTests: XCTestCase {
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputList)
-      
+
       let output = outputList!.first as? Bool
       XCTAssertEqual(true, output)
       XCTAssertTrue(outputList!.count == 1)
@@ -90,11 +91,11 @@ class PrimitiveTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
     api.aBool(value: true) { result in
       switch result {
-        case .success(let res) :
-          XCTAssertEqual(true, res)
-          expectation.fulfill()
-        case .failure(_) :
-          return
+      case .success(let res):
+        XCTAssertEqual(true, res)
+        expectation.fulfill()
+      case .failure(_):
+        return
       }
     }
     wait(for: [expectation], timeout: 1.0)
@@ -113,7 +114,7 @@ class PrimitiveTests: XCTestCase {
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputList)
-      
+
       let output = outputList!.first as? Double
       XCTAssertEqual(1.0, output)
       XCTAssertTrue(outputList!.count == 1)
@@ -130,11 +131,11 @@ class PrimitiveTests: XCTestCase {
     let arg: Double = 1.5
     api.aDouble(value: arg) { result in
       switch result {
-        case .success(let res) :
-          XCTAssertEqual(arg, res)
-          expectation.fulfill()
-        case .failure(_) :
-          return
+      case .success(let res):
+        XCTAssertEqual(arg, res)
+        expectation.fulfill()
+      case .failure(_):
+        return
       }
     }
     wait(for: [expectation], timeout: 1.0)
@@ -153,7 +154,7 @@ class PrimitiveTests: XCTestCase {
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputList)
-      
+
       let output = outputList!.first as? String
       XCTAssertEqual("hello", output)
       XCTAssertTrue(outputList!.count == 1)
@@ -170,11 +171,11 @@ class PrimitiveTests: XCTestCase {
     let arg: String = "hello"
     api.aString(value: arg) { result in
       switch result {
-        case .success(let res) :
-          XCTAssertEqual(arg, res)
-          expectation.fulfill()
-        case .failure(_) :
-          return
+      case .success(let res):
+        XCTAssertEqual(arg, res)
+        expectation.fulfill()
+      case .failure(_):
+        return
       }
     }
     wait(for: [expectation], timeout: 1.0)
@@ -193,7 +194,7 @@ class PrimitiveTests: XCTestCase {
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputList)
-      
+
       let output = outputList!.first as? [Int]
       XCTAssertEqual([1, 2, 3], output)
       XCTAssertTrue(outputList!.count == 1)
@@ -210,11 +211,11 @@ class PrimitiveTests: XCTestCase {
     let arg = ["hello"]
     api.aList(value: arg) { result in
       switch result {
-        case .success(let res) :
-          XCTAssert(equalsList(arg, res))
-          expectation.fulfill()
-        case .failure(_) :
-          return
+      case .success(let res):
+        XCTAssert(equalsList(arg, res))
+        expectation.fulfill()
+      case .failure(_):
+        return
       }
     }
     wait(for: [expectation], timeout: 1.0)
@@ -250,11 +251,11 @@ class PrimitiveTests: XCTestCase {
     let arg = ["hello": 1]
     api.aMap(value: arg) { result in
       switch result {
-        case .success(let res) :
-          XCTAssert(equalsDictionary(arg, res))
-          expectation.fulfill()
-        case .failure(_) :
-          return
+      case .success(let res):
+        XCTAssert(equalsDictionary(arg, res))
+        expectation.fulfill()
+      case .failure(_):
+        return
       }
 
     }
