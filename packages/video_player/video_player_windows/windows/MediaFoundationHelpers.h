@@ -6,12 +6,14 @@
 
 namespace video_player_windows {
 
+// Helper class for managing the lifetime of the MediaFoundation platform.
 class MFPlatformRef {
  public:
   MFPlatformRef() {}
 
   virtual ~MFPlatformRef() { Shutdown(); }
 
+  // Start the MediaFoundation platform.
   void Startup() {
     if (!started_) {
       THROW_IF_FAILED(MFStartup(MF_VERSION, MFSTARTUP_FULL));
@@ -19,6 +21,7 @@ class MFPlatformRef {
     }
   }
 
+  // Shutdown the MediaFoundation platform.
   void Shutdown() {
     if (started_) {
       THROW_IF_FAILED(MFShutdown());
@@ -27,9 +30,11 @@ class MFPlatformRef {
   }
 
  private:
+  // Whether the MediaFoundation platform has been started.
   bool started_ = false;
 };
 
+// Helper base class for implementing IMFAsyncCallback.
 class MFCallbackBase
     : public winrt::implements<MFCallbackBase, IMFAsyncCallback> {
  public:
@@ -37,7 +42,9 @@ class MFCallbackBase
                  DWORD queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED)
       : flags_(flags), queue_(queue) {}
 
+  // Getter for the callback queue.
   DWORD GetQueue() const { return queue_; }
+  // Getter for the callback flags.
   DWORD GetFlags() const { return flags_; }
 
   // IMFAsyncCallback methods
@@ -48,10 +55,13 @@ class MFCallbackBase
   }
 
  private:
+  // Callback flags.
   DWORD flags_ = 0;
+  // Callback queue.
   DWORD queue_ = 0;
 };
 
+// Helper class for synchronously waiting for a MediaFoundation callback.
 class SyncMFCallback : public MFCallbackBase {
  public:
   SyncMFCallback() { invoke_event_.create(); }
@@ -62,10 +72,10 @@ class SyncMFCallback : public MFCallbackBase {
     }
   }
 
+  // Getter for the result of the callback.
   IMFAsyncResult* GetResult() { return result_.get(); }
 
   // IMFAsyncCallback methods
-
   IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* result) noexcept override try {
     result_.copy_from(result);
     invoke_event_.SetEvent();
@@ -74,10 +84,13 @@ class SyncMFCallback : public MFCallbackBase {
   CATCH_RETURN();
 
  private:
+  // Event used to wait for the callback to be invoked.
   wil::unique_event invoke_event_;
+  // Field storing the result of the callback.
   winrt::com_ptr<IMFAsyncResult> result_;
 };
 
+// Helper class for running a callback on a MediaFoundation work queue.
 class MFWorkItem : public MFCallbackBase {
  public:
   MFWorkItem(std::function<void()> callback, DWORD flags = 0,
@@ -87,7 +100,6 @@ class MFWorkItem : public MFCallbackBase {
   }
 
   // IMFAsyncCallback methods
-
   IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* /*result*/) noexcept override
       try {
     callback_();
@@ -96,9 +108,11 @@ class MFWorkItem : public MFCallbackBase {
   CATCH_RETURN();
 
  private:
+  // Callback to run.
   std::function<void()> callback_;
 };
 
+// Helper function for running a callback on a MediaFoundation work queue.
 inline void MFPutWorkItem(std::function<void()> callback) {
   winrt::com_ptr<MFWorkItem> work_item = winrt::make_self<MFWorkItem>(callback);
   THROW_IF_FAILED(
@@ -107,7 +121,8 @@ inline void MFPutWorkItem(std::function<void()> callback) {
 
 // Helper function for ensuring that the provided callback runs synchronously on
 // a MTA thread. All MediaFoundation calls should be made on a MTA thread to
-// avoid subtle deadlock bugs due to objects inadvertedly being created in a STA
+// avoid subtle deadlock bugs due to objects inadvertedly being created in a
+// STA.
 inline void RunSyncInMTA(std::function<void()> callback) {
   APTTYPE apartment_type = {};
   APTTYPEQUALIFIER qualifier = {};
@@ -131,13 +146,16 @@ inline void RunSyncInMTA(std::function<void()> callback) {
   }
 }
 
+// The number of milliseconds in one second.
 constexpr uint64_t kMSPerSecond = 1000;
 
+// Helper function for converting seconds to milliseconds.
 template <typename SecondsT>
 inline uint64_t ConvertSecondsToMs(SecondsT seconds) {
   return static_cast<uint64_t>(seconds * kMSPerSecond);
 }
 
+// Helper function for converting milliseconds to seconds.
 template <typename MsT>
 inline double ConvertMsToSeconds(MsT ms) {
   return static_cast<double>(ms) / kMSPerSecond;
