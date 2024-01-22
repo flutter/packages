@@ -1,3 +1,6 @@
+## 2.4.12
+* Adds support for adding exoplayer extensions like ffmpeg to video_player on Android.
+
 ## 2.4.11
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
