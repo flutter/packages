@@ -28,7 +28,8 @@ namespace video_player_windows {
 
 namespace {
 
-// Implementation of IMFMediaEngineNotify's interface, to handle MediaEngine events.
+// Implementation of IMFMediaEngineNotify's interface, to handle MediaEngine
+// events.
 class MediaEngineCallbackHelper
     : public winrt::implements<MediaEngineCallbackHelper,
                                IMFMediaEngineNotify> {
@@ -50,8 +51,9 @@ class MediaEngineCallbackHelper
     THROW_HR_IF(E_INVALIDARG, !playback_ended_cb_);
     THROW_HR_IF(E_INVALIDARG, !time_update_cb_);
   }
-  virtual ~MediaEngineCallbackHelper() = default;
+  virtual ~MediaEngineCallbackHelper() { DetachParent(); }
 
+  // Detaches the parent MediaEngineWrapper from this callback helper.
   void DetachParent() {
     auto lock = lock_.lock();
     detached_ = true;

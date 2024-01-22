@@ -110,8 +110,6 @@ void VideoPlayer::OnMediaInitialized() {
 }
 
 void VideoPlayer::UpdateVideoSize() {
-  auto lock = lock_.lock();
-
   RECT rect;
   if (GetWindowRect(window_, &rect)) {
     int width = rect.right - rect.left;

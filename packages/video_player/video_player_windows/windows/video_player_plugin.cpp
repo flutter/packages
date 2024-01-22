@@ -175,12 +175,17 @@ std::optional<FlutterError> VideoPlayerPlugin::Play(int64_t texture_id) {
 ErrorOr<int64_t> VideoPlayerPlugin::GetPosition(int64_t texture_id) {
   auto search_player = video_players_.find(texture_id);
   int64_t position = 0;
-  if (search_player != video_players_.end()) {
-    auto& player = search_player->second;
-
-    position = player->GetPosition();
-    player->SendBufferingUpdate();
+  if (search_player == video_players_.end()) {
+    return FlutterError(
+        "player_not_found",
+        "Player not found for texture id: " + std::to_string(texture_id));
   }
+
+  auto& player = search_player->second;
+
+  position = player->GetPosition();
+  player->SendBufferingUpdate();
+
   return position;
 }
 
