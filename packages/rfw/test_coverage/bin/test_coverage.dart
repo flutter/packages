@@ -20,7 +20,7 @@ import 'package:meta/meta.dart';
 
 // Please update these targets when you update this package.
 // Please ensure that test coverage continues to be 100%.
-const int targetLines = 3219;
+const int targetLines = 3223;
 const String targetPercent = '100';
 const String lastUpdate = '2023-06-29';
 

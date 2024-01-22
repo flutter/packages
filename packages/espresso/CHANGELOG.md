@@ -1,5 +1,6 @@
-## NEXT
+## 0.3.0+7
 
+* Replaces call to deprecated `getObservatoryUri`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.3.0+6
