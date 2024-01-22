@@ -703,7 +703,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<bool> _showConfirm(BuildContext context, String message) async {
-    final dynamic result = await showDialog<bool>(
+    return await showDialog<bool>(
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
@@ -721,14 +721,13 @@ class SampleMenu extends StatelessWidget {
                   child: const Text('OK')),
             ],
           );
-        });
-
-    return result.runtimeType == bool && result as bool;
+        }) ??
+        false;
   }
 
   Future<String> _showTextInput(
       BuildContext context, String message, String? defaultText) async {
-    final dynamic result = await showDialog<String>(
+    return await showDialog<String>(
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
@@ -741,9 +740,8 @@ class SampleMenu extends StatelessWidget {
                   child: const Text('Enter')),
             ],
           );
-        });
-
-    return result.runtimeType == String ? result as String : '';
+        }) ??
+        '';
   }
 }
 
