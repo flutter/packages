@@ -86,10 +86,6 @@ void VideoPlayer::Init(
           }));
 }
 
-VideoPlayer::~VideoPlayer() { valid_ = false; }
-
-bool VideoPlayer::IsValid() { return valid_; }
-
 FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(
     size_t width, size_t height) {
   // Lock buffer mutex to protect texture processing.

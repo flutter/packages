@@ -110,10 +110,9 @@ std::optional<FlutterError> VideoPlayerPlugin::Dispose(int64_t texture_id) {
         "player_not_found",
         "Player not found for texture id: " + std::to_string(texture_id));
   }
-  if (search_player->second->IsValid()) {
-    search_player->second->Dispose();
-    video_players_.erase(texture_id);
-  }
+
+  search_player->second->Dispose();
+  video_players_.erase(texture_id);
 
   return std::nullopt;
 }
@@ -126,9 +125,8 @@ std::optional<FlutterError> VideoPlayerPlugin::SetLooping(int64_t texture_id,
         "player_not_found",
         "Player not found for texture id: " + std::to_string(texture_id));
   }
-  if (search_player->second->IsValid()) {
-    search_player->second->SetLooping(is_looping);
-  }
+
+  search_player->second->SetLooping(is_looping);
 
   return std::nullopt;
 }
@@ -141,9 +139,8 @@ std::optional<FlutterError> VideoPlayerPlugin::SetVolume(int64_t texture_id,
         "player_not_found",
         "Player not found for texture id: " + std::to_string(texture_id));
   }
-  if (search_player->second->IsValid()) {
-    search_player->second->SetVolume(volume);
-  }
+
+  search_player->second->SetVolume(volume);
 
   return std::nullopt;
 }
@@ -156,9 +153,8 @@ std::optional<FlutterError> VideoPlayerPlugin::SetPlaybackSpeed(
         "player_not_found",
         "Player not found for texture id: " + std::to_string(texture_id));
   }
-  if (search_player->second->IsValid()) {
-    search_player->second->SetPlaybackSpeed(speed);
-  }
+
+  search_player->second->SetPlaybackSpeed(speed);
 
   return std::nullopt;
 }
@@ -170,9 +166,8 @@ std::optional<FlutterError> VideoPlayerPlugin::Play(int64_t texture_id) {
         "player_not_found",
         "Player not found for texture id: " + std::to_string(texture_id));
   }
-  if (search_player->second->IsValid()) {
-    search_player->second->Play();
-  }
+
+  search_player->second->Play();
 
   return std::nullopt;
 }
@@ -182,10 +177,9 @@ ErrorOr<int64_t> VideoPlayerPlugin::GetPosition(int64_t texture_id) {
   int64_t position = 0;
   if (search_player != video_players_.end()) {
     auto& player = search_player->second;
-    if (player->IsValid()) {
-      position = player->GetPosition();
-      player->SendBufferingUpdate();
-    }
+
+    position = player->GetPosition();
+    player->SendBufferingUpdate();
   }
   return position;
 }
@@ -198,9 +192,8 @@ std::optional<FlutterError> VideoPlayerPlugin::SeekTo(int64_t texture_id,
         "player_not_found",
         "Player not found for texture id: " + std::to_string(texture_id));
   }
-  if (search_player->second->IsValid()) {
-    search_player->second->SeekTo(position);
-  }
+
+  search_player->second->SeekTo(position);
 
   return std::nullopt;
 }
@@ -212,9 +205,8 @@ std::optional<FlutterError> VideoPlayerPlugin::Pause(int64_t texture_id) {
         "player_not_found",
         "Player not found for texture id: " + std::to_string(texture_id));
   }
-  if (search_player->second->IsValid()) {
-    search_player->second->Pause();
-  }
+
+  search_player->second->Pause();
 
   return std::nullopt;
 }

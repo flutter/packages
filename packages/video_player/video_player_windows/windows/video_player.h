@@ -48,7 +48,7 @@ class VideoPlayer {
   VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
               flutter::EncodableMap http_headers);
 
-  virtual ~VideoPlayer();
+  virtual ~VideoPlayer() = default;
 
   void Dispose();
   void SetLooping(bool is_looping);
@@ -60,7 +60,6 @@ class VideoPlayer {
   void SendBufferingUpdate();
   void SeekTo(int64_t seek);
   int64_t GetTextureId();
-  bool IsValid();
 
   FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptorCallback(size_t width,
                                                                size_t height);
@@ -86,7 +85,6 @@ class VideoPlayer {
   wil::critical_section lock_;
   winrt::Windows::Foundation::Size window_size_{};
 
-  std::atomic<bool> valid_ = true;
   flutter::TextureVariant texture_;
   int64_t texture_id_;
 
