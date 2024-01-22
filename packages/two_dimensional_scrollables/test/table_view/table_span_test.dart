@@ -228,86 +228,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.byType(TableViewport),
-          paints
-            // Rows first, bottom to top for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 500.0, 1000.0, 600.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 400.0, 1000.0, 500.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 300.0, 1000.0, 400.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 200.0, 1000.0, 300.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 100.0, 1000.0, 200.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -100.0, 1000.0, 0.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -200.0, 1000.0, -100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -300.0, 1000.0, -200.0),
-              color: const Color(0xffbbdefb),
-            )
-            // Columns next
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(800.0, -300.0, 900.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(900.0, -300.0, 1000.0, 600.0),
-              color: const Color(0xffe1bee7),
-            ));
+        find.byType(TableViewport),
+        paints
+          // Rows first, bottom to top for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 500.0, 1000.0, 600.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 400.0, 1000.0, 500.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 300.0, 1000.0, 400.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 200.0, 1000.0, 300.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 100.0, 1000.0, 200.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -100.0, 1000.0, 0.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -200.0, 1000.0, -100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -300.0, 1000.0, -200.0),
+            color: const Color(0xffbbdefb),
+          )
+          // Columns next
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(800.0, -300.0, 900.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(900.0, -300.0, 1000.0, 600.0),
+            color: const Color(0xffe1bee7),
+          ),
+      );
     });
 
     testWidgets('Vertical main axis, horizontal reversed',
@@ -333,86 +334,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.byType(TableViewport),
-          paints
-            // Rows first
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 600.0, 800.0, 700.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 700.0, 800.0, 800.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 800.0, 800.0, 900.0),
-              color: const Color(0xffbbdefb),
-            )
-            // Columns next, right to left for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(700.0, 0.0, 800.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(600.0, 0.0, 700.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(500.0, 0.0, 600.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(400.0, 0.0, 500.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(300.0, 0.0, 400.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(200.0, 0.0, 300.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 0.0, -100.0, 900.0),
-              color: const Color(0xffe1bee7),
-            ));
+        find.byType(TableViewport),
+        paints
+          // Rows first
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 600.0, 800.0, 700.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 700.0, 800.0, 800.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 800.0, 800.0, 900.0),
+            color: const Color(0xffbbdefb),
+          )
+          // Columns next, right to left for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(700.0, 0.0, 800.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 0.0, 700.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(500.0, 0.0, 600.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 0.0, 500.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(300.0, 0.0, 400.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, 0.0, 300.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 0.0, -100.0, 900.0),
+            color: const Color(0xffe1bee7),
+          ),
+      );
     });
 
     testWidgets('Vertical main axis, both reversed',
@@ -439,86 +441,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.byType(TableViewport),
-          paints
-            // Rows first, bottom to top for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -100.0, 800.0, 0.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -200.0, 800.0, -100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -300.0, 800.0, -200.0),
-              color: const Color(0xffbbdefb),
-            )
-            // Columns next, right to left for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-100.0, -300.0, 0.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -300.0, -100.0, 600.0),
-              color: const Color(0xffe1bee7),
-            ));
+        find.byType(TableViewport),
+        paints
+          // Rows first, bottom to top for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -100.0, 800.0, 0.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -200.0, 800.0, -100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -300.0, 800.0, -200.0),
+            color: const Color(0xffbbdefb),
+          )
+          // Columns next, right to left for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-100.0, -300.0, 0.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -300.0, -100.0, 600.0),
+            color: const Color(0xffe1bee7),
+          ),
+      );
     });
 
     testWidgets('Horizontal main axis, vertical reversed',
@@ -545,86 +548,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.byType(TableViewport),
-          paints
-            // Columns first
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(800.0, -300.0, 900.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(900.0, -300.0, 1000.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            // Rows next, bottom to top for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 500.0, 1000.0, 600.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 400.0, 1000.0, 500.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 300.0, 1000.0, 400.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 200.0, 1000.0, 300.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 100.0, 1000.0, 200.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -100.0, 1000.0, 0.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -200.0, 1000.0, -100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -300.0, 1000.0, -200.0),
-              color: const Color(0xffbbdefb),
-            ));
+        find.byType(TableViewport),
+        paints
+          // Columns first
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(800.0, -300.0, 900.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(900.0, -300.0, 1000.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          // Rows next, bottom to top for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 500.0, 1000.0, 600.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 400.0, 1000.0, 500.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 300.0, 1000.0, 400.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 200.0, 1000.0, 300.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 100.0, 1000.0, 200.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -100.0, 1000.0, 0.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -200.0, 1000.0, -100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -300.0, 1000.0, -200.0),
+            color: const Color(0xffbbdefb),
+          ),
+      );
     });
 
     testWidgets('Horizontal main axis, horizontal reversed',
@@ -651,86 +655,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.byType(TableViewport),
-          paints
-            // Columns first, right to left for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(700.0, 0.0, 800.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(600.0, 0.0, 700.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(500.0, 0.0, 600.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(400.0, 0.0, 500.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(300.0, 0.0, 400.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(200.0, 0.0, 300.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 0.0, -100.0, 900.0),
-              color: const Color(0xffe1bee7),
-            )
-            // Rows next
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 600.0, 800.0, 700.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 700.0, 800.0, 800.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 800.0, 800.0, 900.0),
-              color: const Color(0xffbbdefb),
-            ));
+        find.byType(TableViewport),
+        paints
+          // Columns first, right to left for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(700.0, 0.0, 800.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 0.0, 700.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(500.0, 0.0, 600.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 0.0, 500.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(300.0, 0.0, 400.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, 0.0, 300.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 0.0, -100.0, 900.0),
+            color: const Color(0xffe1bee7),
+          )
+          // Rows next
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 600.0, 800.0, 700.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 700.0, 800.0, 800.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 800.0, 800.0, 900.0),
+            color: const Color(0xffbbdefb),
+          ),
+      );
     });
 
     testWidgets('Horizontal main axis, both reversed',
@@ -758,86 +763,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.byType(TableViewport),
-          paints
-            // Columns first, right to left for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-100.0, -300.0, 0.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -300.0, -100.0, 600.0),
-              color: const Color(0xffe1bee7),
-            )
-            // Rows next, bottom to top for reversed axis
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -100.0, 800.0, 0.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -200.0, 800.0, -100.0),
-              color: const Color(0xffbbdefb),
-            )
-            ..rect(
-              rect: const Rect.fromLTRB(-200.0, -300.0, 800.0, -200.0),
-              color: const Color(0xffbbdefb),
-            ));
+        find.byType(TableViewport),
+        paints
+          // Columns first, right to left for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(700.0, -300.0, 800.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, -300.0, 700.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(500.0, -300.0, 600.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, -300.0, 500.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(300.0, -300.0, 400.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, -300.0, 300.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(100.0, -300.0, 200.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, -300.0, 100.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-100.0, -300.0, 0.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -300.0, -100.0, 600.0),
+            color: const Color(0xffe1bee7),
+          )
+          // Rows next, bottom to top for reversed axis
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 500.0, 800.0, 600.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 400.0, 800.0, 500.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 300.0, 800.0, 400.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 200.0, 800.0, 300.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 100.0, 800.0, 200.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, 0.0, 800.0, 100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -100.0, 800.0, 0.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -200.0, 800.0, -100.0),
+            color: const Color(0xffbbdefb),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(-200.0, -300.0, 800.0, -200.0),
+            color: const Color(0xffbbdefb),
+          ),
+      );
     });
   });
 }
