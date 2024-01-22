@@ -347,25 +347,23 @@ NSString *const errorMethod = @"error";
 
 - (BOOL)setCaptureSessionPreset:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
   switch (resolutionPreset) {
-    case FLTResolutionPresetMax:
-      {
-          AVCaptureDeviceFormat *bestFormat = [self getHighestResolutionFormatFor:_captureDevice];
-          if ( bestFormat ) {
-              _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
-              if ( [_captureDevice lockForConfiguration:NULL] == YES ) {
+    case FLTResolutionPresetMax: {
+      AVCaptureDeviceFormat *bestFormat = [self getHighestResolutionFormatFor:_captureDevice];
+      if (bestFormat) {
+        _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
+        if ([_captureDevice lockForConfiguration:NULL] == YES) {
+          // set best device format and finish device configuration
+          _captureDevice.activeFormat = bestFormat;
+          [_captureDevice unlockForConfiguration];
 
-                  // set best device format and finish device configuration
-                  _captureDevice.activeFormat = bestFormat;
-                  [_captureDevice unlockForConfiguration];
-
-                  // set preview size based on values from the current _captureDevice
-                  _previewSize =
-                  CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
-                             _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
-                  break;
-              }
-          }
+          // set preview size based on values from the current _captureDevice
+          _previewSize =
+              CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
+                         _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
+          break;
+        }
       }
+    }
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
         _previewSize = CGSizeMake(3840, 2160);
@@ -427,20 +425,20 @@ NSString *const errorMethod = @"error";
 }
 
 /// Finds the highest available resolution in terms of pixel count for the given device
-- (AVCaptureDeviceFormat *)getHighestResolutionFormatFor:(AVCaptureDevice*)captureDevice {
-    AVCaptureDeviceFormat *bestFormat = nil;
-    NSUInteger maxPixelCount = 0;
-    for ( AVCaptureDeviceFormat *format in [_captureDevice formats] ) {
-        CMVideoDimensions res = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-        NSUInteger height = res.height;
-        NSUInteger width = res.width;
-        NSUInteger pixelCount = height * width;
-        if ( pixelCount > maxPixelCount ) {
-          maxPixelCount = pixelCount;
-          bestFormat = format;
-        }
+- (AVCaptureDeviceFormat *)getHighestResolutionFormatFor:(AVCaptureDevice *)captureDevice {
+  AVCaptureDeviceFormat *bestFormat = nil;
+  NSUInteger maxPixelCount = 0;
+  for (AVCaptureDeviceFormat *format in [_captureDevice formats]) {
+    CMVideoDimensions res = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+    NSUInteger height = res.height;
+    NSUInteger width = res.width;
+    NSUInteger pixelCount = height * width;
+    if (pixelCount > maxPixelCount) {
+      maxPixelCount = pixelCount;
+      bestFormat = format;
     }
-    return bestFormat;
+  }
+  return bestFormat;
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output
