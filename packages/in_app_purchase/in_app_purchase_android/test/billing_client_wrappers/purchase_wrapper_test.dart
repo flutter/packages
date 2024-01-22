@@ -60,20 +60,6 @@ const PurchaseHistoryRecordWrapper dummyPurchaseHistoryRecord =
   developerPayload: 'dummy payload',
 );
 
-const PurchaseWrapper dummyOldPurchase = PurchaseWrapper(
-  orderId: 'oldOrderId',
-  packageName: 'oldPackageName',
-  purchaseTime: 0,
-  signature: 'oldSignature',
-  products: <String>['oldProduct'],
-  purchaseToken: 'oldPurchaseToken',
-  isAutoRenewing: false,
-  originalJson: '',
-  developerPayload: 'old dummy payload',
-  isAcknowledged: true,
-  purchaseState: PurchaseStateWrapper.purchased,
-);
-
 void main() {
   group('PurchaseWrapper', () {
     test('converts from map', () {

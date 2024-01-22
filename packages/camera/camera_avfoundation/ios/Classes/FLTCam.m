@@ -514,7 +514,6 @@ NSString *const errorMethod = @"error";
       return;
     }
 
-    CFRetain(sampleBuffer);
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
     if (_videoWriter.status != AVAssetWriterStatusWriting) {
@@ -564,18 +563,18 @@ NSString *const errorMethod = @"error";
       _lastAudioSampleTime = currentSampleTime;
 
       if (_audioTimeOffset.value != 0) {
-        CFRelease(sampleBuffer);
-        sampleBuffer = [self adjustTime:sampleBuffer by:_audioTimeOffset];
+        CMSampleBufferRef adjustedSampleBuffer =
+            [self copySampleBufferWithAdjustedTime:sampleBuffer by:_audioTimeOffset];
+        [self newAudioSample:adjustedSampleBuffer];
+        CFRelease(adjustedSampleBuffer);
+      } else {
+        [self newAudioSample:sampleBuffer];
       }
-
-      [self newAudioSample:sampleBuffer];
     }
-
-    CFRelease(sampleBuffer);
   }
 }
 
-- (CMSampleBufferRef)adjustTime:(CMSampleBufferRef)sample by:(CMTime)offset CF_RETURNS_RETAINED {
+- (CMSampleBufferRef)copySampleBufferWithAdjustedTime:(CMSampleBufferRef)sample by:(CMTime)offset {
   CMItemCount count;
   CMSampleBufferGetSampleTimingInfoArray(sample, 0, nil, &count);
   CMSampleTimingInfo *pInfo = malloc(sizeof(CMSampleTimingInfo) * count);

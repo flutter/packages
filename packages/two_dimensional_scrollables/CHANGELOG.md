@@ -1,3 +1,11 @@
+## 0.0.5+2
+
+* Fixes must_call_super lint warning from pending framework change.
+
+## 0.0.5+1
+
+* Fixes new lint warnings.
+
 ## 0.0.5
 
 * Exposes addAutomaticKeepAlives in TableCellBuilderDelegate and TableCellListDelegate

@@ -37,6 +37,7 @@ See the API documentation for details on the following topics:
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 
 ## Migration Guides
+- [Migrating to 13.0.0](https://flutter.dev/go/go-router-v13-breaking-changes).
 - [Migrating to 12.0.0](https://flutter.dev/go/go-router-v12-breaking-changes).
 - [Migrating to 11.0.0](https://flutter.dev/go/go-router-v11-breaking-changes).
 - [Migrating to 10.0.0](https://flutter.dev/go/go-router-v10-breaking-changes).
@@ -67,4 +68,3 @@ The project follows the same priority system as flutter framework.
 [P3](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP3+)
 
 [Package PRs](https://github.com/flutter/packages/pulls?q=is%3Apr+is%3Aopen+label%3A%22p%3A+go_router%22%2C%22p%3A+go_router_builder%22)
-
