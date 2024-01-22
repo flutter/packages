@@ -22,6 +22,8 @@ class MediaEngineWrapper
  public:
   using ErrorCB = std::function<void(MF_MEDIA_ENGINE_ERR, HRESULT)>;
 
+  // The buffering state of the media engine, that maps IMFMediaEngineNotify's
+  // MF_MEDIA_ENGINE_EVENT_PLAYING and MF_MEDIA_ENGINE_EVENT_WAITING events.
   enum class BufferingState { kHaveNothing = 0, kHaveEnough = 1 };
   using BufferingStateChangeCB = std::function<void(BufferingState)>;
 
