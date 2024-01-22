@@ -39,6 +39,7 @@ class NavigationDelegate {
   ///
   /// {@template webview_fluttter.NavigationDelegate.constructor}
   /// `onUrlChange`: invoked when the underlying web view changes to a new url.
+  /// `onHttpAuthRequest`: invoked when the web view is requesting authentication.
   /// {@endtemplate}
   NavigationDelegate({
     FutureOr<NavigationDecision> Function(NavigationRequest request)?
