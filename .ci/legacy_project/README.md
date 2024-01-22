@@ -37,3 +37,5 @@ and then deleting everything but `android/` from it:
 - Added license boilerplate.
 - Replaced `jcenter` in build.gradle with `mavenCentral`, due to the
   jcenter.bintray.com shutdown.
+- Update `compileSdkVersion` from 30 to 33 to maintain compatibility
+  with plugins that use API 34.
