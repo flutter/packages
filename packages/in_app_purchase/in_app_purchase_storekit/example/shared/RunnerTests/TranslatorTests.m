@@ -458,8 +458,8 @@
   SKPaymentTransactionMessage *msg =
       [FIAObjectTranslator convertTransactionToPigeon:paymentTransaction];
 
-  XCTAssertEqual(paymentTransaction.payment, msg.payment);
-  XCTAssertEqual(paymentTransaction.transactionState, msg.transactionState);
+  XCTAssertEqual(msg.payment, NULL);
+  XCTAssertEqual(msg.transactionState, SKPaymentTransactionStateMessagePurchasing);
   XCTAssertEqual(paymentTransaction.transactionDate,
                  [NSDate dateWithTimeIntervalSince1970:[msg.transactionTimeStamp doubleValue]]);
   XCTAssertEqual(paymentTransaction.transactionIdentifier, msg.transactionIdentifier);
