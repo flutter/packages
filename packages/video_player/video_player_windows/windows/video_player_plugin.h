@@ -25,8 +25,7 @@ class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
-  VideoPlayerPlugin(flutter::BinaryMessenger* messenger, HWND window,
-                    IDXGIAdapter* adapter,
+  VideoPlayerPlugin(flutter::BinaryMessenger* messenger, IDXGIAdapter* adapter,
                     flutter::TextureRegistrar* texture_registry);
 
   virtual ~VideoPlayerPlugin() = default;
@@ -57,9 +56,6 @@ class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
 
   // The messenger for communicating with the Flutter engine.
   flutter::BinaryMessenger* messenger_;
-
-  // The window's HWND this plugin is bound to.
-  HWND window_;
 
   // A reference to Flutter's IDXGIAdapter, used to create the internal
   // ID3D11Device.

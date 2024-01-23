@@ -56,7 +56,7 @@ class VideoPlayer {
 
   // Releases any resources held by the video player and prepares it for
   // destruction.
-  void Dispose();
+  void Dispose(flutter::TextureRegistrar* texture_registry);
   // Sets the video's looping attribute to the given value.
   void SetLooping(bool is_looping);
   // Sets the video's volume to the given value.
@@ -108,16 +108,13 @@ class VideoPlayer {
   void OnPlaybackEnded();
 
   // Update's MediaEngineWrapper's video size.
-  void UpdateVideoSize();
+  void UpdateVideoSize(uint32_t width, uint32_t height);
 
   // Media members.
   MFPlatformRef mf_platform_;
 
   // MediaEngineWrapper instance.
   winrt::com_ptr<MediaEngineWrapper> media_engine_wrapper_;
-
-  // The window's size.
-  winrt::Windows::Foundation::Size window_size_{};
 
   // The internal texture instance.
   flutter::TextureVariant texture_;
@@ -129,9 +126,6 @@ class VideoPlayer {
 
   // A mutex is used to synchronize access to the texture descriptor.
   std::mutex buffer_mutex_;
-
-  // The window handle.
-  HWND window_;
 
   // The callback to invoke when a texture frame is available.
   std::function<void(int64_t)> texture_frame_available_callback_;

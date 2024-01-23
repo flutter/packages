@@ -21,8 +21,7 @@ VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
           FlutterDesktopGpuSurfaceType::
               kFlutterDesktopGpuSurfaceTypeDxgiSharedHandle,
           std::bind(&VideoPlayer::ObtainDescriptorCallback, this,
-                    std::placeholders::_1, std::placeholders::_2))),
-      window_(window) {
+                    std::placeholders::_1, std::placeholders::_2))) {
   mf_platform_.Startup();
 
   // Callbacks invoked by the media engine wrapper.
@@ -91,11 +90,23 @@ FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(
   // Lock buffer mutex to protect texture processing.
   std::lock_guard<std::mutex> buffer_lock(buffer_mutex_);
 
-  media_engine_wrapper_->UpdateSurfaceDescriptor(
-      static_cast<uint32_t>(width), static_cast<uint32_t>(height),
-      [&]() { texture_frame_available_callback_(texture_id_); }, descriptor_);
+  if (texture_id_ == -1) {
+    return nullptr;
+  }
 
-  UpdateVideoSize();
+  uint32_t texture_width = static_cast<uint32_t>(width);
+  uint32_t texture_height = static_cast<uint32_t>(height);
+
+  media_engine_wrapper_->UpdateSurfaceDescriptor(
+      texture_width, texture_height,
+      [&]() {
+        if (texture_frame_available_callback_) {
+          texture_frame_available_callback_(texture_id_);
+        }
+      },
+      descriptor_);
+
+  UpdateVideoSize(texture_width, texture_height);
 
   return &descriptor_;
 }
@@ -109,26 +120,9 @@ void VideoPlayer::OnMediaInitialized() {
   }
 }
 
-void VideoPlayer::UpdateVideoSize() {
-  RECT rect;
-  if (GetWindowRect(window_, &rect)) {
-    int width = rect.right - rect.left;
-    int height = rect.bottom - rect.top;
-    window_size_ = {static_cast<float>(width), static_cast<float>(height)};
-  }
-
-  // If the window has not been initialized yet, use a default size of 640x480.
-  const bool window_initialized =
-      window_size_.Width != 0 && window_size_.Height != 0;
-  float width = window_initialized ? window_size_.Width : 640;
-  float height = window_initialized ? window_size_.Height : 480;
-
+void VideoPlayer::UpdateVideoSize(uint32_t width, uint32_t height) {
   if (media_engine_wrapper_) {
-    // Call into media engine wrapper on MTA thread to resize the video surface.
-    RunSyncInMTA([&]() {
-      media_engine_wrapper_->OnWindowUpdate(static_cast<uint32_t>(width),
-                                            static_cast<uint32_t>(height));
-    });
+    media_engine_wrapper_->OnWindowUpdate(width, height);
   }
 }
 
@@ -188,11 +182,19 @@ void VideoPlayer::SendInitialized() {
   event_sink_->Success(event);
 }
 
-void VideoPlayer::Dispose() {
+void VideoPlayer::Dispose(flutter::TextureRegistrar* texture_registry) {
+  std::lock_guard<std::mutex> buffer_lock(buffer_mutex_);
+  texture_frame_available_callback_ = nullptr;
+
   if (is_initialized_) {
     media_engine_wrapper_->Pause();
   }
+  texture_registry->UnregisterTexture(texture_id_);
+  texture_id_ = -1;
   event_channel_ = nullptr;
+  media_engine_wrapper_->Shutdown();
+  media_engine_wrapper_.detach();
+  mf_platform_.Shutdown();
 }
 
 void VideoPlayer::SetLooping(bool is_looping) {

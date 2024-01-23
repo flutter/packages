@@ -135,6 +135,7 @@ void MediaEngineWrapper::Shutdown() {
   RunSyncInMTA([&]() {
     auto lock = lock_.lock();
     THROW_IF_FAILED(media_engine_->Shutdown());
+    media_engine_extension_->Shutdown();
   });
 }
 

@@ -27,26 +27,24 @@ namespace video_player_windows {
 void VideoPlayerPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
   flutter::BinaryMessenger* messenger = registrar->messenger();
-  HWND window = registrar->GetView()->GetNativeWindow();
   IDXGIAdapter* adapter = registrar->GetView()->GetGraphicsAdapter();
 
   auto plugin = std::make_unique<VideoPlayerPlugin>(
-      messenger, window, adapter, registrar->texture_registrar());
+      messenger, adapter, registrar->texture_registrar());
   WindowsVideoPlayerApi::SetUp(messenger, plugin.get());
   registrar->AddPlugin(std::move(plugin));
 }
 
 VideoPlayerPlugin::VideoPlayerPlugin(
-    flutter::BinaryMessenger* messenger, HWND window, IDXGIAdapter* adapter,
+    flutter::BinaryMessenger* messenger, IDXGIAdapter* adapter,
     flutter::TextureRegistrar* texture_registry)
     : messenger_(messenger),
-      window_(window),
       adapter_(adapter),
       texture_registry_(texture_registry) {}
 
 std::optional<FlutterError> VideoPlayerPlugin::Initialize() {
   for (int i = 0; i < video_players_.size(); i++) {
-    video_players_.at((int64_t)i)->Dispose();
+    video_players_.at((int64_t)i)->Dispose(texture_registry_);
   }
   video_players_.clear();
 
@@ -70,8 +68,8 @@ ErrorOr<int64_t> VideoPlayerPlugin::Create(
           module_path + L"/data/flutter_assets/" +
           std::wstring(asset_path.begin(), asset_path.end());
 
-      player = std::make_unique<VideoPlayer>(
-          adapter_, window_, final_asset_path, flutter::EncodableMap());
+      player = std::make_unique<VideoPlayer>(adapter_, final_asset_path,
+                                             flutter::EncodableMap());
     } catch (std::exception& e) {
       return FlutterError("asset_load_failed", e.what());
     }
@@ -79,7 +77,7 @@ ErrorOr<int64_t> VideoPlayerPlugin::Create(
     try {
       std::string asset_path = *uri;
       player = std::make_unique<VideoPlayer>(
-          adapter_, window_, std::wstring(asset_path.begin(), asset_path.end()),
+          adapter_, std::wstring(asset_path.begin(), asset_path.end()),
           http_headers);
     } catch (std::exception& e) {
       return FlutterError("uri_load_failed", e.what());
@@ -111,7 +109,7 @@ std::optional<FlutterError> VideoPlayerPlugin::Dispose(int64_t texture_id) {
         "Player not found for texture id: " + std::to_string(texture_id));
   }
 
-  search_player->second->Dispose();
+  search_player->second->Dispose(texture_registry_);
   video_players_.erase(texture_id);
 
   return std::nullopt;
