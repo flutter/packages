@@ -126,6 +126,20 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+enum CaptureRequestKeySupportedType {
+  controlAeLock,
+}
+
+class CaptureRequestOption {
+  CaptureRequestOption({
+    required this.key,
+    required this.value,
+  });
+
+  CaptureRequestKeySupportedType key;
+  String? value;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -449,4 +463,17 @@ abstract class CameraControlHostApi {
 @FlutterApi()
 abstract class CameraControlFlutterApi {
   void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestCaptureRequestOptionsHostApi')
+abstract class CaptureRequestOptionsHostApi {
+  void create(int identifier, List<CaptureRequestOption> options);
+}
+
+@HostApi(dartHostTestHandler: 'TestCamera2CameraControlHostApi')
+abstract class Camera2CameraControlHostApi {
+  void create(int identifier, int cameraControlIdentifier);
+
+  void addCaptureRequestOptions(
+      int identifier, int captureRequestOptionsIdentifier);
 }
