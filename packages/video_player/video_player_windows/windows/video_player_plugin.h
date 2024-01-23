@@ -42,7 +42,7 @@ class VideoPlayerPlugin : public flutter::Plugin, public WindowsVideoPlayerApi {
 
   // A queue of callbacks to run on the main thread.
   static std::queue<std::function<void()>> callbacks;
-  
+
   // Runs the given callback on the main thread.
   static void RunOnMainThread(std::function<void()> callback);
 
