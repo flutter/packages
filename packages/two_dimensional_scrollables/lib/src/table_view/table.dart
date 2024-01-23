@@ -1045,7 +1045,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           // Walk through the rows to separate merged cells for decorating. A
           // merged column takes the decoration of its leading column.
           // +---------+-------+-------+
-          // | leading |       |       |
+          // |         |       |       |
           // | 1 rect  |       |       |
           // +---------+-------+-------+
           // | merged          |       |
@@ -1065,7 +1065,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             leadingCell = getChildFor(vicinity)!;
             if (parentDataOf(leadingCell).columnMergeStart != null) {
               // Merged portion decorated individually since it exceeds the
-              // current column.
+              // single column width.
               decorationCells.add((
                 leading: leadingCell,
                 trailing: leadingCell,
@@ -1073,6 +1073,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               currentRow++;
               continue;
             }
+            // If this is not a merged cell, collect up all of the cells leading
+            // up to, or following after, the merged cell so we can decorate
+            // efficiently with as few rects as possible.
             RenderBox? nextCell = leadingCell;
             while (nextCell != null &&
                 parentDataOf(nextCell).columnMergeStart == null) {
@@ -1182,8 +1185,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           // Walk through the columns to separate merged cells for decorating. A
           // merged row takes the decoration of its leading row.
           // +---------+--------+--------+
-          // | leading | merged | 1 rect |
-          // | 1 rect  | 1 rect |        |
+          // | 1 rect  | merged | 1 rect |
+          // |         | 1 rect |        |
           // +---------+        +--------+
           // |         |        |        |
           // |         |        |        |
@@ -1201,7 +1204,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             );
             leadingCell = getChildFor(vicinity)!;
             if (parentDataOf(leadingCell).rowMergeStart != null) {
-              // Merged portion decorated individually.
+              // Merged portion decorated individually since it exceeds the
+              // single row height.
               decorationCells.add((
                 leading: leadingCell,
                 trailing: leadingCell,
@@ -1209,6 +1213,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               currentColumn++;
               continue;
             }
+            // If this is not a merged cell, collect up all of the cells leading
+            // up to, or following after, the merged cell so we can decorate
+            // efficiently with as few rects as possible.
             RenderBox? nextCell = leadingCell;
             while (nextCell != null &&
                 parentDataOf(nextCell).rowMergeStart == null) {
