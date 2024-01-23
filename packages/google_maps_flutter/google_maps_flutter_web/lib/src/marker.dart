@@ -74,7 +74,7 @@ class MarkerController {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
     _marker!.options = options;
     if (_infoWindow != null && newInfoWindowContent != null) {
-      _infoWindow!.content = newInfoWindowContent;
+      _infoWindow.content = newInfoWindowContent;
     }
   }
 
@@ -94,7 +94,7 @@ class MarkerController {
   void hideInfoWindow() {
     assert(_marker != null, 'Cannot `hideInfoWindow` on a `remove`d Marker.');
     if (_infoWindow != null) {
-      _infoWindow!.close();
+      _infoWindow.close();
       _infoWindowShown = false;
     }
   }
@@ -105,7 +105,7 @@ class MarkerController {
   void showInfoWindow() {
     assert(_marker != null, 'Cannot `showInfoWindow` on a `remove`d Marker.');
     if (_infoWindow != null) {
-      _infoWindow!.open(_marker!.map, _marker);
+      _infoWindow.open(_marker!.map, _marker);
       _infoWindowShown = true;
     }
   }
