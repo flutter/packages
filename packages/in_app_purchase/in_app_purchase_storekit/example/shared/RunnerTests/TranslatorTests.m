@@ -440,15 +440,17 @@
 }
 
 - (void)testSKPaymentConvertToPigeon {
-  SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:self.paymentMap];
-  SKPaymentMessage *msg = [FIAObjectTranslator convertPaymentToPigeon:payment];
+  if (@available(iOS 12.2, *)) {
+    SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:self.paymentMap];
+    SKPaymentMessage *msg = [FIAObjectTranslator convertPaymentToPigeon:payment];
 
-  XCTAssertEqual(payment.productIdentifier, msg.productIdentifier);
-  XCTAssertEqualObjects(payment.requestData,
-                        [msg.requestData dataUsingEncoding:NSUTF8StringEncoding]);
-  XCTAssertEqual(payment.quantity, [msg.quantity integerValue]);
-  XCTAssertEqual(payment.applicationUsername, msg.applicationUsername);
-  XCTAssertEqual(payment.simulatesAskToBuyInSandbox, [msg.simulatesAskToBuyInSandbox boolValue]);
+    XCTAssertEqual(payment.productIdentifier, msg.productIdentifier);
+    XCTAssertEqualObjects(payment.requestData,
+                          [msg.requestData dataUsingEncoding:NSUTF8StringEncoding]);
+    XCTAssertEqual(payment.quantity, [msg.quantity integerValue]);
+    XCTAssertEqual(payment.applicationUsername, msg.applicationUsername);
+    XCTAssertEqual(payment.simulatesAskToBuyInSandbox, [msg.simulatesAskToBuyInSandbox boolValue]);
+  }
 }
 
 - (void)testSKPaymentTransactionConvertToPigeon {
