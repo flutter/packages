@@ -37,15 +37,15 @@ class _TestInAppPurchaseApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return SKErrorMessage.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return SKPaymentDiscountMessage.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return SKPaymentMessage.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return SKPaymentTransactionMessage.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return SKStorefrontMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -54,7 +54,8 @@ class _TestInAppPurchaseApiCodec extends StandardMessageCodec {
 }
 
 abstract class TestInAppPurchaseApi {
-  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestInAppPurchaseApiCodec();
 
   /// Returns if the current device is able to make payments
@@ -66,15 +67,20 @@ abstract class TestInAppPurchaseApi {
 
   void addPayment(Map<String?, Object?> paymentMap);
 
-  static void setup(TestInAppPurchaseApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestInAppPurchaseApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments', codec,
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           // ignore message
           final bool output = api.canMakePayments();
           return <Object?>[output];
@@ -83,12 +89,16 @@ abstract class TestInAppPurchaseApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions', codec,
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           // ignore message
           final List<SKPaymentTransactionMessage?> output = api.transactions();
           return <Object?>[output];
@@ -97,12 +107,16 @@ abstract class TestInAppPurchaseApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront', codec,
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           // ignore message
           final SKStorefrontMessage output = api.storefront();
           return <Object?>[output];
@@ -111,16 +125,21 @@ abstract class TestInAppPurchaseApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment', codec,
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment was null.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Map<String?, Object?>? arg_paymentMap = (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+          final Map<String?, Object?>? arg_paymentMap =
+              (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           assert(arg_paymentMap != null,
               'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment was null, expected non-null Map<String?, Object?>.');
           api.addPayment(arg_paymentMap!);

@@ -296,13 +296,16 @@
 }
 
 + (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
-    (SKPaymentTransaction *)transaction API_AVAILABLE(ios(12.2)){
+    (SKPaymentTransaction *)transaction API_AVAILABLE(ios(12.2)) {
+  if (!transaction) {
+    return nil;
+  }
   SKPaymentTransactionMessage *msg = [SKPaymentTransactionMessage
             makeWithPayment:[self convertPaymentToPigeon:transaction.payment]
            transactionState:[self convertTransactionStateToPigeon:transaction.transactionState]
         originalTransaction:transaction.originalTransaction
                                 ? [self convertTransactionToPigeon:transaction.originalTransaction]
-                                : nil
+                                : NULL
        transactionTimeStamp:[NSNumber numberWithDouble:[transaction.transactionDate
                                                                timeIntervalSince1970]]
       transactionIdentifier:transaction.transactionIdentifier
@@ -335,6 +338,9 @@
 
 + (nullable SKPaymentMessage *)convertPaymentToPigeon:(SKPayment *)payment
     API_AVAILABLE(ios(12.2)) {
+  if (!payment) {
+    return nil;
+  }
   SKPaymentMessage *msg = [SKPaymentMessage
        makeWithProductIdentifier:payment.productIdentifier
              applicationUsername:payment.applicationUsername
@@ -348,6 +354,9 @@
 
 + (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:(SKPaymentDiscount *)discount
     API_AVAILABLE(ios(12.2)) {
+  if (!discount) {
+    return nil;
+  }
   SKPaymentDiscountMessage *msg =
       [SKPaymentDiscountMessage makeWithIdentifier:discount.identifier
                                      keyIdentifier:discount.keyIdentifier
@@ -360,6 +369,9 @@
 
 + (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(SKStorefront *)storefront
     API_AVAILABLE(ios(13.0)) {
+  if (!storefront) {
+    return nil;
+  }
   SKStorefrontMessage *msg = [SKStorefrontMessage makeWithCountryCode:storefront.countryCode
                                                            identifier:storefront.identifier];
   return msg;

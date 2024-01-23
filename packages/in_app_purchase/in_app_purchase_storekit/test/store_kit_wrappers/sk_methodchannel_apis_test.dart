@@ -279,8 +279,8 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   void addPayment(Map<String?, Object?> paymentMap) {
-    payments.add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(
-        paymentMap)));
+    payments
+        .add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(paymentMap)));
   }
 
   @override
@@ -290,13 +290,13 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   SKStorefrontMessage storefront() {
-    return SKStorefrontMessage(countryCode: 'USA', identifier: 'unique_identifier');
+    return SKStorefrontMessage(
+        countryCode: 'USA', identifier: 'unique_identifier');
   }
 
   @override
   List<SKPaymentTransactionMessage?> transactions() =>
       <SKPaymentTransactionMessage>[dummyTransactionMessage];
-
 }
 
 class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {}

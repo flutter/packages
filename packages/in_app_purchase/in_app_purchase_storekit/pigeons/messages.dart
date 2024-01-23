@@ -88,7 +88,6 @@ class SKPaymentMessage {
 
   final String? requestData;
 
-  // default value is 0?
   final int quantity;
 
   final bool simulatesAskToBuyInSandbox;
@@ -97,7 +96,6 @@ class SKPaymentMessage {
 }
 
 class SKErrorMessage {
-  // a lot of comparison operators are overriden in this class - do i add them here?
   const SKErrorMessage(
       {required this.code, required this.domain, required this.userInfo});
 
@@ -135,13 +133,10 @@ class SKStorefrontMessage {
 @HostApi(dartHostTestHandler: 'TestInAppPurchaseApi')
 abstract class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
-  // @ObjCSelector('canMakePayments')
   bool canMakePayments();
 
-  // @ObjCSelector('transactions')
   List<SKPaymentTransactionMessage> transactions();
 
-  // @ObjCSelector('storefront')
   SKStorefrontMessage storefront();
 
   @ObjCSelector('addPayment:')

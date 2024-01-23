@@ -30,6 +30,7 @@ part 'sk_payment_queue_wrapper.g.dart';
 InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
 
 @visibleForTesting
+
 ///
 void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
   _hostApi = api;

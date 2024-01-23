@@ -400,13 +400,14 @@
   return [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:properties];
 }
 
-- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error API_AVAILABLE(ios(13.0), macos(10.15)) {
-    SKStorefront *storefront = self.paymentQueueHandler.storefront;
-    if (!storefront) {
-      return nil;
-    }
-    return [FIAObjectTranslator convertStorefrontToPigeon:storefront];
+- (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error
+    API_AVAILABLE(ios(13.0), macos(10.15)) {
+  SKStorefront *storefront = self.paymentQueueHandler.storefront;
+  if (!storefront) {
+    return nil;
   }
+  return [FIAObjectTranslator convertStorefrontToPigeon:storefront];
+}
 
 - (void)addPayment:(nonnull NSDictionary *)paymentMap
              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {

@@ -17,8 +17,7 @@ SKPaymentMessage dummyPaymentMessage = SKPaymentMessage(
     applicationUsername: 'app-user-name',
     requestData: 'fake-data-utf8',
     quantity: 2,
-    simulatesAskToBuyInSandbox: true
-);
+    simulatesAskToBuyInSandbox: true);
 
 final SKPaymentWrapper dummyPaymentWithDiscount = SKPaymentWrapper(
     productIdentifier: 'prod-id',
@@ -53,8 +52,9 @@ final SKPaymentTransactionWrapper dummyTransaction =
 );
 
 final SKPaymentTransactionMessage dummyTransactionMessage =
-  SKPaymentTransactionMessage(payment: dummyPaymentMessage,
-      transactionState: SKPaymentTransactionStateMessage.purchased);
+    SKPaymentTransactionMessage(
+        payment: dummyPaymentMessage,
+        transactionState: SKPaymentTransactionStateMessage.purchased);
 
 final SKPriceLocaleWrapper dollarLocale = SKPriceLocaleWrapper(
   currencySymbol: r'$',

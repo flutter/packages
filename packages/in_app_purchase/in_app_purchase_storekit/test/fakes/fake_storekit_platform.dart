@@ -14,7 +14,7 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import '../store_kit_wrappers/sk_test_stub_objects.dart';
 import '../test_api.g.dart';
 
-class FakeStoreKitPlatform implements TestInAppPurchaseApi{
+class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   FakeStoreKitPlatform() {
     _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
         .defaultBinaryMessenger
@@ -250,7 +250,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi{
     // Keep the received paymentDiscount parameter when testing payment with discount.
     if (paymentMap['applicationUsername']! == 'userWithDiscount') {
       final Map<dynamic, dynamic>? discountArgument =
-      paymentMap['paymentDiscount'] as Map<dynamic, dynamic>?;
+          paymentMap['paymentDiscount'] as Map<dynamic, dynamic>?;
       if (discountArgument != null) {
         discountReceived = discountArgument.cast<String, dynamic>();
       } else {
@@ -259,27 +259,27 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi{
     }
 
     final SKPaymentTransactionWrapper transaction =
-    createPendingTransaction(id, quantity: quantity);
+        createPendingTransaction(id, quantity: quantity);
     transactionList.add(transaction);
     InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
         transactions: <SKPaymentTransactionWrapper>[transaction]);
     sleep(const Duration(milliseconds: 30));
     if (testTransactionFail) {
       final SKPaymentTransactionWrapper transactionFailed =
-      createFailedTransaction(id, quantity: quantity);
+          createFailedTransaction(id, quantity: quantity);
       InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
           transactions: <SKPaymentTransactionWrapper>[transactionFailed]);
     } else if (testTransactionCancel > 0) {
       final SKPaymentTransactionWrapper transactionCanceled =
-      createCanceledTransaction(id, testTransactionCancel,
-          quantity: quantity);
+          createCanceledTransaction(id, testTransactionCancel,
+              quantity: quantity);
       InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
           transactions: <SKPaymentTransactionWrapper>[transactionCanceled]);
     } else {
       final SKPaymentTransactionWrapper transactionFinished =
-      createPurchasedTransaction(
-          id, transaction.transactionIdentifier ?? '',
-          quantity: quantity);
+          createPurchasedTransaction(
+              id, transaction.transactionIdentifier ?? '',
+              quantity: quantity);
       InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
           transactions: <SKPaymentTransactionWrapper>[transactionFinished]);
     }
