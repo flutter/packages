@@ -1,3 +1,7 @@
+## 16.0.5
+
+* [swift] Separates message call code generation into separate methods.
+
 ## 16.0.4
 
 * [swift] Improve style of Swift output.
