@@ -17,7 +17,8 @@ void main() async {
 
   const String primaryPage = 'first.txt';
   const String secondaryPage = 'second.txt';
-  final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
+  final HttpServer server =
+      await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
   unawaited(server.forEach((HttpRequest request) {
     if (request.uri.path == '/$primaryPage') {
       request.response.writeln('Hello, world.');
@@ -29,7 +30,7 @@ void main() async {
     }
     request.response.close();
   }));
-  final String prefixUrl = 'http://${server.address.address}:${server.port}';
+  final String prefixUrl = 'http://localhost:${server.port}';
   final String primaryUrl = '$prefixUrl/$primaryPage';
   final String secondaryUrl = '$prefixUrl/$secondaryPage';
 
