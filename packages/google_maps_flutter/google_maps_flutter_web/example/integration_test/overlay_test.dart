@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
-import 'dart:js_util';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
@@ -70,17 +69,17 @@ void main() {
       final Completer<void> imageLoadCompleter = Completer<void>();
 
       // Wait until the image is fully loaded and decoded before re-reading its attributes
-      img.onload = allowInterop((JSAny? _) {
+      img.onload = (JSAny? _) {
         if (!imageLoadCompleter.isCompleted) {
           imageLoadCompleter.complete();
         }
-      }).toJS;
+      }.toJS;
 
-      img.onerror = allowInterop((Event? error) {
+      img.onerror = (Event? error) {
         if (!imageLoadCompleter.isCompleted) {
           imageLoadCompleter.completeError('Failed to load image.');
         }
-      }).toJS;
+      }.toJS;
 
       await imageLoadCompleter.future;
       await img.decode().toDart;
@@ -120,17 +119,17 @@ void main() {
 
         final Completer<void> imageLoadCompleter = Completer<void>();
 
-        img.onload = allowInterop((JSAny? _) {
+        img.onload = (JSAny? _) {
           if (!imageLoadCompleter.isCompleted) {
             imageLoadCompleter.complete();
           }
-        }).toJS;
+        }.toJS;
 
-        img.onerror = allowInterop((Event? error) {
+        img.onerror = (Event? error) {
           if (!imageLoadCompleter.isCompleted) {
             imageLoadCompleter.completeError('Failed to load image.');
           }
-        }).toJS;
+        }.toJS;
 
         await imageLoadCompleter.future;
 
