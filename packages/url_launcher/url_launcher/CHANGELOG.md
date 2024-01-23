@@ -1,8 +1,9 @@
-## NEXT
+## 6.2.4
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
+* Fixes a grammar error in the comments of `launchUrl` method.
 
 ## 6.2.3
 
