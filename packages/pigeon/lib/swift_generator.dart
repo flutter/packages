@@ -291,7 +291,15 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       for (final Method func in api.methods) {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
-        indent.writeln(_getMethodSignature(func));
+        indent.writeln(_getMethodSignature(
+          name: func.name,
+          parameters: func.parameters,
+          returnType: func.returnType,
+          errorTypeName: 'FlutterError',
+          isAsynchronous: true,
+          swiftFunction: func.swiftFunction,
+          getParameterName: _getSafeArgumentName,
+        ));
       }
     });
 
@@ -314,7 +322,16 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       for (final Method func in api.methods) {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
-        indent.writeScoped('${_getMethodSignature(func)} {', '}', () {
+        final String methodSignature = _getMethodSignature(
+          name: func.name,
+          parameters: func.parameters,
+          returnType: func.returnType,
+          errorTypeName: 'FlutterError',
+          isAsynchronous: true,
+          swiftFunction: func.swiftFunction,
+          getParameterName: _getSafeArgumentName,
+        );
+        indent.writeScoped('$methodSignature {', '}', () {
           final Iterable<String> enumSafeArgNames = func.parameters
               .asMap()
               .entries
@@ -404,37 +421,16 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.write('protocol $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
-        final _SwiftFunctionComponents components =
-            _SwiftFunctionComponents.fromMethod(method);
-        final List<String> argSignature =
-            components.arguments.map((_SwiftFunctionArgument argument) {
-          final String? label = argument.label;
-          final String name = argument.name;
-          final String type = _nullsafeSwiftTypeForDartType(argument.type);
-          return '${label == null ? '' : '$label '}$name: $type';
-        }).toList();
-
-        final String returnType = method.returnType.isVoid
-            ? 'Void'
-            : _nullsafeSwiftTypeForDartType(method.returnType);
-
-        final String escapeType =
-            method.returnType.isVoid ? 'Void' : returnType;
-
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
-
-        if (method.isAsynchronous) {
-          argSignature.add(
-              'completion: @escaping (Result<$escapeType, Error>) -> Void');
-          indent.writeln('func ${components.name}(${argSignature.join(', ')})');
-        } else if (method.returnType.isVoid) {
-          indent.writeln(
-              'func ${components.name}(${argSignature.join(', ')}) throws');
-        } else {
-          indent.writeln(
-              'func ${components.name}(${argSignature.join(', ')}) throws -> $returnType');
-        }
+        indent.writeln(_getMethodSignature(
+          name: method.name,
+          parameters: method.parameters,
+          returnType: method.returnType,
+          errorTypeName: 'Error',
+          isAsynchronous: method.isAsynchronous,
+          swiftFunction: method.swiftFunction,
+        ));
       }
     });
 
@@ -457,8 +453,12 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
-          final _SwiftFunctionComponents components =
-              _SwiftFunctionComponents.fromMethod(method);
+          final _SwiftFunctionComponents components = _SwiftFunctionComponents(
+            name: method.name,
+            parameters: method.parameters,
+            returnType: method.returnType,
+            swiftFunction: method.swiftFunction,
+          );
 
           final String channelName =
               makeChannelName(api, method, dartPackageName);
@@ -904,28 +904,49 @@ String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 
-String _getMethodSignature(Method func) {
-  final _SwiftFunctionComponents components =
-      _SwiftFunctionComponents.fromMethod(func);
-  final String returnType = func.returnType.isVoid
-      ? 'Void'
-      : _nullsafeSwiftTypeForDartType(func.returnType);
+String _getMethodSignature({
+  required String name,
+  required Iterable<Parameter> parameters,
+  required TypeDeclaration returnType,
+  required String errorTypeName,
+  bool isAsynchronous = false,
+  String? swiftFunction,
+  String Function(int index, NamedType argument) getParameterName =
+      _getArgumentName,
+}) {
+  final _SwiftFunctionComponents components = _SwiftFunctionComponents(
+    name: name,
+    parameters: parameters,
+    returnType: returnType,
+    swiftFunction: swiftFunction,
+  );
+  final String returnTypeString =
+      returnType.isVoid ? 'Void' : _nullsafeSwiftTypeForDartType(returnType);
 
-  if (func.parameters.isEmpty) {
-    return 'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void)';
+  final Iterable<String> types =
+      parameters.map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
+  final Iterable<String> labels = indexMap(components.arguments,
+      (int index, _SwiftFunctionArgument argument) {
+    return argument.label ?? _getArgumentName(index, argument.namedType);
+  });
+  final Iterable<String> names = indexMap(parameters, getParameterName);
+  final String parameterSignature =
+      map3(types, labels, names, (String type, String label, String name) {
+    return '${label != name ? '$label ' : ''}$name: $type';
+  }).join(', ');
+
+  if (isAsynchronous) {
+    if (parameters.isEmpty) {
+      return 'func ${components.name}(completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
+    } else {
+      return 'func ${components.name}($parameterSignature, completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
+    }
   } else {
-    final Iterable<String> argTypes = func.parameters
-        .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
-    final Iterable<String> argLabels = indexMap(components.arguments,
-        (int index, _SwiftFunctionArgument argument) {
-      return argument.label ?? _getArgumentName(index, argument.namedType);
-    });
-    final Iterable<String> argNames =
-        indexMap(func.parameters, _getSafeArgumentName);
-    final String argsSignature = map3(argTypes, argLabels, argNames,
-            (String type, String label, String name) => '$label $name: $type')
-        .join(', ');
-    return 'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, FlutterError>) -> Void)';
+    if (returnType.isVoid) {
+      return 'func ${components.name}($parameterSignature) throws';
+    } else {
+      return 'func ${components.name}($parameterSignature) throws -> $returnTypeString';
+    }
   }
 }
 
@@ -956,45 +977,40 @@ class _SwiftFunctionArgument {
 /// The [returnType] is the return type of the function.
 /// The [method] is the method that this function signature is generated from.
 class _SwiftFunctionComponents {
-  _SwiftFunctionComponents._({
-    required this.name,
-    required this.arguments,
-    required this.returnType,
-    required this.method,
-  });
-
   /// Constructor that generates a [_SwiftFunctionComponents] from a [Method].
-  factory _SwiftFunctionComponents.fromMethod(Method method) {
-    if (method.swiftFunction.isEmpty) {
+  factory _SwiftFunctionComponents({
+    required String name,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    String? swiftFunction,
+  }) {
+    if (swiftFunction == null || swiftFunction.isEmpty) {
       return _SwiftFunctionComponents._(
-        name: method.name,
-        returnType: method.returnType,
-        arguments: method.parameters
+        name: name,
+        returnType: returnType,
+        arguments: parameters
             .map((NamedType field) => _SwiftFunctionArgument(
                   name: field.name,
                   type: field.type,
                   namedType: field,
                 ))
             .toList(),
-        method: method,
       );
     }
 
-    final String argsExtractor =
-        repeat(r'(\w+):', method.parameters.length).join();
+    final String argsExtractor = repeat(r'(\w+):', parameters.length).join();
     final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsExtractor + r'\)');
-    final RegExpMatch match = signatureRegex.firstMatch(method.swiftFunction)!;
+    final RegExpMatch match = signatureRegex.firstMatch(swiftFunction)!;
 
     final Iterable<String> labels = match
-        .groups(List<int>.generate(
-            method.parameters.length, (int index) => index + 2))
+        .groups(List<int>.generate(parameters.length, (int index) => index + 2))
         .whereType();
 
     return _SwiftFunctionComponents._(
       name: match.group(1)!,
-      returnType: method.returnType,
+      returnType: returnType,
       arguments: map2(
-        method.parameters,
+        parameters,
         labels,
         (NamedType field, String label) => _SwiftFunctionArgument(
           name: field.name,
@@ -1003,12 +1019,16 @@ class _SwiftFunctionComponents {
           namedType: field,
         ),
       ).toList(),
-      method: method,
     );
   }
+
+  _SwiftFunctionComponents._({
+    required this.name,
+    required this.arguments,
+    required this.returnType,
+  });
 
   final String name;
   final List<_SwiftFunctionArgument> arguments;
   final TypeDeclaration returnType;
-  final Method method;
 }
