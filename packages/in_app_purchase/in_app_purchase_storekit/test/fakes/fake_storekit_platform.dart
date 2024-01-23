@@ -216,7 +216,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         finishedTransactions.add(createPurchasedTransaction(
             arguments['productIdentifier']! as String,
             arguments['transactionIdentifier']! as String,
-            quantity: transactions.first.payment.quantity));
+            quantity: transactionList.first.payment.quantity));
       case '-[SKPaymentQueue startObservingTransactionQueue]':
         queueIsActive = true;
       case '-[SKPaymentQueue stopObservingTransactionQueue]':
