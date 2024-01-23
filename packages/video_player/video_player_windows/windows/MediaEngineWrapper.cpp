@@ -243,6 +243,7 @@ bool MediaEngineWrapper::EnsureTextureCreated(DWORD width, DWORD height) {
     texture_->GetDesc(&desc);
     if (desc.Width != width || desc.Height != height) {
       should_create = true;
+      texture_.detach();
     }
   }
 

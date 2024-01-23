@@ -23,6 +23,10 @@
 
 namespace video_player_windows {
 
+HWND GetRootWindow(flutter::FlutterView* view) {
+  return ::GetAncestor(view->GetNativeWindow(), GA_ROOT);
+}
+
 // static
 void VideoPlayerPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
@@ -30,17 +34,66 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
   IDXGIAdapter* adapter = registrar->GetView()->GetGraphicsAdapter();
 
   auto plugin = std::make_unique<VideoPlayerPlugin>(
-      messenger, adapter, registrar->texture_registrar());
+      [registrar](auto delegate) {
+        return registrar->RegisterTopLevelWindowProcDelegate(delegate);
+      },
+      [registrar](auto proc_id) {
+        registrar->UnregisterTopLevelWindowProcDelegate(proc_id);
+      },
+      [registrar] { return GetRootWindow(registrar->GetView()); }, messenger,
+      adapter, registrar->texture_registrar());
   WindowsVideoPlayerApi::SetUp(messenger, plugin.get());
   registrar->AddPlugin(std::move(plugin));
 }
 
+// static
+std::queue<std::function<void()>> VideoPlayerPlugin::callbacks{};
+
+// static
+FlutterRootWindowProvider VideoPlayerPlugin::get_root_window_{};
+
+// static
+void VideoPlayerPlugin::RunOnMainThread(std::function<void()> callback) {
+  callbacks.push(callback);
+  PostMessage(get_root_window_(), WM_RUN_DELEGATE, 0, 0);
+}
+
 VideoPlayerPlugin::VideoPlayerPlugin(
+    WindowProcDelegateRegistrator registrator,
+    WindowProcDelegateUnregistrator unregistrator,
+    FlutterRootWindowProvider window_provider,
     flutter::BinaryMessenger* messenger, IDXGIAdapter* adapter,
     flutter::TextureRegistrar* texture_registry)
-    : messenger_(messenger),
+    : win_proc_delegate_registrator_(registrator),
+      win_proc_delegate_unregistrator_(unregistrator),
+      messenger_(messenger),
       adapter_(adapter),
-      texture_registry_(texture_registry) {}
+      texture_registry_(texture_registry) {
+  get_root_window_ = std::move(window_provider);
+  window_proc_id_ = win_proc_delegate_registrator_(
+      [this](HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
+        return HandleWindowProc(hwnd, message, wparam, lparam);
+      });
+}
+
+VideoPlayerPlugin::~VideoPlayerPlugin() {
+  win_proc_delegate_unregistrator_(window_proc_id_);
+}
+
+std::optional<LRESULT> VideoPlayerPlugin::HandleWindowProc(HWND hwnd,
+                                                           UINT message,
+                                                           WPARAM wparam,
+                                                           LPARAM lparam) {
+  std::optional<LRESULT> result;
+  switch (message) {
+    case WM_RUN_DELEGATE:
+      callbacks.front()();
+      callbacks.pop();
+      result = 0;
+      break;
+  }
+  return result;
+}
 
 std::optional<FlutterError> VideoPlayerPlugin::Initialize() {
   for (int i = 0; i < video_players_.size(); i++) {

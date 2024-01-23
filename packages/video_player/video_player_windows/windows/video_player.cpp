@@ -9,6 +9,8 @@
 #include <flutter/event_stream_handler_functions.h>
 #include <flutter/standard_method_codec.h>
 
+#include "video_player_plugin.h"
+
 #undef GetCurrentTime
 
 using namespace winrt;
@@ -133,7 +135,8 @@ void VideoPlayer::OnMediaError(MF_MEDIA_ENGINE_ERR error, HRESULT hr) {
 void VideoPlayer::OnMediaStateChange(MediaEngineWrapper::BufferingState state) {
   if (state == MediaEngineWrapper::BufferingState::kHaveNothing) {
     SetBuffering(true);
-    SendBufferingUpdate();
+    VideoPlayerPlugin::RunOnMainThread(
+        [this]() -> void { SendBufferingUpdate(); });
   } else {
     if (!is_initialized_) {
       is_initialized_ = true;
@@ -152,34 +155,38 @@ void VideoPlayer::OnPlaybackEnded() {
 }
 
 void VideoPlayer::SetBuffering(bool buffering) {
-  if (event_sink_) {
-    event_sink_->Success(flutter::EncodableMap(
-        {{flutter::EncodableValue("event"),
-          flutter::EncodableValue(buffering ? "bufferingStart"
-                                            : "bufferingEnd")}}));
-  }
+  VideoPlayerPlugin::RunOnMainThread([this, buffering]() -> void {
+    if (event_sink_) {
+      event_sink_->Success(flutter::EncodableMap(
+          {{flutter::EncodableValue("event"),
+            flutter::EncodableValue(buffering ? "bufferingStart"
+                                              : "bufferingEnd")}}));
+    }
+  });
 }
 
 void VideoPlayer::SendInitialized() {
-  if (!event_sink_) {
-    return;
-  }
-  auto event = flutter::EncodableMap(
-      {{flutter::EncodableValue("event"),
-        flutter::EncodableValue("initialized")},
-       {flutter::EncodableValue("duration"),
-        flutter::EncodableValue(
-            (int64_t)media_engine_wrapper_->GetDuration())}});
+  VideoPlayerPlugin::RunOnMainThread([this]() -> void {
+    if (!event_sink_) {
+      return;
+    }
+    auto event = flutter::EncodableMap(
+        {{flutter::EncodableValue("event"),
+          flutter::EncodableValue("initialized")},
+         {flutter::EncodableValue("duration"),
+          flutter::EncodableValue(
+              (int64_t)media_engine_wrapper_->GetDuration())}});
 
-  uint32_t width;
-  uint32_t height;
-  media_engine_wrapper_->GetNativeVideoSize(width, height);
-  event.insert({flutter::EncodableValue("width"),
-                flutter::EncodableValue((int32_t)width)});
-  event.insert({flutter::EncodableValue("height"),
-                flutter::EncodableValue((int32_t)height)});
+    uint32_t width;
+    uint32_t height;
+    media_engine_wrapper_->GetNativeVideoSize(width, height);
+    event.insert({flutter::EncodableValue("width"),
+                  flutter::EncodableValue((int32_t)width)});
+    event.insert({flutter::EncodableValue("height"),
+                  flutter::EncodableValue((int32_t)height)});
 
-  event_sink_->Success(event);
+    event_sink_->Success(event);
+  });
 }
 
 void VideoPlayer::Dispose(flutter::TextureRegistrar* texture_registry) {

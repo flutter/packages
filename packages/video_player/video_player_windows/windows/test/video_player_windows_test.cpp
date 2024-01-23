@@ -42,7 +42,14 @@ TEST(VideoPlayerPlugin, CanInitializeSuccessTrue) {
   IDXGIAdapter* adapter = nullptr;
   pFactory->EnumAdapters(0, &adapter);
 
-  VideoPlayerPlugin plugin(messenger_.get(), adapter, texture_registrar_.get());
+  const HWND fake_window = reinterpret_cast<HWND>(1337);
+  FlutterRootWindowProvider window_provider = [fake_window]() {
+    return fake_window;
+  };
+
+  VideoPlayerPlugin plugin([](auto delegate) { return 1; }, [](auto proc_id) {},
+                           window_provider, messenger_.get(), adapter,
+                           texture_registrar_.get());
   plugin.Initialize();
 
   std::string url =
