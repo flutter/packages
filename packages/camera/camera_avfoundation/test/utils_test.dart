@@ -35,6 +35,51 @@ void main() {
       );
     });
 
+    test(
+        'Should return AppleCaptureDeviceType when valid value is supplied when parsing Apple capture device type',
+        () {
+      expect(
+        parseAppleCaptureDeviceType('builtInWideAngleCamera'),
+        AppleCaptureDeviceType.builtInWideAngleCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('builtInUltraWideCamera'),
+        AppleCaptureDeviceType.builtInUltraWideCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('builtInTelephotoCamera'),
+        AppleCaptureDeviceType.builtInTelephotoCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('builtInDualCamera'),
+        AppleCaptureDeviceType.builtInDualCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('builtInDualWideCamera'),
+        AppleCaptureDeviceType.builtInDualWideCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('builtInTripleCamera'),
+        AppleCaptureDeviceType.builtInTripleCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('continuityCamera'),
+        AppleCaptureDeviceType.continuityCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('external'),
+        AppleCaptureDeviceType.external,
+      );
+      expect(
+        parseAppleCaptureDeviceType('builtInLiDARDepthCamera'),
+        AppleCaptureDeviceType.builtInLiDARDepthCamera,
+      );
+      expect(
+        parseAppleCaptureDeviceType('builtInTrueDepthCamera'),
+        AppleCaptureDeviceType.builtInTrueDepthCamera,
+      );
+    });
+
     test('serializeDeviceOrientation() should serialize correctly', () {
       expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
           'portraitUp');

@@ -1,3 +1,7 @@
+## 0.9.15
+
+* Add `AppleCaptureDeviceType` to CameraDescription when discovering available cameras.
+
 ## 0.9.14
 
 * Adds missing `AVCaptureDevice.DeviceType` objects when checking for available cameras.
