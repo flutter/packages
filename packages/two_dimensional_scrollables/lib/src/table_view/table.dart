@@ -1344,7 +1344,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         final RenderBox? cell = getChildFor(vicinity, allowMerged: false);
         if (cell == null) {
           // Covered by a merged cell
-          assert(_mergedVicinities.keys.contains(vicinity));
+          assert(
+            _mergedVicinities.keys.contains(vicinity),
+            'TableViewCell for $vicinity could not be found. If merging '
+            'cells, the same TableViewCell must be returned for every '
+            'TableVicinity that is contained in the merged area of the '
+            'TableView.',
+          );
           continue;
         }
         final TableViewParentData cellParentData = parentDataOf(cell);
