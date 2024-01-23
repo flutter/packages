@@ -446,7 +446,7 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
           );
         }
       }
-      for (final Field field in api.fields) {
+      for (final ApiField field in api.fields) {
         references.addMany(_getTypeArguments(field.type), field.offset);
       }
     }

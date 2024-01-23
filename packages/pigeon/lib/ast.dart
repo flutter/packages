@@ -145,7 +145,7 @@ class AstProxyApi extends Api {
   final List<Constructor> constructors;
 
   /// List of fields inside the API.
-  List<Field> fields;
+  List<ApiField> fields;
 
   /// Name of the class this class considers the super class.
   final String? superClassName;
@@ -166,20 +166,22 @@ class AstProxyApi extends Api {
   /// All fields that are attached.
   ///
   /// See [attached].
-  Iterable<Field> get attachedFields => fields.where(
-        (Field field) => field.isAttached,
+  Iterable<ApiField> get attachedFields => fields.where(
+        (ApiField field) => field.isAttached,
       );
 
   /// All fields that are not attached.
   ///
   /// See [attached].
-  Iterable<Field> get unattachedFields => fields.where(
-        (Field field) => !field.isAttached,
+  Iterable<ApiField> get unattachedFields => fields.where(
+        (ApiField field) => !field.isAttached,
       );
 
   @override
   String toString() {
-    return '(ProxyApi name:$name methods:$methods documentationComments:$documentationComments superClassName:$superClassName interfacesNames:$interfacesNames)';
+    return '(ProxyApi name:$name methods:$methods field:$fields '
+        'documentationComments:$documentationComments '
+        'superClassName:$superClassName interfacesNames:$interfacesNames)';
   }
 }
 
@@ -206,9 +208,9 @@ class Constructor extends Method {
 }
 
 /// Represents a field of an API.
-class Field extends NamedType {
-  /// Constructor for [Field].
-  Field({
+class ApiField extends NamedType {
+  /// Constructor for [ApiField].
+  ApiField({
     required super.name,
     required super.type,
     super.offset,
@@ -229,8 +231,8 @@ class Field extends NamedType {
 
   /// Returns a copy of [Parameter] instance with new attached [TypeDeclaration].
   @override
-  Field copyWithType(TypeDeclaration type) {
-    return Field(
+  ApiField copyWithType(TypeDeclaration type) {
+    return ApiField(
       name: name,
       type: type,
       offset: offset,
@@ -238,6 +240,12 @@ class Field extends NamedType {
       isAttached: isAttached,
       isStatic: isStatic,
     );
+  }
+
+  @override
+  String toString() {
+    return '(Field name:$name type:$type isAttached:$isAttached '
+        'isStatic:$isStatic documentationComments:$documentationComments)';
   }
 }
 
@@ -315,11 +323,11 @@ class TypeDeclaration {
   /// Associated [Class], if any.
   final Class? associatedClass;
 
-  /// Associated [AstProxyApi], if any.
-  final AstProxyApi? associatedProxyApi;
-
   /// Whether the [TypeDeclaration] has an [associatedProxyApi].
   bool get isProxyApi => associatedProxyApi != null;
+
+  /// Associated [AstProxyApi], if any.
+  final AstProxyApi? associatedProxyApi;
 
   @override
   int get hashCode {

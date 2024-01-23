@@ -999,7 +999,7 @@ List<Error> _validateProxyApi(
     // 1. Having an unattached field.
     // 2. Having a required Flutter method.
     if (hasUnattachedField || hasRequiredFlutterMethod) {
-      for (final Field field in proxyApi.attachedFields) {
+      for (final ApiField field in proxyApi.attachedFields) {
         if (field.type.baseName == api.name) {
           if (hasUnattachedField) {
             result.add(Error(
@@ -1049,7 +1049,7 @@ List<Error> _validateProxyApi(
         result.add(unsupportedDataClassError(parameter));
       }
 
-      if (api.fields.any((Field field) => field.name == parameter.name) ||
+      if (api.fields.any((ApiField field) => field.name == parameter.name) ||
           api.flutterMethods
               .any((Method method) => method.name == parameter.name)) {
         result.add(Error(
@@ -1135,7 +1135,7 @@ List<Error> _validateProxyApi(
   }
 
   // Validate fields
-  for (final Field field in api.fields) {
+  for (final ApiField field in api.fields) {
     if (isDataClass(field)) {
       result.add(unsupportedDataClassError(field));
     } else if (field.isStatic) {
@@ -1287,7 +1287,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final List<NamedType> fields = <NamedType>[];
       for (final NamedType field in classDefinition.fields) {
         fields.add(field.copyWithType(
-          _attachClassesEnumsAndProxyApis(field.type),
+          _attachAssociatedDefinition(field.type),
         ));
       }
       classDefinition.fields = fields;
@@ -1298,27 +1298,27 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         final List<Parameter> paramList = <Parameter>[];
         for (final Parameter param in func.parameters) {
           paramList.add(param.copyWithType(
-            _attachClassesEnumsAndProxyApis(param.type),
+            _attachAssociatedDefinition(param.type),
           ));
         }
         func.parameters = paramList;
-        func.returnType = _attachClassesEnumsAndProxyApis(func.returnType);
+        func.returnType = _attachAssociatedDefinition(func.returnType);
       }
       if (api is AstProxyApi) {
         for (final Constructor constructor in api.constructors) {
           final List<Parameter> paramList = <Parameter>[];
           for (final Parameter param in constructor.parameters) {
             paramList.add(
-              param.copyWithType(_attachClassesEnumsAndProxyApis(param.type)),
+              param.copyWithType(_attachAssociatedDefinition(param.type)),
             );
           }
           constructor.parameters = paramList;
         }
 
-        final List<Field> fieldList = <Field>[];
-        for (final Field field in api.fields) {
+        final List<ApiField> fieldList = <ApiField>[];
+        for (final ApiField field in api.fields) {
           fieldList.add(field.copyWithType(
-            _attachClassesEnumsAndProxyApis(field.type),
+            _attachAssociatedDefinition(field.type),
           ));
         }
         api.fields = fieldList;
@@ -1334,7 +1334,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     );
   }
 
-  TypeDeclaration _attachClassesEnumsAndProxyApis(TypeDeclaration type) {
+  TypeDeclaration _attachAssociatedDefinition(TypeDeclaration type) {
     final Enum? assocEnum = _enums.firstWhereOrNull(
         (Enum enumDefinition) => enumDefinition.name == type.baseName);
     final Class? assocClass = _classes.firstWhereOrNull(
@@ -1512,7 +1512,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           name: node.name.lexeme,
           methods: <Method>[],
           constructors: <Constructor>[],
-          fields: <Field>[],
+          fields: <ApiField>[],
           superClassName:
               superClassName ?? node.extendsClause?.superclass.name2.lexeme,
           interfacesNames: node.implementsClause?.interfaces
@@ -1906,7 +1906,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       } else {
         final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
         (_currentApi as AstProxyApi?)!.fields.add(
-              Field(
+              ApiField(
                 type: TypeDeclaration(
                   baseName: _getNamedTypeQualifiedName(type),
                   isNullable: type.question != null,

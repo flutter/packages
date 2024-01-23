@@ -379,21 +379,21 @@ void main() {
       name: 'Api',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
       superClassName: 'Api2',
     );
     final AstProxyApi superClassApi = AstProxyApi(
       name: 'Api2',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
       superClassName: 'Api3',
     );
     final AstProxyApi superClassOfSuperClassApi = AstProxyApi(
       name: 'Api3',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
     );
 
     final List<AstProxyApi> apiChain = recursiveGetSuperClassApisChain(
@@ -415,34 +415,34 @@ void main() {
       name: 'Api',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
       interfacesNames: <String>{'Api2', 'Api3'},
     );
     final AstProxyApi interfaceApi = AstProxyApi(
       name: 'Api2',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
       interfacesNames: <String>{'Api4', 'Api5'},
     );
     final AstProxyApi interfaceApi2 = AstProxyApi(
       name: 'Api3',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
       interfacesNames: <String>{'Api5'},
     );
     final AstProxyApi interfaceOfInterfaceApi = AstProxyApi(
       name: 'Api4',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
     );
     final AstProxyApi interfaceOfInterfaceApi2 = AstProxyApi(
       name: 'Api5',
       methods: <Method>[],
       constructors: <Constructor>[],
-      fields: <Field>[],
+      fields: <ApiField>[],
     );
 
     final Set<AstProxyApi> allInterfaces = recursiveFindAllInterfacesApis(
