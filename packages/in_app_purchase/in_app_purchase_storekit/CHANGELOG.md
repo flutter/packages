@@ -1,9 +1,6 @@
-## 0.3.7+2
-
-* Converted `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
-
 ## 0.3.7+1
 
+* Converted `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.3.7
