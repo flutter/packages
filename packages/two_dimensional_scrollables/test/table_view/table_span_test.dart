@@ -1093,7 +1093,8 @@ void main() {
               rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 200.0), // M(0,0)
               color: const Color(0xFF2196F3),
             )
-            ..rect( // Rest of the unmerged first row
+            ..rect(
+              // Rest of the unmerged first row
               rect: const Rect.fromLTRB(100.0, 0.0, 300.0, 100.0),
               color: const Color(0xFF2196F3),
             )
@@ -1113,12 +1114,14 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first column
+          ..rect(
+            // Rest of the unmerged first column
             rect: const Rect.fromLTRB(0.0, 100.0, 100.0, 300.0),
             color: const Color(0xFF2196F3),
           )
           // Third column decorations, does not extend into last column
-          ..rect( // Unmerged section
+          ..rect(
+            // Unmerged section
             rect: const Rect.fromLTRB(200.0, 0.0, 300.0, 100.0),
             color: const Color(0xff4caf50),
           )
@@ -1138,7 +1141,8 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(200.0, 0.0, 400.0, 100.0),
             color: const Color(0xFF2196F3),
           )
@@ -1147,7 +1151,8 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect( // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(0.0, 200.0, 100.0, 300.0),
             color: const Color(0xff4caf50),
           )
@@ -1170,7 +1175,8 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 400.0, 100.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(100.0, 500.0, 300.0, 600.0),
             color: const Color(0xFF2196F3),
           )
@@ -1191,12 +1197,14 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 500.0, 200.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first column
+          ..rect(
+            // Rest of the unmerged first column
             rect: const Rect.fromLTRB(0.0, 300.0, 100.0, 500.0),
             color: const Color(0xFF2196F3),
           )
           // Third column decorations, does not extend into last column
-          ..rect( // Unmerged section
+          ..rect(
+            // Unmerged section
             rect: const Rect.fromLTRB(200.0, 500.0, 300.0, 600.0),
             color: const Color(0xff4caf50),
           )
@@ -1216,7 +1224,8 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 400.0, 200.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(200.0, 500.0, 400.0, 600.0),
             color: const Color(0xFF2196F3),
           )
@@ -1225,12 +1234,14 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 400.0, 200.0, 600.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect( // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(0.0, 300.0, 100.0, 400.0),
             color: const Color(0xff4caf50),
           )
           ..rect(
-            rect: const Rect.fromLTRB(300.0, 500.0, 400.0, 600.0), // Last column
+            rect:
+                const Rect.fromLTRB(300.0, 500.0, 400.0, 600.0), // Last column
             color: const Color(0xff4caf50),
           ),
       );
@@ -1248,7 +1259,8 @@ void main() {
             rect: const Rect.fromLTRB(700.0, 0.0, 800.0, 200.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(500.0, 0.0, 700.0, 100.0),
             color: const Color(0xFF2196F3),
           )
@@ -1269,12 +1281,14 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 0.0, 800.0, 100.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first column
+          ..rect(
+            // Rest of the unmerged first column
             rect: const Rect.fromLTRB(700.0, 100.0, 800.0, 300.0),
             color: const Color(0xFF2196F3),
           )
           // Third column decorations, does not extend into last column
-          ..rect( // Unmerged section
+          ..rect(
+            // Unmerged section
             rect: const Rect.fromLTRB(500.0, 0.0, 600.0, 100.0),
             color: const Color(0xff4caf50),
           )
@@ -1294,7 +1308,8 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 0.0, 800.0, 200.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(400.0, 0.0, 600.0, 100.0),
             color: const Color(0xFF2196F3),
           )
@@ -1303,7 +1318,8 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 0.0, 800.0, 200.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect( // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(700.0, 200.0, 800.0, 300.0),
             color: const Color(0xff4caf50),
           )
@@ -1329,7 +1345,8 @@ void main() {
             rect: const Rect.fromLTRB(700.0, 400.0, 800.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(500.0, 500.0, 700.0, 600.0),
             color: const Color(0xFF2196F3),
           )
@@ -1353,12 +1370,14 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 500.0, 800.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first column
+          ..rect(
+            // Rest of the unmerged first column
             rect: const Rect.fromLTRB(700.0, 300.0, 800.0, 500.0),
             color: const Color(0xFF2196F3),
           )
           // Third column decorations, does not extend into last column
-          ..rect( // Unmerged section
+          ..rect(
+            // Unmerged section
             rect: const Rect.fromLTRB(500.0, 500.0, 600.0, 600.0),
             color: const Color(0xff4caf50),
           )
@@ -1381,7 +1400,8 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(400.0, 500.0, 600.0, 600.0),
             color: const Color(0xFF2196F3),
           )
@@ -1390,11 +1410,13 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect( // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(700.0, 300.0, 800.0, 400.0),
             color: const Color(0xff4caf50),
           )
-          ..rect( // Last column
+          ..rect(
+            // Last column
             rect: const Rect.fromLTRB(400.0, 500.0, 500.0, 600.0),
             color: const Color(0xff4caf50),
           ),
@@ -1416,7 +1438,8 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect( // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(0.0, 200.0, 100.0, 300.0),
             color: const Color(0xff4caf50),
           )
@@ -1429,7 +1452,8 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(200.0, 0.0, 400.0, 100.0),
             color: const Color(0xFF2196F3),
           ),
@@ -1454,11 +1478,13 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 400.0, 200.0, 600.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect(  // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(0.0, 300.0, 100.0, 400.0),
             color: const Color(0xff4caf50),
           )
-          ..rect(  // Last column
+          ..rect(
+            // Last column
             rect: const Rect.fromLTRB(300.0, 500.0, 400.0, 600.0),
             color: const Color(0xff4caf50),
           )
@@ -1467,7 +1493,8 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 400.0, 200.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(200.0, 500.0, 400.0, 600.0),
             color: const Color(0xFF2196F3),
           ),
@@ -1492,7 +1519,8 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 0.0, 800.0, 200.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect( // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(700.0, 200.0, 800.0, 300.0),
             color: const Color(0xff4caf50),
           )
@@ -1505,7 +1533,8 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 0.0, 800.0, 200.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect( // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(400.0, 0.0, 600.0, 100.0),
             color: const Color(0xFF2196F3),
           ),
@@ -1531,7 +1560,8 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0), // M(0,0)
             color: const Color(0xff4caf50),
           )
-          ..rect(  // Rest of the first column
+          ..rect(
+            // Rest of the first column
             rect: const Rect.fromLTRB(700.0, 300.0, 800.0, 400.0),
             color: const Color(0xff4caf50),
           )
@@ -1545,7 +1575,8 @@ void main() {
             rect: const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0), // M(0,0)
             color: const Color(0xFF2196F3),
           )
-          ..rect(  // Rest of the unmerged first row
+          ..rect(
+            // Rest of the unmerged first row
             rect: const Rect.fromLTRB(400.0, 500.0, 600.0, 600.0),
             color: const Color(0xFF2196F3),
           ),
@@ -1608,8 +1639,9 @@ void main() {
               child: Text('M(0,0)'),
             );
           },
-          rowBuilder: (_) =>
-              const TableSpan(extent: FixedTableSpanExtent(100.0)),
+          rowBuilder: (_) => const TableSpan(
+            extent: FixedTableSpanExtent(100.0),
+          ),
           columnBuilder: (_) {
             return const TableSpan(
               extent: FixedTableSpanExtent(100.0),
