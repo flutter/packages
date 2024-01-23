@@ -76,6 +76,12 @@ void main() {
         }
       }).toJS;
 
+      img.onerror = allowInterop((Event? error) {
+        if (!imageLoadCompleter.isCompleted) {
+          imageLoadCompleter.completeError('Failed to load image.');
+        }
+      }).toJS;
+
       await imageLoadCompleter.future;
       await img.decode().toDart;
 
@@ -117,6 +123,12 @@ void main() {
         img.onload = allowInterop((JSAny? _) {
           if (!imageLoadCompleter.isCompleted) {
             imageLoadCompleter.complete();
+          }
+        }).toJS;
+
+        img.onerror = allowInterop((Event? error) {
+          if (!imageLoadCompleter.isCompleted) {
+            imageLoadCompleter.completeError('Failed to load image.');
           }
         }).toJS;
 
