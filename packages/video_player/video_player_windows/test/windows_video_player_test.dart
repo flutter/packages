@@ -4,92 +4,15 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 import 'package:video_player_windows/video_player_windows.dart';
 
 import 'test_api.g.dart';
+import 'windows_video_player_test.mocks.dart';
 
-class _ApiLogger implements TestHostVideoPlayerApi {
-  final List<String> log = <String>[];
-  int? textureId;
-
-  String? asset;
-  String? uri;
-  Map<String?, String?>? httpHeaders;
-
-  int? positionValue;
-  bool? isLooping;
-  double? volume;
-  double? speed;
-
-  @override
-  int create(String? asset, String? uri, Map<String?, String?> httpHeaders) {
-    log.add('create');
-    this.asset = asset;
-    this.uri = uri;
-    this.httpHeaders = httpHeaders;
-    return 3;
-  }
-
-  @override
-  void dispose(int arg) {
-    log.add('dispose');
-    textureId = arg;
-  }
-
-  @override
-  void initialize() {
-    log.add('init');
-  }
-
-  @override
-  void pause(int arg) {
-    log.add('pause');
-    textureId = arg;
-  }
-
-  @override
-  void play(int arg) {
-    log.add('play');
-    textureId = arg;
-  }
-
-  @override
-  int getPosition(int arg) {
-    log.add('position');
-    textureId = arg;
-    return 234;
-  }
-
-  @override
-  void seekTo(int textureId, int position) {
-    log.add('seekTo');
-    this.textureId = textureId;
-    positionValue = position;
-  }
-
-  @override
-  void setLooping(int textureId, bool isLooping) {
-    log.add('setLooping');
-    this.textureId = textureId;
-    this.isLooping = isLooping;
-  }
-
-  @override
-  void setVolume(int textureId, double volume) {
-    log.add('setVolume');
-    this.textureId = textureId;
-    this.volume = volume;
-  }
-
-  @override
-  void setPlaybackSpeed(int textureId, double speed) {
-    log.add('setPlaybackSpeed');
-    this.textureId = textureId;
-    this.speed = speed;
-  }
-}
-
+@GenerateMocks(<Type>[TestHostVideoPlayerApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -98,27 +21,26 @@ void main() {
     expect(VideoPlayerPlatform.instance, isA<WindowsVideoPlayer>());
   });
 
+  final WindowsVideoPlayer player = WindowsVideoPlayer();
+  late MockTestHostVideoPlayerApi mockApi;
+
+  setUp(() {
+    mockApi = MockTestHostVideoPlayerApi();
+    TestHostVideoPlayerApi.setup(mockApi);
+
+    when(mockApi.create(any, any, any)).thenReturn(3);
+    when(mockApi.getPosition(any)).thenReturn(234);
+  });
+
   group('$WindowsVideoPlayer', () {
-    final WindowsVideoPlayer player = WindowsVideoPlayer();
-    late _ApiLogger log;
-
-    setUp(() {
-      log = _ApiLogger();
-      TestHostVideoPlayerApi.setup(log);
-    });
-
     test('init', () async {
       await player.init();
-      expect(
-        log.log.last,
-        'init',
-      );
+      verify(mockApi.initialize());
     });
 
     test('dispose', () async {
       await player.dispose(1);
-      expect(log.log.last, 'dispose');
-      expect(log.textureId, 1);
+      verify(mockApi.dispose(1));
     });
 
     test('create with asset', () async {
@@ -126,8 +48,7 @@ void main() {
         sourceType: DataSourceType.asset,
         asset: 'someAsset',
       ));
-      expect(log.log.last, 'create');
-      expect(log.asset, 'someAsset');
+      verify(mockApi.create('someAsset', null, <String, String>{}));
       expect(textureId, 3);
     });
 
@@ -146,10 +67,7 @@ void main() {
         sourceType: DataSourceType.network,
         uri: 'someUri',
       ));
-      expect(log.log.last, 'create');
-      expect(log.asset, null);
-      expect(log.uri, 'someUri');
-      expect(log.httpHeaders, <String, String>{});
+      verify(mockApi.create(null, 'someUri', <String, String>{}));
       expect(textureId, 3);
     });
 
@@ -159,11 +77,8 @@ void main() {
         uri: 'someUri',
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
-      expect(log.log.last, 'create');
-      expect(log.asset, null);
-      expect(log.uri, 'someUri');
-      expect(
-          log.httpHeaders, <String, String>{'Authorization': 'Bearer token'});
+      verify(mockApi.create(
+          null, 'someUri', <String, String>{'Authorization': 'Bearer token'}));
       expect(textureId, 3);
     });
 
@@ -172,8 +87,7 @@ void main() {
         sourceType: DataSourceType.file,
         uri: 'someUri',
       ));
-      expect(log.log.last, 'create');
-      expect(log.uri, 'someUri');
+      verify(mockApi.create(null, 'someUri', <String, String>{}));
       expect(textureId, 3);
     });
 
@@ -183,56 +97,43 @@ void main() {
         uri: 'someUri',
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
-      expect(log.log.last, 'create');
-      expect(log.uri, 'someUri');
-      expect(
-          log.httpHeaders, <String, String>{'Authorization': 'Bearer token'});
+      verify(mockApi.create(
+          null, 'someUri', <String, String>{'Authorization': 'Bearer token'}));
       expect(textureId, 3);
     });
     test('setLooping', () async {
       await player.setLooping(1, true);
-      expect(log.log.last, 'setLooping');
-      expect(log.textureId, 1);
-      expect(log.isLooping, true);
+      verify(mockApi.setLooping(1, true));
     });
 
     test('play', () async {
       await player.play(1);
-      expect(log.log.last, 'play');
-      expect(log.textureId, 1);
+      verify(mockApi.play(1));
     });
 
     test('pause', () async {
       await player.pause(1);
-      expect(log.log.last, 'pause');
-      expect(log.textureId, 1);
+      verify(mockApi.pause(1));
     });
 
     test('setVolume', () async {
       await player.setVolume(1, 0.7);
-      expect(log.log.last, 'setVolume');
-      expect(log.textureId, 1);
-      expect(log.volume, 0.7);
+      verify(mockApi.setVolume(1, 0.7));
     });
 
     test('setPlaybackSpeed', () async {
       await player.setPlaybackSpeed(1, 1.5);
-      expect(log.log.last, 'setPlaybackSpeed');
-      expect(log.textureId, 1);
-      expect(log.speed, 1.5);
+      verify(mockApi.setPlaybackSpeed(1, 1.5));
     });
 
     test('seekTo', () async {
       await player.seekTo(1, const Duration(milliseconds: 12345));
-      expect(log.log.last, 'seekTo');
-      expect(log.textureId, 1);
-      expect(log.positionValue, 12345);
+      verify(mockApi.seekTo(1, 12345));
     });
 
     test('getPosition', () async {
       final Duration position = await player.getPosition(1);
-      expect(log.log.last, 'position');
-      expect(log.textureId, 1);
+      verify(mockApi.getPosition(1));
       expect(position, const Duration(milliseconds: 234));
     });
 
