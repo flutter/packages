@@ -42,10 +42,7 @@ TEST(VideoPlayerPlugin, CanInitializeSuccessTrue) {
   IDXGIAdapter* adapter = nullptr;
   pFactory->EnumAdapters(0, &adapter);
 
-  const HWND fake_window = reinterpret_cast<HWND>(1337);
-
-  VideoPlayerPlugin plugin(messenger_.get(), fake_window, adapter,
-                           texture_registrar_.get());
+  VideoPlayerPlugin plugin(messenger_.get(), adapter, texture_registrar_.get());
   plugin.Initialize();
 
   std::string url =

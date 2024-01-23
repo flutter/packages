@@ -49,7 +49,7 @@ namespace video_player_windows {
 // and event notifications.
 class VideoPlayer {
  public:
-  VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
+  VideoPlayer(IDXGIAdapter* adapter, std::wstring uri,
               flutter::EncodableMap http_headers);
 
   virtual ~VideoPlayer() = default;

@@ -15,7 +15,7 @@ using namespace winrt;
 
 namespace video_player_windows {
 
-VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, HWND window, std::wstring uri,
+VideoPlayer::VideoPlayer(IDXGIAdapter* adapter, std::wstring uri,
                          flutter::EncodableMap http_headers)
     : texture_(flutter::GpuSurfaceTexture(
           FlutterDesktopGpuSurfaceType::
