@@ -108,6 +108,38 @@ const String kLogExamplePage = '''
 </html>
 ''';
 
+const String kAlertTestPage = '''
+<!DOCTYPE html>
+<html>  
+   <head>     
+      <script type = "text/javascript">  
+            function showAlert(text) {	          
+	            alert(text);      
+            }  
+            
+            function showConfirm(text) {
+              var result = confirm(text);
+              alert(result);
+            }
+            
+            function showPrompt(text, defaultText) {
+              var inputString = prompt('Enter input', 'Default text');
+	            alert(inputString);            
+            }            
+      </script>       
+   </head>  
+     
+   <body>  
+      <p> Click the following button to see the effect </p>        
+      <form>  
+        <input type = "button" value = "Alert" onclick = "showAlert('Test Alert');" />
+        <input type = "button" value = "Confirm" onclick = "showConfirm('Test Confirm');" />  
+        <input type = "button" value = "Prompt" onclick = "showPrompt('Test Prompt', 'Default Value');" />    
+      </form>       
+   </body>  
+</html>  
+''';
+
 class WebViewExample extends StatefulWidget {
   const WebViewExample({super.key, this.cookieManager});
 
@@ -162,6 +194,9 @@ Page resource error:
           })
           ..setOnUrlChange((UrlChange change) {
             debugPrint('url change to ${change.url}');
+          })
+          ..setOnHttpAuthRequest((HttpAuthRequest request) {
+            openDialog(request);
           }),
       )
       ..addJavaScriptChannel(JavaScriptChannelParams(
@@ -220,6 +255,62 @@ Page resource error:
       child: const Icon(Icons.favorite),
     );
   }
+
+  Future<void> openDialog(HttpAuthRequest httpRequest) async {
+    final TextEditingController usernameTextController =
+        TextEditingController();
+    final TextEditingController passwordTextController =
+        TextEditingController();
+
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('${httpRequest.host}: ${httpRequest.realm ?? '-'}'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Username'),
+                  autofocus: true,
+                  controller: usernameTextController,
+                ),
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  controller: passwordTextController,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Explicitly cancel the request on iOS as the OS does not emit new
+            // requests when a previous request is pending.
+            TextButton(
+              onPressed: () {
+                httpRequest.onCancel();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                httpRequest.onProceed(
+                  WebViewCredential(
+                    user: usernameTextController.text,
+                    password: passwordTextController.text,
+                  ),
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Authenticate'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 enum MenuOptions {
@@ -237,6 +328,8 @@ enum MenuOptions {
   transparentBackground,
   setCookie,
   logExample,
+  basicAuthentication,
+  javaScriptAlert,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -260,46 +353,36 @@ class SampleMenu extends StatelessWidget {
         switch (value) {
           case MenuOptions.showUserAgent:
             _onShowUserAgent();
-            break;
           case MenuOptions.listCookies:
             _onListCookies(context);
-            break;
           case MenuOptions.clearCookies:
             _onClearCookies(context);
-            break;
           case MenuOptions.addToCache:
             _onAddToCache(context);
-            break;
           case MenuOptions.listCache:
             _onListCache();
-            break;
           case MenuOptions.clearCache:
             _onClearCache(context);
-            break;
           case MenuOptions.navigationDelegate:
             _onNavigationDelegateExample();
-            break;
           case MenuOptions.doPostRequest:
             _onDoPostRequest();
-            break;
           case MenuOptions.loadLocalFile:
             _onLoadLocalFileExample();
-            break;
           case MenuOptions.loadFlutterAsset:
             _onLoadFlutterAssetExample();
-            break;
           case MenuOptions.loadHtmlString:
             _onLoadHtmlStringExample();
-            break;
           case MenuOptions.transparentBackground:
             _onTransparentBackground();
-            break;
           case MenuOptions.setCookie:
             _onSetCookie();
-            break;
           case MenuOptions.logExample:
             _onLogExample();
-            break;
+          case MenuOptions.basicAuthentication:
+            _promptForUrl(context);
+          case MenuOptions.javaScriptAlert:
+            _onJavaScriptAlertExample(context);
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -359,6 +442,14 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.logExample,
           child: Text('Log example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.basicAuthentication,
+          child: Text('Basic Authentication Example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.javaScriptAlert,
+          child: Text('JavaScript Alert Example'),
         ),
       ],
     );
@@ -484,6 +575,28 @@ class SampleMenu extends StatelessWidget {
     return webViewController.loadHtmlString(kTransparentBackgroundPage);
   }
 
+  Future<void> _onJavaScriptAlertExample(BuildContext context) {
+    webViewController.setOnJavaScriptAlertDialog(
+        (JavaScriptAlertDialogRequest request) async {
+      await _showAlert(context, request.message);
+    });
+
+    webViewController.setOnJavaScriptConfirmDialog(
+        (JavaScriptConfirmDialogRequest request) async {
+      final bool result = await _showConfirm(context, request.message);
+      return result;
+    });
+
+    webViewController.setOnJavaScriptTextInputDialog(
+        (JavaScriptTextInputDialogRequest request) async {
+      final String result =
+          await _showTextInput(context, request.message, request.defaultText);
+      return result;
+    });
+
+    return webViewController.loadHtmlString(kAlertTestPage);
+  }
+
   Widget _getCookieList(String cookies) {
     if (cookies == '""') {
       return Container();
@@ -517,6 +630,100 @@ class SampleMenu extends StatelessWidget {
     });
 
     return webViewController.loadHtmlString(kLogExamplePage);
+  }
+
+  Future<void> _promptForUrl(BuildContext context) {
+    final TextEditingController urlTextController =
+        TextEditingController(text: 'https://');
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Input URL to visit'),
+          content: TextField(
+            decoration: const InputDecoration(labelText: 'URL'),
+            autofocus: true,
+            controller: urlTextController,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                if (urlTextController.text.isNotEmpty) {
+                  final Uri? uri = Uri.tryParse(urlTextController.text);
+                  if (uri != null && uri.scheme.isNotEmpty) {
+                    webViewController.loadRequest(
+                      LoadRequestParams(uri: uri),
+                    );
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              child: const Text('Visit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAlert(BuildContext context, String message) async {
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            content: Text(message),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        });
+  }
+
+  Future<bool> _showConfirm(BuildContext context, String message) async {
+    return await showDialog<bool>(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                content: Text(message),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop(false);
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop(true);
+                      },
+                      child: const Text('OK')),
+                ],
+              );
+            }) ??
+        false;
+  }
+
+  Future<String> _showTextInput(
+      BuildContext context, String message, String? defaultText) async {
+    return await showDialog<String>(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                content: Text(message),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop('Text test');
+                      },
+                      child: const Text('Enter')),
+                ],
+              );
+            }) ??
+        '';
   }
 }
 

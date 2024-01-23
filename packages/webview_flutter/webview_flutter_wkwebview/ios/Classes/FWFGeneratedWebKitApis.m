@@ -164,6 +164,31 @@
 }
 @end
 
+/// Responses to an authentication challenge.
+///
+/// See
+/// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+@implementation FWFNSUrlSessionAuthChallengeDispositionBox
+- (instancetype)initWithValue:(FWFNSUrlSessionAuthChallengeDisposition)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+/// Specifies how long a credential will be kept.
+@implementation FWFNSUrlCredentialPersistenceBox
+- (instancetype)initWithValue:(FWFNSUrlCredentialPersistence)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 static NSArray *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[
@@ -282,6 +307,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @interface FWFObjectOrIdentifier ()
 + (FWFObjectOrIdentifier *)fromList:(NSArray *)list;
 + (nullable FWFObjectOrIdentifier *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FWFAuthenticationChallengeResponse ()
++ (FWFAuthenticationChallengeResponse *)fromList:(NSArray *)list;
++ (nullable FWFAuthenticationChallengeResponse *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -578,14 +609,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFWKFrameInfoData
-+ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame {
++ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame request:(FWFNSUrlRequestData *)request {
   FWFWKFrameInfoData *pigeonResult = [[FWFWKFrameInfoData alloc] init];
   pigeonResult.isMainFrame = isMainFrame;
+  pigeonResult.request = request;
   return pigeonResult;
 }
 + (FWFWKFrameInfoData *)fromList:(NSArray *)list {
   FWFWKFrameInfoData *pigeonResult = [[FWFWKFrameInfoData alloc] init];
   pigeonResult.isMainFrame = [GetNullableObjectAtIndex(list, 0) boolValue];
+  pigeonResult.request = [FWFNSUrlRequestData nullableFromList:(GetNullableObjectAtIndex(list, 1))];
   return pigeonResult;
 }
 + (nullable FWFWKFrameInfoData *)nullableFromList:(NSArray *)list {
@@ -594,6 +627,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     @(self.isMainFrame),
+    (self.request ? [self.request toList] : [NSNull null]),
   ];
 }
 @end
@@ -723,6 +757,33 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     self.value ?: [NSNull null],
     @(self.isIdentifier),
+  ];
+}
+@end
+
+@implementation FWFAuthenticationChallengeResponse
++ (instancetype)makeWithDisposition:(FWFNSUrlSessionAuthChallengeDisposition)disposition
+               credentialIdentifier:(nullable NSNumber *)credentialIdentifier {
+  FWFAuthenticationChallengeResponse *pigeonResult =
+      [[FWFAuthenticationChallengeResponse alloc] init];
+  pigeonResult.disposition = disposition;
+  pigeonResult.credentialIdentifier = credentialIdentifier;
+  return pigeonResult;
+}
++ (FWFAuthenticationChallengeResponse *)fromList:(NSArray *)list {
+  FWFAuthenticationChallengeResponse *pigeonResult =
+      [[FWFAuthenticationChallengeResponse alloc] init];
+  pigeonResult.disposition = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.credentialIdentifier = GetNullableObjectAtIndex(list, 1);
+  return pigeonResult;
+}
++ (nullable FWFAuthenticationChallengeResponse *)nullableFromList:(NSArray *)list {
+  return (list) ? [FWFAuthenticationChallengeResponse fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    @(self.disposition),
+    self.credentialIdentifier ?: [NSNull null],
   ];
 }
 @end
@@ -1684,14 +1745,16 @@ void SetUpFWFWKNavigationDelegateHostApi(id<FlutterBinaryMessenger> binaryMessen
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [FWFNSErrorData fromList:[self readValue]];
+      return [FWFAuthenticationChallengeResponse fromList:[self readValue]];
     case 129:
-      return [FWFNSUrlRequestData fromList:[self readValue]];
+      return [FWFNSErrorData fromList:[self readValue]];
     case 130:
-      return [FWFWKFrameInfoData fromList:[self readValue]];
+      return [FWFNSUrlRequestData fromList:[self readValue]];
     case 131:
-      return [FWFWKNavigationActionData fromList:[self readValue]];
+      return [FWFWKFrameInfoData fromList:[self readValue]];
     case 132:
+      return [FWFWKNavigationActionData fromList:[self readValue]];
+    case 133:
       return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1703,20 +1766,23 @@ void SetUpFWFWKNavigationDelegateHostApi(id<FlutterBinaryMessenger> binaryMessen
 @end
 @implementation FWFWKNavigationDelegateFlutterApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FWFNSErrorData class]]) {
+  if ([value isKindOfClass:[FWFAuthenticationChallengeResponse class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
+  } else if ([value isKindOfClass:[FWFNSErrorData class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
+  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
     [self writeByte:132];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+    [self writeByte:133];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1933,6 +1999,40 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void) {
                                                details:@""]);
               }
             }];
+}
+- (void)
+    didReceiveAuthenticationChallengeForDelegateWithIdentifier:(NSInteger)arg_identifier
+                                             webViewIdentifier:(NSInteger)arg_webViewIdentifier
+                                           challengeIdentifier:(NSInteger)arg_challengeIdentifier
+                                                    completion:
+                                                        (void (^)(FWFAuthenticationChallengeResponse
+                                                                      *_Nullable,
+                                                                  FlutterError *_Nullable))
+                                                            completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
+                             @"WKNavigationDelegateFlutterApi.didReceiveAuthenticationChallenge"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[ @(arg_identifier), @(arg_webViewIdentifier), @(arg_challengeIdentifier) ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FWFAuthenticationChallengeResponse *output =
+                           reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+                   }
+                 }];
 }
 @end
 
@@ -2201,40 +2301,42 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [FWFNSErrorData fromList:[self readValue]];
+      return [FWFAuthenticationChallengeResponse fromList:[self readValue]];
     case 129:
-      return [FWFNSHttpCookieData fromList:[self readValue]];
+      return [FWFNSErrorData fromList:[self readValue]];
     case 130:
-      return [FWFNSHttpCookiePropertyKeyEnumData fromList:[self readValue]];
+      return [FWFNSHttpCookieData fromList:[self readValue]];
     case 131:
-      return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
+      return [FWFNSHttpCookiePropertyKeyEnumData fromList:[self readValue]];
     case 132:
-      return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
+      return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
     case 133:
-      return [FWFNSUrlRequestData fromList:[self readValue]];
+      return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
     case 134:
-      return [FWFObjectOrIdentifier fromList:[self readValue]];
+      return [FWFNSUrlRequestData fromList:[self readValue]];
     case 135:
-      return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
+      return [FWFObjectOrIdentifier fromList:[self readValue]];
     case 136:
-      return [FWFWKFrameInfoData fromList:[self readValue]];
+      return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
     case 137:
-      return [FWFWKMediaCaptureTypeData fromList:[self readValue]];
+      return [FWFWKFrameInfoData fromList:[self readValue]];
     case 138:
-      return [FWFWKNavigationActionData fromList:[self readValue]];
+      return [FWFWKMediaCaptureTypeData fromList:[self readValue]];
     case 139:
-      return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
+      return [FWFWKNavigationActionData fromList:[self readValue]];
     case 140:
-      return [FWFWKPermissionDecisionData fromList:[self readValue]];
+      return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
     case 141:
-      return [FWFWKScriptMessageData fromList:[self readValue]];
+      return [FWFWKPermissionDecisionData fromList:[self readValue]];
     case 142:
-      return [FWFWKSecurityOriginData fromList:[self readValue]];
+      return [FWFWKScriptMessageData fromList:[self readValue]];
     case 143:
-      return [FWFWKUserScriptData fromList:[self readValue]];
+      return [FWFWKSecurityOriginData fromList:[self readValue]];
     case 144:
-      return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
+      return [FWFWKUserScriptData fromList:[self readValue]];
     case 145:
+      return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
+    case 146:
       return [FWFWKWebsiteDataTypeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -2246,59 +2348,62 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
 @end
 @implementation FWFWKWebViewHostApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FWFNSErrorData class]]) {
+  if ([value isKindOfClass:[FWFAuthenticationChallengeResponse class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSHttpCookieData class]]) {
+  } else if ([value isKindOfClass:[FWFNSErrorData class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSHttpCookiePropertyKeyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSHttpCookieData class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSKeyValueChangeKeyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSHttpCookiePropertyKeyEnumData class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSKeyValueObservingOptionsEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSKeyValueChangeKeyEnumData class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
+  } else if ([value isKindOfClass:[FWFNSKeyValueObservingOptionsEnumData class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFObjectOrIdentifier class]]) {
+  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFObjectOrIdentifier class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
+  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKMediaCaptureTypeData class]]) {
+  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKMediaCaptureTypeData class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKPermissionDecisionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
+  } else if ([value isKindOfClass:[FWFWKPermissionDecisionData class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKSecurityOriginData class]]) {
+  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
+  } else if ([value isKindOfClass:[FWFWKSecurityOriginData class]]) {
     [self writeByte:143];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
     [self writeByte:144];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
     [self writeByte:145];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
+    [self writeByte:146];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -2996,6 +3101,99 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void) {
               }
             }];
 }
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
+                                                 message:(NSString *)arg_message
+                                                   frame:(FWFWKFrameInfoData *)arg_frame
+                                              completion:
+                                                  (void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
+                             @"runJavaScriptAlertPanel"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel
+      sendMessage:@[ @(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null] ]
+            reply:^(NSArray<id> *reply) {
+              if (reply != nil) {
+                if (reply.count > 1) {
+                  completion([FlutterError errorWithCode:reply[0]
+                                                 message:reply[1]
+                                                 details:reply[2]]);
+                } else {
+                  completion(nil);
+                }
+              } else {
+                completion([FlutterError errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+              }
+            }];
+}
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
+                                                   message:(NSString *)arg_message
+                                                     frame:(FWFWKFrameInfoData *)arg_frame
+                                                completion:
+                                                    (void (^)(NSNumber *_Nullable,
+                                                              FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
+                             @"runJavaScriptConfirmPanel"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel
+      sendMessage:@[ @(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null] ]
+            reply:^(NSArray<id> *reply) {
+              if (reply != nil) {
+                if (reply.count > 1) {
+                  completion(nil, [FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                } else {
+                  NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
+                  completion(output, nil);
+                }
+              } else {
+                completion(nil,
+                           [FlutterError errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+              }
+            }];
+}
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
+                                                      prompt:(NSString *)arg_prompt
+                                                 defaultText:(NSString *)arg_defaultText
+                                                       frame:(FWFWKFrameInfoData *)arg_frame
+                                                  completion:(void (^)(NSString *_Nullable,
+                                                                       FlutterError *_Nullable))
+                                                                 completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
+                             @"runJavaScriptTextInputPanel"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[
+    @(arg_identifier), arg_prompt ?: [NSNull null], arg_defaultText ?: [NSNull null],
+    arg_frame ?: [NSNull null]
+  ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+                   }
+                 }];
+}
 @end
 
 @interface FWFWKHttpCookieStoreHostApiCodecReader : FlutterStandardReader
@@ -3164,6 +3362,146 @@ NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void) {
                        codec:FWFNSUrlFlutterApiGetCodec()];
   [channel
       sendMessage:@[ @(arg_identifier) ]
+            reply:^(NSArray<id> *reply) {
+              if (reply != nil) {
+                if (reply.count > 1) {
+                  completion([FlutterError errorWithCode:reply[0]
+                                                 message:reply[1]
+                                                 details:reply[2]]);
+                } else {
+                  completion(nil);
+                }
+              } else {
+                completion([FlutterError errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+              }
+            }];
+}
+@end
+
+NSObject<FlutterMessageCodec> *FWFNSUrlCredentialHostApiGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+void SetUpFWFNSUrlCredentialHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                    NSObject<FWFNSUrlCredentialHostApi> *api) {
+  /// Create a new native instance and add it to the `InstanceManager`.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser"
+        binaryMessenger:binaryMessenger
+                  codec:FWFNSUrlCredentialHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (createWithUserWithIdentifier:user:password:persistence:error:)],
+                @"FWFNSUrlCredentialHostApi api (%@) doesn't respond to "
+                @"@selector(createWithUserWithIdentifier:user:password:persistence:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSString *arg_user = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_password = GetNullableObjectAtIndex(args, 2);
+        FWFNSUrlCredentialPersistence arg_persistence =
+            [GetNullableObjectAtIndex(args, 3) integerValue];
+        FlutterError *error;
+        [api createWithUserWithIdentifier:arg_identifier
+                                     user:arg_user
+                                 password:arg_password
+                              persistence:arg_persistence
+                                    error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+}
+NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+@interface FWFNSUrlProtectionSpaceFlutterApi ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@end
+
+@implementation FWFNSUrlProtectionSpaceFlutterApi
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  self = [super init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+  }
+  return self;
+}
+- (void)createWithIdentifier:(NSInteger)arg_identifier
+                        host:(nullable NSString *)arg_host
+                       realm:(nullable NSString *)arg_realm
+        authenticationMethod:(nullable NSString *)arg_authenticationMethod
+                  completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:
+          @"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.create"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFNSUrlProtectionSpaceFlutterApiGetCodec()];
+  [channel
+      sendMessage:@[
+        @(arg_identifier), arg_host ?: [NSNull null], arg_realm ?: [NSNull null],
+        arg_authenticationMethod ?: [NSNull null]
+      ]
+            reply:^(NSArray<id> *reply) {
+              if (reply != nil) {
+                if (reply.count > 1) {
+                  completion([FlutterError errorWithCode:reply[0]
+                                                 message:reply[1]
+                                                 details:reply[2]]);
+                } else {
+                  completion(nil);
+                }
+              } else {
+                completion([FlutterError errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+              }
+            }];
+}
+@end
+
+NSObject<FlutterMessageCodec> *FWFNSUrlAuthenticationChallengeFlutterApiGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+@interface FWFNSUrlAuthenticationChallengeFlutterApi ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@end
+
+@implementation FWFNSUrlAuthenticationChallengeFlutterApi
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  self = [super init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+  }
+  return self;
+}
+- (void)createWithIdentifier:(NSInteger)arg_identifier
+    protectionSpaceIdentifier:(NSInteger)arg_protectionSpaceIdentifier
+                   completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
+                             @"NSUrlAuthenticationChallengeFlutterApi.create"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFNSUrlAuthenticationChallengeFlutterApiGetCodec()];
+  [channel
+      sendMessage:@[ @(arg_identifier), @(arg_protectionSpaceIdentifier) ]
             reply:^(NSArray<id> *reply) {
               if (reply != nil) {
                 if (reply.count > 1) {

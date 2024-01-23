@@ -50,6 +50,9 @@ void main() {
       source: ImageSource.camera,
     );
 
+    expect(html.querySelector('flt-image-picker-inputs')?.children.isEmpty,
+        isFalse);
+
     // Mock the browser behavior of selecting a file...
     mockInput.dispatchEvent(html.Event('change'));
 
@@ -68,6 +71,8 @@ void main() {
         completion(
           DateTime.fromMillisecondsSinceEpoch(textFile.lastModified!),
         ));
+    expect(html.querySelector('flt-image-picker-inputs')?.children.isEmpty,
+        isTrue);
   });
 
   testWidgets('getMultiImageWithOptions can select multiple files', (

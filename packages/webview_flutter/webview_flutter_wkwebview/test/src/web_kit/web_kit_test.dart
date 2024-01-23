@@ -585,7 +585,12 @@ void main() {
               url: 'url',
               allHttpHeaderFields: <String, String>{},
             ),
-            targetFrame: WKFrameInfoData(isMainFrame: false),
+            targetFrame: WKFrameInfoData(
+                isMainFrame: false,
+                request: NSUrlRequestData(
+                  url: 'url',
+                  allHttpHeaderFields: <String, String>{},
+                )),
             navigationType: WKNavigationType.linkActivated,
           ),
         );
@@ -682,6 +687,63 @@ void main() {
         );
 
         expect(argsCompleter.future, completion(<Object?>[webView]));
+      });
+
+      test('didReceiveAuthenticationChallenge', () async {
+        WebKitFlutterApis.instance = WebKitFlutterApis(
+          instanceManager: instanceManager,
+        );
+
+        const int credentialIdentifier = 3;
+        final NSUrlCredential credential = NSUrlCredential.detached(
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(
+          credential,
+          credentialIdentifier,
+        );
+
+        navigationDelegate = WKNavigationDelegate(
+          instanceManager: instanceManager,
+          didReceiveAuthenticationChallenge: (
+            WKWebView webView,
+            NSUrlAuthenticationChallenge challenge,
+            void Function(
+              NSUrlSessionAuthChallengeDisposition disposition,
+              NSUrlCredential? credential,
+            ) completionHandler,
+          ) {
+            completionHandler(
+              NSUrlSessionAuthChallengeDisposition.useCredential,
+              credential,
+            );
+          },
+        );
+
+        const int challengeIdentifier = 27;
+        instanceManager.addHostCreatedInstance(
+          NSUrlAuthenticationChallenge.detached(
+            protectionSpace: NSUrlProtectionSpace.detached(
+              host: null,
+              realm: null,
+              authenticationMethod: null,
+            ),
+            instanceManager: instanceManager,
+          ),
+          challengeIdentifier,
+        );
+
+        final AuthenticationChallengeResponse response = await WebKitFlutterApis
+            .instance.navigationDelegate
+            .didReceiveAuthenticationChallenge(
+          instanceManager.getIdentifier(navigationDelegate)!,
+          instanceManager.getIdentifier(webView)!,
+          challengeIdentifier,
+        );
+
+        expect(response.disposition,
+            NSUrlSessionAuthChallengeDisposition.useCredential);
+        expect(response.credentialIdentifier, credentialIdentifier);
       });
     });
 
@@ -947,7 +1009,12 @@ void main() {
               url: 'url',
               allHttpHeaderFields: <String, String>{},
             ),
-            targetFrame: WKFrameInfoData(isMainFrame: false),
+            targetFrame: WKFrameInfoData(
+                isMainFrame: false,
+                request: NSUrlRequestData(
+                  url: 'url',
+                  allHttpHeaderFields: <String, String>{},
+                )),
             navigationType: WKNavigationType.linkActivated,
           ),
         );
@@ -1006,7 +1073,8 @@ void main() {
 
         const WKSecurityOrigin origin =
             WKSecurityOrigin(host: 'host', port: 12, protocol: 'protocol');
-        const WKFrameInfo frame = WKFrameInfo(isMainFrame: false);
+        const WKFrameInfo frame =
+            WKFrameInfo(isMainFrame: false, request: NSUrlRequest(url: 'url'));
         const WKMediaCaptureType type = WKMediaCaptureType.microphone;
 
         flutterApi.requestMediaCapturePermission(
@@ -1017,7 +1085,10 @@ void main() {
             port: origin.port,
             protocol: origin.protocol,
           ),
-          WKFrameInfoData(isMainFrame: frame.isMainFrame),
+          WKFrameInfoData(
+              isMainFrame: frame.isMainFrame,
+              request: NSUrlRequestData(
+                  url: 'url', allHttpHeaderFields: <String, String>{})),
           WKMediaCaptureTypeData(value: type),
         );
 

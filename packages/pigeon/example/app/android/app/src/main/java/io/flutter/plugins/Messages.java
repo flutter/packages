@@ -216,6 +216,14 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+  /** Asynchronous error handling return type for void API method returns. */
+  public interface VoidResult {
+    /** Success case callback method for handling returns. */
+    void success();
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
 
   private static class ExampleHostApiCodec extends StandardMessageCodec {
     public static final ExampleHostApiCodec INSTANCE = new ExampleHostApiCodec();

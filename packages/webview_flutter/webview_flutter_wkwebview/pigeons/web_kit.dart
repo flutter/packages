@@ -258,6 +258,58 @@ class WKMediaCaptureTypeData {
   late WKMediaCaptureType value;
 }
 
+/// Responses to an authentication challenge.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+enum NSUrlSessionAuthChallengeDisposition {
+  /// Use the specified credential, which may be nil.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeusecredential?language=objc.
+  useCredential,
+
+  /// Use the default handling for the challenge as though this delegate method
+  /// were not implemented.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeperformdefaulthandling?language=objc.
+  performDefaultHandling,
+
+  /// Cancel the entire request.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengecancelauthenticationchallenge?language=objc.
+  cancelAuthenticationChallenge,
+
+  /// Reject this challenge, and call the authentication delegate method again
+  /// with the next authentication protection space.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengerejectprotectionspace?language=objc.
+  rejectProtectionSpace,
+}
+
+/// Specifies how long a credential will be kept.
+enum NSUrlCredentialPersistence {
+  /// The credential should not be stored.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencenone?language=objc.
+  none,
+
+  /// The credential should be stored only for this session.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistenceforsession?language=objc.
+  session,
+
+  /// The credential should be stored in the keychain.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencepermanent?language=objc.
+  permanent,
+
+  /// The credential should be stored permanently in the keychain, and in
+  /// addition should be distributed to other devices based on the owning Apple
+  /// ID.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencesynchronizable?language=objc.
+  synchronizable,
+}
+
 /// Mirror of NSURLRequest.
 ///
 /// See https://developer.apple.com/documentation/foundation/nsurlrequest?language=objc.
@@ -291,6 +343,7 @@ class WKNavigationActionData {
 /// See https://developer.apple.com/documentation/webkit/wkframeinfo?language=objc.
 class WKFrameInfoData {
   late bool isMainFrame;
+  late NSUrlRequestData request;
 }
 
 /// Mirror of NSError.
@@ -341,6 +394,11 @@ class ObjectOrIdentifier {
   /// Whether value is an int that is used to retrieve an instance stored in an
   /// `InstanceManager`.
   late bool isIdentifier;
+}
+
+class AuthenticationChallengeResponse {
+  late NSUrlSessionAuthChallengeDisposition disposition;
+  late int? credentialIdentifier;
 }
 
 /// Mirror of WKWebsiteDataStore.
@@ -582,6 +640,16 @@ abstract class WKNavigationDelegateFlutterApi {
     int identifier,
     int webViewIdentifier,
   );
+
+  @async
+  @ObjCSelector(
+    'didReceiveAuthenticationChallengeForDelegateWithIdentifier:webViewIdentifier:challengeIdentifier:',
+  )
+  AuthenticationChallengeResponse didReceiveAuthenticationChallenge(
+    int identifier,
+    int webViewIdentifier,
+    int challengeIdentifier,
+  );
 }
 
 /// Mirror of NSObject.
@@ -738,6 +806,40 @@ abstract class WKUIDelegateFlutterApi {
     WKFrameInfoData frame,
     WKMediaCaptureTypeData type,
   );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanel`.
+  @ObjCSelector(
+    'runJavaScriptAlertPanelForDelegateWithIdentifier:message:frame:',
+  )
+  @async
+  void runJavaScriptAlertPanel(
+    int identifier,
+    String message,
+    WKFrameInfoData frame,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanel`.
+  @ObjCSelector(
+    'runJavaScriptConfirmPanelForDelegateWithIdentifier:message:frame:',
+  )
+  @async
+  bool runJavaScriptConfirmPanel(
+    int identifier,
+    String message,
+    WKFrameInfoData frame,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanel`.
+  @ObjCSelector(
+    'runJavaScriptTextInputPanelForDelegateWithIdentifier:prompt:defaultText:frame:',
+  )
+  @async
+  String runJavaScriptTextInputPanel(
+    int identifier,
+    String prompt,
+    String defaultText,
+    WKFrameInfoData frame,
+  );
 }
 
 /// Mirror of WKHttpCookieStore.
@@ -780,4 +882,58 @@ abstract class NSUrlHostApi {
 abstract class NSUrlFlutterApi {
   @ObjCSelector('createWithIdentifier:')
   void create(int identifier);
+}
+
+/// Host API for `NSUrlCredential`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
+@HostApi(dartHostTestHandler: 'TestNSUrlCredentialHostApi')
+abstract class NSUrlCredentialHostApi {
+  /// Create a new native instance and add it to the `InstanceManager`.
+  @ObjCSelector(
+    'createWithUserWithIdentifier:user:password:persistence:',
+  )
+  void createWithUser(
+    int identifier,
+    String user,
+    String password,
+    NSUrlCredentialPersistence persistence,
+  );
+}
+
+/// Flutter API for `NSUrlProtectionSpace`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlprotectionspace?language=objc.
+@FlutterApi()
+abstract class NSUrlProtectionSpaceFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  @ObjCSelector('createWithIdentifier:host:realm:authenticationMethod:')
+  void create(
+    int identifier,
+    String? host,
+    String? realm,
+    String? authenticationMethod,
+  );
+}
+
+/// Flutter API for `NSUrlAuthenticationChallenge`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
+@FlutterApi()
+abstract class NSUrlAuthenticationChallengeFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  @ObjCSelector('createWithIdentifier:protectionSpaceIdentifier:')
+  void create(int identifier, int protectionSpaceIdentifier);
 }

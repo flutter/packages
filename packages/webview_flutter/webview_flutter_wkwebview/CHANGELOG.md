@@ -1,5 +1,24 @@
-## NEXT
+## 3.11.0
 
+* Adds support to show JavaScript dialog. See `PlatformWebViewController.setOnJavaScriptAlertDialog`, `PlatformWebViewController.setOnJavaScriptConfirmDialog` and `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
+
+## 3.10.3
+
+* Adds a check that throws an `ArgumentError` when `WebKitWebViewController.addJavaScriptChannel`
+  receives a `JavaScriptChannelParams` with a name that is not unique.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 3.10.2
+
+* Adds privacy manifest.
+
+## 3.10.1
+
+* Fixes new lint warnings.
+
+## 3.10.0
+
+* Adds support for `PlatformNavigationDelegate.setOnHttpAuthRequest`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 3.9.4

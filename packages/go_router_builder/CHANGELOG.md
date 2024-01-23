@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Fixes new lint warnings.
+
 ## 2.4.0
 
 * Adds support for passing observers to the ShellRoute for the nested Navigator.
