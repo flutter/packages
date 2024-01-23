@@ -272,8 +272,7 @@ class SKPaymentQueueWrapper {
                   .cast<String, dynamic>());
           return Future<void>(() {
             if (observer.shouldAddStorePayment(
-                    payment: payment, product: product) ==
-                true) {
+                payment: payment, product: product)) {
               SKPaymentQueueWrapper().addPayment(payment);
             }
           });

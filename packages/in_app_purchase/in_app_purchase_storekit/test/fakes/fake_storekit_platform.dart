@@ -211,20 +211,16 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
           InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
               transactions: <SKPaymentTransactionWrapper>[transactionFinished]);
         }
-        break;
       case '-[InAppPurchasePlugin finishTransaction:result:]':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         finishedTransactions.add(createPurchasedTransaction(
             arguments['productIdentifier']! as String,
             arguments['transactionIdentifier']! as String,
-            quantity: transactionList.first.payment.quantity));
-        break;
+            quantity: transactions.first.payment.quantity));
       case '-[SKPaymentQueue startObservingTransactionQueue]':
         queueIsActive = true;
-        break;
       case '-[SKPaymentQueue stopObservingTransactionQueue]':
         queueIsActive = false;
-        break;
     }
     return Future<void>.sync(() {});
   }

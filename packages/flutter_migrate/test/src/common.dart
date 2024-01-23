@@ -58,7 +58,6 @@ String getFlutterRoot() {
   switch (io.Platform.script.scheme) {
     case 'file':
       scriptUri = io.Platform.script;
-      break;
     case 'data':
       final RegExp flutterTools = RegExp(
           r'(file://[^"]*[/\\]flutter_tools[/\\][^"]+\.dart)',
@@ -69,7 +68,6 @@ String getFlutterRoot() {
         throw invalidScript();
       }
       scriptUri = Uri.parse(match.group(1)!);
-      break;
     default:
       throw invalidScript();
   }

@@ -1277,7 +1277,7 @@ class MyWebViewPlatform implements WebViewPlatform {
   }) {
     assert(onWebViewPlatformCreated != null);
     lastPlatformBuilt = MyWebViewPlatformController(
-        creationParams, gestureRecognizers, webViewPlatformCallbacksHandler);
+        creationParams, webViewPlatformCallbacksHandler);
     onWebViewPlatformCreated!(lastPlatformBuilt);
     return Container();
   }
@@ -1289,12 +1289,11 @@ class MyWebViewPlatform implements WebViewPlatform {
 }
 
 class MyWebViewPlatformController extends WebViewPlatformController {
-  MyWebViewPlatformController(this.creationParams, this.gestureRecognizers,
-      WebViewPlatformCallbacksHandler platformHandler)
+  MyWebViewPlatformController(
+      this.creationParams, WebViewPlatformCallbacksHandler platformHandler)
       : super(platformHandler);
 
   CreationParams? creationParams;
-  Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
   String? lastUrlLoaded;
   Map<String, String>? lastRequestHeaders;

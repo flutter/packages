@@ -585,7 +585,12 @@ void main() {
               url: 'url',
               allHttpHeaderFields: <String, String>{},
             ),
-            targetFrame: WKFrameInfoData(isMainFrame: false),
+            targetFrame: WKFrameInfoData(
+                isMainFrame: false,
+                request: NSUrlRequestData(
+                  url: 'url',
+                  allHttpHeaderFields: <String, String>{},
+                )),
             navigationType: WKNavigationType.linkActivated,
           ),
         );
@@ -1004,7 +1009,12 @@ void main() {
               url: 'url',
               allHttpHeaderFields: <String, String>{},
             ),
-            targetFrame: WKFrameInfoData(isMainFrame: false),
+            targetFrame: WKFrameInfoData(
+                isMainFrame: false,
+                request: NSUrlRequestData(
+                  url: 'url',
+                  allHttpHeaderFields: <String, String>{},
+                )),
             navigationType: WKNavigationType.linkActivated,
           ),
         );
@@ -1063,7 +1073,8 @@ void main() {
 
         const WKSecurityOrigin origin =
             WKSecurityOrigin(host: 'host', port: 12, protocol: 'protocol');
-        const WKFrameInfo frame = WKFrameInfo(isMainFrame: false);
+        const WKFrameInfo frame =
+            WKFrameInfo(isMainFrame: false, request: NSUrlRequest(url: 'url'));
         const WKMediaCaptureType type = WKMediaCaptureType.microphone;
 
         flutterApi.requestMediaCapturePermission(
@@ -1074,7 +1085,10 @@ void main() {
             port: origin.port,
             protocol: origin.protocol,
           ),
-          WKFrameInfoData(isMainFrame: frame.isMainFrame),
+          WKFrameInfoData(
+              isMainFrame: frame.isMainFrame,
+              request: NSUrlRequestData(
+                  url: 'url', allHttpHeaderFields: <String, String>{})),
           WKMediaCaptureTypeData(value: type),
         );
 

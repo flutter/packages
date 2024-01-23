@@ -1746,4 +1746,36 @@ name: foobar
         contains(
             '\'Unable to establish connection on channel: "\$channelName".\''));
   });
+
+  test('generate wrapResponse if is generating tests', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+            name: 'Api',
+            location: ApiLocation.host,
+            dartHostTestHandler: 'ApiMock',
+            methods: <Method>[
+              Method(
+                  name: 'foo',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[])
+            ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+
+    final StringBuffer mainCodeSink = StringBuffer();
+    const DartGenerator generator = DartGenerator();
+    generator.generate(
+      const DartOptions(
+        testOutPath: 'test.dart',
+      ),
+      root,
+      mainCodeSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String mainCode = mainCodeSink.toString();
+    expect(mainCode, contains('List<Object?> wrapResponse('));
+  });
 }
