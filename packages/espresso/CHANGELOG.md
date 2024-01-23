@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk version to 34.
+
 ## 0.3.0+7
 
 * Replaces call to deprecated `getObservatoryUri`.
