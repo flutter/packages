@@ -75,7 +75,6 @@ class _MyAppState extends State<_MyApp> {
 
   Future<void> initStoreInfo() async {
     final bool isAvailable = await _iapStoreKitPlatform.isAvailable();
-
     if (!isAvailable) {
       setState(() {
         _isAvailable = isAvailable;
