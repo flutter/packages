@@ -70,7 +70,7 @@ void main() {
       final Completer<void> imageLoadCompleter = Completer<void>();
 
       // Wait until the image is fully loaded and decoded before re-reading its attributes
-      img.onload = allowInterop((_) {
+      img.onload = allowInterop((JSAny? _) {
         if (!imageLoadCompleter.isCompleted) {
           imageLoadCompleter.complete();
         }
@@ -114,7 +114,7 @@ void main() {
 
         final Completer<void> imageLoadCompleter = Completer<void>();
 
-        img.onload = allowInterop((_) {
+        img.onload = allowInterop((JSAny? _) {
           if (!imageLoadCompleter.isCompleted) {
             imageLoadCompleter.complete();
           }
