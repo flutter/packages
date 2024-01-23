@@ -1,4 +1,4 @@
-## NEXT
+## 0.3.7+2
 
 * Converted `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
 
