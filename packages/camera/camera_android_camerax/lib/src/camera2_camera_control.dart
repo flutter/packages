@@ -17,7 +17,7 @@ import 'system_services.dart';
 /// APIs and apply options to its specific controls like capture request
 /// options.
 ///
-/// See https://developer.android.com/reference/androidx/camera/camera2/interop/Camera2CameraControl#from(androidx.camera.core.CameraControl)
+/// See https://developer.android.com/reference/androidx/camera/camera2/interop/Camera2CameraControl#from(androidx.camera.core.CameraControl).
 @immutable
 class Camera2CameraControl extends JavaObject {
   /// Creates a [Camera2CameraControl].

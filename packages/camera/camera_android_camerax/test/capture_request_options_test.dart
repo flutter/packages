@@ -8,6 +8,7 @@ import 'package:mockito/mockito.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 
 import 'capture_request_options_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
 // TODO(bparrishMines): Move desired test implementations to test file or
 // remove .gen_api_impls from filename and follow todos below

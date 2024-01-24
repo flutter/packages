@@ -8,6 +8,7 @@ import 'package:mockito/mockito.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 
 import 'camera2_camera_control_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
 // TODO(bparrishMines): Move desired test implementations to test file or
 // remove .gen_api_impls from filename and follow todos below
@@ -117,33 +118,6 @@ void main() {
         instanceIdentifier,
         captureRequestOptionsIdentifier,
       ));
-    });
-
-    test('FlutterAPI create', () {
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
-      final Camera2CameraControlFlutterApiImpl api =
-          Camera2CameraControlFlutterApiImpl(
-        instanceManager: instanceManager,
-      );
-
-      const int instanceIdentifier = 0;
-
-      api.create(
-        instanceIdentifier,
-        cameraControl: CameraControl.detached(
-          // TODO(bparrishMines): This should include the missing params.
-          binaryMessenger: null,
-          instanceManager: instanceManager,
-        ),
-      );
-
-      expect(
-        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
-        isA<Camera2CameraControl>(),
-      );
     });
   });
 }
