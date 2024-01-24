@@ -13,7 +13,7 @@ import 'instance_manager.dart';
 import 'java_object.dart';
 import 'system_services.dart';
 
-/// Class that provides ability to interopoerate with android.hardware.camera2
+/// Class that provides ability to interoperate with android.hardware.camera2
 /// APIs and apply options to its specific controls like capture request
 /// options.
 ///
