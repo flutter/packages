@@ -4,7 +4,8 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: format
     script: script/tool_runner.sh
-    args: ["format", "--fail-on-change"]
+    # Skip Swift formatting on Linux builders.
+    args: ["format", "--fail-on-change", "--no-swift"]
     always: true
   - name: license validation
     script: script/tool_runner.sh

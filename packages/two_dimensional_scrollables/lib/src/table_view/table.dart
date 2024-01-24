@@ -329,7 +329,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   @override
   TableViewParentData parentDataOf(RenderBox child) =>
-      child.parentData! as TableViewParentData;
+      super.parentDataOf(child) as TableViewParentData;
 
   @override
   void setupParentData(RenderBox child) {
@@ -861,31 +861,41 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         )!;
 
         Rect getColumnRect(bool consumePadding) {
+          final ({double leading, double trailing}) offsetCorrection =
+              axisDirectionIsReversed(verticalAxisDirection)
+                  ? (
+                      leading: leadingCell.size.height,
+                      trailing: trailingCell.size.height,
+                    )
+                  : (leading: 0.0, trailing: 0.0);
+
           return Rect.fromPoints(
             parentDataOf(leadingCell).paintOffset! +
                 offset -
                 Offset(
                   consumePadding ? columnSpan.padding.leading : 0.0,
-                  rowSpan.padding.leading,
+                  rowSpan.padding.leading - offsetCorrection.leading,
                 ),
             parentDataOf(trailingCell).paintOffset! +
                 offset +
                 Offset(trailingCell.size.width, trailingCell.size.height) +
                 Offset(
                   consumePadding ? columnSpan.padding.trailing : 0.0,
-                  rowSpan.padding.trailing,
+                  rowSpan.padding.trailing - offsetCorrection.trailing,
                 ),
           );
         }
 
         if (columnSpan.backgroundDecoration != null) {
           final Rect rect = getColumnRect(
-              columnSpan.backgroundDecoration!.consumeSpanPadding);
+            columnSpan.backgroundDecoration!.consumeSpanPadding,
+          );
           backgroundColumns[rect] = columnSpan.backgroundDecoration!;
         }
         if (columnSpan.foregroundDecoration != null) {
           final Rect rect = getColumnRect(
-              columnSpan.foregroundDecoration!.consumeSpanPadding);
+            columnSpan.foregroundDecoration!.consumeSpanPadding,
+          );
           foregroundColumns[rect] = columnSpan.foregroundDecoration!;
         }
       }
@@ -910,18 +920,25 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         )!;
 
         Rect getRowRect(bool consumePadding) {
+          final ({double leading, double trailing}) offsetCorrection =
+              axisDirectionIsReversed(horizontalAxisDirection)
+                  ? (
+                      leading: leadingCell.size.width,
+                      trailing: trailingCell.size.width,
+                    )
+                  : (leading: 0.0, trailing: 0.0);
           return Rect.fromPoints(
             parentDataOf(leadingCell).paintOffset! +
                 offset -
                 Offset(
-                  columnSpan.padding.leading,
+                  columnSpan.padding.leading - offsetCorrection.leading,
                   consumePadding ? rowSpan.padding.leading : 0.0,
                 ),
             parentDataOf(trailingCell).paintOffset! +
                 offset +
                 Offset(trailingCell.size.width, trailingCell.size.height) +
                 Offset(
-                  columnSpan.padding.leading,
+                  columnSpan.padding.leading - offsetCorrection.trailing,
                   consumePadding ? rowSpan.padding.trailing : 0.0,
                 ),
           );

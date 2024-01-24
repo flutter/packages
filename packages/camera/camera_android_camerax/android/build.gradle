@@ -27,7 +27,7 @@ android {
         namespace 'io.flutter.plugins.camerax'
     }
     // CameraX dependencies require compilation against version 33 or later.
-    compileSdkVersion 33
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
