@@ -216,7 +216,7 @@ public class CameraControlTest {
   }
 
   @Test
-  public void cancelFocusAndMetering_cancelFocusAndMeteringAsExpected() {
+  public void cancelFocusAndMetering_cancelsFocusAndMeteringAsExpected() {
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final CameraControlHostApiImpl cameraControlHostApiImpl =
           new CameraControlHostApiImpl(
