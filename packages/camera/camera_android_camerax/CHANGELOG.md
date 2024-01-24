@@ -1,5 +1,6 @@
-## NEXT
+## 0.5.0+28
 
+* Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.
 * Updates compileSdk version to 34.
 
 ## 0.5.0+27

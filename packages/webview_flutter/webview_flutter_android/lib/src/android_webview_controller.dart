@@ -264,6 +264,49 @@ class AndroidWebViewController extends PlatformWebViewController {
         };
       },
     ),
+    onJsAlert: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message) async {
+        final Future<void> Function(JavaScriptAlertDialogRequest)? callback =
+            weakReference.target?._onJavaScriptAlert;
+        if (callback != null) {
+          final JavaScriptAlertDialogRequest request =
+              JavaScriptAlertDialogRequest(message: message, url: url);
+
+          await callback.call(request);
+        }
+        return;
+      };
+    }),
+    onJsConfirm: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message) async {
+        final Future<bool> Function(JavaScriptConfirmDialogRequest)? callback =
+            weakReference.target?._onJavaScriptConfirm;
+        if (callback != null) {
+          final JavaScriptConfirmDialogRequest request =
+              JavaScriptConfirmDialogRequest(message: message, url: url);
+          final bool result = await callback.call(request);
+          return result;
+        }
+        return false;
+      };
+    }),
+    onJsPrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message, String defaultValue) async {
+        final Future<String> Function(JavaScriptTextInputDialogRequest)?
+            callback = weakReference.target?._onJavaScriptPrompt;
+        if (callback != null) {
+          final JavaScriptTextInputDialogRequest request =
+              JavaScriptTextInputDialogRequest(
+                  message: message, url: url, defaultText: defaultValue);
+          final String result = await callback.call(request);
+          return result;
+        }
+        return '';
+      };
+    }),
   );
 
   /// The native [android_webview.FlutterAssetManager] allows managing assets.
@@ -289,6 +332,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
+
+  Future<void> Function(JavaScriptAlertDialogRequest request)?
+      _onJavaScriptAlert;
+  Future<bool> Function(JavaScriptConfirmDialogRequest request)?
+      _onJavaScriptConfirm;
+  Future<String> Function(JavaScriptTextInputDialogRequest request)?
+      _onJavaScriptPrompt;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -616,6 +666,30 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<String?> getUserAgent() => _webView.settings.getUserAgentString();
+
+  @override
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(JavaScriptAlertDialogRequest request)
+          onJavaScriptAlertDialog) async {
+    _onJavaScriptAlert = onJavaScriptAlertDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsAlert(true);
+  }
+
+  @override
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(JavaScriptConfirmDialogRequest request)
+          onJavaScriptConfirmDialog) async {
+    _onJavaScriptConfirm = onJavaScriptConfirmDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsConfirm(true);
+  }
+
+  @override
+  Future<void> setOnJavaScriptTextInputDialog(
+      Future<String> Function(JavaScriptTextInputDialogRequest request)
+          onJavaScriptTextInputDialog) async {
+    _onJavaScriptPrompt = onJavaScriptTextInputDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
