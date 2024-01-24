@@ -64,6 +64,49 @@ class MockTestCameraControlHostApi extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<int> startFocusAndMetering(
+    int? identifier,
+    int? focusMeteringActionId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #startFocusAndMetering,
+          [
+            identifier,
+            focusMeteringActionId,
+          ],
+        ),
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
+
+  @override
+  _i3.Future<void> cancelFocusAndMetering(int? identifier) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cancelFocusAndMetering,
+          [identifier],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<int> setExposureCompensationIndex(
+    int? identifier,
+    int? index,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setExposureCompensationIndex,
+          [
+            identifier,
+            index,
+          ],
+        ),
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
