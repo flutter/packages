@@ -466,4 +466,35 @@ void main() {
       ]),
     );
   });
+
+  test(
+      'recursiveFindAllInterfacesApis throws error if api recursively implements itself',
+      () {
+    final AstProxyApi a = AstProxyApi(
+      name: 'A',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfacesNames: <String>{'B'},
+    );
+    final AstProxyApi b = AstProxyApi(
+      name: 'B',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfacesNames: <String>{'C'},
+    );
+    final AstProxyApi c = AstProxyApi(
+      name: 'C',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfacesNames: <String>{'A'},
+    );
+
+    expect(
+      () => recursiveFindAllInterfacesApis(a, <AstProxyApi>[a, b, c]),
+      throwsArgumentError,
+    );
+  });
 }

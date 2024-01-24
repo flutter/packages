@@ -623,7 +623,8 @@ String? deducePackageName(String mainDartFile) {
 /// interfaces.
 ///
 /// This method assumes that all interfaces names can be found in
-/// [allProxyApis]. Otherwise, throws an [ArgumentError].
+/// [allProxyApis] and an api doesn't contains itself as an interface.
+/// Otherwise, throws an [ArgumentError].
 Set<AstProxyApi> recursiveFindAllInterfacesApis(
   AstProxyApi api,
   Iterable<AstProxyApi> allProxyApis,
@@ -638,14 +639,18 @@ Set<AstProxyApi> recursiveFindAllInterfacesApis(
 
   if (interfacesApis.length != api.interfacesNames.length) {
     throw ArgumentError(
-      'Could not find a ProxyApi for every interface name: '
+      'Could not find a valid ProxyApi for every interface name: '
       '${api.interfacesNames}, ${allProxyApis.map((Api api) => api.name)}',
     );
   }
 
+  // This removes the current api since it would be invalid for it to be a
+  // super class of itself.
+  final Set<AstProxyApi> allProxyApisWithoutCurrent =
+      Set<AstProxyApi>.from(allProxyApis)..remove(api);
   for (final AstProxyApi proxyApi in Set<AstProxyApi>.from(interfacesApis)) {
     interfacesApis.addAll(
-      recursiveFindAllInterfacesApis(proxyApi, allProxyApis),
+      recursiveFindAllInterfacesApis(proxyApi, allProxyApisWithoutCurrent),
     );
   }
 
