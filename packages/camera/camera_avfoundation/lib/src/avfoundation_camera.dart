@@ -84,6 +84,8 @@ class AVFoundationCamera extends CameraPlatform {
           lensDirection:
               parseCameraLensDirection(camera['lensFacing']! as String),
           sensorOrientation: camera['sensorOrientation']! as int,
+          appleCaptureDeviceType:
+              parseAppleCaptureDeviceType(camera['deviceType']! as String),
         );
       }).toList();
     } on PlatformException catch (e) {

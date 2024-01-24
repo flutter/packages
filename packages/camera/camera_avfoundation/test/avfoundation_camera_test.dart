@@ -62,7 +62,9 @@ void main() {
         const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
-            sensorOrientation: 0),
+            sensorOrientation: 0,
+            appleCaptureDeviceType:
+                AppleCaptureDeviceType.builtInWideAngleCamera),
         ResolutionPreset.high,
       );
 
@@ -98,6 +100,8 @@ void main() {
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
+            appleCaptureDeviceType:
+                AppleCaptureDeviceType.builtInWideAngleCamera,
           ),
           ResolutionPreset.high,
         ),
@@ -129,6 +133,8 @@ void main() {
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
+            appleCaptureDeviceType:
+                AppleCaptureDeviceType.builtInWideAngleCamera,
           ),
           ResolutionPreset.high,
         ),
@@ -191,6 +197,7 @@ void main() {
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          appleCaptureDeviceType: AppleCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -238,6 +245,7 @@ void main() {
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          appleCaptureDeviceType: AppleCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -286,6 +294,7 @@ void main() {
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          appleCaptureDeviceType: AppleCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -459,6 +468,7 @@ void main() {
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          appleCaptureDeviceType: AppleCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -487,12 +497,14 @@ void main() {
         <String, dynamic>{
           'name': 'Test 1',
           'lensFacing': 'front',
-          'sensorOrientation': 1
+          'sensorOrientation': 1,
+          'deviceType': 'builtInTrueDepthCamera'
         },
         <String, dynamic>{
           'name': 'Test 2',
           'lensFacing': 'back',
-          'sensorOrientation': 2
+          'sensorOrientation': 2,
+          'deviceType': 'builtInWideAngleCamera'
         }
       ];
       final MethodChannelMock channel = MethodChannelMock(
@@ -516,6 +528,8 @@ void main() {
           lensDirection:
               parseCameraLensDirection(typedData['lensFacing']! as String),
           sensorOrientation: typedData['sensorOrientation']! as int,
+          appleCaptureDeviceType:
+              parseAppleCaptureDeviceType(typedData['deviceType']! as String),
         );
         expect(cameras[i], cameraDescription);
       }
@@ -710,7 +724,9 @@ void main() {
       const CameraDescription camera2Description = CameraDescription(
           name: 'Test2',
           lensDirection: CameraLensDirection.front,
-          sensorOrientation: 0);
+          sensorOrientation: 0,
+          appleCaptureDeviceType:
+              AppleCaptureDeviceType.builtInWideAngleCamera);
 
       // Act
       await camera.setDescriptionWhileRecording(camera2Description);

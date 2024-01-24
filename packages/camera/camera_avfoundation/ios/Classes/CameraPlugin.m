@@ -105,10 +105,24 @@
                        result:(FLTThreadSafeFlutterResult *)result {
   if ([@"availableCameras" isEqualToString:call.method]) {
     NSMutableArray *discoveryDevices =
-        [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
-            mutableCopy];
+        [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera,
+            AVCaptureDeviceTypeBuiltInDualCamera,
+            AVCaptureDeviceTypeBuiltInTrueDepthCamera]
+         mutableCopy];
     if (@available(iOS 13.0, *)) {
-      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+      [discoveryDevices addObjectsFromArray:
+          @[ AVCaptureDeviceTypeBuiltInUltraWideCamera,
+             AVCaptureDeviceTypeBuiltInDualWideCamera,
+             AVCaptureDeviceTypeBuiltInTripleCamera ]];
+    }
+    if (@available(iOS 15.4, *)) {
+      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
+    }
+    if (@available(iOS 17.0, *)) {
+      [discoveryDevices addObjectsFromArray:
+          @[ AVCaptureDeviceTypeExternal,
+             AVCaptureDeviceTypeContinuityCamera ]];
     }
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
         discoverySessionWithDeviceTypes:discoveryDevices
@@ -130,10 +144,35 @@
           lensFacing = @"external";
           break;
       }
+      NSString *deviceType;
+      if ([device deviceType] == AVCaptureDeviceTypeBuiltInWideAngleCamera) {
+        deviceType = @"builtInWideAngleCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInTelephotoCamera) {
+        deviceType = @"builtInTelephotoCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInUltraWideCamera) {
+        deviceType = @"builtInUltraWideCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInDualCamera) {
+        deviceType = @"builtInDualCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInDualWideCamera) {
+        deviceType = @"builtInDualWideCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInTripleCamera) {
+        deviceType = @"builtInTripleCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeContinuityCamera) {
+        deviceType = @"continuityCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeExternal) {
+        deviceType = @"external";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInLiDARDepthCamera) {
+        deviceType = @"builtInLiDARDepthCamera";
+      } else if ([device deviceType] == AVCaptureDeviceTypeBuiltInTrueDepthCamera) {
+        deviceType = @"builtInTrueDepthCamera";
+      } else {
+        deviceType = @"unknown";
+      }
       [reply addObject:@{
         @"name" : [device uniqueID],
         @"lensFacing" : lensFacing,
         @"sensorOrientation" : @90,
+        @"deviceType" : deviceType,
       }];
     }
     [result sendSuccessWithData:reply];

@@ -1,3 +1,11 @@
+## 0.9.15
+
+* Add `AppleCaptureDeviceType` to CameraDescription when discovering available cameras.
+
+## 0.9.14
+
+* Adds missing `AVCaptureDevice.DeviceType` objects when checking for available cameras.
+
 ## 0.9.13+11
 
 * Fixes a memory leak of sample buffer when pause and resume the video recording.
