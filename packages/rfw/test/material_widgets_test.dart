@@ -205,7 +205,8 @@ void main() {
     await tester.tap(find.text('second'));
     await tester.pumpAndSettle();
     expect(eventLog, contains('menu_item {args: second}'));
-    expect(eventLog, contains('dropdown {value: 2.0}'));
+    expect(eventLog, contains(
+      kIsWeb ? 'dropdown {value: 2}' : 'dropdown {value: 2.0}'));
 
     await tester.tapAt(const Offset(20.0, 20.0));
     await tester.pump();
