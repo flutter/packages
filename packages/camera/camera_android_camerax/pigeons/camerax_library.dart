@@ -137,7 +137,7 @@ class MeteringPointInfo {
   /// InstanceManager ID for a [MeteringPoint].
   int meteringPointId;
 
-  /// The meterind mode of the [MeteringPoint] whose ID is [meteringPointId].
+  /// The metering mode of the [MeteringPoint] whose ID is [meteringPointId].
   ///
   /// Metering mode should be one of the [FocusMeteringAction] constants.
   int? meteringMode;
