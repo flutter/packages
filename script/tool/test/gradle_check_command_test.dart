@@ -96,7 +96,7 @@ apply plugin: 'com.android.library'
 ${includeLanguageVersion ? javaSection : ''}
 android {
 ${includeNamespace ? namespace : ''}
-    compileSdkVersion 33
+    compileSdk 33
 
     defaultConfig {
         minSdkVersion 30
@@ -234,7 +234,7 @@ apply from: "\$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     ${includeNamespace ? namespace : ''}
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
 
     lintOptions {
         disable 'InvalidPackage'

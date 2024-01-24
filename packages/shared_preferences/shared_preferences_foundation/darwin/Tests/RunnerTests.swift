@@ -4,13 +4,13 @@
 
 import XCTest
 
-#if os(iOS)
-import Flutter
-#elseif os(macOS)
-import FlutterMacOS
-#endif
-
 @testable import shared_preferences_foundation
+
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#endif
 
 class RunnerTests: XCTestCase {
   let prefixes: [String] = ["aPrefix", ""]
@@ -30,7 +30,7 @@ class RunnerTests: XCTestCase {
       XCTAssertEqual(storedValues["\(aPrefix)aDouble"] as! Double, 3.14, accuracy: 0.0001)
       XCTAssertEqual(storedValues["\(aPrefix)anInt"] as? Int, 42)
       XCTAssertEqual(storedValues["\(aPrefix)aString"] as? String, "hello world")
-      XCTAssertEqual(storedValues["\(aPrefix)aStringList"] as? Array<String>, ["hello", "world"])
+      XCTAssertEqual(storedValues["\(aPrefix)aStringList"] as? [String], ["hello", "world"])
     }
   }
 
@@ -70,40 +70,40 @@ class RunnerTests: XCTestCase {
       XCTAssertNil(finalValues[testKey] as Any?)
     }
   }
-    
-    func testClearWithNoAllowlist() throws {
-      for aPrefix in prefixes {
-        let plugin = SharedPreferencesPlugin()
-        let testKey = "\(aPrefix)foo"
-        plugin.setValue(key: testKey, value: 42)
 
-        // Make sure there is something to clear, so the test can't pass due to a set failure.
-        let preRemovalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
-        XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
+  func testClearWithNoAllowlist() throws {
+    for aPrefix in prefixes {
+      let plugin = SharedPreferencesPlugin()
+      let testKey = "\(aPrefix)foo"
+      plugin.setValue(key: testKey, value: 42)
 
-        // Then verify that clearing works.
-        plugin.clear(prefix: aPrefix, allowList: nil)
+      // Make sure there is something to clear, so the test can't pass due to a set failure.
+      let preRemovalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+      XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
 
-        let finalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
-        XCTAssertNil(finalValues[testKey] as Any?)
-      }
+      // Then verify that clearing works.
+      plugin.clear(prefix: aPrefix, allowList: nil)
+
+      let finalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+      XCTAssertNil(finalValues[testKey] as Any?)
     }
-    
-    func testClearWithAllowlist() throws {
-      for aPrefix in prefixes {
-        let plugin = SharedPreferencesPlugin()
-        let testKey = "\(aPrefix)foo"
-        plugin.setValue(key: testKey, value: 42)
+  }
 
-        // Make sure there is something to clear, so the test can't pass due to a set failure.
-        let preRemovalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
-        XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
+  func testClearWithAllowlist() throws {
+    for aPrefix in prefixes {
+      let plugin = SharedPreferencesPlugin()
+      let testKey = "\(aPrefix)foo"
+      plugin.setValue(key: testKey, value: 42)
 
-        plugin.clear(prefix: aPrefix, allowList: ["\(aPrefix)notfoo"])
+      // Make sure there is something to clear, so the test can't pass due to a set failure.
+      let preRemovalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+      XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
 
-        let finalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
-          XCTAssertEqual(finalValues[testKey] as? Int, 42)
-      }
+      plugin.clear(prefix: aPrefix, allowList: ["\(aPrefix)notfoo"])
+
+      let finalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+      XCTAssertEqual(finalValues[testKey] as? Int, 42)
     }
-  
+  }
+
 }
