@@ -1778,15 +1778,16 @@ name: foobar
   test('generate wrapResponse if is generating tests', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstHostApi(
             name: 'Api',
-            location: ApiLocation.host,
             dartHostTestHandler: 'ApiMock',
             methods: <Method>[
               Method(
-                  name: 'foo',
-                  returnType: const TypeDeclaration.voidDeclaration(),
-                  parameters: <Parameter>[])
+                name: 'foo',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              )
             ])
       ],
       classes: <Class>[],
