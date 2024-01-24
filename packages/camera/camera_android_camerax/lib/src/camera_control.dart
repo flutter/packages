@@ -161,7 +161,7 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
       return setExposureCompensationIndex(identifier, index);
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController.add(
-          e.message ?? 'Setting the camera xposure compensation index failed.');
+          e.message ?? 'Setting the camera exposure compensation index failed.');
       return Future<int?>.value();
     }
   }
