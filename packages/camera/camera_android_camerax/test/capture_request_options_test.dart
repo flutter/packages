@@ -2,23 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/capture_request_options.dart';
+import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:camera_android_camerax/src/instance_manager.dart';
 
 import 'capture_request_options_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-// TODO(bparrishMines): Move desired test implementations to test file or
-// remove .gen_api_impls from filename and follow todos below
-// TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
-// TODO(bparrishMines): Run build runner
-
-@GenerateMocks(
-    <Type>[TestCaptureRequestOptionsHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  CaptureRequestOption,
+  TestCaptureRequestOptionsHostApi,
+  TestInstanceManagerHostApi
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('CaptureRequestOptions', () {
     tearDown(() {
@@ -26,50 +29,89 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
 
-    test('HostApi create', () {
+    test('detached create does not make call on the Java side', () {
       final MockTestCaptureRequestOptionsHostApi mockApi =
           MockTestCaptureRequestOptionsHostApi();
       TestCaptureRequestOptionsHostApi.setup(mockApi);
-      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      const List options = <dynamic>[];
+      final List<(CaptureRequestKeySupportedType, dynamic)> options =
+          <(CaptureRequestKeySupportedType, dynamic)>[
+        (CaptureRequestKeySupportedType.controlAeLock, true),
+      ];
 
-      final CaptureRequestOptions instance = CaptureRequestOptions(
-        options: options,
+      CaptureRequestOptions.detached(
+        requestedOptions: options,
         instanceManager: instanceManager,
       );
 
-      verify(mockApi.create(
-        instanceManager.getIdentifier(instance),
-        options,
+      verifyNever(mockApi.create(
+        argThat(isA<int>()),
+        argThat(isA<List<CaptureRequestOption>>()),
       ));
     });
 
-    test('FlutterAPI create', () {
+    test(
+        'create makes call on the Java side as expected for suppported capture request options',
+        () {
+      final MockTestCaptureRequestOptionsHostApi mockApi =
+          MockTestCaptureRequestOptionsHostApi();
+      TestCaptureRequestOptionsHostApi.setup(mockApi);
+
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CaptureRequestOptionsFlutterApiImpl api =
-          CaptureRequestOptionsFlutterApiImpl(
+      final List<(CaptureRequestKeySupportedType key, dynamic value)>
+          supportedOptionsForTesting =
+          <(CaptureRequestKeySupportedType key, dynamic value)>[
+        (CaptureRequestKeySupportedType.controlAeLock, null),
+        (CaptureRequestKeySupportedType.controlAeLock, false)
+      ];
+
+      final CaptureRequestOptions instance = CaptureRequestOptions(
+        requestedOptions: supportedOptionsForTesting,
         instanceManager: instanceManager,
       );
 
-      const int instanceIdentifier = 0;
+      final VerificationResult verificationResult = verify(mockApi.create(
+        instanceManager.getIdentifier(instance),
+        captureAny,
+      ));
+      final List<CaptureRequestOption?> captureRequestOptions =
+          verificationResult.captured.single as List<CaptureRequestOption?>;
 
-      api.create(
-        instanceIdentifier,
-        <dynamic>[],
-      );
+      expect(captureRequestOptions.length,
+          equals(supportedOptionsForTesting.length));
+      for (int i = 0; i < supportedOptionsForTesting.length; i++) {
+        final (CaptureRequestKeySupportedType key, dynamic value) option =
+            supportedOptionsForTesting[i];
+        final CaptureRequestOption expectedCaptureRequestOption =
+            captureRequestOptions[i]!;
+        final CaptureRequestKeySupportedType optionKey = option.$1;
+        final dynamic optionValue = option.$2;
 
-      expect(
-        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
-        isA<CaptureRequestOptions>(),
-      );
+        if (optionValue == null) {
+          expect(expectedCaptureRequestOption.value, '');
+          continue;
+        }
+
+        switch (optionKey) {
+          case CaptureRequestKeySupportedType.controlAeLock:
+            expect(expectedCaptureRequestOption.value,
+                equals(optionValue == true ? 'true' : 'false'));
+          // This ignore statement is safe beause this will test when
+          // a new CaptureRequestKeySupportedType is being added, but the logic in
+          // in the CaptureRequestOptions class has not yet been updated.
+          // ignore: no_default_cases
+          default:
+            fail(
+                'Option $option contains unrecognized CaptureRequestKeySupportedType key ${option.$1}');
+        }
+      }
     });
   });
 }

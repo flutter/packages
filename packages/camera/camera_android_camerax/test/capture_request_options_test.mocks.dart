@@ -3,10 +3,10 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i3;
+import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i2;
+import 'test_camerax_library.g.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -21,11 +21,70 @@ import 'test_camerax_library.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeObject_0 extends _i1.SmartFake implements Object {
+  _FakeObject_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+/// A class which mocks [CaptureRequestOption].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCaptureRequestOption extends _i1.Mock
+    implements _i2.CaptureRequestOption {
+  MockCaptureRequestOption() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.CaptureRequestKeySupportedType get key => (super.noSuchMethod(
+        Invocation.getter(#key),
+        returnValue: _i2.CaptureRequestKeySupportedType.controlAeLock,
+      ) as _i2.CaptureRequestKeySupportedType);
+
+  @override
+  set key(_i2.CaptureRequestKeySupportedType? _key) => super.noSuchMethod(
+        Invocation.setter(
+          #key,
+          _key,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set value(String? _value) => super.noSuchMethod(
+        Invocation.setter(
+          #value,
+          _value,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  Object encode() => (super.noSuchMethod(
+        Invocation.method(
+          #encode,
+          [],
+        ),
+        returnValue: _FakeObject_0(
+          this,
+          Invocation.method(
+            #encode,
+            [],
+          ),
+        ),
+      ) as Object);
+}
+
 /// A class which mocks [TestCaptureRequestOptionsHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestCaptureRequestOptionsHostApi extends _i1.Mock
-    implements _i2.TestCaptureRequestOptionsHostApi {
+    implements _i3.TestCaptureRequestOptionsHostApi {
   MockTestCaptureRequestOptionsHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -33,7 +92,7 @@ class MockTestCaptureRequestOptionsHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    List<_i3.CaptureRequestOption?>? options,
+    List<_i2.CaptureRequestOption?>? options,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -51,7 +110,7 @@ class MockTestCaptureRequestOptionsHostApi extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i2.TestInstanceManagerHostApi {
+    implements _i3.TestInstanceManagerHostApi {
   MockTestInstanceManagerHostApi() {
     _i1.throwOnMissingStub(this);
   }

@@ -22,21 +22,22 @@ class CaptureRequestOptions extends JavaObject {
   CaptureRequestOptions({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    required this.options,
+    required this.requestedOptions,
   }) : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = _CaptureRequestOptionsHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
-    _api.createFromInstances(this, options);
+    _api.createFromInstances(this, requestedOptions);
   }
 
-  /// Creates a detached [CaptureRequestOptions].
+  /// Constructs an [CaptureRequestOptions] that is not automatically attached to a
+  /// native object.
   CaptureRequestOptions.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    required this.options,
+    required this.requestedOptions,
   }) : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -47,8 +48,7 @@ class CaptureRequestOptions extends JavaObject {
 
   late final _CaptureRequestOptionsHostApiImpl _api;
 
-  /// Capture request options specified for this bundle of options.
-  final List<CaptureRequestOption> options;
+  List<(CaptureRequestKeySupportedType type, dynamic value)> requestedOptions;
 
   /// Error message indicating a [CaptureRequestOption] was constructed with a
   /// capture request key currently unsupported by the wrapping of this class.
@@ -85,18 +85,30 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
   /// capture request key and value pairs.
   Future<void> createFromInstances(
     CaptureRequestOptions instance,
-    List<CaptureRequestOption> options,
+    List<(CaptureRequestKeySupportedType type, dynamic value)> options,
   ) {
+    if (options.isEmpty) {
+      throw ArgumentError(
+          'At least one capture request option must be specified.');
+    }
+
+    final List<CaptureRequestOption> captureRequestOptions =
+        <CaptureRequestOption>[];
+
     // Validate values have type that matches paired key that is supported by
     // this plugin (CaptureRequestKeySupportedType).
-    for (final CaptureRequestOption option in options) {
-      if (option.value == null) {
+    for (final (CaptureRequestKeySupportedType key, dynamic value) option
+        in options) {
+      final CaptureRequestKeySupportedType key = option.$1;
+      final dynamic value = option.$2;
+      if (value == null) {
+        captureRequestOptions.add(CaptureRequestOption(key: key, value: ''));
         continue;
       }
 
-      switch (option.key) {
+      switch (key) {
         case CaptureRequestKeySupportedType.controlAeLock:
-          if (option.value.runtimeType != bool) {
+          if (value.runtimeType != bool) {
             throw ArgumentError(
                 'A controlAeLock value must be specified as a bool.');
           }
@@ -108,18 +120,21 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
           throw ArgumentError(CaptureRequestOptions
               .unsupportedCaptureRequestKeyTypeErrorMessage);
       }
+
+      captureRequestOptions
+          .add(CaptureRequestOption(key: key, value: value.toString()));
     }
     return create(
       instanceManager.addDartCreatedInstance(
         instance,
         onCopy: (CaptureRequestOptions original) =>
             CaptureRequestOptions.detached(
-          options: original.options,
+          requestedOptions: original.requestedOptions,
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
         ),
       ),
-      options,
+      captureRequestOptions,
     );
   }
 }
