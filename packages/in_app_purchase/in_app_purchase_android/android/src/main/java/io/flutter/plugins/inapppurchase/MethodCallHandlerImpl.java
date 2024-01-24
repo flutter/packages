@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
@@ -198,10 +199,7 @@ class MethodCallHandlerImpl
     billingClient.getBillingConfigAsync(
         GetBillingConfigParams.newBuilder().build(),
         (billingResult, billingConfig) -> {
-          final Map<String, Object> serialized = new HashMap<>();
-          serialized.put("billingResult", fromBillingResult(billingResult));
-          serialized.put("countryCode", billingConfig.getCountryCode());
-          result.success(serialized);
+          result.success(fromBillingConfig(billingResult, billingConfig));
         });
   }
 

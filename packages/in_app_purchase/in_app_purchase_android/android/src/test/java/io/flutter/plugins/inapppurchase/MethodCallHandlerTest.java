@@ -17,6 +17,7 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.START_CONNECTION;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
@@ -216,7 +217,7 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(billingCall, result);
     listenerCaptor.getValue().onBillingConfigResponse(billingResult, mockBillingConfig);
 
-    verify(result, times(1)).success(any());
+    verify(result, times(1)).success(fromBillingConfig(billingResult, mockBillingConfig));
   }
 
   @Test
