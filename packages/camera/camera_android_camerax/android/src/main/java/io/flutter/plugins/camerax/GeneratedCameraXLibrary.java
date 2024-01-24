@@ -529,76 +529,6 @@ public class GeneratedCameraXLibrary {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class CaptureRequestOption {
-    private @NonNull CaptureRequestKeySupportedType key;
-
-    public @NonNull CaptureRequestKeySupportedType getKey() {
-      return key;
-    }
-
-    public void setKey(@NonNull CaptureRequestKeySupportedType setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"key\" is null.");
-      }
-      this.key = setterArg;
-    }
-
-    private @Nullable String value;
-
-    public @Nullable String getValue() {
-      return value;
-    }
-
-    public void setValue(@Nullable String setterArg) {
-      this.value = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    CaptureRequestOption() {}
-
-    public static final class Builder {
-
-      private @Nullable CaptureRequestKeySupportedType key;
-
-      public @NonNull Builder setKey(@NonNull CaptureRequestKeySupportedType setterArg) {
-        this.key = setterArg;
-        return this;
-      }
-
-      private @Nullable String value;
-
-      public @NonNull Builder setValue(@Nullable String setterArg) {
-        this.value = setterArg;
-        return this;
-      }
-
-      public @NonNull CaptureRequestOption build() {
-        CaptureRequestOption pigeonReturn = new CaptureRequestOption();
-        pigeonReturn.setKey(key);
-        pigeonReturn.setValue(value);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(2);
-      toListResult.add(key == null ? null : key.index);
-      toListResult.add(value);
-      return toListResult;
-    }
-
-    static @NonNull CaptureRequestOption fromList(@NonNull ArrayList<Object> list) {
-      CaptureRequestOption pigeonResult = new CaptureRequestOption();
-      Object key = list.get(0);
-      pigeonResult.setKey(key == null ? null : CaptureRequestKeySupportedType.values()[(int) key]);
-      Object value = list.get(1);
-      pigeonResult.setValue((String) value);
-      return pigeonResult;
-    }
-  }
-
   public interface Result<T> {
     @SuppressWarnings("UnknownNullness")
     void success(T result);
@@ -3333,7 +3263,17 @@ public class GeneratedCameraXLibrary {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return CaptureRequestOption.fromList((ArrayList<Object>) readValue(buffer));
+          return CameraPermissionsErrorData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
+          return CameraStateTypeData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
+          return ExposureCompensationRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return LiveDataSupportedTypeData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return VideoQualityData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -3341,9 +3281,24 @@ public class GeneratedCameraXLibrary {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof CaptureRequestOption) {
+      if (value instanceof CameraPermissionsErrorData) {
         stream.write(128);
-        writeValue(stream, ((CaptureRequestOption) value).toList());
+        writeValue(stream, ((CameraPermissionsErrorData) value).toList());
+      } else if (value instanceof CameraStateTypeData) {
+        stream.write(129);
+        writeValue(stream, ((CameraStateTypeData) value).toList());
+      } else if (value instanceof ExposureCompensationRange) {
+        stream.write(130);
+        writeValue(stream, ((ExposureCompensationRange) value).toList());
+      } else if (value instanceof LiveDataSupportedTypeData) {
+        stream.write(131);
+        writeValue(stream, ((LiveDataSupportedTypeData) value).toList());
+      } else if (value instanceof ResolutionInfo) {
+        stream.write(132);
+        writeValue(stream, ((ResolutionInfo) value).toList());
+      } else if (value instanceof VideoQualityData) {
+        stream.write(133);
+        writeValue(stream, ((VideoQualityData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -3353,7 +3308,7 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface CaptureRequestOptionsHostApi {
 
-    void create(@NonNull Long identifier, @NonNull List<CaptureRequestOption> options);
+    void create(@NonNull Long identifier, @NonNull Map<Long, Object> options);
 
     /** The codec used by CaptureRequestOptionsHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -3371,7 +3326,7 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                List<CaptureRequestOption> optionsArg = (List<CaptureRequestOption>) args.get(1);
+                Map<Long, Object> optionsArg = (Map<Long, Object>) args.get(1);
                 try {
                   api.create((identifierArg == null) ? null : identifierArg.longValue(), optionsArg);
                   wrapped.add(0, null);

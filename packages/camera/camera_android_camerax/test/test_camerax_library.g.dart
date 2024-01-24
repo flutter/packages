@@ -1684,8 +1684,23 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
   const _TestCaptureRequestOptionsHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is CaptureRequestOption) {
+    if (value is CameraPermissionsErrorData) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is CameraStateTypeData) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is ExposureCompensationRange) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is ResolutionInfo) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is VideoQualityData) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1696,7 +1711,17 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return CaptureRequestOption.decode(readValue(buffer)!);
+        return CameraPermissionsErrorData.decode(readValue(buffer)!);
+      case 129: 
+        return CameraStateTypeData.decode(readValue(buffer)!);
+      case 130: 
+        return ExposureCompensationRange.decode(readValue(buffer)!);
+      case 131: 
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      case 132: 
+        return ResolutionInfo.decode(readValue(buffer)!);
+      case 133: 
+        return VideoQualityData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1707,7 +1732,7 @@ abstract class TestCaptureRequestOptionsHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestCaptureRequestOptionsHostApiCodec();
 
-  void create(int identifier, List<CaptureRequestOption?> options);
+  void create(int identifier, Map<int?, Object?> options);
 
   static void setup(TestCaptureRequestOptionsHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -1724,9 +1749,9 @@ abstract class TestCaptureRequestOptionsHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.CaptureRequestOptionsHostApi.create was null, expected non-null int.');
-          final List<CaptureRequestOption?>? arg_options = (args[1] as List<Object?>?)?.cast<CaptureRequestOption?>();
+          final Map<int?, Object?>? arg_options = (args[1] as Map<Object?, Object?>?)?.cast<int?, Object?>();
           assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.CaptureRequestOptionsHostApi.create was null, expected non-null List<CaptureRequestOption?>.');
+              'Argument for dev.flutter.pigeon.CaptureRequestOptionsHostApi.create was null, expected non-null Map<int?, Object?>.');
           api.create(arg_identifier!, arg_options!);
           return <Object?>[];
         });

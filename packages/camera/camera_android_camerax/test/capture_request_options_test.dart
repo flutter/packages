@@ -12,11 +12,8 @@ import 'package:mockito/mockito.dart';
 import 'capture_request_options_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[
-  CaptureRequestOption,
-  TestCaptureRequestOptionsHostApi,
-  TestInstanceManagerHostApi
-])
+@GenerateMocks(
+    <Type>[TestCaptureRequestOptionsHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -50,12 +47,12 @@ void main() {
 
       verifyNever(mockApi.create(
         argThat(isA<int>()),
-        argThat(isA<List<CaptureRequestOption>>()),
+        argThat(isA<Map<int, Object?>>()),
       ));
     });
 
     test(
-        'create makes call on the Java side as expected for suppported capture request options',
+        'create makes call on the Java side as expected for suppported non-null capture request options',
         () {
       final MockTestCaptureRequestOptionsHostApi mockApi =
           MockTestCaptureRequestOptionsHostApi();
@@ -66,11 +63,10 @@ void main() {
       );
 
       final List<(CaptureRequestKeySupportedType key, dynamic value)>
-          supportedOptionsForTesting =
-          <(CaptureRequestKeySupportedType key, dynamic value)>[
-        (CaptureRequestKeySupportedType.controlAeLock, null),
-        (CaptureRequestKeySupportedType.controlAeLock, false)
-      ];
+          supportedOptionsForTesting = <(
+        CaptureRequestKeySupportedType key,
+        dynamic value
+      )>[(CaptureRequestKeySupportedType.controlAeLock, null)];
 
       final CaptureRequestOptions instance = CaptureRequestOptions(
         requestedOptions: supportedOptionsForTesting,
@@ -81,28 +77,58 @@ void main() {
         instanceManager.getIdentifier(instance),
         captureAny,
       ));
-      final List<CaptureRequestOption?> captureRequestOptions =
-          verificationResult.captured.single as List<CaptureRequestOption?>;
+      final Map<int?, Object?> captureRequestOptions =
+          verificationResult.captured.single as Map<int?, Object?>;
 
       expect(captureRequestOptions.length,
           equals(supportedOptionsForTesting.length));
-      for (int i = 0; i < supportedOptionsForTesting.length; i++) {
-        final (CaptureRequestKeySupportedType key, dynamic value) option =
-            supportedOptionsForTesting[i];
-        final CaptureRequestOption expectedCaptureRequestOption =
-            captureRequestOptions[i]!;
+      for (final (CaptureRequestKeySupportedType key, dynamic value) option
+          in supportedOptionsForTesting) {
+        final CaptureRequestKeySupportedType optionKey = option.$1;
+        expect(captureRequestOptions[optionKey.index], isNull);
+      }
+    });
+
+    test(
+        'create makes call on the Java side as expected for suppported non-null capture request options',
+        () {
+      final MockTestCaptureRequestOptionsHostApi mockApi =
+          MockTestCaptureRequestOptionsHostApi();
+      TestCaptureRequestOptionsHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final List<(CaptureRequestKeySupportedType key, dynamic value)>
+          supportedOptionsForTesting = <(
+        CaptureRequestKeySupportedType key,
+        dynamic value
+      )>[(CaptureRequestKeySupportedType.controlAeLock, false)];
+
+      final CaptureRequestOptions instance = CaptureRequestOptions(
+        requestedOptions: supportedOptionsForTesting,
+        instanceManager: instanceManager,
+      );
+
+      final VerificationResult verificationResult = verify(mockApi.create(
+        instanceManager.getIdentifier(instance),
+        captureAny,
+      ));
+      final Map<int?, Object?>? captureRequestOptions =
+          verificationResult.captured.single as Map<int?, Object?>?;
+
+      expect(captureRequestOptions!.length,
+          equals(supportedOptionsForTesting.length));
+      for (final (CaptureRequestKeySupportedType key, dynamic value) option
+          in supportedOptionsForTesting) {
         final CaptureRequestKeySupportedType optionKey = option.$1;
         final dynamic optionValue = option.$2;
 
-        if (optionValue == null) {
-          expect(expectedCaptureRequestOption.value, '');
-          continue;
-        }
-
         switch (optionKey) {
           case CaptureRequestKeySupportedType.controlAeLock:
-            expect(expectedCaptureRequestOption.value,
-                equals(optionValue == true ? 'true' : 'false'));
+            expect(captureRequestOptions[optionKey.index],
+                equals(optionValue as bool));
           // This ignore statement is safe beause this will test when
           // a new CaptureRequestKeySupportedType is being added, but the logic in
           // in the CaptureRequestOptions class has not yet been updated.

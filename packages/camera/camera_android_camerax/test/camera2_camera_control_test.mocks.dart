@@ -66,10 +66,23 @@ class MockCaptureRequestOptions extends _i1.Mock
   }
 
   @override
-  List<_i5.CaptureRequestOption> get options => (super.noSuchMethod(
-        Invocation.getter(#options),
-        returnValue: <_i5.CaptureRequestOption>[],
-      ) as List<_i5.CaptureRequestOption>);
+  List<(_i5.CaptureRequestKeySupportedType, dynamic)> get requestedOptions =>
+      (super.noSuchMethod(
+        Invocation.getter(#requestedOptions),
+        returnValue: <(_i5.CaptureRequestKeySupportedType, dynamic)>[],
+      ) as List<(_i5.CaptureRequestKeySupportedType, dynamic)>);
+
+  @override
+  set requestedOptions(
+          List<(_i5.CaptureRequestKeySupportedType, dynamic)>?
+              _requestedOptions) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #requestedOptions,
+          _requestedOptions,
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestCamera2CameraControlHostApi].

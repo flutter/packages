@@ -92,8 +92,7 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
           'At least one capture request option must be specified.');
     }
 
-    final List<CaptureRequestOption> captureRequestOptions =
-        <CaptureRequestOption>[];
+    final Map<int, Object?> captureRequestOptions = <int, Object?>{};
 
     // Validate values have type that matches paired key that is supported by
     // this plugin (CaptureRequestKeySupportedType).
@@ -102,7 +101,7 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
       final CaptureRequestKeySupportedType key = option.$1;
       final dynamic value = option.$2;
       if (value == null) {
-        captureRequestOptions.add(CaptureRequestOption(key: key, value: ''));
+        captureRequestOptions[key.index] = null;
         continue;
       }
 
@@ -121,8 +120,7 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
               .unsupportedCaptureRequestKeyTypeErrorMessage);
       }
 
-      captureRequestOptions
-          .add(CaptureRequestOption(key: key, value: value.toString()));
+      captureRequestOptions[key.index] = value;
     }
     return create(
       instanceManager.addDartCreatedInstance(

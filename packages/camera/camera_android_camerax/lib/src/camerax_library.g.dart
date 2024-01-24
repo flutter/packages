@@ -214,32 +214,6 @@ class VideoQualityData {
   }
 }
 
-class CaptureRequestOption {
-  CaptureRequestOption({
-    required this.key,
-    this.value,
-  });
-
-  CaptureRequestKeySupportedType key;
-
-  String? value;
-
-  Object encode() {
-    return <Object?>[
-      key.index,
-      value,
-    ];
-  }
-
-  static CaptureRequestOption decode(Object result) {
-    result as List<Object?>;
-    return CaptureRequestOption(
-      key: CaptureRequestKeySupportedType.values[result[0]! as int],
-      value: result[1] as String?,
-    );
-  }
-}
-
 class InstanceManagerHostApi {
   /// Constructor for [InstanceManagerHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -2831,8 +2805,23 @@ class _CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
   const _CaptureRequestOptionsHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is CaptureRequestOption) {
+    if (value is CameraPermissionsErrorData) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is CameraStateTypeData) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is ExposureCompensationRange) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is ResolutionInfo) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is VideoQualityData) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2843,7 +2832,17 @@ class _CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return CaptureRequestOption.decode(readValue(buffer)!);
+        return CameraPermissionsErrorData.decode(readValue(buffer)!);
+      case 129: 
+        return CameraStateTypeData.decode(readValue(buffer)!);
+      case 130: 
+        return ExposureCompensationRange.decode(readValue(buffer)!);
+      case 131: 
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      case 132: 
+        return ResolutionInfo.decode(readValue(buffer)!);
+      case 133: 
+        return VideoQualityData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2860,7 +2859,7 @@ class CaptureRequestOptionsHostApi {
 
   static const MessageCodec<Object?> codec = _CaptureRequestOptionsHostApiCodec();
 
-  Future<void> create(int arg_identifier, List<CaptureRequestOption?> arg_options) async {
+  Future<void> create(int arg_identifier, Map<int?, Object?> arg_options) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CaptureRequestOptionsHostApi.create', codec,
         binaryMessenger: _binaryMessenger);

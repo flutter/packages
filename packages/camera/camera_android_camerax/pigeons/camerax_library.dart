@@ -130,16 +130,6 @@ enum CaptureRequestKeySupportedType {
   controlAeLock,
 }
 
-class CaptureRequestOption {
-  CaptureRequestOption({
-    required this.key,
-    required this.value,
-  });
-
-  CaptureRequestKeySupportedType key;
-  String? value;
-}
-
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -467,7 +457,7 @@ abstract class CameraControlFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestCaptureRequestOptionsHostApi')
 abstract class CaptureRequestOptionsHostApi {
-  void create(int identifier, List<CaptureRequestOption> options);
+  void create(int identifier, Map<int, Object?> options);
 }
 
 @HostApi(dartHostTestHandler: 'TestCamera2CameraControlHostApi')
