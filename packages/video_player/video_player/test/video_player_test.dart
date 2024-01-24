@@ -1246,7 +1246,7 @@ void main() {
 
     bool currentIsCompleted = controller.value.isCompleted;
 
-    final void Function() isCompletedTest = expectAsync0(() {});
+    final void Function() isCompletedTest = expectAsync0(() {}, count: 2);
     final void Function() isNoLongerCompletedTest = expectAsync0(() {});
     bool hasLooped = false;
 
@@ -1263,6 +1263,50 @@ void main() {
           }
         } else {
           isNoLongerCompletedTest();
+        }
+      }
+    });
+
+    controller.value = controller.value.copyWith(isPlaying: true);
+    fakeVideoEventStream.add(VideoEvent(eventType: VideoEventType.completed));
+  });
+
+  test(
+      'isCompleted seeks position to max duration and pauses the video first if is playing',
+      () async {
+    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      _localhostUri,
+      videoPlayerOptions: VideoPlayerOptions(),
+    );
+
+    await controller.initialize();
+
+    final StreamController<VideoEvent> fakeVideoEventStream =
+        fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+    bool currentIsCompleted = controller.value.isCompleted;
+
+    final void Function() isCompletedTest = expectAsync0(() {}, count: 2);
+    final void Function() isNoLongerCompletedTest = expectAsync0(() {});
+    bool hasLooped = false;
+
+    controller.addListener(() async {
+      if (currentIsCompleted != controller.value.isCompleted) {
+        currentIsCompleted = controller.value.isCompleted;
+        if (controller.value.isCompleted) {
+          isCompletedTest();
+          expect(controller.value.isPlaying, false);
+          if (!hasLooped) {
+            hasLooped = !hasLooped;
+            fakeVideoEventStream.add(VideoEvent(
+                eventType: VideoEventType.isPlayingStateUpdate,
+                isPlaying: true));
+          }
+        } else {
+          isNoLongerCompletedTest();
+          expect(controller.value.isPlaying, true);
+          fakeVideoEventStream
+              .add(VideoEvent(eventType: VideoEventType.completed));
         }
       }
     });
