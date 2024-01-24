@@ -317,7 +317,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         example.directory.childDirectory('integration_test');
 
     if (integrationTestDir.existsSync()) {
-      await for (final FileSystemEntity file in integrationTestDir.list()) {
+      await for (final FileSystemEntity file
+          in integrationTestDir.list(recursive: true)) {
         if (file is File && file.basename.endsWith('_test.dart')) {
           tests.add(file);
         }

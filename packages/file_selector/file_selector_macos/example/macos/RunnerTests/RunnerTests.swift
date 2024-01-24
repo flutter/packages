@@ -40,7 +40,7 @@ class TestViewProvider: NSObject, ViewProvider {
   var window: NSWindow? = NSWindow()
 }
 
-class exampleTests: XCTestCase {
+class ExampleTests: XCTestCase {
 
   func testOpenSimple() throws {
     let panelController = TestPanelController()

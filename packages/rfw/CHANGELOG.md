@@ -1,3 +1,8 @@
+## 1.0.18
+
+* Exposes `WidgetLibrary`s registered in `Runtime`.
+* Exposes widgets map in `LocalWidgetLibrary`.
+
 ## 1.0.17
 
 * Adds support for tracking source locations of `BlobNode`s and
