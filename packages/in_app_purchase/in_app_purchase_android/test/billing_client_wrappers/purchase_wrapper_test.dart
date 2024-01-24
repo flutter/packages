@@ -4,6 +4,7 @@
 
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:test/test.dart';
 
 const PurchaseWrapper dummyPurchase = PurchaseWrapper(
@@ -250,5 +251,14 @@ Map<String, dynamic> buildBillingResultMap(BillingResultWrapper original) {
     'responseCode':
         const BillingResponseConverter().toJson(original.responseCode),
     'debugMessage': original.debugMessage,
+  };
+}
+
+Map<String, dynamic> buildBillingConfigMap(BillingConfigWrapper original) {
+  return <String, dynamic>{
+    'responseCode':
+        const BillingResponseConverter().toJson(original.responseCode),
+    'debugMessage': original.debugMessage,
+    'countryCode': original.countryCode,
   };
 }

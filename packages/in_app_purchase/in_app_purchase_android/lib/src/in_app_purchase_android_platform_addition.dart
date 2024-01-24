@@ -7,6 +7,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
+import 'billing_client_wrappers/billing_config_wrapper.dart';
 
 /// Contains InApp Purchase features that are only available on PlayStore.
 class InAppPurchaseAndroidPlatformAddition
@@ -144,6 +145,13 @@ class InAppPurchaseAndroidPlatformAddition
   Future<bool> isFeatureSupported(BillingClientFeature feature) async {
     return _billingClientManager.runWithClientNonRetryable(
       (BillingClient client) => client.isFeatureSupported(feature),
+    );
+  }
+
+  /// TODO
+  Future<BillingConfigWrapper> getBillingConfig() async {
+    return _billingClientManager.runWithClientNonRetryable(
+      (BillingClient client) => client.getBillingConfig(),
     );
   }
 }

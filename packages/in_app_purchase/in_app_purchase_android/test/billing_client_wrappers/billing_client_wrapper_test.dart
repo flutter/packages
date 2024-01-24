@@ -5,6 +5,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
 
 import '../stub_in_app_purchase_platform.dart';
@@ -639,6 +640,39 @@ void main() {
           .isFeatureSupported(BillingClientFeature.subscriptions);
       expect(isSupported, isTrue);
       expect(arguments['feature'], equals('subscriptions'));
+    });
+  });
+
+  group('billingConfig', () {
+    const String billingConfigMethodName = 'BillingClient#getBillingConfig()';
+    test('billingConfig returns object', () async {
+      late Map<Object?, Object?> arguments;
+      stubPlatform.addResponse(
+        name: billingConfigMethodName,
+        value: const BillingConfigWrapper(
+            countryCode: 'US',
+            responseCode: BillingResponse.ok,
+            debugMessage: ''),
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+      final BillingConfigWrapper result =
+          await billingClient.getBillingConfig();
+      expect(result.countryCode, 'US');
+    });
+
+
+    test('handles method channel returning null', () async {
+      stubPlatform.addResponse(
+        name: billingConfigMethodName,
+      );
+      final BillingConfigWrapper result =
+          await billingClient.getBillingConfig();
+      expect(
+          result,
+          equals(const BillingConfigWrapper(
+              responseCode: BillingResponse.error,
+              debugMessage: kInvalidBillingConfigErrorMessage)));
     });
   });
 }
