@@ -1,3 +1,7 @@
+## 0.9.14
+
+* Adds support to HEIF format.
+
 ## 0.9.13+11
 
 * Fixes a memory leak of sample buffer when pause and resume the video recording.
