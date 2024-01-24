@@ -867,18 +867,18 @@ List<Error> _validateAst(Root root, String source) {
                 'Parameters must specify their type in method "${method.name}" in API: "${api.name}"',
             lineNumber: _calculateLineNumberNullable(source, param.offset),
           ));
-        } else if (param.name.startsWith('__pigeon_')) {
-          result.add(Error(
-            message:
-                'Parameter name must not begin with "__pigeon_" in method "${method.name}" in API: "${api.name}"',
-            lineNumber: _calculateLineNumberNullable(source, param.offset),
-          ));
-        } else if (param.name == 'pigeonChannelCodec') {
-          result.add(Error(
-            message:
-                'Parameter name must not be "pigeonChannelCodec" in method "${method.name}" in API: "${api.name}"',
-            lineNumber: _calculateLineNumberNullable(source, param.offset),
-          ));
+        } else {
+          final String? matchingPrefix = _findMatchingPrefixOrNull(
+            method.name,
+            prefixes: <String>['__pigeon_', 'pigeonChannelCodec'],
+          );
+          if (matchingPrefix != null) {
+            result.add(Error(
+              message:
+                  'Parameter name must not begin with "$matchingPrefix" in method "${method.name} in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          }
         }
         if (api is AstFlutterApi) {
           if (!param.isPositional) {
@@ -1065,30 +1065,23 @@ List<Error> _validateProxyApi(
               'Parameters must specify their type in constructor "${constructor.name}" in API: "${api.name}"',
           lineNumber: _calculateLineNumberNullable(source, parameter.offset),
         ));
-      } else if (parameter.name.startsWith('__pigeon_')) {
-        result.add(Error(
-          message:
-              'Parameter name must not begin with "__pigeon_" in constructor "${constructor.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
-        ));
-      } else if (parameter.name == 'pigeonChannelCodec') {
-        result.add(Error(
-          message:
-              'Parameter name must not be "pigeonChannelCodec" in constructor "${constructor.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
-        ));
-      } else if (parameter.name.startsWith(classNamePrefix)) {
-        result.add(Error(
-          message:
-              'Parameter name must not begin with "$classNamePrefix" in constructor "${constructor.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
-        ));
-      } else if (parameter.name.startsWith(classMemberNamePrefix)) {
-        result.add(Error(
-          message:
-              'Parameter name must not begin with "$classMemberNamePrefix" in constructor "${constructor.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
-        ));
+      } else {
+        final String? matchingPrefix = _findMatchingPrefixOrNull(
+          parameter.name,
+          prefixes: <String>[
+            '__pigeon_',
+            'pigeonChannelCodec',
+            classNamePrefix,
+            classMemberNamePrefix,
+          ],
+        );
+        if (matchingPrefix != null) {
+          result.add(Error(
+            message:
+                'Parameter name must not begin with "$matchingPrefix" in constructor "${constructor.name} in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+          ));
+        }
       }
     }
     if (constructor.swiftFunction.isNotEmpty) {
@@ -1111,16 +1104,17 @@ List<Error> _validateProxyApi(
         result.add(unsupportedDataClassError(parameter));
       }
 
-      if (parameter.name.startsWith(classNamePrefix)) {
+      final String? matchingPrefix = _findMatchingPrefixOrNull(
+        parameter.name,
+        prefixes: <String>[
+          classNamePrefix,
+          classMemberNamePrefix,
+        ],
+      );
+      if (matchingPrefix != null) {
         result.add(Error(
           message:
-              'Parameter name must not begin with "$classNamePrefix" in method "${method.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
-        ));
-      } else if (parameter.name.startsWith(classMemberNamePrefix)) {
-        result.add(Error(
-          message:
-              'Parameter name must not begin with "$classMemberNamePrefix" in method "${method.name}" in API: "${api.name}"',
+              'Parameter name must not begin with "$matchingPrefix" in method "${method.name} in API: "${api.name}"',
           lineNumber: _calculateLineNumberNullable(source, parameter.offset),
         ));
       }
@@ -1168,34 +1162,38 @@ List<Error> _validateProxyApi(
       }
     }
 
-    if (field.name.startsWith('__pigeon_')) {
+    final String? matchingPrefix = _findMatchingPrefixOrNull(
+      field.name,
+      prefixes: <String>[
+        '__pigeon_',
+        'pigeonChannelCodec',
+        classNamePrefix,
+        classMemberNamePrefix,
+      ],
+    );
+    if (matchingPrefix != null) {
       result.add(Error(
         message:
-            'Field name must not begin with "__pigeon_" in API: "${api.name}"',
-        lineNumber: _calculateLineNumberNullable(source, field.offset),
-      ));
-    } else if (field.name == 'pigeonChannelCodec') {
-      result.add(Error(
-        message:
-            'Field name must not be "pigeonChannelCodec" in API: "${api.name}"',
-        lineNumber: _calculateLineNumberNullable(source, field.offset),
-      ));
-    } else if (field.name.startsWith(classNamePrefix)) {
-      result.add(Error(
-        message:
-            'Field name must not begin with "$classNamePrefix" in API: "${api.name}"',
-        lineNumber: _calculateLineNumberNullable(source, field.offset),
-      ));
-    } else if (field.name.startsWith(classMemberNamePrefix)) {
-      result.add(Error(
-        message:
-            'Field name must not begin with "$classMemberNamePrefix" in API: "${api.name}"',
+            'Field name must not begin with "$matchingPrefix" in API: "${api.name}"',
         lineNumber: _calculateLineNumberNullable(source, field.offset),
       ));
     }
   }
 
   return result;
+}
+
+String? _findMatchingPrefixOrNull(
+  String value, {
+  required List<String> prefixes,
+}) {
+  for (final String prefix in prefixes) {
+    if (value.startsWith(prefix)) {
+      return prefix;
+    }
+  }
+
+  return null;
 }
 
 class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
