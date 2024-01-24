@@ -90,6 +90,10 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
     // Validate values have type that matches paired key that is supported by
     // this plugin (CaptureRequestKeySupportedType).
     for (final CaptureRequestOption option in options) {
+      if (option.value == null) {
+        continue;
+      }
+
       switch (option.key) {
         case CaptureRequestKeySupportedType.controlAeLock:
           if (option.value.runtimeType != bool) {

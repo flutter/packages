@@ -474,6 +474,7 @@ abstract class CaptureRequestOptionsHostApi {
 abstract class Camera2CameraControlHostApi {
   void create(int identifier, int cameraControlIdentifier);
 
+  @async
   void addCaptureRequestOptions(
       int identifier, int captureRequestOptionsIdentifier);
 }

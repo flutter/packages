@@ -11,6 +11,7 @@ import 'camerax_library.g.dart';
 import 'capture_request_options.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'system_services.dart';
 
 /// Class that provides ability to interopoerate with android.hardware.camera2
 /// APIs and apply options to its specific controls like capture request
@@ -119,10 +120,15 @@ class _Camera2CameraControlHostApiImpl extends Camera2CameraControlHostApi {
   Future<void> addCaptureRequestOptionsFromInstances(
     Camera2CameraControl instance,
     CaptureRequestOptions captureRequestOptions,
-  ) {
-    return addCaptureRequestOptions(
-      instanceManager.getIdentifier(instance)!,
-      instanceManager.getIdentifier(captureRequestOptions)!,
-    );
+  ) async {
+    try {
+      return addCaptureRequestOptions(
+        instanceManager.getIdentifier(instance)!,
+        instanceManager.getIdentifier(captureRequestOptions)!,
+      );
+    } on PlatformException catch (e) {
+      SystemServices.cameraErrorStreamController.add(e.message ??
+          'The camera was unable to set new capture request options due to new options being available or the camera being closed.');
+    }
   }
 }

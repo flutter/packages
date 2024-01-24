@@ -88,6 +88,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    * Constructs an {@link CameraControlHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
+   * @param context {@link Context} used to retrieve {@code Executor} where neeeded
    */
   public CameraControlHostApiImpl(
       @NonNull InstanceManager instanceManager, @NonNull Context context) {
@@ -99,7 +100,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link CameraControl}
-   * @param context {@link Context} used to retrieve {@code Executor} used to enable torch mode
+   * @param context {@link Context} used to retrieve {@code Executor} where neeeded
    */
   @VisibleForTesting
   CameraControlHostApiImpl(
@@ -112,11 +113,11 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
   }
 
   /**
-   * Sets the context that the {@code ProcessCameraProvider} will use to enable/disable torch mode
+   * Sets the context that the {@code CameraControl} will use to enable/disable torch mode
    * and set the zoom ratio.
    *
    * <p>If using the camera plugin in an add-to-app context, ensure that a new instance of the
-   * {@code CameraControl} is fetched via {@code #enableTorch} anytime the context changes.
+   * {@code CameraControl} is fetched anytime the context changes.
    */
   public void setContext(@NonNull Context context) {
     this.proxy.context = context;
