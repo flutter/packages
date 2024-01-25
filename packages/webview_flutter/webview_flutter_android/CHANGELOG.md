@@ -1,3 +1,7 @@
+## 3.14.0
+
+* Adds support to show JavaScript dialog. See `AndroidWebViewController.setOnJavaScriptAlertDialog`, `AndroidWebViewController.setOnJavaScriptConfirmDialog` and `AndroidWebViewController.setOnJavaScriptTextInputDialog`.
+
 ## 3.13.2
 
 * Fixes new lint warnings.
