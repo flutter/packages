@@ -16,6 +16,14 @@ import '../messages.g.dart';
 
 part 'sk_payment_queue_wrapper.g.dart';
 
+InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+
+/// Set up pigeon API.
+@visibleForTesting
+void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
+  _hostApi = api;
+}
+
 /// A wrapper around
 /// [`SKPaymentQueue`](https://developer.apple.com/documentation/storekit/skpaymentqueue?language=objc).
 ///
@@ -25,18 +33,7 @@ part 'sk_payment_queue_wrapper.g.dart';
 ///
 /// Full information on using `SKPaymentQueue` and processing purchases is
 /// available at the [In-App Purchase Programming
-/// Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267).
-
-InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
-
-@visibleForTesting
-
-///
-void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
-  _hostApi = api;
-}
-
-///
+/// Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267)
 class SKPaymentQueueWrapper {
   /// Returns the default payment queue.
   ///

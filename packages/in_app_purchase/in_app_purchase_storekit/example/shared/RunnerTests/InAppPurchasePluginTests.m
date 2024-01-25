@@ -140,7 +140,7 @@
 
   FlutterError *error;
 
-  [self.plugin addPayment:argument error:&error];
+  [self.plugin addPaymentPaymentMap:argument error:&error];
 
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg any]]);
   XCTAssertEqualObjects(@"storekit_duplicate_product_object", error.code);
@@ -161,12 +161,18 @@
   FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
   OCMStub([mockHandler addPayment:[OCMArg any]]).andReturn(YES);
   self.plugin.paymentQueueHandler = mockHandler;
-
   FlutterError *error;
 
-  [self.plugin addPayment:argument error:&error];
+  [self.plugin addPaymentPaymentMap:argument error:&error];
+
   XCTAssertNil(error);
-  OCMVerify(times(1), [mockHandler addPayment:[OCMArg any]]);
+  OCMVerify(times(1), [mockHandler addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
+                                     SKPayment *payment = obj;
+                                     XCTAssert(payment != nil);
+                                     XCTAssert(payment.productIdentifier == @"123");
+                                     XCTAssert(payment.quantity == 1);
+                                     return YES;
+                                   }]]);
 }
 
 - (void)testAddPaymentSuccessWithPaymentDiscount {
@@ -189,7 +195,7 @@
 
   FlutterError *error;
 
-  [self.plugin addPayment:argument error:&error];
+  [self.plugin addPaymentPaymentMap:argument error:&error];
   XCTAssertNil(error);
   OCMVerify(
       times(1),
@@ -238,7 +244,7 @@
     self.plugin.paymentQueueHandler = mockHandler;
     FlutterError *error;
 
-    [self.plugin addPayment:argument error:&error];
+    [self.plugin addPaymentPaymentMap:argument error:&error];
 
     XCTAssertEqualObjects(@"storekit_invalid_payment_discount_object", error.code);
     XCTAssertEqualObjects(@"You have requested a payment and specified a "
@@ -261,7 +267,7 @@
   self.plugin.paymentQueueHandler = mockHandler;
   FlutterError *error;
 
-  [self.plugin addPayment:argument error:&error];
+  [self.plugin addPaymentPaymentMap:argument error:&error];
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
                                      SKPayment *payment = obj;
                                      return !payment.simulatesAskToBuyInSandbox;
@@ -414,9 +420,8 @@
       [FIAObjectTranslator convertTransactionToPigeon:original];
   SKPaymentTransactionMessage *result = [self.plugin transactionsWithError:&error][0];
 
-  // Using a private pigeon method to avoid extraneous tests?
-  XCTAssertTrue([result respondsToSelector:@selector(toList)]);
-  XCTAssertEqualObjects([result toList], [originalPigeon toList]);
+  XCTAssertEqualObjects([self PaymentTransactionToList:result],
+                        [self PaymentTransactionToList:originalPigeon]);
 }
 
 - (void)testStartObservingPaymentQueue {
@@ -538,4 +543,48 @@
 }
 #endif
 
+// Pigeon message deserializers for easy comparison
+
+- (NSArray *)PaymentTransactionToList:(SKPaymentTransactionMessage *)paymentTransaction {
+  return @[
+    (paymentTransaction.payment ? [self PaymentToList:paymentTransaction] : [NSNull null]),
+    @(paymentTransaction.transactionState),
+    (paymentTransaction.originalTransaction
+         ? [self PaymentTransactionToList:paymentTransaction.originalTransaction]
+         : [NSNull null]),
+    paymentTransaction.transactionTimeStamp ?: [NSNull null],
+    paymentTransaction.transactionIdentifier ?: [NSNull null],
+    (paymentTransaction.error ? [self ErrorToList:paymentTransaction.error] : [NSNull null]),
+  ];
+}
+
+- (NSArray *)PaymentToList:(SKPaymentMessage *)payment {
+  return @[
+    payment.productIdentifier ?: [NSNull null],
+    payment.applicationUsername ?: [NSNull null],
+    payment.requestData ?: [NSNull null],
+    @(payment.quantity),
+    @(payment.simulatesAskToBuyInSandbox),
+    (payment.paymentDiscount ? [self PaymentDiscountToList:payment.paymentDiscount]
+                             : [NSNull null]),
+  ];
+}
+
+- (NSArray *)PaymentDiscountToList:(SKPaymentDiscountMessage *)discount {
+  return @[
+    discount.identifier ?: [NSNull null],
+    discount.keyIdentifier ?: [NSNull null],
+    discount.nonce ?: [NSNull null],
+    discount.signature ?: [NSNull null],
+    @(discount.timestamp),
+  ];
+}
+
+- (NSArray *)ErrorToList:(SKErrorMessage *)error {
+  return @[
+    @(error.code),
+    error.domain ?: [NSNull null],
+    error.userInfo ?: [NSNull null],
+  ];
+}
 @end

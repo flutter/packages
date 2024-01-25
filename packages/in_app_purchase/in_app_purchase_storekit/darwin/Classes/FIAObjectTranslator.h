@@ -58,15 +58,16 @@ NS_ASSUME_NONNULL_BEGIN
     API_AVAILABLE(ios(12.2));
 
 + (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
-    (SKPaymentTransaction *)transaction;
+    (nullable SKPaymentTransaction *)transaction;
 
-+ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(SKStorefront *)storefront
++ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
     API_AVAILABLE(ios(13.0));
 
-+ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:(SKPaymentDiscount *)discount
-    API_AVAILABLE(ios(12.2));
++ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
+    (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2));
 
-+ (nullable SKPaymentMessage *)convertPaymentToPigeon:(SKPayment *)payment API_AVAILABLE(ios(12.2));
++ (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
+    API_AVAILABLE(ios(12.2));
 
 + (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error;
 @end

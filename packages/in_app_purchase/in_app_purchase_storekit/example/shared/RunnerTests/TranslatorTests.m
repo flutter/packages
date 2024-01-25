@@ -414,19 +414,19 @@
     XCTAssertEqualObjects(paymentDiscount.nonce,
                           [[NSUUID alloc] initWithUUIDString:paymentDiscountPigeon.nonce]);
     XCTAssertEqual(paymentDiscount.signature, paymentDiscountPigeon.signature);
-    XCTAssertEqual(paymentDiscount.timestamp, paymentDiscountPigeon.timestamp);
+    XCTAssertEqual([paymentDiscount.timestamp intValue], paymentDiscountPigeon.timestamp);
   }
 }
 
 - (void)testSKErrorConvertToPigeon {
   NSError *error = [NSError errorWithDomain:SKErrorDomain code:3 userInfo:@{@"key" : @42}];
-  SKErrorMessage *msg = [SKErrorMessage makeWithCode:@(3)
+  SKErrorMessage *msg = [SKErrorMessage makeWithCode:3
                                               domain:SKErrorDomain
                                             userInfo:@{@"key" : @42}];
 
   SKErrorMessage *skerror = [FIAObjectTranslator convertSKErrorToPigeon:error];
   XCTAssertEqual(skerror.domain, msg.domain);
-  XCTAssertEqualObjects(skerror.code, msg.code);
+  XCTAssertEqual(skerror.code, msg.code);
   XCTAssertEqualObjects(skerror.userInfo, msg.userInfo);
 }
 
@@ -438,9 +438,9 @@
     XCTAssertEqual(payment.productIdentifier, msg.productIdentifier);
     XCTAssertEqualObjects(payment.requestData,
                           [msg.requestData dataUsingEncoding:NSUTF8StringEncoding]);
-    XCTAssertEqual(payment.quantity, [msg.quantity integerValue]);
+    XCTAssertEqual(payment.quantity, msg.quantity);
     XCTAssertEqual(payment.applicationUsername, msg.applicationUsername);
-    XCTAssertEqual(payment.simulatesAskToBuyInSandbox, [msg.simulatesAskToBuyInSandbox boolValue]);
+    XCTAssertEqual(payment.simulatesAskToBuyInSandbox, msg.simulatesAskToBuyInSandbox);
   }
 }
 

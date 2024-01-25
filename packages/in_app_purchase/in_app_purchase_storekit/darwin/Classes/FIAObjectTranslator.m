@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #import "FIAObjectTranslator.h"
-#import "messages.g.h"
 
 #pragma mark - SKProduct Coders
 
@@ -290,7 +289,7 @@
 }
 
 + (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
-    (SKPaymentTransaction *)transaction API_AVAILABLE(ios(12.2)) {
+    (nullable SKPaymentTransaction *)transaction API_AVAILABLE(ios(12.2)) {
   if (!transaction) {
     return nil;
   }
@@ -299,7 +298,7 @@
            transactionState:[self convertTransactionStateToPigeon:transaction.transactionState]
         originalTransaction:transaction.originalTransaction
                                 ? [self convertTransactionToPigeon:transaction.originalTransaction]
-                                : NULL
+                                : nil
        transactionTimeStamp:[NSNumber numberWithDouble:[transaction.transactionDate
                                                                timeIntervalSince1970]]
       transactionIdentifier:transaction.transactionIdentifier
@@ -308,7 +307,7 @@
 }
 
 + (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error {
-  SKErrorMessage *msg = [SKErrorMessage makeWithCode:@(error.code)
+  SKErrorMessage *msg = [SKErrorMessage makeWithCode:error.code
                                               domain:error.domain
                                             userInfo:error.userInfo];
   return msg;
@@ -330,7 +329,7 @@
   }
 }
 
-+ (nullable SKPaymentMessage *)convertPaymentToPigeon:(SKPayment *)payment
++ (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
     API_AVAILABLE(ios(12.2)) {
   if (!payment) {
     return nil;
@@ -340,14 +339,14 @@
              applicationUsername:payment.applicationUsername
                      requestData:[[NSString alloc] initWithData:payment.requestData
                                                        encoding:NSUTF8StringEncoding]
-                        quantity:@(payment.quantity)
-      simulatesAskToBuyInSandbox:@(payment.simulatesAskToBuyInSandbox)
+                        quantity:payment.quantity
+      simulatesAskToBuyInSandbox:payment.simulatesAskToBuyInSandbox
                  paymentDiscount:[self convertPaymentDiscountToPigeon:payment.paymentDiscount]];
   return msg;
 }
 
-+ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:(SKPaymentDiscount *)discount
-    API_AVAILABLE(ios(12.2)) {
++ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
+    (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2)) {
   if (!discount) {
     return nil;
   }
@@ -356,12 +355,12 @@
                                      keyIdentifier:discount.keyIdentifier
                                              nonce:[discount.nonce UUIDString]
                                          signature:discount.signature
-                                         timestamp:discount.timestamp];
+                                         timestamp:[discount.timestamp intValue]];
 
   return msg;
 }
 
-+ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(SKStorefront *)storefront
++ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
     API_AVAILABLE(ios(13.0)) {
   if (!storefront) {
     return nil;

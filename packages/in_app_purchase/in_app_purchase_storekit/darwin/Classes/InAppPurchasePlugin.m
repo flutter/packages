@@ -9,7 +9,6 @@
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
-#import "messages.g.h"
 
 @interface InAppPurchasePlugin ()
 
@@ -45,7 +44,7 @@
   InAppPurchasePlugin *instance = [[InAppPurchasePlugin alloc] initWithRegistrar:registrar];
   [registrar addMethodCallDelegate:instance channel:channel];
   [registrar addApplicationDelegate:instance];
-  InAppPurchaseAPISetup(registrar.messenger, instance);
+  SetUpInAppPurchaseAPI(registrar.messenger, instance);
 }
 
 - (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager {
@@ -136,7 +135,7 @@
   for (SKPaymentTransaction *transaction in transactions) {
     [transactionMaps addObject:[FIAObjectTranslator convertTransactionToPigeon:transaction]];
   }
-  return (transactionMaps);
+  return transactionMaps;
 }
 
 - (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error
@@ -184,8 +183,8 @@
   }];
 }
 
-- (void)addPayment:(nonnull NSDictionary *)paymentMap
-             error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+- (void)addPaymentPaymentMap:(nonnull NSDictionary *)paymentMap
+                       error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   NSString *productID = [paymentMap objectForKey:@"productIdentifier"];
   // When a product is already fetched, we create a payment object with
   // the product to process the payment.

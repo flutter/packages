@@ -245,12 +245,12 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
     // Keep the received paymentDiscount parameter when testing payment with discount.
     if (paymentMap['applicationUsername']! == 'userWithDiscount') {
-      final Map<dynamic, dynamic>? discountArgument =
-          paymentMap['paymentDiscount'] as Map<dynamic, dynamic>?;
+      final Map<Object?, Object?>? discountArgument =
+          paymentMap['paymentDiscount'] as Map<Object?, Object?>?;
       if (discountArgument != null) {
-        discountReceived = discountArgument.cast<String, dynamic>();
+        discountReceived = discountArgument.cast<String, Object?>();
       } else {
-        discountReceived = <String, dynamic>{};
+        discountReceived = <String, Object?>{};
       }
     }
 
@@ -259,7 +259,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     transactionList.add(transaction);
     InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
         transactions: <SKPaymentTransactionWrapper>[transaction]);
-    sleep(const Duration(milliseconds: 30));
     if (testTransactionFail) {
       final SKPaymentTransactionWrapper transactionFailed =
           createFailedTransaction(id, quantity: quantity);
@@ -283,13 +282,11 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   SKStorefrontMessage storefront() {
-    // TODO(louisehsu): implement storefront
     throw UnimplementedError();
   }
 
   @override
   List<SKPaymentTransactionMessage?> transactions() {
-    // TODO(louisehsu): implement transactions
     throw UnimplementedError();
   }
 }
