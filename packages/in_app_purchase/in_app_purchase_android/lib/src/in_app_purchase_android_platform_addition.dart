@@ -148,10 +148,13 @@ class InAppPurchaseAndroidPlatformAddition
     );
   }
 
-  /// TODO
-  Future<BillingConfigWrapper> getBillingConfig() async {
+  /// Returns Play billing country code based on ISO-3166-1 alpha2 format.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
+  /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
+  Future<String> getBillingConfig() async {
     return _billingClientManager.runWithClientNonRetryable(
-      (BillingClient client) => client.getBillingConfig(),
+      (BillingClient client) async => (await client.getBillingConfig()).countryCode,
     );
   }
 }

@@ -4,7 +4,6 @@
 
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
-import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:test/test.dart';
 
 const PurchaseWrapper dummyPurchase = PurchaseWrapper(

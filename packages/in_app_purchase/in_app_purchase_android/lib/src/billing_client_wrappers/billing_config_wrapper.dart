@@ -25,7 +25,7 @@ const String kInvalidBillingConfigErrorMessage =
 @immutable
 class BillingConfigWrapper implements HasBillingResponse {
   /// Constructs the object with [responseCode] and [debugMessage].
-  const BillingConfigWrapper({required this.responseCode, this.debugMessage, this.countryCode});
+  const BillingConfigWrapper({required this.responseCode, this.debugMessage, this.countryCode = ''});
 
   /// Constructs an instance of this from a key value map of data.
   ///
@@ -55,7 +55,7 @@ class BillingConfigWrapper implements HasBillingResponse {
 
   /// https://developer.android.com/reference/com/android/billingclient/api/BillingConfig#getCountryCode()
   @JsonKey(defaultValue: '')
-  final String? countryCode;
+  final String countryCode;
 
   @override
   bool operator ==(Object other) {

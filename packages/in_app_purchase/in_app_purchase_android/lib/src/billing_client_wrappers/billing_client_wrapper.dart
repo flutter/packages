@@ -325,12 +325,15 @@ class BillingClient {
     return result ?? false;
   }
 
-  /// TODO
+  /// BillingConfig method channel string identifier.
+  //
+  // Must match the value of GET_BILLING_CONFIG in
+  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
   @visibleForTesting
   final String getBillingConfigMethodString =
       'BillingClient#getBillingConfig()';
 
-  /// TODO
+  /// Fetches billing config info into a [BillingConfigWrapper] object.
   Future<BillingConfigWrapper> getBillingConfig() async {
     return BillingConfigWrapper.fromJson((await channel
             .invokeMapMethod<String, dynamic>(getBillingConfigMethodString)) ??
