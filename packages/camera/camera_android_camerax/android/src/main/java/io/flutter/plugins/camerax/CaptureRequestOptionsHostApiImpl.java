@@ -10,9 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.CaptureRequestOptions;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestKeySupportedType;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestOption;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestOptionsHostApi;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,13 +32,13 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
 
     /** Creates an instance of {@link CaptureRequestOptions}. */
     @SuppressWarnings("unchecked") // TODO(camsim99): If I keep this, explain why this is safe.
-    public CaptureRequestOptions create(@NonNull List<CaptureRequestOption> options) {
+    public CaptureRequestOptions create(@NonNull Map<CaptureRequestKeySupportedType, Object> options) {
       CaptureRequestOptions.Builder builder = new CaptureRequestOptions.Builder();
 
-      for (CaptureRequestOption option : options) {
+      for (Map.Entry<CaptureRequestKeySupportedType, Object> option : options.entrySet()) {
         CaptureRequestKeySupportedType optionKeyType = option.getKey();
         CaptureRequest.Key<? extends Object> optionKey = getCaptureRequestKey(optionKeyType);
-        String optionValue = option.getValue();
+        Object optionValue = option.getValue();
 
         if (optionValue == null) {
           builder.clearCaptureRequestOption(optionKey);
@@ -46,9 +47,9 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
 
         switch (optionKeyType) {
           case CONTROL_AE_LOCK:
-            builder.setCaptureRequestOption((CaptureRequest.Key<Boolean>) optionKey, Boolean.parseBoolean(option.getValue()));
+            builder.setCaptureRequestOption((CaptureRequest.Key<Boolean>) optionKey, (Boolean) optionValue);
             break;
-          default: 
+          default:
             throw new IllegalArgumentException(
               "The capture request key is not currently supported by the plugin.");
         }
@@ -97,7 +98,11 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
   }
 
   @Override
-  public void create(@NonNull Long identifier, @NonNull List<CaptureRequestOption> options) {
-    instanceManager.addDartCreatedInstance(proxy.create(options), identifier);
+  public void create(@NonNull Long identifier, @NonNull Map<Long, Object> options) {
+    Map<CaptureRequestKeySupportedType, Object> decodedOptions = new HashMap<CaptureRequestKeySupportedType, Object>();
+    for (Map.Entry<Long, Object> option : options.entrySet()) {
+      decodedOptions.put(CaptureRequestKeySupportedType.values()[option.getKey().intValue()], option.getValue());
+    }
+    instanceManager.addDartCreatedInstance(proxy.create(decodedOptions), identifier);
   }
 }
