@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '16.0.3';
+const String pigeonVersion = '16.0.4';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -309,7 +309,7 @@ bool isVoid(TypeMirror type) {
 void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   final String prefix = linePrefix ?? '';
   for (final String line in lines) {
-    indent.writeln('$prefix$line');
+    indent.writeln(line.isNotEmpty ? '$prefix$line' : prefix.trimRight());
   }
 }
 

@@ -4,10 +4,13 @@
 
 // This file is hand-formatted.
 
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../dart/model.dart';
+import '../../formats.dart';
+
 import 'content.dart';
 
 /// Signature of builders for local widgets.
@@ -169,6 +172,22 @@ class LocalWidgetLibrary extends WidgetLibrary {
   LocalWidgetBuilder? findConstructor(String name) {
     return _widgets[name];
   }
+
+  /// The widgets defined by this [LocalWidgetLibrary].
+  ///
+  /// The returned map is an immutable view of the map provided to the constructor.
+  /// They keys are the unqualified widget names, and the values are the corresponding
+  /// [LocalWidgetBuilder]s.
+  ///
+  /// The map never changes during the lifetime of the [LocalWidgetLibrary], but a new
+  /// instance of an [UnmodifiableMapView] is returned each time this getter is used.
+  ///
+  /// See also:
+  ///
+  ///  * [createCoreWidgets], a function that creates a [Map] of local widgets.
+  UnmodifiableMapView<String, LocalWidgetBuilder> get widgets {
+    return UnmodifiableMapView<String, LocalWidgetBuilder>(_widgets);
+  }
 }
 
 class _ResolvedConstructor {
@@ -224,6 +243,24 @@ class Runtime extends ChangeNotifier {
   void clearLibraries() {
     _libraries.clear();
     _clearCache();
+  }
+
+  /// The widget libraries imported in this [Runtime].
+  ///
+  /// The returned map is an immutable view of the map updated by calls to
+  /// [update] and [clearLibraries].
+  /// 
+  /// The keys are instances [LibraryName] which encode fully qualified library
+  /// names, and the values are the corresponding [WidgetLibrary]s.
+  /// 
+  /// The returned map is an immutable copy of the registered libraries
+  /// at the time of this call. 
+  ///
+  /// See also:
+  ///
+  ///  * [update] and [clearLibraries], functions that populate this map.
+  UnmodifiableMapView<LibraryName, WidgetLibrary> get libraries {
+    return UnmodifiableMapView<LibraryName, WidgetLibrary>(Map<LibraryName, WidgetLibrary>.from(_libraries));
   }
 
   final Map<FullyQualifiedWidgetName, _ResolvedConstructor?> _cachedConstructors = <FullyQualifiedWidgetName, _ResolvedConstructor?>{};
