@@ -253,12 +253,3 @@ Map<String, dynamic> buildBillingResultMap(BillingResultWrapper original) {
     'debugMessage': original.debugMessage,
   };
 }
-
-Map<String, dynamic> buildBillingConfigMap(BillingConfigWrapper original) {
-  return <String, dynamic>{
-    'responseCode':
-        const BillingResponseConverter().toJson(original.responseCode),
-    'debugMessage': original.debugMessage,
-    'countryCode': original.countryCode,
-  };
-}

@@ -677,6 +677,15 @@ void main() {
   });
 }
 
+Map<String, dynamic> buildBillingConfigMap(BillingConfigWrapper original) {
+  return <String, dynamic>{
+    'responseCode':
+        const BillingResponseConverter().toJson(original.responseCode),
+    'debugMessage': original.debugMessage,
+    'countryCode': original.countryCode,
+  };
+}
+
 /// This allows a value of type T or T? to be treated as a value of type T?.
 ///
 /// We use this so that APIs that have become non-nullable can still be used

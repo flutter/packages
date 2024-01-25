@@ -35,7 +35,7 @@ class BillingConfigWrapper implements HasBillingResponse {
     if (map == null || map.isEmpty) {
       return const BillingConfigWrapper(
           responseCode: BillingResponse.error,
-          debugMessage: kInvalidBillingResultErrorMessage,
+          debugMessage: kInvalidBillingConfigErrorMessage,
           countryCode: '',
           );
     }
