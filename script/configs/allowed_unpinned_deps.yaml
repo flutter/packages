@@ -25,9 +25,11 @@
 - build_config
 - build_runner
 - build_test
+- code_builder
 - collection
 - convert
 - crypto
+- dart_style
 - fake_async
 - ffi
 - gcloud
