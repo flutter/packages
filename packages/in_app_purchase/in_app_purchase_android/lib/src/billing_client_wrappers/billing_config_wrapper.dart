@@ -36,7 +36,6 @@ class BillingConfigWrapper implements HasBillingResponse {
       return const BillingConfigWrapper(
           responseCode: BillingResponse.error,
           debugMessage: kInvalidBillingConfigErrorMessage,
-          countryCode: '',
           );
     }
     return _$BillingConfigWrapperFromJson(map);

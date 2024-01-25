@@ -671,7 +671,6 @@ void main() {
           equals(const BillingConfigWrapper(
               responseCode: BillingResponse.error,
               debugMessage: kInvalidBillingConfigErrorMessage,
-              countryCode: '',
               )));
     });
   });
