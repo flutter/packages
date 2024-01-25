@@ -165,7 +165,7 @@
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
                                      SKPayment *payment = obj;
                                      XCTAssert(payment != nil);
-                                     XCTAssertEquals(payment.productIdentifier, @"123");
+                                     XCTAssertEqual(payment.productIdentifier, @"123");
                                      XCTAssert(payment.quantity == 1);
                                      return YES;
                                    }]]);
