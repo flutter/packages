@@ -137,8 +137,8 @@ class AstProxyApi extends Api {
     super.documentationComments = const <String>[],
     required this.constructors,
     required this.fields,
-    this.superClassName,
-    this.interfacesNames = const <String>{},
+    this.superClass,
+    this.interfaces = const <TypeDeclaration>{},
   });
 
   /// List of constructors inside the API.
@@ -148,10 +148,10 @@ class AstProxyApi extends Api {
   List<ApiField> fields;
 
   /// Name of the class this class considers the super class.
-  final String? superClassName;
+  TypeDeclaration? superClass;
 
   /// Name of the classes this class considers to be implemented.
-  final Set<String> interfacesNames;
+  Set<TypeDeclaration> interfaces;
 
   /// Methods implemented in the host platform language.
   Iterable<Method> get hostMethods => methods.where(
@@ -181,7 +181,7 @@ class AstProxyApi extends Api {
   String toString() {
     return '(ProxyApi name:$name methods:$methods field:$fields '
         'documentationComments:$documentationComments '
-        'superClassName:$superClassName interfacesNames:$interfacesNames)';
+        'superClassName:$superClass interfacesNames:$interfaces)';
   }
 }
 
@@ -428,6 +428,7 @@ class NamedType extends Node {
   final List<String> documentationComments;
 
   /// Returns a copy of [NamedType] instance with new attached [TypeDeclaration].
+  @mustBeOverridden
   NamedType copyWithType(TypeDeclaration type) {
     return NamedType(
       name: name,

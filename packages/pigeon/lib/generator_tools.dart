@@ -622,39 +622,43 @@ String? deducePackageName(String mainDartFile) {
 /// Recursively search for all the interfaces apis from a list of names of
 /// interfaces.
 ///
-/// This method assumes that all interfaces names can be found in
-/// [allProxyApis] and an api doesn't contains itself as an interface.
-/// Otherwise, throws an [ArgumentError].
-Set<AstProxyApi> recursiveFindAllInterfacesApis(
-  AstProxyApi api,
-  Iterable<AstProxyApi> allProxyApis,
-) {
-  final Set<AstProxyApi> interfacesApis = <AstProxyApi>{};
+/// This method assumes that all interfaces are ProxyApis and an api doesn't
+/// contains itself as an interface. Otherwise, throws an [ArgumentError].
+Set<AstProxyApi> recursiveFindAllInterfaceApis(
+  AstProxyApi api, {
+  Set<AstProxyApi> seenApis = const <AstProxyApi>{},
+}) {
+  final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
 
-  for (final AstProxyApi proxyApi in allProxyApis) {
-    if (api.interfacesNames.contains(proxyApi.name)) {
-      interfacesApis.add(proxyApi);
-    }
+  allInterfaces.addAll(
+    api.interfaces.map(
+      (TypeDeclaration type) {
+        if (!type.isProxyApi) {
+          throw ArgumentError(
+            'Could not find a valid ProxyApi for an interface: $type',
+          );
+        } else if (seenApis.contains(type.associatedProxyApi)) {
+          throw ArgumentError(
+            'A ProxyApi cannot be a super class of itself: ${type.baseName}',
+          );
+        }
+        return type.associatedProxyApi!;
+      },
+    ),
+  );
+
+  // Adds the current api since it would be invalid for it to be an interface
+  // of itself.
+  final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, api};
+
+  for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
+    allInterfaces.addAll(recursiveFindAllInterfaceApis(
+      interfaceApi,
+      seenApis: newSeenApis,
+    ));
   }
 
-  if (interfacesApis.length != api.interfacesNames.length) {
-    throw ArgumentError(
-      'Could not find a valid ProxyApi for every interface name: '
-      '${api.interfacesNames}, ${allProxyApis.map((Api api) => api.name)}',
-    );
-  }
-
-  // This removes the current api since it would be invalid for it to be a
-  // super class of itself.
-  final Set<AstProxyApi> allProxyApisWithoutCurrent =
-      Set<AstProxyApi>.from(allProxyApis)..remove(api);
-  for (final AstProxyApi proxyApi in Set<AstProxyApi>.from(interfacesApis)) {
-    interfacesApis.addAll(
-      recursiveFindAllInterfacesApis(proxyApi, allProxyApisWithoutCurrent),
-    );
-  }
-
-  return interfacesApis;
+  return allInterfaces;
 }
 
 /// Creates a list of ProxyApis where each `extends` the ProxyApi that follows
@@ -665,45 +669,40 @@ Set<AstProxyApi> recursiveFindAllInterfacesApis(
 /// This method assumes the super classes of each ProxyApi doesn't create a
 /// loop. Throws a [ArgumentError] if a loop is found.
 ///
-/// This method also assumes that all super class names can be found in
-/// [allProxyApis]. Otherwise, throws an [ArgumentError].
-List<AstProxyApi> recursiveGetSuperClassApisChain(
-  AstProxyApi proxyApi,
-  Iterable<AstProxyApi> allProxyApis,
-) {
-  final List<AstProxyApi> proxyApis = <AstProxyApi>[];
+/// This method also assumes that all super classes are ProxyApis. Otherwise,
+/// throws an [ArgumentError].
+List<AstProxyApi> recursiveGetSuperClassApisChain(AstProxyApi api) {
+  final List<AstProxyApi> superClassChain = <AstProxyApi>[];
 
-  String? currentProxyApiName = proxyApi.superClassName;
-  while (currentProxyApiName != null) {
-    if (proxyApis.length > allProxyApis.length) {
-      final Iterable<String> apiNames = proxyApis.map(
-        (AstProxyApi api) => api.name,
-      );
-      throw ArgumentError(
-        'Loop found when processing super classes for a ProxyApi: '
-        '${proxyApi.name},${apiNames.join(',')}',
-      );
-    }
-
-    AstProxyApi? nextProxyApi;
-    for (final AstProxyApi node in allProxyApis) {
-      if (currentProxyApiName == node.name) {
-        nextProxyApi = node;
-        proxyApis.add(node);
-      }
-    }
-
-    if (nextProxyApi == null) {
-      throw ArgumentError(
-        'Could not find a ProxyApi for every super class name: '
-        '$currentProxyApiName, ${allProxyApis.map((Api api) => api.name)}',
-      );
-    }
-
-    currentProxyApiName = nextProxyApi.superClassName;
+  if (api.superClass != null && !api.superClass!.isProxyApi) {
+    throw ArgumentError(
+      'Could not find a ProxyApi for super class: ${api.superClass!.baseName}',
+    );
   }
 
-  return proxyApis;
+  AstProxyApi? currentProxyApi = api.superClass?.associatedProxyApi;
+  while (currentProxyApi != null) {
+    if (superClassChain.contains(currentProxyApi)) {
+      throw ArgumentError(
+        'Loop found when processing super classes for a ProxyApi: '
+        '${api.name}, ${superClassChain.map((AstProxyApi api) => api.name)}',
+      );
+    }
+
+    superClassChain.add(currentProxyApi);
+
+    if (currentProxyApi.superClass != null &&
+        !currentProxyApi.superClass!.isProxyApi) {
+      throw ArgumentError(
+        'Could not find a ProxyApi for super class: '
+        '${currentProxyApi.superClass!.baseName}',
+      );
+    }
+
+    currentProxyApi = currentProxyApi.superClass?.associatedProxyApi;
+  }
+
+  return superClassChain;
 }
 
 /// Enum to specify api type when generating code.

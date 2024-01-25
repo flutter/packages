@@ -375,31 +375,36 @@ void main() {
   });
 
   test('recursiveGetSuperClassApisChain', () {
-    final AstProxyApi api = AstProxyApi(
-      name: 'Api',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-      superClassName: 'Api2',
-    );
-    final AstProxyApi superClassApi = AstProxyApi(
-      name: 'Api2',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-      superClassName: 'Api3',
-    );
     final AstProxyApi superClassOfSuperClassApi = AstProxyApi(
       name: 'Api3',
       methods: <Method>[],
       constructors: <Constructor>[],
       fields: <ApiField>[],
     );
-
-    final List<AstProxyApi> apiChain = recursiveGetSuperClassApisChain(
-      api,
-      <AstProxyApi>[superClassOfSuperClassApi, api, superClassApi],
+    final AstProxyApi superClassApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      superClass: TypeDeclaration(
+        baseName: 'Api3',
+        isNullable: false,
+        associatedProxyApi: superClassOfSuperClassApi,
+      ),
     );
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      superClass: TypeDeclaration(
+        baseName: 'Api2',
+        isNullable: false,
+        associatedProxyApi: superClassApi,
+      ),
+    );
+
+    final List<AstProxyApi> apiChain = recursiveGetSuperClassApisChain(api);
 
     expect(
       apiChain,
@@ -411,26 +416,11 @@ void main() {
   });
 
   test('recursiveFindAllInterfacesApis', () {
-    final AstProxyApi api = AstProxyApi(
-      name: 'Api',
+    final AstProxyApi interfaceOfInterfaceApi2 = AstProxyApi(
+      name: 'Api5',
       methods: <Method>[],
       constructors: <Constructor>[],
       fields: <ApiField>[],
-      interfacesNames: <String>{'Api2', 'Api3'},
-    );
-    final AstProxyApi interfaceApi = AstProxyApi(
-      name: 'Api2',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-      interfacesNames: <String>{'Api4', 'Api5'},
-    );
-    final AstProxyApi interfaceApi2 = AstProxyApi(
-      name: 'Api3',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-      interfacesNames: <String>{'Api5'},
     );
     final AstProxyApi interfaceOfInterfaceApi = AstProxyApi(
       name: 'Api4',
@@ -438,23 +428,57 @@ void main() {
       constructors: <Constructor>[],
       fields: <ApiField>[],
     );
-    final AstProxyApi interfaceOfInterfaceApi2 = AstProxyApi(
-      name: 'Api5',
+    final AstProxyApi interfaceApi2 = AstProxyApi(
+      name: 'Api3',
       methods: <Method>[],
       constructors: <Constructor>[],
       fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api5',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi2,
+        ),
+      },
+    );
+    final AstProxyApi interfaceApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api4',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi,
+        ),
+        TypeDeclaration(
+          baseName: 'Api5',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi2,
+        ),
+      },
+    );
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api2',
+          isNullable: false,
+          associatedProxyApi: interfaceApi,
+        ),
+        TypeDeclaration(
+          baseName: 'Api3',
+          isNullable: false,
+          associatedProxyApi: interfaceApi2,
+        ),
+      },
     );
 
-    final Set<AstProxyApi> allInterfaces = recursiveFindAllInterfacesApis(
-      api,
-      <AstProxyApi>[
-        api,
-        interfaceApi,
-        interfaceApi2,
-        interfaceOfInterfaceApi,
-        interfaceOfInterfaceApi2,
-      ],
-    );
+    final Set<AstProxyApi> allInterfaces = recursiveFindAllInterfaceApis(api);
 
     expect(
       allInterfaces,
@@ -475,25 +499,32 @@ void main() {
       methods: <Method>[],
       constructors: <Constructor>[],
       fields: <ApiField>[],
-      interfacesNames: <String>{'B'},
     );
     final AstProxyApi b = AstProxyApi(
       name: 'B',
       methods: <Method>[],
       constructors: <Constructor>[],
       fields: <ApiField>[],
-      interfacesNames: <String>{'C'},
     );
     final AstProxyApi c = AstProxyApi(
       name: 'C',
       methods: <Method>[],
       constructors: <Constructor>[],
       fields: <ApiField>[],
-      interfacesNames: <String>{'A'},
     );
 
+    a.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'B', isNullable: false, associatedProxyApi: b),
+    };
+    b.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'C', isNullable: false, associatedProxyApi: c),
+    };
+    c.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'A', isNullable: false, associatedProxyApi: a),
+    };
+
     expect(
-      () => recursiveFindAllInterfacesApis(a, <AstProxyApi>[a, b, c]),
+      () => recursiveFindAllInterfaceApis(a),
       throwsArgumentError,
     );
   });

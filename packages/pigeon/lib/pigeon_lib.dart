@@ -951,35 +951,24 @@ List<Error> _validateProxyApi(
     );
   }
 
-  // Validate super class is another ProxyApi
-  final String? superClassName = api.superClassName;
-  if (api.superClassName != null &&
-      !proxyApis.any((AstProxyApi api) => api.name == superClassName)) {
-    result.add(Error(
-      message:
-          'Super class of ${api.name} is not marked as a @ProxyApi: $superClassName',
-    ));
-  }
+  AstProxyApi? directSuperClass;
 
-  // Validate all interfaces are other ProxyApis
-  for (final String interfaceName in api.interfacesNames) {
-    if (!proxyApis.any((AstProxyApi api) => api.name == interfaceName)) {
-      result.add(Error(
-        message:
-            'Interface of ${api.name} is not marked as a @ProxyApi: $interfaceName',
-      ));
+  // Validate direct super class is another ProxyApi
+  if (api.superClass != null) {
+    directSuperClass = proxyApis.firstWhereOrNull(
+      (AstProxyApi proxyApi) => proxyApi.name == api.superClass?.baseName,
+    );
+    if (directSuperClass == null) {
+      result.add(
+        Error(
+          message: 'Super class of ${api.name} is not marked as a @ProxyApi: '
+              '${api.superClass?.baseName}',
+        ),
+      );
     }
   }
 
-  List<AstProxyApi>? superClassChain;
-  try {
-    superClassChain = recursiveGetSuperClassApisChain(api, proxyApis);
-  } catch (error) {
-    result.add(Error(message: error.toString()));
-  }
-
   // Validate that the api does not inherit an unattached field from its super class.
-  final AstProxyApi? directSuperClass = superClassChain?.firstOrNull;
   if (directSuperClass != null &&
       directSuperClass.unattachedFields.isNotEmpty) {
     result.add(Error(
@@ -990,6 +979,19 @@ List<Error> _validateProxyApi(
         directSuperClass.unattachedFields.first.offset,
       ),
     ));
+  }
+
+  // Validate all interfaces are other ProxyApis
+  final Iterable<String> interfaceNames = api.interfaces.map(
+    (TypeDeclaration type) => type.baseName,
+  );
+  for (final String interfaceName in interfaceNames) {
+    if (!proxyApis.any((AstProxyApi api) => api.name == interfaceName)) {
+      result.add(Error(
+        message:
+            'Interface of ${api.name} is not marked as a @ProxyApi: $interfaceName',
+      ));
+    }
   }
 
   final bool hasUnattachedField = api.unattachedFields.isNotEmpty;
@@ -1032,7 +1034,10 @@ List<Error> _validateProxyApi(
         api.constructors.isEmpty &&
         api.fields.isEmpty;
     if (!isValidInterfaceProxyApi) {
-      for (final String interfaceName in proxyApi.interfacesNames) {
+      final Iterable<String> interfaceNames = proxyApi.interfaces.map(
+        (TypeDeclaration type) => type.baseName,
+      );
+      for (final String interfaceName in interfaceNames) {
         if (interfaceName == api.name) {
           result.add(Error(
             message:
@@ -1283,44 +1288,34 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     }
     for (final Class classDefinition in referencedClasses) {
-      final List<NamedType> fields = <NamedType>[];
-      for (final NamedType field in classDefinition.fields) {
-        fields.add(field.copyWithType(
-          _attachAssociatedDefinition(field.type),
-        ));
-      }
-      classDefinition.fields = fields;
+      classDefinition.fields = _attachAssociatedDefinitions(
+        classDefinition.fields,
+      );
     }
 
     for (final Api api in _apis) {
       for (final Method func in api.methods) {
-        final List<Parameter> paramList = <Parameter>[];
-        for (final Parameter param in func.parameters) {
-          paramList.add(param.copyWithType(
-            _attachAssociatedDefinition(param.type),
-          ));
-        }
-        func.parameters = paramList;
+        func.parameters = _attachAssociatedDefinitions(func.parameters);
         func.returnType = _attachAssociatedDefinition(func.returnType);
       }
       if (api is AstProxyApi) {
         for (final Constructor constructor in api.constructors) {
-          final List<Parameter> paramList = <Parameter>[];
-          for (final Parameter param in constructor.parameters) {
-            paramList.add(
-              param.copyWithType(_attachAssociatedDefinition(param.type)),
-            );
-          }
-          constructor.parameters = paramList;
+          constructor.parameters = _attachAssociatedDefinitions(
+            constructor.parameters,
+          );
         }
 
-        final List<ApiField> fieldList = <ApiField>[];
-        for (final ApiField field in api.fields) {
-          fieldList.add(field.copyWithType(
-            _attachAssociatedDefinition(field.type),
-          ));
+        api.fields = _attachAssociatedDefinitions(api.fields);
+
+        if (api.superClass != null) {
+          api.superClass = _attachAssociatedDefinition(api.superClass!);
         }
-        api.fields = fieldList;
+
+        final Set<TypeDeclaration> newInterfaceSet = <TypeDeclaration>{};
+        for (final TypeDeclaration interface in api.interfaces) {
+          newInterfaceSet.add(_attachAssociatedDefinition(interface));
+        }
+        api.interfaces = newInterfaceSet;
       }
     }
 
@@ -1350,6 +1345,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return type.copyWithProxyApi(assocProxyApi);
     }
     return type;
+  }
+
+  List<T> _attachAssociatedDefinitions<T extends NamedType>(Iterable<T> types) {
+    final List<T> result = <T>[];
+    for (final NamedType type in types) {
+      result.add(
+        type.copyWithType(_attachAssociatedDefinition(type.type)) as T,
+      );
+    }
+    return result;
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {
@@ -1497,6 +1502,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         }
 
         final String? superClassName = annotationMap['superClass'] as String?;
+        TypeDeclaration? superClass;
         if (superClassName != null && node.extendsClause != null) {
           _errors.add(
             Error(
@@ -1505,6 +1511,27 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: _calculateLineNumber(source, node.offset),
             ),
           );
+        } else if (superClassName != null) {
+          superClass = TypeDeclaration(
+            baseName: superClassName,
+            isNullable: false,
+          );
+        } else if (node.extendsClause != null) {
+          superClass = TypeDeclaration(
+            baseName: node.extendsClause!.superclass.name2.lexeme,
+            isNullable: false,
+          );
+        }
+
+        final Set<TypeDeclaration> interfaces = <TypeDeclaration>{};
+        if (node.implementsClause != null) {
+          for (final dart_ast.NamedType type
+              in node.implementsClause!.interfaces) {
+            interfaces.add(TypeDeclaration(
+              baseName: type.name2.lexeme,
+              isNullable: false,
+            ));
+          }
         }
 
         _currentApi = AstProxyApi(
@@ -1512,12 +1539,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           methods: <Method>[],
           constructors: <Constructor>[],
           fields: <ApiField>[],
-          superClassName:
-              superClassName ?? node.extendsClause?.superclass.name2.lexeme,
-          interfacesNames: node.implementsClause?.interfaces
-                  .map<String>((dart_ast.NamedType type) => type.name2.lexeme)
-                  .toSet() ??
-              <String>{},
+          superClass: superClass,
+          interfaces: interfaces,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
