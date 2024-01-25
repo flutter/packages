@@ -232,10 +232,9 @@ import java.util.Map;
     return info;
   }
 
-  /**
-   * Converter from {@link BillingResult} and {@link BillingConfig} to map.
-   */
-  static HashMap<String, Object> fromBillingConfig(BillingResult result, BillingConfig billingConfig) {
+  /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
+  static HashMap<String, Object> fromBillingConfig(
+      BillingResult result, BillingConfig billingConfig) {
     HashMap<String, Object> info = fromBillingResult(result);
     info.put("countryCode", billingConfig.getCountryCode());
     return info;

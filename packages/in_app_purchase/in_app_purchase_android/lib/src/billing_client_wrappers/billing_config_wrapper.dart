@@ -25,7 +25,8 @@ const String kInvalidBillingConfigErrorMessage =
 @immutable
 class BillingConfigWrapper implements HasBillingResponse {
   /// Constructs the object with [responseCode] and [debugMessage].
-  const BillingConfigWrapper({required this.responseCode, this.debugMessage, this.countryCode = ''});
+  const BillingConfigWrapper(
+      {required this.responseCode, this.debugMessage, this.countryCode = ''});
 
   /// Constructs an instance of this from a key value map of data.
   ///
@@ -34,9 +35,9 @@ class BillingConfigWrapper implements HasBillingResponse {
   factory BillingConfigWrapper.fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) {
       return const BillingConfigWrapper(
-          responseCode: BillingResponse.error,
-          debugMessage: kInvalidBillingConfigErrorMessage,
-          );
+        responseCode: BillingResponse.error,
+        debugMessage: kInvalidBillingConfigErrorMessage,
+      );
     }
     return _$BillingConfigWrapperFromJson(map);
   }

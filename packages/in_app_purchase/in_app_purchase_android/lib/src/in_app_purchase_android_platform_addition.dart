@@ -153,7 +153,8 @@ class InAppPurchaseAndroidPlatformAddition
   /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
   Future<String> getBillingConfig() async {
     return _billingClientManager.runWithClientNonRetryable(
-      (BillingClient client) async => (await client.getBillingConfig()).countryCode,
+      (BillingClient client) async =>
+          (await client.getBillingConfig()).countryCode,
     );
   }
 }
