@@ -325,6 +325,7 @@ class BillingClient {
     return result ?? false;
   }
 
+  /// TODO
   @visibleForTesting
   final String getBillingConfigMethodString =
       'BillingClient#getBillingConfig()';

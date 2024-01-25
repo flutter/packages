@@ -646,21 +646,19 @@ void main() {
   group('billingConfig', () {
     const String billingConfigMethodName = 'BillingClient#getBillingConfig()';
     test('billingConfig returns object', () async {
-      late Map<Object?, Object?> arguments;
+      const BillingConfigWrapper expected = BillingConfigWrapper(
+          countryCode: 'US',
+          responseCode: BillingResponse.ok,
+          debugMessage: '');
       stubPlatform.addResponse(
         name: billingConfigMethodName,
-        value: const BillingConfigWrapper(
-            countryCode: 'US',
-            responseCode: BillingResponse.ok,
-            debugMessage: ''),
-        additionalStepBeforeReturn: (dynamic value) =>
-            arguments = value as Map<dynamic, dynamic>,
+        value: buildBillingConfigMap(expected),
       );
       final BillingConfigWrapper result =
           await billingClient.getBillingConfig();
       expect(result.countryCode, 'US');
+      expect(result, expected);
     });
-
 
     test('handles method channel returning null', () async {
       stubPlatform.addResponse(
@@ -672,7 +670,9 @@ void main() {
           result,
           equals(const BillingConfigWrapper(
               responseCode: BillingResponse.error,
-              debugMessage: kInvalidBillingConfigErrorMessage)));
+              debugMessage: kInvalidBillingConfigErrorMessage,
+              countryCode: '',
+              )));
     });
   });
 }
