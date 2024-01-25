@@ -16,10 +16,6 @@
 
 @end
 
-@interface SKPaymentTransactionMessage ()
-- (NSArray *)toList;
-@end
-
 @implementation InAppPurchasePluginTest
 
 - (void)setUp {
@@ -169,7 +165,7 @@
   OCMVerify(times(1), [mockHandler addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
                                      SKPayment *payment = obj;
                                      XCTAssert(payment != nil);
-                                     XCTAssert(payment.productIdentifier == @"123");
+                                     XCTAssertEquals(payment.productIdentifier, @"123");
                                      XCTAssert(payment.quantity == 1);
                                      return YES;
                                    }]]);
@@ -547,7 +543,7 @@
 
 - (NSArray *)PaymentTransactionToList:(SKPaymentTransactionMessage *)paymentTransaction {
   return @[
-    (paymentTransaction.payment ? [self PaymentToList:paymentTransaction] : [NSNull null]),
+    (paymentTransaction.payment ? [self PaymentToList:paymentTransaction.payment] : [NSNull null]),
     @(paymentTransaction.transactionState),
     (paymentTransaction.originalTransaction
          ? [self PaymentTransactionToList:paymentTransaction.originalTransaction]
