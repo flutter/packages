@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 // #docregion Import
 import 'package:go_router/go_router.dart';
 
-part 'readme_excerpts.g.dart';
+part 'example_builder_output.g.dart';
 // #enddocregion Import
 
 void main() {

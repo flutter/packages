@@ -80,7 +80,9 @@ class App extends StatelessWidget {
           ],
         ),
       ],
+// #docregion RouteTree
     ),
+// #enddocregion RouteTree
     TypedGoRoute<FamilyCountRoute>(path: 'family-count/:count'),
 // #docregion RouteTree
   ],
@@ -95,9 +97,7 @@ class HomeRoute extends GoRouteData {
 // #enddocregion DefineRoute
 
 // #docregion QueryParameters
-@TypedGoRoute<LoginRoute>(
-  path: '/login',
-)
+@TypedGoRoute<LoginRoute>(path: '/login')
 class LoginRoute extends GoRouteData {
 // #enddocregion RouteTree
   const LoginRoute({this.fromPage});

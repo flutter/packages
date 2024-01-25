@@ -5,7 +5,6 @@
 To use `go_router_builder`, you need to have the following dependencies in
 `pubspec.yaml`.
 
-<?code-excerpt "example/readme_excerpts.yaml (Dependencies)"?>
 ```yaml
 dependencies:
   # ...along with your other dependencies
@@ -28,7 +27,7 @@ generated file will always have the name `[source_file].g.dart`.
 ```dart
 import 'package:go_router/go_router.dart';
 
-part 'readme_excerpts.g.dart';
+part 'example_builder_output.g.dart';
 ```
 
 ### Running `build_runner`
@@ -109,6 +108,8 @@ The tree of routes is defined as an attribute on each of the top-level routes:
     TypedGoRoute<FamilyRoute>(
       path: 'family/:fid',
 // ···
+    ),
+// ···
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -119,7 +120,7 @@ class HomeRoute extends GoRouteData {
 }
 
 @TypedGoRoute<LoginRoute>(
-  path: '/login',
+  path: '/login'
 )
 class LoginRoute extends GoRouteData {
 // ···
@@ -201,7 +202,7 @@ Parameters (named or positional) not listed in the path of `TypedGoRoute` indica
 <?code-excerpt "example/lib/main.dart (QueryParameters)"?>
 ```dart
 @TypedGoRoute<LoginRoute>(
-  path: '/login',
+  path: '/login'
 )
 class LoginRoute extends GoRouteData {
   const LoginRoute({this.fromPage});
