@@ -374,7 +374,7 @@ class WebViewController {
   /// wants to display a JavaScript alert() dialog.
   Future<void> setOnJavaScriptAlertDialog(
       Future<void> Function(JavaScriptAlertDialogRequest request)
-      onJavaScriptAlertDialog) async {
+          onJavaScriptAlertDialog) async {
     return platform.setOnJavaScriptAlertDialog(onJavaScriptAlertDialog);
   }
 
@@ -382,7 +382,7 @@ class WebViewController {
   /// wants to display a JavaScript confirm() dialog.
   Future<void> setOnJavaScriptConfirmDialog(
       Future<bool> Function(JavaScriptConfirmDialogRequest request)
-      onJavaScriptConfirmDialog) async {
+          onJavaScriptConfirmDialog) async {
     return platform.setOnJavaScriptConfirmDialog(onJavaScriptConfirmDialog);
   }
 
@@ -390,7 +390,7 @@ class WebViewController {
   /// wants to display a JavaScript prompt() dialog.
   Future<void> setOnJavaScriptTextInputDialog(
       Future<String> Function(JavaScriptTextInputDialogRequest request)
-      onJavaScriptTextInputDialog) async {
+          onJavaScriptTextInputDialog) async {
     return platform.setOnJavaScriptTextInputDialog(onJavaScriptTextInputDialog);
   }
 

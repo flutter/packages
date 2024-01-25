@@ -19,9 +19,9 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  webview_flutter_android: ^3.13.0
-  webview_flutter_platform_interface: ^2.7.0
-  webview_flutter_wkwebview: ^3.10.0
+  webview_flutter_android: ^3.14.0
+  webview_flutter_platform_interface: ^2.10.0
+  webview_flutter_wkwebview: ^3.11.0
 
 dev_dependencies:
   build_runner: ^2.1.5
