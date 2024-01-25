@@ -172,10 +172,16 @@ class WKNavigationAction {
 @immutable
 class WKFrameInfo {
   /// Construct a [WKFrameInfo].
-  const WKFrameInfo({required this.isMainFrame});
+  const WKFrameInfo({
+    required this.isMainFrame,
+    required this.request,
+  });
 
   /// Indicates whether the frame is the web site's main frame or a subframe.
   final bool isMainFrame;
+
+  /// The URL request object associated with the navigation action.
+  final NSUrlRequest request;
 }
 
 /// A script that the web view injects into a webpage.
@@ -728,6 +734,9 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptAlertDialog,
+    this.runJavaScriptConfirmDialog,
+    this.runJavaScriptTextInputDialog,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -749,6 +758,9 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate.detached({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptAlertDialog,
+    this.runJavaScriptConfirmDialog,
+    this.runJavaScriptTextInputDialog,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -780,11 +792,30 @@ class WKUIDelegate extends NSObject {
     WKMediaCaptureType type,
   )? requestMediaCapturePermission;
 
+  /// Notifies the host application that the web page
+  /// wants to display a JavaScript alert() dialog.
+  final Future<void> Function(String message, WKFrameInfo frame)?
+      runJavaScriptAlertDialog;
+
+  /// Notifies the host application that the web page
+  /// wants to display a JavaScript confirm() dialog.
+  final Future<bool> Function(String message, WKFrameInfo frame)?
+      runJavaScriptConfirmDialog;
+
+  /// Notifies the host application that the web page
+  /// wants to display a JavaScript prompt() dialog.
+  final Future<String> Function(
+          String prompt, String defaultText, WKFrameInfo frame)?
+      runJavaScriptTextInputDialog;
+
   @override
   WKUIDelegate copy() {
     return WKUIDelegate.detached(
       onCreateWebView: onCreateWebView,
       requestMediaCapturePermission: requestMediaCapturePermission,
+      runJavaScriptAlertDialog: runJavaScriptAlertDialog,
+      runJavaScriptConfirmDialog: runJavaScriptConfirmDialog,
+      runJavaScriptTextInputDialog: runJavaScriptTextInputDialog,
       observeValue: observeValue,
       binaryMessenger: _uiDelegateApi.binaryMessenger,
       instanceManager: _uiDelegateApi.instanceManager,

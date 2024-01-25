@@ -948,6 +948,33 @@ class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
       value,
     );
   }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsAlertFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsAlert(
+        instanceManager.getIdentifier(instance)!, value);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsConfirmFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsConfirm(
+        instanceManager.getIdentifier(instance)!, value);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsPromptFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsPrompt(
+        instanceManager.getIdentifier(instance)!, value);
+  }
 }
 
 /// Flutter api implementation for [DownloadListener].
@@ -1079,6 +1106,31 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     final WebChromeClient instance =
         instanceManager.getInstanceWithWeakReference(instanceId)!;
     instance.onConsoleMessage?.call(instance, message);
+  }
+
+  @override
+  Future<void> onJsAlert(int instanceId, String url, String message) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+
+    return instance.onJsAlert!(url, message);
+  }
+
+  @override
+  Future<bool> onJsConfirm(int instanceId, String url, String message) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+
+    return instance.onJsConfirm!(url, message);
+  }
+
+  @override
+  Future<String> onJsPrompt(
+      int instanceId, String url, String message, String defaultValue) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+
+    return instance.onJsPrompt!(url, message, defaultValue);
   }
 }
 

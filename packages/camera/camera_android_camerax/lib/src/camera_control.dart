@@ -7,6 +7,8 @@ import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
+import 'focus_metering_action.dart';
+import 'focus_metering_result.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 import 'system_services.dart';
@@ -47,6 +49,34 @@ class CameraControl extends JavaObject {
   /// [SystemServices.cameraErrorStreamController].
   Future<void> setZoomRatio(double ratio) async {
     return _api.setZoomRatioFromInstance(this, ratio);
+  }
+
+  /// Starts a focus and metering action configured by the [FocusMeteringAction].
+  ///
+  /// Will trigger an auto focus action and enable auto focus/auto exposure/
+  /// auto white balance metering regions.
+  ///
+  /// Returns null if focus and metering could not be started.
+  Future<FocusMeteringResult?> startFocusAndMetering(
+      FocusMeteringAction action) {
+    return _api.startFocusAndMeteringFromInstance(this, action);
+  }
+
+  /// Cancels current [FocusMeteringAction] and clears auto focus/auto exposure/
+  /// auto white balance regions.
+  Future<void> cancelFocusAndMetering() =>
+      _api.cancelFocusAndMeteringFromInstance(this);
+
+  /// Sets the exposure compensation value for related [Camera] and returns the
+  /// new target exposure value.
+  ///
+  /// The exposure compensation value set on the camera must be within the range
+  /// of the current [ExposureState]'s `exposureCompensationRange` for the call
+  /// to succeed.
+  ///
+  /// Returns null if the exposure compensation index failed to be set.
+  Future<int?> setExposureCompensationIndex(int index) async {
+    return _api.setExposureCompensationIndexFromInstance(this, index);
   }
 }
 
@@ -92,6 +122,47 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController.add(e.message ??
           'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set; otherwise, the camera may be closed.');
+    }
+  }
+
+  /// Starts a focus and metering action configured by the [FocusMeteringAction]
+  /// for the specified [CameraControl] instance.
+  Future<FocusMeteringResult?> startFocusAndMeteringFromInstance(
+      CameraControl instance, FocusMeteringAction action) async {
+    final int cameraControlIdentifier =
+        instanceManager.getIdentifier(instance)!;
+    final int actionIdentifier = instanceManager.getIdentifier(action)!;
+    try {
+      final int focusMeteringResultId = await startFocusAndMetering(
+          cameraControlIdentifier, actionIdentifier);
+      return instanceManager.getInstanceWithWeakReference<FocusMeteringResult>(
+          focusMeteringResultId);
+    } on PlatformException catch (e) {
+      SystemServices.cameraErrorStreamController
+          .add(e.message ?? 'Starting focus and metering failed.');
+      return Future<FocusMeteringResult?>.value();
+    }
+  }
+
+  /// Cancels current [FocusMeteringAction] and clears AF/AE/AWB regions for the
+  /// specified [CameraControl] instance.
+  Future<void> cancelFocusAndMeteringFromInstance(
+      CameraControl instance) async {
+    final int identifier = instanceManager.getIdentifier(instance)!;
+    await cancelFocusAndMetering(identifier);
+  }
+
+  /// Sets exposure compensation index for specified [CameraControl] instance
+  /// and returns the new target exposure value.
+  Future<int?> setExposureCompensationIndexFromInstance(
+      CameraControl instance, int index) async {
+    final int identifier = instanceManager.getIdentifier(instance)!;
+    try {
+      return setExposureCompensationIndex(identifier, index);
+    } on PlatformException catch (e) {
+      SystemServices.cameraErrorStreamController.add(e.message ??
+          'Setting the camera exposure compensation index failed.');
+      return Future<int?>.value();
     }
   }
 }

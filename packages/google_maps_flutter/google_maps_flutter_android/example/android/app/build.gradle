@@ -26,7 +26,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace 'io.flutter.plugins.googlemapsexample'
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
 
 
     defaultConfig {
