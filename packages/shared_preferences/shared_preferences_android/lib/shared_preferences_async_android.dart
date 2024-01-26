@@ -18,10 +18,10 @@ base class SharedPreferencesAsyncAndroid
     extends SharedPreferencesAsyncPlatform<SharedPreferencesAndroidOptions> {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAsyncAndroid({
-    @visibleForTesting SharedPreferencesApi? api,
-  }) : _api = api ?? SharedPreferencesApi();
+    @visibleForTesting SharedPreferencesAsyncApi? api,
+  }) : _api = api ?? SharedPreferencesAsyncApi();
 
-  final SharedPreferencesApi _api;
+  final SharedPreferencesAsyncApi _api;
 
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
@@ -39,7 +39,7 @@ base class SharedPreferencesAsyncAndroid
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
 
     return (await _api.getKeys(
       filter.allowList?.toList(),
@@ -169,10 +169,10 @@ base class SharedPreferencesAsyncAndroid
 
   @override
   Future<bool> clear(
-    ClearParameters parameters,
+    ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     return _api.clear(
       filter.allowList?.toList(),
       _convertOptionsToPigeonOptions(options),
@@ -184,7 +184,7 @@ base class SharedPreferencesAsyncAndroid
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     final Map<String?, Object?> data = await _api.getAll(
       filter.allowList?.toList(),
       _convertOptionsToPigeonOptions(options),

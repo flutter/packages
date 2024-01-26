@@ -12,9 +12,9 @@ class SharedPreferencesOptions {
 }
 
 /// Filter options used to get and clear preferences.
-class PreferencesFilter {
+class PreferencesFilters {
   /// Creates a new instance with the given options.
-  const PreferencesFilter({
+  const PreferencesFilters({
     this.allowList,
   });
 
@@ -29,14 +29,57 @@ class GetPreferencesParameters {
   const GetPreferencesParameters({required this.filter});
 
   /// Filter to limit which preferences are returned.
-  final PreferencesFilter filter;
+  final PreferencesFilters filter;
 }
 
 /// Parameters for use in [clear] methods.
-class ClearParameters {
+class ClearPreferencesParameters {
   /// Creates a new instance with the given options.
-  const ClearParameters({required this.filter});
+  const ClearPreferencesParameters({required this.filter});
 
   /// Filter to limit which preferences are cleared.
-  final PreferencesFilter filter;
+  final PreferencesFilters filter;
+}
+
+// ALL CLASSES BELOW HERE ARE DEPRECATED AND SHOULD NOT BE USED.
+
+/// Filter options used to get and clear preferences.
+///
+/// Deprecated in favor of [PreferencesFilters].
+class PreferencesFilter {
+  /// Creates a new instance with the given options.
+  PreferencesFilter({
+    required this.prefix,
+    this.allowList,
+  });
+
+  /// A prefix to limit getting and clearing to only items that begin with
+  /// this string.
+  String prefix;
+
+  /// A list of preference keys that will limit getting and clearing to only
+  /// items included in this list.
+  Set<String>? allowList;
+}
+
+/// Parameters for use in [getAll] methods.
+///
+/// Deprecated in favor of [GetPreferencesParameters].
+class GetAllParameters {
+  /// Creates a new instance with the given options.
+  GetAllParameters({required this.filter});
+
+  /// Filter to limit which preferences are returned.
+  PreferencesFilter filter;
+}
+
+/// Parameters for use in [clear] methods.
+///
+/// Deprecated in favor of [ClearPreferencesParameters].
+class ClearParameters {
+  /// Creates a new instance with the given options.
+  ClearParameters({required this.filter});
+
+  /// Filter to limit which preferences are cleared.
+  PreferencesFilter filter;
 }

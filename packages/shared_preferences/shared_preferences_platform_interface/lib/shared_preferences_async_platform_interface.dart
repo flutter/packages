@@ -91,7 +91,7 @@ abstract base class SharedPreferencesAsyncPlatform<T> {
 
   /// Removes all keys and values in the store that match the given [parameters].
   Future<bool> clear(
-    ClearParameters parameters,
+    ClearPreferencesParameters parameters,
     T options,
   );
 
@@ -124,10 +124,10 @@ base class InMemorySharedPreferencesAsync<T>
 
   @override
   Future<bool> clear(
-    ClearParameters parameters,
+    ClearPreferencesParameters parameters,
     T options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     if (filter.allowList != null) {
       _data.removeWhere((String key, _) => filter.allowList!.contains(key));
     } else {
@@ -141,7 +141,7 @@ base class InMemorySharedPreferencesAsync<T>
     GetPreferencesParameters parameters,
     T options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     final Map<String, Object> preferences = Map<String, Object>.from(_data);
     preferences.removeWhere((String key, _) =>
         filter.allowList != null && !filter.allowList!.contains(key));

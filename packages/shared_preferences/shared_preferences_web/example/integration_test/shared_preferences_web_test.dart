@@ -4,9 +4,9 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:shared_preferences_platform_interface/deprecated_types.dart';
 import 'package:shared_preferences_platform_interface/method_channel_shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
 import 'package:shared_preferences_web/src/keys_extension.dart';
 import 'package:web/helpers.dart' as html;

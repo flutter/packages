@@ -36,9 +36,8 @@ const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 
 private val Context.sharedPreferencesDataStore: DataStore<Preferences> by preferencesDataStore(SHARED_PREFERENCES_NAME)
 
-
 /// SharedPreferencesPlugin
-class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesApi {
+class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesAsyncApi {
   private lateinit var context: Context
 
   private var listEncoder = ListEncoder() as SharedPreferencesListEncoder
@@ -51,7 +50,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesApi {
   private fun setUp(messenger: BinaryMessenger, context: Context) {
     this.context = context
     try {
-      SharedPreferencesApi.setUp(messenger, this)
+      SharedPreferencesAsyncApi.setUp(messenger, this)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
@@ -62,7 +61,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesApi {
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    SharedPreferencesApi.setUp(binding.binaryMessenger, null)
+    SharedPreferencesAsyncApi.setUp(binding.binaryMessenger, null)
   }
 
 

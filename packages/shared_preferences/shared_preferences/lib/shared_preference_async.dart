@@ -72,7 +72,7 @@ class SharedPreferencesAsync {
   /// Returns true if the the platform contains the given [key].
   Future<bool> containsKey(String key) async =>
       (await getKeys(GetPreferencesParameters(
-              filter: PreferencesFilter(allowList: <String>{key}))))
+              filter: PreferencesFilters(allowList: <String>{key}))))
           .isNotEmpty;
 
   /// Saves a boolean [value] to the platform.
@@ -104,7 +104,8 @@ class SharedPreferencesAsync {
   /// Removes an entry from the platform.
   Future<bool> remove(String key) {
     return _platform.clear(
-        ClearParameters(filter: PreferencesFilter(allowList: <String>{key})),
+        ClearPreferencesParameters(
+            filter: PreferencesFilters(allowList: <String>{key})),
         _options);
   }
 
@@ -112,7 +113,7 @@ class SharedPreferencesAsync {
   ///
   /// If no [parameters] are provided, and [SharedPreferencesAsync] has no filter,
   /// all preferences will be removed.
-  Future<bool> clear(ClearParameters parameters) {
+  Future<bool> clear(ClearPreferencesParameters parameters) {
     return _platform.clear(parameters, _options);
   }
 }
@@ -126,7 +127,7 @@ class SharedPreferencesWithCacheOptions {
 
   /// Information about what data should be fetched during `getAll` and `init`
   /// methods, as well as what data will be removed by `clear`.
-  PreferencesFilter filter;
+  PreferencesFilters filter;
 }
 
 /// Provides a persistent store for simple data.
@@ -267,6 +268,7 @@ class SharedPreferencesWithCache {
     } else {
       _cache.clear();
     }
-    return directAccess.clear(ClearParameters(filter: _cacheOptions.filter));
+    return directAccess
+        .clear(ClearPreferencesParameters(filter: _cacheOptions.filter));
   }
 }

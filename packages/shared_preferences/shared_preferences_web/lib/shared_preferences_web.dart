@@ -6,8 +6,6 @@ import 'dart:async';
 import 'dart:convert' show json;
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:shared_preferences_platform_interface/deprecated_types.dart'
-    as deprecated_types;
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -29,22 +27,21 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   @override
   Future<bool> clear() async {
     return clearWithParameters(
-      deprecated_types.ClearParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: _defaultPrefix),
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
       ),
     );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(deprecated_types.ClearParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: prefix)));
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<bool> clearWithParameters(
-      deprecated_types.ClearParameters parameters) async {
-    final deprecated_types.PreferencesFilter filter = parameters.filter;
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix
@@ -56,22 +53,22 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   @override
   Future<Map<String, Object>> getAll() async {
     return getAllWithParameters(
-      deprecated_types.GetAllParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: _defaultPrefix),
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
       ),
     );
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(deprecated_types.GetAllParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: prefix)));
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      deprecated_types.GetAllParameters parameters) async {
-    final deprecated_types.PreferencesFilter filter = parameters.filter;
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> allData = <String, Object>{};
     for (final String key
         in _getFilteredKeys(filter.prefix, allowList: filter.allowList)) {
@@ -113,10 +110,10 @@ base class SharedPreferencesAsyncWeb
 
   @override
   Future<bool> clear(
-    ClearParameters parameters,
+    ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix

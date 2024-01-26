@@ -5,8 +5,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/deprecated_types.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +28,7 @@ void main() {
   const bool testBool2 = false;
   const int testInt2 = 1337;
   const double testDouble2 = 2.71828;
-  const List<String> testList2 = <String>['baz', 'quox'];
+  const List<String> testList2 = <String>['baz', 'qux'];
   const Map<String, dynamic> testValues2 = <String, dynamic>{
     'flutter.String': testString2,
     'flutter.bool': testBool2,

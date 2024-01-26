@@ -10,8 +10,6 @@ import 'package:file/local.dart';
 import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import 'package:path/path.dart' as path;
 import 'package:path_provider_windows/path_provider_windows.dart';
-import 'package:shared_preferences_platform_interface/deprecated_types.dart'
-    as deprecated_types;
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -59,22 +57,21 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   @override
   Future<bool> clear() async {
     return clearWithParameters(
-      deprecated_types.ClearParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: _defaultPrefix),
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
       ),
     );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(deprecated_types.ClearParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: prefix)));
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<bool> clearWithParameters(
-      deprecated_types.ClearParameters parameters) async {
-    final deprecated_types.PreferencesFilter filter = parameters.filter;
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
 
     final Map<String, Object> preferences = await _readPreferences();
     preferences.removeWhere((String key, _) =>
@@ -91,22 +88,22 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   @override
   Future<Map<String, Object>> getAll() async {
     return getAllWithParameters(
-      deprecated_types.GetAllParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: _defaultPrefix),
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
       ),
     );
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(deprecated_types.GetAllParameters(
-        filter: deprecated_types.PreferencesFilter(prefix: prefix)));
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      deprecated_types.GetAllParameters parameters) async {
-    final deprecated_types.PreferencesFilter filter = parameters.filter;
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> withPrefix =
         Map<String, Object>.from(await _readPreferences());
     withPrefix.removeWhere((String key, _) => !(key.startsWith(filter.prefix) &&
@@ -259,9 +256,9 @@ base class SharedPreferencesAsyncWindows
   }
 
   @override
-  Future<bool> clear(ClearParameters parameters,
+  Future<bool> clear(ClearPreferencesParameters parameters,
       SharedPreferencesWindowsOptions options) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     final Map<String, Object> preferences =
         await _readPreferences(options.fileName);
     preferences.removeWhere((String key, _) =>

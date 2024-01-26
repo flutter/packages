@@ -22,8 +22,8 @@ class SharedPreferencesPigeonOptions {
   String? fileKey;
 }
 
-@HostApi(dartHostTestHandler: 'TestSharedPreferencesApi')
-abstract class SharedPreferencesApi {
+@HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
+abstract class SharedPreferencesAsyncApi {
   /// Adds property to shared preferences data set of type bool.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setBool(String key, bool value, SharedPreferencesPigeonOptions options);

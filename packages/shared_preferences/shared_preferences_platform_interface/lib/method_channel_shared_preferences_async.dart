@@ -23,10 +23,10 @@ base class AsyncMethodChannelBetterSharedPreferences
     extends SharedPreferencesAsyncPlatform<SharedPreferencesOptions> {
   @override
   Future<bool> clear(
-    ClearParameters parameters,
+    ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     return (await _kChannel.invokeMethod<bool>(
       'clearWithParameters',
       <String, dynamic>{
@@ -40,7 +40,7 @@ base class AsyncMethodChannelBetterSharedPreferences
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     final List<String>? allowListAsList = filter.allowList?.toList();
     return await _kChannel.invokeMapMethod<String, Object>(
           'getPreferencesWithParameters',
@@ -156,7 +156,7 @@ base class AsyncMethodChannelBetterSharedPreferences
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     final List<String>? allowListAsList = filter.allowList?.toList();
     return await _kChannel.invokeMethod<Set<String>>(
           'getKeysWithParameters',

@@ -5,7 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences_linux/shared_preferences_linux.dart';
-import 'package:shared_preferences_platform_interface/deprecated_types.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

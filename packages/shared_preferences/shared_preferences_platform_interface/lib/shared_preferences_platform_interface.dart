@@ -7,8 +7,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'deprecated_types.dart';
 import 'method_channel_shared_preferences.dart';
+import 'types.dart';
 
 /// The interface that implementations of shared_preferences must implement.
 ///

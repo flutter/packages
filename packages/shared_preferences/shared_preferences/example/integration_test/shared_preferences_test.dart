@@ -19,7 +19,7 @@ void main() {
   const bool testBool2 = false;
   const int testInt2 = 1337;
   const double testDouble2 = 2.71828;
-  const List<String> testList2 = <String>['baz', 'quox'];
+  const List<String> testList2 = <String>['baz', 'qux'];
 
   late SharedPreferences preferences;
 

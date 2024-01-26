@@ -43,7 +43,7 @@ base class SharedPreferencesAsyncFoundation
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
 
     return (await _api.getKeys(
       filter.allowList?.toList(),
@@ -176,10 +176,10 @@ base class SharedPreferencesAsyncFoundation
 
   @override
   Future<bool> clear(
-    ClearParameters parameters,
+    ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     await _api.clear(
       filter.allowList?.toList(),
       _convertOptionsToPigeonOptions(options),
@@ -192,7 +192,7 @@ base class SharedPreferencesAsyncFoundation
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final PreferencesFilter filter = parameters.filter;
+    final PreferencesFilters filter = parameters.filter;
     final Map<String?, Object?> data = await _api.getAll(
       filter.allowList?.toList(),
       _convertOptionsToPigeonOptions(options),

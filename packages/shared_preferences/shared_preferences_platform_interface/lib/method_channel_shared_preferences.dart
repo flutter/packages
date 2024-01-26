@@ -6,8 +6,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-import 'deprecated_types.dart';
 import 'shared_preferences_platform_interface.dart';
+import 'types.dart';
 
 const MethodChannel _kChannel =
     MethodChannel('plugins.flutter.io/shared_preferences');

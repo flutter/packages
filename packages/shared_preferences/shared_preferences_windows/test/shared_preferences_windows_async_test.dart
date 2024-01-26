@@ -67,7 +67,7 @@ void main() {
     await preferences.setStringList(listKey, testList, emptyOptions);
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
-        const GetPreferencesParameters(filter: PreferencesFilter()),
+        const GetPreferencesParameters(filter: PreferencesFilters()),
         emptyOptions);
 
     expect(gotAll.length, 5);
@@ -88,7 +88,8 @@ void main() {
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
         const GetPreferencesParameters(
-            filter: PreferencesFilter(allowList: <String>{stringKey, boolKey})),
+            filter:
+                PreferencesFilters(allowList: <String>{stringKey, boolKey})),
         emptyOptions);
 
     expect(gotAll.length, 2);
@@ -105,7 +106,7 @@ void main() {
     await preferences.setStringList(listKey, testList, emptyOptions);
 
     final Set<String?> keys = await preferences.getKeys(
-      const GetPreferencesParameters(filter: PreferencesFilter()),
+      const GetPreferencesParameters(filter: PreferencesFilters()),
       emptyOptions,
     );
 
@@ -127,7 +128,7 @@ void main() {
 
     final Set<String?> keys = await preferences.getKeys(
       const GetPreferencesParameters(
-        filter: PreferencesFilter(allowList: <String>{stringKey, boolKey}),
+        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
       ),
       emptyOptions,
     );
@@ -145,7 +146,8 @@ void main() {
     await preferences.setDouble(doubleKey, testDouble, emptyOptions);
     await preferences.setStringList(listKey, testList, emptyOptions);
     await preferences.clear(
-        const ClearParameters(filter: PreferencesFilter()), emptyOptions);
+        const ClearPreferencesParameters(filter: PreferencesFilters()),
+        emptyOptions);
     expect(await preferences.getString(stringKey, emptyOptions), null);
     expect(await preferences.getBool(boolKey, emptyOptions), null);
     expect(await preferences.getInt(intKey, emptyOptions), null);
@@ -161,8 +163,8 @@ void main() {
     await preferences.setDouble(doubleKey, testDouble, emptyOptions);
     await preferences.setStringList(listKey, testList, emptyOptions);
     await preferences.clear(
-      const ClearParameters(
-        filter: PreferencesFilter(allowList: <String>{stringKey, boolKey}),
+      const ClearPreferencesParameters(
+        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
       ),
       emptyOptions,
     );

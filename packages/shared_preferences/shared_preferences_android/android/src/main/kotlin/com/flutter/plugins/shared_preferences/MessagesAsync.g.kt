@@ -65,7 +65,7 @@ data class SharedPreferencesPigeonOptions (
   }
 }
 @Suppress("UNCHECKED_CAST")
-private object SharedPreferencesApiCodec : StandardMessageCodec() {
+private object SharedPreferencesAsyncApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
@@ -88,7 +88,7 @@ private object SharedPreferencesApiCodec : StandardMessageCodec() {
 }
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface SharedPreferencesApi {
+interface SharedPreferencesAsyncApi {
   /** Adds property to shared preferences data set of type bool. */
   fun setBool(key: String, value: Boolean, options: SharedPreferencesPigeonOptions): Boolean
   /** Adds property to shared preferences data set of type String. */
@@ -117,16 +117,16 @@ interface SharedPreferencesApi {
   fun getKeys(allowList: List<String>?, options: SharedPreferencesPigeonOptions): List<String>
 
   companion object {
-    /** The codec used by SharedPreferencesApi. */
+    /** The codec used by SharedPreferencesAsyncApi. */
     val codec: MessageCodec<Any?> by lazy {
-      SharedPreferencesApiCodec
+      SharedPreferencesAsyncApiCodec
     }
-    /** Sets up an instance of `SharedPreferencesApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `SharedPreferencesAsyncApi` to handle messages through the `binaryMessenger`. */
     @Suppress("UNCHECKED_CAST")
-    fun setUp(binaryMessenger: BinaryMessenger, api: SharedPreferencesApi?) {
+    fun setUp(binaryMessenger: BinaryMessenger, api: SharedPreferencesAsyncApi?) {
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setBool", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setBool", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -147,7 +147,7 @@ interface SharedPreferencesApi {
       }
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setString", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setString", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -168,7 +168,7 @@ interface SharedPreferencesApi {
       }
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setInt", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setInt", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -189,7 +189,7 @@ interface SharedPreferencesApi {
       }
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDouble", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDouble", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -210,7 +210,7 @@ interface SharedPreferencesApi {
       }
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setStringList", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setStringList", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -230,7 +230,7 @@ interface SharedPreferencesApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getString", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getString", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -249,7 +249,7 @@ interface SharedPreferencesApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getBool", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getBool", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -268,7 +268,7 @@ interface SharedPreferencesApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getDouble", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getDouble", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -287,7 +287,7 @@ interface SharedPreferencesApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getInt", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getInt", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -306,7 +306,7 @@ interface SharedPreferencesApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getStringList", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getStringList", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -326,7 +326,7 @@ interface SharedPreferencesApi {
       }
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.clear", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.clear", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -346,7 +346,7 @@ interface SharedPreferencesApi {
       }
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getAll", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getAll", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -366,7 +366,7 @@ interface SharedPreferencesApi {
       }
       run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getKeys", codec, taskQueue)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getKeys", codec, taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
