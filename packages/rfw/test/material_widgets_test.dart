@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
@@ -123,6 +124,55 @@ void main() {
                 ),
               ),
             ),
+            Divider(),
+            Padding(
+              padding: [20.0],
+              child: Row(
+                mainAxisAlignment: 'spaceEvenly',
+                children: [
+                  DropdownButton(
+                    value: 'foo',
+                    elevation: 14,
+                    dropdownColor: 0xFF9E9E9E,
+                    underline: Container(
+                      height: 2,
+                      color: 0xFF7C4DFF,
+                    ),
+                    style: {
+                      color:0xFF7C4DFF,
+                    },
+                    items: [
+                      {
+                        value: 'foo',
+                        child: Text(text: 'foo'),
+                      },
+                      {
+                        value: 'bar',
+                        child: Text(text: 'bar'),
+                        onTap: event 'menu_item' { args: 'bar' },
+                      },
+                    ],
+                    borderRadius:[{x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}],
+                    onChanged: event 'dropdown' {},
+                  ),
+                  DropdownButton(
+                    value: 1.0,
+                    items: [
+                      {
+                        value: 1.0,
+                        child: Text(text: 'first'),
+                      },
+                      {
+                        value: 2.0,
+                        child: Text(text: 'second'),
+                        onTap: event 'menu_item' { args: 'second' },
+                      },
+                    ],
+                    onChanged: event 'dropdown' {},
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -137,6 +187,28 @@ void main() {
       matchesGoldenFile('goldens/material_test.scaffold.png'),
       skip: !runGoldens,
     );
+
+    await tester.tap(find.byType(DropdownButton<Object>).first);
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/material_test.dropdown.png'),
+      skip: !runGoldens,
+    );
+    // Tap on the second item.
+    await tester.tap(find.text('bar'));
+    await tester.pumpAndSettle();
+    expect(eventLog, contains('menu_item {args: bar}'));
+    expect(eventLog, contains('dropdown {value: bar}'));
+
+    await tester.tap(find.byType(DropdownButton<Object>).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('second'));
+    await tester.pumpAndSettle();
+    expect(eventLog, contains('menu_item {args: second}'));
+    expect(eventLog,
+        contains(kIsWeb ? 'dropdown {value: 2}' : 'dropdown {value: 2.0}'));
+
     await tester.tapAt(const Offset(20.0, 20.0));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
