@@ -1,13 +1,9 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -15,16 +11,24 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Camera2CameraControlFlutterApi;
-import java.util.Objects;
+import android.content.Context;
+import androidx.camera.camera2.interop.Camera2CameraControl;
+import androidx.camera.camera2.interop.CaptureRequestOptions;
+import androidx.camera.core.CameraControl;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
 public class Camera2CameraControlTest {
 
@@ -32,80 +36,96 @@ public class Camera2CameraControlTest {
 
   @Mock public Camera2CameraControl mockCamera2CameraControl;
 
-  @Mock public BinaryMessenger mockBinaryMessenger;
-
-  @Mock public Camera2CameraControlFlutterApi mockFlutterApi;
-
-  @Mock public Camera2CameraControlHostApiImpl.Camera2CameraControlProxy mockProxy;
-
-  InstanceManager instanceManager;
+  InstanceManager testInstanceManager;
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    testInstanceManager = InstanceManager.create(identifier -> {});
   }
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    testInstanceManager.stopFinalizationListener();
   }
 
   @Test
-  public void hostApiCreate() {
-
-    final CameraControl mockCameraControl = mock(CameraControl.class);
-    final long cameraControlIdentifier = 9;
-    instanceManager.addDartCreatedInstance(mockCameraControl, cameraControlIdentifier);
-
-    when(mockProxy.create(mockCameraControl)).thenReturn(mockCamera2CameraControl);
-
+  public void create_createsInstanceFromCameraControlInstance() {
     final Camera2CameraControlHostApiImpl hostApi =
-        new Camera2CameraControlHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
+        new Camera2CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+    final long instanceIdentifier = 40;
+    final CameraControl mockCameraControl = mock(CameraControl.class);
+    final long cameraControlIdentifier = 29;
 
-    final long instanceIdentifier = 0;
-    hostApi.create(instanceIdentifier, cameraControlIdentifier);
+    testInstanceManager.addDartCreatedInstance(mockCameraControl, cameraControlIdentifier);
+    try (MockedStatic<Camera2CameraControl> mockedCamera2CameraControl =
+        Mockito.mockStatic(Camera2CameraControl.class)) {
+      mockedCamera2CameraControl
+          .when(() -> Camera2CameraControl.from(mockCameraControl))
+          .thenAnswer((Answer<Camera2CameraControl>) invocation -> mockCamera2CameraControl);
 
-    assertEquals(instanceManager.getInstance(instanceIdentifier), mockCamera2CameraControl);
+      hostApi.create(instanceIdentifier, cameraControlIdentifier);
+      assertEquals(testInstanceManager.getInstance(instanceIdentifier), mockCamera2CameraControl);
+    }
   }
 
   @Test
-  public void addCaptureRequestOptions() {
+  public void addCaptureRequestOptions_addsExpectedOptionsWhenSuccessful() {
+    final Camera2CameraControlHostApiImpl hostApi =
+        new Camera2CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+    final long instanceIdentifier = 0;
 
     final CaptureRequestOptions mockCaptureRequestOptions = mock(CaptureRequestOptions.class);
     final long captureRequestOptionsIdentifier = 8;
-    instanceManager.addDartCreatedInstance(
+
+    testInstanceManager.addDartCreatedInstance(mockCamera2CameraControl, instanceIdentifier);
+    testInstanceManager.addDartCreatedInstance(
         mockCaptureRequestOptions, captureRequestOptionsIdentifier);
 
-    final long instanceIdentifier = 0;
-    instanceManager.addDartCreatedInstance(mockCamera2CameraControl, instanceIdentifier);
+    try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
+      @SuppressWarnings("unchecked")
+      final ListenableFuture<Void> addCaptureRequestOptionsFuture = mock(ListenableFuture.class);
 
-    final Camera2CameraControlHostApiImpl hostApi =
-        new Camera2CameraControlHostApiImpl(mockBinaryMessenger, instanceManager);
+      when(mockCamera2CameraControl.addCaptureRequestOptions(mockCaptureRequestOptions))
+          .thenReturn(addCaptureRequestOptionsFuture);
 
-    hostApi.addCaptureRequestOptions(instanceIdentifier, captureRequestOptionsIdentifier);
+      @SuppressWarnings("unchecked")
+      final ArgumentCaptor<FutureCallback<Void>> futureCallbackCaptor =
+          ArgumentCaptor.forClass(FutureCallback.class);
 
-    verify(mockCamera2CameraControl).addCaptureRequestOptions(mockCaptureRequestOptions);
-  }
+      // Test successfully adding capture request options.
+      @SuppressWarnings("unchecked")
+      final GeneratedCameraXLibrary.Result<Void> successfulMockResult =
+          mock(GeneratedCameraXLibrary.Result.class);
 
-  @Test
-  public void flutterApiCreate() {
-    final Camera2CameraControlFlutterApiImpl flutterApi =
-        new Camera2CameraControlFlutterApiImpl(mockBinaryMessenger, instanceManager);
-    flutterApi.setApi(mockFlutterApi);
+      hostApi.addCaptureRequestOptions(
+          instanceIdentifier, captureRequestOptionsIdentifier, successfulMockResult);
+      mockedFutures.verify(
+          () ->
+              Futures.addCallback(
+                  eq(addCaptureRequestOptionsFuture), futureCallbackCaptor.capture(), any()));
+      mockedFutures.clearInvocations();
 
-    final CameraControl mockCameraControl = mock(CameraControl.class);
+      FutureCallback<Void> successfulCallback = futureCallbackCaptor.getValue();
 
-    flutterApi.create(mockCamera2CameraControl, mockCameraControl, reply -> {});
+      successfulCallback.onSuccess(mock(Void.class));
+      verify(successfulMockResult).success(null);
 
-    final long instanceIdentifier =
-        Objects.requireNonNull(
-            instanceManager.getIdentifierForStrongReference(mockCamera2CameraControl));
-    verify(mockFlutterApi)
-        .create(
-            eq(instanceIdentifier),
-            eq(
-                Objects.requireNonNull(
-                    instanceManager.getIdentifierForStrongReference(mockCameraControl))),
-            any());
+      // Test failed attempt to add capture request options.
+      @SuppressWarnings("unchecked")
+      final GeneratedCameraXLibrary.Result<Void> failedMockResult =
+          mock(GeneratedCameraXLibrary.Result.class);
+      final Throwable testThrowable = new Throwable();
+      hostApi.addCaptureRequestOptions(
+          instanceIdentifier, captureRequestOptionsIdentifier, failedMockResult);
+      mockedFutures.verify(
+          () ->
+              Futures.addCallback(
+                  eq(addCaptureRequestOptionsFuture), futureCallbackCaptor.capture(), any()));
+
+      FutureCallback<Void> failedCallback = futureCallbackCaptor.getValue();
+
+      failedCallback.onFailure(testThrowable);
+      verify(failedMockResult).error(testThrowable);
+    }
   }
 }

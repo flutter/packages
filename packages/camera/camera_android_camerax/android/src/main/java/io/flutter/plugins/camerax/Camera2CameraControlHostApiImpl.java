@@ -33,14 +33,24 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
   public static class Camera2CameraControlProxy {
     Context context;
 
-    /** Creates an instance of {@link Camera2CameraControl} derived from specified {@link CameraControl} instance. */
+    /**
+     * Creates an instance of {@link Camera2CameraControl} derived from specified {@link
+     * CameraControl} instance.
+     */
     public Camera2CameraControl create(@NonNull CameraControl cameraControl) {
       return Camera2CameraControl.from(cameraControl);
     }
 
-    /** Adds a {@link CaptureRequestOptions} to update the capture session with the options it contains. */
-    public void addCaptureRequestOptions(@NonNull Camera2CameraControl camera2CameraControl, @NonNull CaptureRequestOptions bundle, @NonNull GeneratedCameraXLibrary.Result<Void> result) {
-      ListenableFuture<Void> addCaptureRequestOptionsFuture = camera2CameraControl.addCaptureRequestOptions(bundle);
+    /**
+     * Adds a {@link CaptureRequestOptions} to update the capture session with the options it
+     * contains.
+     */
+    public void addCaptureRequestOptions(
+        @NonNull Camera2CameraControl camera2CameraControl,
+        @NonNull CaptureRequestOptions bundle,
+        @NonNull GeneratedCameraXLibrary.Result<Void> result) {
+      ListenableFuture<Void> addCaptureRequestOptionsFuture =
+          camera2CameraControl.addCaptureRequestOptions(bundle);
 
       Futures.addCallback(
           addCaptureRequestOptionsFuture,
@@ -85,8 +95,8 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
     proxy.context = context;
   }
 
- /**
-   * Sets the context that the {@code Camera2CameraControl} will use to listen for the result of 
+  /**
+   * Sets the context that the {@code Camera2CameraControl} will use to listen for the result of
    * setting capture request options.
    *
    * <p>If using the camera plugin in an add-to-app context, ensure that a new instance of the
@@ -99,18 +109,25 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
   @Override
   public void create(@NonNull Long identifier, @NonNull Long cameraControlIdentifier) {
     instanceManager.addDartCreatedInstance(
-        proxy.create(
-            Objects.requireNonNull(instanceManager.getInstance(cameraControlIdentifier))),
+        proxy.create(Objects.requireNonNull(instanceManager.getInstance(cameraControlIdentifier))),
         identifier);
   }
 
   @Override
   public void addCaptureRequestOptions(
-      @NonNull Long identifier, @NonNull Long captureRequestOptionsIdentifier, @NonNull GeneratedCameraXLibrary.Result<Void> result) {
-    proxy.addCaptureRequestOptions(getCamera2CameraControlInstance(identifier), Objects.requireNonNull(instanceManager.getInstance(captureRequestOptionsIdentifier)), result);
+      @NonNull Long identifier,
+      @NonNull Long captureRequestOptionsIdentifier,
+      @NonNull GeneratedCameraXLibrary.Result<Void> result) {
+    proxy.addCaptureRequestOptions(
+        getCamera2CameraControlInstance(identifier),
+        Objects.requireNonNull(instanceManager.getInstance(captureRequestOptionsIdentifier)),
+        result);
   }
 
-  /** Retrieives the {@link Camera2CameraControl} instance associated with the specified {@code identifier}. */
+  /**
+   * Retrieives the {@link Camera2CameraControl} instance associated with the specified {@code
+   * identifier}.
+   */
   private Camera2CameraControl getCamera2CameraControlInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

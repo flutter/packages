@@ -12,9 +12,7 @@ import androidx.camera.camera2.interop.CaptureRequestOptions;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestKeySupportedType;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestOptionsHostApi;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Host API implementation for {@link CaptureRequestOptions}.
@@ -32,7 +30,8 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
 
     /** Creates an instance of {@link CaptureRequestOptions}. */
     @SuppressWarnings("unchecked") // TODO(camsim99): If I keep this, explain why this is safe.
-    public CaptureRequestOptions create(@NonNull Map<CaptureRequestKeySupportedType, Object> options) {
+    public CaptureRequestOptions create(
+        @NonNull Map<CaptureRequestKeySupportedType, Object> options) {
       CaptureRequestOptions.Builder builder = new CaptureRequestOptions.Builder();
 
       for (Map.Entry<CaptureRequestKeySupportedType, Object> option : options.entrySet()) {
@@ -47,39 +46,39 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
 
         switch (optionKeyType) {
           case CONTROL_AE_LOCK:
-            builder.setCaptureRequestOption((CaptureRequest.Key<Boolean>) optionKey, (Boolean) optionValue);
+            builder.setCaptureRequestOption(
+                (CaptureRequest.Key<Boolean>) optionKey, (Boolean) optionValue);
             break;
           default:
             throw new IllegalArgumentException(
-              "The capture request key is not currently supported by the plugin.");
+                "The capture request key is not currently supported by the plugin.");
         }
       }
 
       return builder.build();
     }
 
-    private CaptureRequest.Key<? extends Object> getCaptureRequestKey(CaptureRequestKeySupportedType type) {
+    private CaptureRequest.Key<? extends Object> getCaptureRequestKey(
+        CaptureRequestKeySupportedType type) {
       CaptureRequest.Key<? extends Object> key;
       switch (type) {
-          case CONTROL_AE_LOCK:
-            key = CaptureRequest.CONTROL_AE_LOCK;
-            break;
-          default: 
-            throw new IllegalArgumentException(
+        case CONTROL_AE_LOCK:
+          key = CaptureRequest.CONTROL_AE_LOCK;
+          break;
+        default:
+          throw new IllegalArgumentException(
               "The capture request key is not currently supported by the plugin.");
-        }
-      return key;
       }
+      return key;
     }
-
+  }
 
   /**
    * Constructs a {@link CaptureRequestOptionsHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public CaptureRequestOptionsHostApiImpl(
-      @NonNull InstanceManager instanceManager) {
+  public CaptureRequestOptionsHostApiImpl(@NonNull InstanceManager instanceManager) {
     this(instanceManager, new CaptureRequestOptionsProxy());
   }
 
@@ -91,17 +90,18 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
    */
   @VisibleForTesting
   CaptureRequestOptionsHostApiImpl(
-      @NonNull InstanceManager instanceManager,
-      @NonNull CaptureRequestOptionsProxy proxy) {
+      @NonNull InstanceManager instanceManager, @NonNull CaptureRequestOptionsProxy proxy) {
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
 
   @Override
   public void create(@NonNull Long identifier, @NonNull Map<Long, Object> options) {
-    Map<CaptureRequestKeySupportedType, Object> decodedOptions = new HashMap<CaptureRequestKeySupportedType, Object>();
+    Map<CaptureRequestKeySupportedType, Object> decodedOptions =
+        new HashMap<CaptureRequestKeySupportedType, Object>();
     for (Map.Entry<Long, Object> option : options.entrySet()) {
-      decodedOptions.put(CaptureRequestKeySupportedType.values()[option.getKey().intValue()], option.getValue());
+      decodedOptions.put(
+          CaptureRequestKeySupportedType.values()[option.getKey().intValue()], option.getValue());
     }
     instanceManager.addDartCreatedInstance(proxy.create(decodedOptions), identifier);
   }

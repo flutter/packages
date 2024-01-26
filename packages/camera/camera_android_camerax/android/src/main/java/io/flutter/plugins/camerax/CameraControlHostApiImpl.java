@@ -113,8 +113,8 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
   }
 
   /**
-   * Sets the context that the {@code CameraControl} will use to enable/disable torch mode
-   * and set the zoom ratio.
+   * Sets the context that the {@code CameraControl} will use to enable/disable torch mode and set
+   * the zoom ratio.
    *
    * <p>If using the camera plugin in an add-to-app context, ensure that a new instance of the
    * {@code CameraControl} is fetched anytime the context changes.
