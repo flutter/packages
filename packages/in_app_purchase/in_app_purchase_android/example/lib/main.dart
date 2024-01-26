@@ -48,6 +48,7 @@ class _MyAppState extends State<_MyApp> {
   List<ProductDetails> _products = <ProductDetails>[];
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];
   List<String> _consumables = <String>[];
+  String _countryCode = '';
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
@@ -228,6 +229,11 @@ class _MyAppState extends State<_MyApp> {
               'This app needs special configuration to run. Please see example/README.md for instructions.')));
     }
 
+    productList.add(ListTile(
+        title: Text('User Country Code',
+            style: TextStyle(color: ThemeData.light().colorScheme.error)),
+        subtitle: Text(_countryCode)));
+
     // This loading previous purchases code is just a demo. Please do not use this as it is.
     // In your app you should always verify the purchase data using the `verificationData` inside the [PurchaseDetails] object before trusting it.
     // We recommend that you use your own server to verify the purchase data.
@@ -346,6 +352,12 @@ class _MyAppState extends State<_MyApp> {
     });
   }
 
+  Future<void> deliverCountryCode(String countryCode) async {
+    setState(() {
+      _countryCode = countryCode;
+    });
+  }
+
   Future<void> deliverProduct(PurchaseDetails purchaseDetails) async {
     // IMPORTANT!! Always verify purchase details before delivering the product.
     if (purchaseDetails.productID == _kConsumableId) {
@@ -385,6 +397,10 @@ class _MyAppState extends State<_MyApp> {
       if (purchaseDetails.status == PurchaseStatus.pending) {
         showPendingUI();
       } else {
+        final InAppPurchaseAndroidPlatformAddition addition =
+            InAppPurchasePlatformAddition.instance!
+                as InAppPurchaseAndroidPlatformAddition;
+        unawaited(deliverCountryCode(await addition.getCountryCode()));
         if (purchaseDetails.status == PurchaseStatus.error) {
           handleError(purchaseDetails.error!);
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
@@ -399,10 +415,6 @@ class _MyAppState extends State<_MyApp> {
         }
 
         if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-          final InAppPurchaseAndroidPlatformAddition addition =
-              InAppPurchasePlatformAddition.instance!
-                  as InAppPurchaseAndroidPlatformAddition;
-
           await addition.consumePurchase(purchaseDetails);
         }
 

@@ -151,7 +151,7 @@ class InAppPurchaseAndroidPlatformAddition
   ///
   /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
   /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
-  Future<String> getBillingConfig() async {
+  Future<String> getCountryCode() async {
     return _billingClientManager.runWithClientNonRetryable(
       (BillingClient client) async =>
           (await client.getBillingConfig()).countryCode,
