@@ -1,3 +1,6 @@
+## 1.0.8
+* Adopts code excerpts in README.
+
 ## 1.0.7
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

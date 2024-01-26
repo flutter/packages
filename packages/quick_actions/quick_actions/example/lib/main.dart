@@ -4,6 +4,8 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:quick_actions/quick_actions.dart';
 
@@ -43,33 +45,37 @@ class _MyHomePageState extends State<MyHomePage> {
     // #docregion Initialize
     const QuickActions quickActions = QuickActions();
     quickActions.initialize((String shortcutType) {
+      if (shortcutType == 'ios_action') {
+        debugPrint('You pressed ios action');
+      } else if (shortcutType == 'android_action') {
+        debugPrint('You pressed android action');
+      }
+      // #enddocregion Initialize
       setState(() {
         shortcut = shortcutType;
       });
+      // #docregion Initialize
     });
     // #enddocregion Initialize
 
     // #docregion SetShortcuts
     quickActions.setShortcutItems(<ShortcutItem>[
-      // NOTE: This first action icon will only work on iOS.
-      // In a real world project keep the same file name for both platforms.
-      const ShortcutItem(
-        type: 'action_one',
-        localizedTitle: 'Action one',
-        icon: 'AppIcon',
-      ),
-      // NOTE: This second action icon will only work on Android.
-      // In a real world project keep the same file name for both platforms.
-      const ShortcutItem(
-          type: 'action_two',
-          localizedTitle: 'Action two',
-          icon: 'ic_launcher'),
+      // #enddocregion SetShortcuts
+      if (Platform.isIOS)
+        // #docregion SetShortcuts
+        const ShortcutItem(type: 'ios_action', localizedTitle: 'iOS Action', icon: 'AppIcon'),
+      // #enddocregion SetShortcuts
+      if (Platform.isAndroid)
+        // #docregion SetShortcuts
+        const ShortcutItem(type: 'android_action', localizedTitle: 'Android Action', icon: 'ic_launcher')
     ]).then((void _) {
+      // #enddocregion SetShortcuts
       setState(() {
         if (shortcut == 'no action set') {
           shortcut = 'actions ready';
         }
       });
+      // #docregion SetShortcuts
     });
     // #enddocregion SetShortcuts
   }
