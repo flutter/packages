@@ -19,27 +19,41 @@ platform_properties:
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
   linux_android:
+    dimensions:
+      kvm: "1"
     properties:
       os: Ubuntu
       cores: "8"
       device_type: none
+      contexts: >-
+      [
+        "android_virtual_device"
+      ]
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
   linux_android_legacy:
+    dimensions:
+      kvm: "1"
     properties:
       os: Ubuntu
       cores: "8"
       device_type: none
+      contexts: >-
+      [
+        "android_virtual_device"
+      ]
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "android_virtual_device", "version": "22"}
+          {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
   linux_desktop:
     properties:
@@ -333,8 +347,6 @@ targets:
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
     timeout: 30
-    dimensions:
-      kvm: "1"
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
@@ -344,7 +356,7 @@ targets:
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -357,15 +369,13 @@ targets:
   - name: Linux_android custom_package_tests stable
     recipe: packages/packages
     timeout: 30
-    dimensions:
-      kvm: "1"
     properties:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -426,7 +436,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -445,7 +455,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -464,7 +474,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -483,7 +493,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -502,7 +512,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -521,7 +531,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -540,7 +550,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -559,7 +569,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -578,7 +588,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -597,7 +607,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -616,7 +626,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -635,7 +645,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -654,7 +664,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -673,7 +683,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -691,7 +701,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -709,7 +719,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
