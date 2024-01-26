@@ -12,14 +12,29 @@ import 'types.dart';
 const MethodChannel _kChannel =
     MethodChannel('plugins.flutter.io/shared_preferences');
 
+///
+///
+///
+///
+///
 /// EVERYTHING IN HERE NEEDS TO CHANGE TO USE THE OPTIONS THAT ARE PASSED IN
 /// DO NOT MERGE UNTIL THIS CHANGE IS MADE.
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
 
 /// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
 /// a persistent store for simple data.
 ///
 /// Data is persisted to disk asynchronously.
-base class AsyncMethodChannelBetterSharedPreferences
+base class MethodChannelSharedPreferencesAsync
     extends SharedPreferencesAsyncPlatform<SharedPreferencesOptions> {
   @override
   Future<bool> clear(

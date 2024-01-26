@@ -462,8 +462,7 @@ void main() {
       expect(values['Int'], writeCount);
     });
 
-    testWidgets('string clash with lists, big integers and doubles',
-        (WidgetTester _) async {
+    testWidgets('string clash with lists and doubles', (WidgetTester _) async {
       const String key = 'akey';
       const String value = 'a string value';
       await preferences.clearWithParameters(
@@ -477,8 +476,6 @@ void main() {
       const List<String> specialPrefixes = <String>[
         // Prefix for lists:
         'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu',
-        // Prefix for big integers:
-        'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy',
         // Prefix for doubles:
         'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu',
       ];

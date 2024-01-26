@@ -34,7 +34,7 @@ void main() {
 
   testWidgets('registers itself', (WidgetTester tester) async {
     SharedPreferencesAsyncPlatform.instance =
-        AsyncMethodChannelBetterSharedPreferences();
+        MethodChannelSharedPreferencesAsync();
     expect(SharedPreferencesAsyncPlatform.instance,
         isNot(isA<SharedPreferencesPlugin>()));
     SharedPreferencesPlugin.registerWith(null);

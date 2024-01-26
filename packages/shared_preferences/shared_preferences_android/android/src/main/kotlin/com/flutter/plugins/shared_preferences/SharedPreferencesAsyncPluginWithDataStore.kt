@@ -64,8 +64,6 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesAsyncApi {
     SharedPreferencesAsyncApi.setUp(binding.binaryMessenger, null)
   }
 
-
-
   /** Adds property to data store of type bool. */
   override fun setBool(key: String, value: Boolean, options: SharedPreferencesPigeonOptions): Boolean {
     return runBlocking {dataStoreSetBool(key, value)}

@@ -22,7 +22,7 @@ abstract base class SharedPreferencesAsyncPlatform<T> {
   ///
   /// Defaults to [MethodChannelBetterSharedPreferences].
   static SharedPreferencesAsyncPlatform<SharedPreferencesOptions> instance =
-      AsyncMethodChannelBetterSharedPreferences();
+      MethodChannelSharedPreferencesAsync();
 
   /// Stores the String [value] associated with the [key].
   Future<bool> setString(

@@ -114,9 +114,6 @@ base class SharedPreferencesAsyncWeb
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    // IMPORTANT: Do not use html.window.localStorage.clear() as that will
-    //            remove _all_ local data, not just the keys prefixed with
-    //            _prefix
     _getAllowedKeys(allowList: filter.allowList)
         .forEach(html.window.localStorage.removeItem);
     return true;
