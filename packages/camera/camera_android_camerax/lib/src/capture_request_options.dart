@@ -48,7 +48,9 @@ class CaptureRequestOptions extends JavaObject {
 
   late final _CaptureRequestOptionsHostApiImpl _api;
 
-  List<(CaptureRequestKeySupportedType type, dynamic value)> requestedOptions;
+  /// Capture request options this instance will be used to request.
+  final List<(CaptureRequestKeySupportedType type, dynamic value)>
+      requestedOptions;
 
   /// Error message indicating a [CaptureRequestOption] was constructed with a
   /// capture request key currently unsupported by the wrapping of this class.
