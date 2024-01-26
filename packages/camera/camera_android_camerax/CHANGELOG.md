@@ -1,3 +1,7 @@
+## 0.5.0+29
+
+* Wraps CameraX classes need to set exposure mode and more generally, set capture request options if needed.
+
 ## 0.5.0+28
 
 * Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.

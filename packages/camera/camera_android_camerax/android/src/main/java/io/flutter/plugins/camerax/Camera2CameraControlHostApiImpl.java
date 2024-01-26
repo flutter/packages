@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.Camera2CameraControl;
 import androidx.camera.camera2.interop.CaptureRequestOptions;
@@ -37,7 +38,8 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
      * Creates an instance of {@link Camera2CameraControl} derived from specified {@link
      * CameraControl} instance.
      */
-    public Camera2CameraControl create(@NonNull CameraControl cameraControl) {
+    @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
+    public @NonNull Camera2CameraControl create(@NonNull CameraControl cameraControl) {
       return Camera2CameraControl.from(cameraControl);
     }
 
@@ -45,6 +47,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
      * Adds a {@link CaptureRequestOptions} to update the capture session with the options it
      * contains.
      */
+    @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
     public void addCaptureRequestOptions(
         @NonNull Camera2CameraControl camera2CameraControl,
         @NonNull CaptureRequestOptions bundle,

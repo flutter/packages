@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.CaptureRequestOptions;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestKeySupportedType;
@@ -33,7 +34,8 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
     // represent capture request options is checked on the Dart side and even if still
     // invalid, will fail to be cast to the appropriate type.
     @SuppressWarnings("unchecked")
-    public CaptureRequestOptions create(
+    @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
+    public @NonNull CaptureRequestOptions create(
         @NonNull Map<CaptureRequestKeySupportedType, Object> options) {
       CaptureRequestOptions.Builder builder = getCaptureRequestOptionsBuilder();
 
@@ -76,7 +78,8 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
     }
 
     @VisibleForTesting
-    public CaptureRequestOptions.Builder getCaptureRequestOptionsBuilder() {
+    @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
+    public @NonNull CaptureRequestOptions.Builder getCaptureRequestOptionsBuilder() {
       return new CaptureRequestOptions.Builder();
     }
   }
