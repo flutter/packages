@@ -307,9 +307,16 @@
 }
 
 + (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error {
+  NSMutableDictionary *userInfo = [NSMutableDictionary new];
+  for (NSErrorUserInfoKey key in error.userInfo) {
+    id value = error.userInfo[key];
+    userInfo[key] = [FIAObjectTranslator encodeNSErrorUserInfo:value];
+  }
+
+
   SKErrorMessage *msg = [SKErrorMessage makeWithCode:error.code
                                               domain:error.domain
-                                            userInfo:[FIAObjectTranslator encodeNSErrorUserInfo:error.userInfo]];
+                                            userInfo:userInfo];
   return msg;
 }
 
