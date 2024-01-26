@@ -29,10 +29,13 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
   public static class CaptureRequestOptionsProxy {
 
     /** Creates an instance of {@link CaptureRequestOptions}. */
-    @SuppressWarnings("unchecked") // TODO(camsim99): If I keep this, explain why this is safe.
+    // Suppression is safe because the type shared between the key and value pairs that
+    // represent capture request options is checked on the Dart side and even if still
+    // invalid, will fail to be cast to the appropriate type.
+    @SuppressWarnings("unchecked")
     public CaptureRequestOptions create(
         @NonNull Map<CaptureRequestKeySupportedType, Object> options) {
-      CaptureRequestOptions.Builder builder = new CaptureRequestOptions.Builder();
+      CaptureRequestOptions.Builder builder = getCaptureRequestOptionsBuilder();
 
       for (Map.Entry<CaptureRequestKeySupportedType, Object> option : options.entrySet()) {
         CaptureRequestKeySupportedType optionKeyType = option.getKey();
@@ -70,6 +73,11 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
               "The capture request key is not currently supported by the plugin.");
       }
       return key;
+    }
+
+    @VisibleForTesting
+    public CaptureRequestOptions.Builder getCaptureRequestOptionsBuilder() {
+      return new CaptureRequestOptions.Builder();
     }
   }
 

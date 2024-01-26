@@ -31,7 +31,6 @@ import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 
 public class Camera2CameraControlTest {
-
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock public Camera2CameraControl mockCamera2CameraControl;

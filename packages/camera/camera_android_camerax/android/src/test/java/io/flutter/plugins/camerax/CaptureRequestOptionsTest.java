@@ -1,82 +1,109 @@
-// // Copyright 2013 The Flutter Authors. All rights reserved.
-// // Use of this source code is governed by a BSD-style license that can be
-// // found in the LICENSE file.
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-// // TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
+package io.flutter.plugins.camerax;
 
-// package io.flutter.plugins.camerax;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-// // TODO(bparrishMines): Import native classes
-// import static org.junit.Assert.assertEquals;
-// import static org.mockito.ArgumentMatchers.any;
-// import static org.mockito.ArgumentMatchers.eq;
-// import static org.mockito.Mockito.verify;
-// import static org.mockito.Mockito.when;
+import android.hardware.camera2.CaptureRequest;
+import androidx.camera.camera2.interop.CaptureRequestOptions;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestKeySupportedType;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
-// import io.flutter.plugin.common.BinaryMessenger;
-// import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CaptureRequestOptionsFlutterApi;
-// import java.util.Objects;
-// import org.junit.After;
-// import org.junit.Before;
-// import org.junit.Rule;
-// import org.junit.Test;
-// import org.mockito.Mock;
-// import org.mockito.junit.MockitoJUnit;
-// import org.mockito.junit.MockitoRule;
+public class CaptureRequestOptionsTest {
+  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-// public class CaptureRequestOptionsTest {
+  @Mock public CaptureRequestOptions mockCaptureRequestOptions;
 
-//   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  InstanceManager testInstanceManager;
 
-//   @Mock public CaptureRequestOptions mockCaptureRequestOptions;
+  @Before
+  public void setUp() {
+    testInstanceManager = InstanceManager.create(identifier -> {});
+  }
 
-//   @Mock public BinaryMessenger mockBinaryMessenger;
+  @After
+  public void tearDown() {
+    testInstanceManager.stopFinalizationListener();
+  }
 
-//   @Mock public CaptureRequestOptionsFlutterApi mockFlutterApi;
+  @Test
+  public void create_buildsExpectedCaptureKeyRequestOptionsWhenOptionsNonNull() {
+    final CaptureRequestOptionsHostApiImpl.CaptureRequestOptionsProxy proxySpy =
+        spy(new CaptureRequestOptionsHostApiImpl.CaptureRequestOptionsProxy());
+    final CaptureRequestOptionsHostApiImpl hostApi =
+        new CaptureRequestOptionsHostApiImpl(testInstanceManager, proxySpy);
+    final CaptureRequestOptions.Builder mockBuilder = mock(CaptureRequestOptions.Builder.class);
+    final long instanceIdentifier = 44;
 
-//   @Mock public CaptureRequestOptionsHostApiImpl.CaptureRequestOptionsProxy mockProxy;
+    // Map between CaptureRequestOptions indices and a test value for that option.
+    final Map<Long, Object> options =
+        new HashMap<Long, Object>() {
+          {
+            put(0L, false);
+          }
+        };
 
-//   InstanceManager instanceManager;
+    when(proxySpy.getCaptureRequestOptionsBuilder()).thenReturn(mockBuilder);
+    when(mockBuilder.build()).thenReturn(mockCaptureRequestOptions);
 
-//   @Before
-//   public void setUp() {
-//     instanceManager = InstanceManager.open(identifier -> {});
-//   }
+    hostApi.create(instanceIdentifier, options);
+    for (CaptureRequestKeySupportedType supportedType : CaptureRequestKeySupportedType.values()) {
+      final Long supportedTypeIndex = Long.valueOf(supportedType.index);
+      final Object testValueForSupportedType = options.get(supportedTypeIndex);
+      switch (supportedType) {
+        case CONTROL_AE_LOCK:
+          verify(mockBuilder)
+              .setCaptureRequestOption(
+                  eq(CaptureRequest.CONTROL_AE_LOCK), eq((Boolean) testValueForSupportedType));
+          break;
+        default:
+          throw new IllegalArgumentException(
+              "The capture request key is not currently supported by the plugin.");
+      }
+    }
 
-//   @After
-//   public void tearDown() {
-//     instanceManager.close();
-//   }
+    assertEquals(testInstanceManager.getInstance(instanceIdentifier), mockCaptureRequestOptions);
+  }
 
-//   @Test
-//   public void hostApiCreate() {
+  @Test
+  public void create_buildsExpectedCaptureKeyRequestOptionsWhenAnOptionIsNull() {
+    final CaptureRequestOptionsHostApiImpl.CaptureRequestOptionsProxy proxySpy =
+        spy(new CaptureRequestOptionsHostApiImpl.CaptureRequestOptionsProxy());
+    final CaptureRequestOptionsHostApiImpl hostApi =
+        new CaptureRequestOptionsHostApiImpl(testInstanceManager, proxySpy);
+    final CaptureRequestOptions.Builder mockBuilder = mock(CaptureRequestOptions.Builder.class);
+    final long instanceIdentifier = 44;
 
-//     final List options = new ArrayList<Object>();
+    // Map between CaptureRequestOptions.CONTROL_AE_LOCK index and test value.
+    final Map<Long, Object> options =
+        new HashMap<Long, Object>() {
+          {
+            put(0L, null);
+          }
+        };
 
-//     when(mockProxy.create(options)).thenReturn(mockCaptureRequestOptions);
+    when(proxySpy.getCaptureRequestOptionsBuilder()).thenReturn(mockBuilder);
+    when(mockBuilder.build()).thenReturn(mockCaptureRequestOptions);
 
-//     final CaptureRequestOptionsHostApiImpl hostApi =
-//         new CaptureRequestOptionsHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
+    hostApi.create(instanceIdentifier, options);
 
-//     final long instanceIdentifier = 0;
-//     hostApi.create(instanceIdentifier, options);
+    verify(mockBuilder).clearCaptureRequestOption(CaptureRequest.CONTROL_AE_LOCK);
 
-//     assertEquals(instanceManager.getInstance(instanceIdentifier), mockCaptureRequestOptions);
-//   }
-
-//   @Test
-//   public void flutterApiCreate() {
-//     final CaptureRequestOptionsFlutterApiImpl flutterApi =
-//         new CaptureRequestOptionsFlutterApiImpl(mockBinaryMessenger, instanceManager);
-//     flutterApi.setApi(mockFlutterApi);
-
-//     final List options = new ArrayList<Object>();
-
-//     flutterApi.create(mockCaptureRequestOptions, options, reply -> {});
-
-//     final long instanceIdentifier =
-//         Objects.requireNonNull(
-//             instanceManager.getIdentifierForStrongReference(mockCaptureRequestOptions));
-//     verify(mockFlutterApi).create(eq(instanceIdentifier), eq(options), any());
-//   }
-// }
+    assertEquals(testInstanceManager.getInstance(instanceIdentifier), mockCaptureRequestOptions);
+  }
+}
