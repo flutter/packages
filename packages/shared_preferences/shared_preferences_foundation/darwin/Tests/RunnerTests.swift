@@ -17,7 +17,7 @@ class RunnerTests: XCTestCase {
 
   func testSetAndGet() throws {
     for aPrefix in prefixes {
-      let plugin = SharedPreferencesPlugin()
+      let plugin = DeprecatedSharedPreferencesPlugin()
 
       plugin.setBool(key: "\(aPrefix)aBool", value: true)
       plugin.setDouble(key: "\(aPrefix)aDouble", value: 3.14)
@@ -36,7 +36,7 @@ class RunnerTests: XCTestCase {
 
   func testGetWithAllowList() throws {
     for aPrefix in prefixes {
-      let plugin = SharedPreferencesPlugin()
+      let plugin = DeprecatedSharedPreferencesPlugin()
 
       plugin.setBool(key: "\(aPrefix)aBool", value: true)
       plugin.setDouble(key: "\(aPrefix)aDouble", value: 3.14)
@@ -55,7 +55,7 @@ class RunnerTests: XCTestCase {
 
   func testRemove() throws {
     for aPrefix in prefixes {
-      let plugin = SharedPreferencesPlugin()
+      let plugin = DeprecatedSharedPreferencesPlugin()
       let testKey = "\(aPrefix)foo"
       plugin.setValue(key: testKey, value: 42)
 
@@ -70,10 +70,10 @@ class RunnerTests: XCTestCase {
       XCTAssertNil(finalValues[testKey] as Any?)
     }
   }
-
+    
   func testClearWithNoAllowlist() throws {
     for aPrefix in prefixes {
-      let plugin = SharedPreferencesPlugin()
+      let plugin = DeprecatedSharedPreferencesPlugin()
       let testKey = "\(aPrefix)foo"
       plugin.setValue(key: testKey, value: 42)
 
@@ -88,10 +88,10 @@ class RunnerTests: XCTestCase {
       XCTAssertNil(finalValues[testKey] as Any?)
     }
   }
-
+    
   func testClearWithAllowlist() throws {
     for aPrefix in prefixes {
-      let plugin = SharedPreferencesPlugin()
+      let plugin = DeprecatedSharedPreferencesPlugin()
       let testKey = "\(aPrefix)foo"
       plugin.setValue(key: testKey, value: 42)
 
@@ -105,5 +105,4 @@ class RunnerTests: XCTestCase {
       XCTAssertEqual(finalValues[testKey] as? Int, 42)
     }
   }
-
 }

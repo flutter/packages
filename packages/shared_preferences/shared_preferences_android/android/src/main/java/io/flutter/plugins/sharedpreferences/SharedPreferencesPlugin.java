@@ -57,7 +57,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   private void setUp(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     try {
-      SharedPreferencesApi.setup(messenger, this);
+      SharedPreferencesApi.setUp(messenger, this);
     } catch (Exception ex) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex);
     }
@@ -70,7 +70,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
-    SharedPreferencesApi.setup(binding.getBinaryMessenger(), null);
+    SharedPreferencesApi.setUp(binding.getBinaryMessenger(), null);
   }
 
   @Override

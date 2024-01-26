@@ -5,8 +5,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
+import 'package:shared_preferences_platform_interface/deprecated_types.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
-import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'test_api.g.dart';
 

@@ -6,6 +6,9 @@ import 'dart:async';
 import 'dart:convert' show json;
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:shared_preferences_platform_interface/deprecated_types.dart'
+    as deprecated_types;
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:web/web.dart' as html;
@@ -26,21 +29,22 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   @override
   Future<bool> clear() async {
     return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
+      deprecated_types.ClearParameters(
+        filter: deprecated_types.PreferencesFilter(prefix: _defaultPrefix),
       ),
     );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+    return clearWithParameters(deprecated_types.ClearParameters(
+        filter: deprecated_types.PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<bool> clearWithParameters(ClearParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
+  Future<bool> clearWithParameters(
+      deprecated_types.ClearParameters parameters) async {
+    final deprecated_types.PreferencesFilter filter = parameters.filter;
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix
@@ -52,22 +56,22 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   @override
   Future<Map<String, Object>> getAll() async {
     return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
+      deprecated_types.GetAllParameters(
+        filter: deprecated_types.PreferencesFilter(prefix: _defaultPrefix),
       ),
     );
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+    return getAllWithParameters(deprecated_types.GetAllParameters(
+        filter: deprecated_types.PreferencesFilter(prefix: prefix)));
   }
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
+      deprecated_types.GetAllParameters parameters) async {
+    final deprecated_types.PreferencesFilter filter = parameters.filter;
     final Map<String, Object> allData = <String, Object>{};
     for (final String key
         in _getFilteredKeys(filter.prefix, allowList: filter.allowList)) {
@@ -92,24 +96,183 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     String prefix, {
     Set<String>? allowList,
   }) {
-    return html.window.localStorage.keys.where((String key) =>
-        key.startsWith(prefix) && (allowList?.contains(key) ?? true));
-  }
-
-  String _encodeValue(Object? value) {
-    return json.encode(value);
-  }
-
-  Object _decodeValue(String encodedValue) {
-    final Object? decodedValue = json.decode(encodedValue);
-
-    if (decodedValue is List) {
-      // JSON does not preserve generics. The encode/decode roundtrip is
-      // `List<String>` => JSON => `List<dynamic>`. We have to explicitly
-      // restore the RTTI.
-      return decodedValue.cast<String>();
-    }
-
-    return decodedValue!;
+    return _getAllowedKeys(allowList: allowList)
+        .where((String key) => key.startsWith(prefix));
   }
 }
+
+/// The web implementation of [SharedPreferencesAsyncPlatform].
+///
+/// This class implements the `package:shared_preferences` functionality for the web.
+base class SharedPreferencesAsyncWeb
+    extends SharedPreferencesAsyncPlatform<SharedPreferencesWebOptions> {
+  /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
+  static void registerWith(Registrar? registrar) {
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncWeb();
+  }
+
+  @override
+  Future<bool> clear(
+    ClearParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilter filter = parameters.filter;
+    // IMPORTANT: Do not use html.window.localStorage.clear() as that will
+    //            remove _all_ local data, not just the keys prefixed with
+    //            _prefix
+    _getAllowedKeys(allowList: filter.allowList)
+        .forEach(html.window.localStorage.removeItem);
+    return true;
+  }
+
+  @override
+  Future<Map<String, Object>> getPreferences(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    return _readAllFromLocalStorage(parameters.filter.allowList, options);
+  }
+
+  Future<Map<String, Object>> _readAllFromLocalStorage(
+    Set<String>? allowList,
+    SharedPreferencesOptions options,
+  ) async {
+    final Map<String, Object> allData = <String, Object>{};
+    for (final String key in _getAllowedKeys(allowList: allowList)) {
+      allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
+    }
+    return allData;
+  }
+
+  @override
+  Future<Set<String?>> getKeys(GetPreferencesParameters parameters,
+      SharedPreferencesOptions options) async {
+    return (await getPreferences(parameters, options)).keys.toSet();
+  }
+
+  @override
+  Future<bool> setString(
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) =>
+      _setValue(key, value, options);
+
+  @override
+  Future<bool> setBool(
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) =>
+      _setValue(key, value, options);
+
+  @override
+  Future<bool> setDouble(
+    String key,
+    double value,
+    SharedPreferencesOptions options,
+  ) =>
+      _setValue(key, value, options);
+
+  @override
+  Future<bool> setInt(
+    String key,
+    int value,
+    SharedPreferencesOptions options,
+  ) =>
+      _setValue(key, value, options);
+
+  @override
+  Future<bool> setStringList(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) =>
+      _setValue(key, value, options);
+
+  Future<bool> _setValue(
+    String key,
+    Object? value,
+    SharedPreferencesOptions options,
+  ) async {
+    html.window.localStorage.setItem(key, _encodeValue(value));
+    return true;
+  }
+
+  @override
+  Future<String?> getString(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final Map<String, Object> data =
+        await _readAllFromLocalStorage(<String>{key}, options);
+    return data[key] as String?;
+  }
+
+  @override
+  Future<bool?> getBool(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final Map<String, Object> data =
+        await _readAllFromLocalStorage(<String>{key}, options);
+    return data[key] as bool?;
+  }
+
+  @override
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final Map<String, Object> data =
+        await _readAllFromLocalStorage(<String>{key}, options);
+    return data[key] as double?;
+  }
+
+  @override
+  Future<int?> getInt(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final Map<String, Object> data =
+        await _readAllFromLocalStorage(<String>{key}, options);
+    return data[key] as int?;
+  }
+
+  @override
+  Future<List<String>?> getStringList(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final Map<String, Object> data =
+        await _readAllFromLocalStorage(<String>{key}, options);
+    return data[key] as List<String>?;
+  }
+}
+
+Iterable<String> _getAllowedKeys({
+  Set<String>? allowList,
+}) {
+  return html.window.localStorage.keys
+      .where((String key) => allowList?.contains(key) ?? true);
+}
+
+String _encodeValue(Object? value) {
+  return json.encode(value);
+}
+
+Object _decodeValue(String encodedValue) {
+  final Object? decodedValue = json.decode(encodedValue);
+
+  if (decodedValue is List) {
+    // JSON does not preserve generics. The encode/decode roundtrip is
+    // `List<String>` => JSON => `List<dynamic>`. We have to explicitly
+    // restore the RTTI.
+    return decodedValue.cast<String>();
+  }
+
+  return decodedValue!;
+}
+
+/// Web specific SharedPreferences Options.
+class SharedPreferencesWebOptions extends SharedPreferencesOptions {}

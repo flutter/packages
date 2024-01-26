@@ -5,8 +5,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:shared_preferences_platform_interface/deprecated_types.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
-import 'package:shared_preferences_platform_interface/types.dart';
 
 /// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
 /// a persistent store for simple data.
@@ -125,7 +125,7 @@ class SharedPreferences {
   bool containsKey(String key) => _preferenceCache.containsKey(key);
 
   /// Reads a set of string values from persistent storage, throwing an
-  /// exception if it's not a string set.
+  /// exception if it's not a string list.
   List<String>? getStringList(String key) {
     List<dynamic>? list = _preferenceCache[key] as List<dynamic>?;
     if (list != null && list is! List<String>) {

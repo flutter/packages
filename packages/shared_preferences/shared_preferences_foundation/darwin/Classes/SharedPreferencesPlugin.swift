@@ -10,16 +10,16 @@ import Foundation
   import FlutterMacOS
 #endif
 
-public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
+public class DeprecatedSharedPreferencesPlugin: NSObject, FlutterPlugin, DeprecatedUserDefaultsApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let instance = SharedPreferencesPlugin()
+    let instance = DeprecatedSharedPreferencesPlugin()
     // Workaround for https://github.com/flutter/flutter/issues/118103.
     #if os(iOS)
       let messenger = registrar.messenger()
     #else
       let messenger = registrar.messenger
     #endif
-    UserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    DeprecatedUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   func getAll(prefix: String, allowList: [String]?) -> [String?: Any?] {
@@ -54,18 +54,129 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   /// If [allowList] is included, only items included will be returned.
   func getAllPrefs(prefix: String, allowList: [String]?) -> [String: Any] {
     var filteredPrefs: [String: Any] = [:]
-    var allowSet: Set<String>?
-    if let allowList = allowList {
-      allowSet = Set(allowList)
+
+    let prefs = try! SharedPreferencesPlugin.getAllPrefs(allowList: allowList, options: SharedPreferencesPigeonOptions());
+
+    for (key, value) in prefs where (key.hasPrefix(prefix)) {
+      filteredPrefs[key] = value
     }
-    if let appDomain = Bundle.main.bundleIdentifier,
-      let prefs = UserDefaults.standard.persistentDomain(forName: appDomain)
-    {
-      for (key, value) in prefs
-      where (key.hasPrefix(prefix) && (allowSet == nil || allowSet!.contains(key))) {
-        filteredPrefs[key] = value
-      }
-    }
+
     return filteredPrefs
   }
+
+}
+
+public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
+    
+  public static func register(with registrar: FlutterPluginRegistrar) {
+    let instance = SharedPreferencesPlugin()
+    // Workaround for https://github.com/flutter/flutter/issues/118103.
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #else
+      let messenger = registrar.messenger
+    #endif
+    UserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
+  }
+
+  static private func getUserDefaults(options: SharedPreferencesPigeonOptions) throws -> UserDefaults {
+    let prefs = UserDefaults(suiteName: options.suiteName)
+      
+    if (prefs == nil) {
+        throw FlutterError(code: "No Such Suite Name", message: "The provided Suite Name '' does not exist", details: "") as! Error
+    }
+    return prefs!
+  }
+
+  func getKeys(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String] {
+    return Array(try getAll(allowList: allowList, options: options).keys)
+  }
+
+  func getAll(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String: Any] {
+    return try SharedPreferencesPlugin.getAllPrefs(allowList: allowList, options: options)
+  }
+
+  func setBool(key: String, value: Bool, options: SharedPreferencesPigeonOptions) throws {
+    try SharedPreferencesPlugin.getUserDefaults(options: options).set(value, forKey: key)
+  }
+
+  func setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions) throws {
+    try SharedPreferencesPlugin.getUserDefaults(options: options).set(value, forKey: key)
+  }
+
+  func setValue(key: String, value: Any, options: SharedPreferencesPigeonOptions) throws {
+    try SharedPreferencesPlugin.getUserDefaults(options: options).set(value, forKey: key)
+  }
+
+  func getString(key: String, options: SharedPreferencesPigeonOptions) throws -> String? {
+    return try SharedPreferencesPlugin.getUserDefaults(options: options).string(forKey: key)
+  }
+  
+  func getBool(key: String, options: SharedPreferencesPigeonOptions) throws -> Bool? {
+    try SharedPreferencesPlugin.getUserDefaults(options: options).bool(forKey: key)
+  }
+  
+  func getDouble(key: String, options: SharedPreferencesPigeonOptions) throws -> Double? {
+    try SharedPreferencesPlugin.getUserDefaults(options: options).double(forKey: key)
+  }
+  
+  func getInt(key: String, options: SharedPreferencesPigeonOptions) throws -> Int64? {
+    Int64(try SharedPreferencesPlugin.getUserDefaults(options: options).integer(forKey: key))
+  }
+  
+  func getStringList(key: String, options: SharedPreferencesPigeonOptions) throws -> [String]? {
+    try SharedPreferencesPlugin.getUserDefaults(options: options).stringArray(forKey: key)
+  }
+
+  func remove(key: String, options: SharedPreferencesPigeonOptions) throws {
+    try SharedPreferencesPlugin.getUserDefaults(options: options).removeObject(forKey: key)
+  }
+
+  func clear(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws {
+    let defaults = try SharedPreferencesPlugin.getUserDefaults(options: options)
+    for (key, _) in try SharedPreferencesPlugin.getAllPrefs(allowList: allowList, options: options) {
+      defaults.removeObject(forKey: key)
+    }
+  }
+    
+  /// Returns all preferences stored with specified prefix.
+  /// If [allowList] is included, only items included will be returned.
+  /// If no [allowList], returns supported types only.
+  static func getAllPrefs(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String: Any] {
+    var filteredPrefs: [String: Any] = [:]
+    var compatiblePrefs: [String: Any] = [:]
+    let allowSet = allowList.map { Set($0) }
+    if let appDomain = Bundle.main.bundleIdentifier,
+    let prefs = try getUserDefaults(options: options).persistentDomain(forName: appDomain)
+    {
+      if let allowSet = allowSet {
+        filteredPrefs = prefs.filter {allowSet.contains($0.key)}
+      } else {
+        filteredPrefs = prefs
+      }
+      compatiblePrefs = filteredPrefs.filter{isTypeCompatible(value:$0.value)};
+    }
+    return compatiblePrefs
+  }
+
+  static func isTypeCompatible(value: Any) -> Bool {
+    switch value {
+      case is Bool:
+        return true
+      case is Double:
+        return true
+      case is String:
+        return true
+      case is Int:
+        return true
+      case is [Any]:
+        if let value = value as? [Any] {
+          return value.allSatisfy(isTypeCompatible)
+        }
+      default:
+        return false
+    }
+    return false
+  }
+  
 }

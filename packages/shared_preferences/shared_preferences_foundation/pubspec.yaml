@@ -29,9 +29,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^10.1.6
+  pigeon: ^16.0.4
 
 topics:
   - persistence
   - shared-preferences
   - storage
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {shared_preferences_platform_interface: {path: ../../shared_preferences/shared_preferences_platform_interface}}

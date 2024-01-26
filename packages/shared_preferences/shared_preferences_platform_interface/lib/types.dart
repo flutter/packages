@@ -2,37 +2,41 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// Basic options for creating SharedPreferences classes.
+///
+/// This class exists to provide extension to platform specific options as
+/// there are currently no general options that are not platform specific.
+class SharedPreferencesOptions {
+  /// Constructor for SharedPreferencesOptions.
+  const SharedPreferencesOptions();
+}
+
 /// Filter options used to get and clear preferences.
 class PreferencesFilter {
-  /// Constructor.
-  PreferencesFilter({
-    required this.prefix,
+  /// Creates a new instance with the given options.
+  const PreferencesFilter({
     this.allowList,
   });
 
-  /// A prefix to limit getting and clearing to only items that begin with
-  /// this string.
-  String prefix;
-
   /// A list of preference keys that will limit getting and clearing to only
   /// items included in this list.
-  Set<String>? allowList;
+  final Set<String>? allowList;
 }
 
-/// Parameters for use in [getAll] methods.
-class GetAllParameters {
-  /// Constructor.
-  GetAllParameters({required this.filter});
+/// Parameters for use in [get] methods.
+class GetPreferencesParameters {
+  /// Creates a new instance with the given options.
+  const GetPreferencesParameters({required this.filter});
 
   /// Filter to limit which preferences are returned.
-  PreferencesFilter filter;
+  final PreferencesFilter filter;
 }
 
 /// Parameters for use in [clear] methods.
 class ClearParameters {
-  /// Constructor.
-  ClearParameters({required this.filter});
+  /// Creates a new instance with the given options.
+  const ClearParameters({required this.filter});
 
   /// Filter to limit which preferences are cleared.
-  PreferencesFilter filter;
+  final PreferencesFilter filter;
 }

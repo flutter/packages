@@ -3,15 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:shared_preferences_platform_interface/deprecated_types.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
-import 'package:shared_preferences_platform_interface/types.dart';
 import 'messages.g.dart';
 
 typedef _Setter = Future<void> Function(String key, Object value);
 
 /// iOS and macOS implementation of shared_preferences.
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
-  final UserDefaultsApi _api = UserDefaultsApi();
+  final DeprecatedUserDefaultsApi _api = DeprecatedUserDefaultsApi();
 
   static const String _defaultPrefix = 'flutter.';
 
