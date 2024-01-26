@@ -309,7 +309,7 @@
 + (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error {
   SKErrorMessage *msg = [SKErrorMessage makeWithCode:error.code
                                               domain:error.domain
-                                            userInfo:error.userInfo];
+                                            userInfo:[FIAObjectTranslator encodeNSErrorUserInfo:error.userInfo]];
   return msg;
 }
 
