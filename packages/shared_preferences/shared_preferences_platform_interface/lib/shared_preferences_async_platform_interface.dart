@@ -20,7 +20,7 @@ abstract base class SharedPreferencesAsyncPlatform<T> {
 
   /// The instance of [SharedPreferencesAsyncPlatform] to use.
   ///
-  /// Defaults to [MethodChannelBetterSharedPreferences].
+  /// Defaults to [MethodChannelSharedPreferencesAsync].
   static SharedPreferencesAsyncPlatform<SharedPreferencesOptions> instance =
       MethodChannelSharedPreferencesAsync();
 
