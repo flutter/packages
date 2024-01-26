@@ -20,6 +20,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
   static void registerWith(Registrar? registrar) {
     SharedPreferencesStorePlatform.instance = SharedPreferencesPlugin();
+    SharedPreferencesAsyncWeb.registerWith(registrar);
   }
 
   static const String _defaultPrefix = 'flutter.';

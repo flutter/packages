@@ -30,6 +30,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   /// Registers the Windows implementation.
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesWindows();
+    SharedPreferencesAsyncWindows.registerWith();
   }
 
   /// Local copy of preferences

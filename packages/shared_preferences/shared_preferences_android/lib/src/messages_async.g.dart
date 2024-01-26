@@ -54,7 +54,7 @@ class _SharedPreferencesAsyncApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return SharedPreferencesPigeonOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -70,22 +70,18 @@ class SharedPreferencesAsyncApi {
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _SharedPreferencesAsyncApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _SharedPreferencesAsyncApiCodec();
 
   /// Adds property to shared preferences data set of type bool.
-  Future<bool> setBool(
-      String key, bool value, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setBool';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<bool> setBool(String key, bool value, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setBool';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[key, value, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[key, value, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -105,18 +101,15 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Adds property to shared preferences data set of type String.
-  Future<bool> setString(
-      String key, String value, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setString';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<bool> setString(String key, String value, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setString';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[key, value, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[key, value, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -136,18 +129,15 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Adds property to shared preferences data set of type int.
-  Future<bool> setInt(
-      String key, int value, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setInt';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<bool> setInt(String key, int value, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setInt';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[key, value, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[key, value, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -167,18 +157,15 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Adds property to shared preferences data set of type double.
-  Future<bool> setDouble(
-      String key, double value, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDouble';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<bool> setDouble(String key, double value, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[key, value, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[key, value, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -198,18 +185,15 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Adds property to shared preferences data set of type List<String>.
-  Future<bool> setStringList(String key, List<String?> value,
-      SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setStringList';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<bool> setStringList(String key, List<String?> value, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setStringList';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[key, value, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[key, value, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -229,12 +213,9 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Gets individual String value stored with [key], if any.
-  Future<String?> getString(
-      String key, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getString';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<String?> getString(String key, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getString';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -255,12 +236,9 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Gets individual bool value stored with [key], if any.
-  Future<bool?> getBool(
-      String key, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getBool';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<bool?> getBool(String key, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getBool';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -281,12 +259,9 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Gets individual double value stored with [key], if any.
-  Future<double?> getDouble(
-      String key, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getDouble';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<double?> getDouble(String key, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -307,12 +282,9 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Gets individual int value stored with [key], if any.
-  Future<int?> getInt(
-      String key, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getInt';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<int?> getInt(String key, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getInt';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -333,12 +305,9 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Gets individual List<String> value stored with [key], if any.
-  Future<List<String?>?> getStringList(
-      String key, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getStringList';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<List<String?>?> getStringList(String key, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getStringList';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -359,18 +328,15 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Removes all properties from shared preferences data set with matching prefix.
-  Future<bool> clear(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.clear';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<bool> clear(List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.clear';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[allowList, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[allowList, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -390,18 +356,15 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  Future<Map<String?, Object?>> getAll(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getAll';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<Map<String?, Object?>> getAll(List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getAll';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[allowList, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[allowList, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -416,24 +379,20 @@ class SharedPreferencesAsyncApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)!.cast<String?, Object?>();
     }
   }
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  Future<List<String?>> getKeys(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getKeys';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<List<String?>> getKeys(List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getKeys';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[allowList, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[allowList, options]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
