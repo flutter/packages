@@ -63,7 +63,7 @@ class MethodCallHandlerImpl
     static final String ACKNOWLEDGE_PURCHASE =
         "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
-    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";;
+    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
 
     private MethodNames() {}
