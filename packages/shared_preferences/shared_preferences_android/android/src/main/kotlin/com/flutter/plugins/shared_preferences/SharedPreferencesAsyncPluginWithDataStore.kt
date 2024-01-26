@@ -212,7 +212,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>? {
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String> {
     return (transformPref(getString(key, options) as Any) as List<*>).filterIsInstance<String>()
   }
 
