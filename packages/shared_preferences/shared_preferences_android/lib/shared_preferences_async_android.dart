@@ -15,7 +15,7 @@ const String _doublePrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu';
 ///
 /// This class implements the `package:shared_preferences` functionality for Android.
 base class SharedPreferencesAsyncAndroid
-    extends SharedPreferencesAsyncPlatform<SharedPreferencesAndroidOptions> {
+    extends SharedPreferencesAsyncPlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAsyncAndroid({
     @visibleForTesting SharedPreferencesAsyncApi? api,

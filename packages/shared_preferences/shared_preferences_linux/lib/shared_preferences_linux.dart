@@ -140,8 +140,7 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
 /// The Linux implementation of [SharedPreferencesAsyncPlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for Linux.
-base class SharedPreferencesAsyncLinux
-    extends SharedPreferencesAsyncPlatform<SharedPreferencesLinuxOptions> {
+base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   /// Registers the Linux implementation.
   static void registerWith() {
     SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncLinux();
@@ -161,7 +160,7 @@ base class SharedPreferencesAsyncLinux
   @override
   Future<Set<String>> getKeys(
     GetPreferencesParameters parameters,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
     return (await getPreferences(parameters, options)).keys.toSet();
   }
@@ -170,7 +169,7 @@ base class SharedPreferencesAsyncLinux
   Future<bool> setString(
     String key,
     String value,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -178,7 +177,7 @@ base class SharedPreferencesAsyncLinux
   Future<bool> setBool(
     String key,
     bool value,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -186,7 +185,7 @@ base class SharedPreferencesAsyncLinux
   Future<bool> setDouble(
     String key,
     double value,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -194,7 +193,7 @@ base class SharedPreferencesAsyncLinux
   Future<bool> setInt(
     String key,
     int value,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -202,14 +201,14 @@ base class SharedPreferencesAsyncLinux
   Future<bool> setStringList(
     String key,
     List<String> value,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
   @override
   Future<String?> getString(
     String key,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -219,7 +218,7 @@ base class SharedPreferencesAsyncLinux
   @override
   Future<bool?> getBool(
     String key,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -229,7 +228,7 @@ base class SharedPreferencesAsyncLinux
   @override
   Future<double?> getDouble(
     String key,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -239,7 +238,7 @@ base class SharedPreferencesAsyncLinux
   @override
   Future<int?> getInt(
     String key,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -249,7 +248,7 @@ base class SharedPreferencesAsyncLinux
   @override
   Future<List<String>?> getStringList(
     String key,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -258,7 +257,8 @@ base class SharedPreferencesAsyncLinux
 
   @override
   Future<bool> clear(ClearPreferencesParameters parameters,
-      SharedPreferencesLinuxOptions options) async {
+      SharedPreferencesOptions options) async {
+    options as SharedPreferencesLinuxOptions;
     final PreferencesFilters filter = parameters.filter;
     final Map<String, Object> preferences =
         await _readPreferences(options.fileName);
@@ -275,15 +275,16 @@ base class SharedPreferencesAsyncLinux
   @override
   Future<Map<String, Object>> getPreferences(
     GetPreferencesParameters parameters,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
     return _readAllFromFile(parameters.filter.allowList, options);
   }
 
   Future<Map<String, Object>> _readAllFromFile(
     Set<String>? allowList,
-    SharedPreferencesLinuxOptions options,
+    SharedPreferencesOptions options,
   ) async {
+    options as SharedPreferencesLinuxOptions;
     final Map<String, Object> prefs =
         Map<String, Object>.from(await _readPreferences(options.fileName));
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
@@ -291,7 +292,8 @@ base class SharedPreferencesAsyncLinux
   }
 
   Future<bool> _setValue(
-      String key, Object value, SharedPreferencesLinuxOptions options) async {
+      String key, Object value, SharedPreferencesOptions options) async {
+    options as SharedPreferencesLinuxOptions;
     final Map<String, Object> preferences =
         await _readPreferences(options.fileName);
     preferences[key] = value;

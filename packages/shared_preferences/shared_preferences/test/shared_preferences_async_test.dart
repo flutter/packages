@@ -523,10 +523,9 @@ void main() {
   });
 }
 
-base class FakeSharedPreferencesAsync
-    extends SharedPreferencesAsyncPlatform<SharedPreferencesOptions> {
-  final InMemorySharedPreferencesAsync<SharedPreferencesOptions> backend =
-      InMemorySharedPreferencesAsync<SharedPreferencesOptions>.empty();
+base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
+  final InMemorySharedPreferencesAsync backend =
+      InMemorySharedPreferencesAsync.empty();
   final List<MethodCall> log = <MethodCall>[];
 
   @override

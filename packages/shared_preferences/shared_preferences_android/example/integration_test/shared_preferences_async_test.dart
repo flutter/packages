@@ -27,8 +27,7 @@ void main() {
   const List<String> testList = <String>['foo', 'bar'];
 
   group('Async', () {
-    late SharedPreferencesAsyncPlatform<SharedPreferencesAndroidOptions>
-        preferences;
+    late SharedPreferencesAsyncPlatform preferences;
 
     setUp(() async {
       preferences = SharedPreferencesAsyncAndroid();

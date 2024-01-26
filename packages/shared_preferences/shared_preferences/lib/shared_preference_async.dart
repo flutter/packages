@@ -19,7 +19,7 @@ class SharedPreferencesAsync {
   /// platform specific extensions of the [SharedPreferencesOptions] class.
   final SharedPreferencesOptions _options;
 
-  final SharedPreferencesAsyncPlatform<SharedPreferencesOptions> _platform =
+  final SharedPreferencesAsyncPlatform _platform =
       SharedPreferencesAsyncPlatform.instance;
 
   /// Returns all keys on the the platform that match provided [parameters].

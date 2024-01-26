@@ -35,7 +35,7 @@ const MethodChannel _kChannel =
 ///
 /// Data is persisted to disk asynchronously.
 base class MethodChannelSharedPreferencesAsync
-    extends SharedPreferencesAsyncPlatform<SharedPreferencesOptions> {
+    extends SharedPreferencesAsyncPlatform {
   @override
   Future<bool> clear(
     ClearPreferencesParameters parameters,

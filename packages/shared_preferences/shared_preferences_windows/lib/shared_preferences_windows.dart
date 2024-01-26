@@ -141,7 +141,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 ///
 /// This class implements the `package:shared_preferences` functionality for Windows.
 base class SharedPreferencesAsyncWindows
-    extends SharedPreferencesAsyncPlatform<SharedPreferencesWindowsOptions> {
+    extends SharedPreferencesAsyncPlatform {
   /// Registers the Windows implementation.
   static void registerWith() {
     SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncWindows();
@@ -161,7 +161,7 @@ base class SharedPreferencesAsyncWindows
   @override
   Future<Set<String>> getKeys(
     GetPreferencesParameters parameters,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
     return (await getPreferences(parameters, options)).keys.toSet();
   }
@@ -170,7 +170,7 @@ base class SharedPreferencesAsyncWindows
   Future<bool> setString(
     String key,
     String value,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -178,7 +178,7 @@ base class SharedPreferencesAsyncWindows
   Future<bool> setBool(
     String key,
     bool value,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -186,7 +186,7 @@ base class SharedPreferencesAsyncWindows
   Future<bool> setDouble(
     String key,
     double value,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -194,7 +194,7 @@ base class SharedPreferencesAsyncWindows
   Future<bool> setInt(
     String key,
     int value,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
@@ -202,14 +202,14 @@ base class SharedPreferencesAsyncWindows
   Future<bool> setStringList(
     String key,
     List<String> value,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
   @override
   Future<String?> getString(
     String key,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -219,7 +219,7 @@ base class SharedPreferencesAsyncWindows
   @override
   Future<bool?> getBool(
     String key,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -229,7 +229,7 @@ base class SharedPreferencesAsyncWindows
   @override
   Future<double?> getDouble(
     String key,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -239,7 +239,7 @@ base class SharedPreferencesAsyncWindows
   @override
   Future<int?> getInt(
     String key,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -249,7 +249,7 @@ base class SharedPreferencesAsyncWindows
   @override
   Future<List<String>?> getStringList(
     String key,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
     final Map<String, Object> data =
         await _readAllFromFile(<String>{key}, options);
@@ -258,7 +258,8 @@ base class SharedPreferencesAsyncWindows
 
   @override
   Future<bool> clear(ClearPreferencesParameters parameters,
-      SharedPreferencesWindowsOptions options) async {
+      SharedPreferencesOptions options) async {
+    options as SharedPreferencesWindowsOptions;
     final PreferencesFilters filter = parameters.filter;
     final Map<String, Object> preferences =
         await _readPreferences(options.fileName);
@@ -275,15 +276,16 @@ base class SharedPreferencesAsyncWindows
   @override
   Future<Map<String, Object>> getPreferences(
     GetPreferencesParameters parameters,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
     return _readAllFromFile(parameters.filter.allowList, options);
   }
 
   Future<Map<String, Object>> _readAllFromFile(
     Set<String>? allowList,
-    SharedPreferencesWindowsOptions options,
+    SharedPreferencesOptions options,
   ) async {
+    options as SharedPreferencesWindowsOptions;
     final Map<String, Object> prefs =
         Map<String, Object>.from(await _readPreferences(options.fileName));
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
@@ -291,7 +293,8 @@ base class SharedPreferencesAsyncWindows
   }
 
   Future<bool> _setValue(
-      String key, Object value, SharedPreferencesWindowsOptions options) async {
+      String key, Object value, SharedPreferencesOptions options) async {
+    options as SharedPreferencesWindowsOptions;
     final Map<String, Object> preferences =
         await _readPreferences(options.fileName);
     preferences[key] = value;

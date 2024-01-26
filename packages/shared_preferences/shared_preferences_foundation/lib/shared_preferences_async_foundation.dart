@@ -10,7 +10,7 @@ import './messages.g.dart';
 
 /// iOS and macOS implementation of shared_preferences.
 base class SharedPreferencesAsyncFoundation
-    extends SharedPreferencesAsyncPlatform<SharedPreferencesFoundationOptions> {
+    extends SharedPreferencesAsyncPlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAsyncFoundation({
     @visibleForTesting UserDefaultsApi? api,

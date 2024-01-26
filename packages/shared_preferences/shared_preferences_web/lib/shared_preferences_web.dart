@@ -102,8 +102,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
 /// The web implementation of [SharedPreferencesAsyncPlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for the web.
-base class SharedPreferencesAsyncWeb
-    extends SharedPreferencesAsyncPlatform<SharedPreferencesWebOptions> {
+base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith(Registrar? registrar) {
     SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncWeb();

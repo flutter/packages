@@ -14,105 +14,105 @@ import 'types.dart';
 /// (using `extends`) ensures that the subclass will get the default implementation, while
 /// platform implementations that `implements` this interface will be broken by newly added
 /// [SharedPreferencesAsyncPlatform] methods.
-abstract base class SharedPreferencesAsyncPlatform<T> {
+abstract base class SharedPreferencesAsyncPlatform {
   /// Constructs a SharedPreferencesAsyncPlatform.
   SharedPreferencesAsyncPlatform();
 
   /// The instance of [SharedPreferencesAsyncPlatform] to use.
   ///
   /// Defaults to [MethodChannelSharedPreferencesAsync].
-  static SharedPreferencesAsyncPlatform<SharedPreferencesOptions> instance =
+  static SharedPreferencesAsyncPlatform instance =
       MethodChannelSharedPreferencesAsync();
 
   /// Stores the String [value] associated with the [key].
   Future<bool> setString(
     String key,
     String value,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Stores the bool [value] associated with the [key].
   Future<bool> setBool(
     String key,
     bool value,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Stores the double [value] associated with the [key].
   Future<bool> setDouble(
     String key,
     double value,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Stores the int [value] associated with the [key].
   Future<bool> setInt(
     String key,
     int value,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Stores the List<String> [value] associated with the [key].
   Future<bool> setStringList(
     String key,
     List<String> value,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Retrieves the String [value] associated with the [key], if any.
   Future<String?> getString(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Retrieves the bool [value] associated with the [key], if any.
   Future<bool?> getBool(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Retrieves the double [value] associated with the [key], if any.
   Future<double?> getDouble(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Retrieves the int [value] associated with the [key], if any.
   Future<int?> getInt(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Retrieves the List<String> [value] associated with the [key], if any.
   Future<List<String?>?> getStringList(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Removes all keys and values in the store that match the given [parameters].
   Future<bool> clear(
     ClearPreferencesParameters parameters,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Returns all key/value pairs persisting in this store that match the given [parameters].
   Future<Map<String, Object>> getPreferences(
     GetPreferencesParameters parameters,
-    T options,
+    SharedPreferencesOptions options,
   );
 
   /// Returns all keys persisting in this store that match the given [parameters].
   Future<Set<String?>> getKeys(
     GetPreferencesParameters parameters,
-    T options,
+    SharedPreferencesOptions options,
   );
 }
 
 /// Stores data in-memory.
 ///
 /// Data does not persist across application restarts. This is useful in unit-tests.
-base class InMemorySharedPreferencesAsync<T>
-    extends SharedPreferencesAsyncPlatform<T> {
+base class InMemorySharedPreferencesAsync
+    extends SharedPreferencesAsyncPlatform {
   /// Instantiates an empty in-memory preferences store.
   InMemorySharedPreferencesAsync.empty() : _data = <String, Object>{};
 
@@ -125,7 +125,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<bool> clear(
     ClearPreferencesParameters parameters,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
     if (filter.allowList != null) {
@@ -139,7 +139,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<Map<String, Object>> getPreferences(
     GetPreferencesParameters parameters,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
     final Map<String, Object> preferences = Map<String, Object>.from(_data);
@@ -151,7 +151,7 @@ base class InMemorySharedPreferencesAsync<T>
   Future<bool> _setValue(
     String key,
     Object value,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     _data[key] = value;
     return true;
@@ -161,7 +161,7 @@ base class InMemorySharedPreferencesAsync<T>
   Future<bool> setString(
     String key,
     String value,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _setValue(key, value, options);
   }
@@ -170,7 +170,7 @@ base class InMemorySharedPreferencesAsync<T>
   Future<bool> setInt(
     String key,
     int value,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _setValue(key, value, options);
   }
@@ -179,7 +179,7 @@ base class InMemorySharedPreferencesAsync<T>
   Future<bool> setDouble(
     String key,
     double value,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _setValue(key, value, options);
   }
@@ -188,7 +188,7 @@ base class InMemorySharedPreferencesAsync<T>
   Future<bool> setBool(
     String key,
     bool value,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _setValue(key, value, options);
   }
@@ -197,7 +197,7 @@ base class InMemorySharedPreferencesAsync<T>
   Future<bool> setStringList(
     String key,
     List<String> value,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _setValue(key, value, options);
   }
@@ -205,7 +205,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<String?> getString(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _data[key] as String?;
   }
@@ -213,7 +213,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<bool?> getBool(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _data[key] as bool?;
   }
@@ -221,7 +221,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<double?> getDouble(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _data[key] as double?;
   }
@@ -229,7 +229,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<int?> getInt(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _data[key] as int?;
   }
@@ -237,7 +237,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<List<String>?> getStringList(
     String key,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     return _data[key] as List<String>?;
   }
@@ -245,7 +245,7 @@ base class InMemorySharedPreferencesAsync<T>
   @override
   Future<Set<String?>> getKeys(
     GetPreferencesParameters parameters,
-    T options,
+    SharedPreferencesOptions options,
   ) async {
     final Set<String> keys = _data.keys.toSet();
     if (parameters.filter.allowList != null) {
