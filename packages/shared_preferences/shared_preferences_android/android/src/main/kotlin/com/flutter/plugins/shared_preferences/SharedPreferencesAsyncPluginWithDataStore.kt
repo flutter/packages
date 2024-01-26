@@ -141,10 +141,9 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesApi {
           val preferencesKey = booleanPreferencesKey(key)
           preferences.remove(preferencesKey)
         }
-      } ?: {
-        preferences.clear()
-      }
-       true
+      } ?: preferences.clear()
+
+
     }
   }
 
@@ -215,7 +214,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesApi {
 
   /** Gets StringList at [key] from data store. */
   override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>? {
-    return transformPref(getString(key, options) as Any) as List<String>?
+    return (transformPref(getString(key, options) as Any) as List<*>).filterIsInstance<String>()
   }
 
   /** Gets all properties from data store. */
@@ -228,7 +227,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesApi {
     val allPrefs = context.sharedPreferencesDataStore.data
     val allowSet = allowList?.toSet()
     val filteredMap = mutableMapOf<String, Any>()
-    val prefsMap = allPrefs.map{
+    allPrefs.map{
       it.asMap().map {entry ->
         if (preferencesFilter(entry, allowSet)) {
         filteredMap[entry.key.toString()] = transformPref(entry.value)
@@ -288,7 +287,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesApi {
       try {
         val byteArray = Base64.decode(listString, 0)
         val stream = ObjectInputStream(ByteArrayInputStream(byteArray))
-        return stream.readObject() as List<String>
+        return (stream.readObject() as List<*>).filterIsInstance<String>()
       } catch (e: RuntimeException) {
         throw RuntimeException(e)
       }
