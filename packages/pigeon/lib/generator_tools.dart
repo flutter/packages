@@ -164,9 +164,22 @@ class Indent {
   }
 }
 
-/// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func, String dartPackageName) {
-  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
+/// Create the generated channel name for a [method] on an [api].
+String makeChannelName(Api api, Method method, String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName: method.name,
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// Create the generated channel name for a method on an api.
+String makeChannelNameWithStrings({
+  required String apiName,
+  required String methodName,
+  required String dartPackageName,
+}) {
+  return 'dev.flutter.pigeon.$dartPackageName.$apiName.$methodName';
 }
 
 // TODO(tarrinneal): Determine whether HostDataType is needed.
@@ -541,6 +554,23 @@ void addDocumentationComments(
   DocumentCommentSpecification commentSpec, {
   List<String> generatorComments = const <String>[],
 }) {
+  asDocumentationComments(
+    comments,
+    commentSpec,
+    generatorComments: generatorComments,
+  ).forEach(indent.writeln);
+}
+
+/// Formats documentation comments and adds them to current Indent.
+///
+/// The [comments] list is meant for comments written in the input dart file.
+/// The [generatorComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+Iterable<String> asDocumentationComments(
+  Iterable<String> comments,
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
+}) sync* {
   final List<String> allComments = <String>[
     ...comments,
     if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
@@ -549,24 +579,20 @@ void addDocumentationComments(
   String currentLineOpenToken = commentSpec.openCommentToken;
   if (allComments.length > 1) {
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.openCommentToken);
+      yield commentSpec.openCommentToken;
       currentLineOpenToken = commentSpec.blockContinuationToken;
     }
     for (String line in allComments) {
       if (line.isNotEmpty && line[0] != ' ') {
         line = ' $line';
       }
-      indent.writeln(
-        '$currentLineOpenToken$line',
-      );
+      yield '$currentLineOpenToken$line';
     }
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.closeCommentToken);
+      yield commentSpec.closeCommentToken;
     }
   } else if (allComments.length == 1) {
-    indent.writeln(
-      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
-    );
+    yield '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}';
   }
 }
 
