@@ -1,3 +1,19 @@
+## 16.0.4
+
+* [swift] Improve style of Swift output.
+
+## 16.0.3
+
+* [kotlin] Separates message call code generation into separate methods.
+
+## 16.0.2
+
+* [dart] Separates message call code generation into separate methods.
+
+## 16.0.1
+
+* [dart] Fixes test generation for missing wrapResponse method if only host Api.
+
 ## 16.0.0
 
 * [java] Adds `VoidResult` type for `Void` returns.

@@ -17,7 +17,7 @@ Downloaded by pub (not CocoaPods).
   s.documentation_url = 'https://pub.dev/packages/ios_platform_images'
   s.source_files = 'Classes/**/*.swift'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '12.0'
 
   s.xcconfig = {
      'DEFINES_MODULE' => 'YES',

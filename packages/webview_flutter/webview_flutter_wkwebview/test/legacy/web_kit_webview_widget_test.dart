@@ -148,7 +148,7 @@ void main() {
         mockWebViewConfiguration,
         const WKNavigationAction(
           request: request,
-          targetFrame: WKFrameInfo(isMainFrame: false),
+          targetFrame: WKFrameInfo(isMainFrame: false, request: request),
           navigationType: WKNavigationType.linkActivated,
         ),
       );
@@ -1166,7 +1166,9 @@ void main() {
             mockWebView,
             const WKNavigationAction(
               request: NSUrlRequest(url: 'https://google.com'),
-              targetFrame: WKFrameInfo(isMainFrame: false),
+              targetFrame: WKFrameInfo(
+                  isMainFrame: false,
+                  request: NSUrlRequest(url: 'https://google.com')),
               navigationType: WKNavigationType.linkActivated,
             ),
           ),
