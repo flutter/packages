@@ -96,7 +96,7 @@
   OCMStub([telephotoCamera uniqueID]).andReturn(@"3");
   OCMStub([telephotoCamera position]).andReturn(AVCaptureDevicePositionBack);
 
-  // iPad External Camera
+  // iPad External Camera (iPhone doesn't support external camera)
   AVCaptureDevice *externalCamera = OCMClassMock([AVCaptureDevice class]);
   OCMStub([externalCamera uniqueID]).andReturn(@"4");
   OCMStub([externalCamera position]).andReturn(AVCaptureDevicePositionUnspecified);
