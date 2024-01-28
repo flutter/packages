@@ -41,7 +41,9 @@
   if (@available(iOS 13.0, *)) {
     [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
   }
-
+  if (@available(iOS 17.0, *)) {
+    [requiredTypes addObject:AVCaptureDeviceTypeExternal];
+  }
   id discoverySessionMock = OCMClassMock([AVCaptureDeviceDiscoverySession class]);
   OCMStub([discoverySessionMock discoverySessionWithDeviceTypes:requiredTypes
                                                       mediaType:AVMediaTypeVideo
@@ -166,7 +168,9 @@
   if (@available(iOS 13.0, *)) {
     [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
   }
-
+  if (@available(iOS 17.0, *)) {
+    [requiredTypes addObject:AVCaptureDeviceTypeExternal];
+  }
   id discoverySessionMock = OCMClassMock([AVCaptureDeviceDiscoverySession class]);
   OCMStub([discoverySessionMock discoverySessionWithDeviceTypes:requiredTypes
                                                       mediaType:AVMediaTypeVideo
