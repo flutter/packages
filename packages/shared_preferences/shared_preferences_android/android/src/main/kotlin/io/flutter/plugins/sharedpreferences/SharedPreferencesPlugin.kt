@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package com.flutter.plugins.shared_preferences_async
+package io.flutter.plugins.sharedpreferences
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import android.content.Context
@@ -17,6 +17,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApi
+import io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.sharedpreferences.SharedPreferencesListEncoder
 import kotlinx.coroutines.flow.Flow
@@ -37,13 +39,13 @@ const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 private val Context.sharedPreferencesDataStore: DataStore<Preferences> by preferencesDataStore(SHARED_PREFERENCES_NAME)
 
 /// SharedPreferencesPlugin
-class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesAsyncApi {
+class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   private lateinit var context: Context
 
   private var listEncoder = ListEncoder() as SharedPreferencesListEncoder
 
   @VisibleForTesting
-  constructor (listEncoder: SharedPreferencesListEncoder) {
+  constructor (listEncoder: SharedPreferencesListEncoder) : this() {
     this.listEncoder = listEncoder
   }
 
@@ -58,6 +60,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesAsyncApi {
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     setUp(binding.binaryMessenger, binding.applicationContext)
+    DeprecatedSharedPreferencesPlugin().onAttachedToEngine(binding);
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -188,7 +191,7 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesAsyncApi {
     val preferencesKey = doublePreferencesKey(key)
     val preferenceFlow: Flow<Double?> = context.sharedPreferencesDataStore.data
       .map { preferences ->
-        transformPref(preferences[preferencesKey] as Any) as Double
+        transformPref(preferences[preferencesKey] as Any) as Double?
       }
 
     return preferenceFlow.first()
@@ -225,18 +228,19 @@ class SharedPreferencesPlugin: FlutterPlugin, SharedPreferencesAsyncApi {
     val allowSet = allowList?.toSet()
     val filteredMap = mutableMapOf<String, Any>()
     allPrefs.map{
-      it.asMap().map {entry ->
+      it.asMap().map { entry ->
         if (preferencesFilter(entry, allowSet)) {
-        filteredMap[entry.key.toString()] = transformPref(entry.value)
-      } }
+          filteredMap[entry.key.toString()] = transformPref(entry.value)
+        }
+      }
     }
     return filteredMap
   }
 
   /** 
-   * Removes any preferences that are not included in [allowList].
+   * Returns false for any preferences that are not included in [allowList].
    *
-   * If no [allowList] is provided, instead removes any preferences 
+   * If no [allowList] is provided, instead returns false for any preferences
    * that are not supported by shared_preferences.
    */
   private fun preferencesFilter(

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_android/shared_preferences_async_android.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages_async.g.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
@@ -22,14 +22,14 @@ void main() {
   const double testDouble = 3.14159;
   const List<String> testList = <String>['foo', 'bar'];
 
-  late SharedPreferencesAsyncAndroid preferences;
+  late SharedPreferencesAndroid preferences;
   final SharedPreferencesAndroidOptions emptyOptions =
       SharedPreferencesAndroidOptions();
   late _FakeSharedPreferencesApi api;
 
   setUp(() async {
     api = _FakeSharedPreferencesApi();
-    preferences = SharedPreferencesAsyncAndroid(api: api);
+    preferences = SharedPreferencesAndroid(api: api);
   });
 
   test('set and get', () async {

@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   input: 'pigeons/messages_async.dart',
   kotlinOut:
-      'android/src/main/kotlin/com/flutter/plugins/shared_preferences/MessagesAsync.g.kt',
+      'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/MessagesAsync.g.kt',
   kotlinOptions: KotlinOptions(
-    package: 'com.flutter.plugins.shared_preferences_async',
+    package: 'io.flutter.plugins.sharedpreferences',
     errorClassName: 'SharedPreferencesError',
   ),
   dartOut: 'lib/src/messages_async.g.dart',

@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** SharedPreferencesPlugin */
-public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
+/** DeprecatedSharedPreferencesPlugin */
+public class DeprecatedSharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
   private static final String TAG = "SharedPreferencesPlugin";
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
   private static final String LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
@@ -38,19 +38,19 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   private SharedPreferences preferences;
   private SharedPreferencesListEncoder listEncoder;
 
-  public SharedPreferencesPlugin() {
+  public DeprecatedSharedPreferencesPlugin() {
     this(new ListEncoder());
   }
 
   @VisibleForTesting
-  SharedPreferencesPlugin(@NonNull SharedPreferencesListEncoder listEncoder) {
+  DeprecatedSharedPreferencesPlugin(@NonNull SharedPreferencesListEncoder listEncoder) {
     this.listEncoder = listEncoder;
   }
 
   @SuppressWarnings("deprecation")
   public static void registerWith(
       @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    final SharedPreferencesPlugin plugin = new SharedPreferencesPlugin();
+    final DeprecatedSharedPreferencesPlugin plugin = new DeprecatedSharedPreferencesPlugin();
     plugin.setUp(registrar.messenger(), registrar.context());
   }
 

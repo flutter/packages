@@ -77,6 +77,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
       let messenger = registrar.messenger
     #endif
     UserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    DeprecatedSharedPreferencesPlugin.register(with: registrar)
   }
 
   static private func getUserDefaults(options: SharedPreferencesPigeonOptions) throws -> UserDefaults {
