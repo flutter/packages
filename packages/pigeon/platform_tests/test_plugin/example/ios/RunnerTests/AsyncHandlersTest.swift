@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import Flutter
 import XCTest
+
 @testable import test_plugin
 
 class MockHostSmallApi: HostSmallApi {
@@ -27,12 +28,12 @@ class AsyncHandlersTest: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
     flutterApi.echo(value) { result in
-    switch result {
-        case .success(let res) :
-      XCTAssertEqual(res, value)
-      expectation.fulfill()
-        case .failure(_) :
-          return
+      switch result {
+      case .success(let res):
+        XCTAssertEqual(res, value)
+        expectation.fulfill()
+      case .failure(_):
+        return
       }
 
     }
@@ -40,7 +41,8 @@ class AsyncHandlersTest: XCTestCase {
   }
 
   func testAsyncFlutter2HostVoidVoid() throws {
-    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
+    let binaryMessenger = MockBinaryMessenger<String>(
+      codec: FlutterStandardMessageCodec.sharedInstance())
     let mockHostSmallApi = MockHostSmallApi()
     HostSmallApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostSmallApi)
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid"
@@ -49,14 +51,15 @@ class AsyncHandlersTest: XCTestCase {
     let expectation = XCTestExpectation(description: "voidvoid callback")
     binaryMessenger.handlers[channelName]?(nil) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
-        XCTAssertEqual(outputList?.first as! NSNull, NSNull())
+      XCTAssertEqual(outputList?.first as! NSNull, NSNull())
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
   }
 
   func testAsyncFlutter2Host() throws {
-    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
+    let binaryMessenger = MockBinaryMessenger<String>(
+      codec: FlutterStandardMessageCodec.sharedInstance())
     let mockHostSmallApi = MockHostSmallApi()
     let value = "Test"
     mockHostSmallApi.output = value
@@ -69,7 +72,7 @@ class AsyncHandlersTest: XCTestCase {
     let expectation = XCTestExpectation(description: "echo callback")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
-        let output = outputList?.first as? String
+      let output = outputList?.first as? String
       XCTAssertEqual(output, value)
       expectation.fulfill()
     }

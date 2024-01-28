@@ -27,6 +27,7 @@ import 'runtime.dart';
 ///  * [CircularProgressIndicator]
 ///  * [Divider]
 ///  * [DrawerHeader]
+///  * [DropdownButton]
 ///  * [ElevatedButton]
 ///  * [FloatingActionButton]
 ///  * [InkWell]
@@ -66,6 +67,11 @@ import 'runtime.dart';
 ///
 ///  * The [Scaffold]'s floating action button position and animation features
 ///    are not supported.
+///
+///  * [DropdownButton] takes a `items` object which contains a list of
+///    [DropdownMenuItem] configuration objects. Each object may contain
+///    `onTap`, `value`, `enabled` and `child`. The `child` parameter is
+///    required.
 ///
 /// In general, the trend will all of these unsupported features is that this
 /// library doesn't support features that can't be trivially expressed using the
@@ -185,6 +191,46 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       margin: ArgumentDecoders.edgeInsets(source, ['margin']) ?? const EdgeInsets.only(bottom: 8.0),
       padding: ArgumentDecoders.edgeInsets(source, ['padding']) ?? const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
       child: source.optionalChild(['child']),
+    );
+  },
+
+  'DropdownButton': (BuildContext context, DataSource source) {
+    final int length = source.length(['items']);
+    final List<DropdownMenuItem<Object>> dropdownMenuItems = List<DropdownMenuItem<Object>>.generate(
+      length,
+      (int index) => DropdownMenuItem<Object>(
+        onTap: source.voidHandler(['items', index, 'onTap']),
+        value: source.v<String>(['items', index, 'value']) ?? source.v<int>(['items', index, 'value']) ?? source.v<double>(['items', index, 'value']) ?? source.v<bool>(['items', index, 'value']),
+        enabled: source.v<bool>(['items', index, 'enabled']) ?? true,
+        alignment: ArgumentDecoders.alignment(source, ['items', index, 'alignment']) ?? AlignmentDirectional.centerStart,
+        child: source.child(['items', index, 'child']),
+      ),
+    );
+
+    return DropdownButton<Object>(
+      items: dropdownMenuItems,
+      value: source.v<String>(['value']) ?? source.v<int>(['value']) ?? source.v<double>(['value']) ?? source.v<bool>(['value']),
+      disabledHint: source.optionalChild(['disabledHint']),
+      onChanged: source.handler(<Object>['onChanged'], (HandlerTrigger trigger) => (Object? value) => trigger(<String, Object?>{'value': value})),
+      onTap: source.voidHandler(['onTap']),
+      elevation: source.v<int>(['elevation']) ?? 8,
+      style: ArgumentDecoders.textStyle(source, ['style']),
+      underline: source.optionalChild(['underline']),
+      icon: source.optionalChild(['icon']),
+      iconDisabledColor: ArgumentDecoders.color(source, ['iconDisabledColor']),
+      iconEnabledColor: ArgumentDecoders.color(source, ['iconEnabledColor']),
+      iconSize: source.v<double>(['iconSize']) ?? 24.0,
+      isDense: source.v<bool>(['isDense']) ?? false,
+      isExpanded: source.v<bool>(['isExpanded']) ?? false,
+      itemHeight: source.v<double>(['itemHeight']) ?? kMinInteractiveDimension,
+      focusColor: ArgumentDecoders.color(source, ['focusColor']),
+      autofocus: source.v<bool>(['autofocus']) ?? false,
+      dropdownColor: ArgumentDecoders.color(source, ['dropdownColor']),
+      menuMaxHeight: source.v<double>(['menuMaxHeight']),
+      enableFeedback: source.v<bool>(['enableFeedback']),
+      alignment: ArgumentDecoders.alignment(source, ['alignment']) ?? AlignmentDirectional.centerStart,
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
+      padding: ArgumentDecoders.edgeInsets(source, ['padding']),
     );
   },
 

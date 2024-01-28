@@ -94,4 +94,90 @@
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
+- (void)testCaptureToFile_mustReportFileExtensionWithHeifWhenHEVCIsAvailableAndFileFormatIsHEIF {
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:
+                @"Test must set extension to heif if availablePhotoCodecTypes contains HEVC."];
+  dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
+  dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
+                              (void *)FLTCaptureSessionQueueSpecific, NULL);
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  [cam setImageFileFormat:FCPFileFormatHEIF];
+
+  AVCapturePhotoSettings *settings =
+      [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+
+  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
+  OCMStub([mockSettings photoSettingsWithFormat:OCMOCK_ANY]).andReturn(settings);
+
+  id mockResult = OCMClassMock([FLTThreadSafeFlutterResult class]);
+  OCMStub([mockResult sendSuccessWithData:OCMOCK_ANY]).andDo(^(NSInvocation *invocation) {
+    NSString *filePath;
+    [invocation getArgument:&filePath atIndex:2];
+    XCTAssertEqualObjects([filePath pathExtension], @"heif");
+    [expectation fulfill];
+  });
+
+  id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
+  // Set availablePhotoCodecTypes to HEVC
+  NSArray *codecTypes = @[ AVVideoCodecTypeHEVC ];
+  OCMStub([mockOutput availablePhotoCodecTypes]).andReturn(codecTypes);
+
+  OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
+      .andDo(^(NSInvocation *invocation) {
+        FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
+        // Completion runs on IO queue.
+        dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
+        dispatch_async(ioQueue, ^{
+          delegate.completionHandler(delegate.filePath, nil);
+        });
+      });
+  cam.capturePhotoOutput = mockOutput;
+  // `FLTCam::captureToFile` runs on capture session queue.
+  dispatch_async(captureSessionQueue, ^{
+    [cam captureToFile:mockResult];
+  });
+  [self waitForExpectationsWithTimeout:1 handler:nil];
+}
+
+- (void)testCaptureToFile_mustReportFileExtensionWithJpgWhenHEVCNotAvailableAndFileFormatIsHEIF {
+  XCTestExpectation *expectation = [self
+      expectationWithDescription:
+          @"Test must set extension to jpg if availablePhotoCodecTypes does not contain HEVC."];
+  dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
+  dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
+                              (void *)FLTCaptureSessionQueueSpecific, NULL);
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  [cam setImageFileFormat:FCPFileFormatHEIF];
+
+  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
+  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
+  OCMStub([mockSettings photoSettings]).andReturn(settings);
+
+  id mockResult = OCMClassMock([FLTThreadSafeFlutterResult class]);
+  OCMStub([mockResult sendSuccessWithData:OCMOCK_ANY]).andDo(^(NSInvocation *invocation) {
+    NSString *filePath;
+    [invocation getArgument:&filePath atIndex:2];
+    XCTAssertEqualObjects([filePath pathExtension], @"jpg");
+    [expectation fulfill];
+  });
+
+  id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
+
+  OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
+      .andDo(^(NSInvocation *invocation) {
+        FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
+        // Completion runs on IO queue.
+        dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
+        dispatch_async(ioQueue, ^{
+          delegate.completionHandler(delegate.filePath, nil);
+        });
+      });
+  cam.capturePhotoOutput = mockOutput;
+  // `FLTCam::captureToFile` runs on capture session queue.
+  dispatch_async(captureSessionQueue, ^{
+    [cam captureToFile:mockResult];
+  });
+  [self waitForExpectationsWithTimeout:1 handler:nil];
+}
 @end

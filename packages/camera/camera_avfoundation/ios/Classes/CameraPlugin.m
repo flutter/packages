@@ -156,6 +156,7 @@
     NSUInteger cameraId = ((NSNumber *)argsMap[@"cameraId"]).unsignedIntegerValue;
     if ([@"initialize" isEqualToString:call.method]) {
       NSString *videoFormatValue = ((NSString *)argsMap[@"imageFormatGroup"]);
+
       [_camera setVideoFormat:FLTGetVideoFormatFromString(videoFormatValue)];
 
       __weak CameraPlugin *weakSelf = self;
@@ -258,6 +259,9 @@
       [_camera resumePreviewWithResult:result];
     } else if ([@"setDescriptionWhileRecording" isEqualToString:call.method]) {
       [_camera setDescriptionWhileRecording:(call.arguments[@"cameraName"]) result:result];
+    } else if ([@"setImageFileFormat" isEqualToString:call.method]) {
+      NSString *fileFormat = call.arguments[@"fileFormat"];
+      [_camera setImageFileFormat:FCPGetFileFormatFromString(fileFormat)];
     } else {
       [result sendNotImplemented];
     }
