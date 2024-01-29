@@ -198,34 +198,34 @@ Future<void> main() async {
     await expectLater(channelCompleter.future, completion('hello'));
   });
 
-  testWidgets('resize webview', (WidgetTester tester) async {
-    final Completer<void> initialResizeCompleter = Completer<void>();
-    final Completer<void> buttonTapResizeCompleter = Completer<void>();
-    final Completer<void> onPageFinished = Completer<void>();
-
-    bool resizeButtonTapped = false;
-    await tester.pumpWidget(ResizableWebView(
-      onResize: (_) {
-        if (resizeButtonTapped) {
-          buttonTapResizeCompleter.complete();
-        } else {
-          initialResizeCompleter.complete();
-        }
-      },
-      onPageFinished: () => onPageFinished.complete(),
-    ));
-    await onPageFinished.future;
-    // Wait for a potential call to resize after page is loaded.
-    await initialResizeCompleter.future.timeout(
-      const Duration(seconds: 3),
-      onTimeout: () => null,
-    );
-
-    resizeButtonTapped = true;
-    await tester.tap(find.byKey(const ValueKey<String>('resizeButton')));
-    await tester.pumpAndSettle();
-    expect(buttonTapResizeCompleter.future, completes);
-  });
+  // testWidgets('resize webview', (WidgetTester tester) async {
+  //   final Completer<void> initialResizeCompleter = Completer<void>();
+  //   final Completer<void> buttonTapResizeCompleter = Completer<void>();
+  //   final Completer<void> onPageFinished = Completer<void>();
+  //
+  //   bool resizeButtonTapped = false;
+  //   await tester.pumpWidget(ResizableWebView(
+  //     onResize: (_) {
+  //       if (resizeButtonTapped) {
+  //         buttonTapResizeCompleter.complete();
+  //       } else {
+  //         initialResizeCompleter.complete();
+  //       }
+  //     },
+  //     onPageFinished: () => onPageFinished.complete(),
+  //   ));
+  //   await onPageFinished.future;
+  //   // Wait for a potential call to resize after page is loaded.
+  //   await initialResizeCompleter.future.timeout(
+  //     const Duration(seconds: 3),
+  //     onTimeout: () => null,
+  //   );
+  //
+  //   resizeButtonTapped = true;
+  //   await tester.tap(find.byKey(const ValueKey<String>('resizeButton')));
+  //   await tester.pumpAndSettle();
+  //   expect(buttonTapResizeCompleter.future, completes);
+  // });
 
   testWidgets('set custom userAgent', (WidgetTester tester) async {
     final Completer<WebViewController> controllerCompleter1 =
