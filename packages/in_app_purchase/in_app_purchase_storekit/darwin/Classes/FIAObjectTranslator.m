@@ -313,7 +313,6 @@
     userInfo[key] = [FIAObjectTranslator encodeNSErrorUserInfo:value];
   }
 
-
   SKErrorMessage *msg = [SKErrorMessage makeWithCode:error.code
                                               domain:error.domain
                                             userInfo:userInfo];
