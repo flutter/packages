@@ -11,11 +11,18 @@ import 'package:rfw/rfw.dart';
 import 'utils.dart';
 
 void main() {
+  const LibraryName coreName = LibraryName(<String>['core']);
+  const LibraryName materialName = LibraryName(<String>['material']);
+  const LibraryName testName = LibraryName(<String>['test']);
+
+  Runtime setupRuntime() {
+    return Runtime()
+      ..update(coreName, createCoreWidgets())
+      ..update(materialName, createMaterialWidgets());
+  }
+
   testWidgets('Material widgets', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets())
-      ..update(
-          const LibraryName(<String>['material']), createMaterialWidgets());
+    final Runtime runtime = setupRuntime();
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(
@@ -24,8 +31,7 @@ void main() {
         home: RemoteWidget(
           runtime: runtime,
           data: data,
-          widget: const FullyQualifiedWidgetName(
-              LibraryName(<String>['test']), 'root'),
+          widget: const FullyQualifiedWidgetName(testName, 'root'),
           onEvent: (String eventName, DynamicMap eventArguments) {
             eventLog.add('$eventName $eventArguments');
           },
@@ -215,6 +221,138 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.drawer.png'),
+      skip: !runGoldens,
+    );
+  });
+
+  testWidgets('OverflowBar configured to resemble ButtonBar',
+      (WidgetTester tester) async {
+    final Runtime runtime = setupRuntime();
+    final DynamicContent data = DynamicContent();
+    final List<String> eventLog = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: RemoteWidget(
+          runtime: runtime,
+          data: data,
+          widget: const FullyQualifiedWidgetName(testName, 'root'),
+          onEvent: (String eventName, DynamicMap eventArguments) {
+            eventLog.add('$eventName $eventArguments');
+          },
+        ),
+      ),
+    );
+    expect(tester.takeException().toString(),
+        contains('Could not find remote widget named'));
+
+    runtime.update(testName, parseLibraryFile('''
+      import core;
+      import material;
+      widget root = Scaffold(
+        body: Card(
+          margin: [20.0],
+          child: Padding(
+            padding: [8.0],
+            child: OverflowBar(
+              spacing: 8.0,
+              children: [
+                ElevatedButton(
+                  onPressed: event 'button' { },
+                  child: Text(text: 'Elevated'),
+                ),
+                OutlinedButton(
+                  onPressed: event 'button' { },
+                  child: Text(text: 'Outlined'),
+                ),
+                TextButton(
+                  onPressed: event 'button' { },
+                  child: Text(text: 'Text'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    '''));
+    await tester.pump();
+    await expectLater(
+      find.byType(RemoteWidget),
+      matchesGoldenFile(
+          'goldens/material_test.overflow_bar_resembles_button_bar.png'),
+      skip: !runGoldens,
+    );
+  });
+
+  testWidgets('Implement OverflowBar properties', (WidgetTester tester) async {
+    final Runtime runtime = setupRuntime();
+    final DynamicContent data = DynamicContent();
+    final List<String> eventLog = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: RemoteWidget(
+          runtime: runtime,
+          data: data,
+          widget: const FullyQualifiedWidgetName(testName, 'root'),
+          onEvent: (String eventName, DynamicMap eventArguments) {
+            eventLog.add('$eventName $eventArguments');
+          },
+        ),
+      ),
+    );
+    expect(tester.takeException().toString(),
+        contains('Could not find remote widget named'));
+
+    addTearDown(() async {
+      await tester.binding.setSurfaceSize(null);
+    });
+
+    runtime.update(testName, parseLibraryFile('''
+      import core;
+      import material;
+      widget root = Scaffold(
+        body: Center(
+          child: OverflowBar(
+            spacing: 16.0,
+            alignment: 'end',
+            overflowSpacing: 4.0,
+            overflowAlignment: 'center',
+            overflowDirection: 'up',
+            children: [
+              ElevatedButton(
+                onPressed: event 'button' { },
+                child: Text(text: 'Elevated'),
+              ),
+              OutlinedButton(
+                onPressed: event 'button' { },
+                child: Text(text: 'Outlined'),
+              ),
+              TextButton(
+                onPressed: event 'button' { },
+                child: Text(text: 'Text'),
+              ),
+            ],
+          ),
+        ),
+      );
+    '''));
+    await tester.pump();
+
+    await expectLater(
+      find.byType(RemoteWidget),
+      matchesGoldenFile('goldens/material_test.overflow_bar_properties.png'),
+      skip: !runGoldens,
+    );
+
+    // Update the surface size for OverflowBar to overflow.
+    await tester.binding.setSurfaceSize(const Size(200.0, 600.0));
+    await tester.pump();
+
+    await expectLater(
+      find.byType(RemoteWidget),
+      matchesGoldenFile(
+          'goldens/material_test.overflow_bar_properties.overflow.png'),
       skip: !runGoldens,
     );
   });
