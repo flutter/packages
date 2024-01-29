@@ -876,80 +876,80 @@ String _webViewString(String value) {
   return '"$value"';
 }
 
-class ResizableWebView extends StatefulWidget {
-  const ResizableWebView({
-    super.key,
-    required this.onResize,
-    required this.onPageFinished,
-  });
-
-  final VoidCallback onResize;
-  final VoidCallback onPageFinished;
-
-  @override
-  State<StatefulWidget> createState() => ResizableWebViewState();
-}
-
-class ResizableWebViewState extends State<ResizableWebView> {
-  late final WebViewController controller = WebViewController()
-    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setNavigationDelegate(NavigationDelegate(
-      onPageFinished: (_) => widget.onPageFinished(),
-    ))
-    ..addJavaScriptChannel(
-      'Resize',
-      onMessageReceived: (_) {
-        widget.onResize();
-      },
-    )
-    ..loadRequest(
-      Uri.parse(
-        'data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(resizePage))}',
-      ),
-    );
-
-  double webViewWidth = 200;
-  double webViewHeight = 200;
-
-  static const String resizePage = '''
-        <!DOCTYPE html><html>
-        <head><title>Resize test</title>
-          <script type="text/javascript">
-            function onResize() {
-              Resize.postMessage("resize");
-            }
-            function onLoad() {
-              window.onresize = onResize;
-            }
-          </script>
-        </head>
-        <body onload="onLoad();" bgColor="blue">
-        </body>
-        </html>
-      ''';
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-              width: webViewWidth,
-              height: webViewHeight,
-              child: WebViewWidget(controller: controller)),
-          TextButton(
-            key: const Key('resizeButton'),
-            onPressed: () {
-              setState(() {
-                webViewWidth += 100.0;
-                webViewHeight += 100.0;
-              });
-            },
-            child: const Text('ResizeButton'),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class ResizableWebView extends StatefulWidget {
+//   const ResizableWebView({
+//     super.key,
+//     required this.onResize,
+//     required this.onPageFinished,
+//   });
+//
+//   final VoidCallback onResize;
+//   final VoidCallback onPageFinished;
+//
+//   @override
+//   State<StatefulWidget> createState() => ResizableWebViewState();
+// }
+//
+// class ResizableWebViewState extends State<ResizableWebView> {
+//   late final WebViewController controller = WebViewController()
+//     ..setJavaScriptMode(JavaScriptMode.unrestricted)
+//     ..setNavigationDelegate(NavigationDelegate(
+//       onPageFinished: (_) => widget.onPageFinished(),
+//     ))
+//     ..addJavaScriptChannel(
+//       'Resize',
+//       onMessageReceived: (_) {
+//         widget.onResize();
+//       },
+//     )
+//     ..loadRequest(
+//       Uri.parse(
+//         'data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(resizePage))}',
+//       ),
+//     );
+//
+//   double webViewWidth = 200;
+//   double webViewHeight = 200;
+//
+//   static const String resizePage = '''
+//         <!DOCTYPE html><html>
+//         <head><title>Resize test</title>
+//           <script type="text/javascript">
+//             function onResize() {
+//               Resize.postMessage("resize");
+//             }
+//             function onLoad() {
+//               window.onresize = onResize;
+//             }
+//           </script>
+//         </head>
+//         <body onload="onLoad();" bgColor="blue">
+//         </body>
+//         </html>
+//       ''';
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Directionality(
+//       textDirection: TextDirection.ltr,
+//       child: Column(
+//         children: <Widget>[
+//           SizedBox(
+//               width: webViewWidth,
+//               height: webViewHeight,
+//               child: WebViewWidget(controller: controller)),
+//           TextButton(
+//             key: const Key('resizeButton'),
+//             onPressed: () {
+//               setState(() {
+//                 webViewWidth += 100.0;
+//                 webViewHeight += 100.0;
+//               });
+//             },
+//             child: const Text('ResizeButton'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

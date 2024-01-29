@@ -902,7 +902,7 @@ void googleMapsTests() {
   //               body: SizedBox(height: 400, width: 400, child: map)))));
   //
   //   await tester.pumpAndSettle();
-  //   // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+       // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
   //   // in `mapRendered`.
   //   // https://github.com/flutter/flutter/issues/54758
   //   await Future<void>.delayed(const Duration(seconds: 1));
