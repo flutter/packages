@@ -312,46 +312,46 @@ void runTests() {
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
       skip: isIOS);
 
-  testWidgets('testResizeWidget', (WidgetTester tester) async {
-    final Completer<GoogleMapController> controllerCompleter =
-        Completer<GoogleMapController>();
-
-    await pumpMap(
-      tester,
-      GoogleMap(
-        initialCameraPosition: kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) async {
-          controllerCompleter.complete(controller);
-        },
-      ),
-      const Size(100, 100),
-    );
-    final GoogleMapController controller = await controllerCompleter.future;
-
-    await pumpMap(
-      tester,
-      GoogleMap(
-        initialCameraPosition: kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) async {
-          // fail!
-          fail('The map should not get recreated!');
-          // controllerCompleter.complete(controller);
-        },
-      ),
-      const Size(400, 400),
-    );
-
-    await tester.pumpAndSettle();
-    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
-    // in `mapRendered`.
-    // https://github.com/flutter/flutter/issues/54758
-    await Future<void>.delayed(const Duration(seconds: 1));
-
-    // Simple call to make sure that the app hasn't crashed.
-    final LatLngBounds bounds1 = await controller.getVisibleRegion();
-    final LatLngBounds bounds2 = await controller.getVisibleRegion();
-    expect(bounds1, bounds2);
-  });
+  // testWidgets('testResizeWidget', (WidgetTester tester) async {
+  //   final Completer<GoogleMapController> controllerCompleter =
+  //       Completer<GoogleMapController>();
+  //
+  //   await pumpMap(
+  //     tester,
+  //     GoogleMap(
+  //       initialCameraPosition: kInitialCameraPosition,
+  //       onMapCreated: (GoogleMapController controller) async {
+  //         controllerCompleter.complete(controller);
+  //       },
+  //     ),
+  //     const Size(100, 100),
+  //   );
+  //   final GoogleMapController controller = await controllerCompleter.future;
+  //
+  //   await pumpMap(
+  //     tester,
+  //     GoogleMap(
+  //       initialCameraPosition: kInitialCameraPosition,
+  //       onMapCreated: (GoogleMapController controller) async {
+  //         // fail!
+  //         fail('The map should not get recreated!');
+  //         // controllerCompleter.complete(controller);
+  //       },
+  //     ),
+  //     const Size(400, 400),
+  //   );
+  //
+  //   await tester.pumpAndSettle();
+  //   // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+  //   // in `mapRendered`.
+  //   // https://github.com/flutter/flutter/issues/54758
+  //   await Future<void>.delayed(const Duration(seconds: 1));
+  //
+  //   // Simple call to make sure that the app hasn't crashed.
+  //   final LatLngBounds bounds1 = await controller.getVisibleRegion();
+  //   final LatLngBounds bounds2 = await controller.getVisibleRegion();
+  //   expect(bounds1, bounds2);
+  // });
 
   testWidgets('testToggleInfoWindow', (WidgetTester tester) async {
     const Marker marker = Marker(

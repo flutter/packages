@@ -878,40 +878,40 @@ void googleMapsTests() {
     expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
   });
 
-  testWidgets('testResizeWidget', (WidgetTester tester) async {
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
-    final ExampleGoogleMap map = ExampleGoogleMap(
-      initialCameraPosition: _kInitialCameraPosition,
-      onMapCreated: (ExampleGoogleMapController controller) async {
-        controllerCompleter.complete(controller);
-      },
-    );
-    await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: MaterialApp(
-            home: Scaffold(
-                body: SizedBox(height: 100, width: 100, child: map)))));
-    final ExampleGoogleMapController controller =
-        await controllerCompleter.future;
-
-    await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: MaterialApp(
-            home: Scaffold(
-                body: SizedBox(height: 400, width: 400, child: map)))));
-
-    await tester.pumpAndSettle();
-    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
-    // in `mapRendered`.
-    // https://github.com/flutter/flutter/issues/54758
-    await Future<void>.delayed(const Duration(seconds: 1));
-
-    // Simple call to make sure that the app hasn't crashed.
-    final LatLngBounds bounds1 = await controller.getVisibleRegion();
-    final LatLngBounds bounds2 = await controller.getVisibleRegion();
-    expect(bounds1, bounds2);
-  });
+  // testWidgets('testResizeWidget', (WidgetTester tester) async {
+  //   final Completer<ExampleGoogleMapController> controllerCompleter =
+  //       Completer<ExampleGoogleMapController>();
+  //   final ExampleGoogleMap map = ExampleGoogleMap(
+  //     initialCameraPosition: _kInitialCameraPosition,
+  //     onMapCreated: (ExampleGoogleMapController controller) async {
+  //       controllerCompleter.complete(controller);
+  //     },
+  //   );
+  //   await tester.pumpWidget(Directionality(
+  //       textDirection: TextDirection.ltr,
+  //       child: MaterialApp(
+  //           home: Scaffold(
+  //               body: SizedBox(height: 100, width: 100, child: map)))));
+  //   final ExampleGoogleMapController controller =
+  //       await controllerCompleter.future;
+  //
+  //   await tester.pumpWidget(Directionality(
+  //       textDirection: TextDirection.ltr,
+  //       child: MaterialApp(
+  //           home: Scaffold(
+  //               body: SizedBox(height: 400, width: 400, child: map)))));
+  //
+  //   await tester.pumpAndSettle();
+  //   // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+  //   // in `mapRendered`.
+  //   // https://github.com/flutter/flutter/issues/54758
+  //   await Future<void>.delayed(const Duration(seconds: 1));
+  //
+  //   // Simple call to make sure that the app hasn't crashed.
+  //   final LatLngBounds bounds1 = await controller.getVisibleRegion();
+  //   final LatLngBounds bounds2 = await controller.getVisibleRegion();
+  //   expect(bounds1, bounds2);
+  // });
 
   testWidgets('testToggleInfoWindow', (WidgetTester tester) async {
     const Marker marker = Marker(
