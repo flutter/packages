@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -28,11 +27,9 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
   /** Proxy for constructors and static method of {@link CaptureRequestOptions}. */
   @VisibleForTesting
   public static class CaptureRequestOptionsProxy {
-
     /** Creates an instance of {@link CaptureRequestOptions}. */
     // Suppression is safe because the type shared between the key and value pairs that
-    // represent capture request options is checked on the Dart side and even if still
-    // invalid, will fail to be cast to the appropriate type.
+    // represent capture request options is checked on the Dart side.
     @SuppressWarnings("unchecked")
     @OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)
     public @NonNull CaptureRequestOptions create(

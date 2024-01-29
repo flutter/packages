@@ -5,7 +5,6 @@
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable;
 
-import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -28,7 +27,6 @@ class CaptureRequestOptions extends JavaObject {
             instanceManager: instanceManager) {
     _api = _CaptureRequestOptionsHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
     _api.createFromInstances(this, requestedOptions);
   }
 
@@ -43,13 +41,12 @@ class CaptureRequestOptions extends JavaObject {
             instanceManager: instanceManager) {
     _api = _CaptureRequestOptionsHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
   late final _CaptureRequestOptionsHostApiImpl _api;
 
   /// Capture request options this instance will be used to request.
-  final List<(CaptureRequestKeySupportedType type, dynamic value)>
+  final List<(CaptureRequestKeySupportedType type, Object? value)>
       requestedOptions;
 
   /// Error message indicating a [CaptureRequestOption] was constructed with a
@@ -87,7 +84,7 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
   /// capture request key and value pairs.
   Future<void> createFromInstances(
     CaptureRequestOptions instance,
-    List<(CaptureRequestKeySupportedType type, dynamic value)> options,
+    List<(CaptureRequestKeySupportedType type, Object? value)> options,
   ) {
     if (options.isEmpty) {
       throw ArgumentError(
@@ -98,10 +95,10 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
 
     // Validate values have type that matches paired key that is supported by
     // this plugin (CaptureRequestKeySupportedType).
-    for (final (CaptureRequestKeySupportedType key, dynamic value) option
+    for (final (CaptureRequestKeySupportedType key, Object? value) option
         in options) {
       final CaptureRequestKeySupportedType key = option.$1;
-      final dynamic value = option.$2;
+      final Object? value = option.$2;
       if (value == null) {
         captureRequestOptions[key.index] = null;
         continue;

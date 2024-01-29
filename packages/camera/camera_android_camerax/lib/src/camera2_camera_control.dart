@@ -52,12 +52,12 @@ class Camera2CameraControl extends JavaObject {
 
   /// The [CameraControl] info that this instance is based on.
   ///
-  /// Note that options specified with the [Camera2CameraControl] has higher
-  /// priority than [cameraControl].
+  /// Note that options specified with this [Camera2CameraControl] instance will
+  /// have higher priority than [cameraControl].
   final CameraControl cameraControl;
 
   /// Updates capture session with options that the specified
-  ///  [CaptureRequestOptions] contains.
+  /// [CaptureRequestOptions] contains.
   ///
   /// Options will be merged with existing options, and if conflicting with what
   /// was previously set, these options will override those pre-existing. Once
@@ -117,7 +117,7 @@ class _Camera2CameraControlHostApiImpl extends Camera2CameraControlHostApi {
 
   /// Updates capture session corresponding to the specified
   /// [Camera2CameraControl] instance with options that the specified
-  /// [CaptureRequestOptions]  contains.
+  /// [CaptureRequestOptions] contains.
   Future<void> addCaptureRequestOptionsFromInstances(
     Camera2CameraControl instance,
     CaptureRequestOptions captureRequestOptions,
@@ -129,7 +129,7 @@ class _Camera2CameraControlHostApiImpl extends Camera2CameraControlHostApi {
       );
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController.add(e.message ??
-          'The camera was unable to set new capture request options due to new options being available or the camera being closed.');
+          'The camera was unable to set new capture request options due to new options being unavailable or the camera being closed.');
     }
   }
 }

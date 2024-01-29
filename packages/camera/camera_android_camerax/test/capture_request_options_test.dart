@@ -35,8 +35,8 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final List<(CaptureRequestKeySupportedType, dynamic)> options =
-          <(CaptureRequestKeySupportedType, dynamic)>[
+      final List<(CaptureRequestKeySupportedType, Object?)> options =
+          <(CaptureRequestKeySupportedType, Object?)>[
         (CaptureRequestKeySupportedType.controlAeLock, true),
       ];
 
@@ -62,10 +62,10 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final List<(CaptureRequestKeySupportedType key, dynamic value)>
+      final List<(CaptureRequestKeySupportedType key, Object? value)>
           supportedOptionsForTesting = <(
         CaptureRequestKeySupportedType key,
-        dynamic value
+        Object? value
       )>[(CaptureRequestKeySupportedType.controlAeLock, null)];
 
       final CaptureRequestOptions instance = CaptureRequestOptions(
@@ -82,7 +82,7 @@ void main() {
 
       expect(captureRequestOptions.length,
           equals(supportedOptionsForTesting.length));
-      for (final (CaptureRequestKeySupportedType key, dynamic value) option
+      for (final (CaptureRequestKeySupportedType key, Object? value) option
           in supportedOptionsForTesting) {
         final CaptureRequestKeySupportedType optionKey = option.$1;
         expect(captureRequestOptions[optionKey.index], isNull);
@@ -100,10 +100,10 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final List<(CaptureRequestKeySupportedType key, dynamic value)>
+      final List<(CaptureRequestKeySupportedType key, Object? value)>
           supportedOptionsForTesting = <(
         CaptureRequestKeySupportedType key,
-        dynamic value
+        Object? value
       )>[(CaptureRequestKeySupportedType.controlAeLock, false)];
 
       final CaptureRequestOptions instance = CaptureRequestOptions(
@@ -120,15 +120,15 @@ void main() {
 
       expect(captureRequestOptions!.length,
           equals(supportedOptionsForTesting.length));
-      for (final (CaptureRequestKeySupportedType key, dynamic value) option
+      for (final (CaptureRequestKeySupportedType key, Object? value) option
           in supportedOptionsForTesting) {
         final CaptureRequestKeySupportedType optionKey = option.$1;
-        final dynamic optionValue = option.$2;
+        final Object? optionValue = option.$2;
 
         switch (optionKey) {
           case CaptureRequestKeySupportedType.controlAeLock:
             expect(captureRequestOptions[optionKey.index],
-                equals(optionValue as bool));
+                equals(optionValue! as bool));
           // This ignore statement is safe beause this will test when
           // a new CaptureRequestKeySupportedType is being added, but the logic in
           // in the CaptureRequestOptions class has not yet been updated.

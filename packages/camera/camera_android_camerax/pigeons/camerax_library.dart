@@ -143,6 +143,11 @@ class MeteringPointInfo {
   int? meteringMode;
 }
 
+/// The types of capture request options this plugin currently supports.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
+/// for the sorts of capture request options that can be supported via CameraX's
+/// interopability with Camera2.
 enum CaptureRequestKeySupportedType {
   controlAeLock,
 }

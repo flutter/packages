@@ -99,6 +99,10 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
         @NonNull CameraControl cameraControl,
         @NonNull FocusMeteringAction focusMeteringAction,
         @NonNull GeneratedCameraXLibrary.Result<Long> result) {
+      if (context == null) {
+        throw new IllegalStateException("Context must be set to set zoom ratio.");
+      }
+
       ListenableFuture<FocusMeteringResult> focusMeteringResultFuture =
           cameraControl.startFocusAndMetering(focusMeteringAction);
 
@@ -173,7 +177,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    * Constructs an {@link CameraControlHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param context {@link Context} used to retrieve {@code Executor} where neeeded
+   * @param context {@link Context} used to retrieve {@code Executor}
    */
   public CameraControlHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -187,7 +191,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link CameraControl}
-   * @param context {@link Context} used to retrieve {@code Executor} where neeeded
+   * @param context {@link Context} used to retrieve {@code Executor}
    */
   @VisibleForTesting
   CameraControlHostApiImpl(
@@ -207,8 +211,8 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    * Sets the context that the {@code CameraControl} will use to enable/disable torch mode and set
    * the zoom ratio.
    *
-   * <p>If using the camera plugin in an add-to-app context, ensure that a new instance of the
-   * {@code CameraControl} is fetched anytime the context changes.
+   * <p>If using the camera plugin in an add-to-app context, ensure that this is called anytime that
+   * the context changes.
    */
   public void setContext(@NonNull Context context) {
     this.proxy.context = context;

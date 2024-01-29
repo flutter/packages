@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -52,6 +51,10 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
         @NonNull Camera2CameraControl camera2CameraControl,
         @NonNull CaptureRequestOptions bundle,
         @NonNull GeneratedCameraXLibrary.Result<Void> result) {
+      if (context == null) {
+        throw new IllegalStateException("Context must be set to add capture request options.");
+      }
+
       ListenableFuture<Void> addCaptureRequestOptionsFuture =
           camera2CameraControl.addCaptureRequestOptions(bundle);
 
@@ -74,7 +77,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
    * Constructs a {@link Camera2CameraControlHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param context {@link Context} used to retrieve {@code Executor} where neeeded
+   * @param context {@link Context} used to retrieve {@code Executor}
    */
   public Camera2CameraControlHostApiImpl(
       @NonNull InstanceManager instanceManager, @NonNull Context context) {
@@ -86,7 +89,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link Camera2CameraControl}
-   * @param context {@link Context} used to retrieve {@code Executor} where neeeded
+   * @param context {@link Context} used to retrieve {@code Executor}
    */
   @VisibleForTesting
   Camera2CameraControlHostApiImpl(
@@ -102,8 +105,8 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
    * Sets the context that the {@code Camera2CameraControl} will use to listen for the result of
    * setting capture request options.
    *
-   * <p>If using the camera plugin in an add-to-app context, ensure that a new instance of the
-   * {@code Camera2CameraControl} is fetched anytime the context changes.
+   * <p>If using the camera plugin in an add-to-app context, ensure that this is called anytime that
+   * the context changes.
    */
   public void setContext(@NonNull Context context) {
     this.proxy.context = context;

@@ -68,7 +68,7 @@ public class Camera2CameraControlTest {
   }
 
   @Test
-  public void addCaptureRequestOptions_addsExpectedOptionsWhenSuccessful() {
+  public void addCaptureRequestOptions_respondsAsExpectedToSuccessfulAndFailedAttempts() {
     final Camera2CameraControlHostApiImpl hostApi =
         new Camera2CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
     final long instanceIdentifier = 0;
