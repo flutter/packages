@@ -10,10 +10,6 @@ very unlikely to be relevant.
 
 # In App Purchase Example
 
-Demonstrates how to use the In App Purchase Android (IAP) Plugin.
-
-## Getting Started
-
 ### Preparation
 
 There's a significant amount of setup required for testing in-app purchases
