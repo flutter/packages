@@ -228,9 +228,8 @@ class _TableViewCell extends ParentDataWidget<TableViewParentData> {
       needsLayout = true;
     }
 
-    final RenderObject? targetParent = renderObject.parent;
-    if (targetParent is RenderObject && needsLayout) {
-      targetParent.markNeedsLayout();
+    if (needsLayout) {
+      renderObject.parent?.markNeedsLayout();
     }
   }
 
