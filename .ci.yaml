@@ -107,20 +107,6 @@ platform_properties:
         }
 
 targets:
-  ### Linux-host general tasks ###
-  - name: Linux repo_tools_tests
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: repo_tools_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
   - name: Linux repo_checks
     recipe: packages/packages
     timeout: 30
@@ -281,19 +267,10 @@ targets:
           "CHANNEL": "stable"
         }
 
-  - name: Linux analyze_downgraded master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: analyze_downgraded.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
+  # This is only run on stable since it's extremely likely that stable will
+  # resolve to packages that are older (or at least as old) than on master, so
+  # running a second copy with master is very unlikely to catch anything that
+  # this doesn't.
   - name: Linux analyze_downgraded stable
     recipe: packages/packages
     timeout: 30
