@@ -7,6 +7,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
+import 'billing_client_wrappers/billing_config_wrapper.dart';
 
 /// Contains InApp Purchase features that are only available on PlayStore.
 class InAppPurchaseAndroidPlatformAddition
@@ -152,9 +153,9 @@ class InAppPurchaseAndroidPlatformAddition
   /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
   /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
   Future<String> getCountryCode() async {
-    return _billingClientManager.runWithClientNonRetryable(
-      (BillingClient client) async =>
-          (await client.getBillingConfig()).countryCode,
-    );
+
+    BillingConfigWrapper billingConfig = await _billingClientManager
+        .runWithClient((BillingClient client) => client.getBillingConfig());
+    return billingConfig.countryCode;
   }
 }
