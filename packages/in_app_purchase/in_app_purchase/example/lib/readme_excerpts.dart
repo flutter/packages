@@ -79,8 +79,6 @@ void platformSpecific() {
 /// Demonstrate loading product details for the README
 Future<void> loadProducts() async {
   // #docregion LoadProducts
-  // Set literals require Dart 2.2. Alternatively, use
-// `Set<String> _kIds = <String>['product1', 'product2'].toSet()`.
   const Set<String> kIds = <String>{'product1', 'product2'};
   final ProductDetailsResponse response =
       await InAppPurchase.instance.queryProductDetails(kIds);

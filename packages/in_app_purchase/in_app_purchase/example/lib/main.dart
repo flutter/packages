@@ -304,7 +304,7 @@ class _MyAppState extends State<_MyApp> {
                     if (Platform.isAndroid) {
                       // #docregion ChangeSubscription
                       // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-                      // verify the latest status of you your subscription by using server side receipt validation
+                      // verify the latest status of your subscription by using server side receipt validation
                       // and update the UI accordingly. The subscription purchase status shown
                       // inside the app may not be accurate.
                       final GooglePlayPurchaseDetails? oldSubscription =

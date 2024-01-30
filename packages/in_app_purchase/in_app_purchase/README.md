@@ -150,16 +150,14 @@ if (!isAvailable) {
 
 <?code-excerpt "example/lib/readme_excerpts.dart (LoadProducts)"?>
 ```dart
-  // Set literals require Dart 2.2. Alternatively, use
-// `Set<String> _kIds = <String>['product1', 'product2'].toSet()`.
-  const Set<String> kIds = <String>{'product1', 'product2'};
-  final ProductDetailsResponse response =
-      await InAppPurchase.instance.queryProductDetails(kIds);
-  if (response.notFoundIDs.isNotEmpty) {
-    // Handle the error.
-  }
+const Set<String> kIds = <String>{'product1', 'product2'};
+final ProductDetailsResponse response =
+    await InAppPurchase.instance.queryProductDetails(kIds);
+if (response.notFoundIDs.isNotEmpty) {
+  // Handle the error.
+}
 
-  final List<ProductDetails> products = response.productDetails;
+final List<ProductDetails> products = response.productDetails;
 ```
 
 ### Restoring previous purchases
@@ -194,7 +192,7 @@ PurchaseParam purchaseParam;
 
 if (Platform.isAndroid) {
   // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-  // verify the latest status of you your subscription by using server side receipt validation
+  // verify the latest status of your subscription by using server side receipt validation
   // and update the UI accordingly. The subscription purchase status shown
   // inside the app may not be accurate.
   final GooglePlayPurchaseDetails? oldSubscription =
@@ -260,7 +258,7 @@ users from accidentally purchasing multiple subscriptions. Refer to the
 <?code-excerpt "example/lib/main.dart (ChangeSubscription)"?>
 ```dart
 // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-// verify the latest status of you your subscription by using server side receipt validation
+// verify the latest status of your subscription by using server side receipt validation
 // and update the UI accordingly. The subscription purchase status shown
 // inside the app may not be accurate.
 final GooglePlayPurchaseDetails? oldSubscription =
