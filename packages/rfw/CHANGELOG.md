@@ -1,7 +1,11 @@
+## 1.0.21
+
+* Adds support for subscribing to the root of a `DynamicContent` object.
+
 ## 1.0.20
 
-* Adds OverflowBox material widget.
-* Updates ButtonBar material widget implementation.
+* Adds `OverflowBox` material widget.
+* Updates `ButtonBar` material widget implementation.
 
 ## 1.0.19
 
