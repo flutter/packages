@@ -104,23 +104,66 @@
 - (void)handleMethodCallAsync:(FlutterMethodCall *)call
                        result:(FLTThreadSafeFlutterResult *)result {
   if ([@"availableCameras" isEqualToString:call.method]) {
-      NSMutableArray *discoveryDevices =
-            [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
-                AVCaptureDeviceTypeBuiltInTelephotoCamera,
-                AVCaptureDeviceTypeBuiltInDualCamera,
-                AVCaptureDeviceTypeBuiltInTrueDepthCamera]
-                    mutableCopy];
-    if (@available(iOS 13.0, *)) {
-      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
-      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
-      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
-    }
-    if (@available(iOS 15.4, *)) {
-      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
-    }
+    BOOL physicalCameras = [call.arguments[@"physicalCameras"] boolValue];
+    BOOL logicalCameras = [call.arguments[@"logicalCameras"] boolValue];
+    NSMutableArray *discoveryDevices = [NSMutableArray new];
     if (@available(iOS 17.0, *)) {
-      [discoveryDevices addObject:AVCaptureDeviceTypeContinuityCamera];
-      [discoveryDevices addObject:AVCaptureDeviceTypeExternal];
+      if (physicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
+               AVCaptureDeviceTypeBuiltInTelephotoCamera,
+               AVCaptureDeviceTypeBuiltInUltraWideCamera,
+               AVCaptureDeviceTypeExternal ]];
+      }
+      if (logicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInDualCamera,
+               AVCaptureDeviceTypeBuiltInTrueDepthCamera,
+               AVCaptureDeviceTypeBuiltInDualWideCamera,
+               AVCaptureDeviceTypeBuiltInTripleCamera,
+               AVCaptureDeviceTypeBuiltInLiDARDepthCamera,
+               AVCaptureDeviceTypeContinuityCamera ]];
+      }
+    } else if (@available(iOS 15.4, *)) {
+      if (physicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
+               AVCaptureDeviceTypeBuiltInTelephotoCamera,
+               AVCaptureDeviceTypeBuiltInUltraWideCamera ]];
+      }
+      if (logicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInDualCamera,
+               AVCaptureDeviceTypeBuiltInTrueDepthCamera,
+               AVCaptureDeviceTypeBuiltInDualWideCamera,
+               AVCaptureDeviceTypeBuiltInTripleCamera,
+               AVCaptureDeviceTypeBuiltInLiDARDepthCamera ]];
+      }
+    } else if (@available(iOS 13.0, *)) {
+      if (physicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
+               AVCaptureDeviceTypeBuiltInTelephotoCamera,
+               AVCaptureDeviceTypeBuiltInUltraWideCamera ]];
+      }
+      if (logicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInDualCamera,
+               AVCaptureDeviceTypeBuiltInTrueDepthCamera,
+               AVCaptureDeviceTypeBuiltInDualWideCamera,
+               AVCaptureDeviceTypeBuiltInTripleCamera ]];
+      }
+    } else {
+      if (physicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
+               AVCaptureDeviceTypeBuiltInTelephotoCamera ]];
+      }
+      if (logicalCameras) {
+        [discoveryDevices addObjectsFromArray:
+            @[ AVCaptureDeviceTypeBuiltInDualCamera,
+               AVCaptureDeviceTypeBuiltInTrueDepthCamera ]];
+      }
     }
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
         discoverySessionWithDeviceTypes:discoveryDevices

@@ -41,7 +41,10 @@ class CameraWindows extends CameraPlatform {
           .where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
-  Future<List<CameraDescription>> availableCameras() async {
+  Future<List<CameraDescription>> availableCameras({
+    bool physicalCameras = true,
+    bool logicalCameras = false,
+  }) async {
     try {
       final List<Map<dynamic, dynamic>>? cameras = await pluginChannel
           .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');

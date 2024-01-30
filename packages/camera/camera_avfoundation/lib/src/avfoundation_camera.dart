@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:camera_avfoundation/camera_avfoundation.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -69,23 +70,30 @@ class AVFoundationCamera extends CameraPlatform {
           .where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
-  Future<List<CameraDescription>> availableCameras() async {
+  Future<List<CameraDescription>> availableCameras({
+    bool physicalCameras = true,
+    bool logicalCameras = false,
+  }) async {
     try {
       final List<Map<dynamic, dynamic>>? cameras = await _channel
-          .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
+          .invokeListMethod<Map<dynamic, dynamic>>(
+              'availableCameras', <String, dynamic>{
+        'physicalCameras': physicalCameras,
+        'logicalCameras': logicalCameras,
+      });
 
       if (cameras == null) {
         return <CameraDescription>[];
       }
 
       return cameras.map((Map<dynamic, dynamic> camera) {
-        return CameraDescription(
+        return AVCameraDescription(
           name: camera['name']! as String,
           lensDirection:
               parseCameraLensDirection(camera['lensFacing']! as String),
           sensorOrientation: camera['sensorOrientation']! as int,
-          appleCaptureDeviceType:
-              parseAppleCaptureDeviceType(camera['deviceType']! as String),
+          captureDeviceType:
+              parseAVCaptureDeviceType(camera['deviceType']! as String),
         );
       }).toList();
     } on PlatformException catch (e) {

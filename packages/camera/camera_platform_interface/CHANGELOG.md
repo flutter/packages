@@ -1,3 +1,7 @@
+## 2.7.3
+
+* add options to get available physical or logical cameras
+
 ## 2.7.2
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

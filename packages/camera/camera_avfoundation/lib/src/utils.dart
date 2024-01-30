@@ -5,6 +5,8 @@
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 
+import '../camera_avfoundation.dart';
+
 /// Parses a string into a corresponding CameraLensDirection.
 CameraLensDirection parseCameraLensDirection(String string) {
   switch (string) {
@@ -18,29 +20,29 @@ CameraLensDirection parseCameraLensDirection(String string) {
   throw ArgumentError('Unknown CameraLensDirection value');
 }
 
-/// Parses the [type] into an [AppleCaptureDeviceType].
-AppleCaptureDeviceType? parseAppleCaptureDeviceType(String type) {
+/// Parses the [type] into an [AVCaptureDeviceType].
+AVCaptureDeviceType? parseAVCaptureDeviceType(String type) {
   switch (type) {
     case 'builtInWideAngleCamera':
-      return AppleCaptureDeviceType.builtInWideAngleCamera;
+      return AVCaptureDeviceType.builtInWideAngleCamera;
     case 'builtInUltraWideCamera':
-      return AppleCaptureDeviceType.builtInUltraWideCamera;
+      return AVCaptureDeviceType.builtInUltraWideCamera;
     case 'builtInTelephotoCamera':
-      return AppleCaptureDeviceType.builtInTelephotoCamera;
+      return AVCaptureDeviceType.builtInTelephotoCamera;
     case 'builtInDualCamera':
-      return AppleCaptureDeviceType.builtInDualCamera;
+      return AVCaptureDeviceType.builtInDualCamera;
     case 'builtInDualWideCamera':
-      return AppleCaptureDeviceType.builtInDualWideCamera;
+      return AVCaptureDeviceType.builtInDualWideCamera;
     case 'builtInTripleCamera':
-      return AppleCaptureDeviceType.builtInTripleCamera;
+      return AVCaptureDeviceType.builtInTripleCamera;
     case 'continuityCamera':
-      return AppleCaptureDeviceType.continuityCamera;
+      return AVCaptureDeviceType.continuityCamera;
     case 'external':
-      return AppleCaptureDeviceType.external;
+      return AVCaptureDeviceType.external;
     case 'builtInLiDARDepthCamera':
-      return AppleCaptureDeviceType.builtInLiDARDepthCamera;
+      return AVCaptureDeviceType.builtInLiDARDepthCamera;
     case 'builtInTrueDepthCamera':
-      return AppleCaptureDeviceType.builtInTrueDepthCamera;
+      return AVCaptureDeviceType.builtInTrueDepthCamera;
   }
   // unknown type
   return null;

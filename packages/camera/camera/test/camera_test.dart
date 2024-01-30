@@ -1426,7 +1426,8 @@ class MockCameraPlatform extends Mock
   }
 
   @override
-  Future<List<CameraDescription>> availableCameras() =>
+  Future<List<CameraDescription>> availableCameras(
+          {bool physicalCameras = true, bool logicalCameras = false}) =>
       Future<List<CameraDescription>>.value(mockAvailableCameras);
 
   @override

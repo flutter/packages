@@ -16,50 +16,14 @@ enum CameraLensDirection {
   external,
 }
 
-/// Capture device types used on Apple Device. Mirror of AVCaptureDevice.DeviceType:
-/// https://developer.apple.com/documentation/avfoundation/avcapturedevice/devicetype
-enum AppleCaptureDeviceType {
-  /// A built-in wide-angle camera device type.
-  builtInWideAngleCamera,
-
-  /// A built-in camera device type with a shorter focal length than a wide-angle camera.
-  builtInUltraWideCamera,
-
-  /// A built-in camera device type with a longer focal length than a wide-angle camera.
-  builtInTelephotoCamera,
-
-  /// A built-in camera device type that consists of a wide-angle and telephoto camera.
-  builtInDualCamera,
-
-  /// A built-in camera device type that consists of two cameras of fixed focal length, one ultrawide angle and one wide angle.
-  builtInDualWideCamera,
-
-  /// A built-in camera device type that consists of three cameras of fixed focal length, one ultrawide angle, one wide angle, and one telephoto.
-  builtInTripleCamera,
-
-  /// A Continuity Camera device type.
-  continuityCamera,
-
-  /// An external device type.
-  external,
-
-  /// A device that consists of two cameras, one LiDAR and one YUV.
-  builtInLiDARDepthCamera,
-
-  /// A device that consists of two cameras, one Infrared and one YUV.
-  builtInTrueDepthCamera,
-}
-
 /// Properties of a camera device.
 @immutable
 class CameraDescription {
   /// Creates a new camera description with the given properties.
-  const CameraDescription({
-    required this.name,
-    required this.lensDirection,
-    required this.sensorOrientation,
-    this.appleCaptureDeviceType,
-  });
+  const CameraDescription(
+      {required this.name,
+      required this.lensDirection,
+      required this.sensorOrientation});
 
   /// The name of the camera device.
   final String name;
@@ -76,9 +40,6 @@ class CameraDescription {
   /// is from top to bottom in the sensor's coordinate system.
   final int sensorOrientation;
 
-  /// The type of the capture device on Apple devices.
-  final AppleCaptureDeviceType? appleCaptureDeviceType;
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -93,6 +54,6 @@ class CameraDescription {
   @override
   String toString() {
     return '${objectRuntimeType(this, 'CameraDescription')}('
-        '$name, $lensDirection, $sensorOrientation, $appleCaptureDeviceType)';
+        '$name, $lensDirection, $sensorOrientation)';
   }
 }

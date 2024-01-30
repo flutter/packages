@@ -42,7 +42,10 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Completes with a list of available cameras.
   ///
   /// This method returns an empty list when no cameras are available.
-  Future<List<CameraDescription>> availableCameras() {
+  Future<List<CameraDescription>> availableCameras({
+    bool physicalCameras = true,
+    bool logicalCameras = false,
+  }) {
     throw UnimplementedError('availableCameras() is not implemented.');
   }
 
