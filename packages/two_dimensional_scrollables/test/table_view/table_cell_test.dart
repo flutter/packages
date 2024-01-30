@@ -58,7 +58,8 @@ void main() {
               (AssertionError error) => error.toString(),
               'description',
               contains(
-                  'Row merge start and span must both be set, or both unset.'),
+                'Row merge start and span must both be set, or both unset.',
+              ),
             ),
           ),
         );
@@ -71,7 +72,8 @@ void main() {
               (AssertionError error) => error.toString(),
               'description',
               contains(
-                  'Row merge start and span must both be set, or both unset.'),
+                'Row merge start and span must both be set, or both unset.',
+              ),
             ),
           ),
         );
@@ -116,7 +118,8 @@ void main() {
               (AssertionError error) => error.toString(),
               'description',
               contains(
-                  'Column merge start and span must both be set, or both unset.'),
+                'Column merge start and span must both be set, or both unset.',
+              ),
             ),
           ),
         );
@@ -129,7 +132,8 @@ void main() {
               (AssertionError error) => error.toString(),
               'description',
               contains(
-                  'Column merge start and span must both be set, or both unset.'),
+                'Column merge start and span must both be set, or both unset.',
+              ),
             ),
           ),
         );
@@ -351,6 +355,7 @@ void main() {
         );
       });
     });
+
     group('layout', () {
       // For TableView.mainAxis vertical (default) and
       // For TableView.mainAxis horizontal
@@ -405,13 +410,14 @@ void main() {
             columnMergeStart: mergedColumns[vicinity]?.$1,
             columnMergeSpan: mergedColumns[vicinity]?.$2,
             child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-              layoutConstraints[vicinity] = constraints;
-              return Text(
-                'M(${mergedRows[vicinity]?.$1 ?? vicinity.row},'
-                '${mergedColumns[vicinity]?.$1 ?? vicinity.column})',
-              );
-            }),
+              builder: (BuildContext context, BoxConstraints constraints) {
+                layoutConstraints[vicinity] = constraints;
+                return Text(
+                  'M(${mergedRows[vicinity]?.$1 ?? vicinity.row},'
+                  '${mergedColumns[vicinity]?.$1 ?? vicinity.column})',
+                );
+              },
+            ),
           );
         }
         return TableViewCell(
@@ -702,7 +708,9 @@ void main() {
         );
 
         expect(
-            tester.getTopLeft(find.text('M(0,0)')), const Offset(-30.0, 425.0));
+          tester.getTopLeft(find.text('M(0,0)')),
+          const Offset(-30.0, 425.0),
+        );
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],

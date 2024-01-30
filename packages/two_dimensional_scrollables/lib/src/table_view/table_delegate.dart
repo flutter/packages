@@ -16,7 +16,7 @@ import 'table_span.dart';
 /// [TableView].
 typedef TableSpanBuilder = TableSpan Function(int index);
 
-/// Signature for a function that creates a child [Widget] for a given
+/// Signature for a function that creates a child [TableViewCell] for a given
 /// [TableVicinity] in a [TableView], but may return null.
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
@@ -117,10 +117,9 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
 /// A delegate that supplies children for a [TableViewport] on demand using a
 /// builder callback.
 ///
-/// The [addRepaintBoundaries] of the super class is overridden to false here.
-/// This is handled by [TableViewCell.addRepaintBoundaries]. This allows
-/// [ParentData] to be written to children of the [TableView] for features like
-/// merged cells.
+/// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
+/// automatically insert repaint boundaries. Instead, repaint boundaries are
+/// controlled by [TableViewCell.addRepaintBoundaries].
 class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     with TableCellDelegateMixin {
   /// Creates a lazy building delegate to use with a [TableView].
@@ -216,10 +215,9 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
 /// [TableVicinity.column] of the [TwoDimensionalViewport] as
 /// `children[vicinity.row][vicinity.column]`.
 ///
-/// The [addRepaintBoundaries] of the super class is overridden to false here.
-/// This is handled by [TableViewCell.addRepaintBoundaries]. This allows
-/// [ParentData] to be written to children of the [TableView] for features like
-/// merged cells.
+/// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
+/// automatically insert repaint boundaries. Instead, repaint boundaries are
+/// controlled by [TableViewCell.addRepaintBoundaries].
 class TableCellListDelegate extends TwoDimensionalChildListDelegate
     with TableCellDelegateMixin {
   /// Creates a delegate that supplies children for a [TableView].

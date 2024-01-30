@@ -293,8 +293,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   // of the merged child.
   final Map<TableVicinity, TableVicinity> _mergedVicinities =
       <TableVicinity, TableVicinity>{};
-  // Used to optimize decorating when there are no merged cells in a given
-  // span.
+  // These contain the indexes of rows/columns that contain merged cells to
+  // optimize decoration drawing for rows/columns that don't contain merged
+  // cells.
   final List<int> _mergedRows = <int>[];
   final List<int> _mergedColumns = <int>[];
 
@@ -827,10 +828,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 if (cellParentData.columnMergeStart != null) {
                   _mergedColumns.add(currentColumn);
                 }
-                _mergedVicinities[TableVicinity(
+                final TableVicinity key = TableVicinity(
                   row: currentRow,
                   column: currentColumn,
-                )] = vicinity;
+                );
+                _mergedVicinities[key] = vicinity;
                 currentColumn++;
               }
               currentRow++;

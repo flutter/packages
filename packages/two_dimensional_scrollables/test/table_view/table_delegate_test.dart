@@ -174,8 +174,10 @@ void main() {
       int notified = 0;
       TableCellBuilderDelegate oldDelegate;
       TableSpan spanBuilder(int index) => span;
-      TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) =>
-          cell;
+      TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) {
+        return cell;
+      }
+
       final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
         columnBuilder: spanBuilder,
