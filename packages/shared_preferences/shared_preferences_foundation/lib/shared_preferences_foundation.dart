@@ -2,108 +2,214 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
-import 'messages.g.dart';
-import 'shared_preferences_async_foundation.dart';
 
-typedef _Setter = Future<void> Function(String key, Object value);
+import './messages.g.dart';
+import 'deprecated_shared_preferences_foundation.dart';
 
 /// iOS and macOS implementation of shared_preferences.
-class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
-  final DeprecatedUserDefaultsApi _api = DeprecatedUserDefaultsApi();
+base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
+  /// Creates a new plugin implementation instance.
+  SharedPreferencesFoundation({
+    @visibleForTesting UserDefaultsApi? api,
+  }) : _api = api ?? UserDefaultsApi();
 
-  static const String _defaultPrefix = 'flutter.';
+  final UserDefaultsApi _api;
 
-  late final Map<String, _Setter> _setters = <String, _Setter>{
-    'Bool': (String key, Object value) {
-      return _api.setBool(key, value as bool);
-    },
-    'Double': (String key, Object value) {
-      return _api.setDouble(key, value as double);
-    },
-    'Int': (String key, Object value) {
-      return _api.setValue(key, value as int);
-    },
-    'String': (String key, Object value) {
-      return _api.setValue(key, value as String);
-    },
-    'StringList': (String key, Object value) {
-      return _api.setValue(key, value as List<String?>);
-    },
-  };
-
-  /// Registers this class as the default instance of
-  /// [SharedPreferencesStorePlatform].
+  /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
-    SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation();
-    SharedPreferencesAsyncFoundation.registerWith();
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesFoundation();
+    DeprecatedSharedPreferencesFoundation.registerWith();
   }
 
-  @override
-  Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+  /// Returns a SharedPreferencesPigeonOptions for sending to platform.
+  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
+      SharedPreferencesOptions options) {
+    String? suiteName;
+
+    if (options is SharedPreferencesFoundationOptions) {
+      suiteName = options.suiteName;
+    }
+
+    return SharedPreferencesPigeonOptions(
+      suiteName: suiteName,
     );
   }
 
   @override
-  Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
+  Future<Set<String?>> getKeys(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
 
-  @override
-  Future<bool> clearWithParameters(ClearParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    return _api.clear(
-      filter.prefix,
+    return (await _api.getKeys(
       filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
+    ))
+        .toSet();
+  }
+
+  Future<void> _setValue(
+    String key,
+    Object value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    await _api.setValue(key, value, pigeonOptions);
+  }
+
+  @override
+  Future<bool> setString(
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _setValue(key, value, options);
+    return true;
+  }
+
+  @override
+  Future<bool> setInt(
+    String key,
+    int value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _setValue(key, value, options);
+    return true;
+  }
+
+  @override
+  Future<bool> setStringList(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _setValue(key, value, options);
+    return true;
+  }
+
+  @override
+  Future<bool> setBool(
+    String key,
+    Object value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    await _api.setBool(key, value as bool, pigeonOptions);
+    return true;
+  }
+
+  @override
+  Future<bool> setDouble(
+    String key,
+    Object value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    await _api.setDouble(key, value as double, pigeonOptions);
+    return true;
+  }
+
+  @override
+  Future<String?> getString(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getString(key, pigeonOptions);
+  }
+
+  @override
+  Future<bool?> getBool(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getBool(key, pigeonOptions);
+  }
+
+  @override
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getDouble(key, pigeonOptions);
+  }
+
+  @override
+  Future<int?> getInt(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getInt(key, pigeonOptions);
+  }
+
+  @override
+  Future<List<String?>?> getStringList(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getStringList(key, pigeonOptions);
+  }
+
+  @override
+  Future<bool> clear(
+    ClearPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    await _api.clear(
+      filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
     );
+    return true;
   }
 
   @override
-  Future<Map<String, Object>> getAll() async {
-    return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+  Future<Map<String, Object>> getPreferences(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    final Map<String?, Object?> data = await _api.getAll(
+      filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
     );
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    final Map<String?, Object?> data =
-        await _api.getAll(filter.prefix, filter.allowList?.toList());
     return data.cast<String, Object>();
   }
+}
 
-  @override
-  Future<bool> remove(String key) async {
-    await _api.remove(key);
-    return true;
-  }
+/// Options for the Foundation specific SharedPreferences plugin.
+class SharedPreferencesFoundationOptions extends SharedPreferencesOptions {
+  /// Creates a new instance with the given options.
+  SharedPreferencesFoundationOptions({
+    this.suiteName,
+  });
 
-  @override
-  Future<bool> setValue(String valueType, String key, Object value) async {
-    final _Setter? setter = _setters[valueType];
-    if (setter == null) {
-      throw PlatformException(
-          code: 'InvalidOperation',
-          message: '"$valueType" is not a supported type.');
-    }
-    await setter(key, value);
-    return true;
-  }
+  /// Name of Foundation SharedPreferences instance to get/set to.
+  ///
+  /// If this option is not set, Foundations default SharedPreferences will be used.
+  final String? suiteName;
 }

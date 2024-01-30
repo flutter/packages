@@ -114,15 +114,15 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   }
   
   func getBool(key: String, options: SharedPreferencesPigeonOptions) throws -> Bool? {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).bool(forKey: key)
+      try SharedPreferencesPlugin.getUserDefaults(options: options).value(forKey: key) as! Bool?
   }
   
   func getDouble(key: String, options: SharedPreferencesPigeonOptions) throws -> Double? {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).double(forKey: key)
+      try SharedPreferencesPlugin.getUserDefaults(options: options).value(forKey: key) as! Double?
   }
   
   func getInt(key: String, options: SharedPreferencesPigeonOptions) throws -> Int64? {
-    Int64(try SharedPreferencesPlugin.getUserDefaults(options: options).integer(forKey: key))
+      try SharedPreferencesPlugin.getUserDefaults(options: options).value(forKey: key) as! Int64?
   }
   
   func getStringList(key: String, options: SharedPreferencesPigeonOptions) throws -> [String]? {
@@ -135,8 +135,14 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
 
   func clear(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws {
     let defaults = try SharedPreferencesPlugin.getUserDefaults(options: options)
-    for (key, _) in try SharedPreferencesPlugin.getAllPrefs(allowList: allowList, options: options) {
-      defaults.removeObject(forKey: key)
+    if let allowList {
+      for (key) in allowList {
+        defaults.removeObject(forKey: key)
+      }
+    } else {
+        defaults.dictionaryRepresentation().keys.forEach { key in
+            defaults.removeObject(forKey: key)
+        }
     }
   }
     

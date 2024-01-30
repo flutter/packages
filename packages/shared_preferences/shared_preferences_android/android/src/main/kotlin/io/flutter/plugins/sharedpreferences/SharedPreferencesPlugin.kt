@@ -23,6 +23,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.sharedpreferences.SharedPreferencesListEncoder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
@@ -142,14 +143,12 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
           preferences.remove(preferencesKey)
         }
       } ?: preferences.clear()
-
-
     }
   }
 
   /** Gets all properties from data store. */
   override fun getAll(allowList: List<String>?, options: SharedPreferencesPigeonOptions): Map<String, Any> {
-    return getPrefs(allowList)
+    return runBlocking { getPrefs(allowList)}
   }
 
   /** Gets int (as long) at [key] from data store. */
@@ -164,7 +163,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
         preferences[preferencesKey]
       }
 
-    return preferenceFlow.first()
+    return preferenceFlow.firstOrNull()
   }
 
   /** Gets bool at [key] from data store. */
@@ -179,7 +178,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
         preferences[preferencesKey]
       }
 
-    return preferenceFlow.first()
+    return preferenceFlow.firstOrNull()
   }
 
   /** Gets double at [key] from data store. */
@@ -188,13 +187,13 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   private suspend fun getDoubleFromPreferences(key: String): Double? {
-    val preferencesKey = doublePreferencesKey(key)
+    val preferencesKey = stringPreferencesKey(key)
     val preferenceFlow: Flow<Double?> = context.sharedPreferencesDataStore.data
       .map { preferences ->
-        transformPref(preferences[preferencesKey] as Any) as Double?
+        transformPref(preferences[preferencesKey] as Any?) as Double?
       }
 
-    return preferenceFlow.first()
+    return preferenceFlow.firstOrNull()
   }
 
   /** Gets String at [key] from data store. */
@@ -209,32 +208,53 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
         preferences[preferencesKey]
       }
 
-    return preferenceFlow.first()
+    return preferenceFlow.firstOrNull()
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String> {
-    return (transformPref(getString(key, options) as Any) as List<*>).filterIsInstance<String>()
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>? {
+    return (transformPref(getString(key, options) as Any?) as List<*>?)?.filterIsInstance<String>()
   }
 
   /** Gets all properties from data store. */
   override fun getKeys(allowList: List<String>?, options: SharedPreferencesPigeonOptions): List<String> {
-    val prefs = getPrefs(allowList)
+    val prefs = runBlocking { getPrefs(allowList)}
     return prefs.keys.toList()
   }
 
-  private fun getPrefs(allowList: List<String>?): Map<String, Any> {
-    val allPrefs = context.sharedPreferencesDataStore.data
+  private suspend fun getPrefs(allowList: List<String>?): Map<String, Any> {
     val allowSet = allowList?.toSet()
     val filteredMap = mutableMapOf<String, Any>()
-    allPrefs.map{
-      it.asMap().map { entry ->
-        if (preferencesFilter(entry, allowSet)) {
-          filteredMap[entry.key.toString()] = transformPref(entry.value)
+
+    val keys = readAllKeys();
+    keys?.forEach () { key ->
+      val value = getValueByKey(key)
+      if (preferencesFilter(key.toString(), value, allowSet)) {
+        val transformedValue = transformPref(value)
+        if (transformedValue != null) {
+          filteredMap[key.toString()] = transformedValue
         }
+
       }
+
     }
     return filteredMap
+  }
+
+  private suspend fun readAllKeys(): Set<Preferences.Key<*>>? {
+    val keys = context.sharedPreferencesDataStore.data
+      .map {
+        it.asMap().keys
+      }
+    return keys.firstOrNull()
+  }
+
+  private suspend fun getValueByKey(key: Preferences.Key<*>): Any? {
+    val value = context.sharedPreferencesDataStore.data
+      .map {
+        it[key]
+      }
+    return value.firstOrNull()
   }
 
   /** 
@@ -243,10 +263,9 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
    * If no [allowList] is provided, instead returns false for any preferences
    * that are not supported by shared_preferences.
    */
-  private fun preferencesFilter(
-     entry: Map.Entry<Preferences.Key<*>, Any>, allowList: Set<String>?): Boolean {
-    val key = entry.key.toString()
-    val value = entry.value
+  private fun preferencesFilter(key: String,
+     value: Any?, allowList: Set<String>?): Boolean {
+
     if (allowList == null) {
       return value is Boolean
           || value is Long
@@ -258,7 +277,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
   
   /** Transforms preferences that are stored as Strings back to original type. */
-  private fun transformPref(value: Any): Any {
+  private fun transformPref(value: Any?): Any? {
     if (value is String) {
       if (value.startsWith(LIST_PREFIX)) {
         return listEncoder.decode(value.substring(LIST_PREFIX.length))
