@@ -51,21 +51,21 @@ import 'runtime.dart';
 ///  * [VisualDensity] is represented in the manner described in the documentation
 ///    of the [ArgumentDecoders.visualDensity] method.
 ///
-/// Some features have changed in the underlying Material library and are
+/// Some features have changed in the underlying Flutter's material library and are
 /// therefore no longer supported, including:
 ///
-///  * The ButtonBar widget in package:flutter/material.dart is planned to be
-///    deprecated in favor of the OverflowBar widget. The ButtonBar widget in
-///    rfw package uses the OverflowBar widget internally for backward compatibility.
-///    The ButtonBar widget in rfw package is not deprecated and will continue to
-///    be supported. As a result, the following ButtonBar parameters are no longer
+///  * The [ButtonBar] widget in the Flutter's material library is planned to be
+///    deprecated in favor of the [OverflowBar] widget. The [ButtonBar] widget in
+///    `rfw` package uses the [OverflowBar] widget internally for backward compatibility.
+///    The [ButtonBar] widget in `rfw` package is not deprecated and will continue to
+///    be supported. As a result, the following [ButtonBar] parameters are no longer
 ///    supported:
 ///
-///    * buttonMinWidth
-///    * buttonHeight
-///    * buttonAlignedDropdown
+///    * `buttonMinWidth`
+///    * `buttonHeight`
+///    * `buttonAlignedDropdown`
 ///
-///    It is recommended to use the OverflowBar widget.
+///    It is recommended to use the [OverflowBar] widget.
 ///
 /// Some features are not supported:
 ///
