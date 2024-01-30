@@ -14,8 +14,7 @@ import '../store_kit_wrappers/sk_test_stub_objects.dart';
 
 class FakeStoreKitPlatform {
   FakeStoreKitPlatform() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, onMethodCall);
   }
 
@@ -233,9 +232,3 @@ class FakeStoreKitPlatform {
     return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

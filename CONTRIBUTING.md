@@ -40,6 +40,8 @@ use, and use auto-formatters:
     for more details, and exceptions.
 - [Java](https://google.github.io/styleguide/javaguide.html) formatted with
   `google-java-format`
+- [Kotlin](https://developer.android.com/kotlin/style-guide) formatted with
+  `ktfmt`
 - [Objective-C](https://google.github.io/styleguide/objcguide.html) formatted with
   `clang-format`
 - [Swift](https://google.github.io/swift/) formatted with `swift-format`

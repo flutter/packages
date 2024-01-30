@@ -11,7 +11,7 @@
 - [ ] I read and followed the [relevant style guides] and ran the auto-formatter. (Unlike the flutter/flutter repo, the flutter/packages repo does use `dart format`.)
 - [ ] I signed the [CLA].
 - [ ] The title of the PR starts with the name of the package surrounded by square brackets, e.g. `[shared_preferences]`
-- [ ] I listed at least one issue that this PR fixes in the description above.
+- [ ] I [linked to at least one issue that this PR fixes] in the description above.
 - [ ] I updated `pubspec.yaml` with an appropriate new version according to the [pub versioning philosophy], or this PR is [exempt from version changes].
 - [ ] I updated `CHANGELOG.md` to add a description of the change, [following repository CHANGELOG style].
 - [ ] I updated/added relevant documentation (doc comments with `///`).
@@ -28,6 +28,7 @@ If you need help, consider asking for advice on the #hackers-new channel on [Dis
 [flutter/tests]: https://github.com/flutter/tests
 [breaking change policy]: https://github.com/flutter/flutter/wiki/Tree-hygiene#handling-breaking-changes
 [Discord]: https://github.com/flutter/flutter/wiki/Chat
+[linked to at least one issue that this PR fixes]: https://github.com/flutter/flutter/wiki/Tree-hygiene#overview
 [pub versioning philosophy]: https://dart.dev/tools/pub/versioning
 [exempt from version changes]: https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#version-and-changelog-updates
 [following repository CHANGELOG style]: https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changelog-style

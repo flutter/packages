@@ -48,8 +48,7 @@ void main() {
     const MethodChannel channel =
         MethodChannel('plugins.flutter.io/url_launcher');
     final List<MethodCall> log = <MethodCall>[];
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       log.add(methodCall);
 
@@ -325,9 +324,3 @@ class ExtendsUrlLauncherPlatform extends UrlLauncherPlatform {
   @override
   final LinkDelegate? linkDelegate = null;
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
