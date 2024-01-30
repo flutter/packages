@@ -12,6 +12,7 @@ import 'camera_state_error.dart';
 import 'camerax_library.g.dart';
 import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
+import 'focus_metering_result.dart';
 import 'image_proxy.dart';
 import 'java_object.dart';
 import 'live_data.dart';
@@ -50,7 +51,8 @@ class AndroidCameraXCameraFlutterApis {
       ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
       PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
       AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
-      CameraControlFlutterApiImpl? cameraControlFlutterApiImpl}) {
+      CameraControlFlutterApiImpl? cameraControlFlutterApiImpl,
+      FocusMeteringResultFlutterApiImpl? focusMeteringResultFlutterApiImpl}) {
     this.javaObjectFlutterApiImpl =
         javaObjectFlutterApiImpl ?? JavaObjectFlutterApiImpl();
     this.cameraInfoFlutterApiImpl =
@@ -94,6 +96,9 @@ class AndroidCameraXCameraFlutterApis {
         planeProxyFlutterApiImpl ?? PlaneProxyFlutterApiImpl();
     this.cameraControlFlutterApiImpl =
         cameraControlFlutterApiImpl ?? CameraControlFlutterApiImpl();
+    this.focusMeteringResultFlutterApiImpl =
+        focusMeteringResultFlutterApiImpl ??
+            FocusMeteringResultFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -169,6 +174,10 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api implementation for [CameraControl].
   late final CameraControlFlutterApiImpl cameraControlFlutterApiImpl;
 
+  /// Flutter Api implementation for [FocusMeteringResult].
+  late final FocusMeteringResultFlutterApiImpl
+      focusMeteringResultFlutterApiImpl;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -195,6 +204,7 @@ class AndroidCameraXCameraFlutterApis {
       LiveDataFlutterApi.setup(liveDataFlutterApiImpl);
       ObserverFlutterApi.setup(observerFlutterApiImpl);
       CameraControlFlutterApi.setup(cameraControlFlutterApiImpl);
+      FocusMeteringResultFlutterApi.setup(focusMeteringResultFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }
