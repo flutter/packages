@@ -1,3 +1,7 @@
+## NEXT
+
+* Add physicalCameras and logicalCameras options to availableDevices method.
+
 ## 0.9.14
 
 * Adds support to HEIF format.
