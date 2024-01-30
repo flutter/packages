@@ -30,4 +30,4 @@ flutter:
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
 dependency_overrides:
-   {shared_preferences_platform_interface: {path: ../../../shared_preferences/shared_preferences_platform_interface}}
+   {shared_preferences_platform_interface: {path: ../../../shared_preferences/shared_preferences_platform_interface}, shared_preferences_windows: {path: ../../../shared_preferences/shared_preferences_windows}}
