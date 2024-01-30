@@ -70,7 +70,7 @@ class AVFoundationCamera extends CameraPlatform {
           .where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
-  Future<List<CameraDescription>> availableCameras({
+  Future<List<AVCameraDescription>> availableCameras({
     bool physicalCameras = true,
     bool logicalCameras = false,
   }) async {
@@ -83,7 +83,7 @@ class AVFoundationCamera extends CameraPlatform {
       });
 
       if (cameras == null) {
-        return <CameraDescription>[];
+        return <AVCameraDescription>[];
       }
 
       return cameras.map((Map<dynamic, dynamic> camera) {
