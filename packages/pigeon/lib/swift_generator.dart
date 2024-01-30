@@ -76,13 +76,14 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     required String dartPackageName,
   }) {
     indent.writeln('import Foundation');
+    indent.newln();
     indent.format('''
 #if os(iOS)
-import Flutter
+  import Flutter
 #elseif os(macOS)
-import FlutterMacOS
+  import FlutterMacOS
 #else
-#error("Unsupported platform.")
+  #error("Unsupported platform.")
 #endif''');
   }
 
@@ -160,6 +161,9 @@ import FlutterMacOS
     indent.addScoped('{', '}', () {
       indent.write('return ');
       indent.addScoped('[', ']', () {
+        // Follow swift-format style, which is to use a trailing comma unless
+        // there is only one element.
+        final String separator = classDefinition.fields.length > 1 ? ',' : '';
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
           String toWriteValue = '';
@@ -173,7 +177,7 @@ import FlutterMacOS
             toWriteValue = field.name;
           }
 
-          indent.writeln('$toWriteValue,');
+          indent.writeln('$toWriteValue$separator');
         }
       });
     });
@@ -236,7 +240,7 @@ import FlutterMacOS
     required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
+        api is AstHostApi &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
@@ -256,11 +260,9 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
-
     /// Returns an argument name that can be used in a context where it is possible to collide.
     String getEnumSafeArgumentExpression(
         Root root, int count, NamedType argument) {
@@ -294,7 +296,7 @@ import FlutterMacOS
     indent.write('class ${api.name}: ${api.name}Protocol ');
     indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
-      indent.write('init(binaryMessenger: FlutterBinaryMessenger)');
+      indent.write('init(binaryMessenger: FlutterBinaryMessenger) ');
       indent.addScoped('{', '}', () {
         indent.writeln('self.binaryMessenger = binaryMessenger');
       });
@@ -330,20 +332,20 @@ import FlutterMacOS
             indent.writeScoped(
                 'guard let listResponse = response as? [Any?] else {', '}', () {
               indent.writeln(
-                  'completion(.failure(createConnectionError(withChannelName:channelName)))');
+                  'completion(.failure(createConnectionError(withChannelName: channelName)))');
               indent.writeln('return');
             });
-            indent.writeScoped('if (listResponse.count > 1) {', '} ', () {
+            indent.writeScoped('if listResponse.count > 1 {', '} ', () {
               indent.writeln('let code: String = listResponse[0] as! String');
               indent.writeln(
                   'let message: String? = nilOrValue(listResponse[1])');
               indent.writeln(
                   'let details: String? = nilOrValue(listResponse[2])');
               indent.writeln(
-                  'completion(.failure(FlutterError(code: code, message: message, details: details)));');
+                  'completion(.failure(FlutterError(code: code, message: message, details: details)))');
             }, addTrailingNewline: false);
             if (!func.returnType.isNullable && !func.returnType.isVoid) {
-              indent.addScoped('else if (listResponse[0] == nil) {', '} ', () {
+              indent.addScoped('else if listResponse[0] == nil {', '} ', () {
                 indent.writeln(
                     'completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
               }, addTrailingNewline: false);
@@ -380,11 +382,9 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
-
     final String apiName = api.name;
 
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
@@ -495,8 +495,14 @@ import FlutterMacOS
                 });
               }
               final String tryStatement = method.isAsynchronous ? '' : 'try ';
+              // Empty parens are not required when calling a method whose only
+              // argument is a trailing closure.
+              final String argumentString =
+                  methodArgument.isEmpty && method.isAsynchronous
+                      ? ''
+                      : '(${methodArgument.join(', ')})';
               final String call =
-                  '${tryStatement}api.${components.name}(${methodArgument.join(', ')})';
+                  '${tryStatement}api.${components.name}$argumentString';
               if (method.isAsynchronous) {
                 final String resultName =
                     method.returnType.isVoid ? 'nil' : 'res';
@@ -506,7 +512,7 @@ import FlutterMacOS
 
                 indent.addScoped('{ result in', '}', () {
                   indent.write('switch result ');
-                  indent.addScoped('{', '}', () {
+                  indent.addScoped('{', '}', nestCount: 0, () {
                     final String nullsafe =
                         method.returnType.isNullable ? '?' : '';
                     final String enumTag =
@@ -573,7 +579,7 @@ import FlutterMacOS
         indent.write('override func readValue(ofType type: UInt8) -> Any? ');
         indent.addScoped('{', '}', () {
           indent.write('switch type ');
-          indent.addScoped('{', '}', () {
+          indent.addScoped('{', '}', nestCount: 0, () {
             for (final EnumeratedClass customClass
                 in getCodecClasses(api, root)) {
               indent.writeln('case ${customClass.enumeration}:');
@@ -764,14 +770,14 @@ import FlutterMacOS
         indent.addScoped('[', ']', () {
           indent.writeln('flutterError.code,');
           indent.writeln('flutterError.message,');
-          indent.writeln('flutterError.details');
+          indent.writeln('flutterError.details,');
         });
       });
       indent.write('return ');
       indent.addScoped('[', ']', () {
         indent.writeln(r'"\(error)",');
         indent.writeln(r'"\(type(of: error))",');
-        indent.writeln(r'"Stacktrace: \(Thread.callStackSymbols)"');
+        indent.writeln(r'"Stacktrace: \(Thread.callStackSymbols)",');
       });
     });
   }
@@ -802,10 +808,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     if (hasHostApi) {
       _writeWrapResult(indent);

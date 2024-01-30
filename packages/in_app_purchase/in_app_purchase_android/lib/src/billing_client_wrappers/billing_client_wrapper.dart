@@ -335,7 +335,6 @@ class BillingClient {
             _callbacks[kOnPurchasesUpdated]!.first as PurchasesUpdatedListener;
         listener(PurchasesResultWrapper.fromJson(
             (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>()));
-        break;
       case _kOnBillingServiceDisconnected:
         final int handle =
             (call.arguments as Map<Object?, Object?>)['handle']! as int;
@@ -343,7 +342,6 @@ class BillingClient {
             _callbacks[_kOnBillingServiceDisconnected]!
                 .cast<OnBillingServiceDisconnected>();
         onDisconnected[handle]();
-        break;
     }
   }
 }

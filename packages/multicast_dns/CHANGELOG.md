@@ -1,3 +1,7 @@
+## 0.3.2+6
+
+* Improves links in README.md.
+
 ## 0.3.2+5
 
 * Updates `PendingRequest` to be a `base class` for Dart 3.0 compatibility.

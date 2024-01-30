@@ -276,7 +276,7 @@ class DetailsScreenState extends State<DetailsScreen> {
         body: _build(context),
       );
     } else {
-      return Container(
+      return ColoredBox(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: _build(context),
       );

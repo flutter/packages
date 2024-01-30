@@ -14,7 +14,6 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
@@ -86,120 +85,6 @@ public class DeviceOrientationManager {
   }
 
   /**
-   * Returns the device's photo orientation in degrees based on the sensor orientation and the last
-   * known UI orientation.
-   *
-   * <p>Returns one of 0, 90, 180 or 270.
-   *
-   * @return The device's photo orientation in degrees.
-   */
-  public int getPhotoOrientation() {
-    return this.getPhotoOrientation(this.lastOrientation);
-  }
-
-  /**
-   * Returns the device's photo orientation in degrees based on the sensor orientation and the
-   * supplied {@link PlatformChannel.DeviceOrientation} value.
-   *
-   * <p>Returns one of 0, 90, 180 or 270.
-   *
-   * @param orientation The {@link PlatformChannel.DeviceOrientation} value that is to be converted
-   *     into degrees.
-   * @return The device's photo orientation in degrees.
-   */
-  public int getPhotoOrientation(@Nullable PlatformChannel.DeviceOrientation orientation) {
-    int angle = 0;
-    // Fallback to device orientation when the orientation value is null.
-    if (orientation == null) {
-      orientation = getUIOrientation();
-    }
-
-    switch (orientation) {
-      case PORTRAIT_UP:
-        angle = 90;
-        break;
-      case PORTRAIT_DOWN:
-        angle = 270;
-        break;
-      case LANDSCAPE_LEFT:
-        angle = isFrontFacing ? 180 : 0;
-        break;
-      case LANDSCAPE_RIGHT:
-        angle = isFrontFacing ? 0 : 180;
-        break;
-    }
-
-    // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X).
-    // This has to be taken into account so the JPEG is rotated properly.
-    // For devices with orientation of 90, this simply returns the mapping from ORIENTATIONS.
-    // For devices with orientation of 270, the JPEG is rotated 180 degrees instead.
-    return (angle + sensorOrientation + 270) % 360;
-  }
-
-  /**
-   * Returns the device's video orientation in clockwise degrees based on the sensor orientation and
-   * the last known UI orientation.
-   *
-   * <p>Returns one of 0, 90, 180 or 270.
-   *
-   * @return The device's video orientation in clockwise degrees.
-   */
-  public int getVideoOrientation() {
-    return this.getVideoOrientation(this.lastOrientation);
-  }
-
-  /**
-   * Returns the device's video orientation in clockwise degrees based on the sensor orientation and
-   * the supplied {@link PlatformChannel.DeviceOrientation} value.
-   *
-   * <p>Returns one of 0, 90, 180 or 270.
-   *
-   * <p>More details can be found in the official Android documentation:
-   * https://developer.android.com/reference/android/media/MediaRecorder#setOrientationHint(int)
-   *
-   * <p>See also:
-   * https://developer.android.com/training/camera2/camera-preview-large-screens#orientation_calculation
-   *
-   * @param orientation The {@link PlatformChannel.DeviceOrientation} value that is to be converted
-   *     into degrees.
-   * @return The device's video orientation in clockwise degrees.
-   */
-  public int getVideoOrientation(@Nullable PlatformChannel.DeviceOrientation orientation) {
-    int angle = 0;
-
-    // Fallback to device orientation when the orientation value is null.
-    if (orientation == null) {
-      orientation = getUIOrientation();
-    }
-
-    switch (orientation) {
-      case PORTRAIT_UP:
-        angle = 0;
-        break;
-      case PORTRAIT_DOWN:
-        angle = 180;
-        break;
-      case LANDSCAPE_LEFT:
-        angle = 270;
-        break;
-      case LANDSCAPE_RIGHT:
-        angle = 90;
-        break;
-    }
-
-    if (isFrontFacing) {
-      angle *= -1;
-    }
-
-    return (angle + sensorOrientation + 360) % 360;
-  }
-
-  /** @return the last received UI orientation. */
-  public @Nullable PlatformChannel.DeviceOrientation getLastUIOrientation() {
-    return this.lastOrientation;
-  }
-
-  /**
    * Handles orientation changes based on change events triggered by the OrientationIntentFilter.
    *
    * <p>This method is visible for testing purposes only and should never be used outside this
@@ -241,7 +126,7 @@ public class DeviceOrientationManager {
   @SuppressWarnings("deprecation")
   @VisibleForTesting
   PlatformChannel.DeviceOrientation getUIOrientation() {
-    final int rotation = getDisplay().getRotation();
+    final int rotation = getDefaultRotation();
     final int orientation = activity.getResources().getConfiguration().orientation;
 
     switch (orientation) {
@@ -265,57 +150,18 @@ public class DeviceOrientationManager {
   }
 
   /**
-   * Calculates the sensor orientation based on the supplied angle.
+   * Gets default capture rotation for CameraX {@code UseCase}s.
    *
-   * <p>This method is visible for testing purposes only and should never be used outside this
-   * class.
+   * <p>See
+   * https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int),
+   * for instance.
    *
-   * @param angle Orientation angle.
-   * @return The sensor orientation based on the supplied angle.
+   * @return The rotation of the screen from its "natural" orientation; one of {@code
+   *     Surface.ROTATION_0}, {@code Surface.ROTATION_90}, {@code Surface.ROTATION_180}, {@code
+   *     Surface.ROTATION_270}
    */
-  @VisibleForTesting
-  PlatformChannel.DeviceOrientation calculateSensorOrientation(int angle) {
-    final int tolerance = 45;
-    angle += tolerance;
-
-    // Orientation is 0 in the default orientation mode. This is portrait-mode for phones
-    // and landscape for tablets. We have to compensate for this by calculating the default
-    // orientation, and apply an offset accordingly.
-    int defaultDeviceOrientation = getDeviceDefaultOrientation();
-    if (defaultDeviceOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-      angle += 90;
-    }
-    // Determine the orientation
-    angle = angle % 360;
-    return new PlatformChannel.DeviceOrientation[] {
-          PlatformChannel.DeviceOrientation.PORTRAIT_UP,
-          PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT,
-          PlatformChannel.DeviceOrientation.PORTRAIT_DOWN,
-          PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT,
-        }
-        [angle / 90];
-  }
-
-  /**
-   * Gets the default orientation of the device.
-   *
-   * <p>This method is visible for testing purposes only and should never be used outside this
-   * class.
-   *
-   * @return The default orientation of the device.
-   */
-  @VisibleForTesting
-  int getDeviceDefaultOrientation() {
-    Configuration config = activity.getResources().getConfiguration();
-    int rotation = getDisplay().getRotation();
-    if (((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180)
-            && config.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        || ((rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)
-            && config.orientation == Configuration.ORIENTATION_PORTRAIT)) {
-      return Configuration.ORIENTATION_LANDSCAPE;
-    } else {
-      return Configuration.ORIENTATION_PORTRAIT;
-    }
+  int getDefaultRotation() {
+    return getDisplay().getRotation();
   }
 
   /**

@@ -529,6 +529,90 @@ public class GeneratedCameraXLibrary {
     }
   }
 
+  /**
+   * Convenience class for building [FocusMeteringAction] with multiple metering points.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class MeteringPointInfo {
+    /** Instance manager ID corresponding to [MeteringPoint] that relates to this info. */
+    private @NonNull Long meteringPointId;
+
+    public @NonNull Long getMeteringPointId() {
+      return meteringPointId;
+    }
+
+    public void setMeteringPointId(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"meteringPointId\" is null.");
+      }
+      this.meteringPointId = setterArg;
+    }
+
+    /** Metering mode represented by one of the [FocusMeteringAction] constants. */
+    private @Nullable Long meteringMode;
+
+    public @Nullable Long getMeteringMode() {
+      return meteringMode;
+    }
+
+    public void setMeteringMode(@Nullable Long setterArg) {
+      this.meteringMode = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    MeteringPointInfo() {}
+
+    public static final class Builder {
+
+      private @Nullable Long meteringPointId;
+
+      public @NonNull Builder setMeteringPointId(@NonNull Long setterArg) {
+        this.meteringPointId = setterArg;
+        return this;
+      }
+
+      private @Nullable Long meteringMode;
+
+      public @NonNull Builder setMeteringMode(@Nullable Long setterArg) {
+        this.meteringMode = setterArg;
+        return this;
+      }
+
+      public @NonNull MeteringPointInfo build() {
+        MeteringPointInfo pigeonReturn = new MeteringPointInfo();
+        pigeonReturn.setMeteringPointId(meteringPointId);
+        pigeonReturn.setMeteringMode(meteringMode);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(meteringPointId);
+      toListResult.add(meteringMode);
+      return toListResult;
+    }
+
+    static @NonNull MeteringPointInfo fromList(@NonNull ArrayList<Object> list) {
+      MeteringPointInfo pigeonResult = new MeteringPointInfo();
+      Object meteringPointId = list.get(0);
+      pigeonResult.setMeteringPointId(
+          (meteringPointId == null)
+              ? null
+              : ((meteringPointId instanceof Integer)
+                  ? (Integer) meteringPointId
+                  : (Long) meteringPointId));
+      Object meteringMode = list.get(1);
+      pigeonResult.setMeteringMode(
+          (meteringMode == null)
+              ? null
+              : ((meteringMode instanceof Integer) ? (Integer) meteringMode : (Long) meteringMode));
+      return pigeonResult;
+    }
+  }
+
   public interface Result<T> {
     @SuppressWarnings("UnknownNullness")
     void success(T result);
@@ -1256,11 +1340,6 @@ public class GeneratedCameraXLibrary {
     void requestCameraPermissions(
         @NonNull Boolean enableAudio, @NonNull Result<CameraPermissionsErrorData> result);
 
-    void startListeningForDeviceOrientationChange(
-        @NonNull Boolean isFrontFacing, @NonNull Long sensorOrientation);
-
-    void stopListeningForDeviceOrientationChange();
-
     @NonNull
     String getTempFilePath(@NonNull String prefix, @NonNull String suffix);
 
@@ -1300,57 +1379,6 @@ public class GeneratedCameraXLibrary {
                     };
 
                 api.requestCameraPermissions(enableAudioArg, resultCallback);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.SystemServicesHostApi.startListeningForDeviceOrientationChange",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                ArrayList<Object> args = (ArrayList<Object>) message;
-                Boolean isFrontFacingArg = (Boolean) args.get(0);
-                Number sensorOrientationArg = (Number) args.get(1);
-                try {
-                  api.startListeningForDeviceOrientationChange(
-                      isFrontFacingArg,
-                      (sensorOrientationArg == null) ? null : sensorOrientationArg.longValue());
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.SystemServicesHostApi.stopListeningForDeviceOrientationChange",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  api.stopListeningForDeviceOrientationChange();
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1402,18 +1430,6 @@ public class GeneratedCameraXLibrary {
       return new StandardMessageCodec();
     }
 
-    public void onDeviceOrientationChanged(
-        @NonNull String orientationArg, @NonNull Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger,
-              "dev.flutter.pigeon.SystemServicesFlutterApi.onDeviceOrientationChanged",
-              getCodec());
-      channel.send(
-          new ArrayList<Object>(Collections.singletonList(orientationArg)),
-          channelReply -> callback.reply(null));
-    }
-
     public void onCameraError(@NonNull String errorDescriptionArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
@@ -1422,6 +1438,133 @@ public class GeneratedCameraXLibrary {
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(errorDescriptionArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface DeviceOrientationManagerHostApi {
+
+    void startListeningForDeviceOrientationChange(
+        @NonNull Boolean isFrontFacing, @NonNull Long sensorOrientation);
+
+    void stopListeningForDeviceOrientationChange();
+
+    @NonNull
+    Long getDefaultDisplayRotation();
+
+    /** The codec used by DeviceOrientationManagerHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `DeviceOrientationManagerHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable DeviceOrientationManagerHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DeviceOrientationManagerHostApi.startListeningForDeviceOrientationChange",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Boolean isFrontFacingArg = (Boolean) args.get(0);
+                Number sensorOrientationArg = (Number) args.get(1);
+                try {
+                  api.startListeningForDeviceOrientationChange(
+                      isFrontFacingArg,
+                      (sensorOrientationArg == null) ? null : sensorOrientationArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DeviceOrientationManagerHostApi.stopListeningForDeviceOrientationChange",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  api.stopListeningForDeviceOrientationChange();
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultDisplayRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Long output = api.getDefaultDisplayRotation();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class DeviceOrientationManagerFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public DeviceOrientationManagerFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by DeviceOrientationManagerFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+
+    public void onDeviceOrientationChanged(
+        @NonNull String orientationArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(orientationArg)),
           channelReply -> callback.reply(null));
     }
   }
@@ -1465,6 +1608,8 @@ public class GeneratedCameraXLibrary {
 
     @NonNull
     ResolutionInfo getResolutionInfo(@NonNull Long identifier);
+
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
     /** The codec used by PreviewHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1577,6 +1722,32 @@ public class GeneratedCameraXLibrary {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.PreviewHostApi.setTargetRotation", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
@@ -1587,6 +1758,8 @@ public class GeneratedCameraXLibrary {
 
     @NonNull
     Long getOutput(@NonNull Long identifier);
+
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
     /** The codec used by VideoCaptureHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1636,6 +1809,34 @@ public class GeneratedCameraXLibrary {
                   Long output =
                       api.getOutput((identifierArg == null) ? null : identifierArg.longValue());
                   wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
+                  wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
@@ -2055,11 +2256,16 @@ public class GeneratedCameraXLibrary {
   public interface ImageCaptureHostApi {
 
     void create(
-        @NonNull Long identifier, @Nullable Long flashMode, @Nullable Long resolutionSelectorId);
+        @NonNull Long identifier,
+        @Nullable Long targetRotation,
+        @Nullable Long flashMode,
+        @Nullable Long resolutionSelectorId);
 
     void setFlashMode(@NonNull Long identifier, @NonNull Long flashMode);
 
     void takePicture(@NonNull Long identifier, @NonNull Result<String> result);
+
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
     /** The codec used by ImageCaptureHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2080,11 +2286,13 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                Number flashModeArg = (Number) args.get(1);
-                Number resolutionSelectorIdArg = (Number) args.get(2);
+                Number targetRotationArg = (Number) args.get(1);
+                Number flashModeArg = (Number) args.get(2);
+                Number resolutionSelectorIdArg = (Number) args.get(3);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
+                      (targetRotationArg == null) ? null : targetRotationArg.longValue(),
                       (flashModeArg == null) ? null : flashModeArg.longValue(),
                       (resolutionSelectorIdArg == null)
                           ? null
@@ -2151,6 +2359,34 @@ public class GeneratedCameraXLibrary {
 
                 api.takePicture(
                     (identifierArg == null) ? null : identifierArg.longValue(), resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -2486,11 +2722,16 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageAnalysisHostApi {
 
-    void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId);
+    void create(
+        @NonNull Long identifier,
+        @Nullable Long targetRotation,
+        @Nullable Long resolutionSelectorId);
 
     void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier);
 
     void clearAnalyzer(@NonNull Long identifier);
+
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
     /** The codec used by ImageAnalysisHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2512,10 +2753,12 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                Number resolutionSelectorIdArg = (Number) args.get(1);
+                Number targetRotationArg = (Number) args.get(1);
+                Number resolutionSelectorIdArg = (Number) args.get(2);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
+                      (targetRotationArg == null) ? null : targetRotationArg.longValue(),
                       (resolutionSelectorIdArg == null)
                           ? null
                           : resolutionSelectorIdArg.longValue());
@@ -2570,6 +2813,34 @@ public class GeneratedCameraXLibrary {
                 Number identifierArg = (Number) args.get(0);
                 try {
                   api.clearAnalyzer((identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -3240,6 +3511,16 @@ public class GeneratedCameraXLibrary {
     void setZoomRatio(
         @NonNull Long identifier, @NonNull Double ratio, @NonNull Result<Void> result);
 
+    void startFocusAndMetering(
+        @NonNull Long identifier,
+        @NonNull Long focusMeteringActionId,
+        @NonNull Result<Long> result);
+
+    void cancelFocusAndMetering(@NonNull Long identifier, @NonNull Result<Void> result);
+
+    void setExposureCompensationIndex(
+        @NonNull Long identifier, @NonNull Long index, @NonNull Result<Long> result);
+
     /** The codec used by CameraControlHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3318,6 +3599,110 @@ public class GeneratedCameraXLibrary {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.CameraControlHostApi.startFocusAndMetering",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number focusMeteringActionIdArg = (Number) args.get(1);
+                Result<Long> resultCallback =
+                    new Result<Long>() {
+                      public void success(Long result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.startFocusAndMetering(
+                    (identifierArg == null) ? null : identifierArg.longValue(),
+                    (focusMeteringActionIdArg == null)
+                        ? null
+                        : focusMeteringActionIdArg.longValue(),
+                    resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.CameraControlHostApi.cancelFocusAndMetering",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Result<Void> resultCallback =
+                    new Result<Void>() {
+                      public void success(Void result) {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.cancelFocusAndMetering(
+                    (identifierArg == null) ? null : identifierArg.longValue(), resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.CameraControlHostApi.setExposureCompensationIndex",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number indexArg = (Number) args.get(1);
+                Result<Long> resultCallback =
+                    new Result<Long>() {
+                      public void success(Long result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setExposureCompensationIndex(
+                    (identifierArg == null) ? null : identifierArg.longValue(),
+                    (indexArg == null) ? null : indexArg.longValue(),
+                    resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
@@ -3345,6 +3730,342 @@ public class GeneratedCameraXLibrary {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(identifierArg)),
           channelReply -> callback.reply(null));
+    }
+  }
+
+  private static class FocusMeteringActionHostApiCodec extends StandardMessageCodec {
+    public static final FocusMeteringActionHostApiCodec INSTANCE =
+        new FocusMeteringActionHostApiCodec();
+
+    private FocusMeteringActionHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return MeteringPointInfo.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof MeteringPointInfo) {
+        stream.write(128);
+        writeValue(stream, ((MeteringPointInfo) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface FocusMeteringActionHostApi {
+
+    void create(@NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos);
+
+    /** The codec used by FocusMeteringActionHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return FocusMeteringActionHostApiCodec.INSTANCE;
+    }
+    /**
+     * Sets up an instance of `FocusMeteringActionHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable FocusMeteringActionHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.FocusMeteringActionHostApi.create",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                List<MeteringPointInfo> meteringPointInfosArg =
+                    (List<MeteringPointInfo>) args.get(1);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      meteringPointInfosArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface FocusMeteringResultHostApi {
+
+    @NonNull
+    Boolean isFocusSuccessful(@NonNull Long identifier);
+
+    /** The codec used by FocusMeteringResultHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `FocusMeteringResultHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable FocusMeteringResultHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.FocusMeteringResultHostApi.isFocusSuccessful",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                try {
+                  Boolean output =
+                      api.isFocusSuccessful(
+                          (identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class FocusMeteringResultFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public FocusMeteringResultFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by FocusMeteringResultFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+
+    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.FocusMeteringResultFlutterApi.create",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface MeteringPointHostApi {
+
+    void create(
+        @NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size);
+
+    @NonNull
+    Double getDefaultPointSize();
+
+    /** The codec used by MeteringPointHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `MeteringPointHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable MeteringPointHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.MeteringPointHostApi.create", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Double xArg = (Double) args.get(1);
+                Double yArg = (Double) args.get(2);
+                Double sizeArg = (Double) args.get(3);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      xArg,
+                      yArg,
+                      sizeArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.MeteringPointHostApi.getDefaultPointSize",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Double output = api.getDefaultPointSize();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface DisplayOrientedMeteringPointFactoryHostApi {
+
+    void create(
+        @NonNull Long identifier,
+        @NonNull Long cameraInfoId,
+        @NonNull Long width,
+        @NonNull Long height);
+
+    @NonNull
+    Long createPoint(@NonNull Long x, @NonNull Long y, @Nullable Long size);
+
+    @NonNull
+    Long getDefaultPointSize();
+
+    /** The codec used by DisplayOrientedMeteringPointFactoryHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `DisplayOrientedMeteringPointFactoryHostApi` to handle messages
+     * through the `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger,
+        @Nullable DisplayOrientedMeteringPointFactoryHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number cameraInfoIdArg = (Number) args.get(1);
+                Number widthArg = (Number) args.get(2);
+                Number heightArg = (Number) args.get(3);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue(),
+                      (widthArg == null) ? null : widthArg.longValue(),
+                      (heightArg == null) ? null : heightArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number xArg = (Number) args.get(0);
+                Number yArg = (Number) args.get(1);
+                Number sizeArg = (Number) args.get(2);
+                try {
+                  Long output =
+                      api.createPoint(
+                          (xArg == null) ? null : xArg.longValue(),
+                          (yArg == null) ? null : yArg.longValue(),
+                          (sizeArg == null) ? null : sizeArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.getDefaultPointSize",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Long output = api.getDefaultPointSize();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
 }

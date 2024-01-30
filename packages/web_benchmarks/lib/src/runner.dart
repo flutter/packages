@@ -18,6 +18,7 @@ import 'package:shelf_static/shelf_static.dart';
 import 'benchmark_result.dart';
 import 'browser.dart';
 import 'common.dart';
+import 'compilation_options.dart';
 
 /// The default port number used by the local benchmark server.
 const int defaultBenchmarkServerPort = 9999;
@@ -50,11 +51,11 @@ class BenchmarkServer {
   BenchmarkServer({
     required this.benchmarkAppDirectory,
     required this.entryPoint,
-    required this.useCanvasKit,
     required this.benchmarkServerPort,
     required this.chromeDebugPort,
     required this.headless,
     required this.treeShakeIcons,
+    this.compilationOptions = const CompilationOptions(),
     this.initialPage = defaultInitialPage,
   });
 
@@ -72,8 +73,8 @@ class BenchmarkServer {
   /// the app.
   final String entryPoint;
 
-  /// Whether to build the app in CanvasKit mode.
-  final bool useCanvasKit;
+  /// The compilation options to use for building the benchmark web app.
+  final CompilationOptions compilationOptions;
 
   /// The port this benchmark server serves the app on.
   final int benchmarkServerPort;
@@ -109,13 +110,20 @@ class BenchmarkServer {
           "flutter executable is not runnable. Make sure it's in the PATH.");
     }
 
+    final DateTime startTime = DateTime.now();
+    print('Building Flutter web app $compilationOptions...');
     final io.ProcessResult buildResult = await _processManager.run(
       <String>[
         'flutter',
         'build',
         'web',
+        if (compilationOptions.useWasm) ...<String>[
+          '--wasm',
+          '--wasm-opt=debug',
+          '--omit-type-checks',
+        ],
+        '--web-renderer=${compilationOptions.renderer.name}',
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
-        if (useCanvasKit) '--dart-define=FLUTTER_WEB_USE_SKIA=true',
         if (!treeShakeIcons) '--no-tree-shake-icons',
         '--profile',
         '-t',
@@ -123,6 +131,12 @@ class BenchmarkServer {
       ],
       workingDirectory: benchmarkAppDirectory.path,
     );
+
+    final int buildTime = Duration(
+      milliseconds: DateTime.now().millisecondsSinceEpoch -
+          startTime.millisecondsSinceEpoch,
+    ).inSeconds;
+    print('Build took ${buildTime}s to complete.');
 
     if (buildResult.exitCode != 0) {
       io.stderr.writeln(buildResult.stdout);

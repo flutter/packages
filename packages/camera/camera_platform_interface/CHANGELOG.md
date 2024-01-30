@@ -1,5 +1,14 @@
-## NEXT
+## 2.7.2
 
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.7.1
+
+* Fixes new lint warnings.
+
+## 2.7.0
+
+* Adds support for setting the image file format. See `CameraPlatform.setImageFileFormat`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 2.6.0

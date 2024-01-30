@@ -349,6 +349,18 @@ void main() {
 
   testWidgets('Runtime', (WidgetTester tester) async {
     final Runtime runtime = Runtime()
+          ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    expect(runtime.libraries.length, 1);
+    final LibraryName libraryName = runtime.libraries.entries.first.key;
+    expect('$libraryName', 'core');
+    final WidgetLibrary widgetLibrary = runtime.libraries.entries.first.value;
+    expect(widgetLibrary, isA<LocalWidgetLibrary>());
+    widgetLibrary as LocalWidgetLibrary;
+    expect(widgetLibrary.widgets.length, greaterThan(1));
+  });
+
+  testWidgets('Runtime', (WidgetTester tester) async {
+    final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     final DynamicContent data = DynamicContent();
     await tester.pumpWidget(

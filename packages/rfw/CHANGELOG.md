@@ -1,4 +1,24 @@
-## NEXT
+## 1.0.20
+
+* Adds OverflowBox material widget.
+* Updates ButtonBar material widget implementation.
+
+## 1.0.19
+
+* Add `DropdownButton` and `ClipRRect` widgets to rfw widget library.
+
+## 1.0.18
+
+* Exposes `WidgetLibrary`s registered in `Runtime`.
+* Exposes widgets map in `LocalWidgetLibrary`.
+
+## 1.0.17
+
+* Adds support for tracking source locations of `BlobNode`s and
+  finding `BlobNode`s from the widget tree (`BlobNode.source` and
+  `Runtime.blobNodeFor` respectively).
+
+## 1.0.16
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 * Fixes lint warnings.

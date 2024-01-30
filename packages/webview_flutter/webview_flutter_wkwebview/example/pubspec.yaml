@@ -3,14 +3,14 @@ description: Demonstrates how to use the webview_flutter_wkwebview plugin.
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  sdk: ^3.2.3
+  flutter: ">=3.16.6"
 
 dependencies:
   flutter:
     sdk: flutter
   path_provider: ^2.0.6
-  webview_flutter_platform_interface: ^2.6.0
+  webview_flutter_platform_interface: ^2.9.0
   webview_flutter_wkwebview:
     # When depending on this package from a real application you should use:
     #   webview_flutter: ^x.y.z

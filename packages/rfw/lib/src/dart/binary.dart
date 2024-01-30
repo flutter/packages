@@ -476,10 +476,8 @@ class _BlobDecoder {
     switch (type) {
       case _msSwitch:
         root = _readSwitch();
-        break;
       case _msWidget:
         root = _readWidget();
-        break;
       default:
         throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget declaration root.');
     }

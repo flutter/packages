@@ -1,6 +1,19 @@
 ## NEXT
 
+* Updates compileSdk version to 34.
+
+## 0.5.0+7
+
+* Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.
+
+## 0.5.0+6
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 0.5.0+5
+
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
 
 ## 0.5.0+4
 

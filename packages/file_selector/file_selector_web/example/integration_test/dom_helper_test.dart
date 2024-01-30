@@ -47,7 +47,11 @@ void main() {
 
     group('getFiles', () {
       final File mockFile1 =
+          // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+          // ignore: always_specify_types
           File(<Object>['123456'].jsify as JSArray, 'file1.txt');
+      // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+      // ignore: always_specify_types
       final File mockFile2 = File(<Object>[].jsify as JSArray, 'file2.txt');
 
       testWidgets('works', (_) async {

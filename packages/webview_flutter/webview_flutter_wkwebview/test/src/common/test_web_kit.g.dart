@@ -1199,59 +1199,62 @@ class _TestWKWebViewHostApiCodec extends StandardMessageCodec {
   const _TestWKWebViewHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is NSErrorData) {
+    if (value is AuthenticationChallengeResponse) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is NSHttpCookieData) {
+    } else if (value is NSErrorData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NSHttpCookiePropertyKeyEnumData) {
+    } else if (value is NSHttpCookieData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueChangeKeyEnumData) {
+    } else if (value is NSHttpCookiePropertyKeyEnumData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueObservingOptionsEnumData) {
+    } else if (value is NSKeyValueChangeKeyEnumData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSKeyValueObservingOptionsEnumData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is ObjectOrIdentifier) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is WKAudiovisualMediaTypeEnumData) {
+    } else if (value is ObjectOrIdentifier) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is WKMediaCaptureTypeData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKMediaCaptureTypeData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKPermissionDecisionData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKPermissionDecisionData) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is WKSecurityOriginData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKSecurityOriginData) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKUserScriptData) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
       buffer.putUint8(145);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(146);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1262,40 +1265,42 @@ class _TestWKWebViewHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return NSErrorData.decode(readValue(buffer)!);
+        return AuthenticationChallengeResponse.decode(readValue(buffer)!);
       case 129:
-        return NSHttpCookieData.decode(readValue(buffer)!);
+        return NSErrorData.decode(readValue(buffer)!);
       case 130:
-        return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
+        return NSHttpCookieData.decode(readValue(buffer)!);
       case 131:
-        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+        return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
       case 132:
-        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
+        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
       case 133:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
       case 134:
-        return ObjectOrIdentifier.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 135:
-        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
+        return ObjectOrIdentifier.decode(readValue(buffer)!);
       case 136:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       case 137:
-        return WKMediaCaptureTypeData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 138:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKMediaCaptureTypeData.decode(readValue(buffer)!);
       case 139:
-        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+        return WKNavigationActionData.decode(readValue(buffer)!);
       case 140:
-        return WKPermissionDecisionData.decode(readValue(buffer)!);
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 141:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKPermissionDecisionData.decode(readValue(buffer)!);
       case 142:
-        return WKSecurityOriginData.decode(readValue(buffer)!);
+        return WKScriptMessageData.decode(readValue(buffer)!);
       case 143:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKSecurityOriginData.decode(readValue(buffer)!);
       case 144:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKUserScriptData.decode(readValue(buffer)!);
       case 145:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 146:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2185,6 +2190,69 @@ abstract class TestNSUrlHostApi {
           try {
             final String? output = api.getAbsoluteString(arg_identifier!);
             return <Object?>[output];
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `NSUrlCredential`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
+abstract class TestNSUrlCredentialHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Create a new native instance and add it to the `InstanceManager`.
+  void createWithUser(int identifier, String user, String password,
+      NSUrlCredentialPersistence persistence);
+
+  static void setup(TestNSUrlCredentialHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser was null, expected non-null int.');
+          final String? arg_user = (args[1] as String?);
+          assert(arg_user != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser was null, expected non-null String.');
+          final String? arg_password = (args[2] as String?);
+          assert(arg_password != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser was null, expected non-null String.');
+          final NSUrlCredentialPersistence? arg_persistence = args[3] == null
+              ? null
+              : NSUrlCredentialPersistence.values[args[3]! as int];
+          assert(arg_persistence != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser was null, expected non-null NSUrlCredentialPersistence.');
+          try {
+            api.createWithUser(
+                arg_identifier!, arg_user!, arg_password!, arg_persistence!);
+            return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
