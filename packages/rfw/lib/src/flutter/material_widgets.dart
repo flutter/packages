@@ -37,6 +37,7 @@ import 'runtime.dart';
 ///  * [Scaffold]
 ///  * [TextButton]
 ///  * [VerticalDivider]
+///  * [OverflowBar]
 ///
 /// For each, every parameter is implemented using the same name. Parameters
 /// that take structured types are represented using maps, with each named
@@ -49,6 +50,22 @@ import 'runtime.dart';
 ///
 ///  * [VisualDensity] is represented in the manner described in the documentation
 ///    of the [ArgumentDecoders.visualDensity] method.
+///
+/// Some features have changed in the underlying Flutter's material library and are
+/// therefore no longer supported, including:
+///
+///  * The [ButtonBar] widget in the Flutter's material library is planned to be
+///    deprecated in favor of the [OverflowBar] widget. The [ButtonBar] widget in
+///    `rfw` package uses the [OverflowBar] widget internally for backward compatibility.
+///    The [ButtonBar] widget in `rfw` package is not deprecated and will continue to
+///    be supported. As a result, the following [ButtonBar] parameters are no longer
+///    supported:
+///
+///    * `buttonMinWidth`
+///    * `buttonHeight`
+///    * `buttonAlignedDropdown`
+///
+///    It is recommended to use the [OverflowBar] widget.
 ///
 /// Some features are not supported:
 ///
@@ -123,18 +140,66 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
+  // The ButtonBar widget in package:flutter/material.dart is planned to be deprecated
+  // in favor of the OverflowBar widget. This ButtonBar implementation uses the
+  // OverflowBar widget internally for backward compatibility. The ButtonBar
+  // widget in rfw package is not deprecated and will continue to be supported.
+  //
+  // The ButtonBar widget in package:flutter/material.dart has changed over time.
+  // The following parameters are no longer supported:
+  //  - buttonMinWidth
+  //  - buttonHeight
+  //  - buttonAlignedDropdown
+  //
+  // It is recommended to use the OverflowBar widget.
   'ButtonBar': (BuildContext context, DataSource source) {
-    // not implemented: buttonTextTheme
-    return ButtonBar(
+    final EdgeInsetsGeometry buttonPadding = ArgumentDecoders.edgeInsets(source, ['buttonPadding']) ?? const EdgeInsets.all(8.0);
+    final ButtonBarLayoutBehavior layoutBehavior = ArgumentDecoders.enumValue<ButtonBarLayoutBehavior>(ButtonBarLayoutBehavior.values, source, ['layoutBehavior'])
+      ?? ButtonBarLayoutBehavior.padded;
+
+    Widget overflowBar = OverflowBar(
       alignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['alignment']) ?? MainAxisAlignment.start,
-      mainAxisSize: ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) ?? MainAxisSize.max,
-      buttonMinWidth: source.v<double>(['buttonMinWidth']),
-      buttonHeight: source.v<double>(['buttonHeight']),
-      buttonPadding: ArgumentDecoders.edgeInsets(source, ['buttonPadding']),
-      buttonAlignedDropdown: source.v<bool>(['buttonAlignedDropdown']) ?? false,
-      layoutBehavior: ArgumentDecoders.enumValue<ButtonBarLayoutBehavior>(ButtonBarLayoutBehavior.values, source, ['layoutBehavior']),
-      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection']),
-      overflowButtonSpacing: source.v<double>(['overflowButtonSpacing']),
+      spacing: buttonPadding.horizontal / 2,
+      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection']) ?? VerticalDirection.down,
+      overflowSpacing: source.v<double>(['overflowButtonSpacing']) ?? 0.0,
+      children: source.childList(['children']),
+    );
+
+    switch (layoutBehavior) {
+      case ButtonBarLayoutBehavior.padded:
+        overflowBar = Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 2.0 * (buttonPadding.horizontal / 4.0),
+            horizontal: buttonPadding.horizontal / 2.0,
+          ),
+          child: overflowBar,
+        );
+      case ButtonBarLayoutBehavior.constrained:
+        overflowBar = Container(
+          padding: EdgeInsets.symmetric(horizontal: buttonPadding.horizontal / 2.0),
+          constraints: const BoxConstraints(minHeight: 52.0),
+          alignment: Alignment.center,
+          child: overflowBar,
+        );
+    }
+
+    if (ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) == MainAxisSize.min) {
+      return IntrinsicWidth(child: overflowBar);
+    }
+
+    return overflowBar;
+  },
+
+  'OverflowBar': (BuildContext context, DataSource source) {
+    return OverflowBar(
+      spacing: source.v<double>(['spacing']) ?? 0.0,
+      alignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['alignment']),
+      overflowSpacing: source.v<double>(['overflowSpacing']) ?? 0.0,
+      overflowAlignment: ArgumentDecoders.enumValue<OverflowBarAlignment>(OverflowBarAlignment.values, source, ['overflowAlignment'])
+        ?? OverflowBarAlignment.start,
+      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection'])
+        ?? VerticalDirection.down,
+      textDirection: ArgumentDecoders.enumValue<TextDirection>(TextDirection.values, source, ['textDirection']),
       children: source.childList(['children']),
     );
   },

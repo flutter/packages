@@ -1,3 +1,7 @@
+## 16.0.6
+
+* [dart] Adds implementation for `@ProxyApi`.
+
 ## 16.0.5
 
 * Adds ProxyApi to AST generation.
