@@ -416,8 +416,8 @@
       [FIAObjectTranslator convertTransactionToPigeon:original];
   SKPaymentTransactionMessage *result = [self.plugin transactionsWithError:&error][0];
 
-  XCTAssertEqualObjects([self PaymentTransactionToList:result],
-                        [self PaymentTransactionToList:originalPigeon]);
+  XCTAssertEqualObjects([self paymentTransactionToList:result],
+                        [self paymentTransactionToList:originalPigeon]);
 }
 
 - (void)testStartObservingPaymentQueue {
@@ -539,34 +539,34 @@
 }
 #endif
 
-// Pigeon message deserializers for easy comparison
+// The following methods are deserializer copied from Pigeon's output.
 
-- (NSArray *)PaymentTransactionToList:(SKPaymentTransactionMessage *)paymentTransaction {
+- (NSArray *)paymentTransactionToList:(SKPaymentTransactionMessage *)paymentTransaction {
   return @[
-    (paymentTransaction.payment ? [self PaymentToList:paymentTransaction.payment] : [NSNull null]),
+    (paymentTransaction.payment ? [self paymentToList:paymentTransaction.payment] : [NSNull null]),
     @(paymentTransaction.transactionState),
     (paymentTransaction.originalTransaction
-         ? [self PaymentTransactionToList:paymentTransaction.originalTransaction]
+         ? [self paymentTransactionToList:paymentTransaction.originalTransaction]
          : [NSNull null]),
     paymentTransaction.transactionTimeStamp ?: [NSNull null],
     paymentTransaction.transactionIdentifier ?: [NSNull null],
-    (paymentTransaction.error ? [self ErrorToList:paymentTransaction.error] : [NSNull null]),
+    (paymentTransaction.error ? [self errorToList:paymentTransaction.error] : [NSNull null]),
   ];
 }
 
-- (NSArray *)PaymentToList:(SKPaymentMessage *)payment {
+- (NSArray *)paymentToList:(SKPaymentMessage *)payment {
   return @[
     payment.productIdentifier ?: [NSNull null],
     payment.applicationUsername ?: [NSNull null],
     payment.requestData ?: [NSNull null],
     @(payment.quantity),
     @(payment.simulatesAskToBuyInSandbox),
-    (payment.paymentDiscount ? [self PaymentDiscountToList:payment.paymentDiscount]
+    (payment.paymentDiscount ? [self paymentDiscountToList:payment.paymentDiscount]
                              : [NSNull null]),
   ];
 }
 
-- (NSArray *)PaymentDiscountToList:(SKPaymentDiscountMessage *)discount {
+- (NSArray *)paymentDiscountToList:(SKPaymentDiscountMessage *)discount {
   return @[
     discount.identifier ?: [NSNull null],
     discount.keyIdentifier ?: [NSNull null],
@@ -576,7 +576,7 @@
   ];
 }
 
-- (NSArray *)ErrorToList:(SKErrorMessage *)error {
+- (NSArray *)errorToList:(SKErrorMessage *)error {
   return @[
     @(error.code),
     error.domain ?: [NSNull null],
