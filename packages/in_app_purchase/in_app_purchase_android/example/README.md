@@ -45,8 +45,9 @@ we've also included a high level guide below.
    information. `keystore.example.properties` exists as an example to follow.
    It's impossible to use any of the `BillingClient` APIs from an unsigned APK.
    See
-   [here](https://developer.android.com/studio/publish/app-signing#secure-shared-keystore)
-   and [here](https://developer.android.com/studio/publish/app-signing#sign-apk)
+   [keystore](https://developer.android.com/studio/publish/app-signing#secure-shared-keystore)
+   and [signing](https://developer.android.com/studio/publish/app-signing#sign-apk) and
+   [flutter-android](https://docs.flutter.dev/deployment/android#signing-the-app)
    for more information.
 
 6. Build a signed apk. `flutter build apk` will work for this, the gradle files
