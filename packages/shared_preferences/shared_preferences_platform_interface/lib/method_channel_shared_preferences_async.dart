@@ -12,26 +12,7 @@ import 'types.dart';
 const MethodChannel _kChannel =
     MethodChannel('plugins.flutter.io/shared_preferences');
 
-///
-///
-///
-///
-///
-/// EVERYTHING IN HERE NEEDS TO CHANGE TO USE THE OPTIONS THAT ARE PASSED IN
-/// DO NOT MERGE UNTIL THIS CHANGE IS MADE.
-///
-///
-///
-///
-///
-///
-///
-///
-///
-///
-
-/// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
-/// a persistent store for simple data.
+/// Provides a persistent store for simple data.
 ///
 /// Data is persisted to disk asynchronously.
 base class MethodChannelSharedPreferencesAsync
@@ -43,7 +24,7 @@ base class MethodChannelSharedPreferencesAsync
   ) async {
     final PreferencesFilters filter = parameters.filter;
     return (await _kChannel.invokeMethod<bool>(
-      'clearWithParameters',
+      'clear',
       <String, dynamic>{
         'allowList': filter.allowList?.toList(),
       },
@@ -58,7 +39,7 @@ base class MethodChannelSharedPreferencesAsync
     final PreferencesFilters filter = parameters.filter;
     final List<String>? allowListAsList = filter.allowList?.toList();
     return await _kChannel.invokeMapMethod<String, Object>(
-          'getPreferencesWithParameters',
+          'getPreferences',
           <String, dynamic>{'allowList': allowListAsList},
         ) ??
         <String, Object>{};
@@ -126,8 +107,7 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getKeysWithParameters')
-        as String?;
+    return await _kChannel.invokeMethod<Set<String>>('getString') as String?;
   }
 
   @override
@@ -135,8 +115,7 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getKeysWithParameters')
-        as bool?;
+    return await _kChannel.invokeMethod<Set<String>>('getBool') as bool?;
   }
 
   @override
@@ -144,8 +123,7 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getKeysWithParameters')
-        as double?;
+    return await _kChannel.invokeMethod<Set<String>>('getDouble') as double?;
   }
 
   @override
@@ -153,8 +131,7 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getKeysWithParameters')
-        as int?;
+    return await _kChannel.invokeMethod<Set<String>>('getInt') as int?;
   }
 
   @override
@@ -162,7 +139,7 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getKeysWithParameters')
+    return await _kChannel.invokeMethod<Set<String>>('getStringList')
         as List<String>?;
   }
 
@@ -174,7 +151,7 @@ base class MethodChannelSharedPreferencesAsync
     final PreferencesFilters filter = parameters.filter;
     final List<String>? allowListAsList = filter.allowList?.toList();
     return await _kChannel.invokeMethod<Set<String>>(
-          'getKeysWithParameters',
+          'getKeys',
           <String, dynamic>{'allowList': allowListAsList},
         ) ??
         <String>{};

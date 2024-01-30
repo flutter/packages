@@ -4,299 +4,304 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_platform_interface/method_channel_shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/method_channel_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group(MethodChannelSharedPreferencesStore, () {
-    const MethodChannel channel = MethodChannel(
-      'plugins.flutter.io/shared_preferences',
+  const MethodChannel channel = MethodChannel(
+    'plugins.flutter.io/shared_preferences',
+  );
+
+  late InMemorySharedPreferencesAsync testData;
+
+  final List<MethodCall> log = <MethodCall>[];
+  final MethodChannelSharedPreferencesAsync preferences =
+      MethodChannelSharedPreferencesAsync();
+
+  const SharedPreferencesOptions emptyOptions = SharedPreferencesOptions();
+
+  setUp(() async {
+    testData = InMemorySharedPreferencesAsync.empty();
+
+    Map<String, Object?> getArgumentDictionary(MethodCall call) {
+      return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
+    }
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      final Map<String, Object?> arguments = getArgumentDictionary(methodCall);
+      log.add(methodCall);
+      if (methodCall.method == 'getPreferences') {
+        Set<String>? allowSet;
+        final List<dynamic>? allowList =
+            arguments['allowList'] as List<dynamic>?;
+        if (allowList != null) {
+          allowSet = <String>{};
+          for (final dynamic key in allowList) {
+            allowSet.add(key as String);
+          }
+        }
+        return testData.getPreferences(
+          GetPreferencesParameters(
+            filter: PreferencesFilters(
+              allowList: allowSet,
+            ),
+          ),
+          emptyOptions,
+        );
+      }
+
+      if (methodCall.method == 'clear') {
+        Set<String>? allowSet;
+        final List<dynamic>? allowList =
+            arguments['allowList'] as List<dynamic>?;
+        if (allowList != null) {
+          allowSet = <String>{};
+          for (final dynamic key in allowList) {
+            allowSet.add(key as String);
+          }
+        }
+        return testData.clear(
+          ClearPreferencesParameters(
+            filter: PreferencesFilters(allowList: allowSet),
+          ),
+          emptyOptions,
+        );
+      }
+      if (methodCall.method == 'setString') {
+        return testData.setString(
+          arguments['key']! as String,
+          arguments['value']! as String,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'setBool') {
+        return testData.setBool(
+          arguments['key']! as String,
+          arguments['value']! as bool,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'setInt') {
+        return testData.setInt(
+          arguments['key']! as String,
+          arguments['value']! as int,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'setDouble') {
+        return testData.setDouble(
+          arguments['key']! as String,
+          arguments['value']! as double,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'setStringList') {
+        return testData.setStringList(
+          arguments['key']! as String,
+          arguments['value']! as List<String>,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'getString') {
+        return testData.getString(
+          arguments['key']! as String,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'getBool') {
+        return testData.getBool(
+          arguments['key']! as String,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'getInt') {
+        return testData.getInt(
+          arguments['key']! as String,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'getDouble') {
+        return testData.getDouble(
+          arguments['key']! as String,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+      if (methodCall.method == 'getStringList') {
+        return testData.getStringList(
+          arguments['key']! as String,
+          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+        );
+      }
+
+      fail('Unexpected method call: ${methodCall.method}');
+    });
+    log.clear();
+  });
+
+  tearDown(() async {
+    await preferences.clear(
+      const ClearPreferencesParameters(filter: PreferencesFilters()),
+      emptyOptions,
+    );
+  });
+
+  const String stringKey = 'testString';
+  const String boolKey = 'testBool';
+  const String intKey = 'testInt';
+  const String doubleKey = 'testDouble';
+  const String listKey = 'testList';
+
+  const String testString = 'hello world';
+  const bool testBool = true;
+  const int testInt = 42;
+  const double testDouble = 3.14159;
+  const List<String> testList = <String>['foo', 'bar'];
+
+  testWidgets('set and get', (WidgetTester _) async {
+    await Future.wait(<Future<bool>>[
+      preferences.setString(stringKey, testString, emptyOptions),
+      preferences.setBool(boolKey, testBool, emptyOptions),
+      preferences.setInt(intKey, testInt, emptyOptions),
+      preferences.setDouble(doubleKey, testDouble, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
+    ]);
+
+    expect(await preferences.getString(stringKey, emptyOptions), testString);
+    expect(await preferences.getBool(boolKey, emptyOptions), testBool);
+    expect(await preferences.getInt(intKey, emptyOptions), testInt);
+    expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
+    expect(await preferences.getStringList(listKey, emptyOptions), testList);
+  });
+
+  testWidgets('getPreferences', (WidgetTester _) async {
+    await Future.wait(<Future<bool>>[
+      preferences.setString(stringKey, testString, emptyOptions),
+      preferences.setBool(boolKey, testBool, emptyOptions),
+      preferences.setInt(intKey, testInt, emptyOptions),
+      preferences.setDouble(doubleKey, testDouble, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
+    ]);
+
+    final Map<String, Object?> gotAll = await preferences.getPreferences(
+      const GetPreferencesParameters(filter: PreferencesFilters()),
+      emptyOptions,
     );
 
-    const Map<String, Object> flutterTestValues = <String, Object>{
-      'flutter.String': 'hello world',
-      'flutter.Bool': true,
-      'flutter.Int': 42,
-      'flutter.Double': 3.14159,
-      'flutter.StringList': <String>['foo', 'bar'],
-    };
+    expect(gotAll.length, 5);
+    expect(gotAll[stringKey], testString);
+    expect(gotAll[boolKey], testBool);
+    expect(gotAll[intKey], testInt);
+    expect(gotAll[doubleKey], testDouble);
+    expect(gotAll[listKey], testList);
+  });
 
-    const Map<String, Object> prefixTestValues = <String, Object>{
-      'prefix.String': 'hello world',
-      'prefix.Bool': true,
-      'prefix.Int': 42,
-      'prefix.Double': 3.14159,
-      'prefix.StringList': <String>['foo', 'bar'],
-    };
+  testWidgets('getPreferences with filter', (WidgetTester _) async {
+    await Future.wait(<Future<bool>>[
+      preferences.setString(stringKey, testString, emptyOptions),
+      preferences.setBool(boolKey, testBool, emptyOptions),
+      preferences.setInt(intKey, testInt, emptyOptions),
+      preferences.setDouble(doubleKey, testDouble, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
+    ]);
 
-    const Map<String, Object> nonPrefixTestValues = <String, Object>{
-      'String': 'hello world',
-      'Bool': true,
-      'Int': 42,
-      'Double': 3.14159,
-      'StringList': <String>['foo', 'bar'],
-    };
+    final Map<String, Object?> gotAll = await preferences.getPreferences(
+      const GetPreferencesParameters(
+        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
+      ),
+      emptyOptions,
+    );
 
-    final Map<String, Object> allTestValues = <String, Object>{};
+    expect(gotAll.length, 2);
+    expect(gotAll[stringKey], testString);
+    expect(gotAll[boolKey], testBool);
+  });
 
-    allTestValues.addAll(flutterTestValues);
-    allTestValues.addAll(prefixTestValues);
-    allTestValues.addAll(nonPrefixTestValues);
+  testWidgets('getKeys', (WidgetTester _) async {
+    await Future.wait(<Future<bool>>[
+      preferences.setString(stringKey, testString, emptyOptions),
+      preferences.setBool(boolKey, testBool, emptyOptions),
+      preferences.setInt(intKey, testInt, emptyOptions),
+      preferences.setDouble(doubleKey, testDouble, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
+    ]);
 
-    late InMemorySharedPreferencesStore testData;
+    final Set<String?> keys = await preferences.getKeys(
+      const GetPreferencesParameters(filter: PreferencesFilters()),
+      emptyOptions,
+    );
 
-    final List<MethodCall> log = <MethodCall>[];
-    late MethodChannelSharedPreferencesStore store;
+    expect(keys.length, 5);
+    expect(keys, contains(stringKey));
+    expect(keys, contains(boolKey));
+    expect(keys, contains(intKey));
+    expect(keys, contains(doubleKey));
+    expect(keys, contains(listKey));
+  });
 
-    setUp(() async {
-      testData = InMemorySharedPreferencesStore.empty();
+  testWidgets('getKeys with filter', (WidgetTester _) async {
+    await Future.wait(<Future<bool>>[
+      preferences.setString(stringKey, testString, emptyOptions),
+      preferences.setBool(boolKey, testBool, emptyOptions),
+      preferences.setInt(intKey, testInt, emptyOptions),
+      preferences.setDouble(doubleKey, testDouble, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
+    ]);
 
-      Map<String, Object?> getArgumentDictionary(MethodCall call) {
-        return (call.arguments as Map<Object?, Object?>)
-            .cast<String, Object?>();
-      }
+    final Set<String?> keys = await preferences.getKeys(
+      const GetPreferencesParameters(
+        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
+      ),
+      emptyOptions,
+    );
 
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        log.add(methodCall);
-        if (methodCall.method == 'getAll') {
-          return testData.getAll();
-        }
-        if (methodCall.method == 'getAllWithParameters') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String prefix = arguments['prefix']! as String;
-          Set<String>? allowSet;
-          final List<dynamic>? allowList =
-              arguments['allowList'] as List<dynamic>?;
-          if (allowList != null) {
-            allowSet = <String>{};
-            for (final dynamic key in allowList) {
-              allowSet.add(key as String);
-            }
-          }
-          return testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(
-                prefix: prefix,
-                allowList: allowSet,
-              ),
-            ),
-          );
-        }
-        if (methodCall.method == 'remove') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String key = arguments['key']! as String;
-          return testData.remove(key);
-        }
-        if (methodCall.method == 'clear') {
-          return testData.clear();
-        }
-        if (methodCall.method == 'clearWithParameters') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String prefix = arguments['prefix']! as String;
-          Set<String>? allowSet;
-          final List<dynamic>? allowList =
-              arguments['allowList'] as List<dynamic>?;
-          if (allowList != null) {
-            allowSet = <String>{};
-            for (final dynamic key in allowList) {
-              allowSet.add(key as String);
-            }
-          }
-          return testData.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(prefix: prefix, allowList: allowSet),
-            ),
-          );
-        }
-        final RegExp setterRegExp = RegExp(r'set(.*)');
-        final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
-        if (match?.groupCount == 1) {
-          final String valueType = match!.group(1)!;
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String key = arguments['key']! as String;
-          final Object value = arguments['value']!;
-          return testData.setValue(valueType, key, value);
-        }
-        fail('Unexpected method call: ${methodCall.method}');
-      });
-      store = MethodChannelSharedPreferencesStore();
-      log.clear();
-    });
+    expect(keys.length, 2);
+    expect(keys, contains(stringKey));
+    expect(keys, contains(boolKey));
+  });
 
-    tearDown(() async {
-      await testData.clear();
-    });
+  testWidgets('clear', (WidgetTester _) async {
+    await Future.wait(<Future<bool>>[
+      preferences.setString(stringKey, testString, emptyOptions),
+      preferences.setBool(boolKey, testBool, emptyOptions),
+      preferences.setInt(intKey, testInt, emptyOptions),
+      preferences.setDouble(doubleKey, testDouble, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
+    ]);
 
-    test('getAll', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await store.getAll(), flutterTestValues);
-      expect(log.single.method, 'getAll');
-    });
+    await preferences.clear(
+      const ClearPreferencesParameters(filter: PreferencesFilters()),
+      emptyOptions,
+    );
 
-    test('getAllWithParameters with Prefix', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(
-          await store.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          prefixTestValues);
-      expect(log.single.method, 'getAllWithParameters');
-    });
+    expect(await preferences.getString(stringKey, emptyOptions), null);
+    expect(await preferences.getBool(boolKey, emptyOptions), null);
+    expect(await preferences.getInt(intKey, emptyOptions), null);
+    expect(await preferences.getDouble(doubleKey, emptyOptions), null);
+    expect(await preferences.getStringList(listKey, emptyOptions), null);
+  });
 
-    test('getAllWithParameters with allow list', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      final Map<String, Object> data = await store.getAllWithParameters(
-        GetAllParameters(
-          filter: PreferencesFilter(
-            prefix: 'prefix.',
-            allowList: <String>{'prefix.Bool'},
-          ),
-        ),
-      );
-      expect(data.length, 1);
-      expect(data['prefix.Bool'], true);
-      expect(log.single.method, 'getAllWithParameters');
-    });
-
-    test('remove', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await store.remove('flutter.String'), true);
-      expect(await store.remove('flutter.Bool'), true);
-      expect(await store.remove('flutter.Int'), true);
-      expect(await store.remove('flutter.Double'), true);
-      expect(await testData.getAll(), <String, dynamic>{
-        'flutter.StringList': <String>['foo', 'bar'],
-      });
-
-      expect(log, hasLength(4));
-      for (final MethodCall call in log) {
-        expect(call.method, 'remove');
-      }
-    });
-
-    test('setValue', () async {
-      expect(await testData.getAll(), isEmpty);
-      for (final String key in allTestValues.keys) {
-        final Object value = allTestValues[key]!;
-        expect(await store.setValue(key.split('.').last, key, value), true);
-      }
-      expect(await testData.getAll(), flutterTestValues);
-
-      expect(log, hasLength(15));
-      expect(log[0].method, 'setString');
-      expect(log[1].method, 'setBool');
-      expect(log[2].method, 'setInt');
-      expect(log[3].method, 'setDouble');
-      expect(log[4].method, 'setStringList');
-    });
-
-    test('clear', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await testData.getAll(), isNotEmpty);
-      expect(await store.clear(), true);
-      expect(await testData.getAll(), isEmpty);
-      expect(log.single.method, 'clear');
-    });
-
-    test('clearWithParameters with Prefix', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-
-      expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          isNotEmpty);
-      expect(
-          await store.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          true);
-      expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          isEmpty);
-    });
-
-    test('getAllWithParameters with no Prefix', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-
-      expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          hasLength(15));
-    });
-
-    test('clearWithNoPrefix', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-
-      expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          isNotEmpty);
-      expect(
-          await store.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          true);
-      expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          isEmpty);
-    });
-
-    test('clearWithParameters with allow list', () async {
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-
-      expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          isNotEmpty);
-      expect(
-          await store.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(
-                prefix: 'prefix.',
-                allowList: <String>{'prefix.String'},
-              ),
-            ),
-          ),
-          true);
-      expect(
-          (await testData.getAllWithParameters(GetAllParameters(
-                  filter: PreferencesFilter(prefix: 'prefix.'))))
-              .length,
-          4);
-    });
+  testWidgets('clear with filter', (WidgetTester _) async {
+    await Future.wait(<Future<bool>>[
+      preferences.setString(stringKey, testString, emptyOptions),
+      preferences.setBool(boolKey, testBool, emptyOptions),
+      preferences.setInt(intKey, testInt, emptyOptions),
+      preferences.setDouble(doubleKey, testDouble, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
+    ]);
+    await preferences.clear(
+      const ClearPreferencesParameters(
+        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
+      ),
+      emptyOptions,
+    );
+    expect(await preferences.getString(stringKey, emptyOptions), null);
+    expect(await preferences.getBool(boolKey, emptyOptions), null);
+    expect(await preferences.getInt(intKey, emptyOptions), testInt);
+    expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
+    expect(await preferences.getStringList(listKey, emptyOptions), testList);
   });
 }
