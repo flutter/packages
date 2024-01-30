@@ -2,11 +2,11 @@ name: local_auth_ios
 description: iOS implementation of the local_auth plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/local_auth/local_auth_ios
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+local_auth%22
-version: 1.1.6
+version: 1.1.5
 
 environment:
-  sdk: ^3.2.3
-  flutter: ">=3.16.6"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 flutter:
   plugin:

@@ -10,7 +10,7 @@ fingerprint or facial recognition.
 
 |             | Android   | iOS   | Windows     |
 |-------------|-----------|-------|-------------|
-| **Support** | SDK 16+\* | 12.0+ | Windows 10+ |
+| **Support** | SDK 16+\* | 11.0+ | Windows 10+ |
 
 ## Usage
 

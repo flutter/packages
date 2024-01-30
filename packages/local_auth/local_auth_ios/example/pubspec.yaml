@@ -3,8 +3,8 @@ description: Demonstrates how to use the local_auth_ios plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.2.3
-  flutter: ">=3.16.6"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:

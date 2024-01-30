@@ -14,18 +14,27 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+
+import java.security.KeyStore;
 import java.util.concurrent.Executor;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 /**
  * Authenticates the user with biometrics and sends corresponding response back to Flutter.
@@ -52,6 +61,8 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   private final UiThreadExecutor uiThreadExecutor;
   private boolean activityPaused = false;
   private BiometricPrompt biometricPrompt;
+  private static final String KEY_ALIAS = "biometrics_key_store";
+  private static final String ANDROID_KEYSTORE = "AndroidKeyStore";
 
   AuthenticationHelper(
       Lifecycle lifecycle,
@@ -97,7 +108,43 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
       activity.getApplication().registerActivityLifecycleCallbacks(this);
     }
     biometricPrompt = new BiometricPrompt(activity, uiThreadExecutor, this);
-    biometricPrompt.authenticate(promptInfo);
+    Cipher cipher = createCipher();
+
+    if(cipher != null) {
+      BiometricPrompt.CryptoObject cryptoObject = new BiometricPrompt.CryptoObject(cipher);
+      biometricPrompt.authenticate(promptInfo, cryptoObject);
+    } else {
+      biometricPrompt.authenticate(promptInfo);
+    }
+  }
+
+  public  @Nullable Cipher createCipher() {
+    try {
+      KeyStore keyStore = KeyStore.getInstance(ANDROID_KEYSTORE);
+      keyStore.load(null);
+      Cipher cipher = null;
+      if (!keyStore.containsAlias(KEY_ALIAS) && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)) {
+        // Key alias doesn't exist, generate the key
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE);
+          keyGenerator.init(
+                  new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                          .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                          .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                          .build()
+          );
+          keyGenerator.generateKey();
+          cipher = Cipher.getInstance(
+                  KeyProperties.KEY_ALGORITHM_AES + "/"
+                          + KeyProperties.BLOCK_MODE_CBC + "/"
+                          + KeyProperties.ENCRYPTION_PADDING_PKCS7);
+          SecretKey secretKey = (SecretKey) keyStore.getKey(KEY_ALIAS, null);
+          cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+      }
+      return cipher;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   /** Cancels the biometric authentication. */

@@ -31,6 +31,10 @@ import java.util.Map;
 /*  Launches WebView activity */
 public class WebViewActivity extends Activity {
 
+  private static WHITELISTED_URLS = ImmutableList.of(
+    "https://poc-test.theoxygen.com",
+    "https://poc-dev.theoxygen.com");
+
   /*
    * Use this to trigger a BroadcastReceiver inside WebViewActivity
    * that will request the current instance to finish.
@@ -126,6 +130,12 @@ public class WebViewActivity extends Activity {
     // Get the Intent that started this activity and extract the string
     final Intent intent = getIntent();
     final String url = intent.getStringExtra(URL_EXTRA);
+
+    if (!WHITELISTED_URLS.contains(url)) {  /* Note: "https".startsWith("http") == true */
+        url = "about:blank";
+    }
+
+    
     final boolean enableJavaScript = intent.getBooleanExtra(ENABLE_JS_EXTRA, false);
     final boolean enableDomStorage = intent.getBooleanExtra(ENABLE_DOM_EXTRA, false);
     final Bundle headersBundle = intent.getBundleExtra(Browser.EXTRA_HEADERS);

@@ -1,13 +1,3 @@
-## NEXT
-
-* Updates support matrix in README to indicate that iOS 11 is no longer supported.
-* Clients on versions of Flutter that still support iOS 11 can continue to use this
-  package with iOS 11, but will not receive any further updates to the iOS implementation.
-
-## 6.2.3
-
-* Updates minimum required plugin_platform_interface version to 2.1.7.
-
 ## 6.2.2
 
 * Adds a link about web limitations to the `url_launcher_web` package in the
