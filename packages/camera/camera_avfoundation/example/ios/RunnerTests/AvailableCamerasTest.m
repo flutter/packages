@@ -19,6 +19,7 @@
   XCTestExpectation *expectation =
       [[XCTestExpectation alloc] initWithDescription:@"Result finished"];
 
+  // Internal cameras:
   AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
   OCMStub([wideAngleCamera uniqueID]).andReturn(@"0");
   OCMStub([wideAngleCamera position]).andReturn(AVCaptureDevicePositionBack);
@@ -79,7 +80,7 @@
   XCTestExpectation *expectation =
       [[XCTestExpectation alloc] initWithDescription:@"Result finished"];
 
-  // iPhone 13 Cameras:
+  // Internal Cameras:
   AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
   OCMStub([wideAngleCamera uniqueID]).andReturn(@"0");
   OCMStub([wideAngleCamera position]).andReturn(AVCaptureDevicePositionBack);
@@ -96,7 +97,7 @@
   OCMStub([telephotoCamera uniqueID]).andReturn(@"3");
   OCMStub([telephotoCamera position]).andReturn(AVCaptureDevicePositionBack);
 
-  // iPad External Camera (iPhone doesn't support external camera)
+  // External Camera (iPhone doesn't support external camera):
   AVCaptureDevice *externalCamera = OCMClassMock([AVCaptureDevice class]);
   OCMStub([externalCamera uniqueID]).andReturn(@"4");
   OCMStub([externalCamera position]).andReturn(AVCaptureDevicePositionUnspecified);
@@ -153,7 +154,7 @@
   XCTestExpectation *expectation =
       [[XCTestExpectation alloc] initWithDescription:@"Result finished"];
 
-  // iPhone 8 Cameras:
+  // Internal Cameras:
   AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
   OCMStub([wideAngleCamera uniqueID]).andReturn(@"0");
   OCMStub([wideAngleCamera position]).andReturn(AVCaptureDevicePositionBack);
