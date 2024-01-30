@@ -69,7 +69,7 @@ void main() {
       const String expectedCountryCode = 'US';
       const BillingConfigWrapper expected = BillingConfigWrapper(
           countryCode: expectedCountryCode,
-          responseCode:  BillingResponse.ok,
+          responseCode: BillingResponse.ok,
           debugMessage: 'dummy message');
 
       stubPlatform.addResponse(
