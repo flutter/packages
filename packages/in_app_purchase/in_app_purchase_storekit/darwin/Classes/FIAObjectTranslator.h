@@ -4,6 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+#import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -56,7 +57,19 @@ NS_ASSUME_NONNULL_BEGIN
                                                   withError:(NSString *_Nullable *_Nullable)error
     API_AVAILABLE(ios(12.2));
 
++ (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
+    (nullable SKPaymentTransaction *)transaction;
+
++ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
+    API_AVAILABLE(ios(13.0));
+
++ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
+    (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2));
+
++ (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
+    API_AVAILABLE(ios(12.2));
+
++ (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error;
 @end
-;
 
 NS_ASSUME_NONNULL_END
