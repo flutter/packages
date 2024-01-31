@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
@@ -25,6 +26,7 @@ import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.GetBillingConfigParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryProductDetailsParams.Product;
@@ -62,6 +64,7 @@ class MethodCallHandlerImpl
         "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
     static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
+    static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
 
     private MethodNames() {}
   }
@@ -184,9 +187,20 @@ class MethodCallHandlerImpl
       case MethodNames.GET_CONNECTION_STATE:
         getConnectionState(result);
         break;
+      case MethodNames.GET_BILLING_CONFIG:
+        getBillingConfig(result);
+        break;
       default:
         result.notImplemented();
     }
+  }
+
+  private void getBillingConfig(final MethodChannel.Result result) {
+    billingClient.getBillingConfigAsync(
+        GetBillingConfigParams.newBuilder().build(),
+        (billingResult, billingConfig) -> {
+          result.success(fromBillingConfig(billingResult, billingConfig));
+        });
   }
 
   private void endConnection(final MethodChannel.Result result) {
