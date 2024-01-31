@@ -86,7 +86,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyConsumable(
       {required PurchaseParam purchaseParam, bool autoConsume = true}) {
-    assert(autoConsume == true, 'On iOS, we should always auto consume');
+    assert(autoConsume, 'On iOS, we should always auto consume');
     return buyNonConsumable(purchaseParam: purchaseParam);
   }
 

@@ -125,6 +125,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
     super.addRepaintBoundaries,
+    super.addAutomaticKeepAlives,
     required TableViewCellBuilder cellBuilder,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
@@ -149,8 +150,6 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int get columnCount => maxXIndex! + 1;
   set columnCount(int value) {
     assert(pinnedColumnCount <= value);
-    // TODO(Piinks): remove once this assertion is added in the super class
-    assert(value >= -1);
     maxXIndex = value - 1;
   }
 
@@ -179,8 +178,6 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int get rowCount => maxYIndex! + 1;
   set rowCount(int value) {
     assert(pinnedRowCount <= value);
-    // TODO(Piinks): remove once this assertion is added in the super class
-    assert(value >= -1);
     maxYIndex = value - 1;
   }
 
@@ -219,6 +216,7 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
     super.addRepaintBoundaries,
+    super.addAutomaticKeepAlives,
     required List<List<Widget>> cells,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,

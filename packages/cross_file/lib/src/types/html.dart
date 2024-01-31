@@ -4,10 +4,11 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:web/helpers.dart';
 
 import '../web_helpers/web_helpers.dart';
 import 'base.dart';
@@ -65,7 +66,9 @@ class XFile extends XFileBase {
         super(path) {
     if (path == null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
-      _path = Url.createObjectUrl(_browserBlob);
+      // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
+      // ignore: unnecessary_cast
+      _path = URL.createObjectURL(_browserBlob! as JSObject);
     } else {
       _path = path;
     }
@@ -74,8 +77,9 @@ class XFile extends XFileBase {
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
   Blob _createBlobFromBytes(Uint8List bytes, String? mimeType) {
     return (mimeType == null)
-        ? Blob(<dynamic>[bytes])
-        : Blob(<dynamic>[bytes], mimeType);
+        ? Blob(<JSUint8Array>[bytes.toJS].toJS)
+        : Blob(
+            <JSUint8Array>[bytes.toJS].toJS, BlobPropertyBag(type: mimeType));
   }
 
   // Overridable (meta) data that can be specified by the constructors.
@@ -127,11 +131,13 @@ class XFile extends XFileBase {
 
     // Attempt to re-hydrate the blob from the `path` via a (local) HttpRequest.
     // Note that safari hangs if the Blob is >=4GB, so bail out in that case.
+    // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
+    // ignore: unnecessary_non_null_assertion
     if (isSafari() && _length != null && _length! >= _fourGigabytes) {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
 
-    late HttpRequest request;
+    late XMLHttpRequest request;
     try {
       request = await HttpRequest.request(path, responseType: 'blob');
     } on ProgressEvent catch (e) {
@@ -181,7 +187,8 @@ class XFile extends XFileBase {
 
     await reader.onLoadEnd.first;
 
-    final Uint8List? result = reader.result as Uint8List?;
+    final Uint8List? result =
+        (reader.result as JSArrayBuffer?)?.toDart.asUint8List();
 
     if (result == null) {
       throw Exception('Cannot read bytes from Blob. Is it still available?');
@@ -201,12 +208,14 @@ class XFile extends XFileBase {
 
     // Create an <a> tag with the appropriate download attributes and click it
     // May be overridden with CrossFileTestOverrides
-    final AnchorElement element = _hasTestOverrides
-        ? _overrides!.createAnchorElement(this.path, name) as AnchorElement
+    final HTMLAnchorElement element = _hasTestOverrides
+        ? _overrides!.createAnchorElement(this.path, name) as HTMLAnchorElement
         : createAnchorElement(this.path, name);
 
     // Clear the children in _target and add an element to click
-    _target.children.clear();
+    while (_target.children.length > 0) {
+      _target.removeChild(_target.children.item(0)!);
+    }
     addElementToContainerAndClick(_target, element);
   }
 }

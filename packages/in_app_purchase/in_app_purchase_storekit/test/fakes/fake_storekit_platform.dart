@@ -14,8 +14,7 @@ import '../store_kit_wrappers/sk_test_stub_objects.dart';
 
 class FakeStoreKitPlatform {
   FakeStoreKitPlatform() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, onMethodCall);
   }
 
@@ -211,20 +210,16 @@ class FakeStoreKitPlatform {
           InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
               transactions: <SKPaymentTransactionWrapper>[transactionFinished]);
         }
-        break;
       case '-[InAppPurchasePlugin finishTransaction:result:]':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         finishedTransactions.add(createPurchasedTransaction(
             arguments['productIdentifier']! as String,
             arguments['transactionIdentifier']! as String,
             quantity: transactions.first.payment.quantity));
-        break;
       case '-[SKPaymentQueue startObservingTransactionQueue]':
         queueIsActive = true;
-        break;
       case '-[SKPaymentQueue stopObservingTransactionQueue]':
         queueIsActive = false;
-        break;
     }
     return Future<void>.sync(() {});
   }
@@ -237,9 +232,3 @@ class FakeStoreKitPlatform {
     return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

@@ -18,12 +18,13 @@ void main() {
             'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract',
             any))
         .thenAnswer((Invocation realInvocation) async {
-      final Object input = MultipleArityHostApi.codec
+      final Object input = MultipleArityHostApi.pigeonChannelCodec
           .decodeMessage(realInvocation.positionalArguments[1] as ByteData?)!;
       final List<Object?> args = input as List<Object?>;
       final int x = (args[0] as int?)!;
       final int y = (args[1] as int?)!;
-      return MultipleArityHostApi.codec.encodeMessage(<Object>[x - y]);
+      return MultipleArityHostApi.pigeonChannelCodec
+          .encodeMessage(<Object>[x - y]);
     });
 
     final MultipleArityHostApi api =

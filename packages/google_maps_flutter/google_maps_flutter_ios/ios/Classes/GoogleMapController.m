@@ -89,11 +89,18 @@
     }
   }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Switch to initWithOptions: once versions older than
+  // iOS 14 are no longer supported by the plugin, or there is a specific need
+  // for its functionality. Since it involves a newly-added class, call it
+  // dynamically is more trouble than it is currently worth.
   if (mapID && [GMSMapView respondsToSelector:@selector(mapWithFrame:mapID:camera:)]) {
     mapView = [GMSMapView mapWithFrame:frame mapID:mapID camera:camera];
   } else {
     mapView = [GMSMapView mapWithFrame:frame camera:camera];
   }
+#pragma clang diagnostic pop
 
   return [self initWithMapView:mapView viewIdentifier:viewId arguments:args registrar:registrar];
 }

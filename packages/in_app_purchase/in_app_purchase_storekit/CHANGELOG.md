@@ -1,3 +1,20 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.3.8+1
+
+* Adds privacy manifest.
+
+## 0.3.8
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 0.3.7
+
+* Adds `Future<SKStorefrontWrapper?> storefront()` in SKPaymentQueueWrapper class. 
+
 ## 0.3.6+7
 
 * Updates example code for current versions of Flutter.

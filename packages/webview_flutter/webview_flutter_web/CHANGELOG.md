@@ -1,3 +1,8 @@
+## 0.2.2+4
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
 ## 0.2.2+3
 
 * Migrates to `dart:ui_web` APIs.

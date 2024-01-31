@@ -106,7 +106,6 @@ void main() {
     PackageLoopingType packageLoopingType = PackageLoopingType.topLevelOnly,
     bool failsDuringInit = false,
     bool warnsDuringInit = false,
-    bool warnsDuringCleanup = false,
     bool captureOutput = false,
     String? customFailureListHeader,
     String? customFailureListFooter,
@@ -132,7 +131,6 @@ void main() {
       packageLoopingType: packageLoopingType,
       failsDuringInit: failsDuringInit,
       warnsDuringInit: warnsDuringInit,
-      warnsDuringCleanup: warnsDuringCleanup,
       customFailureListHeader: customFailureListHeader,
       customFailureListFooter: customFailureListFooter,
       captureOutput: captureOutput,
@@ -835,7 +833,6 @@ void main() {
 
       final TestPackageLoopingCommand command = createTestCommand(
         hasLongOutput: false,
-        warnsDuringCleanup: true,
         warnsDuringInit: true,
       );
       final List<String> output = await runCommand(command);
@@ -866,7 +863,6 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
     this.customFailureListFooter,
     this.failsDuringInit = false,
     this.warnsDuringInit = false,
-    this.warnsDuringCleanup = false,
     this.captureOutput = false,
     super.processRunner,
     super.gitDir,
@@ -880,7 +876,6 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
 
   final bool failsDuringInit;
   final bool warnsDuringInit;
-  final bool warnsDuringCleanup;
 
   @override
   bool hasLongOutput;

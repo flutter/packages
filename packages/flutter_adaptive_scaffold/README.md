@@ -156,7 +156,8 @@ return AdaptiveLayout(
           },
           leading: const Icon(Icons.menu),
           destinations: destinations
-              .map((_) => AdaptiveScaffold.toRailDestination(_))
+              .map((NavigationDestination destination) =>
+                  AdaptiveScaffold.toRailDestination(destination))
               .toList(),
           backgroundColor: navRailTheme.backgroundColor,
           selectedIconTheme: navRailTheme.selectedIconTheme,
@@ -187,7 +188,8 @@ return AdaptiveLayout(
             ],
           ),
           destinations: destinations
-              .map((_) => AdaptiveScaffold.toRailDestination(_))
+              .map((NavigationDestination destination) =>
+                  AdaptiveScaffold.toRailDestination(destination))
               .toList(),
           trailing: trailingNavRail,
           backgroundColor: navRailTheme.backgroundColor,

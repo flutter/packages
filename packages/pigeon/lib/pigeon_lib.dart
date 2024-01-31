@@ -21,6 +21,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
+import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
 
 import 'ast.dart';
@@ -38,8 +39,46 @@ class _Asynchronous {
   const _Asynchronous();
 }
 
+class _Attached {
+  const _Attached();
+}
+
+class _Static {
+  const _Static();
+}
+
 /// Metadata to annotate a Api method as asynchronous
 const Object async = _Asynchronous();
+
+/// Metadata to annotate the field of a ProxyApi as an Attached Field.
+///
+/// Attached fields provide a synchronous [ProxyApi] instance as a field for
+/// another [ProxyApi].
+///
+/// Attached fields:
+/// * Must be nonnull.
+/// * Must be a ProxyApi (a class annotated with `@ProxyApi()`).
+/// * Must not contain any unattached fields.
+/// * Must not have a required callback Flutter method.
+///
+/// Example generated code:
+///
+/// ```dart
+/// class MyProxyApi {
+///   final MyOtherProxyApi myField = __pigeon_myField().
+/// }
+/// ```
+///
+/// The field provides access to the value synchronously, but the native
+/// instance is stored in the native `InstanceManager` asynchronously. Similar
+/// to how constructors are implemented.
+const Object attached = _Attached();
+
+/// Metadata to annotate a field of a ProxyApi as static.
+///
+/// Static fields are the same as [attached] fields except the field is static
+/// and not attached to any instance of the ProxyApi.
+const Object static = _Static();
 
 /// Metadata annotation used to configure how Pigeon will generate code.
 class ConfigurePigeon {
@@ -85,6 +124,30 @@ class HostApi {
 class FlutterApi {
   /// Parametric constructor for [FlutterApi].
   const FlutterApi();
+}
+
+/// Metadata to annotate a Pigeon API that wraps a native class.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// constructors, fields, methods and host↔Dart methods used to wrap a native
+/// class.
+///
+/// The generated Dart class acts as a proxy to a native type and maintains
+/// instances automatically with an `InstanceManager`. The generated host
+/// language class implements methods to interact with class instances or static
+/// methods.
+class ProxyApi {
+  /// Parametric constructor for [ProxyApi].
+  const ProxyApi({this.superClass});
+
+  /// The proxy api that is a super class to this one.
+  ///
+  /// This provides an alternative to calling `extends` on a class since this
+  /// requires calling the super class constructor.
+  ///
+  /// Note that using this instead of `extends` can cause unexpected conflicts
+  /// with inherited method names.
+  final Type? superClass;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -473,6 +536,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
       options.dartOptions,
       options.copyrightHeader,
+      testOutPath: options.dartTestOut,
       basePath: options.basePath ?? '',
     );
     const DartGenerator generator = DartGenerator();
@@ -756,20 +820,21 @@ List<Error> _validateAst(Root root, String source) {
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
-  for (final Class klass in root.classes) {
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+  for (final Class classDefinition in root.classes) {
+    for (final NamedType field
+        in getFieldsInSerializationOrder(classDefinition)) {
       for (final TypeDeclaration typeArgument in field.type.typeArguments) {
         if (!typeArgument.isNullable) {
           result.add(Error(
             message:
-                'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
+                'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
         if (customEnums.contains(typeArgument.baseName)) {
           result.add(Error(
             message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
+                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
@@ -779,45 +844,82 @@ List<Error> _validateAst(Root root, String source) {
           customEnums.contains(field.type.baseName))) {
         result.add(Error(
           message:
-              'Unsupported datatype:"${field.type.baseName}" in class "${klass.name}".',
+              'Unsupported datatype:"${field.type.baseName}" in class "${classDefinition.name}".',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
     }
   }
+
   for (final Api api in root.apis) {
+    if (api is AstProxyApi) {
+      result.addAll(_validateProxyApi(
+        api,
+        source,
+        customClasses: customClasses.toSet(),
+        proxyApis: root.apis.whereType<AstProxyApi>().toSet(),
+      ));
+    }
     for (final Method method in api.methods) {
-      for (final NamedType unnamedType in method.arguments
-          .where((NamedType element) => element.type.baseName.isEmpty)) {
-        result.add(Error(
-          message:
-              'Arguments must specify their type in method "${method.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, unnamedType.offset),
-        ));
+      for (final Parameter param in method.parameters) {
+        if (param.type.baseName.isEmpty) {
+          result.add(Error(
+            message:
+                'Parameters must specify their type in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        } else {
+          final String? matchingPrefix = _findMatchingPrefixOrNull(
+            method.name,
+            prefixes: <String>['__pigeon_', 'pigeonChannelCodec'],
+          );
+          if (matchingPrefix != null) {
+            result.add(Error(
+              message:
+                  'Parameter name must not begin with "$matchingPrefix" in method "${method.name} in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          }
+        }
+        if (api is AstFlutterApi) {
+          if (!param.isPositional) {
+            result.add(Error(
+              message:
+                  'FlutterApi method parameters must be positional, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          } else if (param.isOptional) {
+            result.add(Error(
+              message:
+                  'FlutterApi method parameters must not be optional, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          }
+        }
       }
       if (method.objcSelector.isNotEmpty) {
         if (':'.allMatches(method.objcSelector).length !=
-            method.arguments.length) {
+            method.parameters.length) {
           result.add(Error(
             message:
-                'Invalid selector, expected ${method.arguments.length} arguments.',
+                'Invalid selector, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
       }
       if (method.swiftFunction.isNotEmpty) {
         final RegExp signatureRegex =
-            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+            RegExp('\\w+ *\\((\\w+:){${method.parameters.length}}\\)');
         if (!signatureRegex.hasMatch(method.swiftFunction)) {
           result.add(Error(
             message:
-                'Invalid function signature, expected ${method.arguments.length} arguments.',
+                'Invalid function signature, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
       }
       if (method.taskQueueType != TaskQueueType.serial &&
-          api.location != ApiLocation.host) {
+          method.location == ApiLocation.flutter) {
         result.add(Error(
           message: 'Unsupported TaskQueue specification on ${method.name}',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
@@ -827,6 +929,277 @@ List<Error> _validateAst(Root root, String source) {
   }
 
   return result;
+}
+
+List<Error> _validateProxyApi(
+  AstProxyApi api,
+  String source, {
+  required Set<String> customClasses,
+  required Set<AstProxyApi> proxyApis,
+}) {
+  final List<Error> result = <Error>[];
+
+  bool isDataClass(NamedType type) =>
+      customClasses.contains(type.type.baseName);
+  bool isProxyApi(NamedType type) => proxyApis.any(
+        (AstProxyApi api) => api.name == type.type.baseName,
+      );
+  Error unsupportedDataClassError(NamedType type) {
+    return Error(
+      message: 'ProxyApis do not support data classes: ${type.type.baseName}.',
+      lineNumber: _calculateLineNumberNullable(source, type.offset),
+    );
+  }
+
+  AstProxyApi? directSuperClass;
+
+  // Validate direct super class is another ProxyApi
+  if (api.superClass != null) {
+    directSuperClass = proxyApis.firstWhereOrNull(
+      (AstProxyApi proxyApi) => proxyApi.name == api.superClass?.baseName,
+    );
+    if (directSuperClass == null) {
+      result.add(
+        Error(
+          message: 'Super class of ${api.name} is not marked as a @ProxyApi: '
+              '${api.superClass?.baseName}',
+        ),
+      );
+    }
+  }
+
+  // Validate that the api does not inherit an unattached field from its super class.
+  if (directSuperClass != null &&
+      directSuperClass.unattachedFields.isNotEmpty) {
+    result.add(Error(
+      message:
+          'Unattached fields can not be inherited. Unattached field found for parent class: ${directSuperClass.unattachedFields.first.name}',
+      lineNumber: _calculateLineNumberNullable(
+        source,
+        directSuperClass.unattachedFields.first.offset,
+      ),
+    ));
+  }
+
+  // Validate all interfaces are other ProxyApis
+  final Iterable<String> interfaceNames = api.interfaces.map(
+    (TypeDeclaration type) => type.baseName,
+  );
+  for (final String interfaceName in interfaceNames) {
+    if (!proxyApis.any((AstProxyApi api) => api.name == interfaceName)) {
+      result.add(Error(
+        message:
+            'Interface of ${api.name} is not marked as a @ProxyApi: $interfaceName',
+      ));
+    }
+  }
+
+  final bool hasUnattachedField = api.unattachedFields.isNotEmpty;
+  final bool hasRequiredFlutterMethod =
+      api.flutterMethods.any((Method method) => method.isRequired);
+  for (final AstProxyApi proxyApi in proxyApis) {
+    // Validate this api is not used as an attached field while either:
+    // 1. Having an unattached field.
+    // 2. Having a required Flutter method.
+    if (hasUnattachedField || hasRequiredFlutterMethod) {
+      for (final ApiField field in proxyApi.attachedFields) {
+        if (field.type.baseName == api.name) {
+          if (hasUnattachedField) {
+            result.add(Error(
+              message:
+                  'ProxyApis with unattached fields can not be used as attached fields: ${field.name}',
+              lineNumber: _calculateLineNumberNullable(
+                source,
+                field.offset,
+              ),
+            ));
+          }
+          if (hasRequiredFlutterMethod) {
+            result.add(Error(
+              message:
+                  'ProxyApis with required callback methods can not be used as attached fields: ${field.name}',
+              lineNumber: _calculateLineNumberNullable(
+                source,
+                field.offset,
+              ),
+            ));
+          }
+        }
+      }
+    }
+
+    // Validate this api isn't used as an interface and contains anything except
+    // Flutter methods.
+    final bool isValidInterfaceProxyApi = api.hostMethods.isEmpty &&
+        api.constructors.isEmpty &&
+        api.fields.isEmpty;
+    if (!isValidInterfaceProxyApi) {
+      final Iterable<String> interfaceNames = proxyApi.interfaces.map(
+        (TypeDeclaration type) => type.baseName,
+      );
+      for (final String interfaceName in interfaceNames) {
+        if (interfaceName == api.name) {
+          result.add(Error(
+            message:
+                'ProxyApis used as interfaces can only have callback methods: `${proxyApi.name}` implements `${api.name}`',
+          ));
+        }
+      }
+    }
+  }
+
+  // Validate constructor parameters
+  for (final Constructor constructor in api.constructors) {
+    for (final Parameter parameter in constructor.parameters) {
+      if (isDataClass(parameter)) {
+        result.add(unsupportedDataClassError(parameter));
+      }
+
+      if (api.fields.any((ApiField field) => field.name == parameter.name) ||
+          api.flutterMethods
+              .any((Method method) => method.name == parameter.name)) {
+        result.add(Error(
+          message:
+              'Parameter names must not share a name with a field or callback method in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      }
+
+      if (parameter.type.baseName.isEmpty) {
+        result.add(Error(
+          message:
+              'Parameters must specify their type in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      } else {
+        final String? matchingPrefix = _findMatchingPrefixOrNull(
+          parameter.name,
+          prefixes: <String>[
+            '__pigeon_',
+            'pigeonChannelCodec',
+            classNamePrefix,
+            classMemberNamePrefix,
+          ],
+        );
+        if (matchingPrefix != null) {
+          result.add(Error(
+            message:
+                'Parameter name must not begin with "$matchingPrefix" in constructor "${constructor.name} in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+          ));
+        }
+      }
+    }
+    if (constructor.swiftFunction.isNotEmpty) {
+      final RegExp signatureRegex =
+          RegExp('\\w+ *\\((\\w+:){${constructor.parameters.length}}\\)');
+      if (!signatureRegex.hasMatch(constructor.swiftFunction)) {
+        result.add(Error(
+          message:
+              'Invalid constructor signature, expected ${constructor.parameters.length} parameters.',
+          lineNumber: _calculateLineNumberNullable(source, constructor.offset),
+        ));
+      }
+    }
+  }
+
+  // Validate method parameters
+  for (final Method method in api.methods) {
+    for (final Parameter parameter in method.parameters) {
+      if (isDataClass(parameter)) {
+        result.add(unsupportedDataClassError(parameter));
+      }
+
+      final String? matchingPrefix = _findMatchingPrefixOrNull(
+        parameter.name,
+        prefixes: <String>[
+          classNamePrefix,
+          classMemberNamePrefix,
+        ],
+      );
+      if (matchingPrefix != null) {
+        result.add(Error(
+          message:
+              'Parameter name must not begin with "$matchingPrefix" in method "${method.name} in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      }
+    }
+
+    if (method.location == ApiLocation.flutter && method.isStatic) {
+      result.add(Error(
+        message: 'Static callback methods are not supported: ${method.name}.',
+        lineNumber: _calculateLineNumberNullable(source, method.offset),
+      ));
+    }
+  }
+
+  // Validate fields
+  for (final ApiField field in api.fields) {
+    if (isDataClass(field)) {
+      result.add(unsupportedDataClassError(field));
+    } else if (field.isStatic) {
+      if (!isProxyApi(field)) {
+        result.add(Error(
+          message:
+              'Static fields are considered attached fields and must be a ProxyApi: ${field.type.baseName}',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      } else if (field.type.isNullable) {
+        result.add(Error(
+          message:
+              'Static fields are considered attached fields and must not be nullable: ${field.type.baseName}?',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      }
+    } else if (field.isAttached) {
+      if (!isProxyApi(field)) {
+        result.add(Error(
+          message: 'Attached fields must be a ProxyApi: ${field.type.baseName}',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      }
+      if (field.type.isNullable) {
+        result.add(Error(
+          message:
+              'Attached fields must not be nullable: ${field.type.baseName}?',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      }
+    }
+
+    final String? matchingPrefix = _findMatchingPrefixOrNull(
+      field.name,
+      prefixes: <String>[
+        '__pigeon_',
+        'pigeonChannelCodec',
+        classNamePrefix,
+        classMemberNamePrefix,
+      ],
+    );
+    if (matchingPrefix != null) {
+      result.add(Error(
+        message:
+            'Field name must not begin with "$matchingPrefix" in API: "${api.name}"',
+        lineNumber: _calculateLineNumberNullable(source, field.offset),
+      ));
+    }
+  }
+
+  return result;
+}
+
+String? _findMatchingPrefixOrNull(
+  String value, {
+  required List<String> prefixes,
+}) {
+  for (final String prefix in prefixes) {
+    if (value.startsWith(prefix)) {
+      return prefix;
+    }
+  }
+
+  return null;
 }
 
 class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
@@ -850,6 +1223,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   final String source;
 
   Class? _currentClass;
+  Map<String, String> _currentClassDefaultValues = <String, String>{};
   Api? _currentApi;
   Map<String, Object>? _pigeonOptions;
 
@@ -864,6 +1238,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentClass != null) {
       _classes.add(_currentClass!);
       _currentClass = null;
+      _currentClassDefaultValues = <String, String>{};
     }
   }
 
@@ -895,6 +1270,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           !referencedEnums
               .map((Enum e) => e.name)
               .contains(element.key.baseName) &&
+          !_apis
+              .whereType<AstProxyApi>()
+              .map((AstProxyApi e) => e.name)
+              .contains(element.key.baseName) &&
           !validTypes.contains(element.key.baseName) &&
           !element.key.isVoid &&
           element.key.baseName != 'dynamic' &&
@@ -908,6 +1287,37 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
+    for (final Class classDefinition in referencedClasses) {
+      classDefinition.fields = _attachAssociatedDefinitions(
+        classDefinition.fields,
+      );
+    }
+
+    for (final Api api in _apis) {
+      for (final Method func in api.methods) {
+        func.parameters = _attachAssociatedDefinitions(func.parameters);
+        func.returnType = _attachAssociatedDefinition(func.returnType);
+      }
+      if (api is AstProxyApi) {
+        for (final Constructor constructor in api.constructors) {
+          constructor.parameters = _attachAssociatedDefinitions(
+            constructor.parameters,
+          );
+        }
+
+        api.fields = _attachAssociatedDefinitions(api.fields);
+
+        if (api.superClass != null) {
+          api.superClass = _attachAssociatedDefinition(api.superClass!);
+        }
+
+        final Set<TypeDeclaration> newInterfaceSet = <TypeDeclaration>{};
+        for (final TypeDeclaration interface in api.interfaces) {
+          newInterfaceSet.add(_attachAssociatedDefinition(interface));
+        }
+        api.interfaces = newInterfaceSet;
+      }
+    }
 
     return ParseResults(
       root: totalErrors.isEmpty
@@ -916,6 +1326,35 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
+  }
+
+  TypeDeclaration _attachAssociatedDefinition(TypeDeclaration type) {
+    final Enum? assocEnum = _enums.firstWhereOrNull(
+        (Enum enumDefinition) => enumDefinition.name == type.baseName);
+    final Class? assocClass = _classes.firstWhereOrNull(
+        (Class classDefinition) => classDefinition.name == type.baseName);
+    final AstProxyApi? assocProxyApi =
+        _apis.whereType<AstProxyApi>().firstWhereOrNull(
+              (Api apiDefinition) => apiDefinition.name == type.baseName,
+            );
+    if (assocClass != null) {
+      return type.copyWithClass(assocClass);
+    } else if (assocEnum != null) {
+      return type.copyWithEnum(assocEnum);
+    } else if (assocProxyApi != null) {
+      return type.copyWithProxyApi(assocProxyApi);
+    }
+    return type;
+  }
+
+  List<T> _attachAssociatedDefinitions<T extends NamedType>(Iterable<T> types) {
+    final List<T> result = <T>[];
+    for (final NamedType type in types) {
+      result.add(
+        type.copyWithType(_attachAssociatedDefinition(type.type)) as T,
+      );
+    }
+    return result;
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {
@@ -940,6 +1379,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value!;
     } else if (expression is dart_ast.BooleanLiteral) {
       return expression.value;
+    } else if (expression is dart_ast.SimpleIdentifier) {
+      return expression.name;
     } else if (expression is dart_ast.ListLiteral) {
       final List<dynamic> list = <dynamic>[];
       for (final dart_ast.CollectionElement element in expression.elements) {
@@ -953,6 +1394,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         }
       }
       return list;
+    } else if (expression is dart_ast.SetOrMapLiteral) {
+      final Set<dynamic> set = <dynamic>{};
+      for (final dart_ast.CollectionElement element in expression.elements) {
+        if (element is dart_ast.Expression) {
+          set.add(_expressionToMap(element));
+        } else {
+          _errors.add(Error(
+            message: 'expected Expression but found $element',
+            lineNumber: _calculateLineNumber(source, element.offset),
+          ));
+        }
+      }
+      return set;
     } else {
       _errors.add(Error(
         message:
@@ -1018,19 +1472,75 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             }
           }
         }
-        _currentApi = Api(
+
+        _currentApi = AstHostApi(
           name: node.name.lexeme,
-          location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
-        _currentApi = Api(
+        _currentApi = AstFlutterApi(
           name: node.name.lexeme,
-          location: ApiLocation.flutter,
           methods: <Method>[],
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        );
+      } else if (_hasMetadata(node.metadata, 'ProxyApi')) {
+        final dart_ast.Annotation proxyApiAnnotation = node.metadata.firstWhere(
+          (dart_ast.Annotation element) => element.name.name == 'ProxyApi',
+        );
+
+        final Map<String, Object?> annotationMap = <String, Object?>{};
+        for (final dart_ast.Expression expression
+            in proxyApiAnnotation.arguments!.arguments) {
+          if (expression is dart_ast.NamedExpression) {
+            annotationMap[expression.name.label.name] =
+                _expressionToMap(expression.expression);
+          }
+        }
+
+        final String? superClassName = annotationMap['superClass'] as String?;
+        TypeDeclaration? superClass;
+        if (superClassName != null && node.extendsClause != null) {
+          _errors.add(
+            Error(
+              message:
+                  'ProxyApis should either set the super class in the annotation OR use extends: ("${node.name.lexeme}").',
+              lineNumber: _calculateLineNumber(source, node.offset),
+            ),
+          );
+        } else if (superClassName != null) {
+          superClass = TypeDeclaration(
+            baseName: superClassName,
+            isNullable: false,
+          );
+        } else if (node.extendsClause != null) {
+          superClass = TypeDeclaration(
+            baseName: node.extendsClause!.superclass.name2.lexeme,
+            isNullable: false,
+          );
+        }
+
+        final Set<TypeDeclaration> interfaces = <TypeDeclaration>{};
+        if (node.implementsClause != null) {
+          for (final dart_ast.NamedType type
+              in node.implementsClause!.interfaces) {
+            interfaces.add(TypeDeclaration(
+              baseName: type.name2.lexeme,
+              isNullable: false,
+            ));
+          }
+        }
+
+        _currentApi = AstProxyApi(
+          name: node.name.lexeme,
+          methods: <Method>[],
+          constructors: <Constructor>[],
+          fields: <ApiField>[],
+          superClass: superClass,
+          interfaces: interfaces,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
@@ -1059,26 +1569,56 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         <String>[];
   }
 
-  NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.NamedType? namedType =
-        getFirstChildOfType<dart_ast.NamedType>(parameter);
-    if (namedType != null) {
-      final String argTypeBaseName = _getNamedTypeQualifiedName(namedType);
-      final bool isNullable = namedType.question != null;
+  Parameter formalParameterToPigeonParameter(
+    dart_ast.FormalParameter formalParameter, {
+    bool? isNamed,
+    bool? isOptional,
+    bool? isPositional,
+    bool? isRequired,
+    String? defaultValue,
+  }) {
+    final dart_ast.NamedType? parameter =
+        getFirstChildOfType<dart_ast.NamedType>(formalParameter);
+    final dart_ast.SimpleFormalParameter? simpleFormalParameter =
+        getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
+    if (parameter != null) {
+      final String argTypeBaseName = _getNamedTypeQualifiedName(parameter);
+      final bool isNullable = parameter.question != null;
       final List<TypeDeclaration> argTypeArguments =
-          typeAnnotationsToTypeArguments(namedType.typeArguments);
-      return NamedType(
-          type: TypeDeclaration(
-              baseName: argTypeBaseName,
-              isNullable: isNullable,
-              typeArguments: argTypeArguments),
-          name: parameter.name?.lexeme ?? '',
-          offset: parameter.offset);
+          typeAnnotationsToTypeArguments(parameter.typeArguments);
+      return Parameter(
+        type: TypeDeclaration(
+          baseName: argTypeBaseName,
+          isNullable: isNullable,
+          typeArguments: argTypeArguments,
+        ),
+        name: formalParameter.name?.lexeme ?? '',
+        offset: formalParameter.offset,
+        isNamed: isNamed ?? formalParameter.isNamed,
+        isOptional: isOptional ?? formalParameter.isOptional,
+        isPositional: isPositional ?? formalParameter.isPositional,
+        isRequired: isRequired ?? formalParameter.isRequired,
+        defaultValue: defaultValue,
+      );
+    } else if (simpleFormalParameter != null) {
+      String? defaultValue;
+      if (formalParameter is dart_ast.DefaultFormalParameter) {
+        defaultValue = formalParameter.defaultValue?.toString();
+      }
+
+      return formalParameterToPigeonParameter(
+        simpleFormalParameter,
+        isNamed: simpleFormalParameter.isNamed,
+        isOptional: simpleFormalParameter.isOptional,
+        isPositional: simpleFormalParameter.isPositional,
+        isRequired: simpleFormalParameter.isRequired,
+        defaultValue: defaultValue,
+      );
     } else {
-      return NamedType(
+      return Parameter(
         name: '',
         type: const TypeDeclaration(baseName: '', isNullable: false),
-        offset: parameter.offset,
+        offset: formalParameter.offset,
       );
     }
   }
@@ -1108,9 +1648,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    final List<NamedType> arguments =
-        parameters.parameters.map(formalParameterToField).toList();
+    final List<Parameter> arguments =
+        parameters.parameters.map(formalParameterToPigeonParameter).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+    final bool isStatic = _hasMetadata(node.metadata, 'static');
     final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
             ?.arguments
             ?.arguments
@@ -1149,7 +1690,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               typeArguments:
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
-          arguments: arguments,
+          parameters: arguments,
+          isStatic: isStatic,
+          location: switch (_currentApi!) {
+            AstHostApi() => ApiLocation.host,
+            AstProxyApi() => ApiLocation.host,
+            AstFlutterApi() => ApiLocation.flutter,
+          },
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,
@@ -1205,8 +1752,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitFieldDeclaration(dart_ast.FieldDeclaration node) {
+    final dart_ast.TypeAnnotation? type = node.fields.type;
     if (_currentClass != null) {
-      final dart_ast.TypeAnnotation? type = node.fields.type;
       if (node.isStatic) {
         _errors.add(Error(
             message:
@@ -1222,23 +1769,28 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: _calculateLineNumber(source, node.offset)));
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          _currentClass!.fields.add(NamedType(
+          final String name = node.fields.variables[0].name.lexeme;
+          final NamedType field = NamedType(
             type: TypeDeclaration(
               baseName: _getNamedTypeQualifiedName(type),
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             ),
-            name: node.fields.variables[0].name.lexeme,
+            name: name,
             offset: node.offset,
+            defaultValue: _currentClassDefaultValues[name],
             documentationComments:
                 _documentationCommentsParser(node.documentationComment?.tokens),
-          ));
+          );
+          _currentClass!.fields.add(field);
         }
       } else {
         _errors.add(Error(
             message: 'Expected a named type but found "$node".',
             lineNumber: _calculateLineNumber(source, node.offset)));
       }
+    } else if (_currentApi is AstProxyApi) {
+      _addProxyApiField(type, node);
     } else if (_currentApi != null) {
       _errors.add(Error(
           message: 'Fields aren\'t supported in Pigeon API classes ("$node").',
@@ -1250,7 +1802,30 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
-    if (_currentApi != null) {
+    if (_currentApi is AstProxyApi) {
+      final dart_ast.FormalParameterList parameters = node.parameters;
+      final List<Parameter> arguments =
+          parameters.parameters.map(formalParameterToPigeonParameter).toList();
+      final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+              ?.arguments
+              ?.arguments
+              .first
+              .asNullable<dart_ast.SimpleStringLiteral>()
+              ?.value ??
+          '';
+
+      (_currentApi as AstProxyApi?)!.constructors.add(
+            Constructor(
+              name: node.name?.lexeme ?? '',
+              parameters: arguments,
+              swiftFunction: swiftFunction,
+              offset: node.offset,
+              documentationComments: _documentationCommentsParser(
+                node.documentationComment?.tokens,
+              ),
+            ),
+          );
+    } else if (_currentApi != null) {
       _errors.add(Error(
           message: 'Constructors aren\'t supported in API classes ("$node").',
           lineNumber: _calculateLineNumber(source, node.offset)));
@@ -1265,6 +1840,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             message:
                 'Constructor initializers aren\'t supported in data classes (use "this.fieldName") ("$node").',
             lineNumber: _calculateLineNumber(source, node.offset)));
+      } else {
+        for (final dart_ast.FormalParameter param
+            in node.parameters.parameters) {
+          if (param is dart_ast.DefaultFormalParameter) {
+            if (param.name != null && param.defaultValue != null) {
+              _currentClassDefaultValues[param.name!.toString()] =
+                  param.defaultValue!.toString();
+            }
+          }
+        }
       }
     }
     node.visitChildren(this);
@@ -1277,6 +1862,91 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return '${importPrefix.name.lexeme}.${node.name2.lexeme}';
     }
     return node.name2.lexeme;
+  }
+
+  void _addProxyApiField(
+    dart_ast.TypeAnnotation? type,
+    dart_ast.FieldDeclaration node,
+  ) {
+    final bool isStatic = _hasMetadata(node.metadata, 'static');
+    if (type is dart_ast.GenericFunctionType) {
+      final List<Parameter> parameters = type.parameters.parameters
+          .map(formalParameterToPigeonParameter)
+          .toList();
+      final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+              ?.arguments
+              ?.arguments
+              .first
+              .asNullable<dart_ast.SimpleStringLiteral>()
+              ?.value ??
+          '';
+      final dart_ast.ArgumentList? taskQueueArguments =
+          _findMetadata(node.metadata, 'TaskQueue')?.arguments;
+      final String? taskQueueTypeName = taskQueueArguments == null
+          ? null
+          : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+              ?.expression
+              .asNullable<dart_ast.PrefixedIdentifier>()
+              ?.name;
+      final TaskQueueType taskQueueType =
+          _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
+              TaskQueueType.serial;
+
+      // Methods without named return types aren't supported.
+      final dart_ast.TypeAnnotation returnType = type.returnType!;
+      returnType as dart_ast.NamedType;
+
+      _currentApi!.methods.add(
+        Method(
+          name: node.fields.variables[0].name.lexeme,
+          returnType: TypeDeclaration(
+            baseName: _getNamedTypeQualifiedName(returnType),
+            typeArguments:
+                typeAnnotationsToTypeArguments(returnType.typeArguments),
+            isNullable: returnType.question != null,
+          ),
+          location: ApiLocation.flutter,
+          isRequired: type.question == null,
+          isStatic: isStatic,
+          parameters: parameters,
+          isAsynchronous: _hasMetadata(node.metadata, 'async'),
+          swiftFunction: swiftFunction,
+          offset: node.offset,
+          taskQueueType: taskQueueType,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
+    } else if (type is dart_ast.NamedType) {
+      final _FindInitializer findInitializerVisitor = _FindInitializer();
+      node.visitChildren(findInitializerVisitor);
+      if (findInitializerVisitor.initializer != null) {
+        _errors.add(Error(
+            message:
+                'Initialization isn\'t supported for fields in ProxyApis ("$node"), just use nullable types with no initializer (example "int? x;").',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      } else {
+        final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
+        (_currentApi as AstProxyApi?)!.fields.add(
+              ApiField(
+                type: TypeDeclaration(
+                  baseName: _getNamedTypeQualifiedName(type),
+                  isNullable: type.question != null,
+                  typeArguments: typeAnnotationsToTypeArguments(
+                    typeArguments,
+                  ),
+                ),
+                name: node.fields.variables[0].name.lexeme,
+                isAttached: _hasMetadata(node.metadata, 'attached') || isStatic,
+                isStatic: isStatic,
+                offset: node.offset,
+                documentationComments: _documentationCommentsParser(
+                  node.documentationComment?.tokens,
+                ),
+              ),
+            );
+      }
+    }
   }
 }
 

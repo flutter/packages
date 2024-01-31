@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart' show Registrar;
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+import 'package:web/web.dart' as html;
 
 import 'src/link.dart';
 
@@ -68,7 +68,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   ///
   /// Returns the newly created window.
   @visibleForTesting
-  html.WindowBase? openNewWindow(String url, {String? webOnlyWindowName}) {
+  html.Window? openNewWindow(String url, {String? webOnlyWindowName}) {
     final String? scheme = _getUrlScheme(url);
     // Actively disallow opening some schemes, like javascript.
     // See https://github.com/flutter/flutter/issues/136657

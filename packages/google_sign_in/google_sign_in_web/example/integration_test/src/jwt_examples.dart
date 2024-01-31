@@ -24,6 +24,11 @@ final CredentialResponse minimalCredential =
   'credential': minimalJwtToken,
 });
 
+final CredentialResponse expiredCredential =
+    jsifyAs<CredentialResponse>(<String, Object?>{
+  'credential': expiredJwtToken,
+});
+
 /// A JWT token with predefined values.
 ///
 /// 'email': 'adultman@example.com',
@@ -55,10 +60,29 @@ const String minimalJwtToken =
 
 /// The payload of a JWT token that contains only non-nullable values.
 ///
-/// "email": "adultman@example.com",
-/// "sub": "123456"
+/// 'email': 'adultman@example.com',
+/// 'sub': '123456'
 const String minimalPayload =
     'eyJlbWFpbCI6ImFkdWx0bWFuQGV4YW1wbGUuY29tIiwic3ViIjoiMTIzNDU2In0';
+
+/// A JWT token with minimal set of predefined values and an expiration timestamp.
+///
+/// 'email': 'adultman@example.com',
+/// 'sub': '123456',
+/// 'exp': 1430330400
+///
+/// Signed with HS256 and the private key: 'symmetric-encryption-is-weak'
+const String expiredJwtToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.$expiredPayload.--gb5tnVSSsLg4zjjVH0FUUvT4rbehIcnBhB-8Iekm4';
+
+/// The payload of a JWT token that contains only non-nullable values, and an
+/// expiration timestamp of 1430330400 (Wednesday, April 29, 2015 6:00:00 PM UTC)
+///
+/// 'email': 'adultman@example.com',
+/// 'sub': '123456',
+/// 'exp': 1430330400
+const String expiredPayload =
+    'eyJlbWFpbCI6ImFkdWx0bWFuQGV4YW1wbGUuY29tIiwic3ViIjoiMTIzNDU2IiwiZXhwIjoxNDMwMzMwNDAwfQ';
 
 // More encrypted JWT Tokens may be created on https://jwt.io.
 //

@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates compileSdk version to 34.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 2.0.17
 
 * Updates annotations lib to 1.7.0.

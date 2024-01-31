@@ -16,7 +16,7 @@ import '../main.dart';
 abstract class AppRecorder extends WidgetRecorder {
   AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
 
-  final String benchmarkName;
+  final String benchmarkName; // ignore: unreachable_from_main
 
   Future<void> automate();
 

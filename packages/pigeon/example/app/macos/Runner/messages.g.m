@@ -16,6 +16,29 @@
 #error File requires ARC to be enabled.
 #endif
 
+static NSArray *wrapResult(id result, FlutterError *error) {
+  if (error) {
+    return @[
+      error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
+    ];
+  }
+  return @[ result ?: [NSNull null] ];
+}
+
+static FlutterError *createConnectionError(NSString *channelName) {
+  return [FlutterError
+      errorWithCode:@"channel-error"
+            message:[NSString stringWithFormat:@"%@/%@/%@",
+                                               @"Unable to establish connection on channel: '",
+                                               channelName, @"'."]
+            details:@""];
+}
+
+static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
+  id result = array[key];
+  return (result == [NSNull null]) ? nil : result;
+}
+
 @implementation PGNCodeBox
 - (instancetype)initWithValue:(PGNCode)value {
   self = [super init];
@@ -25,19 +48,6 @@
   return self;
 }
 @end
-
-static NSArray *wrapResult(id result, FlutterError *error) {
-  if (error) {
-    return @[
-      error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
-    ];
-  }
-  return @[ result ?: [NSNull null] ];
-}
-static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
-  id result = array[key];
-  return (result == [NSNull null]) ? nil : result;
-}
 
 @interface PGNMessageData ()
 + (PGNMessageData *)fromList:(NSArray *)list;
@@ -63,7 +73,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.description = GetNullableObjectAtIndex(list, 1);
   pigeonResult.code = [GetNullableObjectAtIndex(list, 2) integerValue];
   pigeonResult.data = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.data != nil, @"");
   return pigeonResult;
 }
 + (nullable PGNMessageData *)nullableFromList:(NSArray *)list {
@@ -71,10 +80,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 - (NSArray *)toList {
   return @[
-    (self.name ?: [NSNull null]),
-    (self.description ?: [NSNull null]),
+    self.name ?: [NSNull null],
+    self.description ?: [NSNull null],
     @(self.code),
-    (self.data ?: [NSNull null]),
+    self.data ?: [NSNull null],
   ];
 }
 @end
@@ -160,8 +169,8 @@ void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSNumber *arg_a = GetNullableObjectAtIndex(args, 0);
-        NSNumber *arg_b = GetNullableObjectAtIndex(args, 1);
+        NSInteger arg_a = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSInteger arg_b = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
         NSNumber *output = [api addNumber:arg_a toNumber:arg_b error:&error];
         callback(wrapResult(output, error));
@@ -214,11 +223,12 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
 }
 - (void)flutterMethodAString:(nullable NSString *)arg_aString
                   completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
-             binaryMessenger:self.binaryMessenger
-                       codec:PGNMessageFlutterApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:PGNMessageFlutterApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -231,10 +241,7 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }

@@ -13,9 +13,9 @@ import 'package:google_sign_in_web/src/people.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart' as mockito;
+import 'package:web/web.dart' as web;
 
 import 'google_sign_in_web_test.mocks.dart';
-import 'src/dom.dart';
 import 'src/person.dart';
 
 // Mock GisSdkClient so we can simulate any response from the JS side.
@@ -36,12 +36,12 @@ void main() {
       expect(plugin.autoDetectedClientId, isNull);
 
       // Add it to the test page now, and try again
-      final DomHtmlMetaElement meta =
-          document.createElement('meta') as DomHtmlMetaElement
+      final web.HTMLMetaElement meta =
+          web.document.createElement('meta') as web.HTMLMetaElement
             ..name = clientIdMetaName
             ..content = expectedClientId;
 
-      document.head.appendChild(meta);
+      web.document.head!.appendChild(meta);
 
       final GoogleSignInPlugin another = GoogleSignInPlugin(
         debugOverrideLoader: true,
@@ -248,6 +248,24 @@ void main() {
 
         expect(arguments.first, scopes);
         expect(arguments.elementAt(1), someAccessToken);
+      });
+    });
+
+    group('requestServerAuthCode', () {
+      const String someAuthCode = '50m3_4u7h_c0d3';
+
+      setUp(() {
+        plugin.initWithParams(options);
+      });
+
+      testWidgets('passes-through call to gis client', (_) async {
+        mockito
+            .when(mockGis.requestServerAuthCode())
+            .thenAnswer((_) => Future<String>.value(someAuthCode));
+
+        final String? serverAuthCode = await plugin.requestServerAuthCode();
+
+        expect(serverAuthCode, someAuthCode);
       });
     });
   });

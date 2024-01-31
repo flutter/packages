@@ -1165,6 +1165,19 @@ public class CameraTest {
     verify(mockCaptureSession, never()).close();
   }
 
+  @Test
+  public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed() throws CameraAccessException {
+    ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+    mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
+    CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
+    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+
+    camera.close();
+    camera.pausePreview();
+
+    verify(mockCaptureSession, never()).stopRepeating();
+  }
+
   private static class TestCameraFeatureFactory implements CameraFeatureFactory {
     private final AutoFocusFeature mockAutoFocusFeature;
     private final ExposureLockFeature mockExposureLockFeature;

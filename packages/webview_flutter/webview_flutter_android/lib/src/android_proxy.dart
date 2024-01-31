@@ -53,6 +53,10 @@ class AndroidWebViewProxy {
             android_webview.CustomViewCallback callback)?
         onShowCustomView,
     void Function(android_webview.WebChromeClient instance)? onHideCustomView,
+    Future<void> Function(String url, String message)? onJsAlert,
+    Future<bool> Function(String url, String message)? onJsConfirm,
+    Future<String> Function(String url, String message, String defaultValue)?
+        onJsPrompt,
   }) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
@@ -78,6 +82,12 @@ class AndroidWebViewProxy {
     void Function(android_webview.WebView webView, String url)? urlLoading,
     void Function(android_webview.WebView webView, String url, bool isReload)?
         doUpdateVisitedHistory,
+    void Function(
+      android_webview.WebView webView,
+      android_webview.HttpAuthHandler handler,
+      String host,
+      String realm,
+    )? onReceivedHttpAuthRequest,
   }) createAndroidWebViewClient;
 
   /// Constructs a [android_webview.FlutterAssetManager].

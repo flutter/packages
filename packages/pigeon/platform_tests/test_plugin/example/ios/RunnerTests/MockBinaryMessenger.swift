@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
+
 @testable import test_plugin
 
 class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {

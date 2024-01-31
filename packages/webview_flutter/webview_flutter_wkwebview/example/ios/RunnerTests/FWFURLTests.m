@@ -24,7 +24,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  XCTAssertEqualObjects([hostApi absoluteStringForNSURLWithIdentifier:@(0) error:&error],
+  XCTAssertEqualObjects([hostApi absoluteStringForNSURLWithIdentifier:0 error:&error],
                         @"https://www.google.com");
   XCTAssertNil(error);
 }
@@ -43,6 +43,6 @@
           }];
 
   long identifier = [instanceManager identifierWithStrongReferenceForInstance:url];
-  OCMVerify([flutterApi.api createWithIdentifier:@(identifier) completion:OCMOCK_ANY]);
+  OCMVerify([flutterApi.api createWithIdentifier:identifier completion:OCMOCK_ANY]);
 }
 @end

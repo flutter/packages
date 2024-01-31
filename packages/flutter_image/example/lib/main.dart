@@ -13,14 +13,14 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   /// Returns the URL to load an asset from this example app as a network source.
-  // TODO(nitinpoojary): Change it to use an image within this package.
-  String getUrlFromAssetAsNetworkSource() {
-    return 'https://github.com/flutter/packages/blob/2e1673307ff7454aff40b47024eaed49a9e77e81/packages/flutter_markdown/example/assets/logo.png';
+  String getUrlForAssetAsNetworkSource(String assetKey) {
+    return 'https://github.com/flutter/packages/blob/b96a6dae0ca418cf1e91633f275866aa9cffe437/packages/flutter_image/example/$assetKey?raw=true';
   }
 
   @override
   Widget build(BuildContext context) {
-    final String imageUrl = getUrlFromAssetAsNetworkSource();
+    final String imageUrl =
+        getUrlForAssetAsNetworkSource('assets/flutter-mark-square-64.png');
 
     return MaterialApp(
       title: 'flutter_image example app',

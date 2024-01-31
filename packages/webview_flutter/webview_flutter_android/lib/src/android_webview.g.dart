@@ -1703,6 +1703,9 @@ abstract class WebViewClientFlutterApi {
   void doUpdateVisitedHistory(
       int instanceId, int webViewInstanceId, String url, bool isReload);
 
+  void onReceivedHttpAuthRequest(int instanceId, int webViewInstanceId,
+      int httpAuthHandlerInstanceId, String host, String realm);
+
   static void setup(WebViewClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1906,6 +1909,39 @@ abstract class WebViewClientFlutterApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpAuthRequest',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpAuthRequest was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpAuthRequest was null, expected non-null int.');
+          final int? arg_webViewInstanceId = (args[1] as int?);
+          assert(arg_webViewInstanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpAuthRequest was null, expected non-null int.');
+          final int? arg_httpAuthHandlerInstanceId = (args[2] as int?);
+          assert(arg_httpAuthHandlerInstanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpAuthRequest was null, expected non-null int.');
+          final String? arg_host = (args[3] as String?);
+          assert(arg_host != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpAuthRequest was null, expected non-null String.');
+          final String? arg_realm = (args[4] as String?);
+          assert(arg_realm != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpAuthRequest was null, expected non-null String.');
+          api.onReceivedHttpAuthRequest(arg_instanceId!, arg_webViewInstanceId!,
+              arg_httpAuthHandlerInstanceId!, arg_host!, arg_realm!);
+          return;
+        });
+      }
+    }
   }
 }
 
@@ -2070,6 +2106,78 @@ class WebChromeClientHostApi {
       return;
     }
   }
+
+  Future<void> setSynchronousReturnValueForOnJsAlert(
+      int arg_instanceId, bool arg_value) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnJsAlert',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_instanceId, arg_value]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setSynchronousReturnValueForOnJsConfirm(
+      int arg_instanceId, bool arg_value) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnJsConfirm',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_instanceId, arg_value]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setSynchronousReturnValueForOnJsPrompt(
+      int arg_instanceId, bool arg_value) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnJsPrompt',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_instanceId, arg_value]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 class FlutterAssetManagerHostApi {
@@ -2189,6 +2297,13 @@ abstract class WebChromeClientFlutterApi {
 
   /// Callback to Dart function `WebChromeClient.onConsoleMessage`.
   void onConsoleMessage(int instanceId, ConsoleMessage message);
+
+  Future<void> onJsAlert(int instanceId, String url, String message);
+
+  Future<bool> onJsConfirm(int instanceId, String url, String message);
+
+  Future<String> onJsPrompt(
+      int instanceId, String url, String message, String defaultValue);
 
   static void setup(WebChromeClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -2383,6 +2498,89 @@ abstract class WebChromeClientFlutterApi {
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onConsoleMessage was null, expected non-null ConsoleMessage.');
           api.onConsoleMessage(arg_instanceId!, arg_message!);
           return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsAlert',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsAlert was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsAlert was null, expected non-null int.');
+          final String? arg_url = (args[1] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsAlert was null, expected non-null String.');
+          final String? arg_message = (args[2] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsAlert was null, expected non-null String.');
+          await api.onJsAlert(arg_instanceId!, arg_url!, arg_message!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsConfirm',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsConfirm was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsConfirm was null, expected non-null int.');
+          final String? arg_url = (args[1] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsConfirm was null, expected non-null String.');
+          final String? arg_message = (args[2] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsConfirm was null, expected non-null String.');
+          final bool output =
+              await api.onJsConfirm(arg_instanceId!, arg_url!, arg_message!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsPrompt',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsPrompt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsPrompt was null, expected non-null int.');
+          final String? arg_url = (args[1] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsPrompt was null, expected non-null String.');
+          final String? arg_message = (args[2] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsPrompt was null, expected non-null String.');
+          final String? arg_defaultValue = (args[3] as String?);
+          assert(arg_defaultValue != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsPrompt was null, expected non-null String.');
+          final String output = await api.onJsPrompt(
+              arg_instanceId!, arg_url!, arg_message!, arg_defaultValue!);
+          return output;
         });
       }
     }
@@ -2792,6 +2990,141 @@ abstract class GeolocationPermissionsCallbackFlutterApi {
           final int? arg_instanceId = (args[0] as int?);
           assert(arg_instanceId != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallbackFlutterApi.create was null, expected non-null int.');
+          api.create(arg_instanceId!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+class HttpAuthHandlerHostApi {
+  /// Constructor for [HttpAuthHandlerHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  HttpAuthHandlerHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `HttpAuthHandler.useHttpAuthUsernamePassword`.
+  Future<bool> useHttpAuthUsernamePassword(int arg_instanceId) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.useHttpAuthUsernamePassword',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_instanceId]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as bool?)!;
+    }
+  }
+
+  /// Handles Dart method `HttpAuthHandler.cancel`.
+  Future<void> cancel(int arg_instanceId) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.cancel',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_instanceId]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Handles Dart method `HttpAuthHandler.proceed`.
+  Future<void> proceed(
+      int arg_instanceId, String arg_username, String arg_password) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerHostApi.proceed',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_instanceId, arg_username, arg_password])
+        as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+/// Flutter API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+abstract class HttpAuthHandlerFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId);
+
+  static void setup(HttpAuthHandlerFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerFlutterApi.create',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.HttpAuthHandlerFlutterApi.create was null, expected non-null int.');
           api.create(arg_instanceId!);
           return;
         });

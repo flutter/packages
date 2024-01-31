@@ -126,6 +126,23 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+/// Convenience class for building [FocusMeteringAction]s with multiple metering
+/// points.
+class MeteringPointInfo {
+  MeteringPointInfo({
+    required this.meteringPointId,
+    required this.meteringMode,
+  });
+
+  /// InstanceManager ID for a [MeteringPoint].
+  int meteringPointId;
+
+  /// The metering mode of the [MeteringPoint] whose ID is [meteringPointId].
+  ///
+  /// Metering mode should be one of the [FocusMeteringAction] constants.
+  int? meteringMode;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -211,19 +228,27 @@ abstract class SystemServicesHostApi {
   @async
   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
 
-  void startListeningForDeviceOrientationChange(
-      bool isFrontFacing, int sensorOrientation);
-
-  void stopListeningForDeviceOrientationChange();
-
   String getTempFilePath(String prefix, String suffix);
 }
 
 @FlutterApi()
 abstract class SystemServicesFlutterApi {
-  void onDeviceOrientationChanged(String orientation);
-
   void onCameraError(String errorDescription);
+}
+
+@HostApi(dartHostTestHandler: 'TestDeviceOrientationManagerHostApi')
+abstract class DeviceOrientationManagerHostApi {
+  void startListeningForDeviceOrientationChange(
+      bool isFrontFacing, int sensorOrientation);
+
+  void stopListeningForDeviceOrientationChange();
+
+  int getDefaultDisplayRotation();
+}
+
+@FlutterApi()
+abstract class DeviceOrientationManagerFlutterApi {
+  void onDeviceOrientationChanged(String orientation);
 }
 
 @HostApi(dartHostTestHandler: 'TestPreviewHostApi')
@@ -235,6 +260,8 @@ abstract class PreviewHostApi {
   void releaseFlutterSurfaceTexture();
 
   ResolutionInfo getResolutionInfo(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestVideoCaptureHostApi')
@@ -242,6 +269,8 @@ abstract class VideoCaptureHostApi {
   int withOutput(int videoOutputId);
 
   int getOutput(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @FlutterApi()
@@ -294,12 +323,15 @@ abstract class RecordingFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
 abstract class ImageCaptureHostApi {
-  void create(int identifier, int? flashMode, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? flashMode,
+      int? resolutionSelectorId);
 
   void setFlashMode(int identifier, int flashMode);
 
   @async
   String takePicture(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
@@ -341,11 +373,13 @@ abstract class ZoomStateFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
 abstract class ImageAnalysisHostApi {
-  void create(int identifier, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? resolutionSelectorId);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
   void clearAnalyzer(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestAnalyzerHostApi')
@@ -427,9 +461,40 @@ abstract class CameraControlHostApi {
 
   @async
   void setZoomRatio(int identifier, double ratio);
+
+  @async
+  int startFocusAndMetering(int identifier, int focusMeteringActionId);
+
+  @async
+  void cancelFocusAndMetering(int identifier);
+
+  @async
+  int setExposureCompensationIndex(int identifier, int index);
 }
 
 @FlutterApi()
 abstract class CameraControlFlutterApi {
   void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
+abstract class FocusMeteringActionHostApi {
+  void create(int identifier, List<MeteringPointInfo> meteringPointInfos);
+}
+
+@HostApi(dartHostTestHandler: 'TestFocusMeteringResultHostApi')
+abstract class FocusMeteringResultHostApi {
+  bool isFocusSuccessful(int identifier);
+}
+
+@FlutterApi()
+abstract class FocusMeteringResultFlutterApi {
+  void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
+abstract class MeteringPointHostApi {
+  void create(int identifier, double x, double y, double? size);
+
+  double getDefaultPointSize();
 }
