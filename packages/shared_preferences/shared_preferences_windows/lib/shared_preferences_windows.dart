@@ -47,7 +47,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   /// Checks for cached preferences and returns them or loads preferences from
   /// file and returns and caches them.
   Future<Map<String, Object>> _readPreferences() async {
-    _cachedPreferences ??= await _reload(
+    _cachedPreferences ??= await _readFromFile(
       _defaultFileName,
       fs: fs,
       pathProvider: pathProvider,
@@ -309,7 +309,7 @@ base class SharedPreferencesAsyncWindows
   /// Checks for cached preferences and returns them or loads preferences from
   /// file and returns and caches them.
   Future<Map<String, Object>> _readPreferences(String fileName) async {
-    _cachedPreferences ??= await _reload(
+    _cachedPreferences ??= await _readFromFile(
       fileName,
       fs: fs,
       pathProvider: pathProvider,
@@ -332,8 +332,8 @@ Future<File?> _getLocalDataFile(
   return fs.file(path.join(directory, fileName));
 }
 
-/// Gets the preferences from the stored file and saves them in cache.
-Future<Map<String, Object>> _reload(
+/// Gets the preferences from the stored file.
+Future<Map<String, Object>> _readFromFile(
   String fileName, {
   FileSystem fs = const LocalFileSystem(),
   PathProviderWindows? pathProvider,
