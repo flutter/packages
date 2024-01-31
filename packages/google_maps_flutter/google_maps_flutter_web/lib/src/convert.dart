@@ -269,11 +269,15 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
   } else if (iconConfig[0] == 'fromBytes') {
     // Grab the bytes, and put them into a blob
     final List<int> bytes = iconConfig[1]! as List<int>;
-    // TODO(ditman): Improve Blob creation
-    // See https://github.com/dart-lang/web/issues/91
-    //
     // Create a Blob from bytes, but let the browser figure out the encoding
-    final Blob blob = Blob(bytes.map((int byte) => byte.toJS).toList().toJS);
+    final Blob blob;
+
+    if (bytes is Uint8List) {
+      blob = Blob(<JSUint8Array>[bytes.toJS].toJS);
+    } else {
+      blob = Blob(<JSUint8Array>[Uint8List.fromList(bytes).toJS].toJS);
+    }
+
     icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);

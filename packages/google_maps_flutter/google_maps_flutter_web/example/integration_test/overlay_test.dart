@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
 
@@ -66,22 +65,8 @@ void main() {
       expect(img.naturalHeight, 0);
       expect(img.hidden, true);
 
-      final Completer<void> imageLoadCompleter = Completer<void>();
+      await img.onLoad.first;
 
-      // Wait until the image is fully loaded and decoded before re-reading its attributes
-      img.onload = (JSAny? _) {
-        if (!imageLoadCompleter.isCompleted) {
-          imageLoadCompleter.complete();
-        }
-      }.toJS;
-
-      img.onerror = (Event? error) {
-        if (!imageLoadCompleter.isCompleted) {
-          imageLoadCompleter.completeError('Failed to load image.');
-        }
-      }.toJS;
-
-      await imageLoadCompleter.future;
       await img.decode().toDart;
 
       expect(img.hidden, false);
@@ -117,21 +102,7 @@ void main() {
             controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document)!
                 as HTMLImageElement;
 
-        final Completer<void> imageLoadCompleter = Completer<void>();
-
-        img.onload = (JSAny? _) {
-          if (!imageLoadCompleter.isCompleted) {
-            imageLoadCompleter.complete();
-          }
-        }.toJS;
-
-        img.onerror = (Event? error) {
-          if (!imageLoadCompleter.isCompleted) {
-            imageLoadCompleter.completeError('Failed to load image.');
-          }
-        }.toJS;
-
-        await imageLoadCompleter.future;
+        await img.onLoad.first;
 
         expect(
           img.src,

@@ -56,9 +56,7 @@ class TileOverlayController {
       }
       // Using img lets us take advantage of native decoding.
       final String src = URL.createObjectURL(
-        // TODO(ditman): Improve Blob creation
-        // See https://github.com/dart-lang/web/issues/91
-        Blob(tile.data!.map((int byte) => byte.toJS).toList().toJS) as JSObject,
+        Blob(<JSUint8Array>[tile.data!.toJS].toJS) as JSObject,
       );
       img.src = src;
       img.onload = (JSAny? _) {
