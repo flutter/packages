@@ -1,3 +1,8 @@
+## 1.0.22
+
+* Adds more testing to restore coverage to 100%.
+* Format documentation.
+
 ## 1.0.21
 
 * Adds support for subscribing to the root of a `DynamicContent` object.
