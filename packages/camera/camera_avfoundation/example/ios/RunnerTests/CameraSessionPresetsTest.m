@@ -34,8 +34,7 @@
   OCMVerifyAll(videoSessionMock);
 }
 
-- (void)
-    testResolutionPresetWithCanSetSessionPresetUltraHigh_mustUpdateCaptureSessionPreset {  // TODO
+- (void)testResolutionPresetWithCanSetSessionPresetUltraHigh_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPreset3840x2160;
 
   id videoSessionMock = OCMClassMock([AVCaptureSession class]);
