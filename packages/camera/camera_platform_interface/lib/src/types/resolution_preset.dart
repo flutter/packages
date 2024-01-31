@@ -5,6 +5,11 @@
 /// Affect the quality of video recording and image capture:
 ///
 /// If a preset is not available on the camera being used a preset of lower quality will be selected automatically.
+///
+/// For the CameraX implementation of the plugin on Android (`camera_android_camerax`),
+/// these are treated as a target resolution and is not guaranteed. If unavailable,
+/// a fallback resolution of the next highest quality will be attempted as
+/// mentioned above. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
 enum ResolutionPreset {
   /// 352x288 on iOS, 240p (320x240) on Android and Web
   low,
