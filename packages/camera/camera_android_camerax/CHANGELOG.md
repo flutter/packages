@@ -1,3 +1,7 @@
+## 0.5.0+29
+
+* Clarifies how the plugin uses resolution presets as target resolutions for CameraX.
+
 ## 0.5.0+28
 
 * Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.

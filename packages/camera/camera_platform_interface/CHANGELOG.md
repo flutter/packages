@@ -1,3 +1,8 @@
+## 2.7.3
+
+* Clarifies how the `camera_android_camerax` platform implementation of the plugin uses
+  resolution presets as target resolutions for CameraX.
+
 ## 2.7.2
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.
