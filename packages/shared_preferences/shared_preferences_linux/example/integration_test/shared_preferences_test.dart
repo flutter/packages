@@ -32,6 +32,13 @@ void main() {
     preferences = SharedPreferencesAsyncPlatform.instance;
   });
 
+  tearDown(() async {
+    await preferences.clear(
+      const ClearPreferencesParameters(filter: PreferencesFilters()),
+      emptyOptions,
+    );
+  });
+
   testWidgets('set and get', (WidgetTester _) async {
     await Future.wait(<Future<bool>>[
       preferences.setString(stringKey, testString, emptyOptions),

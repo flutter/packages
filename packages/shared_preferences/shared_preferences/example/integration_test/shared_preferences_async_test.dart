@@ -30,6 +30,11 @@ void main() {
           SharedPreferencesAsync(options: const SharedPreferencesOptions());
     });
 
+    tearDown(() async {
+      await preferences.clear(
+          const ClearPreferencesParameters(filter: PreferencesFilters()));
+    });
+
     test('set and get', () async {
       await Future.wait(<Future<bool>>[
         preferences.setString(stringKey, testString),
