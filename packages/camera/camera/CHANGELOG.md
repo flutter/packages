@@ -1,7 +1,3 @@
-## 0.10.5+6
-
-* Fixes bug where max resolution preset does not produce highest available resolution on iOS.
-
 ## 0.10.5+5
 
 * Fixes bug where old camera resources were not disposed when switching between camera descriptions.
