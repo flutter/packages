@@ -108,20 +108,6 @@ platform_properties:
         }
 
 targets:
-  ### Linux-host general tasks ###
-  - name: Linux repo_tools_tests
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: repo_tools_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
   - name: Linux repo_checks
     recipe: packages/packages
     timeout: 30
