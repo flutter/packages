@@ -46,7 +46,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix
-    _getFilteredKeys(filter.prefix, allowList: filter.allowList)
+    _getPrefixedKeys(filter.prefix, allowList: filter.allowList)
         .forEach(remove);
     return true;
   }
@@ -72,7 +72,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> allData = <String, Object>{};
     for (final String key
-        in _getFilteredKeys(filter.prefix, allowList: filter.allowList)) {
+        in _getPrefixedKeys(filter.prefix, allowList: filter.allowList)) {
       allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
     }
     return allData;
@@ -90,7 +90,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     return true;
   }
 
-  Iterable<String> _getFilteredKeys(
+  Iterable<String> _getPrefixedKeys(
     String prefix, {
     Set<String>? allowList,
   }) {
@@ -115,7 +115,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   ) async {
     final PreferencesFilters filter = parameters.filter;
     _getAllowedKeys(allowList: filter.allowList)
-        .forEach(html.window.localStorage.removeItem);
+        .forEach((String key) => html.window.localStorage.removeItem(key));
     return true;
   }
 
