@@ -38,8 +38,10 @@ void main() {
         ),
       ),
     );
-    expect(tester.takeException().toString(),
-        contains('Could not find remote widget named'));
+    expect(
+      tester.takeException().toString(),
+      contains('Could not find remote widget named'),
+    );
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -225,6 +227,82 @@ void main() {
     );
   });
 
+  testWidgets('Implement ButtonBar properties', (WidgetTester tester) async {
+    final Runtime runtime = setupRuntime();
+    final DynamicContent data = DynamicContent();
+    final List<String> eventLog = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: RemoteWidget(
+          runtime: runtime,
+          data: data,
+          widget: const FullyQualifiedWidgetName(testName, 'root'),
+          onEvent: (String eventName, DynamicMap eventArguments) {
+            eventLog.add('$eventName $eventArguments');
+          },
+        ),
+      ),
+    );
+    expect(
+      tester.takeException().toString(),
+      contains('Could not find remote widget named'),
+    );
+
+    addTearDown(() async {
+      await tester.binding.setSurfaceSize(null);
+    });
+
+    runtime.update(testName, parseLibraryFile('''
+      import core;
+      import material;
+      widget root = Scaffold(
+        body: Center(
+          child: ButtonBar(
+            buttonPadding: [8.0],
+            layoutBehavior: 'constrained',
+            alignment: 'end',
+            overflowDirection: 'up',
+            overflowButtonSpacing: 8.0,
+            mainAxisSize: 'min',
+            children: [
+              ElevatedButton(
+                onPressed: event 'button' { },
+                child: Text(text: 'Elevated'),
+              ),
+              OutlinedButton(
+                onPressed: event 'button' { },
+                child: Text(text: 'Outlined'),
+              ),
+              TextButton(
+                onPressed: event 'button' { },
+                child: Text(text: 'Text'),
+              ),
+            ],
+          ),
+        ),
+      );
+    '''));
+    await tester.pump();
+
+    await expectLater(
+      find.byType(RemoteWidget),
+      matchesGoldenFile('goldens/material_test.button_bar_properties.png'),
+      skip: !runGoldens,
+    );
+
+    // Update the surface size for ButtonBar to overflow.
+    await tester.binding.setSurfaceSize(const Size(200.0, 600.0));
+    await tester.pump();
+
+    await expectLater(
+      find.byType(RemoteWidget),
+      matchesGoldenFile(
+          'goldens/material_test.button_bar_properties.overflow.png'),
+      skip: !runGoldens,
+    );
+  });
+
   testWidgets('OverflowBar configured to resemble ButtonBar',
       (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
@@ -243,8 +321,10 @@ void main() {
         ),
       ),
     );
-    expect(tester.takeException().toString(),
-        contains('Could not find remote widget named'));
+    expect(
+      tester.takeException().toString(),
+      contains('Could not find remote widget named'),
+    );
 
     runtime.update(testName, parseLibraryFile('''
       import core;
@@ -301,8 +381,10 @@ void main() {
         ),
       ),
     );
-    expect(tester.takeException().toString(),
-        contains('Could not find remote widget named'));
+    expect(
+      tester.takeException().toString(),
+      contains('Could not find remote widget named'),
+    );
 
     addTearDown(() async {
       await tester.binding.setSurfaceSize(null);

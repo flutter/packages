@@ -5,7 +5,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/src/channel.dart';
+import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+import '../test_api.g.dart';
 import 'sk_test_stub_objects.dart';
 
 void main() {
@@ -14,6 +16,7 @@ void main() {
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
+    TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
             SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
@@ -101,12 +104,6 @@ void main() {
       expect(await SKPaymentQueueWrapper.canMakePayments(), true);
     });
 
-    test('canMakePayment returns false if method channel returns null',
-        () async {
-      fakeStoreKitPlatform.testReturnNull = true;
-      expect(await SKPaymentQueueWrapper.canMakePayments(), false);
-    });
-
     test('storefront returns valid SKStoreFrontWrapper object', () async {
       final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
       expect(
@@ -115,12 +112,6 @@ void main() {
             'countryCode': 'USA',
             'identifier': 'unique_identifier',
           }));
-    });
-
-    test('storefront returns null', () async {
-      fakeStoreKitPlatform.testReturnNull = true;
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      expect(await queue.storefront(), isNull);
     });
 
     test('transactions should return a valid list of transactions', () async {
@@ -200,7 +191,7 @@ void main() {
   });
 }
 
-class FakeStoreKitPlatform {
+class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   FakeStoreKitPlatform() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, onMethodCall);
@@ -255,27 +246,6 @@ class FakeStoreKitPlatform {
           throw Exception('some arbitrary error');
         }
         return Future<String>.value('receipt data');
-      // payment queue
-      case '-[SKPaymentQueue canMakePayments:]':
-        if (testReturnNull) {
-          return Future<dynamic>.value();
-        }
-        return Future<bool>.value(true);
-      case '-[SKPaymentQueue transactions]':
-        return Future<List<dynamic>>.value(
-            <dynamic>[buildTransactionMap(dummyTransaction)]);
-      case '-[SKPaymentQueue storefront]':
-        if (testReturnNull) {
-          return Future<dynamic>.value();
-        }
-        return Future<Map<String, dynamic>>.value(const <String, dynamic>{
-          'countryCode': 'USA',
-          'identifier': 'unique_identifier',
-        });
-      case '-[InAppPurchasePlugin addPayment:result:]':
-        payments.add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(
-            call.arguments as Map<dynamic, dynamic>)));
-        return Future<void>.sync(() {});
       case '-[InAppPurchasePlugin finishTransaction:result:]':
         transactionsFinished.add(
             Map<String, String>.from(call.arguments as Map<dynamic, dynamic>));
@@ -304,6 +274,27 @@ class FakeStoreKitPlatform {
     }
     return Future<dynamic>.error('method not mocked');
   }
+
+  @override
+  void addPayment(Map<String?, Object?> paymentMap) {
+    payments
+        .add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(paymentMap)));
+  }
+
+  @override
+  bool canMakePayments() {
+    return true;
+  }
+
+  @override
+  SKStorefrontMessage storefront() {
+    return SKStorefrontMessage(
+        countryCode: 'USA', identifier: 'unique_identifier');
+  }
+
+  @override
+  List<SKPaymentTransactionMessage?> transactions() =>
+      <SKPaymentTransactionMessage>[dummyTransactionMessage];
 }
 
 class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {}

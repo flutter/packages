@@ -12,8 +12,17 @@ import 'package:json_annotation/json_annotation.dart';
 import '../../store_kit_wrappers.dart';
 import '../channel.dart';
 import '../in_app_purchase_storekit_platform.dart';
+import '../messages.g.dart';
 
 part 'sk_payment_queue_wrapper.g.dart';
+
+InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+
+/// Set up pigeon API.
+@visibleForTesting
+void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
+  _hostApi = api;
+}
 
 /// A wrapper around
 /// [`SKPaymentQueue`](https://developer.apple.com/documentation/storekit/skpaymentqueue?language=objc).
@@ -24,7 +33,7 @@ part 'sk_payment_queue_wrapper.g.dart';
 ///
 /// Full information on using `SKPaymentQueue` and processing purchases is
 /// available at the [In-App Purchase Programming
-/// Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267).
+/// Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267)
 class SKPaymentQueueWrapper {
   /// Returns the default payment queue.
   ///
@@ -45,25 +54,21 @@ class SKPaymentQueueWrapper {
   ///
   /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
   Future<SKStorefrontWrapper?> storefront() async {
-    final Map<String, dynamic>? storefrontMap = await channel
-        .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
-    if (storefrontMap == null) {
-      return null;
-    }
-    return SKStorefrontWrapper.fromJson(storefrontMap);
+    return SKStorefrontWrapper.convertFromPigeon(await _hostApi.storefront());
   }
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    return _getTransactionList((await channel
-        .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
+    final List<SKPaymentTransactionMessage?> pigeonMsgs =
+        await _hostApi.transactions();
+    return pigeonMsgs
+        .map((SKPaymentTransactionMessage? msg) =>
+            SKPaymentTransactionWrapper.convertFromPigeon(msg!))
+        .toList();
   }
 
   /// Calls [`-[SKPaymentQueue canMakePayments:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506139-canmakepayments?language=objc).
-  static Future<bool> canMakePayments() async =>
-      (await channel
-          .invokeMethod<bool>('-[SKPaymentQueue canMakePayments:]')) ??
-      false;
+  static Future<bool> canMakePayments() async => _hostApi.canMakePayments();
 
   /// Sets an observer to listen to all incoming transaction events.
   ///
@@ -138,11 +143,8 @@ class SKPaymentQueueWrapper {
   Future<void> addPayment(SKPaymentWrapper payment) async {
     assert(_observer != null,
         '[in_app_purchase]: Trying to add a payment without an observer. One must be set using `SkPaymentQueueWrapper.setTransactionObserver` before the app launches.');
-    final Map<String, dynamic> requestMap = payment.toMap();
-    await channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin addPayment:result:]',
-      requestMap,
-    );
+
+    await _hostApi.addPayment(payment.toMap());
   }
 
   /// Finishes a transaction and removes it from the queue.
@@ -358,7 +360,7 @@ class SKError {
   ///
   /// Any key of the map must be a valid [NSErrorUserInfoKey](https://developer.apple.com/documentation/foundation/nserroruserinfokey?language=objc).
   @JsonKey(defaultValue: <String, dynamic>{})
-  final Map<String, dynamic> userInfo;
+  final Map<String?, Object?> userInfo;
 
   @override
   bool operator ==(Object other) {
@@ -381,6 +383,11 @@ class SKError {
         domain,
         userInfo,
       );
+
+  /// Converts [SKErrorMessage] into the dart equivalent
+  static SKError convertFromPigeon(SKErrorMessage msg) {
+    return SKError(code: msg.code, domain: msg.domain, userInfo: msg.userInfo);
+  }
 }
 
 /// Dart wrapper around StoreKit's
@@ -498,6 +505,18 @@ class SKPaymentWrapper {
 
   @override
   String toString() => _$SKPaymentWrapperToJson(this).toString();
+
+  /// Converts [SKPaymentMessage] into the dart equivalent
+  static SKPaymentWrapper convertFromPigeon(SKPaymentMessage msg) {
+    return SKPaymentWrapper(
+        productIdentifier: msg.productIdentifier,
+        applicationUsername: msg.applicationUsername,
+        quantity: msg.quantity,
+        simulatesAskToBuyInSandbox: msg.simulatesAskToBuyInSandbox,
+        requestData: msg.requestData,
+        paymentDiscount:
+            SKPaymentDiscountWrapper.convertFromPigeon(msg.paymentDiscount));
+  }
 }
 
 /// Dart wrapper around StoreKit's
@@ -596,4 +615,18 @@ class SKPaymentDiscountWrapper {
   @override
   int get hashCode =>
       Object.hash(identifier, keyIdentifier, nonce, signature, timestamp);
+
+  /// Converts [SKPaymentDiscountMessage] into the dart equivalent
+  static SKPaymentDiscountWrapper? convertFromPigeon(
+      SKPaymentDiscountMessage? msg) {
+    if (msg == null) {
+      return null;
+    }
+    return SKPaymentDiscountWrapper(
+        identifier: msg.identifier,
+        keyIdentifier: msg.keyIdentifier,
+        nonce: msg.nonce,
+        signature: msg.signature,
+        timestamp: msg.timestamp);
+  }
 }
