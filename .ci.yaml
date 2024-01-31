@@ -39,7 +39,8 @@ platform_properties:
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "android_virtual_device", "version": "22"}
+          {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
   linux_desktop:
     properties:
@@ -107,6 +108,20 @@ platform_properties:
         }
 
 targets:
+  ### Linux-host general tasks ###
+  - name: Linux repo_tools_tests
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: repo_tools_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
   - name: Linux repo_checks
     recipe: packages/packages
     timeout: 30
@@ -267,10 +282,19 @@ targets:
           "CHANNEL": "stable"
         }
 
-  # This is only run on stable since it's extremely likely that stable will
-  # resolve to packages that are older (or at least as old) than on master, so
-  # running a second copy with master is very unlikely to catch anything that
-  # this doesn't.
+  - name: Linux analyze_downgraded master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: analyze_downgraded.yaml
+      channel: master
+      version_file: flutter_master.version
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
   - name: Linux analyze_downgraded stable
     recipe: packages/packages
     timeout: 30
@@ -321,7 +345,8 @@ targets:
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -342,7 +367,8 @@ targets:
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -403,7 +429,8 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -422,7 +449,8 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -441,7 +469,8 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -460,7 +489,8 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -479,7 +509,8 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -498,7 +529,8 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -517,7 +549,8 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -536,7 +569,8 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -555,7 +589,8 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -574,7 +609,8 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -593,7 +629,8 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -612,7 +649,8 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -631,7 +669,8 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -650,7 +689,8 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -668,7 +708,8 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
@@ -686,7 +727,8 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
         ]
       env_variables: >-
         {
