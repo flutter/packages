@@ -140,18 +140,18 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
-  // The ButtonBar widget in package:flutter/material.dart is planned to be deprecated
-  // in favor of the OverflowBar widget. This ButtonBar implementation uses the
-  // OverflowBar widget internally for backward compatibility. The ButtonBar
-  // widget in rfw package is not deprecated and will continue to be supported.
+  // The [ButtonBar] widget in Flutter's material library is planned to be deprecated
+  // in favor of the [OverflowBar] widget. This [ButtonBar] implementation uses the
+  // [OverflowBar] widget internally for backward compatibility. The [ButtonBar]
+  // widget in `rfw` package is not deprecated and will continue to be supported.
   //
-  // The ButtonBar widget in package:flutter/material.dart has changed over time.
+  // The [ButtonBar] widget in Flutter's material library has changed over time.
   // The following parameters are no longer supported:
-  //  - buttonMinWidth
-  //  - buttonHeight
-  //  - buttonAlignedDropdown
+  //  - `buttonMinWidth`
+  //  - `buttonHeight`
+  //  - `buttonAlignedDropdown`
   //
-  // It is recommended to use the OverflowBar widget.
+  // It is recommended to use the [OverflowBar] widget.
   'ButtonBar': (BuildContext context, DataSource source) {
     final EdgeInsetsGeometry buttonPadding = ArgumentDecoders.edgeInsets(source, ['buttonPadding']) ?? const EdgeInsets.all(8.0);
     final ButtonBarLayoutBehavior layoutBehavior = ArgumentDecoders.enumValue<ButtonBarLayoutBehavior>(ButtonBarLayoutBehavior.values, source, ['layoutBehavior'])
