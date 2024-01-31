@@ -44,28 +44,6 @@ class _TableExampleState extends State<TableExample> {
   late final ScrollController _verticalController = ScrollController();
   int _rowCount = 20;
 
-  final Map<TableVicinity, ({int start, int span})> mergedRows =
-      <TableVicinity, ({int start, int span})>{
-    TableVicinity.zero: (start: 0, span: 2),
-    TableVicinity.zero.copyWith(row: 1): (start: 0, span: 2),
-  };
-
-  final Map<TableVicinity, ({int start, int span})> mergedColumns =
-      <TableVicinity, ({int start, int span})>{
-    const TableVicinity(row: 0, column: 1): (start: 1, span: 2),
-    const TableVicinity(row: 0, column: 2): (start: 1, span: 2),
-  };
-
-  // If a merged square is along the identity matrix, the values are the same
-  // for row merge and column merge data.
-  final Map<TableVicinity, ({int start, int span})> mergedIdentitySquares =
-      <TableVicinity, ({int start, int span})>{
-    const TableVicinity(row: 1, column: 1): (start: 1, span: 2),
-    const TableVicinity(row: 1, column: 2): (start: 1, span: 2),
-    const TableVicinity(row: 2, column: 1): (start: 1, span: 2),
-    const TableVicinity(row: 2, column: 2): (start: 1, span: 2),
-  };
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,43 +53,44 @@ class _TableExampleState extends State<TableExample> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50),
         child: TableView.builder(
-          verticalDetails: ScrollableDetails.vertical(
-            controller: _verticalController,
-          ),
+          verticalDetails:
+              ScrollableDetails.vertical(controller: _verticalController),
           cellBuilder: _buildCell,
           columnCount: 20,
-          rowCount: _rowCount,
           columnBuilder: _buildColumnSpan,
+          rowCount: _rowCount,
           rowBuilder: _buildRowSpan,
         ),
       ),
+      persistentFooterButtons: <Widget>[
+        TextButton(
+          onPressed: () {
+            _verticalController.jumpTo(0);
+          },
+          child: const Text('Jump to Top'),
+        ),
+        TextButton(
+          onPressed: () {
+            _verticalController
+                .jumpTo(_verticalController.position.maxScrollExtent);
+          },
+          child: const Text('Jump to Bottom'),
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              _rowCount += 10;
+            });
+          },
+          child: const Text('Add 10 Rows'),
+        ),
+      ],
     );
   }
 
-  TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    final bool mergedCell = mergedRows.keys.contains(vicinity) ||
-        mergedColumns.keys.contains(vicinity) ||
-        mergedIdentitySquares.keys.contains(vicinity);
-    if (mergedCell) {
-      return TableViewCell(
-        rowMergeStart: mergedIdentitySquares[vicinity]?.start ??
-            mergedRows[vicinity]?.start,
-        rowMergeSpan:
-            mergedIdentitySquares[vicinity]?.span ?? mergedRows[vicinity]?.span,
-        columnMergeStart: mergedIdentitySquares[vicinity]?.start ??
-            mergedColumns[vicinity]?.start,
-        columnMergeSpan: mergedIdentitySquares[vicinity]?.span ??
-            mergedColumns[vicinity]?.span,
-        child: const Center(
-          child: Text('Merged'),
-        ),
-      );
-    }
-
-    return TableViewCell(
-      child: Center(
-        child: Text('(${vicinity.row}, ${vicinity.column})'),
-      ),
+  Widget _buildCell(BuildContext context, TableVicinity vicinity) {
+    return Center(
+      child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
     );
   }
 
@@ -169,7 +148,7 @@ class _TableExampleState extends State<TableExample> {
 
   TableSpan _buildRowSpan(int index) {
     final TableSpanDecoration decoration = TableSpanDecoration(
-      color: index.isEven ? Colors.blueAccent[100] : null,
+      color: index.isEven ? Colors.purple[100] : null,
       border: const TableSpanBorder(
         trailing: BorderSide(
           width: 3,

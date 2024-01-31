@@ -991,13 +991,21 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
   }
 
+  // If mapMergedVicinityToCanonicalChild is true, it will return the canonical
+  // child for the merged cell, if false, it will return whatever value in the
+  // underlying child data structure is, which could be null if the given
+  // vicinity is covered by a merged cell.
+  // This is relevant for scenarios like painting, where we only want to paint
+  // one merged cell.
   @override
   RenderBox? getChildFor(
     ChildVicinity vicinity, {
-    bool allowMerged = true,
+    bool mapMergedVicinityToCanonicalChild = true,
   }) {
     return super.getChildFor(vicinity) ??
-        (allowMerged ? _getMergedChildFor(vicinity as TableVicinity) : null);
+        (mapMergedVicinityToCanonicalChild
+            ? _getMergedChildFor(vicinity as TableVicinity)
+            : null);
   }
 
   RenderBox _getMergedChildFor(TableVicinity vicinity) {
@@ -1090,7 +1098,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               }
               trailingCell = nextCell;
               vicinity = vicinity.copyWith(row: currentRow);
-              nextCell = getChildFor(vicinity, allowMerged: false);
+              nextCell = getChildFor(
+                vicinity,
+                mapMergedVicinityToCanonicalChild: false,
+              );
             }
             decorationCells.add((
               leading: leadingCell,
@@ -1230,7 +1241,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               }
               trailingCell = nextCell;
               vicinity = vicinity.copyWith(column: currentColumn);
-              nextCell = getChildFor(vicinity, allowMerged: false);
+              nextCell = getChildFor(
+                vicinity,
+                mapMergedVicinityToCanonicalChild: false,
+              );
             }
             decorationCells.add((
               leading: leadingCell,
@@ -1350,7 +1364,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         column++) {
       for (int row = leadingVicinity.row; row <= trailingVicinity.row; row++) {
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-        final RenderBox? cell = getChildFor(vicinity, allowMerged: false);
+        final RenderBox? cell = getChildFor(
+          vicinity,
+          mapMergedVicinityToCanonicalChild: false,
+        );
         if (cell == null) {
           // Covered by a merged cell
           assert(
