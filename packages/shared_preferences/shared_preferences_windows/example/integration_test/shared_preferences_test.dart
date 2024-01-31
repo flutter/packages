@@ -368,13 +368,11 @@ void main() {
     });
 
     testWidgets('set and get', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+      await preferences.setString(stringKey, testString, emptyOptions);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
+      await preferences.setInt(intKey, testInt, emptyOptions);
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
+      await preferences.setStringList(listKey, testList, emptyOptions);
 
       expect(await preferences.getString(stringKey, emptyOptions), testString);
       expect(await preferences.getBool(boolKey, emptyOptions), testBool);
@@ -384,13 +382,11 @@ void main() {
     });
 
     testWidgets('getPreferences', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+      await preferences.setString(stringKey, testString, emptyOptions);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
+      await preferences.setInt(intKey, testInt, emptyOptions);
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
+      await preferences.setStringList(listKey, testList, emptyOptions);
 
       final Map<String, Object?> gotAll = await preferences.getPreferences(
         const GetPreferencesParameters(filter: PreferencesFilters()),
@@ -406,13 +402,11 @@ void main() {
     });
 
     testWidgets('getPreferences with filter', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+      await preferences.setString(stringKey, testString, emptyOptions);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
+      await preferences.setInt(intKey, testInt, emptyOptions);
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
+      await preferences.setStringList(listKey, testList, emptyOptions);
 
       final Map<String, Object?> gotAll = await preferences.getPreferences(
         const GetPreferencesParameters(
@@ -427,13 +421,11 @@ void main() {
     });
 
     testWidgets('getKeys', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+      await preferences.setString(stringKey, testString, emptyOptions);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
+      await preferences.setInt(intKey, testInt, emptyOptions);
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
+      await preferences.setStringList(listKey, testList, emptyOptions);
 
       final Set<String?> keys = await preferences.getKeys(
         const GetPreferencesParameters(filter: PreferencesFilters()),
@@ -449,13 +441,11 @@ void main() {
     });
 
     testWidgets('getKeys with filter', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+      await preferences.setString(stringKey, testString, emptyOptions);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
+      await preferences.setInt(intKey, testInt, emptyOptions);
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
+      await preferences.setStringList(listKey, testList, emptyOptions);
 
       final Set<String?> keys = await preferences.getKeys(
         const GetPreferencesParameters(
@@ -470,13 +460,11 @@ void main() {
     });
 
     testWidgets('clear', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+      await preferences.setString(stringKey, testString, emptyOptions);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
+      await preferences.setInt(intKey, testInt, emptyOptions);
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
+      await preferences.setStringList(listKey, testList, emptyOptions);
 
       await preferences.clear(
         const ClearPreferencesParameters(filter: PreferencesFilters()),
@@ -491,13 +479,11 @@ void main() {
     });
 
     testWidgets('clear with filter', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+      await preferences.setString(stringKey, testString, emptyOptions);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
+      await preferences.setInt(intKey, testInt, emptyOptions);
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
+      await preferences.setStringList(listKey, testList, emptyOptions);
       await preferences.clear(
         const ClearPreferencesParameters(
           filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),

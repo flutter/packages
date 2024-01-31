@@ -351,6 +351,10 @@ void main() {
         );
       });
 
+      tearDown(() async {
+        await preferences.clear();
+      });
+
       test('set and get', () async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
@@ -438,6 +442,10 @@ void main() {
                 allowList: <String>{stringKey, boolKey}),
           ),
         );
+      });
+
+      tearDown(() async {
+        await preferences.clear();
       });
 
       test('set and get', () async {
