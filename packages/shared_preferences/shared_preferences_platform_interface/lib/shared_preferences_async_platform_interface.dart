@@ -239,7 +239,8 @@ base class InMemorySharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return _data[key] as List<String>?;
+    final List<Object?>? data = _data[key] as List<Object?>?;
+    return data?.cast<String>();
   }
 
   @override

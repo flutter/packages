@@ -102,7 +102,7 @@ void main() {
       if (methodCall.method == 'setStringList') {
         return testData.setStringList(
           arguments['key']! as String,
-          arguments['value']! as List<String>,
+          (arguments['value']! as List<Object?>).cast<String>(),
           arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
         );
       }
@@ -131,10 +131,32 @@ void main() {
         );
       }
       if (methodCall.method == 'getStringList') {
-        return testData.getStringList(
+        final List<String>? data = await testData.getStringList(
           arguments['key']! as String,
           arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
         );
+        return data;
+      }
+      if (methodCall.method == 'getKeys') {
+        Set<String>? allowSet;
+        final List<dynamic>? allowList =
+            arguments['allowList'] as List<dynamic>?;
+        if (allowList != null) {
+          allowSet = <String>{};
+          for (final dynamic key in allowList) {
+            allowSet.add(key as String);
+          }
+        }
+        return (await testData.getKeys(
+          GetPreferencesParameters(
+            filter: PreferencesFilters(
+              allowList: allowSet,
+            ),
+          ),
+          emptyOptions,
+        ))
+            .toList()
+            .cast<String>();
       }
 
       fail('Unexpected method call: ${methodCall.method}');

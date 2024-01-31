@@ -60,7 +60,7 @@ base class MethodChannelSharedPreferencesAsync
   @override
   Future<bool> setString(
     String key,
-    Object value,
+    String value,
     SharedPreferencesOptions options,
   ) async {
     return _setValue('String', key, value, options);
@@ -69,7 +69,7 @@ base class MethodChannelSharedPreferencesAsync
   @override
   Future<bool> setBool(
     String key,
-    Object value,
+    bool value,
     SharedPreferencesOptions options,
   ) async {
     return _setValue('Bool', key, value, options);
@@ -78,7 +78,7 @@ base class MethodChannelSharedPreferencesAsync
   @override
   Future<bool> setInt(
     String key,
-    Object value,
+    int value,
     SharedPreferencesOptions options,
   ) async {
     return _setValue('Int', key, value, options);
@@ -87,7 +87,7 @@ base class MethodChannelSharedPreferencesAsync
   @override
   Future<bool> setDouble(
     String key,
-    Object value,
+    double value,
     SharedPreferencesOptions options,
   ) async {
     return _setValue('Double', key, value, options);
@@ -96,7 +96,7 @@ base class MethodChannelSharedPreferencesAsync
   @override
   Future<bool> setStringList(
     String key,
-    Object value,
+    List<String> value,
     SharedPreferencesOptions options,
   ) async {
     return _setValue('StringList', key, value, options);
@@ -107,7 +107,12 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getString') as String?;
+    return _kChannel.invokeMethod<String>(
+      'getString',
+      <String, dynamic>{
+        'key': key,
+      },
+    );
   }
 
   @override
@@ -115,7 +120,12 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getBool') as bool?;
+    return _kChannel.invokeMethod<bool>(
+      'getBool',
+      <String, dynamic>{
+        'key': key,
+      },
+    );
   }
 
   @override
@@ -123,7 +133,12 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getDouble') as double?;
+    return _kChannel.invokeMethod<double>(
+      'getDouble',
+      <String, dynamic>{
+        'key': key,
+      },
+    );
   }
 
   @override
@@ -131,7 +146,12 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getInt') as int?;
+    return _kChannel.invokeMethod<int>(
+      'getInt',
+      <String, dynamic>{
+        'key': key,
+      },
+    );
   }
 
   @override
@@ -139,8 +159,13 @@ base class MethodChannelSharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    return await _kChannel.invokeMethod<Set<String>>('getStringList')
-        as List<String>?;
+    return (await _kChannel.invokeMethod<List<Object?>>(
+      'getStringList',
+      <String, dynamic>{
+        'key': key,
+      },
+    ))
+        ?.cast<String>();
   }
 
   @override
@@ -150,10 +175,12 @@ base class MethodChannelSharedPreferencesAsync
   ) async {
     final PreferencesFilters filter = parameters.filter;
     final List<String>? allowListAsList = filter.allowList?.toList();
-    return await _kChannel.invokeMethod<Set<String>>(
+    return (await _kChannel.invokeMethod<List<Object?>>(
           'getKeys',
           <String, dynamic>{'allowList': allowListAsList},
-        ) ??
+        ))
+            ?.cast<String>()
+            .toSet() ??
         <String>{};
   }
 }
