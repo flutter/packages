@@ -43,7 +43,7 @@ void main() {
     return prefs;
   }
 
-  test('set and get', () async {
+  testWidgets('set and get', (WidgetTester _) async {
     final SharedPreferencesAsyncWindows preferences = getPreferences();
     await preferences.setString(stringKey, testString, emptyOptions);
     await preferences.setBool(boolKey, testBool, emptyOptions);
@@ -58,7 +58,7 @@ void main() {
     expect(await preferences.getStringList(listKey, emptyOptions), testList);
   });
 
-  test('getPreferences', () async {
+  testWidgets('getPreferences', (WidgetTester _) async {
     final SharedPreferencesAsyncWindows preferences = getPreferences();
     await preferences.setString(stringKey, testString, emptyOptions);
     await preferences.setBool(boolKey, testBool, emptyOptions);
@@ -78,7 +78,7 @@ void main() {
     expect(gotAll[listKey], testList);
   });
 
-  test('getPreferences with filter', () async {
+  testWidgets('getPreferences with filter', (WidgetTester _) async {
     final SharedPreferencesAsyncWindows preferences = getPreferences();
     await preferences.setString(stringKey, testString, emptyOptions);
     await preferences.setBool(boolKey, testBool, emptyOptions);
@@ -97,7 +97,7 @@ void main() {
     expect(gotAll[boolKey], testBool);
   });
 
-  test('getKeys', () async {
+  testWidgets('getKeys', (WidgetTester _) async {
     final SharedPreferencesAsyncWindows preferences = getPreferences();
     await preferences.setString(stringKey, testString, emptyOptions);
     await preferences.setBool(boolKey, testBool, emptyOptions);
@@ -118,7 +118,7 @@ void main() {
     expect(keys, contains(listKey));
   });
 
-  test('getKeys with filter', () async {
+  testWidgets('getKeys with filter', (WidgetTester _) async {
     final SharedPreferencesAsyncWindows preferences = getPreferences();
     await preferences.setString(stringKey, testString, emptyOptions);
     await preferences.setBool(boolKey, testBool, emptyOptions);
@@ -138,7 +138,7 @@ void main() {
     expect(keys, contains(boolKey));
   });
 
-  test('clear', () async {
+  testWidgets('clear', (WidgetTester _) async {
     final SharedPreferencesAsyncWindows preferences = getPreferences();
     await preferences.setString(stringKey, testString, emptyOptions);
     await preferences.setBool(boolKey, testBool, emptyOptions);
@@ -155,7 +155,7 @@ void main() {
     expect(await preferences.getStringList(listKey, emptyOptions), null);
   });
 
-  test('clear with filter', () async {
+  testWidgets('clear with filter', (WidgetTester _) async {
     final SharedPreferencesAsyncWindows preferences = getPreferences();
     await preferences.setString(stringKey, testString, emptyOptions);
     await preferences.setBool(boolKey, testBool, emptyOptions);

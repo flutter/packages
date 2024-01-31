@@ -135,13 +135,13 @@ void main() {
       await testData.clear();
     });
 
-    test('getAll', () async {
+    testWidgets('getAll', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
       expect(await store.getAll(), flutterTestValues);
       expect(log.single.method, 'getAll');
     });
 
-    test('getAllWithParameters with Prefix', () async {
+    testWidgets('getAllWithParameters with Prefix', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
       expect(
           await store.getAllWithParameters(
@@ -153,7 +153,7 @@ void main() {
       expect(log.single.method, 'getAllWithParameters');
     });
 
-    test('getAllWithParameters with allow list', () async {
+    testWidgets('getAllWithParameters with allow list', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
       final Map<String, Object> data = await store.getAllWithParameters(
         GetAllParameters(
@@ -168,7 +168,7 @@ void main() {
       expect(log.single.method, 'getAllWithParameters');
     });
 
-    test('remove', () async {
+    testWidgets('remove', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
       expect(await store.remove('flutter.String'), true);
       expect(await store.remove('flutter.Bool'), true);
@@ -184,7 +184,7 @@ void main() {
       }
     });
 
-    test('setValue', () async {
+    testWidgets('setValue', (WidgetTester _) async {
       expect(await testData.getAll(), isEmpty);
       for (final String key in allTestValues.keys) {
         final Object value = allTestValues[key]!;
@@ -200,7 +200,7 @@ void main() {
       expect(log[4].method, 'setStringList');
     });
 
-    test('clear', () async {
+    testWidgets('clear', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
       expect(await testData.getAll(), isNotEmpty);
       expect(await store.clear(), true);
@@ -208,7 +208,7 @@ void main() {
       expect(log.single.method, 'clear');
     });
 
-    test('clearWithParameters with Prefix', () async {
+    testWidgets('clearWithParameters with Prefix', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(
@@ -234,7 +234,7 @@ void main() {
           isEmpty);
     });
 
-    test('getAllWithParameters with no Prefix', () async {
+    testWidgets('getAllWithParameters with no Prefix', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(
@@ -246,7 +246,7 @@ void main() {
           hasLength(15));
     });
 
-    test('clearWithNoPrefix', () async {
+    testWidgets('clearWithNoPrefix', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(
@@ -272,7 +272,7 @@ void main() {
           isEmpty);
     });
 
-    test('clearWithParameters with allow list', () async {
+    testWidgets('clearWithParameters with allow list', (WidgetTester _) async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(

@@ -49,25 +49,25 @@ void main() {
     plugin = DeprecatedSharedPreferencesAndroid(api: api);
   });
 
-  test('registerWith', () {
+  testWidgets('registerWith', (WidgetTester _) async {
     DeprecatedSharedPreferencesAndroid.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
         isA<DeprecatedSharedPreferencesAndroid>());
   });
 
-  test('remove', () async {
+  testWidgets('remove', (WidgetTester _) async {
     api.items['flutter.hi'] = 'world';
     expect(await plugin.remove('flutter.hi'), isTrue);
     expect(api.items.containsKey('flutter.hi'), isFalse);
   });
 
-  test('clear', () async {
+  testWidgets('clear', (WidgetTester _) async {
     api.items['flutter.hi'] = 'world';
     expect(await plugin.clear(), isTrue);
     expect(api.items.containsKey('flutter.hi'), isFalse);
   });
 
-  test('clearWithPrefix', () async {
+  testWidgets('clearWithPrefix', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -81,7 +81,7 @@ void main() {
     expect(all.length, 0);
   });
 
-  test('clearWithParameters', () async {
+  testWidgets('clearWithParameters', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -107,7 +107,7 @@ void main() {
     expect(all.length, 0);
   });
 
-  test('clearWithParameters with allow list', () async {
+  testWidgets('clearWithParameters with allow list', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -136,7 +136,7 @@ void main() {
     expect(all.length, 4);
   });
 
-  test('getAll', () async {
+  testWidgets('getAll', (WidgetTester _) async {
     for (final String key in flutterTestValues.keys) {
       api.items[key] = flutterTestValues[key]!;
     }
@@ -145,7 +145,7 @@ void main() {
     expect(all, flutterTestValues);
   });
 
-  test('getAllWithNoPrefix', () async {
+  testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -154,7 +154,7 @@ void main() {
     expect(all, allTestValues);
   });
 
-  test('clearWithNoPrefix', () async {
+  testWidgets('clearWithNoPrefix', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -166,7 +166,7 @@ void main() {
     expect(all.length, 0);
   });
 
-  test('getAllWithParameters', () async {
+  testWidgets('getAllWithParameters', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -179,7 +179,7 @@ void main() {
     expect(all, prefixTestValues);
   });
 
-  test('getAllWithParameters with allow list', () async {
+  testWidgets('getAllWithParameters with allow list', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -195,7 +195,7 @@ void main() {
     expect(all['prefix.Bool'], true);
   });
 
-  test('setValue', () async {
+  testWidgets('setValue', (WidgetTester _) async {
     expect(await plugin.setValue('Bool', 'flutter.Bool', true), isTrue);
     expect(api.items['flutter.Bool'], true);
     expect(await plugin.setValue('Double', 'flutter.Double', 1.5), isTrue);
@@ -211,13 +211,13 @@ void main() {
     expect(api.items['flutter.StringList'], <String>['hi']);
   });
 
-  test('setValue with unsupported type', () {
-    expect(() async {
+  testWidgets('setValue with unsupported type', (WidgetTester _) async {
+    expect((WidgetTester _) async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
     }, throwsA(isA<PlatformException>()));
   });
 
-  test('getAllWithNoPrefix', () async {
+  testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -230,7 +230,7 @@ void main() {
     expect(all, allTestValues);
   });
 
-  test('clearWithNoPrefix', () async {
+  testWidgets('clearWithNoPrefix', (WidgetTester _) async {
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }

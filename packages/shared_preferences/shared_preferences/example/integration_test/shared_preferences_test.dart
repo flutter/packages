@@ -193,7 +193,7 @@ void main() {
             const ClearPreferencesParameters(filter: PreferencesFilters()));
       });
 
-      test('set and get', () async {
+      testWidgets('set and get', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -209,7 +209,7 @@ void main() {
         expect(await preferences.getStringList(listKey), testList);
       });
 
-      test('getAll', () async {
+      testWidgets('getAll', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -229,7 +229,7 @@ void main() {
         expect(gotAll[listKey], testList);
       });
 
-      test('getAll with filter', () async {
+      testWidgets('getAll with filter', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -249,7 +249,7 @@ void main() {
         expect(gotAll[boolKey], testBool);
       });
 
-      test('getKeys', () async {
+      testWidgets('getKeys', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -269,7 +269,7 @@ void main() {
         expect(keys, contains(listKey));
       });
 
-      test('getKeys with filter', () async {
+      testWidgets('getKeys with filter', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -289,7 +289,7 @@ void main() {
         expect(keys, contains(boolKey));
       });
 
-      test('containsKey', () async {
+      testWidgets('containsKey', (WidgetTester _) async {
         const String key = 'testKey';
 
         expect(false, await preferences.containsKey(key));
@@ -298,7 +298,7 @@ void main() {
         expect(true, await preferences.containsKey(key));
       });
 
-      test('clear', () async {
+      testWidgets('clear', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -315,7 +315,7 @@ void main() {
         expect(await preferences.getStringList(listKey), null);
       });
 
-      test('clear with filter', () async {
+      testWidgets('clear with filter', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -355,7 +355,7 @@ void main() {
         await preferences.clear();
       });
 
-      test('set and get', () async {
+      testWidgets('set and get', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -371,7 +371,7 @@ void main() {
         expect(preferences.getStringList(listKey), testList);
       });
 
-      test('reloading', () async {
+      testWidgets('reloading', (WidgetTester _) async {
         await preferences.clear();
         await preferences.setString(stringKey, testString);
         expect(preferences.getString(stringKey), testString);
@@ -383,7 +383,7 @@ void main() {
         expect(preferences.getString(stringKey), testString);
       });
 
-      test('containsKey', () async {
+      testWidgets('containsKey', (WidgetTester _) async {
         const String key = 'testKey';
 
         expect(false, preferences.containsKey(key));
@@ -392,7 +392,7 @@ void main() {
         expect(true, preferences.containsKey(key));
       });
 
-      test('getKeys', () async {
+      testWidgets('getKeys', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -411,7 +411,7 @@ void main() {
         expect(keys, contains(listKey));
       });
 
-      test('clear', () async {
+      testWidgets('clear', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -448,7 +448,7 @@ void main() {
         await preferences.clear();
       });
 
-      test('set and get', () async {
+      testWidgets('set and get', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -464,7 +464,7 @@ void main() {
         expect(preferences.getStringList(listKey), testList);
       });
 
-      test('reloading', () async {
+      testWidgets('reloading', (WidgetTester _) async {
         await preferences.clear();
         await preferences.setString(stringKey, testString);
         expect(preferences.getString(stringKey), testString);
@@ -476,7 +476,7 @@ void main() {
         expect(preferences.getString(stringKey), testString);
       });
 
-      test('containsKey', () async {
+      testWidgets('containsKey', (WidgetTester _) async {
         const String key = 'testKey';
 
         expect(false, preferences.containsKey(key));
@@ -485,7 +485,7 @@ void main() {
         expect(true, preferences.containsKey(key));
       });
 
-      test('getKeys', () async {
+      testWidgets('getKeys', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
@@ -501,7 +501,7 @@ void main() {
         expect(keys, contains(boolKey));
       });
 
-      test('clear', () async {
+      testWidgets('clear', (WidgetTester _) async {
         await Future.wait(<Future<bool>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
