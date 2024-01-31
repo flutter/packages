@@ -459,6 +459,8 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
+    indent.writeln(proxyApiBaseClass);
+
     indent.writeln(
       instanceManagerTemplate(
         proxyApiBaseClassName: '${classMemberNamePrefix}ProxyApiBaseClass',
