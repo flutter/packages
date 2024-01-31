@@ -230,7 +230,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The specified [resolutionPreset] is the target resolution that CameraX
   /// will attempt to select for the [UseCase]s constructed in this method
   /// ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
-  /// unavailable, a fallback behavior of targetting the next highest resolution
+  /// unavailable, a fallback behavior of targeting the next highest resolution
   /// will be attempted.
   ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture

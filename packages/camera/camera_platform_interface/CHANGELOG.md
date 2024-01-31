@@ -1,7 +1,7 @@
 ## 2.7.3
 
-* Clarifies how the `camera_android_camerax` platform implementation of the plugin uses
-  resolution presets as target resolutions for CameraX.
+* Adds documentation to clarify how the `camera_android_camerax` platform implementation
+  of the plugin uses resolution presets as target resolutions for CameraX.
 
 ## 2.7.2
 
