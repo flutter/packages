@@ -268,6 +268,10 @@ targets:
           "CHANNEL": "stable"
         }
 
+  # This is only run on stable since it's extremely likely that stable will
+  # resolve to packages that are older (or at least as old) than on master, so
+  # running a second copy with master is very unlikely to catch anything that
+  # this doesn't.
   - name: Linux analyze_downgraded stable
     recipe: packages/packages
     timeout: 30
