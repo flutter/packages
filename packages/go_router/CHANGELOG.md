@@ -1,3 +1,7 @@
+## 13.1.1
+
+- Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
 ## 13.1.0
 
 - Adds `topRoute` to `GoRouterState`
