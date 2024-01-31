@@ -92,7 +92,8 @@ private class DeprecatedUserDefaultsApiCodecReaderWriter: FlutterStandardReaderW
 }
 
 class DeprecatedUserDefaultsApiCodec: FlutterStandardMessageCodec {
-  static let shared = DeprecatedUserDefaultsApiCodec(readerWriter: DeprecatedUserDefaultsApiCodecReaderWriter())
+  static let shared = DeprecatedUserDefaultsApiCodec(
+    readerWriter: DeprecatedUserDefaultsApiCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -111,7 +112,9 @@ class DeprecatedUserDefaultsApiSetup {
   static var codec: FlutterStandardMessageCodec { DeprecatedUserDefaultsApiCodec.shared }
   /// Sets up an instance of `DeprecatedUserDefaultsApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: DeprecatedUserDefaultsApi?) {
-    let removeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.remove", binaryMessenger: binaryMessenger, codec: codec)
+    let removeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.remove",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -126,7 +129,9 @@ class DeprecatedUserDefaultsApiSetup {
     } else {
       removeChannel.setMessageHandler(nil)
     }
-    let setBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setBool", binaryMessenger: binaryMessenger, codec: codec)
+    let setBoolChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setBool",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -142,7 +147,9 @@ class DeprecatedUserDefaultsApiSetup {
     } else {
       setBoolChannel.setMessageHandler(nil)
     }
-    let setDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setDouble", binaryMessenger: binaryMessenger, codec: codec)
+    let setDoubleChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setDouble",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -158,7 +165,9 @@ class DeprecatedUserDefaultsApiSetup {
     } else {
       setDoubleChannel.setMessageHandler(nil)
     }
-    let setValueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setValue", binaryMessenger: binaryMessenger, codec: codec)
+    let setValueChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setValue",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setValueChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -174,7 +183,9 @@ class DeprecatedUserDefaultsApiSetup {
     } else {
       setValueChannel.setMessageHandler(nil)
     }
-    let getAllChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.getAll", binaryMessenger: binaryMessenger, codec: codec)
+    let getAllChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.getAll",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAllChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -190,7 +201,9 @@ class DeprecatedUserDefaultsApiSetup {
     } else {
       getAllChannel.setMessageHandler(nil)
     }
-    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.clear", binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.clear",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       clearChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -277,7 +290,9 @@ class UserDefaultsApiSetup {
   /// Sets up an instance of `UserDefaultsApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UserDefaultsApi?) {
     /// Adds property to shared preferences data set of type bool.
-    let setBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool", binaryMessenger: binaryMessenger, codec: codec)
+    let setBoolChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -295,7 +310,9 @@ class UserDefaultsApiSetup {
       setBoolChannel.setMessageHandler(nil)
     }
     /// Adds property to shared preferences data set of type String.
-    let setValueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setValue", binaryMessenger: binaryMessenger, codec: codec)
+    let setValueChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setValue",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setValueChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -313,7 +330,9 @@ class UserDefaultsApiSetup {
       setValueChannel.setMessageHandler(nil)
     }
     /// Adds property to shared preferences data set of type double.
-    let setDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble", binaryMessenger: binaryMessenger, codec: codec)
+    let setDoubleChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -331,7 +350,9 @@ class UserDefaultsApiSetup {
       setDoubleChannel.setMessageHandler(nil)
     }
     /// Removes all properties from shared preferences data set with matching prefix.
-    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.clear", binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.clear",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       clearChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -348,7 +369,9 @@ class UserDefaultsApiSetup {
       clearChannel.setMessageHandler(nil)
     }
     /// Gets all properties from shared preferences data set with matching prefix.
-    let getAllChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getAll", binaryMessenger: binaryMessenger, codec: codec)
+    let getAllChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getAll",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAllChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -365,7 +388,9 @@ class UserDefaultsApiSetup {
       getAllChannel.setMessageHandler(nil)
     }
     /// Gets individual String value stored with [key], if any.
-    let getStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getString", binaryMessenger: binaryMessenger, codec: codec)
+    let getStringChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getString",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -382,7 +407,9 @@ class UserDefaultsApiSetup {
       getStringChannel.setMessageHandler(nil)
     }
     /// Gets individual bool value stored with [key], if any.
-    let getBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getBool", binaryMessenger: binaryMessenger, codec: codec)
+    let getBoolChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getBool",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -399,7 +426,9 @@ class UserDefaultsApiSetup {
       getBoolChannel.setMessageHandler(nil)
     }
     /// Gets individual double value stored with [key], if any.
-    let getDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getDouble", binaryMessenger: binaryMessenger, codec: codec)
+    let getDoubleChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getDouble",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -416,7 +445,9 @@ class UserDefaultsApiSetup {
       getDoubleChannel.setMessageHandler(nil)
     }
     /// Gets individual int value stored with [key], if any.
-    let getIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getInt", binaryMessenger: binaryMessenger, codec: codec)
+    let getIntChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getInt",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -433,7 +464,9 @@ class UserDefaultsApiSetup {
       getIntChannel.setMessageHandler(nil)
     }
     /// Gets individual List<String> value stored with [key], if any.
-    let getStringListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getStringList", binaryMessenger: binaryMessenger, codec: codec)
+    let getStringListChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getStringList",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getStringListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -450,7 +483,9 @@ class UserDefaultsApiSetup {
       getStringListChannel.setMessageHandler(nil)
     }
     /// Gets all properties from shared preferences data set with matching prefix.
-    let getKeysChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getKeys", binaryMessenger: binaryMessenger, codec: codec)
+    let getKeysChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getKeys",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getKeysChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
