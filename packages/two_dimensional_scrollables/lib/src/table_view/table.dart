@@ -24,12 +24,12 @@ import 'table_span.dart';
 /// vertically. If there is not enough space for all the columns, it will
 /// scroll horizontally.
 ///
-/// Each child [TableViewCell] can belong to exactly one row and one column as
-/// represented by its [TableVicinity], or it can span multiple rows and columns
-/// through merging. The table supports lazy rendering and will only instantiate
-/// those cells that are currently visible in the table's viewport and those
-/// that extend into the [cacheExtent]. Therefore, when merging cells in a
-/// [TableView], the same child should be returned from every vicinity the
+/// Each child [TableViewCell] can belong to either exactly one row and one
+/// column as represented by its [TableVicinity], or it can span multiple rows
+/// and columns through merging. The table supports lazy rendering and will only
+/// instantiate those cells that are currently visible in the table's viewport
+/// and those that extend into the [cacheExtent]. Therefore, when merging cells
+/// in a [TableView], the same child must be returned from every vicinity the
 /// merged cell contains. The `build` method will only be called once for a
 /// merged cell, but since the table's children are lazily laid out, returning
 /// the same child ensures the merged cell can be built no matter which part of
@@ -1014,7 +1014,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // vicinity.
     assert(_mergedVicinities.keys.contains(vicinity));
     final TableVicinity mergedVicinity = _mergedVicinities[vicinity]!;
-    return getChildFor(mergedVicinity)!;
+    // This vicinity must resolve to a child, unless something has gone wrong!
+    return getChildFor(
+      mergedVicinity,
+      mapMergedVicinityToCanonicalChild: false,
+    )!;
   }
 
   void _paintCells({
