@@ -21,7 +21,7 @@ typedef TableSpanBuilder = TableSpan Function(int index);
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder = TableViewCell? Function(
+typedef TableViewCellBuilder = TableViewCell Function(
   BuildContext context,
   TableVicinity vicinity,
 );
