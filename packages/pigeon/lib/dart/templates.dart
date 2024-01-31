@@ -3,10 +3,8 @@ import '../generator_tools.dart';
 /// Creates the `InstanceManager` with the passed string values.
 String instanceManagerTemplate({
   required String proxyApiBaseClassName,
-  required List<String> allProxyApiNames,
+  required Iterable<String> allProxyApiNames,
 }) {
-  //const String proxyApiBaseClassName = '${classNamePrefix}ProxyApiBaseClass';
-
   final Iterable<String> apiHandlerSetUps = allProxyApiNames.map(
     (String name) {
       return '$name.${classMemberNamePrefix}setUpMessageHandlers(${classMemberNamePrefix}instanceManager: instanceManager);';
@@ -357,7 +355,7 @@ abstract class $_proxyApiBaseClassName {
 }
 ''';
 
-const String proxyApiCodec = '''
+const String proxyApiBaseCodec = '''
 class $_proxyApiCodecName extends StandardMessageCodec {
  const $_proxyApiCodecName(this.instanceManager);
  final $instanceManagerClassName instanceManager;
