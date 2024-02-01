@@ -252,6 +252,7 @@
     if (self.mapView != nil) {
       UIGraphicsImageRenderer *renderer =
           [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
+      // The API originally used doesn't work in ios 17
       UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
         [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
       }];
