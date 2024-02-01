@@ -113,10 +113,10 @@ class RunnerTests: XCTestCase {
   }
 
   // Async system tests.
-  
+
   let emptyOptions = SharedPreferencesPigeonOptions()
 
-  func testSetAndGet() throws {
+  func testAsyncSetAndGet() throws {
 
     let plugin = SharedPreferencesPlugin()
 
@@ -135,7 +135,7 @@ class RunnerTests: XCTestCase {
       plugin.getStringList(key: "aStringList", options: emptyOptions), ["hello", "world"])
   }
 
-  func testGetAll() throws {
+  func testAsyncGetAll() throws {
 
     let plugin = SharedPreferencesPlugin()
 
@@ -154,7 +154,7 @@ class RunnerTests: XCTestCase {
 
   }
 
-  func testGetAllWithAllowList() throws {
+  func testAsyncGetAllWithAllowList() throws {
 
     let plugin = SharedPreferencesPlugin()
 
@@ -173,7 +173,7 @@ class RunnerTests: XCTestCase {
 
   }
 
-  func testRemove() throws {
+  func testAsyncRemove() throws {
 
     let plugin = SharedPreferencesPlugin()
     plugin.setString(key: testKey, value: testValue, options: emptyOptions)
@@ -190,7 +190,7 @@ class RunnerTests: XCTestCase {
 
   }
 
-  func testClearWithNoAllowlist() throws {
+  func testAsyncClearWithNoAllowlist() throws {
 
     let plugin = SharedPreferencesPlugin()
     plugin.setString(key: testKey, value: testValue, options: emptyOptions)
@@ -207,7 +207,7 @@ class RunnerTests: XCTestCase {
 
   }
 
-  func testClearWithAllowlist() throws {
+  func testAsyncClearWithAllowlist() throws {
 
     let plugin = SharedPreferencesPlugin()
 

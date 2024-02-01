@@ -212,7 +212,7 @@ void main() {
   });
 
   testWidgets('setValue with unsupported type', (WidgetTester _) async {
-    expect((WidgetTester _) async {
+    expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
     }, throwsA(isA<PlatformException>()));
   });
