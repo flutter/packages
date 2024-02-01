@@ -492,9 +492,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testIsDeviceSupportedHandlesSupported {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:[OCMArg setTo:nil]]).andReturn(YES);
+  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
+                                       error:[OCMArg setTo:nil]])
+      .andReturn(YES);
   FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
-      initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]];
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];
@@ -504,9 +507,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testIsDeviceSupportedHandlesUnsupported {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:[OCMArg setTo:nil]]).andReturn(NO);
+  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
+                                       error:[OCMArg setTo:nil]])
+      .andReturn(NO);
   FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
-      initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]];
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];
