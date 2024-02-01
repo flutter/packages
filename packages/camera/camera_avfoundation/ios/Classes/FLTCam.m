@@ -1212,6 +1212,7 @@ NSString *const errorMethod = @"error";
   if (_isAudioSetup) {
     return;
   }
+  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth error:nil];
 
   NSError *error = nil;
   // Create a device input with the device and add it to the session.
@@ -1219,6 +1220,9 @@ NSString *const errorMethod = @"error";
   AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
   AVCaptureDeviceInput *audioInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice
                                                                            error:&error];
+
+
+
   if (error) {
     [_methodChannel invokeMethod:errorMethod arguments:error.description];
   }
@@ -1227,6 +1231,9 @@ NSString *const errorMethod = @"error";
 
   if ([_audioCaptureSession canAddInput:audioInput]) {
     [_audioCaptureSession addInput:audioInput];
+
+    _audioCaptureSession.usesApplicationAudioSession = true;
+    _audioCaptureSession.automaticallyConfiguresApplicationAudioSession = false;
 
     if ([_audioCaptureSession canAddOutput:_audioOutput]) {
       [_audioCaptureSession addOutput:_audioOutput];
