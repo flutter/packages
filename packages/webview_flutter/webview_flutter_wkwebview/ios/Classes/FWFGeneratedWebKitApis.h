@@ -464,8 +464,9 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @interface FWFWKFrameInfoData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame;
++ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame request:(FWFNSUrlRequestData *)request;
 @property(nonatomic, assign) BOOL isMainFrame;
+@property(nonatomic, strong) FWFNSUrlRequestData *request;
 @end
 
 /// Mirror of NSError.
@@ -949,6 +950,27 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void);
                                                         (void (^)(
                                                             FWFWKPermissionDecisionData *_Nullable,
                                                             FlutterError *_Nullable))completion;
+/// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanel`.
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSInteger)identifier
+                                                 message:(NSString *)message
+                                                   frame:(FWFWKFrameInfoData *)frame
+                                              completion:
+                                                  (void (^)(FlutterError *_Nullable))completion;
+/// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanel`.
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSInteger)identifier
+                                                   message:(NSString *)message
+                                                     frame:(FWFWKFrameInfoData *)frame
+                                                completion:
+                                                    (void (^)(NSNumber *_Nullable,
+                                                              FlutterError *_Nullable))completion;
+/// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanel`.
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSInteger)identifier
+                                                      prompt:(NSString *)prompt
+                                                 defaultText:(NSString *)defaultText
+                                                       frame:(FWFWKFrameInfoData *)frame
+                                                  completion:
+                                                      (void (^)(NSString *_Nullable,
+                                                                FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFWKHttpCookieStoreHostApi.

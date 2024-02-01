@@ -1,3 +1,11 @@
+## 16.0.5
+
+* Adds ProxyApi to AST generation.
+
+## 16.0.4
+
+* [swift] Improve style of Swift output.
+
 ## 16.0.3
 
 * [kotlin] Separates message call code generation into separate methods.

@@ -64,7 +64,7 @@ android {
         }
     }
 
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
 
 
     defaultConfig {

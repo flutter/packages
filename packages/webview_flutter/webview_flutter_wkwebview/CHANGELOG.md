@@ -1,3 +1,7 @@
+## 3.11.0
+
+* Adds support to show JavaScript dialog. See `PlatformWebViewController.setOnJavaScriptAlertDialog`, `PlatformWebViewController.setOnJavaScriptConfirmDialog` and `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
+
 ## 3.10.3
 
 * Adds a check that throws an `ArgumentError` when `WebKitWebViewController.addJavaScriptChannel`

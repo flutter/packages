@@ -5,6 +5,13 @@ tasks:
   - name: update pods repo
     script: .ci/scripts/update_pods.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: Swift format
+    script: script/tool_runner.sh
+    # Non-Swift languages are formatted on Linux builders.
+    # Skip them on Mac builder to avoid duplication.
+    args: ["format", "--fail-on-change", "--no-dart", "--no-clang-format", "--no-kotlin", "--no-java" ]
+    always: true
   - name: validate iOS and macOS podspecs
     script: script/tool_runner.sh
     args: ["podspec-check"]
+    always: true

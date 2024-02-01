@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds `WebResourceRequest` and `WebResourceResponse` to `HttpResponseError`.
+
 ## 2.9.1
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.
