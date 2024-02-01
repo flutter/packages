@@ -1,7 +1,8 @@
 ## 0.5.0+29
 
 * Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
-  that `createCamera` should have been called before building the preview.
+  that `createCamera` should have been called before building the preview. Fixes
+  https://github.com/flutter/flutter/issues/140567.
 
 ## 0.5.0+28
 
