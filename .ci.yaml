@@ -40,7 +40,7 @@ platform_properties:
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
           {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
   linux_desktop:
     properties:
@@ -323,7 +323,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -345,7 +345,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -407,7 +407,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -427,7 +427,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -447,7 +447,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -467,7 +467,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -487,7 +487,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -507,7 +507,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -527,7 +527,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -547,7 +547,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -567,7 +567,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -587,7 +587,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -607,7 +607,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -627,7 +627,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -647,7 +647,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -667,7 +667,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -686,7 +686,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
@@ -705,7 +705,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "SjJFjwg1rz5dh2xdLMSPqU6MF4ipvATxpiQ_gCOyTOgC"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
       env_variables: >-
         {
