@@ -283,7 +283,7 @@ public class VideoPlayerTest {
   }
 
   @Test
-  public void behindLiveWindowErrorResets() {
+  public void behindLiveWindowErrorResetsPlayerToDefaultPosition() {
     List<Player.Listener> listeners = new LinkedList<>();
     doAnswer(invocation -> listeners.add(invocation.getArgument(0)))
         .when(fakeExoPlayer)
