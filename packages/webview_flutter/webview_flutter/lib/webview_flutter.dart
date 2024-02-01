@@ -4,6 +4,7 @@
 
 export 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     show
+        HttpAuthRequest,
         JavaScriptConsoleMessage,
         JavaScriptLogLevel,
         JavaScriptMessage,
@@ -24,6 +25,7 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         WebResourceErrorCallback,
         WebResourceErrorType,
         WebViewCookie,
+        WebViewCredential,
         WebViewPermissionResourceType,
         WebViewPlatform;
 

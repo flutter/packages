@@ -7,6 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ACKNOWLEDGE_PURCHASE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CONSUME_PURCHASE_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.END_CONNECTION;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_FEATURE_SUPPORTED;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_READY;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
@@ -16,6 +17,7 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.START_CONNECTION;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
@@ -46,10 +48,13 @@ import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingConfig;
+import com.android.billingclient.api.BillingConfigResponseListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.GetBillingConfigParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
@@ -90,6 +95,7 @@ public class MethodCallHandlerTest {
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
   @Captor ArgumentCaptor<HashMap<String, Object>> resultCaptor;
+  @Mock BillingConfig mockBillingConfig;
 
   @Before
   public void setUp() {
@@ -183,6 +189,35 @@ public class MethodCallHandlerTest {
 
     verify(result, times(1)).success(fromBillingResult(billingResult1));
     verify(result, times(1)).success(any());
+  }
+
+  @Test
+  public void getBillingConfigSuccess() {
+    mockStartConnection();
+    ArgumentCaptor<GetBillingConfigParams> paramsCaptor =
+        ArgumentCaptor.forClass(GetBillingConfigParams.class);
+    ArgumentCaptor<BillingConfigResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(BillingConfigResponseListener.class);
+    MethodCall billingCall = new MethodCall(GET_BILLING_CONFIG, null);
+    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
+    BillingResult billingResult =
+        BillingResult.newBuilder()
+            .setResponseCode(100)
+            .setDebugMessage("dummy debug message")
+            .build();
+    final String expectedCountryCode = "US";
+    final HashMap<String, Object> expectedResult = fromBillingResult(billingResult);
+    expectedResult.put("countryCode", expectedCountryCode);
+
+    when(mockBillingConfig.getCountryCode()).thenReturn(expectedCountryCode);
+    doNothing()
+        .when(mockBillingClient)
+        .getBillingConfigAsync(paramsCaptor.capture(), listenerCaptor.capture());
+
+    methodChannelHandler.onMethodCall(billingCall, result);
+    listenerCaptor.getValue().onBillingConfigResponse(billingResult, mockBillingConfig);
+
+    verify(result, times(1)).success(fromBillingConfig(billingResult, mockBillingConfig));
   }
 
   @Test

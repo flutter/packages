@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk version to 34.
+
 ## 0.5.0+7
 
 * Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.

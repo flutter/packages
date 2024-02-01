@@ -6,7 +6,9 @@ import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
+import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/podspec_check_command.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -17,8 +19,13 @@ import 'util.dart';
 /// If [includeSwiftWorkaround] is set, the xcconfig additions to make Swift
 /// libraries work in apps that have no Swift will be included. If
 /// [scopeSwiftWorkaround] is set, it will be specific to the iOS configuration.
-void _writeFakePodspec(RepositoryPackage plugin, String platform,
-    {bool includeSwiftWorkaround = false, bool scopeSwiftWorkaround = false}) {
+void _writeFakePodspec(
+  RepositoryPackage plugin,
+  String platform, {
+  bool includeSwiftWorkaround = false,
+  bool scopeSwiftWorkaround = false,
+  bool includePrivacyManifest = false,
+}) {
   final String pluginName = plugin.directory.basename;
   final File file = plugin.directory
       .childDirectory(platform)
@@ -29,6 +36,11 @@ void _writeFakePodspec(RepositoryPackage plugin, String platform,
      'LIBRARY_SEARCH_PATHS' => '\$(TOOLCHAIN_DIR)/usr/lib/swift/\$(PLATFORM_NAME)/ \$(SDKROOT)/usr/lib/swift',
      'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
+'''
+      : '';
+  final String privacyManifest = includePrivacyManifest
+      ? '''
+  s.resource_bundles = {'$pluginName' => ['Resources/PrivacyInfo.xcprivacy']}
 '''
       : '';
   file.createSync(recursive: true);
@@ -55,6 +67,7 @@ Wraps NSUserDefaults, providing a persistent store for simple key-value pairs.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   $swiftWorkaround
   s.swift_version = '5.0'
+  $privacyManifest
 
 end
 ''');
@@ -472,6 +485,50 @@ void main() {
           output,
           containsAllInOrder(
             <Matcher>[contains('SKIPPING: No podspecs.')],
+          ));
+    });
+
+    test('fails when an iOS plugin is missing a privacy manifest', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        platformSupport: <String, PlatformDetails>{
+          Platform.iOS: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+      _writeFakePodspec(plugin, 'ios');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['podspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[contains('No PrivacyInfo.xcprivacy file specified.')],
+          ));
+    });
+
+    test('passes when an iOS plugin has a privacy manifest', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        platformSupport: <String, PlatformDetails>{
+          Platform.iOS: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+      _writeFakePodspec(plugin, 'ios', includePrivacyManifest: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['podspec-check']);
+
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[contains('Ran for 1 package(s)')],
           ));
     });
   });

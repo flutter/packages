@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk version to 34.
+
 ## 2.6.2
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

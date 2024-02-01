@@ -1,5 +1,6 @@
 ## 2.4.12
 
+* Updates compileSdk version to 34.
 * Adds error handling for `BehindLiveWindowException`
 
 ## 2.4.11

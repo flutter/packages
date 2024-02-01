@@ -1,4 +1,4 @@
-# IOS Platform Images
+# iOS Platform Images
 
 A Flutter plugin to share images between Flutter and iOS.
 
@@ -10,7 +10,7 @@ When loading images from Image.xcassets the device specific variant is chosen
 
 |             | iOS   |
 |-------------|-------|
-| **Support** | 11.0+ |
+| **Support** | 12.0+ |
 
 ## Usage
 
