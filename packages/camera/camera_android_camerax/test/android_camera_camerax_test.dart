@@ -388,6 +388,10 @@ void main() {
 
     // Verify the camera's CameraInfo instance got updated.
     expect(camera.cameraInfo, equals(mockCameraInfo));
+
+    // Verify preview has been marked as bound to the camera lifecycle by
+    // createCamera.
+    expect(camera.previewInitiallyBound, isTrue);
   });
 
   test(
@@ -971,83 +975,33 @@ void main() {
   });
 
   test(
-      'buildPreview returns a FutureBuilder that does not return a Texture until the preview is bound to the lifecycle',
+      'buildPreview throws an exception if the preview is not bound to the lifecycle',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
-    final MockCamera mockCamera = MockCamera();
-    final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    const int textureId = 75;
+    const int cameraId = 73;
 
-    // Set directly for test versus calling createCamera.
-    camera.processCameraProvider = mockProcessCameraProvider;
-    camera.cameraSelector = MockCameraSelector();
-    camera.preview = MockPreview();
-
-    // Tell plugin to create a mock Observer<CameraState>, that is created to
-    // track camera state once preview is bound to the lifecycle.
-    camera.proxy =
-        CameraXProxy(createCameraStateObserver: (_) => MockObserver());
-
-    when(mockProcessCameraProvider
-            .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
-        .thenAnswer((_) async => mockCamera);
-    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-    when(mockCameraInfo.getCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
-
-    final FutureBuilder<void> previewWidget =
-        camera.buildPreview(textureId) as FutureBuilder<void>;
+    // Tell camera that createCamera has not been called and thus, preview has
+    // not been bound to the lifecycle of the camera.
+    camera.previewInitiallyBound = false;
 
     expect(
-        previewWidget.builder(
-            MockBuildContext(), const AsyncSnapshot<void>.nothing()),
-        isA<SizedBox>());
-    expect(
-        previewWidget.builder(
-            MockBuildContext(), const AsyncSnapshot<void>.waiting()),
-        isA<SizedBox>());
-    expect(
-        previewWidget.builder(MockBuildContext(),
-            const AsyncSnapshot<void>.withData(ConnectionState.active, null)),
-        isA<SizedBox>());
+        () => camera.buildPreview(cameraId), throwsA(isA<CameraException>()));
   });
 
   test(
-      'buildPreview returns a FutureBuilder that returns a Texture once the preview is bound to the lifecycle',
+      'buildPreview returns a Texture once the preview is bound to the lifecycle',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
-    final MockCamera mockCamera = MockCamera();
-    final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    const int textureId = 75;
+    const int cameraId = 37;
 
-    // Set directly for test versus calling createCamera.
-    camera.processCameraProvider = mockProcessCameraProvider;
-    camera.cameraSelector = MockCameraSelector();
-    camera.preview = MockPreview();
+    // Tell camera that createCamera has been called and thus, preview has been
+    // bound to the lifecycle of the camera.
+    camera.previewInitiallyBound = true;
 
-    // Tell plugin to create a mock Observer<CameraState>, that is created to
-    // track camera state once preview is bound to the lifecycle.
-    camera.proxy =
-        CameraXProxy(createCameraStateObserver: (_) => MockObserver());
+    final Widget widget = camera.buildPreview(cameraId);
 
-    when(mockProcessCameraProvider
-            .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
-        .thenAnswer((_) async => mockCamera);
-    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-    when(mockCameraInfo.getCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
-
-    final FutureBuilder<void> previewWidget =
-        camera.buildPreview(textureId) as FutureBuilder<void>;
-
-    final Texture previewTexture = previewWidget.builder(MockBuildContext(),
-            const AsyncSnapshot<void>.withData(ConnectionState.done, null))
-        as Texture;
-    expect(previewTexture.textureId, equals(textureId));
+    expect(widget is Texture, isTrue);
+    expect((widget as Texture).textureId, cameraId);
   });
 
   group('video recording', () {
