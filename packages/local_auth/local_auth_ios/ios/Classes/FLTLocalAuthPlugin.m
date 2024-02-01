@@ -146,13 +146,8 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
 
 - (nullable NSNumber *)isDeviceSupportedWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  LAContext *context = [[LAContext alloc] init];
-  NSError *authError = nil;
-  if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
-    return @YES;
-  } else {
-    return @NO;
-  }
+  LAContext *context = [self.authContextFactory createAuthContext];
+  return @([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:NULL]);
 }
 
 #pragma mark Private Methods
