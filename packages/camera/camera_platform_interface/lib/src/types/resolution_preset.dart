@@ -6,7 +6,7 @@
 ///
 /// A preset is treated as a target resolution, and exact values are not
 /// guaranteed. Platform implementations may fall back to a higher or lower
-/// resolution if the specific preset is not available.
+/// resolution if a specific preset is not available.
 enum ResolutionPreset {
   /// 352x288 on iOS, ~240p (320x240) on Android and Web
   low,
