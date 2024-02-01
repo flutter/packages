@@ -250,9 +250,12 @@
     result(nil);
   } else if ([call.method isEqualToString:@"map#takeSnapshot"]) {
     if (self.mapView != nil) {
+      // Before we had this code : 
+      // UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.frame.size format:format];
+      // UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {[self.mapView.layer renderInContext:context.CGContext];}]
+      // The API originally used is returning a blank image on ios 17
       UIGraphicsImageRenderer *renderer =
           [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
-      // The API originally used doesn't work in ios 17
       UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
         [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
       }];
