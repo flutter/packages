@@ -126,6 +126,23 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+/// Convenience class for building [FocusMeteringAction]s with multiple metering
+/// points.
+class MeteringPointInfo {
+  MeteringPointInfo({
+    required this.meteringPointId,
+    required this.meteringMode,
+  });
+
+  /// InstanceManager ID for a [MeteringPoint].
+  int meteringPointId;
+
+  /// The metering mode of the [MeteringPoint] whose ID is [meteringPointId].
+  ///
+  /// Metering mode should be one of the [FocusMeteringAction] constants.
+  int? meteringMode;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -444,9 +461,40 @@ abstract class CameraControlHostApi {
 
   @async
   void setZoomRatio(int identifier, double ratio);
+
+  @async
+  int startFocusAndMetering(int identifier, int focusMeteringActionId);
+
+  @async
+  void cancelFocusAndMetering(int identifier);
+
+  @async
+  int setExposureCompensationIndex(int identifier, int index);
 }
 
 @FlutterApi()
 abstract class CameraControlFlutterApi {
   void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
+abstract class FocusMeteringActionHostApi {
+  void create(int identifier, List<MeteringPointInfo> meteringPointInfos);
+}
+
+@HostApi(dartHostTestHandler: 'TestFocusMeteringResultHostApi')
+abstract class FocusMeteringResultHostApi {
+  bool isFocusSuccessful(int identifier);
+}
+
+@FlutterApi()
+abstract class FocusMeteringResultFlutterApi {
+  void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
+abstract class MeteringPointHostApi {
+  void create(int identifier, double x, double y, double? size);
+
+  double getDefaultPointSize();
 }

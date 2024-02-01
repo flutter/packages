@@ -85,12 +85,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-12|Mac-13
+      os: Mac-13
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e300c"
+          "sdk_version": "15a240d"
         }
   mac_x64:
     properties:
@@ -98,29 +98,15 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-12|Mac-13
+      os: Mac-13
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e300c"
+          "sdk_version": "15a240d"
         }
 
 targets:
-  ### Linux-host general tasks ###
-  - name: Linux repo_tools_tests
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: repo_tools_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
   - name: Linux repo_checks
     recipe: packages/packages
     timeout: 30
@@ -281,19 +267,10 @@ targets:
           "CHANNEL": "stable"
         }
 
-  - name: Linux analyze_downgraded master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: analyze_downgraded.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
+  # This is only run on stable since it's extremely likely that stable will
+  # resolve to packages that are older (or at least as old) than on master, so
+  # running a second copy with master is very unlikely to catch anything that
+  # this doesn't.
   - name: Linux analyze_downgraded stable
     recipe: packages/packages
     timeout: 30
@@ -1071,7 +1048,11 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: macos_check_podspecs.yaml
+      target_file: macos_repo_checks.yaml
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
+        ]
 
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
@@ -1143,6 +1124,10 @@ targets:
         {
           "CHANNEL": "master"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   - name: Mac_arm64 custom_package_tests stable
     recipe: packages/packages
@@ -1156,6 +1141,10 @@ targets:
         {
           "CHANNEL": "stable"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   ### iOS tasks ###
   # ios_platform_tests builds all the packages on ARM, so this build is run

@@ -1,6 +1,20 @@
-## 2.3.6
+## 2.4.2
 
 * Fix of takeSnapShot function (for IOS 17, a blank image is no longer being returned).
+
+## 2.4.1
+
+* Restores the workaround to exclude arm64 simulator builds, as it is still necessary for applications targeting iOS 12.
+
+## 2.4.0
+
+* Adds support for arm64 simulators.
+* Updates minimum supported SDK version to Flutter 3.16.6.
+* Removes support for iOS 11.
+
+## 2.3.6
+
+* Adds privacy manifest.
 
 ## 2.3.5
 

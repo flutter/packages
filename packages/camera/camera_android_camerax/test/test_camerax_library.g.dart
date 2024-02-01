@@ -1898,6 +1898,12 @@ abstract class TestCameraControlHostApi {
 
   Future<void> setZoomRatio(int identifier, double ratio);
 
+  Future<int> startFocusAndMetering(int identifier, int focusMeteringActionId);
+
+  Future<void> cancelFocusAndMetering(int identifier);
+
+  Future<int> setExposureCompensationIndex(int identifier, int index);
+
   static void setup(TestCameraControlHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1947,6 +1953,334 @@ abstract class TestCameraControlHostApi {
               'Argument for dev.flutter.pigeon.CameraControlHostApi.setZoomRatio was null, expected non-null double.');
           await api.setZoomRatio(arg_identifier!, arg_ratio!);
           return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraControlHostApi.startFocusAndMetering',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.startFocusAndMetering was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.startFocusAndMetering was null, expected non-null int.');
+          final int? arg_focusMeteringActionId = (args[1] as int?);
+          assert(arg_focusMeteringActionId != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.startFocusAndMetering was null, expected non-null int.');
+          final int output = await api.startFocusAndMetering(
+              arg_identifier!, arg_focusMeteringActionId!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraControlHostApi.cancelFocusAndMetering',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.cancelFocusAndMetering was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.cancelFocusAndMetering was null, expected non-null int.');
+          await api.cancelFocusAndMetering(arg_identifier!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraControlHostApi.setExposureCompensationIndex',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.setExposureCompensationIndex was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.setExposureCompensationIndex was null, expected non-null int.');
+          final int? arg_index = (args[1] as int?);
+          assert(arg_index != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.setExposureCompensationIndex was null, expected non-null int.');
+          final int output = await api.setExposureCompensationIndex(
+              arg_identifier!, arg_index!);
+          return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
+class _TestFocusMeteringActionHostApiCodec extends StandardMessageCodec {
+  const _TestFocusMeteringActionHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is MeteringPointInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return MeteringPointInfo.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class TestFocusMeteringActionHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec =
+      _TestFocusMeteringActionHostApiCodec();
+
+  void create(int identifier, List<MeteringPointInfo?> meteringPointInfos);
+
+  static void setup(TestFocusMeteringActionHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FocusMeteringActionHostApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FocusMeteringActionHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.FocusMeteringActionHostApi.create was null, expected non-null int.');
+          final List<MeteringPointInfo?>? arg_meteringPointInfos =
+              (args[1] as List<Object?>?)?.cast<MeteringPointInfo?>();
+          assert(arg_meteringPointInfos != null,
+              'Argument for dev.flutter.pigeon.FocusMeteringActionHostApi.create was null, expected non-null List<MeteringPointInfo?>.');
+          api.create(arg_identifier!, arg_meteringPointInfos!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestFocusMeteringResultHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  bool isFocusSuccessful(int identifier);
+
+  static void setup(TestFocusMeteringResultHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.FocusMeteringResultHostApi.isFocusSuccessful',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.FocusMeteringResultHostApi.isFocusSuccessful was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.FocusMeteringResultHostApi.isFocusSuccessful was null, expected non-null int.');
+          final bool output = api.isFocusSuccessful(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestMeteringPointHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier, double x, double y, double? size);
+
+  double getDefaultPointSize();
+
+  static void setup(TestMeteringPointHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.MeteringPointHostApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.MeteringPointHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.MeteringPointHostApi.create was null, expected non-null int.');
+          final double? arg_x = (args[1] as double?);
+          assert(arg_x != null,
+              'Argument for dev.flutter.pigeon.MeteringPointHostApi.create was null, expected non-null double.');
+          final double? arg_y = (args[2] as double?);
+          assert(arg_y != null,
+              'Argument for dev.flutter.pigeon.MeteringPointHostApi.create was null, expected non-null double.');
+          final double? arg_size = (args[3] as double?);
+          api.create(arg_identifier!, arg_x!, arg_y!, arg_size);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.MeteringPointHostApi.getDefaultPointSize', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          // ignore message
+          final double output = api.getDefaultPointSize();
+          return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestDisplayOrientedMeteringPointFactoryHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier, int cameraInfoId, int width, int height);
+
+  int createPoint(int x, int y, int? size);
+
+  int getDefaultPointSize();
+
+  static void setup(TestDisplayOrientedMeteringPointFactoryHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
+          final int? arg_cameraInfoId = (args[1] as int?);
+          assert(arg_cameraInfoId != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
+          final int? arg_width = (args[2] as int?);
+          assert(arg_width != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
+          final int? arg_height = (args[3] as int?);
+          assert(arg_height != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
+          api.create(
+              arg_identifier!, arg_cameraInfoId!, arg_width!, arg_height!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_x = (args[0] as int?);
+          assert(arg_x != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint was null, expected non-null int.');
+          final int? arg_y = (args[1] as int?);
+          assert(arg_y != null,
+              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint was null, expected non-null int.');
+          final int? arg_size = (args[2] as int?);
+          final int output = api.createPoint(arg_x!, arg_y!, arg_size);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.getDefaultPointSize',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          // ignore message
+          final int output = api.getDefaultPointSize();
+          return <Object?>[output];
         });
       }
     }

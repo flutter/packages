@@ -319,4 +319,25 @@ void main() {
 
     expect(await completer.future, isNotNull);
   });
+
+  // Test fileFormat is respected when taking a picture.
+  testWidgets('Capture specific image output formats',
+      (WidgetTester tester) async {
+    final List<CameraDescription> cameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+    for (final CameraDescription cameraDescription in cameras) {
+      for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
+        final CameraController controller =
+            CameraController(cameraDescription, ResolutionPreset.low);
+        await controller.initialize();
+        await controller.setImageFileFormat(fileFormat);
+        final XFile file = await controller.takePicture();
+        await controller.dispose();
+        expect(file.path.endsWith(fileFormat.name), true);
+      }
+    }
+  });
 }
