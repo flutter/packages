@@ -1,3 +1,7 @@
+## NEXT
+
+* Add placeholder physicalCameras and logicalCameras options to availableDevices method.
+
 ## 0.5.0+28
 
 * Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.

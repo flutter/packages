@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:async/async.dart';
-import 'package:camera_avfoundation/src/avfoundation_camera.dart';
+import 'package:camera_avfoundation/camera_avfoundation.dart';
 import 'package:camera_avfoundation/src/utils.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
@@ -43,6 +43,29 @@ void main() {
     expect(response, null);
   });
 
+  group('AVCaptureDeviceType tests', () {
+    test('AVCaptureDeviceType should contain 10 options', () {
+      const List<AVCaptureDeviceType> values = AVCaptureDeviceType.values;
+
+      expect(values.length, 10);
+    });
+
+    test('AVCaptureDeviceType enum should have items in correct index', () {
+      const List<AVCaptureDeviceType> values = AVCaptureDeviceType.values;
+
+      expect(values[0], AVCaptureDeviceType.builtInWideAngleCamera);
+      expect(values[1], AVCaptureDeviceType.builtInUltraWideCamera);
+      expect(values[2], AVCaptureDeviceType.builtInTelephotoCamera);
+      expect(values[3], AVCaptureDeviceType.builtInDualCamera);
+      expect(values[4], AVCaptureDeviceType.builtInDualWideCamera);
+      expect(values[5], AVCaptureDeviceType.builtInTripleCamera);
+      expect(values[6], AVCaptureDeviceType.continuityCamera);
+      expect(values[7], AVCaptureDeviceType.external);
+      expect(values[8], AVCaptureDeviceType.builtInLiDARDepthCamera);
+      expect(values[9], AVCaptureDeviceType.builtInTrueDepthCamera);
+    });
+  });
+
   group('Creation, Initialization & Disposal Tests', () {
     test('Should send creation data and receive back a camera id', () async {
       // Arrange
@@ -58,10 +81,11 @@ void main() {
 
       // Act
       final int cameraId = await camera.createCamera(
-        const CameraDescription(
+        const AVCameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
-            sensorOrientation: 0),
+            sensorOrientation: 0,
+            captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera),
         ResolutionPreset.high,
       );
 
@@ -93,10 +117,11 @@ void main() {
       // Act
       expect(
         () => camera.createCamera(
-          const CameraDescription(
+          const AVCameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
+            captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera,
           ),
           ResolutionPreset.high,
         ),
@@ -124,10 +149,11 @@ void main() {
       // Act
       expect(
         () => camera.createCamera(
-          const CameraDescription(
+          const AVCameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
+            captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera,
           ),
           ResolutionPreset.high,
         ),
@@ -186,10 +212,11 @@ void main() {
           });
       final AVFoundationCamera camera = AVFoundationCamera();
       final int cameraId = await camera.createCamera(
-        const CameraDescription(
+        const AVCameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -233,10 +260,11 @@ void main() {
 
       final AVFoundationCamera camera = AVFoundationCamera();
       final int cameraId = await camera.createCamera(
-        const CameraDescription(
+        const AVCameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -281,10 +309,11 @@ void main() {
       );
       camera = AVFoundationCamera();
       cameraId = await camera.createCamera(
-        const CameraDescription(
+        const AVCameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -453,10 +482,11 @@ void main() {
       );
       camera = AVFoundationCamera();
       cameraId = await camera.createCamera(
-        const CameraDescription(
+        const AVCameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
+          captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera,
         ),
         ResolutionPreset.high,
       );
@@ -485,12 +515,14 @@ void main() {
         <String, dynamic>{
           'name': 'Test 1',
           'lensFacing': 'front',
-          'sensorOrientation': 1
+          'sensorOrientation': 1,
+          'deviceType': 'builtInTrueDepthCamera'
         },
         <String, dynamic>{
           'name': 'Test 2',
           'lensFacing': 'back',
-          'sensorOrientation': 2
+          'sensorOrientation': 2,
+          'deviceType': 'builtInWideAngleCamera'
         }
       ];
       final MethodChannelMock channel = MethodChannelMock(
@@ -503,17 +535,22 @@ void main() {
 
       // Assert
       expect(channel.log, <Matcher>[
-        isMethodCall('availableCameras', arguments: null),
+        isMethodCall('availableCameras', arguments: <String, Object?>{
+          'physicalCameras': true,
+          'logicalCameras': false
+        }),
       ]);
       expect(cameras.length, returnData.length);
       for (int i = 0; i < returnData.length; i++) {
         final Map<String, Object?> typedData =
             (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
-        final CameraDescription cameraDescription = CameraDescription(
+        final CameraDescription cameraDescription = AVCameraDescription(
           name: typedData['name']! as String,
           lensDirection:
               parseCameraLensDirection(typedData['lensFacing']! as String),
           sensorOrientation: typedData['sensorOrientation']! as int,
+          captureDeviceType:
+              parseAVCaptureDeviceType(typedData['deviceType']! as String),
         );
         expect(cameras[i], cameraDescription);
       }
@@ -705,10 +742,11 @@ void main() {
         channelName: _channelName,
         methods: <String, dynamic>{'setDescriptionWhileRecording': null},
       );
-      const CameraDescription camera2Description = CameraDescription(
+      const AVCameraDescription camera2Description = AVCameraDescription(
           name: 'Test2',
           lensDirection: CameraLensDirection.front,
-          sensorOrientation: 0);
+          sensorOrientation: 0,
+          captureDeviceType: AVCaptureDeviceType.builtInWideAngleCamera);
 
       // Act
       await camera.setDescriptionWhileRecording(camera2Description);

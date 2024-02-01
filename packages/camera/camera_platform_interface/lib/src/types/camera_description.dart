@@ -20,11 +20,10 @@ enum CameraLensDirection {
 @immutable
 class CameraDescription {
   /// Creates a new camera description with the given properties.
-  const CameraDescription({
-    required this.name,
-    required this.lensDirection,
-    required this.sensorOrientation,
-  });
+  const CameraDescription(
+      {required this.name,
+      required this.lensDirection,
+      required this.sensorOrientation});
 
   /// The name of the camera device.
   final String name;

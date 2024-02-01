@@ -5,6 +5,8 @@
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 
+import '../camera_avfoundation.dart';
+
 /// Parses a string into a corresponding CameraLensDirection.
 CameraLensDirection parseCameraLensDirection(String string) {
   switch (string) {
@@ -16,6 +18,34 @@ CameraLensDirection parseCameraLensDirection(String string) {
       return CameraLensDirection.external;
   }
   throw ArgumentError('Unknown CameraLensDirection value');
+}
+
+/// Parses the [type] into an [AVCaptureDeviceType].
+AVCaptureDeviceType? parseAVCaptureDeviceType(String type) {
+  switch (type) {
+    case 'builtInWideAngleCamera':
+      return AVCaptureDeviceType.builtInWideAngleCamera;
+    case 'builtInUltraWideCamera':
+      return AVCaptureDeviceType.builtInUltraWideCamera;
+    case 'builtInTelephotoCamera':
+      return AVCaptureDeviceType.builtInTelephotoCamera;
+    case 'builtInDualCamera':
+      return AVCaptureDeviceType.builtInDualCamera;
+    case 'builtInDualWideCamera':
+      return AVCaptureDeviceType.builtInDualWideCamera;
+    case 'builtInTripleCamera':
+      return AVCaptureDeviceType.builtInTripleCamera;
+    case 'continuityCamera':
+      return AVCaptureDeviceType.continuityCamera;
+    case 'external':
+      return AVCaptureDeviceType.external;
+    case 'builtInLiDARDepthCamera':
+      return AVCaptureDeviceType.builtInLiDARDepthCamera;
+    case 'builtInTrueDepthCamera':
+      return AVCaptureDeviceType.builtInTrueDepthCamera;
+  }
+  // unknown type
+  return null;
 }
 
 /// Returns the device orientation as a String.

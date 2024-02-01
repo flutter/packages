@@ -29,6 +29,20 @@ dependencies:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
 
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+
+  camera_android:
+    path: ../../camera/camera_android
+  camera_avfoundation:
+    path: ../../camera/camera_avfoundation
+  camera_platform_interface:
+    path: ../../camera/camera_platform_interface
+  camera_web:
+    path: ../../camera/camera_web
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

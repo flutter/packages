@@ -1,3 +1,7 @@
+## NEXT
+
+* Add placeholder physicalCameras and logicalCameras options to availableDevices method.
+
 ## 0.2.1+9
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

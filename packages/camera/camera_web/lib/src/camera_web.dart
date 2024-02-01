@@ -82,7 +82,10 @@ class CameraPlugin extends CameraPlatform {
   html.Window? window = html.window;
 
   @override
-  Future<List<CameraDescription>> availableCameras() async {
+  Future<List<CameraDescription>> availableCameras({
+    bool physicalCameras = true,
+    bool logicalCameras = false,
+  }) async {
     try {
       final html.MediaDevices? mediaDevices = window?.navigator.mediaDevices;
       final List<CameraDescription> cameras = <CameraDescription>[];

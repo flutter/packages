@@ -177,7 +177,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns list of all available cameras and their descriptions.
   @override
-  Future<List<CameraDescription>> availableCameras() async {
+  Future<List<CameraDescription>> availableCameras({
+    bool physicalCameras = true,
+    bool logicalCameras = false,
+  }) async {
     final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
 
     processCameraProvider ??= await proxy.getProcessCameraProvider();
