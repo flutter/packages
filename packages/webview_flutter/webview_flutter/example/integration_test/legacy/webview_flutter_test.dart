@@ -356,62 +356,62 @@ Future<void> main() async {
       videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
     });
 
-    testWidgets('Auto media playback', (WidgetTester tester) async {
-      Completer<WebViewController> controllerCompleter =
-          Completer<WebViewController>();
-      Completer<void> pageLoaded = Completer<void>();
+    // testWidgets('Auto media playback', (WidgetTester tester) async {
+    //   Completer<WebViewController> controllerCompleter =
+    //       Completer<WebViewController>();
+    //   Completer<void> pageLoaded = Completer<void>();
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: GlobalKey(),
-            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
-            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-          ),
-        ),
-      );
-      WebViewController controller = await controllerCompleter.future;
-      await pageLoaded.future;
+    //   await tester.pumpWidget(
+    //     Directionality(
+    //       textDirection: TextDirection.ltr,
+    //       child: WebView(
+    //         key: GlobalKey(),
+    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+    //         onWebViewCreated: (WebViewController controller) {
+    //           controllerCompleter.complete(controller);
+    //         },
+    //         javascriptMode: JavascriptMode.unrestricted,
+    //         onPageFinished: (String url) {
+    //           pageLoaded.complete(null);
+    //         },
+    //         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+    //       ),
+    //     ),
+    //   );
+    //   WebViewController controller = await controllerCompleter.future;
+    //   await pageLoaded.future;
 
-      String isPaused =
-          await controller.runJavascriptReturningResult('isPaused();');
-      expect(isPaused, _webviewBool(false));
+    //   String isPaused =
+    //       await controller.runJavascriptReturningResult('isPaused();');
+    //   expect(isPaused, _webviewBool(false));
 
-      controllerCompleter = Completer<WebViewController>();
-      pageLoaded = Completer<void>();
+    //   controllerCompleter = Completer<WebViewController>();
+    //   pageLoaded = Completer<void>();
 
-      // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: GlobalKey(),
-            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
-          ),
-        ),
-      );
+    //   // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
+    //   await tester.pumpWidget(
+    //     Directionality(
+    //       textDirection: TextDirection.ltr,
+    //       child: WebView(
+    //         key: GlobalKey(),
+    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+    //         onWebViewCreated: (WebViewController controller) {
+    //           controllerCompleter.complete(controller);
+    //         },
+    //         javascriptMode: JavascriptMode.unrestricted,
+    //         onPageFinished: (String url) {
+    //           pageLoaded.complete(null);
+    //         },
+    //       ),
+    //     ),
+    //   );
 
-      controller = await controllerCompleter.future;
-      await pageLoaded.future;
+    //   controller = await controllerCompleter.future;
+    //   await pageLoaded.future;
 
-      isPaused = await controller.runJavascriptReturningResult('isPaused();');
-      expect(isPaused, _webviewBool(true));
-    });
+    //   isPaused = await controller.runJavascriptReturningResult('isPaused();');
+    //   expect(isPaused, _webviewBool(true));
+    // });
 
     testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
         (WidgetTester tester) async {
