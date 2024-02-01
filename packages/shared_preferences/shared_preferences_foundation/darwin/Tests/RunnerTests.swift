@@ -120,32 +120,32 @@ class RunnerTests: XCTestCase {
 
     let plugin = SharedPreferencesPlugin()
 
-    plugin.setBool(key: "aBool", value: true)
-    plugin.setDouble(key: "aDouble", value: 3.14)
-    plugin.setValue(key: "anInt", value: 42)
-    plugin.setValue(key: "aString", value: "hello world")
-    plugin.setValue(key: "aStringList", value: ["hello", "world"])
+    try plugin.setBool(key: "aBool", value: true, options: emptyOptions)
+    try plugin.setDouble(key: "aDouble", value: 3.14, options: emptyOptions)
+    try plugin.setValue(key: "anInt", value: 42, options: emptyOptions)
+    try plugin.setValue(key: "aString", value: "hello world", options: emptyOptions)
+    try plugin.setValue(key: "aStringList", value: ["hello", "world"], options: emptyOptions)
 
-    XCTAssertEqual(plugin.getBool(key: "aBool", options: emptyOptions), true)
+    XCTAssertEqual(try plugin.getBool(key: "aBool", options: emptyOptions), true)
     XCTAssertEqual(
-      plugin.getDouble(key: "aDouble", options: emptyOptions), 3.14, accuracy: 0.0001)
-    XCTAssertEqual(plugin.getInt(key: "anInt", options: emptyOptions), 42)
-    XCTAssertEqual(plugin.getString(key: "aString", options: emptyOptions), "hello world")
+      try plugin.getDouble(key: "aDouble", options: emptyOptions)!, 3.14, accuracy: 0.0001)
+    XCTAssertEqual(try plugin.getInt(key: "anInt", options: emptyOptions), 42)
+    XCTAssertEqual(try plugin.getString(key: "aString", options: emptyOptions), "hello world")
     XCTAssertEqual(
-      plugin.getStringList(key: "aStringList", options: emptyOptions), ["hello", "world"])
+      try plugin.getStringList(key: "aStringList", options: emptyOptions), ["hello", "world"])
   }
 
   func testAsyncGetAll() throws {
 
     let plugin = SharedPreferencesPlugin()
 
-    plugin.setBool(key: "aBool", value: true)
-    plugin.setDouble(key: "aDouble", value: 3.14)
-    plugin.setValue(key: "anInt", value: 42)
-    plugin.setValue(key: "aString", value: "hello world")
-    plugin.setValue(key: "aStringList", value: ["hello", "world"])
+    try plugin.setBool(key: "aBool", value: true, options: emptyOptions)
+    try plugin.setDouble(key: "aDouble", value: 3.14, options: emptyOptions)
+    try plugin.setValue(key: "anInt", value: 42, options: emptyOptions)
+    try plugin.setValue(key: "aString", value: "hello world", options: emptyOptions)
+    try plugin.setValue(key: "aStringList", value: ["hello", "world"], options: emptyOptions)
 
-    let storedValues = plugin.getAll(allowList: nil, options: emptyOptions)
+    let storedValues = try plugin.getAll(allowList: nil, options: emptyOptions)
     XCTAssertEqual(storedValues["aBool"] as? Bool, true)
     XCTAssertEqual(storedValues["aDouble"] as! Double, 3.14, accuracy: 0.0001)
     XCTAssertEqual(storedValues["anInt"] as? Int, 42)
@@ -158,13 +158,13 @@ class RunnerTests: XCTestCase {
 
     let plugin = SharedPreferencesPlugin()
 
-    plugin.setBool(key: "aBool", value: true)
-    plugin.setDouble(key: "aDouble", value: 3.14)
-    plugin.setValue(key: "anInt", value: 42)
-    plugin.setValue(key: "aString", value: "hello world")
-    plugin.setValue(key: "aStringList", value: ["hello", "world"])
+    try plugin.setBool(key: "aBool", value: true, options: emptyOptions)
+    try plugin.setDouble(key: "aDouble", value: 3.14, options: emptyOptions)
+    try plugin.setValue(key: "anInt", value: 42, options: emptyOptions)
+    try plugin.setValue(key: "aString", value: "hello world", options: emptyOptions)
+    try plugin.setValue(key: "aStringList", value: ["hello", "world"], options: emptyOptions)
 
-    let storedValues = plugin.getAll(allowList: ["aBool"], options: emptyOptions)
+    let storedValues = try plugin.getAll(allowList: ["aBool"], options: emptyOptions)
     XCTAssertEqual(storedValues["aBool"] as? Bool, true)
     XCTAssertNil(storedValues["aDouble"] ?? nil)
     XCTAssertNil(storedValues["anInt"] ?? nil)
@@ -176,16 +176,16 @@ class RunnerTests: XCTestCase {
   func testAsyncRemove() throws {
 
     let plugin = SharedPreferencesPlugin()
-    plugin.setString(key: testKey, value: testValue, options: emptyOptions)
+    try plugin.setValue(key: testKey, value: testValue, options: emptyOptions)
 
     // Make sure there is something to remove, so the test can't pass due to a set failure.
-    let preRemovalValue = plugin.getString(key: testKey, options: emptyOptions)
+    let preRemovalValue = try plugin.getString(key: testKey, options: emptyOptions)
     XCTAssertEqual(preRemovalValue, testValue)
 
     // Then verify that removing it works.
-    plugin.remove(key: testKey, options: emptyOptions)
+    try plugin.remove(key: testKey, options: emptyOptions)
 
-    let finalValue = plugin.getString(key: testKey, options: emptyOptions)
+    let finalValue = try plugin.getString(key: testKey, options: emptyOptions)
     XCTAssertNil(finalValue)
 
   }
@@ -193,16 +193,16 @@ class RunnerTests: XCTestCase {
   func testAsyncClearWithNoAllowlist() throws {
 
     let plugin = SharedPreferencesPlugin()
-    plugin.setString(key: testKey, value: testValue, options: emptyOptions)
+    try plugin.setValue(key: testKey, value: testValue, options: emptyOptions)
 
     // Make sure there is something to remove, so the test can't pass due to a set failure.
-    let preRemovalValue = plugin.getString(key: testKey, options: emptyOptions)
+    let preRemovalValue = try plugin.getString(key: testKey, options: emptyOptions)
     XCTAssertEqual(preRemovalValue, testValue)
 
     // Then verify that clearing works.
-    plugin.clear(allowList: nil, options: emptyOptions)
+    try plugin.clear(allowList: nil, options: emptyOptions)
 
-    let finalValue = plugin.getString(key: testKey, options: emptyOptions)
+    let finalValue = try plugin.getString(key: testKey, options: emptyOptions)
     XCTAssertNil(finalValue)
 
   }
@@ -211,18 +211,18 @@ class RunnerTests: XCTestCase {
 
     let plugin = SharedPreferencesPlugin()
 
-    plugin.setString(key: testKey, value: testValue, options: emptyOptions)
-    plugin.setString(key: testKeyToStay, value: testValue, options: emptyOptions)
+    try plugin.setValue(key: testKey, value: testValue, options: emptyOptions)
+    try plugin.setValue(key: testKeyTwo, value: testValue, options: emptyOptions)
 
     // Make sure there is something to clear, so the test can't pass due to a set failure.
-    let preRemovalValue = plugin.getString(key: testKey, options: emptyOptions)
+    let preRemovalValue = try plugin.getString(key: testKey, options: emptyOptions)
     XCTAssertEqual(preRemovalValue, testValue)
 
-    plugin.clear(allowList: [testKey], options: emptyOptions)
+    try plugin.clear(allowList: [testKey], options: emptyOptions)
 
-    let finalValueNil = plugin.getString(key: testKey, options: emptyOptions)
-    XCTAssertNil(finalValue)
-    let finalValueNotNil = plugin.getString(key: testKeyTwo, options: emptyOptions)
-    XCTAssertEqual(finalValue, testValue)
+    let finalValueNil = try plugin.getString(key: testKey, options: emptyOptions)
+    XCTAssertNil(finalValueNil)
+    let finalValueNotNil = try plugin.getString(key: testKeyTwo, options: emptyOptions)
+    XCTAssertEqual(finalValueNotNil, testValue)
   }
 }
