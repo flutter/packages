@@ -1,6 +1,12 @@
-## 0.5.0+29
+## 0.5.0+30
 
 * Adds documentation to clarify how the plugin uses resolution presets as target resolutions for CameraX.
+
+## 0.5.0+29
+
+* Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
+  that `createCamera` should have been called before building the preview. Fixes
+  https://github.com/flutter/flutter/issues/140567.
 
 ## 0.5.0+28
 
