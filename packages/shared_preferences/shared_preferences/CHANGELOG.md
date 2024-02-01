@@ -2,10 +2,6 @@
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
-## 2.2.3
-
-* Fixes `shared_preferences_web` issue where non-JSON formatted strings cause parsing errors when getAllWithParameters is called.
-
 ## 2.2.2
 
 * Updates documentation for `containsKey`.
