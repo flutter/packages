@@ -236,7 +236,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// will attempt to select for the [UseCase]s constructed in this method
   /// ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
   /// unavailable, a fallback behavior of targeting the next highest resolution
-  /// will be attempted. See  See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
+  /// will be attempted. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
   ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
