@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk version to 34.
+
 ## 1.0.36
 
 * Updates androidx.fragment version to 1.6.2.

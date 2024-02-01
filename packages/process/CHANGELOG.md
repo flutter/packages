@@ -1,5 +1,6 @@
 ## 5.0.2
 
+* Removes mention of the removed record/replay feature from README.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 * Fixes new lint warnings.
 
