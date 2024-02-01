@@ -31,10 +31,6 @@ dependencies:
 and thus, the plugin will fall back to 480p if configured with a
 `ResolutionPreset`.
 
-### Locking/Unlocking capture orientation \[[Issue #125915][125915]\]
-
-`lockCaptureOrientation` & `unLockCaptureOrientation` are unimplemented.
-
 ### Exposure mode, point, & offset configuration \[[Issue #120468][120468]\]
 
 `setExposureMode`, `setExposurePoint`, & `setExposureOffset` are unimplemented.
@@ -42,10 +38,6 @@ and thus, the plugin will fall back to 480p if configured with a
 ### Focus mode & point configuration \[[Issue #120467][120467]\]
 
 `setFocusMode` & `setFocusPoint` are unimplemented.
-
-### Zoom configuration \[[Issue #125371][125371]\]
-
-`setZoomLevel` is unimplemented.
 
 ### Setting maximum duration and stream options for video capture
 

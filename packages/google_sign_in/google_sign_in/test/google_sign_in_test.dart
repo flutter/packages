@@ -13,7 +13,7 @@ import 'package:mockito/mockito.dart';
 import 'google_sign_in_test.mocks.dart';
 
 /// Verify that [GoogleSignInAccount] can be mocked even though it's unused
-// ignore: avoid_implementing_value_types, must_be_immutable
+// ignore: avoid_implementing_value_types, must_be_immutable, unreachable_from_main
 class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
 
 @GenerateMocks(<Type>[GoogleSignInPlatform])
@@ -78,6 +78,28 @@ void main() {
       await googleSignIn.signIn();
 
       _verifyInit(mockPlatform, serverClientId: fakeServerClientId);
+      verify(mockPlatform.signIn());
+    });
+
+    test(
+        'clientId and serverClientId parameters is forwarded to implementation',
+        () async {
+      // #docregion GoogleSignIn
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        // The OAuth client id of your app. This is required.
+        clientId: 'Your Client ID',
+        // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
+        serverClientId: 'Your Server ID',
+      );
+      // #enddocregion GoogleSignIn
+
+      await googleSignIn.signIn();
+
+      _verifyInit(
+        mockPlatform,
+        clientId: 'Your Client ID',
+        serverClientId: 'Your Server ID',
+      );
       verify(mockPlatform.signIn());
     });
 

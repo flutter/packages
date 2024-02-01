@@ -436,16 +436,26 @@ abstract class PackageCommand extends Command<void> {
       packages = <String>{currentPackageName};
     }
 
-    Set<String> excludedPackageNames = getExcludedPackageNames();
-
-    final Set<String> filter =
-        _expandYamlInPackageList(getStringListArg(_filterPackagesArg));
-    if (filter.isNotEmpty) {
-      final List<String> sortedList = filter.toList()..sort();
+    final Set<String> excludedPackageNames = getExcludedPackageNames();
+    final bool hasFilter = argResults?.wasParsed(_filterPackagesArg) ?? false;
+    final Set<String>? excludeAllButPackageNames = hasFilter
+        ? _expandYamlInPackageList(getStringListArg(_filterPackagesArg))
+        : null;
+    if (excludeAllButPackageNames != null &&
+        excludeAllButPackageNames.isNotEmpty) {
+      final List<String> sortedList = excludeAllButPackageNames.toList()
+        ..sort();
       print('--$_filterPackagesArg is excluding packages that are not '
           'included in: ${sortedList.join(',')}');
-      excludedPackageNames =
-          excludedPackageNames.union(packages.difference(filter));
+    }
+    // Returns true if a package that could be identified by any of
+    // `possibleNames` should be excluded.
+    bool isExcluded(Set<String> possibleNames) {
+      if (excludedPackageNames.intersection(possibleNames).isNotEmpty) {
+        return true;
+      }
+      return excludeAllButPackageNames != null &&
+          excludeAllButPackageNames.intersection(possibleNames).isEmpty;
     }
 
     for (final Directory dir in <Directory>[
@@ -459,7 +469,7 @@ abstract class PackageCommand extends Command<void> {
           if (packages.isEmpty || packages.contains(p.basename(entity.path))) {
             yield PackageEnumerationEntry(
                 RepositoryPackage(entity as Directory),
-                excluded: excludedPackageNames.contains(entity.basename));
+                excluded: isExcluded(<String>{entity.basename}));
           }
         } else if (entity is Directory) {
           // Look for Dart packages under this top-level directory; this is the
@@ -481,9 +491,7 @@ abstract class PackageCommand extends Command<void> {
                   packages.intersection(possibleMatches).isNotEmpty) {
                 yield PackageEnumerationEntry(
                     RepositoryPackage(subdir as Directory),
-                    excluded: excludedPackageNames
-                        .intersection(possibleMatches)
-                        .isNotEmpty);
+                    excluded: isExcluded(possibleMatches));
               }
             }
           }

@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
 @property(nonatomic, copy, nullable) NSString *name;
 @property(nonatomic, copy, nullable) NSString *description;
 @property(nonatomic, assign) PGNCode code;
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
+@property(nonatomic, copy) NSDictionary<NSString *, NSString *> *data;
 @end
 
 /// The codec used by PGNExampleHostApi.
@@ -46,8 +46,8 @@ NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSString *)getHostLanguageWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)addNumber:(NSNumber *)a
-                        toNumber:(NSNumber *)b
+- (nullable NSNumber *)addNumber:(NSInteger)a
+                        toNumber:(NSInteger)b
                            error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)sendMessageMessage:(PGNMessageData *)message
                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;

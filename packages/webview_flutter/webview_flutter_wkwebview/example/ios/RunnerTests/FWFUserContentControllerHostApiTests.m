@@ -20,7 +20,7 @@
   [instanceManager addDartCreatedInstance:[[WKWebViewConfiguration alloc] init] withIdentifier:0];
 
   FlutterError *error;
-  [hostAPI createFromWebViewConfigurationWithIdentifier:@1 configurationIdentifier:@0 error:&error];
+  [hostAPI createFromWebViewConfigurationWithIdentifier:1 configurationIdentifier:0 error:&error];
   WKUserContentController *userContentController =
       (WKUserContentController *)[instanceManager instanceForIdentifier:1];
   XCTAssertTrue([userContentController isKindOfClass:[WKUserContentController class]]);
@@ -42,8 +42,8 @@
   [instanceManager addDartCreatedInstance:mockMessageHandler withIdentifier:1];
 
   FlutterError *error;
-  [hostAPI addScriptMessageHandlerForControllerWithIdentifier:@0
-                                            handlerIdentifier:@1
+  [hostAPI addScriptMessageHandlerForControllerWithIdentifier:0
+                                            handlerIdentifier:1
                                                        ofName:@"apple"
                                                         error:&error];
   OCMVerify([mockUserContentController addScriptMessageHandler:mockMessageHandler name:@"apple"]);
@@ -61,7 +61,7 @@
       [[FWFUserContentControllerHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI removeScriptMessageHandlerForControllerWithIdentifier:@0 name:@"apple" error:&error];
+  [hostAPI removeScriptMessageHandlerForControllerWithIdentifier:0 name:@"apple" error:&error];
   OCMVerify([mockUserContentController removeScriptMessageHandlerForName:@"apple"]);
   XCTAssertNil(error);
 }
@@ -77,7 +77,7 @@
       [[FWFUserContentControllerHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI removeAllScriptMessageHandlersForControllerWithIdentifier:@0 error:&error];
+  [hostAPI removeAllScriptMessageHandlersForControllerWithIdentifier:0 error:&error];
   OCMVerify([mockUserContentController removeAllScriptMessageHandlers]);
   XCTAssertNil(error);
 }
@@ -94,7 +94,7 @@
 
   FlutterError *error;
   [hostAPI
-      addUserScriptForControllerWithIdentifier:@0
+      addUserScriptForControllerWithIdentifier:0
                                     userScript:
                                         [FWFWKUserScriptData
                                              makeWithSource:@"runAScript"
@@ -102,7 +102,7 @@
                                                   [FWFWKUserScriptInjectionTimeEnumData
                                                       makeWithValue:
                                                           FWFWKUserScriptInjectionTimeEnumAtDocumentEnd]
-                                            isMainFrameOnly:@YES]
+                                            isMainFrameOnly:YES]
                                          error:&error];
 
   OCMVerify([mockUserContentController addUserScript:[OCMArg isKindOfClass:[WKUserScript class]]]);
@@ -120,7 +120,7 @@
       [[FWFUserContentControllerHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI removeAllUserScriptsForControllerWithIdentifier:@0 error:&error];
+  [hostAPI removeAllUserScriptsForControllerWithIdentifier:0 error:&error];
   OCMVerify([mockUserContentController removeAllUserScripts]);
   XCTAssertNil(error);
 }

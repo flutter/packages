@@ -137,7 +137,7 @@ class IosPlatformImages {
     imageData.then((PlatformImageData? image) {
       if (image == null) {
         scaleCompleter.completeError(
-          Exception("Image couldn't be found: $name"),
+          Exception("Scale couldn't be found to load image: $name"),
         );
         bytesCompleter.completeError(
           Exception("Image couldn't be found: $name"),

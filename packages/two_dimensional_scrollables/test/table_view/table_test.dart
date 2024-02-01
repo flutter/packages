@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Platform;
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -39,14 +37,6 @@ TableSpan getMouseTrackingSpan(
     cursor: SystemMouseCursors.cell,
   );
 }
-
-final bool masterChannel = !Platform.environment.containsKey('CHANNEL') ||
-    Platform.environment['CHANNEL'] == 'master';
-
-// TODO(Piinks): Remove once painting can be validated by mock_canvas in
-//  flutter_test, and re-enable web tests in https://github.com/flutter/flutter/issues/132782
-// Regenerate goldens on a Mac computer by running `flutter test --update-goldens`
-final bool runGoldens = Platform.isMacOS && masterChannel;
 
 void main() {
   group('TableView.builder', () {
@@ -329,6 +319,127 @@ void main() {
       expect(parentData.isVisible, isFalse);
     });
 
+    testWidgets('TableSpanPadding', (WidgetTester tester) async {
+      final Map<TableVicinity, UniqueKey> childKeys =
+          <TableVicinity, UniqueKey>{};
+      const TableSpan columnSpan = TableSpan(
+        extent: FixedTableSpanExtent(200),
+        padding: TableSpanPadding(
+          leading: 10.0,
+          trailing: 20.0,
+        ),
+      );
+      const TableSpan rowSpan = TableSpan(
+        extent: FixedTableSpanExtent(200),
+        padding: TableSpanPadding(
+          leading: 30.0,
+          trailing: 40.0,
+        ),
+      );
+      TableView tableView = TableView.builder(
+        rowCount: 2,
+        columnCount: 2,
+        columnBuilder: (_) => columnSpan,
+        rowBuilder: (_) => rowSpan,
+        cellBuilder: (_, TableVicinity vicinity) {
+          childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
+          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+        },
+      );
+      TableViewParentData parentDataOf(RenderBox child) {
+        return child.parentData! as TableViewParentData;
+      }
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      RenderTwoDimensionalViewport viewport = getViewport(
+        tester,
+        childKeys.values.first,
+      );
+      // first child
+      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableViewParentData parentData = parentDataOf(
+        viewport.firstChild!,
+      );
+      expect(parentData.vicinity, vicinity);
+      expect(
+        parentData.layoutOffset,
+        const Offset(
+          10.0, // Leading 10 pixels before first column
+          30.0, // leading 30 pixels before first row
+        ),
+      );
+      // after first child
+      vicinity = const TableVicinity(column: 1, row: 0);
+
+      parentData = parentDataOf(
+        viewport.childAfter(viewport.firstChild!)!,
+      );
+      expect(parentData.vicinity, vicinity);
+      expect(
+        parentData.layoutOffset,
+        const Offset(
+          240, // 10 leading + 200 first column + 20 trailing + 10 leading
+          30.0, // leading 30 pixels before first row
+        ),
+      );
+
+      // last child
+      vicinity = const TableVicinity(column: 1, row: 1);
+      parentData = parentDataOf(viewport.lastChild!);
+      expect(parentData.vicinity, vicinity);
+      expect(
+        parentData.layoutOffset,
+        const Offset(
+          240.0, // 10 leading + 200 first column + 20 trailing + 10 leading
+          300.0, // 30 leading + 200 first row + 40 trailing + 30 leading
+        ),
+      );
+
+      // reverse
+      tableView = TableView.builder(
+        rowCount: 2,
+        columnCount: 2,
+        verticalDetails: const ScrollableDetails.vertical(reverse: true),
+        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+        columnBuilder: (_) => columnSpan,
+        rowBuilder: (_) => rowSpan,
+        cellBuilder: (_, TableVicinity vicinity) {
+          childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
+          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      viewport = getViewport(
+        tester,
+        childKeys.values.first,
+      );
+      // first child
+      vicinity = const TableVicinity(column: 0, row: 0);
+      parentData = parentDataOf(
+        viewport.firstChild!,
+      );
+      expect(parentData.vicinity, vicinity);
+      // layoutOffset is later corrected for reverse in the paintOffset
+      expect(parentData.paintOffset, const Offset(590.0, 370.0));
+      // after first child
+      vicinity = const TableVicinity(column: 1, row: 0);
+
+      parentData = parentDataOf(
+        viewport.childAfter(viewport.firstChild!)!,
+      );
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.paintOffset, const Offset(360.0, 370.0));
+
+      // last child
+      vicinity = const TableVicinity(column: 1, row: 1);
+      parentData = parentDataOf(viewport.lastChild!);
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.paintOffset, const Offset(360.0, 100.0));
+    });
+
     testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
       int tapCounter = 0;
       // Rows
@@ -566,6 +677,190 @@ void main() {
       expect(columnExtent.delegate.viewportExtent, 800.0);
       expect(rowExtent.delegate.precedingExtent, 900.0);
       expect(rowExtent.delegate.viewportExtent, 600.0);
+    });
+
+    testWidgets('First row/column layout based on padding',
+        (WidgetTester tester) async {
+      // Huge padding, first span layout
+      // Column-wise
+      TableView tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        columnBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(100),
+          // This padding is so high, only the first column should be laid out.
+          padding: TableSpanPadding(leading: 2000),
+        ),
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      // All of these children are so offset by the column padding that they are
+      // outside of the viewport and cache extent, so all but the very
+      // first column is laid out. This is so that the ability to scroll the
+      // table through means such as focus traversal are still accessible.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 1'), findsNothing);
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+      expect(find.text('Row: 0 Column: 2'), findsNothing);
+      expect(find.text('Row: 1 Column: 2'), findsNothing);
+
+      // Row-wise
+      tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        // This padding is so high, no children should be laid out.
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(100),
+          padding: TableSpanPadding(leading: 2000),
+        ),
+        columnBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      // All of these children are so offset by the row padding that they are
+      // outside of the viewport and cache extent, so all but the very
+      // first row is laid out. This is so that the ability to scroll the
+      // table through means such as focus traversal are still accessible.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 0'), findsNothing);
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+      expect(find.text('Row: 2 Column: 0'), findsNothing);
+      expect(find.text('Row: 2 Column: 1'), findsNothing);
+    });
+
+    testWidgets('lazy layout accounts for gradually accrued padding',
+        (WidgetTester tester) async {
+      // Check with gradually accrued paddings
+      // Column-wise
+      TableView tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        columnBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+        ),
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 200,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      // No padding here, check all lazily laid out columns in one row.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 2'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 3'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 4'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 5'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 6'), findsNothing);
+
+      tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        columnBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+          padding: TableSpanPadding(trailing: 200),
+        ),
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 200,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      // Fewer children laid out.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 2'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 3'), findsNothing);
+      expect(find.text('Row: 0 Column: 4'), findsNothing);
+      expect(find.text('Row: 0 Column: 5'), findsNothing);
+      expect(find.text('Row: 0 Column: 6'), findsNothing);
+
+      // Row-wise
+      tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+        ),
+        columnBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 200,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      // No padding here, check all lazily laid out rows in one column.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 2 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 3 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 4 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 5 Column: 0'), findsNothing);
+
+      tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+          padding: TableSpanPadding(trailing: 200),
+        ),
+        columnBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 200,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      // Fewer children laid out.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 2 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 3 Column: 0'), findsNothing);
+      expect(find.text('Row: 4 Column: 0'), findsNothing);
+      expect(find.text('Row: 5 Column: 0'), findsNothing);
+
+      // Check padding with pinned rows and columns
+      // TODO(Piinks): Pinned rows/columns are not lazily laid out, should check
+      //  for assertions in this case. Will add in https://github.com/flutter/flutter/issues/136833
     });
 
     testWidgets('regular layout - no pinning', (WidgetTester tester) async {
@@ -948,16 +1243,16 @@ void main() {
 
     testWidgets('paints decorations in correct order',
         (WidgetTester tester) async {
-      // TODO(Piinks): Rewrite this to remove golden files from this repo when
-      //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
-      // foreground, background, and precedence per mainAxis
       TableView tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
+          padding: index == 0 ? const TableSpanPadding(trailing: 10) : null,
+          foregroundDecoration: TableSpanDecoration(
+            consumeSpanPadding: false,
+            borderRadius: BorderRadius.circular(10.0),
+            border: const TableSpanBorder(
               trailing: BorderSide(
                 color: Colors.orange,
                 width: 3,
@@ -965,13 +1260,18 @@ void main() {
             ),
           ),
           backgroundDecoration: TableSpanDecoration(
+            // consumePadding true by default
             color: index.isEven ? Colors.red : null,
+            borderRadius: BorderRadius.circular(30.0),
           ),
         ),
         rowBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
+          padding: index == 1 ? const TableSpanPadding(leading: 10) : null,
+          foregroundDecoration: TableSpanDecoration(
+            // consumePadding true by default
+            borderRadius: BorderRadius.circular(30.0),
+            border: const TableSpanBorder(
               leading: BorderSide(
                 color: Colors.green,
                 width: 3,
@@ -980,22 +1280,132 @@ void main() {
           ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isOdd ? Colors.blue : null,
+            borderRadius: BorderRadius.circular(30.0),
+            consumeSpanPadding: false,
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(
-            dimension: 200,
-            child: Center(child: FlutterLogo()),
+          return Container(
+            height: 200,
+            width: 200,
+            color: Colors.grey.withOpacity(0.5),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(TableView),
-        matchesGoldenFile('goldens/tableSpanDecoration.defaultMainAxis.png'),
-        skip: !runGoldens,
+      expect(
+        find.byType(TableViewport),
+        paints
+          // background row
+          ..rrect(
+            rrect: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 210.0, 410.0, 410.0),
+              const Radius.circular(30.0),
+            ),
+            color: const Color(0xff2196f3),
+          )
+          // background column
+          ..rrect(
+            rrect: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 0.0, 210.0, 410.0),
+              const Radius.circular(30.0),
+            ),
+            color: const Color(0xfff44336),
+          )
+          // child at 0,0
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 0,1
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 210.0, 200.0, 410.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,0
+          ..rect(
+            rect: const Rect.fromLTRB(210.0, 0.0, 410.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,1
+          ..rect(
+            rect: const Rect.fromLTRB(210.0, 210.0, 410.0, 410.0),
+            color: const Color(0x809e9e9e),
+          )
+          // foreground row border (1)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 0.0, 410.0, 200.0),
+              const Radius.circular(30.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              0.0,
+              3.0,
+              410.0,
+              200.0,
+              topLeft: const Radius.elliptical(30.0, 27.0),
+              topRight: const Radius.elliptical(30.0, 27.0),
+              bottomRight: const Radius.circular(30.0),
+              bottomLeft: const Radius.circular(30.0),
+            ),
+            color: const Color(0xff4caf50),
+          )
+          // foreground row border (2)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 200.0, 410.0, 410.0),
+              const Radius.circular(30.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              0.0,
+              203.0,
+              410.0,
+              410.0,
+              topLeft: const Radius.elliptical(30.0, 27.0),
+              topRight: const Radius.elliptical(30.0, 27.0),
+              bottomRight: const Radius.circular(30.0),
+              bottomLeft: const Radius.circular(30.0),
+            ),
+            color: const Color(0xff4caf50),
+          )
+          // foreground column border (1)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 0.0, 200.0, 410.0),
+              const Radius.circular(10.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              0.0,
+              0.0,
+              197.0,
+              410.0,
+              topLeft: const Radius.circular(10.0),
+              topRight: const Radius.elliptical(7.0, 10.0),
+              bottomRight: const Radius.elliptical(7.0, 10.0),
+              bottomLeft: const Radius.circular(10.0),
+            ),
+            color: const Color(0xffff9800),
+          )
+          // foreground column border (2)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(210.0, 0.0, 410.0, 410.0),
+              const Radius.circular(10.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              210.0,
+              0.0,
+              407.0,
+              410.0,
+              topLeft: const Radius.circular(10.0),
+              topRight: const Radius.elliptical(7.0, 10.0),
+              bottomRight: const Radius.elliptical(7.0, 10.0),
+              bottomLeft: const Radius.circular(10.0),
+            ),
+            color: const Color(0xffff9800),
+          ),
       );
 
       // Switch main axis
@@ -1032,76 +1442,180 @@ void main() {
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(
-            dimension: 200,
-            child: Center(child: FlutterLogo()),
+          return Container(
+            height: 200,
+            width: 200,
+            color: Colors.grey.withOpacity(0.5),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(TableView),
-        matchesGoldenFile('goldens/tableSpanDecoration.horizontalMainAxis.png'),
-        skip: !runGoldens,
+      expect(
+        find.byType(TableViewport),
+        paints
+          // background column goes first this time
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 400.0),
+            color: const Color(0xfff44336),
+          )
+          // background row
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 200.0, 400.0, 400.0),
+            color: const Color(0xff2196f3),
+          )
+          // child at 0,0
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,0
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 200.0, 200.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 0,1
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, 0.0, 400.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,1
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, 200.0, 400.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          // foreground column border (1)
+          ..path(
+            includes: <Offset>[
+              const Offset(200.0, 0.0),
+              const Offset(200.0, 200.0),
+              const Offset(200.0, 400.0),
+            ],
+            color: const Color(0xffff9800),
+          )
+          // foreground column border (2)
+          ..path(
+            includes: <Offset>[
+              const Offset(400.0, 0.0),
+              const Offset(400.0, 200.0),
+              const Offset(400.0, 400.0),
+            ],
+            color: const Color(0xffff9800),
+          )
+          // foreground row border
+          ..path(
+            includes: <Offset>[
+              Offset.zero,
+              const Offset(200.0, 0.0),
+              const Offset(400.0, 0.0),
+            ],
+            color: const Color(0xff4caf50),
+          )
+          // foreground row border(2)
+          ..path(
+            includes: <Offset>[
+              const Offset(0.0, 200.0),
+              const Offset(200.0, 200.0),
+              const Offset(400.0, 200.0),
+            ],
+            color: const Color(0xff4caf50),
+          ),
       );
     });
 
-    testWidgets('paint rects are correct when reversed and pinned',
+    testWidgets('child paint rects are correct when reversed and pinned',
         (WidgetTester tester) async {
-      // TODO(Piinks): Rewrite this to remove golden files from this repo when
-      //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
-      // foreground, background, and precedence per mainAxis
-      final TableView tableView = TableView.builder(
+      // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
+      TableView tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder: (int index) => TableSpan(
-          extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
-              trailing: BorderSide(
-                color: Colors.orange,
-                width: 3,
-              ),
-            ),
-          ),
-          backgroundDecoration: TableSpanDecoration(
-            color: index.isEven ? Colors.red : null,
-          ),
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
         ),
-        rowBuilder: (int index) => TableSpan(
-          extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
-              leading: BorderSide(
-                color: Colors.green,
-                width: 3,
-              ),
-            ),
-          ),
-          backgroundDecoration: TableSpanDecoration(
-            color: index.isOdd ? Colors.blue : null,
-          ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(
-            dimension: 200,
-            child: Center(child: FlutterLogo()),
+          return Container(
+            height: 200,
+            width: 200,
+            color: Colors.grey.withOpacity(0.5),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(TableView),
-        matchesGoldenFile('goldens/reversed.pinned.painting.png'),
-        skip: !runGoldens,
+      // All children are painted in the right place
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 200.0, 600.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 200.0, 800.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 400.0, 600.0, 600.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0),
+            color: const Color(0x809e9e9e),
+          ),
+      );
+
+      // Only one axis reversed - Regression test for https://github.com/flutter/flutter/issues/136897
+      tableView = TableView.builder(
+        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+        rowCount: 2,
+        pinnedRowCount: 1,
+        columnCount: 2,
+        pinnedColumnCount: 1,
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
+        ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
+        ),
+        cellBuilder: (_, TableVicinity vicinity) {
+          return Container(
+            height: 200,
+            width: 200,
+            color: Colors.grey.withOpacity(0.5),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 200.0, 600.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 200.0, 800.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 0.0, 600.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 0.0, 800.0, 200.0),
+            color: const Color(0x809e9e9e),
+          ),
       );
     });
 

@@ -23,7 +23,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   [instanceManager addDartCreatedInstance:[[WKWebViewConfiguration alloc] init] withIdentifier:0];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@1 configurationIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:1 configurationIdentifier:0 error:&error];
   WKWebView *webView = (WKWebView *)[instanceManager instanceForIdentifier:1];
   XCTAssertTrue([webView isKindOfClass:[WKWebView class]]);
   XCTAssertNil(error);
@@ -44,7 +44,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
                                                            httpMethod:@"get"
                                                              httpBody:nil
                                                   allHttpHeaderFields:@{@"a" : @"header"}];
-  [hostAPI loadRequestForWebViewWithIdentifier:@0 request:requestData error:&error];
+  [hostAPI loadRequestForWebViewWithIdentifier:0 request:requestData error:&error];
 
   NSURL *url = [NSURL URLWithString:@"https://www.flutter.dev"];
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
@@ -70,7 +70,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
                                                            httpMethod:nil
                                                              httpBody:nil
                                                   allHttpHeaderFields:@{}];
-  [hostAPI loadRequestForWebViewWithIdentifier:@0 request:requestData error:&error];
+  [hostAPI loadRequestForWebViewWithIdentifier:0 request:requestData error:&error];
   // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
   // fail to parse URLs, so the test must allow for either outcome.
   if (error) {
@@ -95,7 +95,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setCustomUserAgentForWebViewWithIdentifier:@0 userAgent:@"userA" error:&error];
+  [hostAPI setCustomUserAgentForWebViewWithIdentifier:0 userAgent:@"userA" error:&error];
   OCMVerify([mockWebView setCustomUserAgent:@"userA"]);
   XCTAssertNil(error);
 }
@@ -112,7 +112,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  XCTAssertEqualObjects([hostAPI URLForWebViewWithIdentifier:@0 error:&error],
+  XCTAssertEqualObjects([hostAPI URLForWebViewWithIdentifier:0 error:&error],
                         @"https://www.flutter.dev/");
   XCTAssertNil(error);
 }
@@ -129,7 +129,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  XCTAssertEqualObjects([hostAPI canGoBackForWebViewWithIdentifier:@0 error:&error], @YES);
+  XCTAssertEqualObjects([hostAPI canGoBackForWebViewWithIdentifier:0 error:&error], @YES);
   XCTAssertNil(error);
 }
 
@@ -147,7 +147,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   [instanceManager addDartCreatedInstance:mockDelegate withIdentifier:1];
 
   FlutterError *error;
-  [hostAPI setUIDelegateForWebViewWithIdentifier:@0 delegateIdentifier:@1 error:&error];
+  [hostAPI setUIDelegateForWebViewWithIdentifier:0 delegateIdentifier:@1 error:&error];
   OCMVerify([mockWebView setUIDelegate:mockDelegate]);
   XCTAssertNil(error);
 }
@@ -166,7 +166,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   [instanceManager addDartCreatedInstance:mockDelegate withIdentifier:1];
   FlutterError *error;
 
-  [hostAPI setNavigationDelegateForWebViewWithIdentifier:@0 delegateIdentifier:@1 error:&error];
+  [hostAPI setNavigationDelegateForWebViewWithIdentifier:0 delegateIdentifier:@1 error:&error];
   OCMVerify([mockWebView setNavigationDelegate:mockDelegate]);
   XCTAssertNil(error);
 }
@@ -183,7 +183,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  XCTAssertEqualObjects([hostAPI estimatedProgressForWebViewWithIdentifier:@0 error:&error], @34.0);
+  XCTAssertEqualObjects([hostAPI estimatedProgressForWebViewWithIdentifier:0 error:&error], @34.0);
   XCTAssertNil(error);
 }
 
@@ -198,7 +198,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI loadHTMLForWebViewWithIdentifier:@0
+  [hostAPI loadHTMLForWebViewWithIdentifier:0
                                  HTMLString:@"myString"
                                     baseURL:@"myBaseUrl"
                                       error:&error];
@@ -217,7 +217,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI loadFileForWebViewWithIdentifier:@0
+  [hostAPI loadFileForWebViewWithIdentifier:0
                                     fileURL:@"myFolder/apple.txt"
                               readAccessURL:@"myFolder"
                                       error:&error];
@@ -249,7 +249,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
                  assetManager:mockAssetManager];
 
   FlutterError *error;
-  [hostAPI loadAssetForWebViewWithIdentifier:@0 assetKey:@"assets/index.html" error:&error];
+  [hostAPI loadAssetForWebViewWithIdentifier:0 assetKey:@"assets/index.html" error:&error];
 
   XCTAssertNil(error);
   OCMVerify([mockWebView
@@ -269,7 +269,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  XCTAssertEqualObjects([hostAPI canGoForwardForWebViewWithIdentifier:@0 error:&error], @NO);
+  XCTAssertEqualObjects([hostAPI canGoForwardForWebViewWithIdentifier:0 error:&error], @NO);
   XCTAssertNil(error);
 }
 
@@ -284,7 +284,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI goBackForWebViewWithIdentifier:@0 error:&error];
+  [hostAPI goBackForWebViewWithIdentifier:0 error:&error];
   OCMVerify([mockWebView goBack]);
   XCTAssertNil(error);
 }
@@ -300,7 +300,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI goForwardForWebViewWithIdentifier:@0 error:&error];
+  [hostAPI goForwardForWebViewWithIdentifier:0 error:&error];
   OCMVerify([mockWebView goForward]);
   XCTAssertNil(error);
 }
@@ -316,7 +316,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI reloadWebViewWithIdentifier:@0 error:&error];
+  [hostAPI reloadWebViewWithIdentifier:0 error:&error];
   OCMVerify([mockWebView reload]);
   XCTAssertNil(error);
 }
@@ -333,7 +333,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  XCTAssertEqualObjects([hostAPI titleForWebViewWithIdentifier:@0 error:&error], @"myTitle");
+  XCTAssertEqualObjects([hostAPI titleForWebViewWithIdentifier:0 error:&error], @"myTitle");
   XCTAssertNil(error);
 }
 
@@ -348,7 +348,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setAllowsBackForwardForWebViewWithIdentifier:@0 isAllowed:@YES error:&error];
+  [hostAPI setAllowsBackForwardForWebViewWithIdentifier:0 isAllowed:YES error:&error];
   OCMVerify([mockWebView setAllowsBackForwardNavigationGestures:YES]);
   XCTAssertNil(error);
 }
@@ -369,7 +369,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
 
   NSString __block *returnValue;
   FlutterError __block *returnError;
-  [hostAPI evaluateJavaScriptForWebViewWithIdentifier:@0
+  [hostAPI evaluateJavaScriptForWebViewWithIdentifier:0
                                      javaScriptString:@"runJavaScript"
                                            completion:^(id result, FlutterError *error) {
                                              returnValue = result;
@@ -403,7 +403,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
 
   NSString __block *returnValue;
   FlutterError __block *returnError;
-  [hostAPI evaluateJavaScriptForWebViewWithIdentifier:@0
+  [hostAPI evaluateJavaScriptForWebViewWithIdentifier:0
                                      javaScriptString:@"runJavaScript"
                                            completion:^(id result, FlutterError *error) {
                                              returnValue = result;
@@ -413,7 +413,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   XCTAssertNil(returnValue);
   FWFNSErrorData *errorData = returnError.details;
   XCTAssertTrue([errorData isKindOfClass:[FWFNSErrorData class]]);
-  XCTAssertEqualObjects(errorData.code, @0);
+  XCTAssertEqual(errorData.code, 0);
   XCTAssertEqualObjects(errorData.domain, @"errorDomain");
   XCTAssertEqualObjects(errorData.userInfo, @{NSLocalizedDescriptionKey : @"description"});
 }
@@ -427,7 +427,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   [instanceManager addDartCreatedInstance:[[WKWebViewConfiguration alloc] init] withIdentifier:0];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@1 configurationIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:1 configurationIdentifier:0 error:&error];
   FWFWebView *webView = (FWFWebView *)[instanceManager instanceForIdentifier:1];
 
   XCTAssertEqual(webView.scrollView.contentInsetAdjustmentBehavior,
@@ -444,7 +444,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   [instanceManager addDartCreatedInstance:[[WKWebViewConfiguration alloc] init] withIdentifier:0];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@1 configurationIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:1 configurationIdentifier:0 error:&error];
   FWFWebView *webView = (FWFWebView *)[instanceManager instanceForIdentifier:1];
 
   XCTAssertFalse(webView.scrollView.automaticallyAdjustsScrollIndicatorInsets);
@@ -483,7 +483,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setInspectableForWebViewWithIdentifier:@0 inspectable:@YES error:&error];
+  [hostAPI setInspectableForWebViewWithIdentifier:0 inspectable:YES error:&error];
   OCMVerify([mockWebView setInspectable:YES]);
   XCTAssertNil(error);
 }
@@ -502,7 +502,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  XCTAssertEqualObjects([hostAPI customUserAgentForWebViewWithIdentifier:@0 error:&error],
+  XCTAssertEqualObjects([hostAPI customUserAgentForWebViewWithIdentifier:0 error:&error],
                         userAgent);
   XCTAssertNil(error);
 }

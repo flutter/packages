@@ -16,9 +16,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
@@ -95,14 +97,16 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options) {
+  public @NonNull Boolean openUrlInApp(
+      @NonNull String url, @NonNull Boolean allowCustomTab, @NonNull WebViewOptions options) {
     ensureActivity();
     assert activity != null;
 
     Bundle headersBundle = extractBundle(options.getHeaders());
 
-    // Try to launch using Custom Tabs if they have the necessary functionality.
-    if (!containsRestrictedHeader(options.getHeaders())) {
+    // Try to launch using Custom Tabs if they have the necessary functionality, unless the caller
+    // specifically requested a web view.
+    if (allowCustomTab && !containsRestrictedHeader(options.getHeaders())) {
       Uri uri = Uri.parse(url);
       if (openCustomTab(activity, uri, headersBundle)) {
         return true;
@@ -129,6 +133,11 @@ final class UrlLauncher implements UrlLauncherApi {
   @Override
   public void closeWebView() {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
+  }
+
+  @Override
+  public @NonNull Boolean supportsCustomTabs() {
+    return CustomTabsClient.getPackageName(applicationContext, Collections.emptyList()) != null;
   }
 
   private static boolean openCustomTab(

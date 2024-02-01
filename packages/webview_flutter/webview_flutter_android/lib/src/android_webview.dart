@@ -769,6 +769,7 @@ class WebViewClient extends JavaObject {
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -789,6 +790,7 @@ class WebViewClient extends JavaObject {
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -937,6 +939,14 @@ class WebViewClient extends JavaObject {
   final void Function(WebView webView, String url, bool isReload)?
       doUpdateVisitedHistory;
 
+  /// This callback is only called for requests that require HTTP authentication.
+  final void Function(
+    WebView webView,
+    HttpAuthHandler handler,
+    String host,
+    String realm,
+  )? onReceivedHttpAuthRequest;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -965,6 +975,7 @@ class WebViewClient extends JavaObject {
       requestLoading: requestLoading,
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
+      onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -1054,6 +1065,9 @@ class WebChromeClient extends JavaObject {
     this.onShowCustomView,
     this.onHideCustomView,
     this.onConsoleMessage,
+    this.onJsAlert,
+    this.onJsConfirm,
+    this.onJsPrompt,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -1076,6 +1090,9 @@ class WebChromeClient extends JavaObject {
     this.onShowCustomView,
     this.onHideCustomView,
     this.onConsoleMessage,
+    this.onJsAlert,
+    this.onJsConfirm,
+    this.onJsPrompt,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -1133,6 +1150,19 @@ class WebChromeClient extends JavaObject {
   final void Function(WebChromeClient instance, ConsoleMessage message)?
       onConsoleMessage;
 
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript alert() dialog.
+  final Future<void> Function(String url, String message)? onJsAlert;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript confirm() dialog.
+  final Future<bool> Function(String url, String message)? onJsConfirm;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript prompt() dialog.
+  final Future<String> Function(
+      String url, String message, String defaultValue)? onJsPrompt;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
   ///
@@ -1189,6 +1219,78 @@ class WebChromeClient extends JavaObject {
     );
   }
 
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsAlert(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsAlert(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires [onJsAlert] to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnJsAlert(
+    bool value,
+  ) {
+    if (value && onJsAlert == null) {
+      throw StateError(
+        'Setting this to true requires `onJsAlert` to be nonnull.',
+      );
+    }
+    return api.setSynchronousReturnValueForOnJsAlertFromInstance(this, value);
+  }
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsConfirm(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsConfirm(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires [onJsConfirm] to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnJsConfirm(
+    bool value,
+  ) {
+    if (value && onJsConfirm == null) {
+      throw StateError(
+        'Setting this to true requires `onJsConfirm` to be nonnull.',
+      );
+    }
+    return api.setSynchronousReturnValueForOnJsConfirmFromInstance(this, value);
+  }
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsPrompt(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsPrompt(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires [onJsPrompt] to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnJsPrompt(
+    bool value,
+  ) {
+    if (value && onJsPrompt == null) {
+      throw StateError(
+        'Setting this to true requires `onJsPrompt` to be nonnull.',
+      );
+    }
+    return api.setSynchronousReturnValueForOnJsPromptFromInstance(this, value);
+  }
+
   @override
   WebChromeClient copy() {
     return WebChromeClient.detached(
@@ -1200,6 +1302,9 @@ class WebChromeClient extends JavaObject {
       onShowCustomView: onShowCustomView,
       onHideCustomView: onHideCustomView,
       onConsoleMessage: onConsoleMessage,
+      onJsAlert: onJsAlert,
+      onJsConfirm: onJsConfirm,
+      onJsPrompt: onJsPrompt,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -1494,5 +1599,43 @@ class CustomViewCallback extends JavaObject {
       binaryMessenger: _customViewCallbackApi.binaryMessenger,
       instanceManager: _customViewCallbackApi.instanceManager,
     );
+  }
+}
+
+/// Represents a request for HTTP authentication.
+///
+/// Instances of this class are created by the [WebView] and passed to
+/// [WebViewClient.onReceivedHttpAuthRequest]. The host application must call
+/// either [HttpAuthHandler.proceed] or [HttpAuthHandler.cancel] to set the
+/// WebView's response to the request.
+class HttpAuthHandler extends JavaObject {
+  /// Constructs a [HttpAuthHandler].
+  HttpAuthHandler({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// Pigeon Host Api implementation for [HttpAuthHandler].
+  @visibleForTesting
+  static HttpAuthHandlerHostApiImpl api = HttpAuthHandlerHostApiImpl();
+
+  /// Instructs the WebView to cancel the authentication request.
+  Future<void> cancel() {
+    return api.cancelFromInstance(this);
+  }
+
+  /// Instructs the WebView to proceed with the authentication with the provided
+  /// credentials.
+  Future<void> proceed(String username, String password) {
+    return api.proceedFromInstance(this, username, password);
+  }
+
+  /// Gets whether the credentials stored for the current host are suitable for
+  /// use.
+  ///
+  /// Credentials are not suitable if they have previously been rejected by the
+  /// server for the current request.
+  Future<bool> useHttpAuthUsernamePassword() {
+    return api.useHttpAuthUsernamePasswordFromInstance(this);
   }
 }

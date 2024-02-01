@@ -14,8 +14,7 @@ void main() {
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
             SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
   });
@@ -108,6 +107,22 @@ void main() {
       expect(await SKPaymentQueueWrapper.canMakePayments(), false);
     });
 
+    test('storefront returns valid SKStoreFrontWrapper object', () async {
+      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
+      expect(
+          await queue.storefront(),
+          SKStorefrontWrapper.fromJson(const <String, dynamic>{
+            'countryCode': 'USA',
+            'identifier': 'unique_identifier',
+          }));
+    });
+
+    test('storefront returns null', () async {
+      fakeStoreKitPlatform.testReturnNull = true;
+      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
+      expect(await queue.storefront(), isNull);
+    });
+
     test('transactions should return a valid list of transactions', () async {
       expect(await SKPaymentQueueWrapper().transactions(), isNotEmpty);
     });
@@ -187,8 +202,7 @@ void main() {
 
 class FakeStoreKitPlatform {
   FakeStoreKitPlatform() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, onMethodCall);
   }
   // get product request
@@ -250,6 +264,14 @@ class FakeStoreKitPlatform {
       case '-[SKPaymentQueue transactions]':
         return Future<List<dynamic>>.value(
             <dynamic>[buildTransactionMap(dummyTransaction)]);
+      case '-[SKPaymentQueue storefront]':
+        if (testReturnNull) {
+          return Future<dynamic>.value();
+        }
+        return Future<Map<String, dynamic>>.value(const <String, dynamic>{
+          'countryCode': 'USA',
+          'identifier': 'unique_identifier',
+        });
       case '-[InAppPurchasePlugin addPayment:result:]':
         payments.add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(
             call.arguments as Map<dynamic, dynamic>)));
@@ -307,9 +329,3 @@ class TestPaymentTransactionObserver extends SKTransactionObserverWrapper {
     return true;
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

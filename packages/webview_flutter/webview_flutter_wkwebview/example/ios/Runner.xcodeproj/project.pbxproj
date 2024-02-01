@@ -11,6 +11,9 @@
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		8F4FF949299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4FF948299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */; };
 		8F4FF94B29AC223F000A6586 /* FWFURLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4FF94A29AC223F000A6586 /* FWFURLTests.m */; };
+		8F562F902A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F562F8F2A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m */; };
+		8F562F922A56C04F00C2BED6 /* FWFURLProtectionSpaceHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F562F912A56C04F00C2BED6 /* FWFURLProtectionSpaceHostApiTests.m */; };
+		8F562F942A56C07B00C2BED6 /* FWFURLAuthenticationChallengeHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F562F932A56C07B00C2BED6 /* FWFURLAuthenticationChallengeHostApiTests.m */; };
 		8F78EAAA2A02CB9100C2E520 /* FWFErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F78EAA92A02CB9100C2E520 /* FWFErrorTests.m */; };
 		8FA6A87928062CD000A4B183 /* FWFInstanceManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA6A87828062CD000A4B183 /* FWFInstanceManagerTests.m */; };
 		8FB79B5328134C3100C101D3 /* FWFWebViewHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FB79B5228134C3100C101D3 /* FWFWebViewHostApiTests.m */; };
@@ -81,6 +84,9 @@
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8F4FF948299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FWFWebViewFlutterWKWebViewExternalAPITests.m; sourceTree = "<group>"; };
 		8F4FF94A29AC223F000A6586 /* FWFURLTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLTests.m; sourceTree = "<group>"; };
+		8F562F8F2A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLCredentialHostApiTests.m; sourceTree = "<group>"; };
+		8F562F912A56C04F00C2BED6 /* FWFURLProtectionSpaceHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLProtectionSpaceHostApiTests.m; sourceTree = "<group>"; };
+		8F562F932A56C07B00C2BED6 /* FWFURLAuthenticationChallengeHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFURLAuthenticationChallengeHostApiTests.m; sourceTree = "<group>"; };
 		8F78EAA92A02CB9100C2E520 /* FWFErrorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFErrorTests.m; sourceTree = "<group>"; };
 		8FA6A87828062CD000A4B183 /* FWFInstanceManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFInstanceManagerTests.m; sourceTree = "<group>"; };
 		8FB79B5228134C3100C101D3 /* FWFWebViewHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFWebViewHostApiTests.m; sourceTree = "<group>"; };
@@ -167,6 +173,9 @@
 				8FB79B902820BAC700C101D3 /* FWFUIViewHostApiTests.m */,
 				8FB79B962821985200C101D3 /* FWFObjectHostApiTests.m */,
 				8F4FF94A29AC223F000A6586 /* FWFURLTests.m */,
+				8F562F8F2A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m */,
+				8F562F912A56C04F00C2BED6 /* FWFURLProtectionSpaceHostApiTests.m */,
+				8F562F932A56C07B00C2BED6 /* FWFURLAuthenticationChallengeHostApiTests.m */,
 				8F78EAA92A02CB9100C2E520 /* FWFErrorTests.m */,
 			);
 			path = RunnerTests;
@@ -283,6 +292,7 @@
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
+				699F6E4617F8F25892A802F1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -318,7 +328,7 @@
 			isa = PBXProject;
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "The Flutter Authors";
 				TargetAttributes = {
 					68BDCAE823C3F7CB00D9C032 = {
@@ -327,7 +337,6 @@
 					};
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 7624MWN53C;
 					};
 					F7151F73266057800028CB91 = {
 						CreatedOnToolsVersion = 12.5;
@@ -402,6 +411,26 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" thin\n";
 		};
+		699F6E4617F8F25892A802F1 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/path_provider_foundation/path_provider_foundation_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/path_provider_foundation_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/webview_flutter_wkwebview_privacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		6F536C27DD48B395A30EBB65 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -474,12 +503,15 @@
 				8FB79B852820A3A400C101D3 /* FWFUIDelegateHostApiTests.m in Sources */,
 				8FB79B972821985200C101D3 /* FWFObjectHostApiTests.m in Sources */,
 				8FB79B672820453400C101D3 /* FWFHTTPCookieStoreHostApiTests.m in Sources */,
+				8F562F942A56C07B00C2BED6 /* FWFURLAuthenticationChallengeHostApiTests.m in Sources */,
 				8FB79B5328134C3100C101D3 /* FWFWebViewHostApiTests.m in Sources */,
 				8FB79B73282096B500C101D3 /* FWFScriptMessageHandlerHostApiTests.m in Sources */,
 				8FB79B7928209D1300C101D3 /* FWFUserContentControllerHostApiTests.m in Sources */,
+				8F562F902A56C02D00C2BED6 /* FWFURLCredentialHostApiTests.m in Sources */,
 				8F4FF949299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m in Sources */,
 				8FB79B6B28204EE500C101D3 /* FWFWebsiteDataStoreHostApiTests.m in Sources */,
 				8FB79B8F2820BAB300C101D3 /* FWFScrollViewHostApiTests.m in Sources */,
+				8F562F922A56C04F00C2BED6 /* FWFURLProtectionSpaceHostApiTests.m in Sources */,
 				8FB79B912820BAC700C101D3 /* FWFUIViewHostApiTests.m in Sources */,
 				8FB79B55281B24F600C101D3 /* FWFDataConvertersTests.m in Sources */,
 				8FB79B6D2820533B00C101D3 /* FWFWebViewConfigurationHostApiTests.m in Sources */,
@@ -625,7 +657,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -675,7 +707,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -689,6 +721,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 7624MWN53C;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -715,6 +748,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 7624MWN53C;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

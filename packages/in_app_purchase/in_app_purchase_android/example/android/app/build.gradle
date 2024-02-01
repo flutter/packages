@@ -55,7 +55,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace 'io.flutter.plugins.inapppurchaseexample'
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
 
     signingConfigs {
         release {
@@ -110,7 +110,7 @@ dependencies {
     implementation 'com.android.billingclient:billing:5.0.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.1.1'
-    testImplementation 'org.json:json:20230618'
+    testImplementation 'org.json:json:20231013'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

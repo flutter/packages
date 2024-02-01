@@ -11,24 +11,30 @@ const int kElementWaitingTime = 30;
 
 @property(nonatomic, strong) XCUIApplication *app;
 
+@property(nonatomic, assign) BOOL interceptedPermissionInterruption;
+
 @end
 
 @implementation ImagePickerFromGalleryUITests
 
 - (void)setUp {
   [super setUp];
-  // Delete the app if already exists, to test permission popups
 
   self.continueAfterFailure = NO;
   self.app = [[XCUIApplication alloc] init];
+  if (@available(iOS 13.4, *)) {
+    // Reset the authorization status for Photos to test permission popups
+    [self.app resetAuthorizationStatusForResource:XCUIProtectedResourcePhotos];
+  }
   [self.app launch];
+  self.interceptedPermissionInterruption = NO;
   __weak typeof(self) weakSelf = self;
   [self addUIInterruptionMonitorWithDescription:@"Permission popups"
                                         handler:^BOOL(XCUIElement *_Nonnull interruptingElement) {
                                           if (@available(iOS 14, *)) {
                                             XCUIElement *allPhotoPermission =
                                                 interruptingElement
-                                                    .buttons[@"Allow Access to All Photos"];
+                                                    .buttons[weakSelf.allowAccessPermissionText];
                                             if (![allPhotoPermission waitForExistenceWithTimeout:
                                                                          kElementWaitingTime]) {
                                               os_log_error(OS_LOG_DEFAULT, "%@",
@@ -50,6 +56,7 @@ const int kElementWaitingTime = 30;
                                             }
                                             [ok tap];
                                           }
+                                          weakSelf.interceptedPermissionInterruption = YES;
                                           return YES;
                                         }];
 }
@@ -57,6 +64,46 @@ const int kElementWaitingTime = 30;
 - (void)tearDown {
   [super tearDown];
   [self.app terminate];
+}
+
+- (NSString *)allowAccessPermissionText {
+  NSString *fullAccessButtonText = @"Allow Access to All Photos";
+  if (@available(iOS 17, *)) {
+    fullAccessButtonText = @"Allow Full Access";
+  }
+  return fullAccessButtonText;
+}
+
+- (void)handlePermissionInterruption {
+  // addUIInterruptionMonitorWithDescription is only invoked when trying to interact with an element
+  // (the app in this case) the alert is blocking. We expect a permission popup here so do a swipe
+  // up action (which should be harmless).
+  [self.app swipeUp];
+
+  if (@available(iOS 17, *)) {
+    // addUIInterruptionMonitorWithDescription does not work consistently on Xcode 15 simulators, so
+    // use a backup method of accepting permissions popup.
+
+    if (self.interceptedPermissionInterruption == YES) {
+      return;
+    }
+
+    // If cancel button exists, permission has already been given.
+    XCUIElement *cancelButton = self.app.buttons[@"Cancel"].firstMatch;
+    if ([cancelButton waitForExistenceWithTimeout:kElementWaitingTime]) {
+      return;
+    }
+
+    XCUIApplication *springboardApp =
+        [[XCUIApplication alloc] initWithBundleIdentifier:@"com.apple.springboard"];
+    XCUIElement *allowButton = springboardApp.buttons[self.allowAccessPermissionText];
+    if (![allowButton waitForExistenceWithTimeout:kElementWaitingTime]) {
+      os_log_error(OS_LOG_DEFAULT, "%@", self.app.debugDescription);
+      XCTFail(@"Failed due to not able to find Allow Access button with %@ seconds",
+              @(kElementWaitingTime));
+    }
+    [allowButton tap];
+  }
 }
 
 - (void)testCancel {
@@ -80,9 +127,7 @@ const int kElementWaitingTime = 30;
 
   [pickButton tap];
 
-  // There is a known bug where the permission popups interruption won't get fired until a tap
-  // happened in the app. We expect a permission popup so we do a tap here.
-  [self.app tap];
+  [self handlePermissionInterruption];
 
   // Find and tap on the `Cancel` button.
   XCUIElement *cancelButton = self.app.buttons[@"Cancel"].firstMatch;
@@ -151,9 +196,7 @@ const int kElementWaitingTime = 30;
   }
   [pickButton tap];
 
-  // There is a known bug where the permission popups interruption won't get fired until a tap
-  // happened in the app. We expect a permission popup so we do a tap here.
-  [self.app tap];
+  [self handlePermissionInterruption];
 
   // Find an image and tap on it. (IOS 14 UI, images are showing directly)
   XCUIElement *aImage;

@@ -146,6 +146,12 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
                   case '.cpp':
                     language = 'c++';
                     break;
+                  case '.m':
+                    language = 'objectivec';
+                    break;
+                  case '.gradle':
+                    language = 'groovy';
+                    break;
                   default:
                     language = extension.substring(1);
                     break;
@@ -239,6 +245,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       case 'js':
       case 'kotlin':
       case 'rfwtxt':
+      case 'java':
+      case 'groovy':
+      case 'objectivec':
       case 'swift':
         prefix = '// ';
         break;
@@ -253,6 +262,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         padding = ' ';
         break;
       case 'yaml':
+        prefix = '# ';
+        break;
+      case 'sh':
         prefix = '# ';
         break;
     }

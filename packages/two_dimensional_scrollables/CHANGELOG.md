@@ -1,3 +1,25 @@
+## 0.0.6
+
+* Fixes an error in TableSpanDecoration when one or both axes are reversed.
+
+## 0.0.5+2
+
+* Fixes must_call_super lint warning from pending framework change.
+
+## 0.0.5+1
+
+* Fixes new lint warnings.
+
+## 0.0.5
+
+* Exposes addAutomaticKeepAlives in TableCellBuilderDelegate and TableCellListDelegate
+* Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
+* Adds support for BorderRadius in TableSpanDecorations.
+
+## 0.0.4
+
+* Adds TableSpanPadding, TableSpan.padding, and TableSpanDecoration.consumeSpanPadding.
+
 ## 0.0.3
 
 * Fixes paint issue when axes are reversed and TableView has pinned rows and columns.

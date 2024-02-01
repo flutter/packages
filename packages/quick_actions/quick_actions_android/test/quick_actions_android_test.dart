@@ -4,169 +4,104 @@
 
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quick_actions_android/quick_actions_android.dart';
+import 'package:quick_actions_android/src/messages.g.dart';
 import 'package:quick_actions_platform_interface/quick_actions_platform_interface.dart';
+
+const String LAUNCH_ACTION_STRING = 'aString';
+
+/// Conversion tool to change [ShortcutItemMessage] back to [ShortcutItem]
+ShortcutItem shortcutItemMessageToShortcutItem(ShortcutItemMessage item) {
+  return ShortcutItem(
+    type: item.type,
+    localizedTitle: item.localizedTitle,
+    icon: item.icon,
+  );
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$QuickActionsAndroid', () {
-    late List<MethodCall> log;
+  final _FakeQuickActionsApi api = _FakeQuickActionsApi();
+  final QuickActionsAndroid quickActions = QuickActionsAndroid(api: api);
 
-    setUp(() {
-      log = <MethodCall>[];
+  test('registerWith() registers correct instance', () {
+    QuickActionsAndroid.registerWith();
+    expect(QuickActionsPlatform.instance, isA<QuickActionsAndroid>());
+  });
+
+  group('#initialize', () {
+    test('passes getLaunchAction on launch method', () {
+      quickActions.initialize((String type) {});
+
+      expect(api.getLaunchActionCalled, true);
     });
 
-    QuickActionsAndroid buildQuickActionsPlugin() {
-      final QuickActionsAndroid quickActions = QuickActionsAndroid();
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
-          .setMockMethodCallHandler(quickActions.channel,
-              (MethodCall methodCall) async {
-        log.add(methodCall);
-        return '';
-      });
+    test('initialize', () async {
+      final Completer<bool> quickActionsHandler = Completer<bool>();
+      await quickActions.initialize((_) => quickActionsHandler.complete(true));
 
-      return quickActions;
-    }
-
-    test('registerWith() registers correct instance', () {
-      QuickActionsAndroid.registerWith();
-      expect(QuickActionsPlatform.instance, isA<QuickActionsAndroid>());
-    });
-
-    group('#initialize', () {
-      test('passes getLaunchAction on launch method', () {
-        final QuickActionsAndroid quickActions = buildQuickActionsPlugin();
-        quickActions.initialize((String type) {});
-
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('getLaunchAction', arguments: null),
-          ],
-        );
-      });
-
-      test('initialize', () async {
-        final QuickActionsAndroid quickActions = buildQuickActionsPlugin();
-        final Completer<bool> quickActionsHandler = Completer<bool>();
-        await quickActions
-            .initialize((_) => quickActionsHandler.complete(true));
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('getLaunchAction', arguments: null),
-          ],
-        );
-        log.clear();
-
-        expect(quickActionsHandler.future, completion(isTrue));
-      });
-    });
-
-    group('#setShortCutItems', () {
-      test('passes shortcutItem through channel', () {
-        final QuickActionsAndroid quickActions = buildQuickActionsPlugin();
-        quickActions.initialize((String type) {});
-        quickActions.setShortcutItems(<ShortcutItem>[
-          const ShortcutItem(
-              type: 'test', localizedTitle: 'title', icon: 'icon.svg')
-        ]);
-
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('getLaunchAction', arguments: null),
-            isMethodCall('setShortcutItems', arguments: <Map<String, String>>[
-              <String, String>{
-                'type': 'test',
-                'localizedTitle': 'title',
-                'icon': 'icon.svg',
-              }
-            ]),
-          ],
-        );
-      });
-
-      test('setShortcutItems with demo data', () async {
-        const String type = 'type';
-        const String localizedTitle = 'localizedTitle';
-        const String icon = 'icon';
-        final QuickActionsAndroid quickActions = buildQuickActionsPlugin();
-        await quickActions.setShortcutItems(
-          const <ShortcutItem>[
-            ShortcutItem(type: type, localizedTitle: localizedTitle, icon: icon)
-          ],
-        );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall(
-              'setShortcutItems',
-              arguments: <Map<String, String>>[
-                <String, String>{
-                  'type': type,
-                  'localizedTitle': localizedTitle,
-                  'icon': icon,
-                }
-              ],
-            ),
-          ],
-        );
-        log.clear();
-      });
-    });
-
-    group('#clearShortCutItems', () {
-      test('send clearShortcutItems through channel', () {
-        final QuickActionsAndroid quickActions = buildQuickActionsPlugin();
-        quickActions.initialize((String type) {});
-        quickActions.clearShortcutItems();
-
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('getLaunchAction', arguments: null),
-            isMethodCall('clearShortcutItems', arguments: null),
-          ],
-        );
-      });
-
-      test('clearShortcutItems', () {
-        final QuickActionsAndroid quickActions = buildQuickActionsPlugin();
-        quickActions.clearShortcutItems();
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('clearShortcutItems', arguments: null),
-          ],
-        );
-        log.clear();
-      });
+      expect(quickActionsHandler.future, completion(isTrue));
     });
   });
 
-  group('$ShortcutItem', () {
-    test('Shortcut item can be constructed', () {
-      const String type = 'type';
-      const String localizedTitle = 'title';
-      const String icon = 'foo';
+  test('setShortCutItems', () async {
+    await quickActions.initialize((String type) {});
+    const ShortcutItem item =
+        ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg');
+    await quickActions.setShortcutItems(<ShortcutItem>[item]);
 
-      const ShortcutItem item =
-          ShortcutItem(type: type, localizedTitle: localizedTitle, icon: icon);
+    expect(api.items.first.type, item.type);
+    expect(api.items.first.localizedTitle, item.localizedTitle);
+    expect(api.items.first.icon, item.icon);
+  });
 
-      expect(item.type, type);
-      expect(item.localizedTitle, localizedTitle);
-      expect(item.icon, icon);
-    });
+  test('clearShortCutItems', () {
+    quickActions.initialize((String type) {});
+    const ShortcutItem item =
+        ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg');
+    quickActions.setShortcutItems(<ShortcutItem>[item]);
+    quickActions.clearShortcutItems();
+
+    expect(api.items.isEmpty, true);
+  });
+
+  test('Shortcut item can be constructed', () {
+    const String type = 'type';
+    const String localizedTitle = 'title';
+    const String icon = 'foo';
+
+    const ShortcutItem item =
+        ShortcutItem(type: type, localizedTitle: localizedTitle, icon: icon);
+
+    expect(item.type, type);
+    expect(item.localizedTitle, localizedTitle);
+    expect(item.icon, icon);
   });
 }
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+class _FakeQuickActionsApi implements AndroidQuickActionsApi {
+  List<ShortcutItem> items = <ShortcutItem>[];
+  bool getLaunchActionCalled = false;
+
+  @override
+  Future<void> clearShortcutItems() async {
+    items = <ShortcutItem>[];
+    return;
+  }
+
+  @override
+  Future<String?> getLaunchAction() async {
+    getLaunchActionCalled = true;
+    return LAUNCH_ACTION_STRING;
+  }
+
+  @override
+  Future<void> setShortcutItems(List<ShortcutItemMessage?> itemsList) async {
+    await clearShortcutItems();
+    for (final ShortcutItemMessage? element in itemsList) {
+      items.add(shortcutItemMessageToShortcutItem(element!));
+    }
+  }
+}

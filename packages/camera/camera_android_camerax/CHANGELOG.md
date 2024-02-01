@@ -1,3 +1,43 @@
+## 0.5.0+28
+
+* Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.
+* Updates compileSdk version to 34.
+
+## 0.5.0+27
+
+* Removes or updates any references to an `ActivityPluginBinding` when the plugin is detached
+  or attached/re-attached, respectively, to an `Activity.`
+
+## 0.5.0+26
+
+* Fixes new lint warnings.
+
+## 0.5.0+25
+
+* Implements `lockCaptureOrientation` and `unlockCaptureOrientation`.
+
+## 0.5.0+24
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.5.0+23
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Adds `CameraXProxy` class to test `JavaObject` creation and their method calls in the plugin.
+
+## 0.5.0+22
+
+* Fixes `_getResolutionSelectorFromPreset` null pointer error.
+
+## 0.5.0+21
+
+* Changes fallback resolution strategies for camera use cases to look for a higher resolution if neither the desired
+  resolution nor any lower resolutions are available.
+
+## 0.5.0+20
+
+* Implements `setZoomLevel`.
+
 ## 0.5.0+19
 
 * Implements torch flash mode.

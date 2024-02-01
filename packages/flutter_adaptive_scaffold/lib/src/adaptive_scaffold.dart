@@ -228,7 +228,7 @@ class AdaptiveScaffold extends StatefulWidget {
   final PreferredSizeWidget? appBar;
 
   /// Callback function for when the index of a [NavigationRail] changes.
-  final Function(int)? onSelectedIndexChange;
+  final void Function(int)? onSelectedIndexChange;
 
   /// The width used for the internal [NavigationRail] at the medium [Breakpoint].
   final double navigationRailWidth;
@@ -267,7 +267,7 @@ class AdaptiveScaffold extends StatefulWidget {
     EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
     Widget? leading,
     Widget? trailing,
-    Function(int)? onDestinationSelected,
+    void Function(int)? onDestinationSelected,
     double? groupAlignment,
     IconThemeData? selectedIconTheme,
     IconThemeData? unselectedIconTheme,
@@ -514,7 +514,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
                     .toList(),
                 onDestinationSelected: widget.onSelectedIndexChange,
               ),
@@ -534,7 +535,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
                     .toList(),
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,
@@ -553,7 +555,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
                     .toList(),
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,

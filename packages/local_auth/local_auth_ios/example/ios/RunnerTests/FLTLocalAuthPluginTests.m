@@ -73,9 +73,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@YES
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:YES
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
@@ -111,9 +111,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@NO
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
@@ -149,9 +149,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@YES
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:YES
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
@@ -191,9 +191,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@NO
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
@@ -229,9 +229,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@NO
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
@@ -267,9 +267,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@NO
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
@@ -310,9 +310,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@NO
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
@@ -348,9 +348,9 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:@NO
-                                                                 sticky:@NO
-                                                        useErrorDialogs:@NO]
+  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
+                                                                 sticky:NO
+                                                        useErrorDialogs:NO]
                           strings:strings
                        completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {

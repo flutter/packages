@@ -1,3 +1,96 @@
+## 16.0.4
+
+* [swift] Improve style of Swift output.
+
+## 16.0.3
+
+* [kotlin] Separates message call code generation into separate methods.
+
+## 16.0.2
+
+* [dart] Separates message call code generation into separate methods.
+
+## 16.0.1
+
+* [dart] Fixes test generation for missing wrapResponse method if only host Api.
+
+## 16.0.0
+
+* [java] Adds `VoidResult` type for `Void` returns.
+* **Breaking Change** [java] Updates all `Void` return types to use new `VoidResult`.
+
+## 15.0.3
+
+* Fixes new lint warnings.
+
+## 15.0.2
+
+* Prevents optional and non-positional parameters in Flutter APIs.
+* [dart] Fixes named parameters in test output of host API methods.
+
+## 15.0.1
+
+* [java] Adds @CanIgnoreReturnValue annotation to class builder.
+
+## 15.0.0
+
+* **Breaking Change** [kotlin] Updates Flutter API to use new errorClassName.
+
+## 14.0.1
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates issue_tracker link.
+
+## 14.0.0
+
+* **Breaking change** [dart] Renames locally defined host API variables.
+  * [dart] Host api static field `codec` changed to `pigeonChannelCodec`.
+* [dart] Adds named parameters to host API methods.
+* [dart] Adds optional parameters to host API methods.
+* [dart] Adds default values for class constructors and host API methods.
+* Adds `isEnum` and `isClass` to `TypeDeclaration`s.
+* [cpp] Fixes `FlutterError` generation being tied to ErrorOr.
+
+## 13.1.2
+
+* Adds compatibility with `analyzer` 6.x.
+
+## 13.1.1
+
+* [kotlin] Removes unnecessary `;`s in generated code.
+
+## 13.1.0
+
+* [swift] Fixes Flutter Api void return error handling.
+  * This shouldn't be breaking for anyone, but if you were incorrectly getting
+    success responses, you may now be failing (correctly).
+* Adds method channel name to error response when channel fails to connect.
+* Reduces code generation duplication.
+* Changes some methods to only be generated if needed.
+
+## 13.0.0
+
+* **Breaking Change** [objc] Eliminates boxing of non-nullable primitive types
+  (bool, int, double). Changes required:
+  * Implementations of host API methods that take non-nullable
+    primitives will need to be updated to match the new signatures.
+  * Calls to Flutter API methods that take non-nullable primitives will need to
+    be updated to pass unboxed values.
+  * Calls to non-nullable primitive property methods on generated data classes
+    will need to be updated.
+  * **WARNING**: Current versions of `Xcode` do not appear to warn about
+    implicit `NSNumber *` to `BOOL` conversions, so code that is no longer
+    correct after this breaking change may compile without warning. For example,
+    `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
+    `YES`. Any data class or Flutter API interactions involving `bool`s should
+    be carefully audited by hand when updating.
+
+
+
+## 12.0.1
+
+* [swift] Adds protocol for Flutter APIs.
+
 ## 12.0.0
 
 * Adds error handling on Flutter API methods.
@@ -119,7 +212,7 @@
 * [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
-* [java] Removes legacy try catch from async apis.
+* [java] Removes legacy try catch from async APIs.
 * [java] Removes legacy null check on non-nullable method arguments.
 * [cpp] Fixes wrong order of items in `FlutterError`.
 * Adds `FlutterError` handling integration tests for all platforms.
@@ -172,7 +265,7 @@
 
 ## 7.2.1
 
-* [kotlin] Fixes Flutter api int errors with updated casting.
+* [kotlin] Fixes Flutter API int errors with updated casting.
 
 ## 7.2.0
 
@@ -198,7 +291,7 @@
 
 ## 7.1.2
 
-* [swift] Adds error handling to sync host api methods.
+* [swift] Adds error handling to sync host API methods.
 
 ## 7.1.1
 
@@ -312,7 +405,7 @@
 
 ## 4.2.4
 
-* [kotlin] Fixes Kotlin generated sync host api error.
+* [kotlin] Fixes Kotlin generated sync host API error.
 
 ## 4.2.3
 
@@ -791,7 +884,7 @@ class Foo {
 
 ## 0.1.0-experimental.11
 
-* Fixed setting an api to null in Java.
+* Fixed setting an API to null in Java.
 
 ## 0.1.0-experimental.10
 
