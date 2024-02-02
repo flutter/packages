@@ -79,7 +79,7 @@
 - (void)testResolutionPresetWithBestFormat_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPresetInputPriority;
 
-  // make sure getHighestResolutionFormatForCaptureDevice returns a value
+  // make sure initializing AVCaptureDevice always succeeds
   [AVCaptureDevice swizzleDeviceWithUniqueIDMethod];
   // make sure getHighestResolutionFormatForCaptureDevice returns a value
   [FLTCam swizzleGetHighestResolutionMethod];
