@@ -46,6 +46,31 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
                         videoCaptureSession:captureSession
                         audioCaptureSession:audioSessionMock
                         captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
+                              captureDevice:nil
+              videoDimensionsForFormatBlock:nil
+                                      error:nil];
+}
+
+FLTCam *FLTCreateCamWithVideoDimensionsForFormatBlock(
+    AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
+    VideoDimensionsForFormatBlock videoDimensionsForFormatBlock) {
+  id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
+  OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
+      .andReturn(inputMock);
+
+  id audioSessionMock = OCMClassMock([AVCaptureSession class]);
+  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);  // no-op
+  OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
+
+  return [[FLTCam alloc] initWithCameraName:@"camera"
+                           resolutionPreset:resolutionPreset
+                                enableAudio:true
+                                orientation:UIDeviceOrientationPortrait
+                        videoCaptureSession:captureSession
+                        audioCaptureSession:audioSessionMock
+                        captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
+                              captureDevice:captureDevice
+              videoDimensionsForFormatBlock:videoDimensionsForFormatBlock
                                       error:nil];
 }
 
