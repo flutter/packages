@@ -255,7 +255,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingConfigResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(BillingConfigResponseListener.class);
     MethodCall billingCall = new MethodCall(GET_BILLING_CONFIG, null);
-    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -294,7 +293,6 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(AlternativeBillingOnlyReportingDetailsListener.class);
     MethodCall createABOReportingDetailsCall =
         new MethodCall(CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS, null);
-    methodChannelHandler.onMethodCall(createABOReportingDetailsCall, mock(Result.class));
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingResponseCode.OK)
@@ -333,7 +331,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<AlternativeBillingOnlyAvailabilityListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyAvailabilityListener.class);
     MethodCall billingCall = new MethodCall(IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE, null);
-    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingClient.BillingResponseCode.OK)
@@ -368,7 +365,6 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(AlternativeBillingOnlyInformationDialogListener.class);
     MethodCall showDialogCall =
         new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
-    methodChannelHandler.onMethodCall(showDialogCall, mock(Result.class));
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingResponseCode.OK)
