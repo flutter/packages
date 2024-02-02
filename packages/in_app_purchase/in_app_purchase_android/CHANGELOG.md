@@ -1,5 +1,6 @@
-## NEXT
+## 0.3.0+18
 
+* Adds new getCountryCode() method to InAppPurchaseAndroidPlatformAddition to get a customer's country code.
 * Updates compileSdk version to 34.
 
 ## 0.3.0+17

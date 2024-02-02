@@ -7,8 +7,10 @@ import 'package:flutter/widgets.dart' as widgets;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
 
+import 'billing_client_wrappers/billing_client_wrapper_test.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
 import 'stub_in_app_purchase_platform.dart';
 
@@ -58,6 +60,26 @@ void main() {
               GooglePlayPurchaseDetails.fromPurchase(dummyPurchase).first);
 
       expect(billingResultWrapper, equals(expectedBillingResult));
+    });
+  });
+
+  group('billingConfig', () {
+    const String billingConfigMethodName = 'BillingClient#getBillingConfig()';
+    test('getCountryCode success', () async {
+      const String expectedCountryCode = 'US';
+      const BillingConfigWrapper expected = BillingConfigWrapper(
+          countryCode: expectedCountryCode,
+          responseCode: BillingResponse.ok,
+          debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: billingConfigMethodName,
+        value: buildBillingConfigMap(expected),
+      );
+      final String countryCode =
+          await iapAndroidPlatformAddition.getCountryCode();
+
+      expect(countryCode, equals(expectedCountryCode));
     });
   });
 
