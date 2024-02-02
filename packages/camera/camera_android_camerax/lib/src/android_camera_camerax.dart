@@ -232,6 +232,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
+  /// The specified [resolutionPreset] is the target resolution that CameraX
+  /// will attempt to select for the [UseCase]s constructed in this method
+  /// ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
+  /// unavailable, a fallback behavior of targeting the next highest resolution
+  /// will be attempted. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
+  ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
