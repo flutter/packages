@@ -86,13 +86,29 @@ Future<PackageChangeState> checkPackageChangeState(
         continue;
       }
 
-      // Some other changes don't need version changes, but might benefit from
-      // changelog changes.
+      final bool isUnpublishedExampleChange =
+          _isUnpublishedExampleChange(components, package);
+
+      // Since examples of federated plugin implementations are only intended
+      // for testing purposes, any unpublished example change in one of them is
+      // effectively a developer-only change.
+      if (package.isFederated &&
+          package.isPlatformImplementation &&
+          isUnpublishedExampleChange) {
+        continue;
+      }
+
+      // Anything that is not developer-only might benefit from changelog
+      // changes. This errs on the side of flagging, so that someone checks to
+      // see if it should be mentioned there or not.
       needsChangelogChange = true;
+
+      // Most changes that aren't developer-only need version changes.
       if (
           // One of a few special files example will be shown on pub.dev, but
-          // for anything else in the example publishing has no purpose.
-          !_isUnpublishedExampleChange(components, package)) {
+          // for anything else in the example, publishing isn't necessary (even
+          // if it is relevant to mention in the CHANGELOG for the future).
+          !isUnpublishedExampleChange) {
         needsVersionChange = true;
       }
     }
