@@ -172,7 +172,7 @@ import 'model.dart';
 ///    Remote Flutter Widgets text library files.
 ///  * [decodeDataBlob], which decodes the binary variant of this format.
 DynamicMap parseDataFile(String file) {
-  final _Parser parser = _Parser(_tokenize(file));
+  final _Parser parser = _Parser(_tokenize(file), null);
   final DynamicMap library = parser.readDataFile();
   if (kDebugMode) {
     _debugLibraryContentExpando[library] = file;
@@ -602,8 +602,8 @@ DynamicMap parseDataFile(String file) {
 ///  * [parseDataFile], which uses a subset of this format to decode
 ///    Remote Flutter Widgets text data files.
 ///  * [decodeLibraryBlob], which decodes the binary variant of this format.
-RemoteWidgetLibrary parseLibraryFile(String file) {
-  final _Parser parser = _Parser(_tokenize(file));
+RemoteWidgetLibrary parseLibraryFile(String file, { Object? sourceIdentifier }) {
+  final _Parser parser = _Parser(_tokenize(file), sourceIdentifier);
   final RemoteWidgetLibrary library = parser.readLibraryFile();
   if (kDebugMode) {
     _debugLibraryContentExpando[library] = file;
