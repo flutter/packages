@@ -7,6 +7,9 @@
 // This file must not import `dart:ui`, directly or indirectly, as it is
 // intended to function even in pure Dart server or CLI environments.
 
+// TODO(kenz): remove this import and check debug mode another way (maybe using assert)
+import 'package:flutter/foundation.dart';
+
 import 'model.dart';
 
 /// Parse a Remote Flutter Widgets text data file.
@@ -2427,6 +2430,7 @@ String? getDebugLibraryContent(Object object) {
     content = _debugLibraryContentExpando[object];
     return true;
   }());
+  return content;
 }
 
 final Expando<String> _debugLibraryContentExpando =
