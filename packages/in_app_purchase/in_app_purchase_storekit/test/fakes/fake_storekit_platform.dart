@@ -288,4 +288,10 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   List<SKPaymentTransactionMessage?> transactions() {
     throw UnimplementedError();
   }
+
+  @override
+  Map<String?, Object?>? startProductRequest(List<String?> productIdentifiers) {
+    // TODO: implement startProductRequest
+    throw UnimplementedError();
+  }
 }

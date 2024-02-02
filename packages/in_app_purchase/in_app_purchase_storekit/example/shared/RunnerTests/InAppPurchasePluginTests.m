@@ -108,7 +108,7 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect response contains 1 item"];
   FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin startProductRequest:result:]"
+      methodCallWithMethodName:@"-[`InAppPurchasePlugin startProductRequest`:result:]"
                      arguments:@[ @"123" ]];
   __block id result;
   [self.plugin handleMethodCall:call

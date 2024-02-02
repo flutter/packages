@@ -5,9 +5,13 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import '../channel.dart';
+import '../messages.g.dart';
 import 'sk_product_wrapper.dart';
+
+
 
 /// A request maker that handles all the requests made by SKRequest subclasses.
 ///
@@ -15,6 +19,13 @@ import 'sk_product_wrapper.dart';
 /// we consolidated all the `SKRequest` subclasses into this class to make requests in a more straightforward way.
 /// The request maker will create a SKRequest object, immediately starting it, and completing the future successfully or throw an exception depending on what happened to the request.
 class SKRequestMaker {
+  InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+
+  /// Set up pigeon API.
+  @visibleForTesting
+  void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
+    _hostApi = api;
+  }
   /// Fetches product information for a list of given product identifiers.
   ///
   /// The `productIdentifiers` should contain legitimate product identifiers that you declared for the products in the iTunes Connect. Invalid identifiers
@@ -26,18 +37,17 @@ class SKRequestMaker {
   /// A [PlatformException] is thrown if the platform code making the request fails.
   Future<SkProductResponseWrapper> startProductRequest(
       List<String> productIdentifiers) async {
-    final Map<String, dynamic>? productResponseMap =
-        await channel.invokeMapMethod<String, dynamic>(
-      '-[InAppPurchasePlugin startProductRequest:result:]',
-      productIdentifiers,
-    );
-    if (productResponseMap == null) {
+    final SKProductResponseMessage productResponsePigeon = await _hostApi.startProductRequest(productIdentifiers);
+
+    // should products be null or <String>[] ?
+    if (productResponsePigeon.products == null) {
       throw PlatformException(
         code: 'storekit_no_response',
         message: 'StoreKit: Failed to get response from platform.',
       );
     }
-    return SkProductResponseWrapper.fromJson(productResponseMap);
+
+    return SkProductResponseWrapper.convertFromPigeon(productResponsePigeon);
   }
 
   /// Uses [SKReceiptRefreshRequest](https://developer.apple.com/documentation/storekit/skreceiptrefreshrequest?language=objc) to request a new receipt.

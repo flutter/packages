@@ -147,6 +147,43 @@
   return [FIAObjectTranslator convertStorefrontToPigeon:storefront];
 }
 
+- (nullable NSDictionary<NSString *, id> *)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+
+  SKProductsRequest *request =
+      [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
+  FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
+  [self.requestHandlers addObject:handler];
+  __weak typeof(self) weakSelf = self;
+
+  NSError *startProductRequestError;
+  SKProductsResponse *result;
+
+  [handler startProductRequestWithCompletionHandler:^(SKProductsResponse *_Nullable result,
+                                                      NSError *_Nullable startProductRequestError) {
+    if (startProductRequestError) {
+      *error = [FlutterError errorWithCode:@"storekit_getproductrequest_platform_error"
+                                 message:startProductRequestError.localizedDescription
+                                 details:startProductRequestError.description];
+    }
+    if (!result) {
+      *error = [FlutterError errorWithCode:@"storekit_platform_no_response"
+                                 message:@"Failed to get SKProductResponse in startRequest "
+                                         @"call. Error occured on iOS platform"
+                                 details:productIdentifiers];
+    }
+    for (SKProduct *product in result.products) {
+      [self.productsCache setObject:product forKey:product.productIdentifier];
+    }
+
+    [weakSelf.requestHandlers removeObject:handler];
+  }];
+  
+  
+
+  return [FIAObjectTranslator getMapFromSKProductsResponse:result];
+
+}
+
 - (void)handleProductRequestMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
   if (![call.arguments isKindOfClass:[NSArray class]]) {
     result([FlutterError errorWithCode:@"storekit_invalid_argument"

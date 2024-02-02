@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'enum_converters.dart';
+import '../messages.g.dart';
 
 // WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
 // below generated file. Run `flutter packages pub run build_runner watch` to
@@ -64,6 +65,13 @@ class SkProductResponseWrapper {
 
   @override
   int get hashCode => Object.hash(products, invalidProductIdentifiers);
+
+  static SkProductResponseWrapper convertFromPigeon(SKProductResponseMessage msg) {
+      return SkProductResponseWrapper(
+          products: msg.products!.map((SKProductMessage? e) => SKProductWrapper.convertFromPigeon(e!)).toList(),
+          invalidProductIdentifiers: msg.invalidProductIdentifiers != null ? msg.invalidProductIdentifiers!.cast<String>() : <String>[],
+      );
+  }
 }
 
 /// Dart wrapper around StoreKit's [SKProductPeriodUnit](https://developer.apple.com/documentation/storekit/skproductperiodunit?language=objc).
@@ -88,7 +96,20 @@ enum SKSubscriptionPeriodUnit {
 
   /// An interval lasting one year.
   @JsonValue(3)
-  year,
+  year;
+
+  static SKSubscriptionPeriodUnit convertFromPigeon(SKSubscriptionPeriodUnitMessage msg) {
+    switch (msg) {
+      case SKSubscriptionPeriodUnitMessage.day:
+        return SKSubscriptionPeriodUnit.day;
+      case SKSubscriptionPeriodUnitMessage.week:
+        return SKSubscriptionPeriodUnit.week;
+      case SKSubscriptionPeriodUnitMessage.month:
+        return SKSubscriptionPeriodUnit.month;
+      case SKSubscriptionPeriodUnitMessage.year:
+        return SKSubscriptionPeriodUnit.year;
+    }
+  }
 }
 
 /// Dart wrapper around StoreKit's [SKProductSubscriptionPeriod](https://developer.apple.com/documentation/storekit/skproductsubscriptionperiod?language=objc).
@@ -142,6 +163,12 @@ class SKProductSubscriptionPeriodWrapper {
 
   @override
   int get hashCode => Object.hash(numberOfUnits, unit);
+
+  static SKProductSubscriptionPeriodWrapper convertFromPigeon(SKProductSubscriptionPeriodMessage msg) {
+    return SKProductSubscriptionPeriodWrapper(
+        numberOfUnits: msg.numberOfUnits,
+        unit: SKSubscriptionPeriodUnit.convertFromPigeon(msg.unit));
+  }
 }
 
 /// Dart wrapper around StoreKit's [SKProductDiscountPaymentMode](https://developer.apple.com/documentation/storekit/skproductdiscountpaymentmode?language=objc).
@@ -164,7 +191,20 @@ enum SKProductDiscountPaymentMode {
 
   /// Unspecified mode.
   @JsonValue(-1)
-  unspecified,
+  unspecified;
+
+  static SKProductDiscountPaymentMode convertFromPigeon(SKProductDiscountPaymentModeMessage msg) {
+    switch (msg) {
+      case SKProductDiscountPaymentModeMessage.payAsYouGo:
+        return SKProductDiscountPaymentMode.payAsYouGo;
+      case SKProductDiscountPaymentModeMessage.payUpFront:
+        return SKProductDiscountPaymentMode.payUpFront;
+      case SKProductDiscountPaymentModeMessage.freeTrial:
+        return SKProductDiscountPaymentMode.freeTrail;
+      case SKProductDiscountPaymentModeMessage.unspecified:
+        return SKProductDiscountPaymentMode.unspecified;
+    }
+  }
 }
 
 /// Dart wrapper around StoreKit's [SKProductDiscountType]
@@ -182,7 +222,16 @@ enum SKProductDiscountType {
 
   /// A constant indicating the discount type is a promotional offer.
   @JsonValue(1)
-  subscription,
+  subscription;
+
+  static SKProductDiscountType convertFromPigeon(SKProductDiscountTypeMessage msg) {
+    switch (msg) {
+      case SKProductDiscountTypeMessage.introductory:
+        return SKProductDiscountType.introductory;
+      case SKProductDiscountTypeMessage.subscription:
+        return SKProductDiscountType.subscription;
+    }
+  }
 }
 
 /// Dart wrapper around StoreKit's [SKProductDiscount](https://developer.apple.com/documentation/storekit/skproductdiscount?language=objc).
@@ -265,6 +314,17 @@ class SKProductDiscountWrapper {
   @override
   int get hashCode => Object.hash(price, priceLocale, numberOfPeriods,
       paymentMode, subscriptionPeriod, identifier, type);
+
+  static SKProductDiscountWrapper convertFromPigeon(SKProductDiscountMessage msg) {
+    return SKProductDiscountWrapper(
+        price: msg.price,
+        priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
+        numberOfPeriods: msg.numberOfPeriods,
+        paymentMode: SKProductDiscountPaymentMode.convertFromPigeon(msg.paymentMode),
+        subscriptionPeriod: SKProductSubscriptionPeriodWrapper.convertFromPigeon(msg.subscriptionPeriod),
+        identifier: msg.identifier,
+        type: SKProductDiscountType.convertFromPigeon(msg.type));
+  }
 }
 
 /// Dart wrapper around StoreKit's [SKProduct](https://developer.apple.com/documentation/storekit/skproduct?language=objc).
@@ -383,6 +443,19 @@ class SKProductWrapper {
       subscriptionPeriod,
       introductoryPrice,
       discounts);
+
+  static SKProductWrapper convertFromPigeon(SKProductMessage msg) {
+    return SKProductWrapper(productIdentifier: msg.productIdentifier,
+        localizedTitle: msg.localizedTitle,
+        localizedDescription: msg.localizedDescription,
+        priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
+        price: msg.price,
+        subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
+        subscriptionPeriod: msg.subscriptionPeriod != null ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(msg.subscriptionPeriod!) : null,
+        introductoryPrice: msg.introductoryPrice != null ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!) : null,
+        discounts: msg.discounts != null ? msg.discounts!.map((SKProductDiscountMessage? e) => SKProductDiscountWrapper.convertFromPigeon(e!)).toList() : <SKProductDiscountWrapper>[]
+    );
+  }
 }
 
 /// Object that indicates the locale of the price
@@ -442,4 +515,12 @@ class SKPriceLocaleWrapper {
 
   @override
   int get hashCode => Object.hash(currencySymbol, currencyCode);
+
+  static SKPriceLocaleWrapper convertFromPigeon(SKPriceLocaleMessage msg) {
+    return SKPriceLocaleWrapper(
+        currencySymbol: msg.currencySymbol,
+        currencyCode: msg.currencyCode,
+        countryCode: msg.countryCode
+    );
+  }
 }
