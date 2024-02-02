@@ -258,15 +258,16 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   @override
   Future<bool> clear(ClearPreferencesParameters parameters,
       SharedPreferencesOptions options) async {
-    options as SharedPreferencesLinuxOptions;
+    final SharedPreferencesLinuxOptions linuxOptions =
+        SharedPreferencesLinuxOptions.fromSharedPreferencesOptions(options);
     final PreferencesFilters filter = parameters.filter;
     final Map<String, Object> preferences =
-        await _readPreferences(options.fileName);
+        await _readPreferences(linuxOptions.fileName);
     preferences.removeWhere((String key, _) =>
         filter.allowList == null || filter.allowList!.contains(key));
     return _writePreferences(
       preferences,
-      options.fileName,
+      linuxOptions.fileName,
       fs: fs,
       pathProvider: pathProvider,
     );
@@ -284,22 +285,24 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
     Set<String>? allowList,
     SharedPreferencesOptions options,
   ) async {
-    options as SharedPreferencesLinuxOptions;
+    final SharedPreferencesLinuxOptions linuxOptions =
+        SharedPreferencesLinuxOptions.fromSharedPreferencesOptions(options);
     final Map<String, Object> prefs =
-        Map<String, Object>.from(await _readPreferences(options.fileName));
+        Map<String, Object>.from(await _readPreferences(linuxOptions.fileName));
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
     return prefs;
   }
 
   Future<bool> _setValue(
       String key, Object value, SharedPreferencesOptions options) async {
-    options as SharedPreferencesLinuxOptions;
+    final SharedPreferencesLinuxOptions linuxOptions =
+        SharedPreferencesLinuxOptions.fromSharedPreferencesOptions(options);
     final Map<String, Object> preferences =
-        await _readPreferences(options.fileName);
+        await _readPreferences(linuxOptions.fileName);
     preferences[key] = value;
     return _writePreferences(
       preferences,
-      options.fileName,
+      linuxOptions.fileName,
       fs: fs,
       pathProvider: pathProvider,
     );
@@ -395,4 +398,14 @@ class SharedPreferencesLinuxOptions extends SharedPreferencesOptions {
 
   /// The name of the file to store preferences in.
   final String fileName;
+
+  /// Returns a new instance of [SharedPreferencesLinuxOptions] from an existing
+  /// [SharedPreferencesOptions].
+  static SharedPreferencesLinuxOptions fromSharedPreferencesOptions(
+      SharedPreferencesOptions options) {
+    if (options is SharedPreferencesLinuxOptions) {
+      return options;
+    }
+    return const SharedPreferencesLinuxOptions();
+  }
 }

@@ -75,65 +75,65 @@ void main() {
         return testData.setString(
           arguments['key']! as String,
           arguments['value']! as String,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'setBool') {
         return testData.setBool(
           arguments['key']! as String,
           arguments['value']! as bool,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'setInt') {
         return testData.setInt(
           arguments['key']! as String,
           arguments['value']! as int,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'setDouble') {
         return testData.setDouble(
           arguments['key']! as String,
           arguments['value']! as double,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'setStringList') {
         return testData.setStringList(
           arguments['key']! as String,
           (arguments['value']! as List<Object?>).cast<String>(),
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'getString') {
         return testData.getString(
           arguments['key']! as String,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'getBool') {
         return testData.getBool(
           arguments['key']! as String,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'getInt') {
         return testData.getInt(
           arguments['key']! as String,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'getDouble') {
         return testData.getDouble(
           arguments['key']! as String,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
       }
       if (methodCall.method == 'getStringList') {
         final List<String>? data = await testData.getStringList(
           arguments['key']! as String,
-          arguments['options'] as SharedPreferencesOptions? ?? emptyOptions,
+          emptyOptions,
         );
         return data;
       }

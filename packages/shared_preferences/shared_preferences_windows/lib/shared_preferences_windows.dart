@@ -259,15 +259,16 @@ base class SharedPreferencesAsyncWindows
   @override
   Future<bool> clear(ClearPreferencesParameters parameters,
       SharedPreferencesOptions options) async {
-    options as SharedPreferencesWindowsOptions;
+    final SharedPreferencesWindowsOptions windowsOptions =
+        SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
     final PreferencesFilters filter = parameters.filter;
     final Map<String, Object> preferences =
-        await _readPreferences(options.fileName);
+        await _readPreferences(windowsOptions.fileName);
     preferences.removeWhere((String key, _) =>
         filter.allowList == null || filter.allowList!.contains(key));
     return _writePreferences(
       preferences,
-      options.fileName,
+      windowsOptions.fileName,
       fs: fs,
       pathProvider: pathProvider,
     );
@@ -285,22 +286,24 @@ base class SharedPreferencesAsyncWindows
     Set<String>? allowList,
     SharedPreferencesOptions options,
   ) async {
-    options as SharedPreferencesWindowsOptions;
-    final Map<String, Object> prefs =
-        Map<String, Object>.from(await _readPreferences(options.fileName));
+    final SharedPreferencesWindowsOptions windowsOptions =
+        SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
+    final Map<String, Object> prefs = Map<String, Object>.from(
+        await _readPreferences(windowsOptions.fileName));
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
     return prefs;
   }
 
   Future<bool> _setValue(
       String key, Object value, SharedPreferencesOptions options) async {
-    options as SharedPreferencesWindowsOptions;
+    final SharedPreferencesWindowsOptions windowsOptions =
+        SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
     final Map<String, Object> preferences =
-        await _readPreferences(options.fileName);
+        await _readPreferences(windowsOptions.fileName);
     preferences[key] = value;
     return _writePreferences(
       preferences,
-      options.fileName,
+      windowsOptions.fileName,
       fs: fs,
       pathProvider: pathProvider,
     );
@@ -395,4 +398,14 @@ class SharedPreferencesWindowsOptions extends SharedPreferencesOptions {
 
   /// The name of the file to store preferences in.
   final String fileName;
+
+  /// Returns a new instance of [SharedPreferencesWindowsOptions] from an existing
+  /// [SharedPreferencesOptions].
+  static SharedPreferencesWindowsOptions fromSharedPreferencesOptions(
+      SharedPreferencesOptions options) {
+    if (options is SharedPreferencesWindowsOptions) {
+      return options;
+    }
+    return const SharedPreferencesWindowsOptions();
+  }
 }
