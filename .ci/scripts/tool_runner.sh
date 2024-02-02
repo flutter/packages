@@ -5,9 +5,11 @@
 
 set -e
 
-# WARNING! Do not remove this script, or change its behavior, unless you have
-# verified that it will not break the flutter/flutter analysis run of this
-# repository: https://github.com/flutter/flutter/blob/master/dev/bots/test.dart
+# This file runs the repo tooling (see TOOL_PATH) in a configuration that's
+# common to almost all of the CI usage, avoiding the need to pass the same
+# flags (e.g., --packages-for-branch) in every CI invocation.
+#
+# For local use, directly run `dart run <tool path>`.
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 readonly REPO_DIR="$(dirname "$SCRIPT_DIR")"
