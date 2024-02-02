@@ -399,7 +399,7 @@ NSString *const errorMethod = @"error";
   switch (resolutionPreset) {
     case FLTResolutionPresetMax: {
       AVCaptureDeviceFormat *bestFormat =
-          [self getHighestResolutionFormatForCaptureDevice:_captureDevice];
+          [self highestResolutionFormatForCaptureDevice:_captureDevice];
       if (bestFormat) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
         if ([_captureDevice lockForConfiguration:NULL] == YES) {
@@ -476,7 +476,7 @@ NSString *const errorMethod = @"error";
 }
 
 /// Finds the highest available resolution in terms of pixel count for the given device
-- (AVCaptureDeviceFormat *)getHighestResolutionFormatForCaptureDevice:
+- (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
     (AVCaptureDevice *)captureDevice {
   AVCaptureDeviceFormat *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
