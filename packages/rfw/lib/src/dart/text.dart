@@ -169,8 +169,12 @@ import 'model.dart';
 ///    Remote Flutter Widgets text library files.
 ///  * [decodeDataBlob], which decodes the binary variant of this format.
 DynamicMap parseDataFile(String file) {
-  final _Parser parser = _Parser(_tokenize(file), null);
-  return parser.readDataFile();
+  final _Parser parser = _Parser(_tokenize(file));
+  final DynamicMap library = parser.readDataFile();
+  if (kDebugMode) {
+    _debugLibraryContentExpando[library] = file;
+  }
+  return library;
 }
 
 /// Parses a Remote Flutter Widgets text library file.
@@ -595,9 +599,13 @@ DynamicMap parseDataFile(String file) {
 ///  * [parseDataFile], which uses a subset of this format to decode
 ///    Remote Flutter Widgets text data files.
 ///  * [decodeLibraryBlob], which decodes the binary variant of this format.
-RemoteWidgetLibrary parseLibraryFile(String file, { Object? sourceIdentifier }) {
-  final _Parser parser = _Parser(_tokenize(file), sourceIdentifier);
-  return parser.readLibraryFile();
+RemoteWidgetLibrary parseLibraryFile(String file) {
+  final _Parser parser = _Parser(_tokenize(file));
+  final RemoteWidgetLibrary library = parser.readLibraryFile();
+  if (kDebugMode) {
+    _debugLibraryContentExpando[library] = file;
+  }
+  return library;
 }
 
 const Set<String> _reservedWords = <String>{
@@ -2412,3 +2420,14 @@ class _Parser {
     assert(!more);
   }
 }
+
+String? getDebugLibraryContent(Object object) {
+  String? content;
+  assert(() {
+    content = _debugLibraryContentExpando[object];
+    return true;
+  }());
+}
+
+final Expando<String> _debugLibraryContentExpando =
+    Expando<String>('debugRfwLibraryContent');
