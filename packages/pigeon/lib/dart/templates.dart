@@ -319,6 +319,9 @@ class _$apiName {
 }''';
 }
 
+/// The base class for all ProxyApis.
+///
+/// All Dart classes generated as a ProxyApi extends this one.
 const String proxyApiBaseClass = '''
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
@@ -355,6 +358,11 @@ abstract class $_proxyApiBaseClassName {
 }
 ''';
 
+/// The base codec for ProxyApis.
+///
+/// All generated Dart proxy apis should use this codec or extend it. This codec
+/// adds support to convert instances to their corresponding identifier from an
+/// `InstanceManager` and vice versa.
 const String proxyApiBaseCodec = '''
 class $_proxyApiCodecName extends StandardMessageCodec {
  const $_proxyApiCodecName(this.instanceManager);

@@ -597,7 +597,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           apiName: api.name,
         ))
         ..fields.addAll(_proxyApiInterfaceApiFields(interfacesApis))
-        ..fields.addAll(_proxyApiattachedFields(api.attachedFields))
+        ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
         ..methods.add(
           _proxyApiSetUpMessageHandlerMethod(
             flutterMethods: api.flutterMethods,
@@ -1000,6 +1000,8 @@ if (${_varNamePrefix}replyList == null) {
     return 'api.$methodName(${safeArgumentNames.join(', ')})';
   }
 
+  /// Converts Constructors from the pigeon AST to a `code_builder` Constructor
+  /// for a ProxyApi.
   Iterable<cb.Constructor> _proxyApiConstructors(
     Iterable<Constructor> constructors, {
     required String apiName,
@@ -1125,7 +1127,7 @@ if (${_varNamePrefix}replyList == null) {
   /// This constructor doesn't include a host method call to create a new native
   /// class instance. It is mainly used when the native side once to create a
   /// Dart instance and when the `InstanceManager` wants to create a copy for
-  /// garbage collection.
+  /// automatic garbage collection.
   cb.Constructor _proxyApiDetachedConstructor({
     required String apiName,
     required AstProxyApi? superClassApi,
@@ -1180,6 +1182,7 @@ if (${_varNamePrefix}replyList == null) {
     );
   }
 
+  /// A private Field of the base codec.
   cb.Field _proxyApiCodecInstanceField({
     required String codecInstanceName,
     required String codecName,
@@ -1194,8 +1197,11 @@ if (${_varNamePrefix}replyList == null) {
     );
   }
 
+  /// Converts unattached constructors from the pigeon AST to `code_builder`
+  /// Fields.
   Iterable<cb.Field> _proxyApiUnattachedFields(
-      Iterable<ApiField> fields) sync* {
+    Iterable<ApiField> fields,
+  ) sync* {
     for (final ApiField field in fields) {
       yield cb.Field(
         (cb.FieldBuilder builder) => builder
@@ -1210,6 +1216,10 @@ if (${_varNamePrefix}replyList == null) {
     }
   }
 
+  /// Converts Flutter methods from the pigeon AST to `code_builder` Fields.
+  ///
+  /// Flutter methods of a ProxyApi are set as an anonymous function of a class
+  /// instance, so this converts methods to a `Function` type field instance.
   Iterable<cb.Field> _proxyApiFlutterMethodFields(
     Iterable<Method> methods, {
     required String apiName,
@@ -1268,6 +1278,14 @@ if (${_varNamePrefix}replyList == null) {
     }
   }
 
+  /// Converts the Flutter methods from the pigeon AST to `code_builder` Fields.
+  ///
+  /// Flutter methods of a ProxyApi are set as an anonymous function of a class
+  /// instance, so this converts methods to a `Function` type field instance.
+  ///
+  /// This is similar to [_proxyApiFlutterMethodFields] except all the methods are
+  /// inherited from apis that are being implemented (following the `implements`
+  /// keyword).
   Iterable<cb.Field> _proxyApiInterfaceApiFields(
     Iterable<AstProxyApi> apis,
   ) sync* {
@@ -1307,7 +1325,17 @@ if (${_varNamePrefix}replyList == null) {
     }
   }
 
-  Iterable<cb.Field> _proxyApiattachedFields(Iterable<ApiField> fields) sync* {
+  /// Converts attached Fields from the pigeon AST to `code_builder` Field.
+  ///
+  /// Attached fields are set lazily by calling a private method that returns
+  /// it.
+  ///
+  /// Example Output:
+  ///
+  /// ```dart
+  /// final MyOtherProxyApiClass value = _pigeon_value();
+  /// ```
+  Iterable<cb.Field> _proxyApiAttachedFields(Iterable<ApiField> fields) sync* {
     for (final ApiField field in fields) {
       yield cb.Field(
         (cb.FieldBuilder builder) => builder
@@ -1325,6 +1353,14 @@ if (${_varNamePrefix}replyList == null) {
     }
   }
 
+  /// Creates the static `setUpMessageHandlers` method for a ProxyApi.
+  ///
+  /// This method handles setting the message handler for every un-inherited
+  /// Flutter method.
+  ///
+  /// This also adds a handler to receive a call from the platform to
+  /// instantiate a new Dart instance if [hasCallbackConstructor] is set to
+  /// true.
   cb.Method _proxyApiSetUpMessageHandlerMethod({
     required Iterable<Method> flutterMethods,
     required String apiName,
@@ -1513,6 +1549,11 @@ if (${_varNamePrefix}replyList == null) {
     );
   }
 
+  /// Converts attached fields from the pigeon AST to `code_builder` fields.
+  ///
+  /// These private methods are used to lazily instantiate attached fields. The
+  /// instance is created and returned synchronously while the native instance
+  /// is created synchronously. This is similar to how constructors work.
   Iterable<cb.Method> _proxyApiAttachedFieldMethods(
     Iterable<ApiField> fields, {
     required String apiName,
@@ -1602,6 +1643,10 @@ if (${_varNamePrefix}replyList == null) {
     }
   }
 
+  /// Converts host methods from pigeon AST to `code_builder` AST.
+  ///
+  /// This creates methods like a HostApi except that it includes the calling
+  /// instance if the method is not static.
   Iterable<cb.Method> _proxyApiHostMethods(
     Iterable<Method> methods, {
     required String apiName,
@@ -1689,6 +1734,11 @@ if (${_varNamePrefix}replyList == null) {
     }
   }
 
+  /// Creates the copy method for a ProxyApi.
+  ///
+  /// This method returns a copy of the instance with all the Flutter methods
+  /// and unattached fields passed to the new instance. This method is inherited
+  /// from the base ProxyApi class.
   cb.Method _proxyApiCopyMethod({
     required Iterable<Method> flutterMethods,
     required Iterable<Method> superClassFlutterMethods,
