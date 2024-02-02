@@ -12,7 +12,7 @@ set -e
 # For local use, directly run `dart run <tool path>`.
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
-readonly REPO_DIR="$(dirname "$SCRIPT_DIR")"
+readonly REPO_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 readonly TOOL_PATH="$REPO_DIR/script/tool/bin/flutter_plugin_tools.dart"
 
 # Ensure that the tool dependencies have been fetched.
