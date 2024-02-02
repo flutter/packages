@@ -50,9 +50,11 @@ abstract class Pigeon_ProxyApiBaseClass {
   ///
   /// If it is null, the default BinaryMessenger will be used, which routes to
   /// the host platform.
+  @protected
   final BinaryMessenger? pigeon_binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
+  @protected
   final Pigeon_InstanceManager pigeon_instanceManager;
 
   /// Instantiates and returns a functionally identical object to oneself.
@@ -533,10 +535,11 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }();
   }
 
-  /// Constructs ProxyApiTestClass without creating the associated native object.
+  /// Constructs [ProxyApiTestClass] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [Pigeon_InstanceManager].
+  @protected
   ProxyApiTestClass.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
@@ -644,7 +647,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(ProxyApiTestClass pigeon_instance)? flutterNoop;
 
@@ -666,7 +669,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError;
 
@@ -688,7 +691,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(ProxyApiTestClass pigeon_instance)?
       flutterThrowErrorFromVoid;
@@ -711,7 +714,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final bool Function(
     ProxyApiTestClass pigeon_instance,
@@ -736,7 +739,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final int Function(
     ProxyApiTestClass pigeon_instance,
@@ -761,7 +764,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final double Function(
     ProxyApiTestClass pigeon_instance,
@@ -786,7 +789,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final String Function(
     ProxyApiTestClass pigeon_instance,
@@ -811,7 +814,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Uint8List Function(
     ProxyApiTestClass pigeon_instance,
@@ -836,7 +839,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final List<Object?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -862,7 +865,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final List<ProxyApiTestClass?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -887,7 +890,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Map<String?, Object?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -913,7 +916,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Map<String?, ProxyApiTestClass?> Function(
     ProxyApiTestClass pigeon_instance,
@@ -938,7 +941,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final AnEnum Function(
     ProxyApiTestClass pigeon_instance,
@@ -963,7 +966,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final ProxyApiSuperClass Function(
     ProxyApiTestClass pigeon_instance,
@@ -988,7 +991,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final bool? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1013,7 +1016,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final int? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1038,7 +1041,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final double? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1063,7 +1066,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final String? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1088,7 +1091,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Uint8List? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1113,7 +1116,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final List<Object?>? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1138,7 +1141,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Map<String?, Object?>? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1163,7 +1166,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final AnEnum? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1188,7 +1191,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final ProxyApiSuperClass? Function(
     ProxyApiTestClass pigeon_instance,
@@ -1214,7 +1217,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Future<void> Function(ProxyApiTestClass pigeon_instance)?
       flutterNoopAsync;
@@ -1237,7 +1240,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Future<String> Function(
     ProxyApiTestClass pigeon_instance,
@@ -4819,10 +4822,11 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
     }();
   }
 
-  /// Constructs ProxyApiSuperClass without creating the associated native object.
+  /// Constructs [ProxyApiSuperClass] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [Pigeon_InstanceManager].
+  @protected
   ProxyApiSuperClass.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
@@ -4917,10 +4921,11 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
 
 /// ProxyApi to serve as an interface to the core ProxyApi interface.
 class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
-  /// Constructs ProxyApiInterface without creating the associated native object.
+  /// Constructs [ProxyApiInterface] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [Pigeon_InstanceManager].
+  @protected
   ProxyApiInterface.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
@@ -4943,7 +4948,7 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
   /// );
   /// ```
   ///
-  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod;
 

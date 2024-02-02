@@ -1170,11 +1170,12 @@ if (${_varNamePrefix}replyList == null) {
       (cb.ConstructorBuilder builder) => builder
         ..name = '${classMemberNamePrefix}detached'
         ..docs.addAll(<String>[
-          '/// Constructs $apiName without creating the associated native object.',
+          '/// Constructs [$apiName] without creating the associated native object.',
           '///',
           '/// This should only be used by subclasses created by this library or to',
           '/// create copies for an [$instanceManagerClassName].',
         ])
+        ..annotations.add(cb.refer('protected'))
         ..optionalParameters.addAll(<cb.Parameter>[
           binaryMessengerParameter,
           instanceManagerParameter,
@@ -1226,7 +1227,7 @@ if (${_varNamePrefix}replyList == null) {
     );
   }
 
-  /// Converts unattached constructors from the pigeon AST to `code_builder`
+  /// Converts unattached fields from the pigeon AST to `code_builder`
   /// Fields.
   Iterable<cb.Field> _proxyApiUnattachedFields(
     Iterable<ApiField> fields,
@@ -1279,7 +1280,7 @@ if (${_varNamePrefix}replyList == null) {
                 ');',
                 '```',
                 '',
-                'Alternatively, `$instanceManagerClassName.removeWeakReference` can be used to',
+                'Alternatively, [$instanceManagerClassName.removeWeakReference] can be used to',
                 'release the associated Native object manually.',
               ],
             ],

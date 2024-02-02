@@ -344,9 +344,11 @@ abstract class $proxyApiBaseClassName {
   ///
   /// If it is null, the default BinaryMessenger will be used, which routes to
   /// the host platform.
+  @protected
   final BinaryMessenger? $_proxyApiBaseClassMessengerVarName;
 
   /// Maintains instances stored to communicate with native language objects.
+  @protected
   final $instanceManagerClassName $_proxyApiBaseClassInstanceManagerVarName;
 
   /// Instantiates and returns a functionally identical object to oneself.
