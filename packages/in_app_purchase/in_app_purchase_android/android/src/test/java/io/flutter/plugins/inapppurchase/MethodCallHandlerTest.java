@@ -8,6 +8,7 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CONSUME_PURCHASE_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.END_CONNECTION;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_FEATURE_SUPPORTED;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_READY;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
@@ -46,7 +47,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
+import com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener;
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingConfigResponseListener;
@@ -218,6 +221,51 @@ public class MethodCallHandlerTest {
     listenerCaptor.getValue().onBillingConfigResponse(billingResult, mockBillingConfig);
 
     verify(result, times(1)).success(fromBillingConfig(billingResult, mockBillingConfig));
+  }
+
+
+  @Test
+  public void getBillingConfig_serviceDisconnected() {
+    MethodCall billingCall = new MethodCall(GET_BILLING_CONFIG, null);
+    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
+
+    methodChannelHandler.onMethodCall(billingCall, result);
+
+    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
+  }
+
+  @Test
+  public void isAlternativeBillingOnlyAvailableSuccess() {
+    mockStartConnection();
+    ArgumentCaptor<AlternativeBillingOnlyAvailabilityListener> listenerCaptor =
+        ArgumentCaptor.forClass(AlternativeBillingOnlyAvailabilityListener.class);
+    MethodCall billingCall = new MethodCall(IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE, null);
+    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
+    BillingResult billingResult =
+        BillingResult.newBuilder()
+            .setResponseCode(BillingClient.BillingResponseCode.OK)
+            .setDebugMessage("dummy debug message")
+            .build();
+    final HashMap<String, Object> expectedResult = fromBillingResult(billingResult);
+
+    doNothing()
+        .when(mockBillingClient)
+        .isAlternativeBillingOnlyAvailableAsync(listenerCaptor.capture());
+
+    methodChannelHandler.onMethodCall(billingCall, result);
+    listenerCaptor.getValue().onAlternativeBillingOnlyAvailabilityResponse(billingResult);
+
+    verify(result, times(1)).success(fromBillingResult(billingResult));
+  }
+
+  @Test
+  public void isAlternativeBillingOnlyAvailable_serviceDisconnected() {
+    MethodCall billingCall = new MethodCall(IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE, null);
+    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
+
+    methodChannelHandler.onMethodCall(billingCall, result);
+
+    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
   }
 
   @Test

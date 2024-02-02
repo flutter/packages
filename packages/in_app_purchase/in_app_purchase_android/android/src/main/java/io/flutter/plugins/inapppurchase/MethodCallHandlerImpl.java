@@ -65,6 +65,8 @@ class MethodCallHandlerImpl
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
     static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
+    static final String IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE =
+        "BillingClient#isAlternativeBillingOnlyAvailable()";
 
     private MethodNames() {}
   }
@@ -190,12 +192,28 @@ class MethodCallHandlerImpl
       case MethodNames.GET_BILLING_CONFIG:
         getBillingConfig(result);
         break;
+      case MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE:
+        isAlternativeBillingOnlyAvailable(result);
+        break;
       default:
         result.notImplemented();
     }
   }
 
+  private void isAlternativeBillingOnlyAvailable(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
+    billingClient.isAlternativeBillingOnlyAvailableAsync(
+        billingResult -> {
+          result.success(fromBillingResult(billingResult));
+        }
+    );
+  }
   private void getBillingConfig(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
     billingClient.getBillingConfigAsync(
         GetBillingConfigParams.newBuilder().build(),
         (billingResult, billingConfig) -> {
