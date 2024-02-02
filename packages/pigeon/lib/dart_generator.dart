@@ -520,9 +520,9 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     final Set<AstProxyApi> interfacesApis = recursiveFindAllInterfaceApis(api);
 
     // All methods inherited from interfaces and the interfaces of interfaces.
-    final List<Method> interfacesMethods = <Method>[];
+    final List<Method> flutterMethodsFromInterfaces = <Method>[];
     for (final AstProxyApi proxyApi in interfacesApis) {
-      interfacesMethods.addAll(proxyApi.methods);
+      flutterMethodsFromInterfaces.addAll(proxyApi.methods);
     }
 
     // A list of Flutter methods inherited from the ProxyApi that this ProxyApi
@@ -531,17 +531,17 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     //
     // This also includes methods that super classes inherited from interfaces
     // with `implements`.
-    final List<Method> superClassFlutterMethods = <Method>[];
+    final List<Method> flutterMethodsFromSuperClasses = <Method>[];
     for (final AstProxyApi proxyApi in superClassApisChain.reversed) {
-      superClassFlutterMethods.addAll(proxyApi.flutterMethods);
+      flutterMethodsFromSuperClasses.addAll(proxyApi.flutterMethods);
     }
     if (api.superClass != null) {
-      final Set<AstProxyApi> superClassInterfacesApis =
+      final Set<AstProxyApi> interfaceApisFromSuperClasses =
           recursiveFindAllInterfaceApis(
         api.superClass!.associatedProxyApi!,
       );
-      for (final AstProxyApi proxyApi in superClassInterfacesApis) {
-        superClassFlutterMethods.addAll(proxyApi.methods);
+      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
+        flutterMethodsFromSuperClasses.addAll(proxyApi.methods);
       }
     }
 
@@ -568,18 +568,18 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           codecInstanceName: codecInstanceName,
           superClassApi: api.superClass?.associatedProxyApi,
           unattachedFields: api.unattachedFields,
-          declaredAndInheritedFlutterMethods: superClassFlutterMethods
-              .followedBy(interfacesMethods)
-              .followedBy(api.flutterMethods),
+          flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+          flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+          declaredFlutterMethods: api.flutterMethods,
         ))
         ..constructors.add(
           _proxyApiDetachedConstructor(
             apiName: api.name,
             superClassApi: api.superClass?.associatedProxyApi,
             unattachedFields: api.unattachedFields,
-            declaredAndInheritedFlutterMethods: superClassFlutterMethods
-                .followedBy(interfacesMethods)
-                .followedBy(api.flutterMethods),
+            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+            declaredFlutterMethods: api.flutterMethods,
           ),
         )
         ..fields.addAll(<cb.Field>[
@@ -606,8 +606,8 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
             codecName: codecName,
             unattachedFields: api.unattachedFields,
             hasCallbackConstructor: api.methods
-                .followedBy(superClassFlutterMethods)
-                .followedBy(interfacesMethods)
+                .followedBy(flutterMethodsFromSuperClasses)
+                .followedBy(flutterMethodsFromInterfaces)
                 .every((Method method) => !method.isRequired),
           ),
         )
@@ -629,7 +629,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
         ))
         ..methods.add(_proxyApiCopyMethod(
           flutterMethods: api.flutterMethods,
-          superClassFlutterMethods: superClassFlutterMethods,
+          flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
           apiName: api.name,
           unattachedFields: api.unattachedFields,
           interfacesApis: interfacesApis,
@@ -1010,7 +1010,9 @@ if (${_varNamePrefix}replyList == null) {
     required String codecInstanceName,
     required AstProxyApi? superClassApi,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> declaredAndInheritedFlutterMethods,
+    required Iterable<Method> flutterMethodsFromSuperClasses,
+    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<Method> declaredFlutterMethods,
   }) sync* {
     final cb.Parameter binaryMessengerParameter = cb.Parameter(
       (cb.ParameterBuilder builder) => builder
@@ -1052,12 +1054,21 @@ if (${_varNamePrefix}replyList == null) {
                       ..toThis = true
                       ..required = !field.type.isNullable,
                   ),
-                for (final Method method in declaredAndInheritedFlutterMethods)
+                for (final Method method in flutterMethodsFromSuperClasses)
                   cb.Parameter(
                     (cb.ParameterBuilder builder) => builder
                       ..name = method.name
                       ..named = true
                       ..toSuper = true
+                      ..required = method.isRequired,
+                  ),
+                for (final Method method in flutterMethodsFromInterfaces
+                    .followedBy(declaredFlutterMethods))
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = method.name
+                      ..named = true
+                      ..toThis = true
                       ..required = method.isRequired,
                   ),
                 ...constructor.parameters.mapIndexed(
@@ -1132,7 +1143,9 @@ if (${_varNamePrefix}replyList == null) {
     required String apiName,
     required AstProxyApi? superClassApi,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> declaredAndInheritedFlutterMethods,
+    required Iterable<Method> flutterMethodsFromSuperClasses,
+    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<Method> declaredFlutterMethods,
   }) {
     final cb.Parameter binaryMessengerParameter = cb.Parameter(
       (cb.ParameterBuilder builder) => builder
@@ -1166,12 +1179,21 @@ if (${_varNamePrefix}replyList == null) {
                 ..toThis = true
                 ..required = !field.type.isNullable,
             ),
-          for (final Method method in declaredAndInheritedFlutterMethods)
+          for (final Method method in flutterMethodsFromSuperClasses)
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
                 ..name = method.name
                 ..named = true
                 ..toSuper = true
+                ..required = method.isRequired,
+            ),
+          for (final Method method in flutterMethodsFromInterfaces
+              .followedBy(declaredFlutterMethods))
+            cb.Parameter(
+              (cb.ParameterBuilder builder) => builder
+                ..name = method.name
+                ..named = true
+                ..toThis = true
                 ..required = method.isRequired,
             ),
         ])
@@ -1741,7 +1763,7 @@ if (${_varNamePrefix}replyList == null) {
   /// from the base ProxyApi class.
   cb.Method _proxyApiCopyMethod({
     required Iterable<Method> flutterMethods,
-    required Iterable<Method> superClassFlutterMethods,
+    required Iterable<Method> flutterMethodsFromSuperClasses,
     required String apiName,
     required Iterable<ApiField> unattachedFields,
     required Iterable<AstProxyApi> interfacesApis,
@@ -1762,7 +1784,7 @@ if (${_varNamePrefix}replyList == null) {
                   _instanceManagerVarName: cb.refer(_instanceManagerVarName),
                   for (final ApiField field in unattachedFields)
                     field.name: cb.refer(field.name),
-                  for (final Method method in superClassFlutterMethods)
+                  for (final Method method in flutterMethodsFromSuperClasses)
                     method.name: cb.refer(method.name),
                   for (final AstProxyApi proxyApi in interfacesApis)
                     for (final Method method in proxyApi.methods)
