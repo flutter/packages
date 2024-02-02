@@ -98,7 +98,7 @@ class MethodCallHandlerImpl
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
       "https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
-  private static final String ACTIVITY_UNAVAILABLE = "ACTIVITY_UNAVAILABLE";
+  @VisibleForTesting static final String ACTIVITY_UNAVAILABLE = "ACTIVITY_UNAVAILABLE";
 
   @Nullable private BillingClient billingClient;
   private final BillingClientFactory billingClientFactory;

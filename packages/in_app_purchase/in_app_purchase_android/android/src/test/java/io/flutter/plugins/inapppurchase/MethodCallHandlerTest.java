@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ACKNOWLEDGE_PURCHASE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CONSUME_PURCHASE_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
@@ -387,13 +388,24 @@ public class MethodCallHandlerTest {
   @Test
   public void showAlternativeBillingOnlyInformationDialog_serviceDisconnected() {
     MethodCall billingCall = new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
-    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
 
     methodChannelHandler.onMethodCall(billingCall, result);
 
     verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
   }
 
+  @Test
+  public void showAlternativeBillingOnlyInformationDialog_NullActivity() {
+    mockStartConnection();
+    MethodCall showDialogCall =
+        new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
+
+    methodChannelHandler.setActivity(null);
+    methodChannelHandler.onMethodCall(showDialogCall, result);
+
+    verify(result)
+        .error(contains(ACTIVITY_UNAVAILABLE), contains("Not attempting to show dialog"), any());
+  }
 
   @Test
   public void endConnection() {
