@@ -11,6 +11,13 @@
                           identifier:(NSString *)identifier
                              mapView:(GMSMapView *)mapView;
 - (void)removePolyline;
+
+/**
+ * Sets the pattern on polyline controller
+ *
+ * @param styles The styles for repeating pattern sections.
+ * @param lengths The lengths for repeating pattern sections.
+ */
 - (void)setPattern:(NSArray<GMSStrokeStyle *> *)styles lengths:(NSArray<NSNumber *> *)lengths;
 @end
 
@@ -23,5 +30,4 @@
 - (void)removePolylineWithIdentifiers:(NSArray *)identifiers;
 - (void)didTapPolylineWithIdentifier:(NSString *)identifier;
 - (bool)hasPolylineWithIdentifier:(NSString *)identifier;
-+ (GMSMutablePath *)getPath:(NSDictionary *)polyline;
 @end

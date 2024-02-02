@@ -118,6 +118,14 @@
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
+/**
+ * Returns the path for polyline based on the points(locations) the polyline has.
+ *
+ * @param polyline The polyline instance for which path is calculated.
+ * @return An instance of GMSMutablePath.
+ */
+- (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline;
+
 @end
 ;
 
@@ -137,7 +145,7 @@
 }
 - (void)addPolylines:(NSArray *)polylinesToAdd {
   for (NSDictionary *polyline in polylinesToAdd) {
-    GMSMutablePath *path = [FLTPolylinesController getPath:polyline];
+    GMSMutablePath *path = [self pathForPolyline:polyline];
     NSString *identifier = polyline[@"polylineId"];
     FLTGoogleMapPolylineController *controller =
         [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path
@@ -183,7 +191,7 @@
   }
   return self.polylineIdentifierToController[identifier] != nil;
 }
-+ (GMSMutablePath *)getPath:(NSDictionary *)polyline {
+- (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline {
   NSArray *pointArray = polyline[@"points"];
   NSArray<CLLocation *> *points = [FLTGoogleMapJSONConversions pointsFromLatLongs:pointArray];
   GMSMutablePath *path = [GMSMutablePath path];
