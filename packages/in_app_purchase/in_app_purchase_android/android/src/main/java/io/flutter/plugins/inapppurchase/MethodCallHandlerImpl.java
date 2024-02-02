@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
@@ -67,6 +68,10 @@ class MethodCallHandlerImpl
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
     static final String IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE =
         "BillingClient#isAlternativeBillingOnlyAvailable()";
+    static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
+        "BillingClient#createAlternativeBillingOnlyReportingDetails()";
+    static final String SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG =
+        "BillingClient#showAlternativeBillingOnlyInformationDialog()";
 
     private MethodNames() {}
   }
@@ -93,6 +98,7 @@ class MethodCallHandlerImpl
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
       "https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
+  private static final String ACTIVITY_UNAVAILABLE = "ACTIVITY_UNAVAILABLE";
 
   @Nullable private BillingClient billingClient;
   private final BillingClientFactory billingClientFactory;
@@ -212,9 +218,42 @@ class MethodCallHandlerImpl
       case MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE:
         isAlternativeBillingOnlyAvailable(result);
         break;
+      case MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS:
+        createAlternativeBillingOnlyReportingDetails(result);
+        break;
+      case MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG:
+        showAlternativeBillingOnlyInformationDialog(result);
+        break;
       default:
         result.notImplemented();
     }
+  }
+
+  private void showAlternativeBillingOnlyInformationDialog(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
+    if (activity == null) {
+      result.error(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null);
+      return;
+    }
+    billingClient.showAlternativeBillingOnlyInformationDialog(
+        activity,
+        billingResult -> {
+          result.success(fromBillingResult(billingResult));
+        });
+  }
+
+  private void createAlternativeBillingOnlyReportingDetails(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
+    billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
+        ((billingResult, alternativeBillingOnlyReportingDetails) -> {
+          result.success(
+              fromAlternativeBillingOnlyReportingDetails(
+                  billingResult, alternativeBillingOnlyReportingDetails));
+        }));
   }
 
   private void isAlternativeBillingOnlyAvailable(final MethodChannel.Result result) {
@@ -348,7 +387,7 @@ class MethodCallHandlerImpl
 
     if (activity == null) {
       result.error(
-          "ACTIVITY_UNAVAILABLE",
+          ACTIVITY_UNAVAILABLE,
           "Details for product "
               + product
               + " are not available. This method must be run with the app in foreground.",

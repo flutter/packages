@@ -19,6 +19,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
       boolean enableAlternativeBillingOnly) {
     BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
     if (enableAlternativeBillingOnly) {
+      // https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
       builder.enableAlternativeBillingOnly();
     }
     return builder.setListener(new PluginPurchaseListener(channel)).build();

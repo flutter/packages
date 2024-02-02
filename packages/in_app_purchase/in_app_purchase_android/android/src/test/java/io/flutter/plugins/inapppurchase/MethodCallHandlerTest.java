@@ -6,6 +6,7 @@ package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ACKNOWLEDGE_PURCHASE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CONSUME_PURCHASE_ASYNC;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.END_CONNECTION;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE;
@@ -16,8 +17,10 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PRODUCT_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.START_CONNECTION;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
+import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
@@ -47,7 +50,11 @@ import androidx.annotation.Nullable;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener;
+import com.android.billingclient.api.AlternativeBillingOnlyInformationDialogListener;
+import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
+import com.android.billingclient.api.AlternativeBillingOnlyReportingDetailsListener;
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingConfigResponseListener;
@@ -97,7 +104,6 @@ public class MethodCallHandlerTest {
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
   @Captor ArgumentCaptor<HashMap<String, Object>> resultCaptor;
-  @Mock BillingConfig mockBillingConfig;
 
   @Before
   public void setUp() {
@@ -255,18 +261,17 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     final String expectedCountryCode = "US";
-    final HashMap<String, Object> expectedResult = fromBillingResult(billingResult);
-    expectedResult.put("countryCode", expectedCountryCode);
+    final BillingConfig expectedConfig = mock(BillingConfig.class);
+    when(expectedConfig.getCountryCode()).thenReturn(expectedCountryCode);
 
-    when(mockBillingConfig.getCountryCode()).thenReturn(expectedCountryCode);
     doNothing()
         .when(mockBillingClient)
         .getBillingConfigAsync(paramsCaptor.capture(), listenerCaptor.capture());
 
     methodChannelHandler.onMethodCall(billingCall, result);
-    listenerCaptor.getValue().onBillingConfigResponse(billingResult, mockBillingConfig);
+    listenerCaptor.getValue().onBillingConfigResponse(billingResult, expectedConfig);
 
-    verify(result, times(1)).success(fromBillingConfig(billingResult, mockBillingConfig));
+    verify(result, times(1)).success(fromBillingConfig(billingResult, expectedConfig));
   }
 
   @Test
@@ -275,6 +280,48 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
 
     methodChannelHandler.onMethodCall(billingCall, result);
+
+    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
+  }
+
+  @Test
+  public void createAlternativeBillingOnlyReportingDetailsSuccess() {
+    mockStartConnection();
+    // ArgumentCaptor<GetBillingConfigParams> paramsCaptor =
+    //     ArgumentCaptor.forClass(GetBillingConfigParams.class);
+    ArgumentCaptor<AlternativeBillingOnlyReportingDetailsListener> listenerCaptor =
+        ArgumentCaptor.forClass(AlternativeBillingOnlyReportingDetailsListener.class);
+    MethodCall createABOReportingDetailsCall =
+        new MethodCall(CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS, null);
+    methodChannelHandler.onMethodCall(createABOReportingDetailsCall, mock(Result.class));
+    BillingResult billingResult =
+        BillingResult.newBuilder()
+            .setResponseCode(BillingResponseCode.OK)
+            .setDebugMessage("dummy debug message")
+            .build();
+    final AlternativeBillingOnlyReportingDetails expectedDetails =
+        mock(AlternativeBillingOnlyReportingDetails.class);
+    final String expectedExternalTransactionToken = "abc123youandme";
+
+    when(expectedDetails.getExternalTransactionToken())
+        .thenReturn(expectedExternalTransactionToken);
+    doNothing()
+        .when(mockBillingClient)
+        .createAlternativeBillingOnlyReportingDetailsAsync(listenerCaptor.capture());
+
+    methodChannelHandler.onMethodCall(createABOReportingDetailsCall, result);
+    listenerCaptor.getValue().onAlternativeBillingOnlyTokenResponse(billingResult, expectedDetails);
+
+    verify(result, times(1))
+        .success(fromAlternativeBillingOnlyReportingDetails(billingResult, expectedDetails));
+  }
+
+  @Test
+  public void createAlternativeBillingOnlyReportingDetails_serviceDisconnected() {
+    MethodCall createCall = new MethodCall(CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS, null);
+    methodChannelHandler.onMethodCall(createCall, mock(Result.class));
+
+    methodChannelHandler.onMethodCall(createCall, result);
 
     verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
   }
@@ -312,6 +359,41 @@ public class MethodCallHandlerTest {
 
     verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
   }
+
+  @Test
+  public void showAlternativeBillingOnlyInformationDialogSuccess() {
+    mockStartConnection();
+    ArgumentCaptor<AlternativeBillingOnlyInformationDialogListener> listenerCaptor =
+        ArgumentCaptor.forClass(AlternativeBillingOnlyInformationDialogListener.class);
+    MethodCall showDialogCall =
+        new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
+    methodChannelHandler.onMethodCall(showDialogCall, mock(Result.class));
+    BillingResult billingResult =
+        BillingResult.newBuilder()
+            .setResponseCode(BillingResponseCode.OK)
+            .setDebugMessage("dummy debug message")
+            .build();
+
+    when(mockBillingClient.showAlternativeBillingOnlyInformationDialog(
+            eq(activity), listenerCaptor.capture()))
+        .thenReturn(billingResult);
+
+    methodChannelHandler.onMethodCall(showDialogCall, result);
+    listenerCaptor.getValue().onAlternativeBillingOnlyInformationDialogResponse(billingResult);
+
+    verify(result, times(1)).success(fromBillingResult(billingResult));
+  }
+
+  @Test
+  public void showAlternativeBillingOnlyInformationDialog_serviceDisconnected() {
+    MethodCall billingCall = new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
+    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
+
+    methodChannelHandler.onMethodCall(billingCall, result);
+
+    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
+  }
+
 
   @Test
   public void endConnection() {
