@@ -16,7 +16,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  url_launcher_platform_interface: ^2.2.0
+  url_launcher_platform_interface: ^2.3.1
 
 dev_dependencies:
   flutter_test:
@@ -28,8 +28,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {url_launcher_android: {path: ../../../url_launcher/url_launcher_android}, url_launcher_platform_interface: {path: ../../../url_launcher/url_launcher_platform_interface}}
