@@ -213,6 +213,10 @@ class DynamicContent {
     }
   }
 
+  Map<String, Object?> toDartMap() {
+    return _root.toDartMap();
+  }
+
   @override
   String toString() => '${objectRuntimeType(this, 'DynamicContent')}($_root)';
 }
@@ -370,6 +374,10 @@ class _DynamicNode {
     for (final SubscriptionCallback callback in _callbacks) {
       callback(value);
     }
+  }
+
+  Map<String, Object?> toDartMap() {
+    return Map<String, Object?>.from(_value as DynamicMap);
   }
 
   @override
