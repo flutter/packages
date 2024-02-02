@@ -6,7 +6,6 @@ import '../generator_tools.dart';
 
 /// Creates the `InstanceManager` with the passed string values.
 String instanceManagerTemplate({
-  required String proxyApiBaseClassName,
   required Iterable<String> allProxyApiNames,
 }) {
   final Iterable<String> apiHandlerSetUps = allProxyApiNames.map(
@@ -333,9 +332,9 @@ const String proxyApiBaseClass = '''
 /// All implementers are expected to be [immutable] as defined by the annotation
 /// and override [${classMemberNamePrefix}copy] returning an instance of itself.
 @immutable
-abstract class $_proxyApiBaseClassName {
-  /// Construct a [$_proxyApiBaseClassName].
-  $_proxyApiBaseClassName({
+abstract class $proxyApiBaseClassName {
+  /// Construct a [$proxyApiBaseClassName].
+  $proxyApiBaseClassName({
     this.$_proxyApiBaseClassMessengerVarName,
     $instanceManagerClassName? $_proxyApiBaseClassInstanceManagerVarName,
   }) : $_proxyApiBaseClassInstanceManagerVarName =
@@ -358,7 +357,7 @@ abstract class $_proxyApiBaseClassName {
   /// Subclasses should always override their parent's implementation of this
   /// method.
   @protected
-  $_proxyApiBaseClassName ${classMemberNamePrefix}copy();
+  $proxyApiBaseClassName ${classMemberNamePrefix}copy();
 }
 ''';
 
@@ -373,7 +372,7 @@ class $_proxyApiCodecName extends StandardMessageCodec {
  final $instanceManagerClassName instanceManager;
  @override
  void writeValue(WriteBuffer buffer, Object? value) {
-   if (value is $_proxyApiBaseClassName) {
+   if (value is $proxyApiBaseClassName) {
      buffer.putUint8(128);
      writeValue(buffer, instanceManager.getIdentifier(value));
    } else {
@@ -393,7 +392,8 @@ class $_proxyApiCodecName extends StandardMessageCodec {
 }
 ''';
 
-const String _proxyApiBaseClassName = '${classNamePrefix}ProxyApiBaseClass';
+/// Name of the base class of all ProxyApis.
+const String proxyApiBaseClassName = '${classNamePrefix}ProxyApiBaseClass';
 const String _proxyApiBaseClassMessengerVarName =
     '${classMemberNamePrefix}binaryMessenger';
 const String _proxyApiBaseClassInstanceManagerVarName =

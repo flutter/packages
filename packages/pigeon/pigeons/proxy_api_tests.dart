@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
-// TODO(bparrishMines): Remove this import when ProxyApi has an implementation
-// for at least one host language.
-import 'package:pigeon/pigeon_lib.dart';
 
 enum AnEnum {
   one,

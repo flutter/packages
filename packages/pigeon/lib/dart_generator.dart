@@ -125,7 +125,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
     final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
     indent.writeln(
-        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${hasProxyApi ? ' immutable, protected' : ''};");
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${hasProxyApi ? ', immutable, protected' : ''};");
     indent.writeln("import 'package:flutter/services.dart';");
     if (hasProxyApi) {
       indent.writeln(
@@ -463,7 +463,6 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 
     indent.writeln(
       instanceManagerTemplate(
-        proxyApiBaseClassName: '${classMemberNamePrefix}ProxyApiBaseClass',
         allProxyApiNames: root.apis
             .whereType<AstProxyApi>()
             .map((AstProxyApi api) => api.name),
@@ -551,7 +550,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
         ..name = api.name
         ..extend = api.superClass != null
             ? cb.refer(api.superClass!.baseName)
-            : cb.refer('${classNamePrefix}ProxyApiBaseClass')
+            : cb.refer(proxyApiBaseClassName)
         ..implements.addAll(
           api.interfaces.map(
             (TypeDeclaration type) => cb.refer(type.baseName),
@@ -583,9 +582,9 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           ),
         )
         ..fields.addAll(<cb.Field>[
-          if (api.methods.isNotEmpty ||
-              api.constructors.isNotEmpty ||
-              api.attachedFields.any((ApiField field) => !field.isStatic))
+          if (api.constructors.isNotEmpty ||
+              api.attachedFields.any((ApiField field) => !field.isStatic) ||
+              api.hostMethods.isNotEmpty)
             _proxyApiCodecInstanceField(
               codecInstanceName: codecInstanceName,
               codecName: codecName,
@@ -605,7 +604,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
             dartPackageName: dartPackageName,
             codecName: codecName,
             unattachedFields: api.unattachedFields,
-            hasCallbackConstructor: api.methods
+            hasCallbackConstructor: api.flutterMethods
                 .followedBy(flutterMethodsFromSuperClasses)
                 .followedBy(flutterMethodsFromInterfaces)
                 .every((Method method) => !method.isRequired),
@@ -727,15 +726,22 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi =
-        root.apis.any((Api api) => api.methods.isNotEmpty && api is AstHostApi);
-    final bool hasFlutterApi = root.apis
-        .any((Api api) => api.methods.isNotEmpty && api is AstFlutterApi);
+    final bool hasHostMethod = root.apis
+            .whereType<AstHostApi>()
+            .any((AstHostApi api) => api.methods.isNotEmpty) ||
+        root.apis.whereType<AstProxyApi>().any((AstProxyApi api) =>
+            api.constructors.isNotEmpty ||
+            api.attachedFields.isNotEmpty ||
+            api.hostMethods.isNotEmpty);
+    final bool hasFlutterMethod = root.apis
+            .whereType<AstFlutterApi>()
+            .any((AstFlutterApi api) => api.methods.isNotEmpty) ||
+        root.apis.any((Api api) => api is AstProxyApi);
 
-    if (hasHostApi) {
+    if (hasHostMethod) {
       _writeCreateConnectionError(indent);
     }
-    if (hasFlutterApi || generatorOptions.testOutPath != null) {
+    if (hasFlutterMethod || generatorOptions.testOutPath != null) {
       _writeWrapResponse(generatorOptions, root, indent);
     }
   }
@@ -1461,12 +1467,14 @@ if (${_varNamePrefix}replyList == null) {
             ),
         ])
         ..body = cb.Block.of(<cb.Code>[
-          cb.Code(
-            'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
-          ),
-          const cb.Code(
-            'final BinaryMessenger? binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
-          ),
+          if (hasCallbackConstructor || flutterMethods.isNotEmpty) ...<cb.Code>[
+            cb.Code(
+              'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
+            ),
+            const cb.Code(
+              'final BinaryMessenger? binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
+            )
+          ],
           if (hasCallbackConstructor)
             ...cb.Block((cb.BlockBuilder builder) {
               final StringBuffer messageHandlerSink = StringBuffer();
