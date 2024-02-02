@@ -512,6 +512,26 @@ class Runtime extends ChangeNotifier {
   }
 }
 
+extension DebugRuntimeExtension on Runtime {
+  List<String> debugGetLibraryNames() {
+    if (kDebugMode) {
+      return _libraries.keys.map((LibraryName l) => l.toString()).toList();
+    } else {
+      throw UnsupportedError(
+        'Cannot call Runtime.debugGetLibraryNames in release mode',
+      );
+    }
+  }
+
+  String? debugGetLibraryContent(String libraryName) {
+    final WidgetLibrary library = _libraries.entries
+        .firstWhere((MapEntry<LibraryName, WidgetLibrary> e) =>
+            e.key.toString() == libraryName)
+        .value;
+    return getDebugLibraryContent(library);
+  }
+}
+
 // Internal structure to represent the result of indexing into a list.
 //
 // There are two ways this can go: either we index in and find a result, in
