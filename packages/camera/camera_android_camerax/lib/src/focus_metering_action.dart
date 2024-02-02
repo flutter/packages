@@ -19,8 +19,7 @@ class FocusMeteringAction extends JavaObject {
   FocusMeteringAction({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    required List<(MeteringPoint meteringPoint, int? meteringMode)>
-        meteringPointInfos,
+    required this.meteringPointInfos,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -35,6 +34,7 @@ class FocusMeteringAction extends JavaObject {
   FocusMeteringAction.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
+    required this.meteringPointInfos,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -44,6 +44,10 @@ class FocusMeteringAction extends JavaObject {
   }
 
   late final _FocusMeteringActionHostApiImpl _api;
+
+  /// The requested [MeteringPoint]s and modes those points are relevant to.
+  final List<(MeteringPoint meteringPoint, int? meteringMode)>
+      meteringPointInfos;
 
   /// Flag for metering mode that indicates the auto focus region is enabled.
   ///

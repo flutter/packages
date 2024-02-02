@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
@@ -21,10 +22,12 @@ import 'camerax_proxy.dart';
 import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
+import 'focus_metering_action.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
 import 'live_data.dart';
+import 'metering_point.dart';
 import 'observer.dart';
 import 'pending_recording.dart';
 import 'plane_proxy.dart';
@@ -179,6 +182,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int)
   /// for an example on how setting target rotations for [UseCase]s works.
   bool shouldSetDefaultRotation = false;
+
+  /// The currently set [FocusMeteringAction] used to enable auto-focus and
+  /// auto-exposure.
+  FocusMeteringAction? currentFocusMeteringAction;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -424,6 +431,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     captureOrientationLocked = false;
   }
 
+  /// Sets the exposure point for automatically determining the exposure values.
+  ///
+  /// Supplying `null` for the [point] argument will result in resetting to the
+  /// original exposure point value.
+  ///
+  /// [cameraId] is not used.
+  @override
+  Future<void> setExposurePoint(int cameraId, Point<double>? point) async {
+    await _startFocusAndMeteringFor(
+        meteringPoint: point, meteringMode: FocusMeteringAction.flagAe);
+  }
+
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
   ///
   /// [cameraId] not used.
@@ -453,6 +472,34 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<double> getExposureOffsetStepSize(int cameraId) async {
     final ExposureState exposureState = await cameraInfo!.getExposureState();
     return exposureState.exposureCompensationStep;
+  }
+
+  /// Sets the exposure offset for the selected camera.
+  ///
+  /// The supplied [offset] value should be in EV units. 1 EV unit represents a
+  /// doubling in brightness. It should be between the minimum and maximum offsets
+  /// obtained through `getMinExposureOffset` and `getMaxExposureOffset` respectively.
+  /// Throws a `CameraException` when an illegal offset is supplied.
+  ///
+  /// When the supplied [offset] value does not align with the step size obtained
+  /// through `getExposureStepSize`, it will automatically be rounded to the nearest step.
+  ///
+  /// Returns the (rounded) offset value that was set.
+  @override
+  Future<double> setExposureOffset(int cameraId, double offset) {
+    // double minOffset = TODO(camsim99): here
+  }
+
+  /// Sets the focus point for automatically determining the focus values.
+  ///
+  /// Supplying `null` for the [point] argument will result in resetting to the
+  /// original focus point value.
+  ///
+  /// [cameraId] is not used.
+  @override
+  Future<void> setFocusPoint(int cameraId, Point<double>? point) async {
+    await _startFocusAndMeteringFor(
+        meteringPoint: point, meteringMode: FocusMeteringAction.flagAf);
   }
 
   /// Gets the maximum supported zoom level for the selected camera.
@@ -973,5 +1020,46 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     return proxy.createQualitySelector(
         videoQuality: videoQuality, fallbackStrategy: fallbackStrategy);
+  }
+
+  Future<void> _startFocusAndMeteringFor(
+      {required Point<double>? meteringPoint,
+      required int? meteringMode}) async {
+    // TODO(camsim99): Consider caching cameraControl when camera created.
+    final CameraControl cameraControl = await camera!.getCameraControl();
+    if (meteringPoint == null) {
+      if (currentFocusMeteringAction == null) {
+        return;
+      }
+      final List<(MeteringPoint, int?)> newMeteringPointInfos =
+          currentFocusMeteringAction!.meteringPointInfos
+              .where(((MeteringPoint, int?) meteringPointInfo) =>
+                  meteringPointInfo.$2 != meteringMode)
+              .toList();
+      currentFocusMeteringAction =
+          FocusMeteringAction(meteringPointInfos: newMeteringPointInfos);
+
+      await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
+    } else if (meteringPoint.x < 0 ||
+        meteringPoint.x > 1 ||
+        meteringPoint.y < 0 && meteringPoint.y > 1) {
+      throw CameraException('TODO(camsim99)', 'TODO(camsim99)');
+    }
+
+    List<(MeteringPoint, int?)> newMeteringPointInfos =
+        <(MeteringPoint, int?)>[];
+    if (currentFocusMeteringAction != null) {
+      newMeteringPointInfos = currentFocusMeteringAction!.meteringPointInfos
+          .where(((MeteringPoint, int?) meteringPointInfo) =>
+              meteringPointInfo.$2 != meteringMode)
+          .toList();
+    }
+    final MeteringPoint newMeteringPoint =
+        MeteringPoint(x: meteringPoint!.x, y: meteringPoint.y);
+    newMeteringPointInfos.add((newMeteringPoint, meteringMode));
+    currentFocusMeteringAction =
+        FocusMeteringAction(meteringPointInfos: newMeteringPointInfos);
+
+    await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
   }
 }

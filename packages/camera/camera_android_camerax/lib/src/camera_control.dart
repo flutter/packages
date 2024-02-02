@@ -56,6 +56,10 @@ class CameraControl extends JavaObject {
   /// Will trigger an auto focus action and enable auto focus/auto exposure/
   /// auto white balance metering regions.
   ///
+  /// Only one [FocusMeteringAction] is allowed to run at a time; if multiple
+  /// are executed in a row, only the latest one will work and other actions
+  /// will be canceled.
+  ///
   /// Returns null if focus and metering could not be started.
   Future<FocusMeteringResult?> startFocusAndMetering(
       FocusMeteringAction action) {
@@ -73,6 +77,10 @@ class CameraControl extends JavaObject {
   /// The exposure compensation value set on the camera must be within the range
   /// of the current [ExposureState]'s `exposureCompensationRange` for the call
   /// to succeed.
+  ///
+  /// Only one [setExposureCompensationIndex] is allowed to run at a time; if
+  /// multiple are executed in a row, only the latest setting will be kept in
+  /// the camera.
   ///
   /// Returns null if the exposure compensation index failed to be set.
   Future<int?> setExposureCompensationIndex(int index) async {
