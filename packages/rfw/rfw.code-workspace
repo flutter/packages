@@ -1,0 +1,41 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../rfw_devtools_extension"
+		},
+		{
+			"path": "../../../rfwpad"
+		}
+	],
+	"settings": {},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "rfw_devtools_extension + simulated environment",
+				"request": "launch",
+				"type": "dart",
+				"program": "/Users/kenzieschmoll/develop/packages/packages/rfw_devtools_extension/lib/main.dart",
+				"args": [
+					"--dart-define=use_simulated_environment=true"
+				]
+			},
+			{
+				"name": "example/hello (lib/main.dart)",
+				"type": "dart",
+				"request": "launch",
+				"program": "/Users/kenzieschmoll/develop/packages/packages/rfw/example/hello/lib/main.dart"
+			},
+			{
+				"name": "example/remote (lib/main.dart)",
+				"type": "dart",
+				"request": "launch",
+				"program": "/Users/kenzieschmoll/develop/packages/packages/rfw/example/remote/lib/main.dart"
+			}
+			
+		]
+	}
+}

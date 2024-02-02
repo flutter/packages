@@ -1,0 +1,4 @@
+name: rfw
+issueTracker: https://github.com/flutter/flutter/issues
+version: 0.0.1
+materialIconCodePoint: '0xe58f'
