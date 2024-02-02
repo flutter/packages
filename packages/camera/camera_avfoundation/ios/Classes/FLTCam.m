@@ -475,20 +475,13 @@ NSString *const errorMethod = @"error";
   return YES;
 }
 
-- (CMVideoDimensions)preferredFormatForDevice:(AVCaptureDeviceFormat *)format {
-  if (self.videoDimensionsForFormatBlock) {
-    return self.videoDimensionsForFormatBlock(format);
-  }
-  return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-}
-
 /// Finds the highest available resolution in terms of pixel count for the given device
 - (AVCaptureDeviceFormat *)getHighestResolutionFormatForCaptureDevice:
     (AVCaptureDevice *)captureDevice {
   AVCaptureDeviceFormat *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
   for (AVCaptureDeviceFormat *format in [_captureDevice formats]) {
-    CMVideoDimensions res = [self preferredFormatForDevice:format];
+    CMVideoDimensions res = [self videoDimensionsForFormat:format];
     NSUInteger height = res.height;
     NSUInteger width = res.width;
     NSUInteger pixelCount = height * width;
@@ -498,6 +491,14 @@ NSString *const errorMethod = @"error";
     }
   }
   return bestFormat;
+}
+
+/// Wrapper for CMVideoFormatDescriptionGetDimensions to use custom code for testing
+- (CMVideoDimensions)videoDimensionsForFormat:(AVCaptureDeviceFormat *)format {
+  if (self.videoDimensionsForFormatBlock) {
+    return self.videoDimensionsForFormatBlock(format);
+  }
+  return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output
