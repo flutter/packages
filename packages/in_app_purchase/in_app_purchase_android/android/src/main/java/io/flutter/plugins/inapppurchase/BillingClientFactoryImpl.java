@@ -14,9 +14,13 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
 
   @Override
   public BillingClient createBillingClient(
-      @NonNull Context context, @NonNull MethodChannel channel) {
+      @NonNull Context context,
+      @NonNull MethodChannel channel,
+      boolean enableAlternativeBillingOnly) {
     BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
-
+    if (enableAlternativeBillingOnly) {
+      builder.enableAlternativeBillingOnly();
+    }
     return builder.setListener(new PluginPurchaseListener(channel)).build();
   }
 }
