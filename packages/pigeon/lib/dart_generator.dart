@@ -516,11 +516,12 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 
     // All ProxyApis this API `implements` and all the interfaces those APIs
     // `implements`.
-    final Set<AstProxyApi> interfacesApis = recursiveFindAllInterfaceApis(api);
+    final Set<AstProxyApi> apisOfInterfaces =
+        recursiveFindAllInterfaceApis(api);
 
     // All methods inherited from interfaces and the interfaces of interfaces.
     final List<Method> flutterMethodsFromInterfaces = <Method>[];
-    for (final AstProxyApi proxyApi in interfacesApis) {
+    for (final AstProxyApi proxyApi in apisOfInterfaces) {
       flutterMethodsFromInterfaces.addAll(proxyApi.methods);
     }
 
@@ -595,7 +596,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           api.flutterMethods,
           apiName: api.name,
         ))
-        ..fields.addAll(_proxyApiInterfaceApiFields(interfacesApis))
+        ..fields.addAll(_proxyApiInterfaceApiFields(apisOfInterfaces))
         ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
         ..methods.add(
           _proxyApiSetUpMessageHandlerMethod(
@@ -627,11 +628,11 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           codecName: codecName,
         ))
         ..methods.add(_proxyApiCopyMethod(
-          flutterMethods: api.flutterMethods,
-          flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
           apiName: api.name,
           unattachedFields: api.unattachedFields,
-          interfacesApis: interfacesApis,
+          declaredAndInheritedFlutterMethods: flutterMethodsFromSuperClasses
+              .followedBy(flutterMethodsFromInterfaces)
+              .followedBy(api.flutterMethods),
         )),
     );
 
@@ -1315,9 +1316,9 @@ if (${_varNamePrefix}replyList == null) {
   /// inherited from apis that are being implemented (following the `implements`
   /// keyword).
   Iterable<cb.Field> _proxyApiInterfaceApiFields(
-    Iterable<AstProxyApi> apis,
+    Iterable<AstProxyApi> apisOfInterfaces,
   ) sync* {
-    for (final AstProxyApi proxyApi in apis) {
+    for (final AstProxyApi proxyApi in apisOfInterfaces) {
       for (final Method method in proxyApi.methods) {
         yield cb.Field(
           (cb.FieldBuilder builder) => builder
@@ -1770,11 +1771,9 @@ if (${_varNamePrefix}replyList == null) {
   /// and unattached fields passed to the new instance. This method is inherited
   /// from the base ProxyApi class.
   cb.Method _proxyApiCopyMethod({
-    required Iterable<Method> flutterMethods,
-    required Iterable<Method> flutterMethodsFromSuperClasses,
     required String apiName,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<AstProxyApi> interfacesApis,
+    required Iterable<Method> declaredAndInheritedFlutterMethods,
   }) {
     return cb.Method(
       (cb.MethodBuilder builder) => builder
@@ -1792,12 +1791,8 @@ if (${_varNamePrefix}replyList == null) {
                   _instanceManagerVarName: cb.refer(_instanceManagerVarName),
                   for (final ApiField field in unattachedFields)
                     field.name: cb.refer(field.name),
-                  for (final Method method in flutterMethodsFromSuperClasses)
-                    method.name: cb.refer(method.name),
-                  for (final AstProxyApi proxyApi in interfacesApis)
-                    for (final Method method in proxyApi.methods)
-                      method.name: cb.refer(method.name),
-                  for (final Method method in flutterMethods)
+                  for (final Method method
+                      in declaredAndInheritedFlutterMethods)
                     method.name: cb.refer(method.name),
                 },
               )
