@@ -8,6 +8,7 @@
 @import GoogleMaps;
 
 #import <OCMock/OCMock.h>
+#import "GoogleMapPolylineController_Test.h"
 #import "PartiallyMockedMapView.h"
 
 @interface GoogleMapsPolylinesControllerTests : XCTestCase

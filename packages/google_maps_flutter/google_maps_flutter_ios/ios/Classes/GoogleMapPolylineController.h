@@ -7,8 +7,6 @@
 
 // Defines polyline controllable by Flutter.
 @interface FLTGoogleMapPolylineController : NSObject
-@property(strong, nonatomic) GMSPolyline *polyline;
-
 - (instancetype)initPolylineWithPath:(GMSMutablePath *)path
                           identifier:(NSString *)identifier
                              mapView:(GMSMapView *)mapView;

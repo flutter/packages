@@ -7,6 +7,7 @@
 
 @interface FLTGoogleMapPolylineController ()
 
+@property(strong, nonatomic) GMSPolyline *polyline;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
