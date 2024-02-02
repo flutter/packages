@@ -22,7 +22,6 @@
       @[ @(53.4153), @(-4.0829) ]
     ],
     @"polylineId" : @"polyline_id_0",
-
   };
 
   GMSMutablePath *path = [FLTPolylinesController getPath:polyline];
