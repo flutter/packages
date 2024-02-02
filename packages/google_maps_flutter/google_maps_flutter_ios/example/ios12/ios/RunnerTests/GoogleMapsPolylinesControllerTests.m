@@ -50,7 +50,7 @@
 
   [self.polylineController setPattern:styles lengths:lengths];
 
-  // `GMSStyleSpan` doesn't implement `isEqual` so cannot be compared by value at present
+  // `GMSStyleSpan` doesn't implement `isEqual` so cannot be compared by value at present.
   XCTAssertNotNil(self.polylineController.polyline.spans);
 }
 
