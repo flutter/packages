@@ -631,7 +631,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -653,7 +652,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Responds with an error from an async function returning a value.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -675,7 +673,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Responds with an error from an async void function.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -698,7 +695,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed boolean, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -723,7 +719,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed int, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -748,7 +743,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed double, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -773,7 +767,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed string, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -798,7 +791,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed byte list, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -823,7 +815,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed list, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -849,7 +840,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -874,7 +864,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed map, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -900,7 +889,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -925,7 +913,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed enum to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -950,7 +937,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -975,7 +961,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed boolean, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1000,7 +985,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed int, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1025,7 +1009,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed double, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1050,7 +1033,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed string, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1075,7 +1057,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed byte list, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1100,7 +1081,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed list, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1125,7 +1105,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed map, to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1150,7 +1129,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed enum to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1175,7 +1153,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1201,7 +1178,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -1224,7 +1200,6 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed in generic Object asynchronously.
   ///
-  /// Dart:
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -4932,7 +4907,8 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
     this.anInterfaceMethod,
   });
 
-  /// Dart:
+  /// Callback method.
+  ///
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`

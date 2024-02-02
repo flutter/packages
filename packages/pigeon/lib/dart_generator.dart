@@ -1263,8 +1263,12 @@ if (${_varNamePrefix}replyList == null) {
             <String>[
               ...method.documentationComments,
               ...<String>[
-                if (method.documentationComments.isNotEmpty) '',
-                'Dart:',
+                if (method.documentationComments.isNotEmpty)
+                  ''
+                else ...<String>[
+                  'Callback method.',
+                  '',
+                ],
                 'For the associated Native object to be automatically garbage collected,',
                 "it is required that the implementation of this `Function` doesn't have a",
                 'strong reference to the encapsulating class instance. When this `Function`',
@@ -1399,6 +1403,8 @@ if (${_varNamePrefix}replyList == null) {
     required Iterable<ApiField> unattachedFields,
     required bool hasCallbackConstructor,
   }) {
+    final bool hasAnyMessageHandlers =
+        hasCallbackConstructor || flutterMethods.isNotEmpty;
     return cb.Method.returnsVoid(
       (cb.MethodBuilder builder) => builder
         ..name = '${classMemberNamePrefix}setUpMessageHandlers'
@@ -1469,7 +1475,7 @@ if (${_varNamePrefix}replyList == null) {
             ),
         ])
         ..body = cb.Block.of(<cb.Code>[
-          if (hasCallbackConstructor || flutterMethods.isNotEmpty) ...<cb.Code>[
+          if (hasAnyMessageHandlers) ...<cb.Code>[
             cb.Code(
               'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
             ),
@@ -1581,11 +1587,11 @@ if (${_varNamePrefix}replyList == null) {
     );
   }
 
-  /// Converts attached fields from the pigeon AST to `code_builder` fields.
+  /// Converts attached fields from the pigeon AST to `code_builder` Methods.
   ///
   /// These private methods are used to lazily instantiate attached fields. The
   /// instance is created and returned synchronously while the native instance
-  /// is created synchronously. This is similar to how constructors work.
+  /// is created asynchronously. This is similar to how constructors work.
   Iterable<cb.Method> _proxyApiAttachedFieldMethods(
     Iterable<ApiField> fields, {
     required String apiName,
@@ -1675,7 +1681,7 @@ if (${_varNamePrefix}replyList == null) {
     }
   }
 
-  /// Converts host methods from pigeon AST to `code_builder` AST.
+  /// Converts host methods from pigeon AST to `code_builder` Methods.
   ///
   /// This creates methods like a HostApi except that it includes the calling
   /// instance if the method is not static.

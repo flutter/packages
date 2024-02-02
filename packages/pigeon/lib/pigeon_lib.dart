@@ -1029,7 +1029,7 @@ List<Error> _validateProxyApi(
     }
 
     // Validate this api isn't used as an interface and contains anything except
-    // Flutter methods or a static host method.
+    // Flutter methods, a static host method, attached methods.
     final bool isValidInterfaceProxyApi = api.constructors.isEmpty &&
         api.fields.where((ApiField field) => !field.isStatic).isEmpty &&
         api.hostMethods.where((Method method) => !method.isStatic).isEmpty;
