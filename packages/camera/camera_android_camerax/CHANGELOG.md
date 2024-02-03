@@ -1,3 +1,7 @@
+## 0.5.0+30
+
+* Adds documentation to clarify how the plugin uses resolution presets as target resolutions for CameraX.
+
 ## 0.5.0+29
 
 * Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
