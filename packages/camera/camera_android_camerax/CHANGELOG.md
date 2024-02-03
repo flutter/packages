@@ -1,3 +1,23 @@
+## 0.5.0+30
+
+* Adds documentation to clarify how the plugin uses resolution presets as target resolutions for CameraX.
+
+## 0.5.0+29
+
+* Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
+  that `createCamera` should have been called before building the preview. Fixes
+  https://github.com/flutter/flutter/issues/140567.
+
+## 0.5.0+28
+
+* Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.
+* Updates compileSdk version to 34.
+
+## 0.5.0+27
+
+* Removes or updates any references to an `ActivityPluginBinding` when the plugin is detached
+  or attached/re-attached, respectively, to an `Activity.`
+
 ## 0.5.0+26
 
 * Fixes new lint warnings.

@@ -5,12 +5,13 @@
 // See also: https://pub.dev/packages/pigeon
 
 import Foundation
+
 #if os(iOS)
-import Flutter
+  import Flutter
 #elseif os(macOS)
-import FlutterMacOS
+  import FlutterMacOS
 #else
-#error("Unsupported platform.")
+  #error("Unsupported platform.")
 #endif
 
 extension FlutterError: Error {}
@@ -28,13 +29,13 @@ private func wrapError(_ error: Any) -> [Any?] {
     return [
       flutterError.code,
       flutterError.message,
-      flutterError.details
+      flutterError.details,
     ]
   }
   return [
     "\(error)",
     "\(type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)"
+    "Stacktrace: \(Thread.callStackSymbols)",
   ]
 }
 
@@ -76,10 +77,10 @@ struct ShortcutItemMessage {
 private class IOSQuickActionsApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
-      case 128:
-        return ShortcutItemMessage.fromList(self.readValue() as! [Any?])
-      default:
-        return super.readValue(ofType: type)
+    case 128:
+      return ShortcutItemMessage.fromList(self.readValue() as! [Any?])
+    default:
+      return super.readValue(ofType: type)
     }
   }
 }
@@ -124,7 +125,9 @@ class IOSQuickActionsApiSetup {
   /// Sets up an instance of `IOSQuickActionsApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: IOSQuickActionsApi?) {
     /// Sets the dynamic shortcuts for the app.
-    let setShortcutItemsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.setShortcutItems", binaryMessenger: binaryMessenger, codec: codec)
+    let setShortcutItemsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.setShortcutItems",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setShortcutItemsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -140,7 +143,9 @@ class IOSQuickActionsApiSetup {
       setShortcutItemsChannel.setMessageHandler(nil)
     }
     /// Removes all dynamic shortcuts.
-    let clearShortcutItemsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.clearShortcutItems", binaryMessenger: binaryMessenger, codec: codec)
+    let clearShortcutItemsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.clearShortcutItems",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       clearShortcutItemsChannel.setMessageHandler { _, reply in
         do {
@@ -158,16 +163,21 @@ class IOSQuickActionsApiSetup {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol IOSQuickActionsFlutterApiProtocol {
   /// Sends a string representing a shortcut from the native platform to the app.
-  func launchAction(action actionArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void) 
+  func launchAction(
+    action actionArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 class IOSQuickActionsFlutterApi: IOSQuickActionsFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
-  init(binaryMessenger: FlutterBinaryMessenger){
+  init(binaryMessenger: FlutterBinaryMessenger) {
     self.binaryMessenger = binaryMessenger
   }
   /// Sends a string representing a shortcut from the native platform to the app.
-  func launchAction(action actionArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void)  {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction", binaryMessenger: binaryMessenger)
+  func launchAction(
+    action actionArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void
+  ) {
+    let channel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction",
+      binaryMessenger: binaryMessenger)
     channel.sendMessage([actionArg] as [Any?]) { _ in
       completion(.success(Void()))
     }

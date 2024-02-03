@@ -27,6 +27,7 @@ import 'runtime.dart';
 ///  * [Align]
 ///  * [AspectRatio]
 ///  * [Center]
+///  * [ClipRRect]
 ///  * [ColoredBox]
 ///  * [Column]
 ///  * [Container] (actually uses [AnimatedContainer])
@@ -268,6 +269,15 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       child: source.optionalChild(['child']),
     );
   },
+
+  'ClipRRect': (BuildContext context, DataSource source) {
+    return ClipRRect(
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']) ?? BorderRadius.zero,
+      // CustomClipper<RRect> clipper,
+      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.antiAlias,
+      child: source.optionalChild(['child']),
+    );
+  }, 
 
   'ColoredBox': (BuildContext context, DataSource source) {
     return ColoredBox(

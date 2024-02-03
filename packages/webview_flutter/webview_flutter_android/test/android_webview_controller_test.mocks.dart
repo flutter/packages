@@ -941,6 +941,19 @@ class MockAndroidWebViewProxy extends _i1.Mock
       _i2.GeolocationPermissionsCallback,
     )? onGeolocationPermissionsShowPrompt,
     void Function(_i2.WebChromeClient)? onHideCustomView,
+    _i9.Future<void> Function(
+      String,
+      String,
+    )? onJsAlert,
+    _i9.Future<bool> Function(
+      String,
+      String,
+    )? onJsConfirm,
+    _i9.Future<String> Function(
+      String,
+      String,
+      String,
+    )? onJsPrompt,
     void Function(
       _i2.WebChromeClient,
       _i2.PermissionRequest,
@@ -972,6 +985,19 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.GeolocationPermissionsCallback,
           )? onGeolocationPermissionsShowPrompt,
           void Function(_i2.WebChromeClient)? onHideCustomView,
+          _i9.Future<void> Function(
+            String,
+            String,
+          )? onJsAlert,
+          _i9.Future<bool> Function(
+            String,
+            String,
+          )? onJsConfirm,
+          _i9.Future<String> Function(
+            String,
+            String,
+            String,
+          )? onJsPrompt,
           void Function(
             _i2.WebChromeClient,
             _i2.PermissionRequest,
@@ -1006,6 +1032,19 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.GeolocationPermissionsCallback,
           )? onGeolocationPermissionsShowPrompt,
           void Function(_i2.WebChromeClient)? onHideCustomView,
+          _i9.Future<void> Function(
+            String,
+            String,
+          )? onJsAlert,
+          _i9.Future<bool> Function(
+            String,
+            String,
+          )? onJsConfirm,
+          _i9.Future<String> Function(
+            String,
+            String,
+            String,
+          )? onJsPrompt,
           void Function(
             _i2.WebChromeClient,
             _i2.PermissionRequest,
@@ -1039,6 +1078,19 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.GeolocationPermissionsCallback,
         )? onGeolocationPermissionsShowPrompt,
         void Function(_i2.WebChromeClient)? onHideCustomView,
+        _i9.Future<void> Function(
+          String,
+          String,
+        )? onJsAlert,
+        _i9.Future<bool> Function(
+          String,
+          String,
+        )? onJsConfirm,
+        _i9.Future<String> Function(
+          String,
+          String,
+          String,
+        )? onJsPrompt,
         void Function(
           _i2.WebChromeClient,
           _i2.PermissionRequest,
@@ -2055,6 +2107,36 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
 
+  @override
+  _i9.Future<void> setSynchronousReturnValueForOnJsAlert(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsAlert,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setSynchronousReturnValueForOnJsConfirm(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsConfirm,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setSynchronousReturnValueForOnJsPrompt(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsPrompt,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   _i2.WebChromeClient copy() => (super.noSuchMethod(
         Invocation.method(

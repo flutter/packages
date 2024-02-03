@@ -74,7 +74,7 @@
 
   [mockDelegate scrollViewDidScroll:scrollView];
   OCMVerify([mockFlutterAPI scrollViewDidScrollWithIdentifier:0
-                                       uiScrollViewIdentifier:1
+                                       UIScrollViewIdentifier:1
                                                             x:1.0
                                                             y:2.0
                                                    completion:OCMOCK_ANY]);

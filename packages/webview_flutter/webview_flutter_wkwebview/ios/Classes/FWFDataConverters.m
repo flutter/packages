@@ -167,7 +167,7 @@ FWFWKNavigationActionData *FWFWKNavigationActionDataFromNativeWKNavigationAction
 
 FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *request) {
   return [FWFNSUrlRequestData
-              makeWithUrl:request.URL.absoluteString
+              makeWithUrl:request.URL.absoluteString == nil ? @"" : request.URL.absoluteString
                httpMethod:request.HTTPMethod
                  httpBody:request.HTTPBody
                               ? [FlutterStandardTypedData typedDataWithBytes:request.HTTPBody]
@@ -176,7 +176,9 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *req
 }
 
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *info) {
-  return [FWFWKFrameInfoData makeWithIsMainFrame:info.isMainFrame];
+  return [FWFWKFrameInfoData
+      makeWithIsMainFrame:info.isMainFrame
+                  request:FWFNSUrlRequestDataFromNativeNSURLRequest(info.request)];
 }
 
 WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(

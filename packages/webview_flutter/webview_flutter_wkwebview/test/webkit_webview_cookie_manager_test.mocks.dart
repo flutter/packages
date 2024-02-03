@@ -63,6 +63,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
           Invocation.getter(#httpCookieStore),
         ),
       ) as _i2.WKHttpCookieStore);
+
   @override
   _i3.Future<bool> removeDataOfTypes(
     Set<_i2.WKWebsiteDataType>? dataTypes,
@@ -78,6 +79,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
   @override
   _i2.WKWebsiteDataStore copy() => (super.noSuchMethod(
         Invocation.method(
@@ -92,6 +94,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
           ),
         ),
       ) as _i2.WKWebsiteDataStore);
+
   @override
   _i3.Future<void> addObserver(
     _i4.NSObject? observer, {
@@ -110,6 +113,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
   @override
   _i3.Future<void> removeObserver(
     _i4.NSObject? observer, {
@@ -144,6 +148,7 @@ class MockWKHttpCookieStore extends _i1.Mock implements _i2.WKHttpCookieStore {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
   @override
   _i2.WKHttpCookieStore copy() => (super.noSuchMethod(
         Invocation.method(
@@ -158,6 +163,7 @@ class MockWKHttpCookieStore extends _i1.Mock implements _i2.WKHttpCookieStore {
           ),
         ),
       ) as _i2.WKHttpCookieStore);
+
   @override
   _i3.Future<void> addObserver(
     _i4.NSObject? observer, {
@@ -176,6 +182,7 @@ class MockWKHttpCookieStore extends _i1.Mock implements _i2.WKHttpCookieStore {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
   @override
   _i3.Future<void> removeObserver(
     _i4.NSObject? observer, {

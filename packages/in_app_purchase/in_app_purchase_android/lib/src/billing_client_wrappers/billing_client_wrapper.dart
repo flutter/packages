@@ -10,6 +10,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
 import '../channel.dart';
+import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
 
@@ -322,6 +323,21 @@ class BillingClient {
       'feature': const BillingClientFeatureConverter().toJson(feature),
     });
     return result ?? false;
+  }
+
+  /// BillingConfig method channel string identifier.
+  //
+  // Must match the value of GET_BILLING_CONFIG in
+  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
+  @visibleForTesting
+  final String getBillingConfigMethodString =
+      'BillingClient#getBillingConfig()';
+
+  /// Fetches billing config info into a [BillingConfigWrapper] object.
+  Future<BillingConfigWrapper> getBillingConfig() async {
+    return BillingConfigWrapper.fromJson((await channel
+            .invokeMapMethod<String, dynamic>(getBillingConfigMethodString)) ??
+        <String, dynamic>{});
   }
 
   /// The method call handler for [channel].

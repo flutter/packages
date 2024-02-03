@@ -159,6 +159,7 @@ class MockNSUrl extends _i1.Mock implements _i2.NSUrl {
         ),
         returnValue: _i6.Future<String?>.value(),
       ) as _i6.Future<String?>);
+
   @override
   _i2.NSObject copy() => (super.noSuchMethod(
         Invocation.method(
@@ -173,6 +174,7 @@ class MockNSUrl extends _i1.Mock implements _i2.NSUrl {
           ),
         ),
       ) as _i2.NSObject);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -191,6 +193,7 @@ class MockNSUrl extends _i1.Mock implements _i2.NSUrl {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -230,6 +233,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
           ),
         )),
       ) as _i6.Future<_i3.Point<double>>);
+
   @override
   _i6.Future<void> scrollBy(_i3.Point<double>? offset) => (super.noSuchMethod(
         Invocation.method(
@@ -239,6 +243,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setContentOffset(_i3.Point<double>? offset) =>
       (super.noSuchMethod(
@@ -249,6 +254,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setDelegate(_i4.UIScrollViewDelegate? delegate) =>
       (super.noSuchMethod(
@@ -259,6 +265,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i4.UIScrollView copy() => (super.noSuchMethod(
         Invocation.method(
@@ -273,6 +280,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
           ),
         ),
       ) as _i4.UIScrollView);
+
   @override
   _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
         Invocation.method(
@@ -282,6 +290,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setOpaque(bool? opaque) => (super.noSuchMethod(
         Invocation.method(
@@ -291,6 +300,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -309,6 +319,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -349,6 +360,7 @@ class MockUIScrollViewDelegate extends _i1.Mock
           ),
         ),
       ) as _i4.UIScrollViewDelegate);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -367,6 +379,7 @@ class MockUIScrollViewDelegate extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -401,6 +414,7 @@ class MockWKPreferences extends _i1.Mock implements _i5.WKPreferences {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i5.WKPreferences copy() => (super.noSuchMethod(
         Invocation.method(
@@ -415,6 +429,7 @@ class MockWKPreferences extends _i1.Mock implements _i5.WKPreferences {
           ),
         ),
       ) as _i5.WKPreferences);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -433,6 +448,7 @@ class MockWKPreferences extends _i1.Mock implements _i5.WKPreferences {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -475,6 +491,7 @@ class MockWKUserContentController extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeScriptMessageHandler(String? name) =>
       (super.noSuchMethod(
@@ -485,6 +502,7 @@ class MockWKUserContentController extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeAllScriptMessageHandlers() => (super.noSuchMethod(
         Invocation.method(
@@ -494,6 +512,7 @@ class MockWKUserContentController extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> addUserScript(_i5.WKUserScript? userScript) =>
       (super.noSuchMethod(
@@ -504,6 +523,7 @@ class MockWKUserContentController extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeAllUserScripts() => (super.noSuchMethod(
         Invocation.method(
@@ -513,6 +533,7 @@ class MockWKUserContentController extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i5.WKUserContentController copy() => (super.noSuchMethod(
         Invocation.method(
@@ -527,6 +548,7 @@ class MockWKUserContentController extends _i1.Mock
           ),
         ),
       ) as _i5.WKUserContentController);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -545,6 +567,7 @@ class MockWKUserContentController extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -579,6 +602,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
           Invocation.getter(#httpCookieStore),
         ),
       ) as _i5.WKHttpCookieStore);
+
   @override
   _i6.Future<bool> removeDataOfTypes(
     Set<_i5.WKWebsiteDataType>? dataTypes,
@@ -594,6 +618,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
         ),
         returnValue: _i6.Future<bool>.value(false),
       ) as _i6.Future<bool>);
+
   @override
   _i5.WKWebsiteDataStore copy() => (super.noSuchMethod(
         Invocation.method(
@@ -608,6 +633,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
           ),
         ),
       ) as _i5.WKWebsiteDataStore);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -626,6 +652,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -659,6 +686,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
           Invocation.getter(#configuration),
         ),
       ) as _i5.WKWebViewConfiguration);
+
   @override
   _i4.UIScrollView get scrollView => (super.noSuchMethod(
         Invocation.getter(#scrollView),
@@ -667,6 +695,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
           Invocation.getter(#scrollView),
         ),
       ) as _i4.UIScrollView);
+
   @override
   _i6.Future<void> setUIDelegate(_i5.WKUIDelegate? delegate) =>
       (super.noSuchMethod(
@@ -677,6 +706,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setNavigationDelegate(_i5.WKNavigationDelegate? delegate) =>
       (super.noSuchMethod(
@@ -687,6 +717,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<String?> getUrl() => (super.noSuchMethod(
         Invocation.method(
@@ -695,6 +726,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
         returnValue: _i6.Future<String?>.value(),
       ) as _i6.Future<String?>);
+
   @override
   _i6.Future<double> getEstimatedProgress() => (super.noSuchMethod(
         Invocation.method(
@@ -703,6 +735,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
         returnValue: _i6.Future<double>.value(0.0),
       ) as _i6.Future<double>);
+
   @override
   _i6.Future<void> loadRequest(_i2.NSUrlRequest? request) =>
       (super.noSuchMethod(
@@ -713,6 +746,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> loadHtmlString(
     String? string, {
@@ -727,6 +761,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> loadFileUrl(
     String? url, {
@@ -741,6 +776,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> loadFlutterAsset(String? key) => (super.noSuchMethod(
         Invocation.method(
@@ -750,6 +786,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<bool> canGoBack() => (super.noSuchMethod(
         Invocation.method(
@@ -758,6 +795,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
         returnValue: _i6.Future<bool>.value(false),
       ) as _i6.Future<bool>);
+
   @override
   _i6.Future<bool> canGoForward() => (super.noSuchMethod(
         Invocation.method(
@@ -766,6 +804,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
         returnValue: _i6.Future<bool>.value(false),
       ) as _i6.Future<bool>);
+
   @override
   _i6.Future<void> goBack() => (super.noSuchMethod(
         Invocation.method(
@@ -775,6 +814,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> goForward() => (super.noSuchMethod(
         Invocation.method(
@@ -784,6 +824,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> reload() => (super.noSuchMethod(
         Invocation.method(
@@ -793,6 +834,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<String?> getTitle() => (super.noSuchMethod(
         Invocation.method(
@@ -801,6 +843,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
         returnValue: _i6.Future<String?>.value(),
       ) as _i6.Future<String?>);
+
   @override
   _i6.Future<void> setAllowsBackForwardNavigationGestures(bool? allow) =>
       (super.noSuchMethod(
@@ -811,6 +854,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setCustomUserAgent(String? userAgent) => (super.noSuchMethod(
         Invocation.method(
@@ -820,6 +864,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<Object?> evaluateJavaScript(String? javaScriptString) =>
       (super.noSuchMethod(
@@ -829,6 +874,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
         returnValue: _i6.Future<Object?>.value(),
       ) as _i6.Future<Object?>);
+
   @override
   _i6.Future<void> setInspectable(bool? inspectable) => (super.noSuchMethod(
         Invocation.method(
@@ -838,6 +884,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<String?> getCustomUserAgent() => (super.noSuchMethod(
         Invocation.method(
@@ -846,6 +893,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
         returnValue: _i6.Future<String?>.value(),
       ) as _i6.Future<String?>);
+
   @override
   _i5.WKWebView copy() => (super.noSuchMethod(
         Invocation.method(
@@ -860,6 +908,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
           ),
         ),
       ) as _i5.WKWebView);
+
   @override
   _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
         Invocation.method(
@@ -869,6 +918,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setOpaque(bool? opaque) => (super.noSuchMethod(
         Invocation.method(
@@ -878,6 +928,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -896,6 +947,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -930,6 +982,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
           Invocation.getter(#userContentController),
         ),
       ) as _i5.WKUserContentController);
+
   @override
   _i5.WKPreferences get preferences => (super.noSuchMethod(
         Invocation.getter(#preferences),
@@ -938,6 +991,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
           Invocation.getter(#preferences),
         ),
       ) as _i5.WKPreferences);
+
   @override
   _i5.WKWebsiteDataStore get websiteDataStore => (super.noSuchMethod(
         Invocation.getter(#websiteDataStore),
@@ -946,6 +1000,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
           Invocation.getter(#websiteDataStore),
         ),
       ) as _i5.WKWebsiteDataStore);
+
   @override
   _i6.Future<void> setAllowsInlineMediaPlayback(bool? allow) =>
       (super.noSuchMethod(
@@ -956,6 +1011,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setLimitsNavigationsToAppBoundDomains(bool? limit) =>
       (super.noSuchMethod(
@@ -966,6 +1022,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setMediaTypesRequiringUserActionForPlayback(
           Set<_i5.WKAudiovisualMediaType>? types) =>
@@ -977,6 +1034,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i5.WKWebViewConfiguration copy() => (super.noSuchMethod(
         Invocation.method(
@@ -991,6 +1049,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
           ),
         ),
       ) as _i5.WKWebViewConfiguration);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -1009,6 +1068,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {
@@ -1049,6 +1109,7 @@ class MockWKScriptMessageHandler extends _i1.Mock
         _i5.WKUserContentController,
         _i5.WKScriptMessage,
       ));
+
   @override
   _i5.WKScriptMessageHandler copy() => (super.noSuchMethod(
         Invocation.method(
@@ -1063,6 +1124,7 @@ class MockWKScriptMessageHandler extends _i1.Mock
           ),
         ),
       ) as _i5.WKScriptMessageHandler);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -1081,6 +1143,7 @@ class MockWKScriptMessageHandler extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {

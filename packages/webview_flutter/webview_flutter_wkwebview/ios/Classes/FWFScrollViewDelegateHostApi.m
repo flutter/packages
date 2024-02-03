@@ -32,7 +32,7 @@
                           uiScrollView:(UIScrollView *)scrollView
                             completion:(void (^)(FlutterError *_Nullable))completion {
   [self scrollViewDidScrollWithIdentifier:[self identifierForDelegate:instance]
-                   uiScrollViewIdentifier:[self.instanceManager
+                   UIScrollViewIdentifier:[self.instanceManager
                                               identifierWithStrongReferenceForInstance:scrollView]
                                         x:scrollView.contentOffset.x
                                         y:scrollView.contentOffset.y

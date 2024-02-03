@@ -343,6 +343,7 @@ class WKNavigationActionData {
 /// See https://developer.apple.com/documentation/webkit/wkframeinfo?language=objc.
 class WKFrameInfoData {
   late bool isMainFrame;
+  late NSUrlRequestData request;
 }
 
 /// Mirror of NSError.
@@ -809,6 +810,40 @@ abstract class WKUIDelegateFlutterApi {
     WKFrameInfoData frame,
     WKMediaCaptureTypeData type,
   );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanel`.
+  @ObjCSelector(
+    'runJavaScriptAlertPanelForDelegateWithIdentifier:message:frame:',
+  )
+  @async
+  void runJavaScriptAlertPanel(
+    int identifier,
+    String message,
+    WKFrameInfoData frame,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanel`.
+  @ObjCSelector(
+    'runJavaScriptConfirmPanelForDelegateWithIdentifier:message:frame:',
+  )
+  @async
+  bool runJavaScriptConfirmPanel(
+    int identifier,
+    String message,
+    WKFrameInfoData frame,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanel`.
+  @ObjCSelector(
+    'runJavaScriptTextInputPanelForDelegateWithIdentifier:prompt:defaultText:frame:',
+  )
+  @async
+  String runJavaScriptTextInputPanel(
+    int identifier,
+    String prompt,
+    String defaultText,
+    WKFrameInfoData frame,
+  );
 }
 
 /// Mirror of WKHttpCookieStore.
@@ -872,7 +907,7 @@ abstract class UIScrollViewDelegateHostApi {
 @FlutterApi()
 abstract class UIScrollViewDelegateFlutterApi {
   @ObjCSelector(
-    'scrollViewDidScrollWithIdentifier:uiScrollViewIdentifier:x:y:',
+    'scrollViewDidScrollWithIdentifier:UIScrollViewIdentifier:x:y:',
   )
   void scrollViewDidScroll(
     int identifier,

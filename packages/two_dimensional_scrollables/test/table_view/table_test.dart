@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
-const Widget cell = SizedBox.shrink();
+const TableViewCell cell = TableViewCell(child: SizedBox.shrink());
 
 TableSpan getTappableSpan(int index, VoidCallback callback) {
   return TableSpan(
@@ -59,7 +59,7 @@ void main() {
       expect(
         delegate.builder(
           _NullBuildContext(),
-          const TableVicinity(row: 0, column: 0),
+          TableVicinity.zero,
         ),
         cell,
       );
@@ -188,9 +188,9 @@ void main() {
       final TableView tableView = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
-        cells: const <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell]
+        cells: const <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell]
         ],
       );
       final TableCellListDelegate delegate =
@@ -209,8 +209,8 @@ void main() {
       expect(
         () {
           tableView = TableView.list(
-            cells: const <List<Widget>>[
-              <Widget>[cell]
+            cells: const <List<TableViewCell>>[
+              <TableViewCell>[cell]
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -228,8 +228,8 @@ void main() {
       expect(
         () {
           tableView = TableView.list(
-            cells: const <List<Widget>>[
-              <Widget>[cell]
+            cells: const <List<TableViewCell>>[
+              <TableViewCell>[cell]
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -261,7 +261,12 @@ void main() {
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
       TableViewParentData parentDataOf(RenderBox child) {
@@ -276,7 +281,7 @@ void main() {
       );
       expect(viewport.mainAxis, Axis.vertical);
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -343,7 +348,12 @@ void main() {
         rowBuilder: (_) => rowSpan,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
       TableViewParentData parentDataOf(RenderBox child) {
@@ -357,7 +367,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -406,7 +416,12 @@ void main() {
         rowBuilder: (_) => rowSpan,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
 
@@ -417,7 +432,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      vicinity = const TableVicinity(column: 0, row: 0);
+      vicinity = TableVicinity.zero;
       parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -454,9 +469,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -498,9 +515,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -548,9 +567,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -605,9 +626,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -638,7 +661,9 @@ void main() {
         columnBuilder: (_) => TableSpan(extent: columnExtent),
         rowBuilder: (_) => TableSpan(extent: rowExtent),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(dimension: 100);
+          return const TableViewCell(
+            child: SizedBox.square(dimension: 100),
+          );
         },
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -693,9 +718,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -724,9 +751,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -757,9 +786,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -785,9 +816,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -813,9 +846,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -840,9 +875,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -872,9 +909,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -950,9 +989,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1028,9 +1069,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1107,9 +1150,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1185,9 +1230,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1285,10 +1332,12 @@ void main() {
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1442,10 +1491,12 @@ void main() {
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1541,10 +1592,12 @@ void main() {
           extent: FixedTableSpanExtent(200.0),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1587,10 +1640,12 @@ void main() {
           extent: FixedTableSpanExtent(200.0),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1634,9 +1689,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
