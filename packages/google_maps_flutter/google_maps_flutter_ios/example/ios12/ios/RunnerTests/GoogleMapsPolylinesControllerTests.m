@@ -65,15 +65,16 @@
 }
 
 - (void)testStrokeStylesFromPatterns {
-    NSArray* patterns = @ [@[@"gap", @10], @[@"dash", @10]];
-    UIColor* strokeColor = [UIColor redColor];
-    
-    NSArray<GMSStrokeStyle*> *patternStrokeStyle = [FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns strokeColor:strokeColor];
-    
-    XCTAssertEqual([patternStrokeStyle count], 2);
-    
-    // None of the parameters of patternStrokeStyle is observable, so we limit to testing
-    // the length of this output array.
+  NSArray *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @10 ] ];
+  UIColor *strokeColor = [UIColor redColor];
+
+  NSArray<GMSStrokeStyle *> *patternStrokeStyle =
+      [FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns strokeColor:strokeColor];
+
+  XCTAssertEqual([patternStrokeStyle count], 2);
+
+  // None of the parameters of patternStrokeStyle is observable, so we limit to testing
+  // the length of this output array.
 }
 
 @end
