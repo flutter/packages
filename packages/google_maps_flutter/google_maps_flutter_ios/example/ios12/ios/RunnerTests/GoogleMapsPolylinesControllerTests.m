@@ -73,7 +73,7 @@
 
   XCTAssertEqual([patternStrokeStyle count], 2);
 
-  // None of the parameters of patternStrokeStyle is observable, so we limit to testing
+  // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
   // the length of this output array.
 }
 
