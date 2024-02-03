@@ -25,13 +25,19 @@
     @"polylineId" : @"polyline_id_0",
   };
 
-  GMSMutablePath *path = [FLTPolylinesController getPath:polyline];
-  NSString *identifier = polyline[@"polylineId"];
-
   CGRect frame = CGRectMake(0, 0, 100, 100);
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+
+  id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  id methodChannel = OCMClassMock([FlutterMethodChannel class]);
+  FLTPolylinesController *polylinesController = [[FLTPolylinesController alloc] init:methodChannel
+                                                                             mapView:mapView
+                                                                           registrar:registrar];
+
+  GMSMutablePath *path = [polylinesController pathForPolyline:polyline];
+  NSString *identifier = polyline[@"polylineId"];
 
   FLTGoogleMapPolylineController *polylineControllerWithMockedMap =
       [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path

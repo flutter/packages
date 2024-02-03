@@ -7,3 +7,7 @@
 @interface FLTGoogleMapPolylineController (Test)
 @property(strong, nonatomic) GMSPolyline *polyline;
 @end
+
+@interface FLTPolylinesController (Test)
+- (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline;
+@end
