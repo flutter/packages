@@ -391,7 +391,7 @@ class _Pigeon_ProxyApiBaseCodec extends StandardMessageCodec {
   }
 }
 
-enum AnEnum {
+enum ProxyApiTestEnum {
   one,
   two,
   three,
@@ -455,7 +455,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     required Uint8List aUint8ListParam,
     required List<Object?> listParam,
     required Map<String?, Object?> mapParam,
-    required AnEnum enumParam,
+    required ProxyApiTestEnum enumParam,
     required ProxyApiSuperClass proxyApiParam,
     bool? nullableBoolParam,
     int? nullableIntParam,
@@ -464,7 +464,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     Uint8List? nullableUint8ListParam,
     List<Object?>? nullableListParam,
     Map<String?, Object?>? nullableMapParam,
-    AnEnum? nullableEnumParam,
+    ProxyApiTestEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
   }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
@@ -606,7 +606,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   final Map<String?, Object?> aMap;
 
-  final AnEnum anEnum;
+  final ProxyApiTestEnum anEnum;
 
   final ProxyApiSuperClass aProxyApi;
 
@@ -624,7 +624,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   final Map<String?, Object?>? aNullableMap;
 
-  final AnEnum? aNullableEnum;
+  final ProxyApiTestEnum? aNullableEnum;
 
   final ProxyApiSuperClass? aNullableProxyApi;
 
@@ -930,9 +930,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final AnEnum Function(
+  final ProxyApiTestEnum Function(
     ProxyApiTestClass pigeon_instance,
-    AnEnum anEnum,
+    ProxyApiTestEnum anEnum,
   )? flutterEchoEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
@@ -1146,9 +1146,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [Pigeon_InstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final AnEnum? Function(
+  final ProxyApiTestEnum? Function(
     ProxyApiTestClass pigeon_instance,
-    AnEnum? anEnum,
+    ProxyApiTestEnum? anEnum,
   )? flutterEchoNullableEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
@@ -1242,7 +1242,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       Uint8List aUint8List,
       List<Object?> aList,
       Map<String?, Object?> aMap,
-      AnEnum anEnum,
+      ProxyApiTestEnum anEnum,
       ProxyApiSuperClass aProxyApi,
       bool? aNullableBool,
       int? aNullableInt,
@@ -1251,7 +1251,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       Uint8List? aNullableUint8List,
       List<Object?>? aNullableList,
       Map<String?, Object?>? aNullableMap,
-      AnEnum? aNullableEnum,
+      ProxyApiTestEnum? aNullableEnum,
       ProxyApiSuperClass? aNullableProxyApi,
     )? pigeon_newInstance,
     void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
@@ -1293,9 +1293,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       ProxyApiTestClass pigeon_instance,
       Map<String?, ProxyApiTestClass?> aMap,
     )? flutterEchoProxyApiMap,
-    AnEnum Function(
+    ProxyApiTestEnum Function(
       ProxyApiTestClass pigeon_instance,
-      AnEnum anEnum,
+      ProxyApiTestEnum anEnum,
     )? flutterEchoEnum,
     ProxyApiSuperClass Function(
       ProxyApiTestClass pigeon_instance,
@@ -1329,9 +1329,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?>? aMap,
     )? flutterEchoNullableMap,
-    AnEnum? Function(
+    ProxyApiTestEnum? Function(
       ProxyApiTestClass pigeon_instance,
-      AnEnum? anEnum,
+      ProxyApiTestEnum? anEnum,
     )? flutterEchoNullableEnum,
     ProxyApiSuperClass? Function(
       ProxyApiTestClass pigeon_instance,
@@ -1386,10 +1386,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[7] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           assert(arg_aMap != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance was null, expected non-null Map<String?, Object?>.');
-          final AnEnum? arg_anEnum =
-              args[8] == null ? null : AnEnum.values[args[8]! as int];
+          final ProxyApiTestEnum? arg_anEnum =
+              args[8] == null ? null : ProxyApiTestEnum.values[args[8]! as int];
           assert(arg_anEnum != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance was null, expected non-null AnEnum.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance was null, expected non-null ProxyApiTestEnum.');
           final ProxyApiSuperClass? arg_aProxyApi =
               (args[9] as ProxyApiSuperClass?);
           assert(arg_aProxyApi != null,
@@ -1403,8 +1403,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[15] as List<Object?>?)?.cast<Object?>();
           final Map<String?, Object?>? arg_aNullableMap =
               (args[16] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-          final AnEnum? arg_aNullableEnum =
-              args[17] == null ? null : AnEnum.values[args[17]! as int];
+          final ProxyApiTestEnum? arg_aNullableEnum = args[17] == null
+              ? null
+              : ProxyApiTestEnum.values[args[17]! as int];
           final ProxyApiSuperClass? arg_aNullableProxyApi =
               (args[18] as ProxyApiSuperClass?);
           try {
@@ -1897,12 +1898,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[0] as ProxyApiTestClass?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestClass.');
-          final AnEnum? arg_anEnum =
-              args[1] == null ? null : AnEnum.values[args[1]! as int];
+          final ProxyApiTestEnum? arg_anEnum =
+              args[1] == null ? null : ProxyApiTestEnum.values[args[1]! as int];
           assert(arg_anEnum != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null AnEnum.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestEnum.');
           try {
-            final AnEnum? output =
+            final ProxyApiTestEnum? output =
                 (flutterEchoEnum ?? arg_pigeon_instance!.flutterEchoEnum)
                     ?.call(arg_pigeon_instance!, arg_anEnum!);
             return wrapResponse(result: output?.index);
@@ -2202,10 +2203,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[0] as ProxyApiTestClass?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum was null, expected non-null ProxyApiTestClass.');
-          final AnEnum? arg_anEnum =
-              args[1] == null ? null : AnEnum.values[args[1]! as int];
+          final ProxyApiTestEnum? arg_anEnum =
+              args[1] == null ? null : ProxyApiTestEnum.values[args[1]! as int];
           try {
-            final AnEnum? output = (flutterEchoNullableEnum ??
+            final ProxyApiTestEnum? output = (flutterEchoNullableEnum ??
                     arg_pigeon_instance!.flutterEchoNullableEnum)
                 ?.call(arg_pigeon_instance!, arg_anEnum);
             return wrapResponse(result: output?.index);
@@ -2843,7 +2844,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  Future<AnEnum> echoEnum(AnEnum anEnum) async {
+  Future<ProxyApiTestEnum> echoEnum(ProxyApiTestEnum anEnum) async {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         __pigeon_codecProxyApiTestClass;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
@@ -2871,7 +2872,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return AnEnum.values[__pigeon_replyList[0]! as int];
+      return ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
     }
   }
 
@@ -3135,7 +3136,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
   }
 
-  Future<AnEnum?> echoNullableEnum(AnEnum? aNullableEnum) async {
+  Future<ProxyApiTestEnum?> echoNullableEnum(
+      ProxyApiTestEnum? aNullableEnum) async {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         __pigeon_codecProxyApiTestClass;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
@@ -3160,7 +3162,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     } else {
       return (__pigeon_replyList[0] as int?) == null
           ? null
-          : AnEnum.values[__pigeon_replyList[0]! as int];
+          : ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
     }
   }
 
@@ -3488,7 +3490,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  Future<AnEnum> echoAsyncEnum(AnEnum anEnum) async {
+  Future<ProxyApiTestEnum> echoAsyncEnum(ProxyApiTestEnum anEnum) async {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         __pigeon_codecProxyApiTestClass;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
@@ -3516,7 +3518,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return AnEnum.values[__pigeon_replyList[0]! as int];
+      return ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
     }
   }
 
@@ -3831,7 +3833,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  Future<AnEnum?> echoAsyncNullableEnum(AnEnum? anEnum) async {
+  Future<ProxyApiTestEnum?> echoAsyncNullableEnum(
+      ProxyApiTestEnum? anEnum) async {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         __pigeon_codecProxyApiTestClass;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
@@ -3856,7 +3859,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     } else {
       return (__pigeon_replyList[0] as int?) == null
           ? null
-          : AnEnum.values[__pigeon_replyList[0]! as int];
+          : ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
     }
   }
 
@@ -4334,7 +4337,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
   }
 
-  Future<AnEnum> callFlutterEchoEnum(AnEnum anEnum) async {
+  Future<ProxyApiTestEnum> callFlutterEchoEnum(ProxyApiTestEnum anEnum) async {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         __pigeon_codecProxyApiTestClass;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
@@ -4362,7 +4365,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return AnEnum.values[__pigeon_replyList[0]! as int];
+      return ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
     }
   }
 
@@ -4592,7 +4595,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
   }
 
-  Future<AnEnum?> callFlutterEchoNullableEnum(AnEnum? anEnum) async {
+  Future<ProxyApiTestEnum?> callFlutterEchoNullableEnum(
+      ProxyApiTestEnum? anEnum) async {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         __pigeon_codecProxyApiTestClass;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
@@ -4617,7 +4621,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     } else {
       return (__pigeon_replyList[0] as int?) == null
           ? null
-          : AnEnum.values[__pigeon_replyList[0]! as int];
+          : ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
     }
   }
 

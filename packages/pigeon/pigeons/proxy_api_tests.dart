@@ -4,7 +4,7 @@
 
 import 'package:pigeon/pigeon.dart';
 
-enum AnEnum {
+enum ProxyApiTestEnum {
   one,
   two,
   three,
@@ -31,7 +31,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
     // ignore: avoid_unused_constructor_parameters
     Map<String?, Object?> mapParam,
     // ignore: avoid_unused_constructor_parameters
-    AnEnum enumParam,
+    ProxyApiTestEnum enumParam,
     // ignore: avoid_unused_constructor_parameters
     ProxyApiSuperClass proxyApiParam,
     // ignore: avoid_unused_constructor_parameters
@@ -49,7 +49,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
     // ignore: avoid_unused_constructor_parameters
     Map<String?, Object?>? nullableMapParam,
     // ignore: avoid_unused_constructor_parameters
-    AnEnum? nullableEnumParam,
+    ProxyApiTestEnum? nullableEnumParam,
     // ignore: avoid_unused_constructor_parameters
     ProxyApiSuperClass? nullableProxyApiParam,
   );
@@ -61,7 +61,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
   late Uint8List aUint8List;
   late List<Object?> aList;
   late Map<String?, Object?> aMap;
-  late AnEnum anEnum;
+  late ProxyApiTestEnum anEnum;
   late ProxyApiSuperClass aProxyApi;
 
   late bool? aNullableBool;
@@ -71,7 +71,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
   late Uint8List? aNullableUint8List;
   late List<Object?>? aNullableList;
   late Map<String?, Object?>? aNullableMap;
-  late AnEnum? aNullableEnum;
+  late ProxyApiTestEnum? aNullableEnum;
   late ProxyApiSuperClass? aNullableProxyApi;
 
   @attached
@@ -125,7 +125,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
       Map<String?, ProxyApiTestClass?> aMap)? flutterEchoProxyApiMap;
 
   /// Returns the passed enum to test serialization and deserialization.
-  late AnEnum Function(AnEnum anEnum)? flutterEchoEnum;
+  late ProxyApiTestEnum Function(ProxyApiTestEnum anEnum)? flutterEchoEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   late ProxyApiSuperClass Function(ProxyApiSuperClass aProxyApi)?
@@ -156,7 +156,8 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
       flutterEchoNullableMap;
 
   /// Returns the passed enum to test serialization and deserialization.
-  late AnEnum? Function(AnEnum? anEnum)? flutterEchoNullableEnum;
+  late ProxyApiTestEnum? Function(ProxyApiTestEnum? anEnum)?
+      flutterEchoNullableEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   late ProxyApiSuperClass? Function(ProxyApiSuperClass? aProxyApi)?
@@ -228,7 +229,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
   );
 
   /// Returns the passed enum to test serialization and deserialization.
-  AnEnum echoEnum(AnEnum anEnum);
+  ProxyApiTestEnum echoEnum(ProxyApiTestEnum anEnum);
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   ProxyApiSuperClass echoProxyApi(ProxyApiSuperClass aProxyApi);
@@ -259,7 +260,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
 
-  AnEnum? echoNullableEnum(AnEnum? aNullableEnum);
+  ProxyApiTestEnum? echoNullableEnum(ProxyApiTestEnum? aNullableEnum);
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   ProxyApiSuperClass? echoNullableProxyApi(
@@ -307,7 +308,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
-  AnEnum echoAsyncEnum(AnEnum anEnum);
+  ProxyApiTestEnum echoAsyncEnum(ProxyApiTestEnum anEnum);
 
   /// Responds with an error from an async function returning a value.
   @async
@@ -355,7 +356,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
-  AnEnum? echoAsyncNullableEnum(AnEnum? anEnum);
+  ProxyApiTestEnum? echoAsyncNullableEnum(ProxyApiTestEnum? anEnum);
 
   // ========== Static method test ==========
 
@@ -410,7 +411,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
       Map<String?, ProxyApiTestClass?> aMap);
 
   @async
-  AnEnum callFlutterEchoEnum(AnEnum anEnum);
+  ProxyApiTestEnum callFlutterEchoEnum(ProxyApiTestEnum anEnum);
 
   @async
   ProxyApiSuperClass callFlutterEchoProxyApi(ProxyApiSuperClass aProxyApi);
@@ -439,7 +440,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
   );
 
   @async
-  AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+  ProxyApiTestEnum? callFlutterEchoNullableEnum(ProxyApiTestEnum? anEnum);
 
   @async
   ProxyApiSuperClass? callFlutterEchoNullableProxyApi(
