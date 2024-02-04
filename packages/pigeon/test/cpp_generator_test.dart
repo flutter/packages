@@ -25,7 +25,7 @@ final Enum emptyEnum = Enum(
 void main() {
   test('gen one api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
           parameters: <Parameter>[
@@ -37,6 +37,7 @@ void main() {
                 ),
                 name: 'input')
           ],
+          location: ApiLocation.host,
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
@@ -101,7 +102,7 @@ void main() {
 
   test('naming follows style', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
           parameters: <Parameter>[
@@ -113,6 +114,7 @@ void main() {
                 ),
                 name: 'someInput')
           ],
+          location: ApiLocation.host,
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
@@ -179,9 +181,10 @@ void main() {
 
   test('FlutterError fields are private with public accessors', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
@@ -230,9 +233,10 @@ void main() {
 
   test('Error field is private with public accessors', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
@@ -273,9 +277,10 @@ void main() {
 
   test('Spaces before {', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -350,9 +355,10 @@ void main() {
 
   test('include blocks follow style', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
@@ -423,9 +429,10 @@ void main() {
 
   test('namespaces follows style', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
@@ -478,9 +485,10 @@ void main() {
 
   test('data classes handle nullable fields', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -661,9 +669,10 @@ void main() {
 
   test('data classes handle non-nullable fields', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -804,9 +813,10 @@ void main() {
 
   test('host nullable return types map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'returnNullableBool',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
@@ -815,6 +825,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableInt',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
@@ -823,6 +834,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableString',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
@@ -831,6 +843,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableList',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
@@ -845,6 +858,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableMap',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
@@ -863,6 +877,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableDataClass',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
@@ -921,9 +936,10 @@ void main() {
 
   test('host non-nullable return types map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'returnBool',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
@@ -932,6 +948,7 @@ void main() {
         ),
         Method(
           name: 'returnInt',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
@@ -940,6 +957,7 @@ void main() {
         ),
         Method(
           name: 'returnString',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
@@ -948,6 +966,7 @@ void main() {
         ),
         Method(
           name: 'returnList',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
@@ -962,6 +981,7 @@ void main() {
         ),
         Method(
           name: 'returnMap',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
@@ -980,6 +1000,7 @@ void main() {
         ),
         Method(
           name: 'returnDataClass',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
@@ -1024,9 +1045,10 @@ void main() {
 
   test('host nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
@@ -1179,9 +1201,10 @@ void main() {
 
   test('host non-nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
@@ -1329,9 +1352,10 @@ void main() {
 
   test('flutter nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
@@ -1488,9 +1512,10 @@ void main() {
 
   test('flutter non-nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
@@ -1621,9 +1646,10 @@ void main() {
 
   test('host API argument extraction uses references', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 name: 'anArg',
@@ -1661,9 +1687,10 @@ void main() {
   test('enum argument', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Bar', methods: <Method>[
           Method(
               name: 'bar',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1705,13 +1732,13 @@ void main() {
 
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           documentationComments: <String>[comments[count++]],
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
               parameters: <Parameter>[
@@ -1785,12 +1812,12 @@ void main() {
   test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1827,9 +1854,10 @@ void main() {
 
   test('creates custom codecs if custom datatypes present', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -1884,9 +1912,10 @@ void main() {
 
   test('Does not send unwrapped EncodableLists', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
@@ -1966,15 +1995,17 @@ void main() {
 
   test('does not keep unowned references in async handlers', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'HostApi', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'HostApi', methods: <Method>[
         Method(
           name: 'noop',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
@@ -1988,15 +2019,17 @@ void main() {
           isAsynchronous: true,
         ),
       ]),
-      Api(name: 'FlutterApi', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'FlutterApi', methods: <Method>[
         Method(
           name: 'noop',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
@@ -2038,12 +2071,12 @@ void main() {
   test('connection error contains channel name', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
