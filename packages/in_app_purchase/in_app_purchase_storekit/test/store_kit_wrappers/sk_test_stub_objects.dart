@@ -2,9 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 const SKPaymentWrapper dummyPayment = SKPaymentWrapper(
+    productIdentifier: 'prod-id',
+    applicationUsername: 'app-user-name',
+    requestData: 'fake-data-utf8',
+    quantity: 2,
+    simulatesAskToBuyInSandbox: true);
+
+SKPaymentMessage dummyPaymentMessage = SKPaymentMessage(
     productIdentifier: 'prod-id',
     applicationUsername: 'app-user-name',
     requestData: 'fake-data-utf8',
@@ -42,6 +50,11 @@ final SKPaymentTransactionWrapper dummyTransaction =
   transactionIdentifier: '123123',
   error: dummyError,
 );
+
+final SKPaymentTransactionMessage dummyTransactionMessage =
+    SKPaymentTransactionMessage(
+        payment: dummyPaymentMessage,
+        transactionState: SKPaymentTransactionStateMessage.purchased);
 
 final SKPriceLocaleWrapper dollarLocale = SKPriceLocaleWrapper(
   currencySymbol: r'$',
@@ -181,6 +194,22 @@ Map<String, dynamic> buildErrorMap(SKError error) {
 }
 
 Map<String, dynamic> buildTransactionMap(
+    SKPaymentTransactionWrapper transaction) {
+  final Map<String, dynamic> map = <String, dynamic>{
+    'transactionState': SKPaymentTransactionStateWrapper.values
+        .indexOf(SKPaymentTransactionStateWrapper.purchased),
+    'payment': transaction.payment.toMap(),
+    'originalTransaction': transaction.originalTransaction == null
+        ? null
+        : buildTransactionMap(transaction.originalTransaction!),
+    'transactionTimeStamp': transaction.transactionTimeStamp,
+    'transactionIdentifier': transaction.transactionIdentifier,
+    'error': buildErrorMap(transaction.error!),
+  };
+  return map;
+}
+
+Map<String, dynamic> buildTransactionMessage(
     SKPaymentTransactionWrapper transaction) {
   final Map<String, dynamic> map = <String, dynamic>{
     'transactionState': SKPaymentTransactionStateWrapper.values
