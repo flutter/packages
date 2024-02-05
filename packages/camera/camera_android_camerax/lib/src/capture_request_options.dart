@@ -30,7 +30,7 @@ class CaptureRequestOptions extends JavaObject {
     _api.createFromInstances(this, requestedOptions);
   }
 
-  /// Constructs an [CaptureRequestOptions] that is not automatically attached to a
+  /// Constructs a [CaptureRequestOptions] that is not automatically attached to a
   /// native object.
   CaptureRequestOptions.detached({
     BinaryMessenger? binaryMessenger,

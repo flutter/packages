@@ -34,7 +34,7 @@ class Camera2CameraControl extends JavaObject {
     _api.createFromInstances(this, cameraControl);
   }
 
-  /// Constructs an [Camera2CameraControl] that is not automatically attached to a
+  /// Constructs a [Camera2CameraControl] that is not automatically attached to a
   /// native object.
   Camera2CameraControl.detached(
       {BinaryMessenger? binaryMessenger,
@@ -62,7 +62,7 @@ class Camera2CameraControl extends JavaObject {
   /// Options will be merged with existing options, and if conflicting with what
   /// was previously set, these options will override those pre-existing. Once
   /// merged, these values will be submitted with every repeating and single
-  /// capture requests issued by CameraX.
+  /// capture request issued by CameraX.
   Future<void> addCaptureRequestOptions(
       CaptureRequestOptions captureRequestOptions) {
     return _api.addCaptureRequestOptionsFromInstances(
