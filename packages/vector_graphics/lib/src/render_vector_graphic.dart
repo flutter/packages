@@ -439,6 +439,7 @@ class RenderPictureVectorGraphic extends RenderBox {
       context.canvas.translate(offset.dx, offset.dy);
     }
     if (_opacityValue != 1.0 || colorFilter != null) {
+      context.canvas.clipRect(Offset.zero & size);
       context.canvas.saveLayer(Offset.zero & size, colorPaint);
     }
     context.canvas.drawPicture(pictureInfo.picture);
