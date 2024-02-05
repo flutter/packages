@@ -6,11 +6,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'alternative_billing_only_reporting_details_wrapper.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
 import '../channel.dart';
+import 'alternative_billing_only_reporting_details_wrapper.dart';
 import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
@@ -382,7 +382,8 @@ class BillingClient {
   static const String createAlternativeBillingOnlyReportingDetailsMethodString =
       'BillingClient#createAlternativeBillingOnlyReportingDetails()';
 
-  /// TODO
+  /// The details used to report transactions made via alternative billing
+  /// without user choice to use Google Play billing.
   Future<AlternativeBillingOnlyReportingDetailsWrapper>
       createAlternativeBillingOnlyReportingDetails() async {
     return AlternativeBillingOnlyReportingDetailsWrapper.fromJson(
