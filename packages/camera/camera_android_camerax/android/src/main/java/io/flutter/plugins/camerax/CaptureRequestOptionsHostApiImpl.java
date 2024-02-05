@@ -24,7 +24,7 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
   private final InstanceManager instanceManager;
   private final CaptureRequestOptionsProxy proxy;
 
-  /** Proxy for constructors and static method of {@link CaptureRequestOptions}. */
+  /** Proxy for constructor of {@link CaptureRequestOptions}. */
   @VisibleForTesting
   public static class CaptureRequestOptionsProxy {
     /** Creates an instance of {@link CaptureRequestOptions}. */
@@ -94,7 +94,7 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
    * Constructs a {@link CaptureRequestOptionsHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link CaptureRequestOptions}
+   * @param proxy proxy for constructor of {@link CaptureRequestOptions}
    */
   @VisibleForTesting
   CaptureRequestOptionsHostApiImpl(

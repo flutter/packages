@@ -28,7 +28,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
   private final InstanceManager instanceManager;
   private final Camera2CameraControlProxy proxy;
 
-  /** Proxy for constructors and static method of {@link Camera2CameraControl}. */
+  /** Proxy for constructor and methods of {@link Camera2CameraControl}. */
   @VisibleForTesting
   public static class Camera2CameraControlProxy {
     Context context;
@@ -88,7 +88,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
    * Constructs a {@link Camera2CameraControlHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link Camera2CameraControl}
+   * @param proxy proxy for constructor and methods of {@link Camera2CameraControl}
    * @param context {@link Context} used to retrieve {@code Executor}
    */
   @VisibleForTesting
