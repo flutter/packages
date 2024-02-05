@@ -1,3 +1,7 @@
+## 0.3.0+19
+
+* Adds Alternitive billing only apis to platform addition.
+
 ## 0.3.0+18
 
 * Adds new getCountryCode() method to InAppPurchaseAndroidPlatformAddition to get a customer's country code.
