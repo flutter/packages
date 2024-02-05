@@ -101,7 +101,9 @@ class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (FocusMeteringAction original) {
       return FocusMeteringAction.detached(
-          binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+          meteringPointInfos: original.meteringPointInfos);
     });
 
     final List<MeteringPointInfo> meteringPointInfosWithIds =

@@ -465,13 +465,17 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
   ///
-  /// Returns 0 when exposure compensation is not supported.
-  ///
   /// [cameraId] not used.
   @override
   Future<double> getExposureOffsetStepSize(int cameraId) async {
     final ExposureState exposureState = await cameraInfo!.getExposureState();
-    return exposureState.exposureCompensationStep;
+    final double exposureOffsetStepSize =
+        (await cameraInfo!.getExposureState()).exposureCompensationStep;
+    if (exposureOffsetStepSize == 0) {
+      throw CameraException(
+          'TODO(camsim99)', 'Exposure compensation not supported');
+    }
+    return exposureOffsetStepSize;
   }
 
   /// Sets the exposure offset for the selected camera.
@@ -486,8 +490,29 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// Returns the (rounded) offset value that was set.
   @override
-  Future<double> setExposureOffset(int cameraId, double offset) {
-    // double minOffset = TODO(camsim99): here
+  Future<double> setExposureOffset(int cameraId, double offset) async {
+    final double minOffset = await getMinExposureOffset(cameraId);
+    final double maxOffset = await getMaxExposureOffset(cameraId);
+
+    if (offset < minOffset || offset > maxOffset) {
+      throw CameraException('TODO(camsim99)', 'TODO(camsim99)');
+    }
+
+    final double exposureOffsetStepSize =
+        (await cameraInfo!.getExposureState()).exposureCompensationStep;
+    if (exposureOffsetStepSize == 0) {
+      throw CameraException(
+          'TODO(camsim99)', 'Exposure compensation not supported');
+    }
+
+    final int roundedExposureCompensationIndex =
+        (offset / exposureOffsetStepSize) as int;
+    final CameraControl cameraControl = await camera!.getCameraControl();
+
+    await cameraControl
+        .setExposureCompensationIndex(roundedExposureCompensationIndex);
+
+    return roundedExposureCompensationIndex * exposureOffsetStepSize;
   }
 
   /// Sets the focus point for automatically determining the focus values.
@@ -1022,6 +1047,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         videoQuality: videoQuality, fallbackStrategy: fallbackStrategy);
   }
 
+  /// TODO(camsim99)
   Future<void> _startFocusAndMeteringFor(
       {required Point<double>? meteringPoint,
       required int? meteringMode}) async {
