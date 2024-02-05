@@ -644,14 +644,13 @@ void main() {
   });
 
   group('billingConfig', () {
-    const String billingConfigMethodName = 'BillingClient#getBillingConfig()';
     test('billingConfig returns object', () async {
       const BillingConfigWrapper expected = BillingConfigWrapper(
           countryCode: 'US',
           responseCode: BillingResponse.ok,
           debugMessage: '');
       stubPlatform.addResponse(
-        name: billingConfigMethodName,
+        name: BillingClient.getBillingConfigMethodString,
         value: buildBillingConfigMap(expected),
       );
       final BillingConfigWrapper result =
@@ -662,7 +661,7 @@ void main() {
 
     test('handles method channel returning null', () async {
       stubPlatform.addResponse(
-        name: billingConfigMethodName,
+        name: BillingClient.getBillingConfigMethodString,
       );
       final BillingConfigWrapper result =
           await billingClient.getBillingConfig();
@@ -672,6 +671,52 @@ void main() {
             responseCode: BillingResponse.error,
             debugMessage: kInvalidBillingConfigErrorMessage,
           )));
+    });
+  });
+
+  group('isAlternativeBillingOnlyAvailable', () {
+    test('returns object', () async {
+      const BillingResultWrapper expected =
+          BillingResultWrapper(responseCode: BillingResponse.ok);
+      stubPlatform.addResponse(
+          name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
+          value: buildBillingResultMap(expected));
+      final BillingResultWrapper result =
+          await billingClient.isAlternativeBillingOnlyAvailable();
+      expect(result, expected);
+    });
+
+    test('handles method channel returning null', () async {
+      stubPlatform.addResponse(
+        name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
+      );
+      final BillingResultWrapper result =
+          await billingClient.isAlternativeBillingOnlyAvailable();
+      expect(result.responseCode, BillingResponse.error);
+    });
+  });
+
+  group('showAlternativeBillingOnlyInformationDialog', () {
+    test('returns object', () async {
+      const BillingResultWrapper expected =
+          BillingResultWrapper(responseCode: BillingResponse.ok);
+      stubPlatform.addResponse(
+          name: BillingClient
+              .showAlternativeBillingOnlyInformationDialogMethodString,
+          value: buildBillingResultMap(expected));
+      final BillingResultWrapper result =
+          await billingClient.showAlternativeBillingOnlyInformationDialog();
+      expect(result, expected);
+    });
+
+    test('handles method channel returning null', () async {
+      stubPlatform.addResponse(
+        name: BillingClient
+            .showAlternativeBillingOnlyInformationDialogMethodString,
+      );
+      final BillingResultWrapper result =
+          await billingClient.showAlternativeBillingOnlyInformationDialog();
+      expect(result.responseCode, BillingResponse.error);
     });
   });
 }

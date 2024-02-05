@@ -64,7 +64,6 @@ void main() {
   });
 
   group('billingConfig', () {
-    const String billingConfigMethodName = 'BillingClient#getBillingConfig()';
     test('getCountryCode success', () async {
       const String expectedCountryCode = 'US';
       const BillingConfigWrapper expected = BillingConfigWrapper(
@@ -73,13 +72,47 @@ void main() {
           debugMessage: 'dummy message');
 
       stubPlatform.addResponse(
-        name: billingConfigMethodName,
+        name: BillingClient.getBillingConfigMethodString,
         value: buildBillingConfigMap(expected),
       );
       final String countryCode =
           await iapAndroidPlatformAddition.getCountryCode();
 
       expect(countryCode, equals(expectedCountryCode));
+    });
+  });
+
+    group('isAlternativeBillingOnlyAvailable', () {
+    test('isAlternativeBillingOnlyAvailable success', () async {
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok,
+          debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
+        value: buildBillingResultMap(expected),
+      );
+      final BillingResultWrapper result =
+          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+
+      expect(result, equals(expected));
+    });
+  });
+
+    group('showAlternativeBillingOnlyInformationDialog', () {
+    test('showAlternativeBillingOnlyInformationDialog success', () async {
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok,
+          debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: BillingClient.showAlternativeBillingOnlyInformationDialogMethodString,
+        value: buildBillingResultMap(expected),
+      );
+      final BillingResultWrapper result =
+          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+
+      expect(result, equals(expected));
     });
   });
 

@@ -330,7 +330,7 @@ class BillingClient {
   // Must match the value of GET_BILLING_CONFIG in
   // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
   @visibleForTesting
-  final String getBillingConfigMethodString =
+  static const String getBillingConfigMethodString =
       'BillingClient#getBillingConfig()';
 
   /// Fetches billing config info into a [BillingConfigWrapper] object.
@@ -345,7 +345,7 @@ class BillingClient {
   // Must match the value of IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE in
   // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
   @visibleForTesting
-  final String isAlternativeBillingOnlyAvailableMethodString =
+  static const String isAlternativeBillingOnlyAvailableMethodString =
       'BillingClient#isAlternativeBillingOnlyAvailable()';
 
   /// Checks if "AlterntitiveBillingOnly" features is available.
@@ -362,7 +362,7 @@ class BillingClient {
   // Must match the value of SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG in
   // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
   @visibleForTesting
-  final String showAlternativeBillingOnlyInformationDialogMethodString =
+  static const String showAlternativeBillingOnlyInformationDialogMethodString =
       'BillingClient#showAlternativeBillingOnlyInformationDialog()';
 
   /// Shows the alternative billing only information dialog on top of the calling app.
