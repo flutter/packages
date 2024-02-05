@@ -31,17 +31,16 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('UrlLauncherPlugin', () {
-    late MockWindow mockWindow;
     late MockNavigator mockNavigator;
+    late html.Window jsMockWindow;
 
     late UrlLauncherPlugin plugin;
 
     setUp(() {
-      mockWindow = MockWindow();
+      final MockWindow mockWindow = MockWindow();
       mockNavigator = MockNavigator();
 
-      final html.Window jsMockWindow =
-          createDartExport(mockWindow) as html.Window;
+      jsMockWindow = createDartExport(mockWindow) as html.Window;
       final html.Navigator jsMockNavigator =
           createDartExport(mockNavigator) as html.Navigator;
 
@@ -53,7 +52,7 @@ void main() {
       when(mockNavigator.userAgent).thenReturn(
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
 
-      plugin = UrlLauncherPlugin(debugWindow: mockWindow as html.Window);
+      plugin = UrlLauncherPlugin(debugWindow: jsMockWindow);
     });
 
     group('canLaunch', () {
@@ -128,7 +127,7 @@ void main() {
           (WidgetTester _) async {
         plugin.openNewWindow('http://www.google.com');
 
-        verify(mockWindow.open(
+        verify(jsMockWindow.open(
             'http://www.google.com', '', 'noopener,noreferrer'));
       });
 
@@ -136,7 +135,7 @@ void main() {
           (WidgetTester _) async {
         plugin.openNewWindow('https://www.google.com');
 
-        verify(mockWindow.open(
+        verify(jsMockWindow.open(
             'https://www.google.com', '', 'noopener,noreferrer'));
       });
 
@@ -144,7 +143,7 @@ void main() {
           (WidgetTester _) async {
         plugin.openNewWindow('mailto:name@mydomain.com');
 
-        verify(mockWindow.open(
+        verify(jsMockWindow.open(
             'mailto:name@mydomain.com', '', 'noopener,noreferrer'));
       });
 
@@ -152,14 +151,14 @@ void main() {
           (WidgetTester _) async {
         plugin.openNewWindow('tel:5551234567');
 
-        verify(mockWindow.open('tel:5551234567', '', 'noopener,noreferrer'));
+        verify(jsMockWindow.open('tel:5551234567', '', 'noopener,noreferrer'));
       });
 
       testWidgets('sms urls should be launched on a new window',
           (WidgetTester _) async {
         plugin.openNewWindow('sms:+19725551212?body=hello%20there');
 
-        verify(mockWindow.open(
+        verify(jsMockWindow.open(
             'sms:+19725551212?body=hello%20there', '', 'noopener,noreferrer'));
       });
       testWidgets(
@@ -167,7 +166,7 @@ void main() {
           (WidgetTester _) async {
         plugin.openNewWindow('https://www.google.com',
             webOnlyWindowName: '_self');
-        verify(mockWindow.open(
+        verify(jsMockWindow.open(
             'https://www.google.com', '_self', 'noopener,noreferrer'));
       });
 
@@ -176,7 +175,7 @@ void main() {
           (WidgetTester _) async {
         plugin.openNewWindow('https://www.google.com',
             webOnlyWindowName: '_blank');
-        verify(mockWindow.open(
+        verify(jsMockWindow.open(
             'https://www.google.com', '_blank', 'noopener,noreferrer'));
       });
 
@@ -185,14 +184,14 @@ void main() {
           when(mockNavigator.userAgent).thenReturn(
               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5.1 Safari/605.1.15');
           // Recreate the plugin, so it grabs the overrides from this group
-          plugin = UrlLauncherPlugin(debugWindow: mockWindow as html.Window);
+          plugin = UrlLauncherPlugin(debugWindow: jsMockWindow);
         });
 
         testWidgets('http urls should be launched in a new window',
             (WidgetTester _) async {
           plugin.openNewWindow('http://www.google.com');
 
-          verify(mockWindow.open(
+          verify(jsMockWindow.open(
               'http://www.google.com', '', 'noopener,noreferrer'));
         });
 
@@ -200,7 +199,7 @@ void main() {
             (WidgetTester _) async {
           plugin.openNewWindow('https://www.google.com');
 
-          verify(mockWindow.open(
+          verify(jsMockWindow.open(
               'https://www.google.com', '', 'noopener,noreferrer'));
         });
 
@@ -208,7 +207,7 @@ void main() {
             (WidgetTester _) async {
           plugin.openNewWindow('mailto:name@mydomain.com');
 
-          verify(mockWindow.open(
+          verify(jsMockWindow.open(
               'mailto:name@mydomain.com', '_top', 'noopener,noreferrer'));
         });
 
@@ -216,23 +215,23 @@ void main() {
             (WidgetTester _) async {
           plugin.openNewWindow('tel:5551234567');
 
-          verify(
-              mockWindow.open('tel:5551234567', '_top', 'noopener,noreferrer'));
+          verify(jsMockWindow.open(
+              'tel:5551234567', '_top', 'noopener,noreferrer'));
         });
 
         testWidgets('sms urls should be launched on the same window',
             (WidgetTester _) async {
           plugin.openNewWindow('sms:+19725551212?body=hello%20there');
 
-          verify(mockWindow.open('sms:+19725551212?body=hello%20there', '_top',
-              'noopener,noreferrer'));
+          verify(jsMockWindow.open('sms:+19725551212?body=hello%20there',
+              '_top', 'noopener,noreferrer'));
         });
         testWidgets(
             'mailto urls should use _blank if webOnlyWindowName is set as _blank',
             (WidgetTester _) async {
           plugin.openNewWindow('mailto:name@mydomain.com',
               webOnlyWindowName: '_blank');
-          verify(mockWindow.open(
+          verify(jsMockWindow.open(
               'mailto:name@mydomain.com', '_blank', 'noopener,noreferrer'));
         });
       });
