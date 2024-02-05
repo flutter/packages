@@ -34,7 +34,7 @@ class Camera2CameraControl extends JavaObject {
     _api.createFromInstances(this, cameraControl);
   }
 
-  /// Constructs an [Camera2CameraControl] that is not automatically attached to a
+  /// Constructs a [Camera2CameraControl] that is not automatically attached to a
   /// native object.
   Camera2CameraControl.detached(
       {BinaryMessenger? binaryMessenger,
