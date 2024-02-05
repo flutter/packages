@@ -61,7 +61,7 @@ abstract class PlatformAdsManager extends PlatformInterface {
     final PlatformAdsManager implementation = InteractiveMediaAdsPlatform
         .instance!
         .createPlatformAdsManager(params);
-    PlatformInterface.verify(implementation, _token);
+    PlatformInterface.verifyToken(implementation, _token);
     return implementation;
   }
 

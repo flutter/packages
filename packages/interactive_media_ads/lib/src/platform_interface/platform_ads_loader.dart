@@ -60,7 +60,7 @@ abstract class PlatformAdsLoader extends PlatformInterface {
     );
     final PlatformAdsLoader implementation =
         InteractiveMediaAdsPlatform.instance!.createPlatformAdsLoader(params);
-    PlatformInterface.verify(implementation, _token);
+    PlatformInterface.verifyToken(implementation, _token);
     return implementation;
   }
 

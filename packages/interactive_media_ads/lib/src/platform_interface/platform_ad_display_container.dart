@@ -62,7 +62,7 @@ abstract class PlatformAdDisplayContainer extends PlatformInterface {
     final PlatformAdDisplayContainer implementation =
         InteractiveMediaAdsPlatform.instance!
             .createPlatformAdDisplayContainer(params);
-    PlatformInterface.verify(implementation, _token);
+    PlatformInterface.verifyToken(implementation, _token);
     return implementation;
   }
 
