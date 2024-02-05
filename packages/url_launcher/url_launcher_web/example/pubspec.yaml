@@ -19,3 +19,8 @@ dev_dependencies:
   url_launcher_web:
     path: ../
   web: '>=0.3.0 <0.5.0'
+
+
+dependency_overrides:
+  web:
+    path: ../../../../../web
