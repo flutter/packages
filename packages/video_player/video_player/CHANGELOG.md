@@ -1,3 +1,7 @@
+## 2.8.4
+
+* Update example to call `super.dispose()` last
+
 ## 2.8.3
 
 * Fixes typo in `README.md`.
