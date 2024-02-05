@@ -53,7 +53,9 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
             break;
           default:
             throw new IllegalArgumentException(
-                "The capture request key is not currently supported by the plugin.");
+                "The capture request key "
+                    + optionKeyType.toString()
+                    + "is not currently supported by the plugin.");
         }
       }
 

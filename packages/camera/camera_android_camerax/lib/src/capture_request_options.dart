@@ -51,8 +51,9 @@ class CaptureRequestOptions extends JavaObject {
 
   /// Error message indicating a [CaptureRequestOption] was constructed with a
   /// capture request key currently unsupported by the wrapping of this class.
-  static const String unsupportedCaptureRequestKeyTypeErrorMessage =
-      'The type of capture request key passed to this method is current unspported; please see CaptureRequestKeySupportedType in pigeons/camerax_library.dart if you wish to support a new type.';
+  static String getUnsupportedCaptureRequestKeyTypeErrorMessage(
+          CaptureRequestKeySupportedType captureRequestKeyType) =>
+      'The type of capture request key passed to this method ($captureRequestKeyType) is current unspported; please see CaptureRequestKeySupportedType in pigeons/camerax_library.dart if you wish to support a new type.';
 }
 
 /// Host API implementation of [CaptureRequestOptions].
@@ -104,11 +105,12 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
         continue;
       }
 
+      final Type valueRuntimeType = value.runtimeType;
       switch (key) {
         case CaptureRequestKeySupportedType.controlAeLock:
-          if (value.runtimeType != bool) {
+          if (valueRuntimeType != bool) {
             throw ArgumentError(
-                'A controlAeLock value must be specified as a bool.');
+                'A controlAeLock value must be specified as a bool, but a $valueRuntimeType was specified.');
           }
         // This ignore statement is safe beause this error will be useful when
         // a new CaptureRequestKeySupportedType is being added, but the logic in
@@ -116,7 +118,7 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
         // ignore: no_default_cases
         default:
           throw ArgumentError(CaptureRequestOptions
-              .unsupportedCaptureRequestKeyTypeErrorMessage);
+              .getUnsupportedCaptureRequestKeyTypeErrorMessage(key));
       }
 
       captureRequestOptions[key.index] = value;

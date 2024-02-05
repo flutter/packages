@@ -52,7 +52,7 @@ void main() {
     });
 
     test(
-        'create makes call on the Java side as expected for suppported non-null capture request options',
+        'create makes call on the Java side as expected for suppported null capture request options',
         () {
       final MockTestCaptureRequestOptionsHostApi mockApi =
           MockTestCaptureRequestOptionsHostApi();
