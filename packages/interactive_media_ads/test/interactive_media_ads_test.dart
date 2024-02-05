@@ -11,21 +11,22 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockInteractiveMediaAdsPlatform
     with MockPlatformInterfaceMixin
     implements InteractiveMediaAdsPlatform {
-
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<String?> getPlatformVersion() => Future<String?>.value('42');
 }
 
 void main() {
-  final InteractiveMediaAdsPlatform initialPlatform = InteractiveMediaAdsPlatform.instance;
+  final InteractiveMediaAdsPlatform initialPlatform =
+      InteractiveMediaAdsPlatform.instance;
 
   test('$MethodChannelInteractiveMediaAds is the default instance', () {
     expect(initialPlatform, isInstanceOf<MethodChannelInteractiveMediaAds>());
   });
 
   test('getPlatformVersion', () async {
-    InteractiveMediaAds interactiveMediaAdsPlugin = InteractiveMediaAds();
-    MockInteractiveMediaAdsPlatform fakePlatform = MockInteractiveMediaAdsPlatform();
+    final InteractiveMediaAds interactiveMediaAdsPlugin = InteractiveMediaAds();
+    final MockInteractiveMediaAdsPlatform fakePlatform =
+        MockInteractiveMediaAdsPlatform();
     InteractiveMediaAdsPlatform.instance = fakePlatform;
 
     expect(await interactiveMediaAdsPlugin.getPlatformVersion(), '42');

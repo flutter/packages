@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'interactive_media_ads_method_channel.dart';
@@ -12,7 +14,8 @@ abstract class InteractiveMediaAdsPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static InteractiveMediaAdsPlatform _instance = MethodChannelInteractiveMediaAds();
+  static InteractiveMediaAdsPlatform _instance =
+      MethodChannelInteractiveMediaAds();
 
   /// The default instance of [InteractiveMediaAdsPlatform] to use.
   ///
