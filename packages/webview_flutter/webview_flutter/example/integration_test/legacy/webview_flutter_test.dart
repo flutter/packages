@@ -319,11 +319,13 @@ Future<void> main() async {
   group('Video playback policy', () {
     late String videoTestBase64;
     setUpAll(() async {
-      final ByteData videoData =
-          await rootBundle.load('assets/sample_video.mp4');
-      final String base64VideoData =
-          base64Encode(Uint8List.view(videoData.buffer));
-      final String videoTest = '''
+      return rootBundle
+          .load('assets/sample_video.mp4')
+          .then((ByteData data) async {
+        final ByteData videoData = data;
+        final String base64VideoData =
+            base64Encode(Uint8List.view(videoData.buffer));
+        final String videoTest = '''
         <!DOCTYPE html><html>
         <head><title>Video auto play</title>
           <script type="text/javascript">
@@ -353,65 +355,66 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-      videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
+        videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
+      });
     });
 
-    // testWidgets('Auto media playback', (WidgetTester tester) async {
-    //   Completer<WebViewController> controllerCompleter =
-    //       Completer<WebViewController>();
-    //   Completer<void> pageLoaded = Completer<void>();
+    testWidgets('Auto media playback', (WidgetTester tester) async {
+      Completer<WebViewController> controllerCompleter =
+          Completer<WebViewController>();
+      Completer<void> pageLoaded = Completer<void>();
 
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         key: GlobalKey(),
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-    //       ),
-    //     ),
-    //   );
-    //   WebViewController controller = await controllerCompleter.future;
-    //   await pageLoaded.future;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: GlobalKey(),
+            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+          ),
+        ),
+      );
+      WebViewController controller = await controllerCompleter.future;
+      await pageLoaded.future;
 
-    //   String isPaused =
-    //       await controller.runJavascriptReturningResult('isPaused();');
-    //   expect(isPaused, _webviewBool(false));
+      String isPaused =
+          await controller.runJavascriptReturningResult('isPaused();');
+      expect(isPaused, _webviewBool(false));
 
-    //   controllerCompleter = Completer<WebViewController>();
-    //   pageLoaded = Completer<void>();
+      controllerCompleter = Completer<WebViewController>();
+      pageLoaded = Completer<void>();
 
-    //   // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         key: GlobalKey(),
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //       ),
-    //     ),
-    //   );
+      // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: GlobalKey(),
+            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+          ),
+        ),
+      );
 
-    //   controller = await controllerCompleter.future;
-    //   await pageLoaded.future;
+      controller = await controllerCompleter.future;
+      await pageLoaded.future;
 
-    //   isPaused = await controller.runJavascriptReturningResult('isPaused();');
-    //   expect(isPaused, _webviewBool(true));
-    // });
+      isPaused = await controller.runJavascriptReturningResult('isPaused();');
+      expect(isPaused, _webviewBool(true));
+    });
 
     testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
         (WidgetTester tester) async {
@@ -576,11 +579,13 @@ Future<void> main() async {
   group('Audio playback policy', () {
     late String audioTestBase64;
     setUpAll(() async {
-      final ByteData audioData =
-          await rootBundle.load('assets/sample_audio.ogg');
-      final String base64AudioData =
-          base64Encode(Uint8List.view(audioData.buffer));
-      final String audioTest = '''
+      return rootBundle
+          .load('assets/sample_audio.ogg')
+          .then((ByteData data) async {
+        final ByteData audioData = data;
+        final String base64AudioData =
+            base64Encode(Uint8List.view(audioData.buffer));
+        final String audioTest = '''
         <!DOCTYPE html><html>
         <head><title>Audio auto play</title>
           <script type="text/javascript">
@@ -601,75 +606,76 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-      audioTestBase64 = base64Encode(const Utf8Encoder().convert(audioTest));
+        audioTestBase64 = base64Encode(const Utf8Encoder().convert(audioTest));
+      });
     });
 
-    // testWidgets('Auto media playback', (WidgetTester tester) async {
-    //   Completer<WebViewController> controllerCompleter =
-    //       Completer<WebViewController>();
-    //   Completer<void> pageStarted = Completer<void>();
-    //   Completer<void> pageLoaded = Completer<void>();
+    testWidgets('Auto media playback', (WidgetTester tester) async {
+      Completer<WebViewController> controllerCompleter =
+          Completer<WebViewController>();
+      Completer<void> pageStarted = Completer<void>();
+      Completer<void> pageLoaded = Completer<void>();
 
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         key: GlobalKey(),
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         onPageStarted: (String url) {
-    //           pageStarted.complete(null);
-    //         },
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-    //       ),
-    //     ),
-    //   );
-    //   WebViewController controller = await controllerCompleter.future;
-    //   await pageStarted.future;
-    //   await pageLoaded.future;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: GlobalKey(),
+            initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageStarted: (String url) {
+              pageStarted.complete(null);
+            },
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+          ),
+        ),
+      );
+      WebViewController controller = await controllerCompleter.future;
+      await pageStarted.future;
+      await pageLoaded.future;
 
-    //   String isPaused =
-    //       await controller.runJavascriptReturningResult('isPaused();');
-    //   expect(isPaused, _webviewBool(false));
+      String isPaused =
+          await controller.runJavascriptReturningResult('isPaused();');
+      expect(isPaused, _webviewBool(false));
 
-    //   controllerCompleter = Completer<WebViewController>();
-    //   pageStarted = Completer<void>();
-    //   pageLoaded = Completer<void>();
+      controllerCompleter = Completer<WebViewController>();
+      pageStarted = Completer<void>();
+      pageLoaded = Completer<void>();
 
-    //   // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         key: GlobalKey(),
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         onPageStarted: (String url) {
-    //           pageStarted.complete(null);
-    //         },
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //       ),
-    //     ),
-    //   );
+      // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: GlobalKey(),
+            initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageStarted: (String url) {
+              pageStarted.complete(null);
+            },
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+          ),
+        ),
+      );
 
-    //   controller = await controllerCompleter.future;
-    //   await pageStarted.future;
-    //   await pageLoaded.future;
+      controller = await controllerCompleter.future;
+      await pageStarted.future;
+      await pageLoaded.future;
 
-    //   isPaused = await controller.runJavascriptReturningResult('isPaused();');
-    //   expect(isPaused, _webviewBool(true));
-    // });
+      isPaused = await controller.runJavascriptReturningResult('isPaused();');
+      expect(isPaused, _webviewBool(true));
+    });
 
     testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
         (WidgetTester tester) async {
