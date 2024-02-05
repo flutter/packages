@@ -157,4 +157,26 @@ class InAppPurchaseAndroidPlatformAddition
         .runWithClient((BillingClient client) => client.getBillingConfig());
     return billingConfig.countryCode;
   }
+
+  /// Returns if the caller can use alternative billing only without giving the
+  /// user a choice to use Play billing.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingClient#isAlternativeBillingOnlyAvailableAsync(com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener)
+  Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
+    final BillingResultWrapper wrapper =
+        await _billingClientManager.runWithClient((BillingClient client) =>
+            client.isAlternativeBillingOnlyAvailable());
+    return wrapper;
+  }
+
+  /// Shows the alternative billing only information dialog on top of the calling app.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingClient#showAlternativeBillingOnlyInformationDialog(android.app.Activity,%20com.android.billingclient.api.AlternativeBillingOnlyInformationDialogListener)
+  Future<BillingResultWrapper>
+      showAlternativeBillingOnlyInformationDialog() async {
+    final BillingResultWrapper wrapper =
+        await _billingClientManager.runWithClient((BillingClient client) =>
+            client.showAlternativeBillingOnlyInformationDialog());
+    return wrapper;
+  }
 }

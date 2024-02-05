@@ -340,6 +340,39 @@ class BillingClient {
         <String, dynamic>{});
   }
 
+  /// isAlternativeBillingOnlyAvailable method channel string identifier.
+  //
+  // Must match the value of IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE in
+  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
+  @visibleForTesting
+  final String isAlternativeBillingOnlyAvailableMethodString =
+      'BillingClient#isAlternativeBillingOnlyAvailable()';
+
+  /// Checks if "AlterntitiveBillingOnly" features is available.
+  Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
+    return BillingResultWrapper.fromJson(
+        (await channel.invokeMapMethod<String, dynamic>(
+                isAlternativeBillingOnlyAvailableMethodString)) ??
+            <String, dynamic>{});
+  }
+
+
+  /// showAlternativeBillingOnlyInformationDialog method channel string identifier.
+  //
+  // Must match the value of SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG in
+  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
+  @visibleForTesting
+  final String showAlternativeBillingOnlyInformationDialogMethodString =
+      'BillingClient#showAlternativeBillingOnlyInformationDialog()';
+
+  /// Shows the alternative billing only information dialog on top of the calling app.
+  Future<BillingResultWrapper> showAlternativeBillingOnlyInformationDialog() async {
+    return BillingResultWrapper.fromJson(
+        (await channel.invokeMapMethod<String, dynamic>(
+                showAlternativeBillingOnlyInformationDialogMethodString)) ??
+            <String, dynamic>{});
+  }
+
   /// The method call handler for [channel].
   @visibleForTesting
   Future<void> callHandler(MethodCall call) async {
