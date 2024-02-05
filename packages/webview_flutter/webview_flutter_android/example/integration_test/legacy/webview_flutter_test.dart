@@ -129,23 +129,23 @@ Future<void> main() async {
       controllerCompleter = Completer<WebViewController>();
       pageLoaded = Completer<void>();
 
-      // // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
-      // await tester.pumpWidget(
-      //   Directionality(
-      //     textDirection: TextDirection.ltr,
-      //     child: WebView(
-      //       key: GlobalKey(),
-      //       initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-      //       onWebViewCreated: (WebViewController controller) {
-      //         controllerCompleter.complete(controller);
-      //       },
-      //       javascriptMode: JavascriptMode.unrestricted,
-      //       onPageFinished: (String url) {
-      //         pageLoaded.complete(null);
-      //       },
-      //     ),
-      //   ),
-      // );
+      // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: GlobalKey(),
+            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+          ),
+        ),
+      );
 
       // controller = await controllerCompleter.future;
       // await pageLoaded.future;
