@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.10
+
+- Add missing clip before saveLayer.
+
 ## 1.1.9+2
 
 - Fix case sensitivity on scientific notation parsing.
