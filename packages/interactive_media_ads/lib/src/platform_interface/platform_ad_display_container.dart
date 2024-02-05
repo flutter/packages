@@ -40,7 +40,7 @@ import 'interactive_media_ads_platform.dart';
 /// }
 /// ```
 @immutable
-class PlatformAdDisplayContainerCreationParams {
+base class PlatformAdDisplayContainerCreationParams {
   /// Used by the platform implementation to create a new [PlatformAdDisplayContainer].
   const PlatformAdDisplayContainerCreationParams();
 }

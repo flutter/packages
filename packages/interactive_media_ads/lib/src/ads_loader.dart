@@ -11,65 +11,65 @@ import 'platform_interface/platform_interface.dart';
 /// platform. Once a platform implementation is imported, the examples below
 /// can be followed to use features provided by a platform's implementation.
 ///
-/// {@macro interactive_media_ads.AdsManager.fromPlatformCreationParams}
+/// {@macro interactive_media_ads.AdsLoader.fromPlatformCreationParams}
 ///
 /// Below is an example of accessing the platform-specific implementation for
 /// iOS and Android:
 ///
 /// ```dart
-/// final AdsManager manager = AdsManager();
+/// final AdsLoader loader = AdsLoader();
 ///
 /// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-///   final IosAdsManager iosManager = manager.platform as WebKitAdsManager;
+///   final IosAdsLoader iosLoader = loader.platform as IosAdsLoader;
 /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
-///   final AndroidAdsManager androidManager =
-///       manager.platform as AndroidAdsManager;
+///   final AndroidAdsLoader androidLoader =
+///       loader.platform as AndroidAdsLoader;
 /// }
 /// ```
-class AdsManager {
-  /// Constructs an [AdsManager].
+class AdsLoader {
+  /// Constructs an [AdsLoader].
   ///
-  /// See [AdsManager.fromPlatformCreationParams] for setting parameters for a
+  /// See [AdsLoader.fromPlatformCreationParams] for setting parameters for a
   /// specific platform.
-  AdsManager()
+  AdsLoader()
       : this.fromPlatformCreationParams(
-          const PlatformAdsManagerCreationParams(),
+          const PlatformAdsLoaderCreationParams(),
         );
 
-  /// Constructs an [AdsManager] from creation params for a specific platform.
+  /// Constructs an [AdsLoader] from creation params for a specific platform.
   ///
-  /// {@template interactive_media_ads.AdsManager.fromPlatformCreationParams}
+  /// {@template interactive_media_ads.AdsLoader.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// iOS and Android:
   ///
   /// ```dart
-  /// PlatformAdsManagerCreationParams params =
-  ///     const PlatformAdsManagerCreationParams();
+  /// PlatformAdsLoaderCreationParams params =
+  ///     const PlatformAdsLoaderCreationParams();
   ///
   /// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-  ///   params = IosAdsManagerCreationParams
-  ///       .fromPlatformAdsManagerCreationParams(
+  ///   params = IosAdsLoaderCreationParams
+  ///       .fromPlatformAdsLoaderCreationParams(
   ///     params,
   ///   );
   /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
-  ///   params = AndroidAdsManagerCreationParams
-  ///       .fromPlatformAdsManagerCreationParams(
+  ///   params = AndroidAdsLoaderCreationParams
+  ///       .fromPlatformAdsLoaderCreationParams(
   ///     params,
   ///   );
   /// }
   ///
-  /// final AdsManager manager = AdsManager.fromPlatformCreationParams(
+  /// final AdsLoader loader = AdsLoader.fromPlatformCreationParams(
   ///   params,
   /// );
   /// ```
   /// {@endtemplate}
-  AdsManager.fromPlatformCreationParams(
-    PlatformAdsManagerCreationParams params,
-  ) : this.fromPlatform(PlatformAdsManager(params));
+  AdsLoader.fromPlatformCreationParams(
+    PlatformAdsLoaderCreationParams params,
+  ) : this.fromPlatform(PlatformAdsLoader(params));
 
-  /// Constructs a [AdsManager] from a specific platform implementation.
-  AdsManager.fromPlatform(this.platform);
+  /// Constructs a [AdsLoader] from a specific platform implementation.
+  AdsLoader.fromPlatform(this.platform);
 
-  /// Implementation of [PlatformAdsManager] for the current platform.
-  final PlatformAdsManager platform;
+  /// Implementation of [PlatformAdsLoader] for the current platform.
+  final PlatformAdsLoader platform;
 }

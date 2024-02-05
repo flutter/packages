@@ -39,7 +39,7 @@ import 'interactive_media_ads_platform.dart';
 /// }
 /// ```
 @immutable
-class PlatformAdsManagerCreationParams {
+base class PlatformAdsManagerCreationParams {
   /// Used by the platform implementation to create a new [PlatformAdsManager].
   const PlatformAdsManagerCreationParams();
 }
