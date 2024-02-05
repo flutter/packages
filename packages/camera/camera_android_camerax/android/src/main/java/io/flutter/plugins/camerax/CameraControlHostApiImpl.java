@@ -162,6 +162,11 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
             }
 
             public void onFailure(Throwable t) {
+              if (t instanceof CameraControl.OperationCanceledException) {
+                // TODO(camsim99): make result nullable, return null result here if canceled because we don't want this to throw an exception
+                result.success(3L);
+                return;
+              }
               result.error(t);
             }
           },

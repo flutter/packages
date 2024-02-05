@@ -491,6 +491,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns the (rounded) offset value that was set.
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
+    // TODO(camsim99): Cache these values if possible in an attempt to improve performance.
     final double minOffset = await getMinExposureOffset(cameraId);
     final double maxOffset = await getMaxExposureOffset(cameraId);
 
@@ -506,7 +507,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final int roundedExposureCompensationIndex =
-        (offset / exposureOffsetStepSize) as int;
+        (offset / exposureOffsetStepSize).round();
     final CameraControl cameraControl = await camera!.getCameraControl();
 
     await cameraControl
@@ -1062,10 +1063,15 @@ class AndroidCameraCameraX extends CameraPlatform {
               .where(((MeteringPoint, int?) meteringPointInfo) =>
                   meteringPointInfo.$2 != meteringMode)
               .toList();
+      if (newMeteringPointInfos.isEmpty) {
+        await cameraControl.cancelFocusAndMetering();
+        return;
+      }
       currentFocusMeteringAction =
           FocusMeteringAction(meteringPointInfos: newMeteringPointInfos);
 
       await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
+      return;
     } else if (meteringPoint.x < 0 ||
         meteringPoint.x > 1 ||
         meteringPoint.y < 0 && meteringPoint.y > 1) {
