@@ -357,7 +357,6 @@ class BillingClient {
             <String, dynamic>{});
   }
 
-
   /// showAlternativeBillingOnlyInformationDialog method channel string identifier.
   //
   // Must match the value of SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG in
@@ -367,7 +366,8 @@ class BillingClient {
       'BillingClient#showAlternativeBillingOnlyInformationDialog()';
 
   /// Shows the alternative billing only information dialog on top of the calling app.
-  Future<BillingResultWrapper> showAlternativeBillingOnlyInformationDialog() async {
+  Future<BillingResultWrapper>
+      showAlternativeBillingOnlyInformationDialog() async {
     return BillingResultWrapper.fromJson(
         (await channel.invokeMapMethod<String, dynamic>(
                 showAlternativeBillingOnlyInformationDialogMethodString)) ??
@@ -391,7 +391,6 @@ class BillingClient {
                 createAlternativeBillingOnlyReportingDetailsMethodString)) ??
             <String, dynamic>{});
   }
-
 
   /// The method call handler for [channel].
   @visibleForTesting

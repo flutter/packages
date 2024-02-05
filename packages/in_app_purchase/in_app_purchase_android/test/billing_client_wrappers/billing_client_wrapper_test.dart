@@ -705,7 +705,8 @@ void main() {
               debugMessage: 'debug',
               externalTransactionToken: 'abc123youandme');
       stubPlatform.addResponse(
-          name: BillingClient.createAlternativeBillingOnlyReportingDetailsMethodString,
+          name: BillingClient
+              .createAlternativeBillingOnlyReportingDetailsMethodString,
           value: buildAlternativeBillingOnlyReportingDetailsMap(expected));
       final AlternativeBillingOnlyReportingDetailsWrapper result =
           await billingClient.createAlternativeBillingOnlyReportingDetails();
@@ -714,7 +715,8 @@ void main() {
 
     test('handles method channel returning null', () async {
       stubPlatform.addResponse(
-        name: BillingClient.createAlternativeBillingOnlyReportingDetailsMethodString,
+        name: BillingClient
+            .createAlternativeBillingOnlyReportingDetailsMethodString,
       );
       final AlternativeBillingOnlyReportingDetailsWrapper result =
           await billingClient.createAlternativeBillingOnlyReportingDetails();

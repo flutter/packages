@@ -82,11 +82,10 @@ void main() {
     });
   });
 
-    group('isAlternativeBillingOnlyAvailable', () {
+  group('isAlternativeBillingOnlyAvailable', () {
     test('isAlternativeBillingOnlyAvailable success', () async {
       const BillingResultWrapper expected = BillingResultWrapper(
-          responseCode: BillingResponse.ok,
-          debugMessage: 'dummy message');
+          responseCode: BillingResponse.ok, debugMessage: 'dummy message');
 
       stubPlatform.addResponse(
         name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
@@ -99,14 +98,14 @@ void main() {
     });
   });
 
-    group('showAlternativeBillingOnlyInformationDialog', () {
+  group('showAlternativeBillingOnlyInformationDialog', () {
     test('showAlternativeBillingOnlyInformationDialog success', () async {
       const BillingResultWrapper expected = BillingResultWrapper(
-          responseCode: BillingResponse.ok,
-          debugMessage: 'dummy message');
+          responseCode: BillingResponse.ok, debugMessage: 'dummy message');
 
       stubPlatform.addResponse(
-        name: BillingClient.showAlternativeBillingOnlyInformationDialogMethodString,
+        name: BillingClient
+            .showAlternativeBillingOnlyInformationDialogMethodString,
         value: buildBillingResultMap(expected),
       );
       final BillingResultWrapper result =
