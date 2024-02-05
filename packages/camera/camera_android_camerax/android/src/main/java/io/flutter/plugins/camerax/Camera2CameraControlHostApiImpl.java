@@ -131,7 +131,7 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
   }
 
   /**
-   * Retrieives the {@link Camera2CameraControl} instance associated with the specified {@code
+   * Retrieves the {@link Camera2CameraControl} instance associated with the specified {@code
    * identifier}.
    */
   private Camera2CameraControl getCamera2CameraControlInstance(@NonNull Long identifier) {
