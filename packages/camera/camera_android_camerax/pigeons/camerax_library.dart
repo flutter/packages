@@ -160,7 +160,7 @@ class MeteringPointInfo {
 ///
 /// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
 /// for the sorts of capture request options that can be supported via CameraX's
-/// interopability with Camera2.
+/// interoperability with Camera2.
 enum CaptureRequestKeySupportedType {
   controlAeLock,
 }
