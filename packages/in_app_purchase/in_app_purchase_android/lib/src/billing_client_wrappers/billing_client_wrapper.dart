@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'alternative_billing_only_reporting_details_wrapper.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
@@ -372,6 +373,24 @@ class BillingClient {
                 showAlternativeBillingOnlyInformationDialogMethodString)) ??
             <String, dynamic>{});
   }
+
+  /// createAlternativeBillingOnlyReportingDetails method channel string identifier.
+  //
+  // Must match the value of CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS in
+  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
+  @visibleForTesting
+  static const String createAlternativeBillingOnlyReportingDetailsMethodString =
+      'BillingClient#createAlternativeBillingOnlyReportingDetails()';
+
+  /// TODO
+  Future<AlternativeBillingOnlyReportingDetailsWrapper>
+      createAlternativeBillingOnlyReportingDetails() async {
+    return AlternativeBillingOnlyReportingDetailsWrapper.fromJson(
+        (await channel.invokeMapMethod<String, dynamic>(
+                createAlternativeBillingOnlyReportingDetailsMethodString)) ??
+            <String, dynamic>{});
+  }
+
 
   /// The method call handler for [channel].
   @visibleForTesting
