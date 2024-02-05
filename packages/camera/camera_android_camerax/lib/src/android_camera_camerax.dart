@@ -98,6 +98,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  /// Whether or not [preview] has been bound to the lifecycle of the camera by
+  /// [createCamera].
+  @visibleForTesting
+  bool previewInitiallyBound = false;
+
   bool _previewIsPaused = false;
 
   /// The prefix used to create the filename for video recording files.
@@ -227,6 +232,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
+  /// The specified [resolutionPreset] is the target resolution that CameraX
+  /// will attempt to select for the [UseCase]s constructed in this method
+  /// ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
+  /// unavailable, a fallback behavior of targeting the next highest resolution
+  /// will be attempted. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
+  ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
@@ -284,6 +295,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!.bindToLifecycle(
         cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
     await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
+    previewInitiallyBound = true;
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -520,21 +532,20 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns a widget showing a live camera preview.
+  ///
+  /// [createCamera] must be called before attempting to build this preview.
   @override
   Widget buildPreview(int cameraId) {
-    return FutureBuilder<void>(
-        future: _bindPreviewToLifecycle(cameraId),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              // Do nothing while waiting for preview to be bound to lifecyle.
-              return const SizedBox.shrink();
-            case ConnectionState.done:
-              return Texture(textureId: cameraId);
-          }
-        });
+    if (!previewInitiallyBound) {
+      // No camera has been created, and thus, the preview UseCase has not been
+      // bound to the camera lifecycle, restricting this preview from being
+      // built.
+      throw CameraException(
+        'cameraNotFound',
+        "Camera not found. Please call the 'create' method before calling 'buildPreview'",
+      );
+    }
+    return Texture(textureId: cameraId);
   }
 
   /// Captures an image and returns the file where it was saved.
