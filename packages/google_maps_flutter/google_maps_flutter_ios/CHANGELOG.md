@@ -1,3 +1,7 @@
+## 2.4.3
+
+* Makes the tile overlay callback invoke the platform channel on the platform thread.
+
 ## 2.4.2
 
 * Fixes a bug in "takeSnapshot" function that incorrectly returns a blank image on iOS 17.
