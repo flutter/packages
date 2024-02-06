@@ -124,14 +124,16 @@ class GoogleFontsVariant {
   int get hashCode => Object.hash(fontWeight, fontStyle);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other.fontWeight == fontWeight && other.fontStyle == fontStyle;
+    return other is GoogleFontsVariant &&
+        other.fontWeight == fontWeight &&
+        other.fontStyle == fontStyle;
   }
 }
 
