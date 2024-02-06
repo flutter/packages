@@ -349,7 +349,7 @@ class BillingClient {
   static const String isAlternativeBillingOnlyAvailableMethodString =
       'BillingClient#isAlternativeBillingOnlyAvailable()';
 
-  /// Checks if "AlterntitiveBillingOnly" features is available.
+  /// Checks if "AlterntitiveBillingOnly" feature is available.
   Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
     return BillingResultWrapper.fromJson(
         (await channel.invokeMapMethod<String, dynamic>(
