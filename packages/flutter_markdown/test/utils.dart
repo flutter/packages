@@ -34,8 +34,8 @@ void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
   int currentString = 0;
   for (final Widget widget in widgets) {
     TextSpan? span;
-    if (widget is RichText) {
-      span = widget.text as TextSpan;
+    if (widget is Text) {
+      span = widget.textSpan! as TextSpan;
     } else if (widget is SelectableText) {
       span = widget.textSpan;
     }
