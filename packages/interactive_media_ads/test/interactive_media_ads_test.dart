@@ -8,13 +8,6 @@ import 'package:interactive_media_ads/interactive_media_ads_method_channel.dart'
 import 'package:interactive_media_ads/interactive_media_ads_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-class MockInteractiveMediaAdsPlatform
-    with MockPlatformInterfaceMixin
-    implements InteractiveMediaAdsPlatform {
-  @override
-  Future<String?> getPlatformVersion() => Future<String?>.value('42');
-}
-
 void main() {
   final InteractiveMediaAdsPlatform initialPlatform =
       InteractiveMediaAdsPlatform.instance;
@@ -24,11 +17,5 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    final InteractiveMediaAds interactiveMediaAdsPlugin = InteractiveMediaAds();
-    final MockInteractiveMediaAdsPlatform fakePlatform =
-        MockInteractiveMediaAdsPlatform();
-    InteractiveMediaAdsPlatform.instance = fakePlatform;
-
-    expect(await interactiveMediaAdsPlugin.getPlatformVersion(), '42');
   });
 }

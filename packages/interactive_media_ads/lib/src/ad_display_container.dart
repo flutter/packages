@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/cupertino.dart';
+
+import 'platform_interface/platform_ad_display_container.dart';
 import 'platform_interface/platform_interface.dart';
 
 /// Handles playing ads after they've been received from the server.
@@ -26,14 +29,23 @@ import 'platform_interface/platform_interface.dart';
 ///       container.platform as AndroidAdDisplayContainer;
 /// }
 /// ```
-class AdDisplayContainer {
+class AdDisplayContainer extends StatelessWidget {
   /// Constructs an [AdDisplayContainer].
   ///
   /// See [AdDisplayContainer.fromPlatformCreationParams] for setting parameters for a
   /// specific platform.
-  AdDisplayContainer()
-      : this.fromPlatformCreationParams(
-          const PlatformAdDisplayContainerCreationParams(),
+  AdDisplayContainer({
+    Key? key,
+    required void Function(AdDisplayContainer container) onContainerAdded,
+  }) : this.fromPlatformCreationParams(
+          key: key,
+          params: PlatformAdDisplayContainerCreationParams(
+            onContainerAdded: (PlatformAdDisplayContainer container) {
+              onContainerAdded(AdDisplayContainer.fromPlatform(
+                platform: container,
+              ));
+            },
+          ),
         );
 
   /// Constructs an [AdDisplayContainer] from creation params for a specific platform.
@@ -63,13 +75,26 @@ class AdDisplayContainer {
   /// );
   /// ```
   /// {@endtemplate}
-  AdDisplayContainer.fromPlatformCreationParams(
-    PlatformAdDisplayContainerCreationParams params,
-  ) : this.fromPlatform(PlatformAdDisplayContainer(params));
+  AdDisplayContainer.fromPlatformCreationParams({
+    Key? key,
+    required PlatformAdDisplayContainerCreationParams params,
+  }) : this.fromPlatform(
+          key: key,
+          platform: PlatformAdDisplayContainer(params),
+        );
 
-  /// Constructs a [AdDisplayContainer] from a specific platform implementation.
-  AdDisplayContainer.fromPlatform(this.platform);
+  /// Constructs an [AdDisplayContainer] from a specific platform
+  /// implementation.
+  const AdDisplayContainer.fromPlatform({super.key, required this.platform});
 
   /// Implementation of [PlatformAdDisplayContainer] for the current platform.
   final PlatformAdDisplayContainer platform;
+
+  void Function(PlatformAdDisplayContainer container) get onContainerAdded =>
+      platform.params.onContainerAdded;
+
+  @override
+  Widget build(BuildContext context) {
+    return platform.build(context);
+  }
 }

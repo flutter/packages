@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'interactive_media_ads_platform.dart';
@@ -41,8 +41,20 @@ import 'interactive_media_ads_platform.dart';
 /// ```
 @immutable
 base class PlatformAdDisplayContainerCreationParams {
-  /// Used by the platform implementation to create a new [PlatformAdDisplayContainer].
-  const PlatformAdDisplayContainerCreationParams();
+  /// Used by the platform implementation to create a new
+  /// [PlatformAdDisplayContainer].
+  const PlatformAdDisplayContainerCreationParams({
+    this.key,
+    required this.onContainerAdded,
+  });
+
+  /// Controls how one widget replaces another widget in the tree.
+  ///
+  /// See also:
+  ///  * The discussions at [Key] and [GlobalKey].
+  final Key? key;
+
+  final void Function(PlatformAdDisplayContainer container) onContainerAdded;
 }
 
 /// Interface for a platform implementation of a `AdDisplayContainer`.
@@ -77,4 +89,6 @@ abstract class PlatformAdDisplayContainer extends PlatformInterface {
 
   /// The parameters used to initialize the [PlatformAdDisplayContainer].
   final PlatformAdDisplayContainerCreationParams params;
+
+  Widget build(BuildContext context);
 }

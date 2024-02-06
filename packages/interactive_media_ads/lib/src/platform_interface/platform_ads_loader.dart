@@ -44,7 +44,7 @@ base class PlatformAdsLoaderCreationParams {
   const PlatformAdsLoaderCreationParams();
 }
 
-/// Interface for a platform implementation of a `AdsLoader`.
+/// Interface for a platform implementation of an `AdsLoader`.
 abstract class PlatformAdsLoader extends PlatformInterface {
   /// Creates a new [PlatformAdsLoader]
   factory PlatformAdsLoader(
