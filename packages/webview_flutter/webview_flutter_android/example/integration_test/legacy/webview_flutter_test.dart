@@ -147,11 +147,11 @@ Future<void> main() async {
         ),
       );
 
-      // controller = await controllerCompleter.future;
-      // await pageLoaded.future;
+      controller = await controllerCompleter.future;
+      await pageLoaded.future;
 
-      // isPaused = await controller.runJavascriptReturningResult('isPaused();');
-      // expect(isPaused, _webviewBool(true));
-    });
+      isPaused = await controller.runJavascriptReturningResult('isPaused();');
+      expect(isPaused, _webviewBool(true));
+    }, timeout: const Timeout(Duration(minutes: 60)));
   });
 }
