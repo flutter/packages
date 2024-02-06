@@ -717,11 +717,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   ) {
     final List<Widget> mergedTexts = <Widget>[];
     for (final Widget child in children) {
-      if (mergedTexts.isNotEmpty &&
-          mergedTexts.last is RichText &&
-          child is RichText) {
-        final RichText previous = mergedTexts.removeLast() as RichText;
-        final TextSpan previousTextSpan = previous.text as TextSpan;
+      if (mergedTexts.isNotEmpty && mergedTexts.last is Text && child is Text) {
+        final Text previous = mergedTexts.removeLast() as Text;
+        final TextSpan previousTextSpan = previous.textSpan! as TextSpan;
         final List<TextSpan> children = previousTextSpan.children != null
             ? previousTextSpan.children!
                 .map((InlineSpan span) => span is! TextSpan
@@ -729,7 +727,7 @@ class MarkdownBuilder implements md.NodeVisitor {
                     : span)
                 .toList()
             : <TextSpan>[previousTextSpan];
-        children.add(child.text as TextSpan);
+        children.add(child.textSpan! as TextSpan);
         final TextSpan? mergedSpan = _mergeSimilarTextSpans(children);
         mergedTexts.add(_buildRichText(
           mergedSpan,
@@ -876,9 +874,8 @@ class MarkdownBuilder implements md.NodeVisitor {
         key: k,
       );
     } else {
-      return RichText(
-        text: text!,
-        // ignore: deprecated_member_use
+      return Text.rich(
+        text!,
         textScaleFactor: styleSheet.textScaleFactor!,
         textAlign: textAlign ?? TextAlign.start,
         key: k,
