@@ -34,16 +34,16 @@ void defineTests() {
                 ),
               );
 
-              final Finder richTextFinder = find.byType(RichText);
-              expect(richTextFinder, findsOneWidget);
+              final Finder textFinder = find.byType(Text);
+              expect(textFinder, findsOneWidget);
 
-              final RichText richText =
-                  richTextFinder.evaluate().first.widget as RichText;
-              final String text = richText.text.toPlainText();
+              final Text textWidget =
+                  textFinder.evaluate().first.widget as Text;
+              final String text = textWidget.textSpan!.toPlainText();
               expect(text, 'foo bar');
 
               expectTextSpanStyle(
-                richText.text as TextSpan,
+                textWidget.textSpan! as TextSpan,
                 FontStyle.italic,
                 FontWeight.normal,
               );
@@ -61,17 +61,17 @@ void defineTests() {
                 ),
               );
 
-              final Finder richTextFinder = find.byType(RichText);
-              expect(richTextFinder, findsOneWidget);
+              final Finder textFinder = find.byType(Text);
+              expect(textFinder, findsOneWidget);
 
               // Expect text to be unchanged from original data string.
-              final RichText richText =
-                  richTextFinder.evaluate().first.widget as RichText;
-              final String text = richText.text.toPlainText();
+              final Text textWidget =
+                  textFinder.evaluate().first.widget as Text;
+              final String text = textWidget.textSpan!.toPlainText();
               expect(text, data);
 
               expectTextSpanStyle(
-                richText.text as TextSpan,
+                textWidget.textSpan! as TextSpan,
                 null,
                 FontWeight.normal,
               );
@@ -89,17 +89,17 @@ void defineTests() {
                 ),
               );
 
-              final Finder richTextFinder = find.byType(RichText);
-              expect(richTextFinder, findsOneWidget);
+              final Finder textFinder = find.byType(Text);
+              expect(textFinder, findsOneWidget);
 
               // Expect text to be unchanged from original data string.
-              final RichText richText =
-                  richTextFinder.evaluate().first.widget as RichText;
-              final String text = richText.text.toPlainText();
+              final Text textWidget =
+                  textFinder.evaluate().first.widget as Text;
+              final String text = textWidget.textSpan!.toPlainText();
               expect(text, data);
 
               expectTextSpanStyle(
-                richText.text as TextSpan,
+                textWidget.textSpan! as TextSpan,
                 null,
                 FontWeight.normal,
               );
@@ -121,17 +121,17 @@ void defineTests() {
                 ),
               );
 
-              final Finder richTextFinder = find.byType(RichText);
-              expect(richTextFinder, findsOneWidget);
+              final Finder textFinder = find.byType(Text);
+              expect(textFinder, findsOneWidget);
 
-              final RichText richText =
-                  richTextFinder.evaluate().first.widget as RichText;
-              expect(richText, isNotNull);
-              final String text = richText.text.toPlainText();
+              final Text textWidget =
+                  textFinder.evaluate().first.widget as Text;
+              expect(textWidget, isNotNull);
+              final String text = textWidget.textSpan!.toPlainText();
               expect(text, 'foobar');
 
               // There should be two spans of text.
-              final TextSpan textSpan = richText.text as TextSpan;
+              final TextSpan textSpan = textWidget.textSpan! as TextSpan;
               expect(textSpan, isNotNull);
               expect(textSpan.children!.length == 2, isTrue);
 
@@ -164,17 +164,17 @@ void defineTests() {
                 ),
               );
 
-              final Finder richTextFinder = find.byType(RichText);
-              expect(richTextFinder, findsOneWidget);
+              final Finder textFinder = find.byType(Text);
+              expect(textFinder, findsOneWidget);
 
-              final RichText richText =
-                  richTextFinder.evaluate().first.widget as RichText;
-              expect(richText, isNotNull);
-              final String text = richText.text.toPlainText();
+              final Text textWidget =
+                  textFinder.evaluate().first.widget as Text;
+              expect(textWidget, isNotNull);
+              final String text = textWidget.textSpan!.toPlainText();
               expect(text, '5678');
 
               // There should be three spans of text.
-              final TextSpan textSpan = richText.text as TextSpan;
+              final TextSpan textSpan = textWidget.textSpan! as TextSpan;
               expect(textSpan, isNotNull);
               expect(textSpan.children!.length == 3, isTrue);
 
@@ -218,16 +218,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -245,17 +245,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -273,17 +273,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -301,17 +301,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -329,17 +329,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -357,17 +357,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -385,17 +385,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -413,16 +413,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo-(bar)');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -457,17 +457,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -485,17 +485,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -513,16 +513,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo bar *');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -540,17 +540,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -568,16 +568,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -595,16 +595,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -639,17 +639,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -667,17 +667,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -695,16 +695,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -722,17 +722,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -750,17 +750,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -778,16 +778,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo_bar_baz');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -805,16 +805,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(bar).');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -849,16 +849,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -876,17 +876,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -904,17 +904,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -932,16 +932,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -976,16 +976,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -1003,17 +1003,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1031,16 +1031,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '__ foo bar__');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1058,17 +1058,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1086,17 +1086,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1114,17 +1114,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1142,17 +1142,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1170,17 +1170,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo, bar, baz');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -1198,17 +1198,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo-(bar)');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -1243,17 +1243,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1271,17 +1271,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1299,17 +1299,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -1351,18 +1351,18 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text,
                 'Gomphocarpus (Gomphocarpus physocarpus, syn. Asclepias physocarpa)');
 
             // There should be five spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 5, isTrue);
 
@@ -1419,17 +1419,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo "bar" foo');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -1470,17 +1470,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -1515,17 +1515,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1543,17 +1543,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1571,16 +1571,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -1621,17 +1621,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1649,17 +1649,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -1677,16 +1677,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo__bar__baz');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -1704,16 +1704,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(bar).');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -1748,16 +1748,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -1793,16 +1793,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -1820,16 +1820,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -1870,16 +1870,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -1897,16 +1897,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -1924,16 +1924,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -1951,16 +1951,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -2001,16 +2001,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobarbaz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -2051,16 +2051,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo**bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -2078,16 +2078,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2120,16 +2120,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2162,16 +2162,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2204,16 +2204,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobarbaz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -2254,16 +2254,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar***baz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -2304,16 +2304,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz bim bop');
 
             // There should be five spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length, 3);
 
@@ -2354,16 +2354,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2399,17 +2399,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -2427,17 +2427,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -2457,16 +2457,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2502,16 +2502,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -2529,16 +2529,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -2579,16 +2579,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -2606,16 +2606,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -2633,16 +2633,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -2660,16 +2660,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -2710,16 +2710,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobarbaz');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -2760,16 +2760,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2802,16 +2802,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2844,16 +2844,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz bim bop');
 
             // There should be five spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length, 3);
 
@@ -2894,16 +2894,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -2939,17 +2939,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -2967,17 +2967,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -2997,17 +2997,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -3025,17 +3025,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3068,17 +3068,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3111,17 +3111,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -3139,17 +3139,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3182,17 +3182,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3225,17 +3225,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3268,17 +3268,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo*');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3311,17 +3311,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3354,17 +3354,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '***foo');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3397,17 +3397,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo*');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3440,17 +3440,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo***');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3485,17 +3485,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -3513,17 +3513,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3556,17 +3556,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3599,17 +3599,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.normal,
             );
@@ -3627,17 +3627,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3670,17 +3670,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3713,17 +3713,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '_foo');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3756,17 +3756,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo_');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3799,17 +3799,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '_foo');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3842,17 +3842,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '___foo');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3885,17 +3885,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo_');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3928,17 +3928,17 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo___');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -3973,16 +3973,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -4000,16 +4000,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -4027,16 +4027,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -4054,16 +4054,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.normal,
             );
@@ -4081,16 +4081,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -4108,16 +4108,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -4135,16 +4135,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               null,
               FontWeight.bold,
             );
@@ -4166,16 +4166,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.bold,
             );
@@ -4193,16 +4193,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
             expectTextSpanStyle(
-              richText.text as TextSpan,
+              textWidget.textSpan! as TextSpan,
               FontStyle.italic,
               FontWeight.bold,
             );
@@ -4222,16 +4222,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _bar baz_');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -4264,16 +4264,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar *baz bim bam');
 
             // There should be three spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 3, isTrue);
 
@@ -4316,16 +4316,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '**foo bar baz');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 
@@ -4358,16 +4358,16 @@ void defineTests() {
               ),
             );
 
-            final Finder richTextFinder = find.byType(RichText);
-            expect(richTextFinder, findsOneWidget);
+            final Finder textFinder = find.byType(Text);
+            expect(textFinder, findsOneWidget);
 
-            final RichText richText =
-                richTextFinder.evaluate().first.widget as RichText;
-            final String text = richText.text.toPlainText();
+            final Text textWidget =
+                textFinder.evaluate().first.widget as Text;
+            final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo bar baz');
 
             // There should be two spans of text.
-            final TextSpan textSpan = richText.text as TextSpan;
+            final TextSpan textSpan = textWidget.textSpan! as TextSpan;
             expect(textSpan, isNotNull);
             expect(textSpan.children!.length == 2, isTrue);
 

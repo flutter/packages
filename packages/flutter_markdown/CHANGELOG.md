@@ -1,3 +1,8 @@
+## 0.6.18+4
+
+* Uses Text.rich to replace RichText so the widget can work with `SelectionArea` when `selectable` set to false.
+* Updates affected tests.
+
 ## 0.6.18+3
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
