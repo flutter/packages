@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ui';
-
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 // TODO(andrewkolos): The flutter framework wishes to add a new class named
