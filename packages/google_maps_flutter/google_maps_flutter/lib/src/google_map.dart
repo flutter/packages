@@ -91,6 +91,7 @@ class GoogleMap extends StatefulWidget {
   const GoogleMap({
     super.key,
     required this.initialCameraPosition,
+    this.initialMapStyle,
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.webGestureHandling,
@@ -135,6 +136,9 @@ class GoogleMap extends StatefulWidget {
 
   /// The initial position of the map's camera.
   final CameraPosition initialCameraPosition;
+
+  /// The initial map style used when the controller is created.
+  final String? initialMapStyle;
 
   /// True if the map should show a compass when rotated.
   final bool compassEnabled;
