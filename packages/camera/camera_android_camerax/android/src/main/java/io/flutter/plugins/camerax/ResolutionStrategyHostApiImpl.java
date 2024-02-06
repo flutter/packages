@@ -21,7 +21,7 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
   private final InstanceManager instanceManager;
   private final ResolutionStrategyProxy proxy;
 
-  /** Proxy for constructors and static method of {@link ResolutionStrategy}. */
+  /** Proxy for constructor of {@link ResolutionStrategy}. */
   @VisibleForTesting
   public static class ResolutionStrategyProxy {
 
@@ -45,7 +45,7 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
    * Constructs a {@link ResolutionStrategyHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link ResolutionStrategy}
+   * @param proxy proxy for constructor of {@link ResolutionStrategy}
    */
   @VisibleForTesting
   ResolutionStrategyHostApiImpl(
