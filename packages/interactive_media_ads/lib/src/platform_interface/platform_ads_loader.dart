@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'interactive_media_ads_platform.dart';
+import 'platform_ad_display_container.dart';
+import 'platform_ads_manager.dart';
 
 /// Object specifying creation parameters for creating a [PlatformAdsLoader].
 ///
@@ -41,7 +43,15 @@ import 'interactive_media_ads_platform.dart';
 @immutable
 base class PlatformAdsLoaderCreationParams {
   /// Used by the platform implementation to create a new [PlatformAdsLoader].
-  const PlatformAdsLoaderCreationParams();
+  const PlatformAdsLoaderCreationParams({
+    required this.container,
+    required this.onAdsLoaded,
+    required this.onAdsLoadError,
+  });
+
+  final PlatformAdDisplayContainer container;
+  final void Function(PlatformOnAdsLoadedData data) onAdsLoaded;
+  final void Function(AdsLoadErrorData data) onAdsLoadError;
 }
 
 /// Interface for a platform implementation of an `AdsLoader`.
@@ -75,4 +85,26 @@ abstract class PlatformAdsLoader extends PlatformInterface {
 
   /// The parameters used to initialize the [PlatformAdsLoader].
   final PlatformAdsLoaderCreationParams params;
+
+  Future<void> contentComplete() {
+    throw UnimplementedError(
+      'contentComplete is not implemented on the current platform',
+    );
+  }
+
+  Future<void> request() {
+    throw UnimplementedError(
+      'request is not implemented on the current platform',
+    );
+  }
 }
+
+@immutable
+class PlatformOnAdsLoadedData {
+  PlatformOnAdsLoadedData({required this.manager});
+
+  final PlatformAdsManager manager;
+}
+
+@immutable
+class AdsLoadErrorData {}

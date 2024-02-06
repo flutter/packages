@@ -19,11 +19,11 @@ abstract base class PlatformAdsManager  {
   @protected
   PlatformAdsManager();
 
-  void init(AdsManagerInitParams params);
+  Future<void> init(AdsManagerInitParams params);
 
-  void start(AdsManagerStartParams params);
+  Future<void> start(AdsManagerStartParams params);
 
-  void setAdsManagerDelegate(PlatformAdsManagerDelegate delegate);
+  Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate);
 
-  void destroy();
+  Future<void> destroy();
 }

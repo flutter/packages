@@ -42,7 +42,14 @@ import 'interactive_media_ads_platform.dart';
 @immutable
 base class PlatformAdsManagerDelegateCreationParams {
   /// Used by the platform implementation to create a new [PlatformAdsManagerDelegate].
-  const PlatformAdsManagerDelegateCreationParams();
+  PlatformAdsManagerDelegateCreationParams({
+    this.onAdEvent,
+    this.onAdErrorEvent,
+  });
+
+  void Function(AdEvent event)? onAdEvent;
+
+  void Function(AdErrorEvent event)? onAdErrorEvent;
 }
 
 /// Interface for a platform implementation of a `AdsManagerDelegate`.
@@ -79,3 +86,9 @@ abstract class PlatformAdsManagerDelegate extends PlatformInterface {
   /// The parameters used to initialize the [PlatformAdsManagerDelegate].
   final PlatformAdsManagerDelegateCreationParams params;
 }
+
+@immutable
+class AdEvent {}
+
+@immutable
+class AdErrorEvent {}

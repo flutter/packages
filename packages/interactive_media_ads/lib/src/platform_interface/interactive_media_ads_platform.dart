@@ -6,7 +6,6 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'platform_ad_display_container.dart';
 import 'platform_ads_loader.dart';
-import 'platform_ads_manager.dart';
 import 'platform_ads_manager_delegate.dart';
 
 /// Interface for a platform implementation of the Interactive Media Ads SDKs.
@@ -33,15 +32,6 @@ abstract class InteractiveMediaAdsPlatform extends PlatformInterface {
 
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
-  }
-
-  /// Creates a new [PlatformAdsManager].
-  PlatformAdsManager createPlatformAdsManager(
-    PlatformAdsManagerCreationParams params,
-  ) {
-    throw UnimplementedError(
-      'createPlatformAdsManager is not implemented on the current platform.',
-    );
   }
 
   /// Creates a new [PlatformAdsLoader].
