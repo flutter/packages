@@ -187,6 +187,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// auto-exposure.
   FocusMeteringAction? currentFocusMeteringAction;
 
+  /// Error code indicating that exposure compensation is not supported by
+  /// CameraX for the device.
+  static const String exposureCompensationNotSupported =
+      'exposureCompensationNotSupported';
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -470,10 +475,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<double> getExposureOffsetStepSize(int cameraId) async {
     final ExposureState exposureState = await cameraInfo!.getExposureState();
     final double exposureOffsetStepSize =
-        (await cameraInfo!.getExposureState()).exposureCompensationStep;
+        exposureState.exposureCompensationStep;
     if (exposureOffsetStepSize == 0) {
-      throw CameraException(
-          'TODO(camsim99)', 'Exposure compensation not supported');
+      // CameraX returns a step size of 0 if exposure compensation is not
+      // supported for the device.
+      throw CameraException(exposureCompensationNotSupported,
+          'Exposure compensation not supported for the device.');
     }
     return exposureOffsetStepSize;
   }
@@ -491,7 +498,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns the (rounded) offset value that was set.
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
-    // TODO(camsim99): Cache these values if possible in an attempt to improve performance.
+    // TODO(camsim99): cache camera + related values if possible.
     final double minOffset = await getMinExposureOffset(cameraId);
     final double maxOffset = await getMaxExposureOffset(cameraId);
 
@@ -512,7 +519,6 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     await cameraControl
         .setExposureCompensationIndex(roundedExposureCompensationIndex);
-
     return roundedExposureCompensationIndex * exposureOffsetStepSize;
   }
 

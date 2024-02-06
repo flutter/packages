@@ -113,6 +113,12 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
             }
 
             public void onFailure(Throwable t) {
+              if (t instanceof CameraControl.OperationCanceledException) {
+                // Operation was canceled due to camera being closed or a new request was submitted, which
+                // is not actionable and should not block a new value from potentially being submitted.
+                result.success(null);
+                return;
+              }
               result.error(t);
             }
           },
@@ -163,8 +169,9 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
 
             public void onFailure(Throwable t) {
               if (t instanceof CameraControl.OperationCanceledException) {
-                // TODO(camsim99): make result nullable, return null result here if canceled because we don't want this to throw an exception
-                result.success(3L);
+                // Operation was canceled due to camera being closed or a new request was submitted, which
+                // is not actionable and should not block a new value from potentially being submitted.
+                result.success(null);
                 return;
               }
               result.error(t);

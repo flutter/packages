@@ -141,8 +141,13 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
         instanceManager.getIdentifier(instance)!;
     final int actionIdentifier = instanceManager.getIdentifier(action)!;
     try {
-      final int focusMeteringResultId = await startFocusAndMetering(
+      final int? focusMeteringResultId = await startFocusAndMetering(
           cameraControlIdentifier, actionIdentifier);
+      if (focusMeteringResultId == null) {
+        SystemServices.cameraErrorStreamController.add(
+            'Starting focus and metering was canceled due to the camera being closed or a new request being submitted.');
+        return Future<FocusMeteringResult?>.value();
+      }
       return instanceManager.getInstanceWithWeakReference<FocusMeteringResult>(
           focusMeteringResultId);
     } on PlatformException catch (e) {
@@ -166,8 +171,16 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
       CameraControl instance, int index) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
     try {
-      return setExposureCompensationIndex(identifier, index);
+      final int? exposureCompensationIndex =
+          await setExposureCompensationIndex(identifier, index);
+      if (exposureCompensationIndex == null) {
+        SystemServices.cameraErrorStreamController.add(
+            'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.');
+        return Future<int?>.value();
+      }
+      return exposureCompensationIndex;
     } on PlatformException catch (e) {
+      // TODO(camsim99): perhaps throw cameraexception here.
       SystemServices.cameraErrorStreamController.add(e.message ??
           'Setting the camera exposure compensation index failed.');
       return Future<int?>.value();

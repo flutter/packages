@@ -463,13 +463,13 @@ abstract class CameraControlHostApi {
   void setZoomRatio(int identifier, double ratio);
 
   @async
-  int startFocusAndMetering(int identifier, int focusMeteringActionId);
+  int? startFocusAndMetering(int identifier, int focusMeteringActionId);
 
   @async
   void cancelFocusAndMetering(int identifier);
 
   @async
-  int setExposureCompensationIndex(int identifier, int index);
+  int? setExposureCompensationIndex(int identifier, int index);
 }
 
 @FlutterApi()
