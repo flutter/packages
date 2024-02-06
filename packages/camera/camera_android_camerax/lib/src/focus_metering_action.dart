@@ -45,7 +45,8 @@ class FocusMeteringAction extends JavaObject {
 
   late final _FocusMeteringActionHostApiImpl _api;
 
-  /// The requested [MeteringPoint]s and modes those points are relevant to.
+  /// The requested [MeteringPoint]s and modes that are relevant to each of those
+  /// points.
   final List<(MeteringPoint meteringPoint, int? meteringMode)>
       meteringPointInfos;
 

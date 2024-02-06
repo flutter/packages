@@ -753,7 +753,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (videoOutputPath == null) {
       // Stop the current active recording as we will be unable to complete it
       // in this error case.
-      await recording!.close();
+      unawaited(recording!.close());
       recording = null;
       pendingRecording = null;
       throw CameraException(
@@ -762,7 +762,7 @@ class AndroidCameraCameraX extends CameraPlatform {
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    await recording!.close();
+    unawaited(recording!.close());
     recording = null;
     pendingRecording = null;
     return XFile(videoOutputPath!);
@@ -1088,8 +1088,8 @@ class AndroidCameraCameraX extends CameraPlatform {
               .where(((MeteringPoint, int?) meteringPointInfo) =>
                   // meteringPointInfo may technically include points without a
                   // mode specified, but this logic is safe because this plugin
-                  // only explicitly uses FocusMeteringAction.flagAe or
-                  // FocusMeteringAction.flagAf.
+                  // only uses points that explicitly have mode
+                  // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
                   meteringPointInfo.$2 != meteringMode)
               .toList();
 
@@ -1119,8 +1119,8 @@ class AndroidCameraCameraX extends CameraPlatform {
             .where(((MeteringPoint, int?) meteringPointInfo) =>
                 // meteringPointInfo may technically include points without a
                 // mode specified, but this logic is safe because this plugin
-                // only explicitly uses FocusMeteringAction.flagAe or
-                // FocusMeteringAction.flagAf.
+                // only uses points that explicitly have mode
+                // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
                 meteringPointInfo.$2 != meteringMode)
             .toList();
       }
