@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.10+1
+
+- Add missing save before clip.
+
 ## 1.1.10
 
 - Add missing clip before saveLayer.

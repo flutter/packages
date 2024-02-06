@@ -421,6 +421,9 @@ void main() {
 
     expect(context.canvas.lastClipRect,
         equals(const ui.Rect.fromLTRB(0, 0, 50, 50)));
+    expect(context.canvas.saveCount, 0);
+    expect(context.canvas.totalSaves, 1);
+    expect(context.canvas.totalSaveLayers, 1);
   });
 }
 
@@ -430,6 +433,9 @@ class FakeCanvas extends Fake implements Canvas {
   Rect? lastDst;
   Paint? lastPaint;
   Rect? lastClipRect;
+  int saveCount = 0;
+  int totalSaves = 0;
+  int totalSaveLayers = 0;
 
   @override
   void drawImageRect(ui.Image image, Rect src, Rect dst, Paint paint) {
@@ -444,14 +450,30 @@ class FakeCanvas extends Fake implements Canvas {
 
   @override
   int getSaveCount() {
-    return 0;
+    return saveCount;
   }
 
   @override
-  void restoreToCount(int count) {}
+  void restoreToCount(int count) {
+    saveCount = count;
+  }
 
   @override
-  void saveLayer(Rect? bounds, Paint paint) {}
+  void saveLayer(Rect? bounds, Paint paint) {
+    saveCount++;
+    totalSaveLayers++;
+  }
+
+  @override
+  void save() {
+    saveCount++;
+    totalSaves++;
+  }
+
+  @override
+  void restore() {
+    saveCount--;
+  }
 
   @override
   void clipRect(ui.Rect rect,
