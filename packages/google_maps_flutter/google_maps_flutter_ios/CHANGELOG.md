@@ -1,3 +1,7 @@
+## 2.4.3
+
+* Downsamples wide gamut tiles before serving them to google maps.
+
 ## 2.4.2
 
 * Makes the tile overlay callback invoke the platform channel on the platform thread.
