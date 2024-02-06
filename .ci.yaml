@@ -18,6 +18,9 @@ platform_properties:
         [
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
+  # The current android emulator config names can be found here:
+  # https://chromium.googlesource.com/chromium/src.git/+/HEAD/tools/android/avd/proto
+  # You may use those names for the android_virtual_device version.
   linux_android:
     properties:
       os: Ubuntu

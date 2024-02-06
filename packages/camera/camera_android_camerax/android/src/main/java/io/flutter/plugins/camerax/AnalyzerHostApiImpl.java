@@ -22,7 +22,7 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
   private final InstanceManager instanceManager;
   private final AnalyzerProxy proxy;
 
-  /** Proxy for constructors and static method of {@link ImageAnalysis.Analyzer}. */
+  /** Proxy for constructor of {@link ImageAnalysis.Analyzer}. */
   @VisibleForTesting
   public static class AnalyzerProxy {
 
@@ -95,7 +95,7 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
    *
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link ImageAnalysis.Analyzer}
+   * @param proxy proxy for constructor of {@link ImageAnalysis.Analyzer}
    */
   @VisibleForTesting
   AnalyzerHostApiImpl(
