@@ -54,10 +54,13 @@ base class PlatformAdDisplayContainerCreationParams {
   ///  * The discussions at [Key] and [GlobalKey].
   final Key? key;
 
+  /// Invoked when the View that contains the ad has been added to the platform
+  /// view hierarchy.
   final void Function(PlatformAdDisplayContainer container) onContainerAdded;
 }
 
-/// Interface for a platform implementation of a `AdDisplayContainer`.
+/// The interface for a platform implementation for a container in which to
+/// display ads.
 abstract class PlatformAdDisplayContainer extends PlatformInterface {
   /// Creates a new [PlatformAdDisplayContainer]
   factory PlatformAdDisplayContainer(
@@ -78,7 +81,8 @@ abstract class PlatformAdDisplayContainer extends PlatformInterface {
     return implementation;
   }
 
-  /// Used by the platform implementation to create a new [PlatformAdDisplayContainer].
+  /// Used by the platform implementation to create a new
+  /// [PlatformAdDisplayContainer].
   ///
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
@@ -90,5 +94,6 @@ abstract class PlatformAdDisplayContainer extends PlatformInterface {
   /// The parameters used to initialize the [PlatformAdDisplayContainer].
   final PlatformAdDisplayContainerCreationParams params;
 
+  /// Builds the Widget that contains the native View.
   Widget build(BuildContext context);
 }
