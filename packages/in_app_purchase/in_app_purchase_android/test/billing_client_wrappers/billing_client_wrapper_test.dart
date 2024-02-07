@@ -107,7 +107,34 @@ void main() {
       );
       await billingClient.startConnection(onBillingServiceDisconnected: () {});
       final MethodCall call = stubPlatform.previousCallMatching(methodName);
-      expect(call.arguments, equals(<dynamic, dynamic>{'handle': 0}));
+      expect(
+          call.arguments,
+          equals(<dynamic, dynamic>{
+            'handle': 0,
+            'enableAlternativeBillingOnly': false,
+          }));
+    });
+
+    test('passes enableAlternativeBillingOnly when set', () async {
+      const String debugMessage = 'dummy message';
+      const BillingResponse responseCode = BillingResponse.developerError;
+      stubPlatform.addResponse(
+        name: methodName,
+        value: <String, dynamic>{
+          'responseCode': const BillingResponseConverter().toJson(responseCode),
+          'debugMessage': debugMessage,
+        },
+      );
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          enableAlternativeBillingOnly: true);
+      final MethodCall call = stubPlatform.previousCallMatching(methodName);
+      expect(
+          call.arguments,
+          equals(<dynamic, dynamic>{
+            'handle': 0,
+            'enableAlternativeBillingOnly': true,
+          }));
     });
 
     test('handles method channel returning null', () async {

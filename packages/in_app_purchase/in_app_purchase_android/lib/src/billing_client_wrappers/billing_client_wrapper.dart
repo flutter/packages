@@ -111,7 +111,8 @@ class BillingClient {
   /// one doesn't already exist.
   Future<BillingResultWrapper> startConnection(
       {required OnBillingServiceDisconnected
-          onBillingServiceDisconnected}) async {
+          onBillingServiceDisconnected,
+          bool enableAlternativeBillingOnly = false}) async {
     final List<Function> disconnectCallbacks =
         _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
     disconnectCallbacks.add(onBillingServiceDisconnected);
@@ -120,6 +121,7 @@ class BillingClient {
                 'BillingClient#startConnection(BillingClientStateListener)',
                 <String, dynamic>{
               'handle': disconnectCallbacks.length - 1,
+              'enableAlternativeBillingOnly': enableAlternativeBillingOnly,
             })) ??
         <String, dynamic>{});
   }

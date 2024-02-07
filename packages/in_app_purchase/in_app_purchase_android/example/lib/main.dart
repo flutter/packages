@@ -145,6 +145,7 @@ class _MyAppState extends State<_MyApp> {
             _buildProductList(),
             _buildConsumableBox(),
             const _FeatureCard(),
+            _buildFetchButtons(),
           ],
         ),
       );
@@ -209,6 +210,29 @@ class _MyAppState extends State<_MyApp> {
     return Card(child: Column(children: children));
   }
 
+  Card _buildFetchButtons() {
+    final ListTile fetchCountryCode = ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(deliverCountryCode(addition.getCountryCode()));
+        },
+        child: const Text('Fetch Country Code'),
+      ),
+    );
+    return Card(
+      child: Column(
+        children: [fetchCountryCode],
+      ),
+    );
+  }
+
   Card _buildProductList() {
     if (_loading) {
       return const Card(
@@ -231,7 +255,7 @@ class _MyAppState extends State<_MyApp> {
 
     productList.add(ListTile(
         title: Text('User Country Code',
-            style: TextStyle(color: ThemeData.light().colorScheme.error)),
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
         subtitle: Text(_countryCode)));
 
     // This loading previous purchases code is just a demo. Please do not use this as it is.
@@ -352,7 +376,8 @@ class _MyAppState extends State<_MyApp> {
     });
   }
 
-  Future<void> deliverCountryCode(String countryCode) async {
+  Future<void> deliverCountryCode(Future<String> countryCodeFuture) async {
+    final String countryCode = await countryCodeFuture;
     setState(() {
       _countryCode = countryCode;
     });
@@ -400,7 +425,6 @@ class _MyAppState extends State<_MyApp> {
         final InAppPurchaseAndroidPlatformAddition addition =
             InAppPurchasePlatformAddition.instance!
                 as InAppPurchaseAndroidPlatformAddition;
-        unawaited(deliverCountryCode(await addition.getCountryCode()));
         if (purchaseDetails.status == PurchaseStatus.error) {
           handleError(purchaseDetails.error!);
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||

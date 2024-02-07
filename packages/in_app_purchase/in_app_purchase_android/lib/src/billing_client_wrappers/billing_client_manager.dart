@@ -32,7 +32,12 @@ class BillingClientManager {
   /// Creates the [BillingClientManager].
   ///
   /// Immediately initializes connection to the underlying [BillingClient].
-  BillingClientManager() {
+  /// [enableAlternativeBillingOnly] if customers should only see alternitive billing.
+  ///
+  /// Callers need to check if AlternativeBillingOnly is available by calling
+  /// [BillingClientWrapper.isAlternativeBillingOnlyAvailable] first.
+  BillingClientManager({bool enableAlternativeBillingOnly = false})
+      : _enableAlternativeBillingOnly = enableAlternativeBillingOnly {
     _connect();
   }
 
@@ -53,6 +58,7 @@ class BillingClientManager {
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
       StreamController<PurchasesResultWrapper>.broadcast();
 
+  final bool _enableAlternativeBillingOnly;
   bool _isConnecting = false;
   bool _isDisposed = false;
 
@@ -131,7 +137,9 @@ class BillingClientManager {
     }
     _isConnecting = true;
     _readyFuture = Future<void>.sync(() async {
-      await client.startConnection(onBillingServiceDisconnected: _connect);
+      await client.startConnection(
+          onBillingServiceDisconnected: _connect,
+          enableAlternativeBillingOnly: _enableAlternativeBillingOnly);
       _isConnecting = false;
     });
     return _readyFuture;
