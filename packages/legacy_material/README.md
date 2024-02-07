@@ -1,7 +1,7 @@
 # Legacy Material
 
-A package that provides `ThemeData` and component themes for widgets that will
-reflect legacy Material Design specifications.
+A package that provides `LegacyThemeData` and component themes for widgets that
+will reflect legacy Material Design specifications.
 
 ## Getting started
 
