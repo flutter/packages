@@ -34,6 +34,8 @@ enum AnEnum {
   one,
   two,
   three,
+  fourtyTwo,
+  fourHundredTwentyTwo,
 }
 
 /// A class containing all supported types.
