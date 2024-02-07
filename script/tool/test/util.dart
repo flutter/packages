@@ -306,13 +306,11 @@ String _pluginPlatformSection(
         if (support.hasDartCode) {
           lines.add('        dartPluginClass: FakeDartPlugin');
         }
-        break;
       case platformWeb:
         lines.addAll(<String>[
           '        pluginClass: FakePlugin',
           '        fileName: ${packageName}_web.dart',
         ]);
-        break;
       default:
         assert(false, 'Unrecognized platform: $platform');
         break;

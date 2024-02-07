@@ -24,7 +24,7 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
 
   private final FocusMeteringActionProxy proxy;
 
-  /** Proxy for constructors and static method of {@link FocusMeteringAction}. */
+  /** Proxy for constructor of {@link FocusMeteringAction}. */
   @VisibleForTesting
   public static class FocusMeteringActionProxy {
     /** Creates an instance of {@link FocusMeteringAction}. */
@@ -90,7 +90,7 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
    * Constructs a {@link FocusMeteringActionHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link FocusMeteringAction}
+   * @param proxy proxy for constructor of {@link FocusMeteringAction}
    */
   FocusMeteringActionHostApiImpl(
       @NonNull InstanceManager instanceManager, @NonNull FocusMeteringActionProxy proxy) {
