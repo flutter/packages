@@ -66,7 +66,7 @@ class SkProductResponseWrapper {
   @override
   int get hashCode => Object.hash(products, invalidProductIdentifiers);
 
-  static SkProductResponseWrapper convertFromPigeon(SKProductResponseMessage msg) {
+  static SkProductResponseWrapper convertFromPigeon(SKProductsResponseMessage msg) {
       return SkProductResponseWrapper(
           products: msg.products!.map((SKProductMessage? e) => SKProductWrapper.convertFromPigeon(e!)).toList(),
           invalidProductIdentifiers: msg.invalidProductIdentifiers != null ? msg.invalidProductIdentifiers!.cast<String>() : <String>[],

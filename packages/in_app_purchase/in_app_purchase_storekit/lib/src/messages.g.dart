@@ -278,8 +278,8 @@ class SKStorefrontMessage {
   }
 }
 
-class SKProductResponseMessage {
-  SKProductResponseMessage({
+class SKProductsResponseMessage {
+  SKProductsResponseMessage({
     this.products,
     this.invalidProductIdentifiers,
   });
@@ -295,9 +295,9 @@ class SKProductResponseMessage {
     ];
   }
 
-  static SKProductResponseMessage decode(Object result) {
+  static SKProductsResponseMessage decode(Object result) {
     result as List<Object?>;
-    return SKProductResponseMessage(
+    return SKProductsResponseMessage(
       products: (result[0] as List<Object?>?)?.cast<SKProductMessage?>(),
       invalidProductIdentifiers: (result[1] as List<Object?>?)?.cast<String?>(),
     );
@@ -505,10 +505,10 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
     } else if (value is SKProductMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is SKProductResponseMessage) {
+    } else if (value is SKProductSubscriptionPeriodMessage) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is SKProductSubscriptionPeriodMessage) {
+    } else if (value is SKProductsResponseMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else if (value is SKStorefrontMessage) {
@@ -537,9 +537,9 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
       case 134: 
         return SKProductMessage.decode(readValue(buffer)!);
       case 135: 
-        return SKProductResponseMessage.decode(readValue(buffer)!);
-      case 136: 
         return SKProductSubscriptionPeriodMessage.decode(readValue(buffer)!);
+      case 136: 
+        return SKProductsResponseMessage.decode(readValue(buffer)!);
       case 137: 
         return SKStorefrontMessage.decode(readValue(buffer)!);
       default:
@@ -662,7 +662,7 @@ class InAppPurchaseAPI {
     }
   }
 
-  Future<SKProductResponseMessage> startProductRequest(List<String?> productIdentifiers) async {
+  Future<SKProductsResponseMessage> startProductRequest(List<String?> productIdentifiers) async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.startProductRequest';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -685,7 +685,73 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as SKProductResponseMessage?)!;
+      return (__pigeon_replyList[0] as SKProductsResponseMessage?)!;
+    }
+  }
+
+  Future<void> finishTransaction(Map<String?, String?> finishMap) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.finishTransaction';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[finishMap]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> restoreTransactions(String? applicationUserName) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.restoreTransactions';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[applicationUserName]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> presentCodeRedemptionSheet() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.presentCodeRedemptionSheet';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }

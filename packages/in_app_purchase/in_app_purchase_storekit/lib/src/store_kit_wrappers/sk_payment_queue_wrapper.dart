@@ -161,10 +161,7 @@ class SKPaymentQueueWrapper {
   Future<void> finishTransaction(
       SKPaymentTransactionWrapper transaction) async {
     final Map<String, String?> requestMap = transaction.toFinishMap();
-    await channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin finishTransaction:result:]',
-      requestMap,
-    );
+    await _hostApi.finishTransaction(requestMap);
   }
 
   /// Restore previously purchased transactions.
@@ -188,9 +185,10 @@ class SKPaymentQueueWrapper {
   /// or [`-[SKPayment restoreCompletedTransactionsWithApplicationUsername:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1505992-restorecompletedtransactionswith?language=objc)
   /// depending on whether the `applicationUserName` is set.
   Future<void> restoreTransactions({String? applicationUserName}) async {
-    await channel.invokeMethod<void>(
-        '-[InAppPurchasePlugin restoreTransactions:result:]',
-        applicationUserName);
+    // await channel.invokeMethod<void>(
+    //     '-[InAppPurchasePlugin restoreTransactions:result:]',
+    //     applicationUserName);
+    await _hostApi.restoreTransactions(applicationUserName);
   }
 
   /// Present Code Redemption Sheet

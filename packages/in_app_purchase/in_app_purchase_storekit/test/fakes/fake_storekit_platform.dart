@@ -290,8 +290,9 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  Map<String?, Object?>? startProductRequest(List<String?> productIdentifiers) {
+  SKProductsResponseMessage startProductRequest(List<String?> productIdentifiers) {
     // TODO: implement startProductRequest
     throw UnimplementedError();
   }
+  
 }

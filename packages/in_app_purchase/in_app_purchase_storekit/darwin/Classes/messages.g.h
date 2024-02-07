@@ -96,7 +96,7 @@ typedef NS_ENUM(NSUInteger, SKSubscriptionPeriodUnitMessage) {
 @class SKErrorMessage;
 @class SKPaymentDiscountMessage;
 @class SKStorefrontMessage;
-@class SKProductResponseMessage;
+@class SKProductsResponseMessage;
 @class SKProductMessage;
 @class SKPriceLocaleMessage;
 @class SKProductDiscountMessage;
@@ -171,7 +171,7 @@ typedef NS_ENUM(NSUInteger, SKSubscriptionPeriodUnitMessage) {
 @property(nonatomic, copy) NSString * identifier;
 @end
 
-@interface SKProductResponseMessage : NSObject
+@interface SKProductsResponseMessage : NSObject
 + (instancetype)makeWithProducts:(nullable NSArray<SKProductMessage *> *)products
     invalidProductIdentifiers:(nullable NSArray<NSString *> *)invalidProductIdentifiers;
 @property(nonatomic, copy, nullable) NSArray<SKProductMessage *> * products;
@@ -256,8 +256,10 @@ NSObject<FlutterMessageCodec> *InAppPurchaseAPIGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable SKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)addPaymentPaymentMap:(NSDictionary<NSString *, id> *)paymentMap error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable SKProductResponseMessage *)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers completion:(void (^)(SKProductsResponseMessage *_Nullable, FlutterError *_Nullable))completion;
+- (void)finishTransactionFinishMap:(NSDictionary<NSString *, NSString *> *)finishMap error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)restoreTransactionsApplicationUserName:(nullable NSString *)applicationUserName error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)presentCodeRedemptionSheetWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<InAppPurchaseAPI> *_Nullable api);

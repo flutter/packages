@@ -37,7 +37,7 @@ class SKRequestMaker {
   /// A [PlatformException] is thrown if the platform code making the request fails.
   Future<SkProductResponseWrapper> startProductRequest(
       List<String> productIdentifiers) async {
-    final SKProductResponseMessage productResponsePigeon = await _hostApi.startProductRequest(productIdentifiers);
+    final SKProductsResponseMessage productResponsePigeon = await _hostApi.startProductRequest(productIdentifiers);
 
     // should products be null or <String>[] ?
     if (productResponsePigeon.products == null) {

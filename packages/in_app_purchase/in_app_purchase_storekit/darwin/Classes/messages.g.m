@@ -97,9 +97,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface SKProductResponseMessage ()
-+ (SKProductResponseMessage *)fromList:(NSArray *)list;
-+ (nullable SKProductResponseMessage *)nullableFromList:(NSArray *)list;
+@interface SKProductsResponseMessage ()
++ (SKProductsResponseMessage *)fromList:(NSArray *)list;
++ (nullable SKProductsResponseMessage *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -300,22 +300,22 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation SKProductResponseMessage
+@implementation SKProductsResponseMessage
 + (instancetype)makeWithProducts:(nullable NSArray<SKProductMessage *> *)products
     invalidProductIdentifiers:(nullable NSArray<NSString *> *)invalidProductIdentifiers {
-  SKProductResponseMessage* pigeonResult = [[SKProductResponseMessage alloc] init];
+  SKProductsResponseMessage* pigeonResult = [[SKProductsResponseMessage alloc] init];
   pigeonResult.products = products;
   pigeonResult.invalidProductIdentifiers = invalidProductIdentifiers;
   return pigeonResult;
 }
-+ (SKProductResponseMessage *)fromList:(NSArray *)list {
-  SKProductResponseMessage *pigeonResult = [[SKProductResponseMessage alloc] init];
++ (SKProductsResponseMessage *)fromList:(NSArray *)list {
+  SKProductsResponseMessage *pigeonResult = [[SKProductsResponseMessage alloc] init];
   pigeonResult.products = GetNullableObjectAtIndex(list, 0);
   pigeonResult.invalidProductIdentifiers = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
-+ (nullable SKProductResponseMessage *)nullableFromList:(NSArray *)list {
-  return (list) ? [SKProductResponseMessage fromList:list] : nil;
++ (nullable SKProductsResponseMessage *)nullableFromList:(NSArray *)list {
+  return (list) ? [SKProductsResponseMessage fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -497,9 +497,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     case 134: 
       return [SKProductMessage fromList:[self readValue]];
     case 135: 
-      return [SKProductResponseMessage fromList:[self readValue]];
-    case 136: 
       return [SKProductSubscriptionPeriodMessage fromList:[self readValue]];
+    case 136: 
+      return [SKProductsResponseMessage fromList:[self readValue]];
     case 137: 
       return [SKStorefrontMessage fromList:[self readValue]];
     default:
@@ -533,10 +533,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   } else if ([value isKindOfClass:[SKProductMessage class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKProductResponseMessage class]]) {
+  } else if ([value isKindOfClass:[SKProductSubscriptionPeriodMessage class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SKProductSubscriptionPeriodMessage class]]) {
+  } else if ([value isKindOfClass:[SKProductsResponseMessage class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[SKStorefrontMessage class]]) {
@@ -648,13 +648,68 @@ void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
         binaryMessenger:binaryMessenger
         codec:InAppPurchaseAPIGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(startProductRequestProductIdentifiers:error:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(startProductRequestProductIdentifiers:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(startProductRequestProductIdentifiers:completion:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(startProductRequestProductIdentifiers:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSArray<NSString *> *arg_productIdentifiers = GetNullableObjectAtIndex(args, 0);
+        [api startProductRequestProductIdentifiers:arg_productIdentifiers completion:^(SKProductsResponseMessage *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.finishTransaction"
+        binaryMessenger:binaryMessenger
+        codec:InAppPurchaseAPIGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(finishTransactionFinishMap:error:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(finishTransactionFinishMap:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSDictionary<NSString *, NSString *> *arg_finishMap = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        SKProductResponseMessage *output = [api startProductRequestProductIdentifiers:arg_productIdentifiers error:&error];
-        callback(wrapResult(output, error));
+        [api finishTransactionFinishMap:arg_finishMap error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.restoreTransactions"
+        binaryMessenger:binaryMessenger
+        codec:InAppPurchaseAPIGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(restoreTransactionsApplicationUserName:error:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(restoreTransactionsApplicationUserName:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_applicationUserName = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        [api restoreTransactionsApplicationUserName:arg_applicationUserName error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.presentCodeRedemptionSheet"
+        binaryMessenger:binaryMessenger
+        codec:InAppPurchaseAPIGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(presentCodeRedemptionSheetWithError:)], @"InAppPurchaseAPI api (%@) doesn't respond to @selector(presentCodeRedemptionSheetWithError:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        [api presentCodeRedemptionSheetWithError:&error];
+        callback(wrapResult(nil, error));
       }];
     } else {
       [channel setMessageHandler:nil];

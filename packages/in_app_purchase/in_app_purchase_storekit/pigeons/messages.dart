@@ -130,8 +130,8 @@ class SKStorefrontMessage {
   final String identifier;
 }
 
-class SKProductResponseMessage {
-  const SKProductResponseMessage ({
+class SKProductsResponseMessage {
+  const SKProductsResponseMessage ({
     required this.products,
     required this.invalidProductIdentifiers
 });
@@ -250,5 +250,15 @@ abstract class InAppPurchaseAPI {
 
   void addPayment(Map<String, Object?> paymentMap);
 
-  SKProductResponseMessage startProductRequest(List<String> productIdentifiers);
+  @async
+  SKProductsResponseMessage startProductRequest(List<String> productIdentifiers);
+
+  void finishTransaction(Map<String, String?> finishMap);
+
+  void restoreTransactions(String? applicationUserName);
+
+  void presentCodeRedemptionSheet();
+  //
+  // void retrieveReceiptData();
+
 }

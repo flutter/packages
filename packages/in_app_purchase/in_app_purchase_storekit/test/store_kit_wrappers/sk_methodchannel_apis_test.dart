@@ -297,10 +297,11 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
       <SKPaymentTransactionMessage>[dummyTransactionMessage];
 
   @override
-  Map<String?, Object?>? startProductRequest(List<String?> productIdentifiers) {
+  SKProductsResponseMessage startProductRequest(List<String?> productIdentifiers) {
     // TODO: implement startProductRequest
     throw UnimplementedError();
   }
+  
 }
 
 class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {}

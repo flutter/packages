@@ -105,22 +105,13 @@
 }
 
 - (void)testGetProductResponse {
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:@"expect response contains 1 item"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[`InAppPurchasePlugin startProductRequest`:result:]"
-                     arguments:@[ @"123" ]];
-  __block id result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           [expectation fulfill];
-                           result = r;
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssert([result isKindOfClass:[NSDictionary class]]);
-  NSArray *resultArray = [result objectForKey:@"products"];
-  XCTAssertEqual(resultArray.count, 1);
-  XCTAssertTrue([resultArray.firstObject[@"productIdentifier"] isEqualToString:@"123"]);
+  NSArray *argument = @[@"123"];
+  [self.plugin startProductRequestProductIdentifiers:argument completion:^(SKProductsResponseMessage * _Nullable response, FlutterError * _Nullable startProductRequestError) {
+    XCTAssert([response isKindOfClass:[SKProductsResponseMessage class]]);
+    XCTAssertEqual(response.products.count, 1);
+    XCTAssertEqual(response.invalidProductIdentifiers.count, 0);
+    XCTAssertEqual(response.products[0].productIdentifier, @"123");
+  }];
 }
 
 - (void)testAddPaymentShouldReturnFlutterErrorWhenPaymentFails {

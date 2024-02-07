@@ -70,6 +70,20 @@ NS_ASSUME_NONNULL_BEGIN
     API_AVAILABLE(ios(12.2));
 
 + (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error;
+
++ (nullable SKProductsResponseMessage*)convertProductsResponseToPigeon:(nullable SKProductsResponse *)payment;
+
++ (nullable SKProductMessage*)convertProductToPigeon:(nullable SKProduct *)product
+    API_AVAILABLE(ios(12.2));
+
++ (nullable SKProductDiscountMessage*)convertProductDiscountToPigeon:(nullable SKProductDiscount *)productDiscount
+    API_AVAILABLE(ios(12.2));
+
++ (nullable SKPriceLocaleMessage*)convertNSLocaleToPigeon:(nullable NSLocale *)locale
+    API_AVAILABLE(ios(12.2));
+
++ (nullable SKProductSubscriptionPeriodMessage*)convertSKProductSubscriptionPeriodToPigeon:(nullable SKProductSubscriptionPeriod *)period
+    API_AVAILABLE(ios(12.2));
 @end
 
 NS_ASSUME_NONNULL_END
