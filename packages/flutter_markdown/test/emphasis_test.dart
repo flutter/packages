@@ -221,8 +221,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -249,8 +248,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -277,8 +275,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -305,8 +302,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -333,8 +329,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -361,8 +356,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -389,8 +383,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -416,8 +409,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo-(bar)');
 
@@ -461,8 +453,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -489,8 +480,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -516,8 +506,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo bar *');
 
@@ -544,8 +533,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -571,8 +559,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
@@ -598,8 +585,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
@@ -643,8 +629,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -671,8 +656,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -698,8 +682,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
@@ -726,8 +709,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -754,8 +736,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -781,8 +762,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo_bar_baz');
 
@@ -808,8 +788,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(bar).');
 
@@ -852,8 +831,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -880,8 +858,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -908,8 +885,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -935,8 +911,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
@@ -979,8 +954,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -1007,8 +981,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1034,8 +1007,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '__ foo bar__');
 
@@ -1062,8 +1034,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1090,8 +1061,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1118,8 +1088,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1146,8 +1115,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1174,8 +1142,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo, bar, baz');
 
@@ -1202,8 +1169,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo-(bar)');
 
@@ -1247,8 +1213,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1275,8 +1240,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1303,8 +1267,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
@@ -1355,8 +1318,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text,
                 'Gomphocarpus (Gomphocarpus physocarpus, syn. Asclepias physocarpa)');
@@ -1423,8 +1385,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo "bar" foo');
 
@@ -1474,8 +1435,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
@@ -1519,8 +1479,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1547,8 +1506,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1574,8 +1532,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(foo)');
 
@@ -1625,8 +1582,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1653,8 +1609,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -1680,8 +1635,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo__bar__baz');
 
@@ -1707,8 +1661,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '(bar).');
 
@@ -1751,8 +1704,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -1796,8 +1748,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -1823,8 +1774,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
@@ -1873,8 +1823,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
@@ -1900,8 +1849,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -1927,8 +1875,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -1954,8 +1901,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
@@ -2004,8 +1950,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobarbaz');
 
@@ -2054,8 +1999,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo**bar');
 
@@ -2081,8 +2025,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2123,8 +2066,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2165,8 +2107,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar');
 
@@ -2207,8 +2148,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobarbaz');
 
@@ -2257,8 +2197,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobar***baz');
 
@@ -2307,8 +2246,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz bim bop');
 
@@ -2357,8 +2295,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2403,8 +2340,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -2431,8 +2367,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -2460,8 +2395,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2505,8 +2439,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2532,8 +2465,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
@@ -2582,8 +2514,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
@@ -2609,8 +2540,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2636,8 +2566,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2663,8 +2592,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz');
 
@@ -2713,8 +2641,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foobarbaz');
 
@@ -2763,8 +2690,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2805,8 +2731,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2847,8 +2772,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar baz bim bop');
 
@@ -2897,8 +2821,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar');
 
@@ -2943,8 +2866,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -2971,8 +2893,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -3001,8 +2922,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -3029,8 +2949,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
@@ -3072,8 +2991,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
@@ -3115,8 +3033,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -3143,8 +3060,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
@@ -3186,8 +3102,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
@@ -3229,8 +3144,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo');
 
@@ -3272,8 +3186,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo*');
 
@@ -3315,8 +3228,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo');
 
@@ -3358,8 +3270,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '***foo');
 
@@ -3401,8 +3312,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo*');
 
@@ -3444,8 +3354,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo***');
 
@@ -3489,8 +3398,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -3517,8 +3425,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
@@ -3560,8 +3467,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
@@ -3603,8 +3509,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, data);
 
@@ -3631,8 +3536,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _');
 
@@ -3674,8 +3578,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo *');
 
@@ -3717,8 +3620,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '_foo');
 
@@ -3760,8 +3662,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo_');
 
@@ -3803,8 +3704,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '_foo');
 
@@ -3846,8 +3746,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '___foo');
 
@@ -3889,8 +3788,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo_');
 
@@ -3932,8 +3830,7 @@ void defineTests() {
             expect(textFinder, findsOneWidget);
 
             // Expect text to be unchanged from original data string.
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo___');
 
@@ -3976,8 +3873,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4003,8 +3899,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4030,8 +3925,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4057,8 +3951,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4084,8 +3977,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4111,8 +4003,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4138,8 +4029,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4169,8 +4059,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4196,8 +4085,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo');
 
@@ -4225,8 +4113,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo _bar baz_');
 
@@ -4267,8 +4154,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, 'foo bar *baz bim bam');
 
@@ -4319,8 +4205,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '**foo bar baz');
 
@@ -4361,8 +4246,7 @@ void defineTests() {
             final Finder textFinder = find.byType(Text);
             expect(textFinder, findsOneWidget);
 
-            final Text textWidget =
-                textFinder.evaluate().first.widget as Text;
+            final Text textWidget = textFinder.evaluate().first.widget as Text;
             final String text = textWidget.textSpan!.toPlainText();
             expect(text, '*foo bar baz');
 

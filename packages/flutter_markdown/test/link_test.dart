@@ -1977,13 +1977,13 @@ void defineTests() {
         expect(textWidgets.length, 2);
 
         expect(textWidgets[0].textSpan, isNotNull);
-        expect(textWidgets[0].textSpan!, isA<TextSpan>());
+        expect(textWidgets[0].textSpan, isA<TextSpan>());
         expect(textWidgets[0].textSpan!.toPlainText(), '[foo][ref[bar]]');
         expectTextSpanStyle(
             textWidgets[0].textSpan! as TextSpan, null, FontWeight.normal);
 
         expect(textWidgets[1].textSpan, isNotNull);
-        expect(textWidgets[1].textSpan!, isA<TextSpan>());
+        expect(textWidgets[1].textSpan, isA<TextSpan>());
         expect(textWidgets[1].textSpan!.toPlainText(), '[ref[bar]]: /uri');
         expectTextSpanStyle(
             textWidgets[1].textSpan! as TextSpan, null, FontWeight.normal);
@@ -2013,13 +2013,13 @@ void defineTests() {
         expect(textWidgets.length, 2);
 
         expect(textWidgets[0].textSpan, isNotNull);
-        expect(textWidgets[0].textSpan!, isA<TextSpan>());
+        expect(textWidgets[0].textSpan, isA<TextSpan>());
         expect(textWidgets[0].textSpan!.toPlainText(), '[[[foo]]]');
         expectTextSpanStyle(
             textWidgets[0].textSpan! as TextSpan, null, FontWeight.normal);
 
         expect(textWidgets[1].textSpan, isNotNull);
-        expect(textWidgets[1].textSpan!, isA<TextSpan>());
+        expect(textWidgets[1].textSpan, isA<TextSpan>());
         expect(textWidgets[1].textSpan!.toPlainText(), '[[[foo]]]: /url');
         expectTextSpanStyle(
             textWidgets[1].textSpan! as TextSpan, null, FontWeight.normal);
@@ -2094,13 +2094,13 @@ void defineTests() {
         expect(textWidgets.length, 2);
 
         expect(textWidgets[0].textSpan, isNotNull);
-        expect(textWidgets[0].textSpan!, isA<TextSpan>());
+        expect(textWidgets[0].textSpan, isA<TextSpan>());
         expect(textWidgets[0].textSpan!.toPlainText(), '[]');
         expectTextSpanStyle(
             textWidgets[0].textSpan! as TextSpan, null, FontWeight.normal);
 
         expect(textWidgets[1].textSpan, isNotNull);
-        expect(textWidgets[1].textSpan!, isA<TextSpan>());
+        expect(textWidgets[1].textSpan, isA<TextSpan>());
         expect(textWidgets[1].textSpan!.toPlainText(), '[]: /uri');
         expectTextSpanStyle(
             textWidgets[1].textSpan! as TextSpan, null, FontWeight.normal);
@@ -2130,13 +2130,13 @@ void defineTests() {
         expect(textWidgets.length, 2);
 
         expect(textWidgets[0].textSpan, isNotNull);
-        expect(textWidgets[0].textSpan!, isA<TextSpan>());
+        expect(textWidgets[0].textSpan, isA<TextSpan>());
         expect(textWidgets[0].textSpan!.toPlainText(), '[ ]');
         expectTextSpanStyle(
             textWidgets[0].textSpan! as TextSpan, null, FontWeight.normal);
 
         expect(textWidgets[1].textSpan, isNotNull);
-        expect(textWidgets[1].textSpan!, isA<TextSpan>());
+        expect(textWidgets[1].textSpan, isA<TextSpan>());
         expect(textWidgets[1].textSpan!.toPlainText(), '[ ]: /uri');
         expectTextSpanStyle(
             textWidgets[1].textSpan! as TextSpan, null, FontWeight.normal);
@@ -2257,17 +2257,17 @@ void defineTests() {
         expect(textWidgets.length, 2);
 
         expect(textWidgets[0].textSpan, isNotNull);
-        expect(textWidgets[0].textSpan!, isA<TextSpan>());
+        expect(textWidgets[0].textSpan, isA<TextSpan>());
         expect(textWidgets[0].textSpan!.toPlainText(), 'foo');
 
         expect(textWidgets[0].textSpan, isNotNull);
-        expect(textWidgets[0].textSpan!, isA<TextSpan>());
+        expect(textWidgets[0].textSpan, isA<TextSpan>());
         expectLinkTextSpan(textWidgets[0].textSpan! as TextSpan, 'foo');
         expectLinkTap(
             linkTapResults, const MarkdownLink('foo', '/url', 'title'));
 
         expect(textWidgets[1].textSpan, isNotNull);
-        expect(textWidgets[1].textSpan!, isA<TextSpan>());
+        expect(textWidgets[1].textSpan, isA<TextSpan>());
         expect(textWidgets[1].textSpan!.toPlainText(), '[]');
         expectTextSpanStyle(
             textWidgets[1].textSpan! as TextSpan, null, FontWeight.normal);
@@ -2360,7 +2360,7 @@ void defineTests() {
         );
 
         final Text textWidget = tester.widget(find.byType(Text));
-        final TextSpan span = textWidget.textSpan as TextSpan;
+        final TextSpan span = textWidget.textSpan! as TextSpan;
         expect(span.children!.length, 2);
         expect(span.children, everyElement(isA<TextSpan>()));
 

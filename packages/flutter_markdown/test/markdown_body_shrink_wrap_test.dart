@@ -61,7 +61,8 @@ void defineTests() {
         ));
 
         final Rect stackRect = tester.getRect(find.byType(Stack));
-        final Rect textRect = tester.getRect(find.text(('shrinkWrap=false test')));
+        final Rect textRect =
+            tester.getRect(find.text('shrinkWrap=false test'));
         final Rect markdownBodyRect = tester.getRect(find.byType(MarkdownBody));
 
         // The Text should be on the top of the Stack

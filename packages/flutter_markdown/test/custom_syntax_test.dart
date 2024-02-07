@@ -225,11 +225,9 @@ class WikilinkSyntax extends md.InlineSyntax {
 class WikilinkBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfter(md.Element element, _) {
-    return Text.rich(
-      TextSpan(
-          text: element.textContent,
-          recognizer: TapGestureRecognizer()..onTap = () {})
-    );
+    return Text.rich(TextSpan(
+        text: element.textContent,
+        recognizer: TapGestureRecognizer()..onTap = () {}));
   }
 }
 

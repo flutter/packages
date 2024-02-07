@@ -170,8 +170,8 @@ void defineTests() {
           );
 
           final Iterable<Widget> widgets = tester.allWidgets;
-          final Text text = widgets
-              .firstWhere((Widget widget) => widget is Text) as Text;
+          final Text text =
+              widgets.firstWhere((Widget widget) => widget is Text) as Text;
 
           final TextSpan span = text.textSpan! as TextSpan;
           final List<InlineSpan>? children = span.children;
@@ -197,8 +197,8 @@ void defineTests() {
           );
 
           final Iterable<Widget> widgets = tester.allWidgets;
-          final Text text = widgets
-              .firstWhere((Widget widget) => widget is Text) as Text;
+          final Text text =
+              widgets.firstWhere((Widget widget) => widget is Text) as Text;
 
           final TextSpan span = text.textSpan! as TextSpan;
           final List<InlineSpan>? children = span.children;
@@ -227,8 +227,8 @@ void defineTests() {
           );
 
           final Iterable<Widget> widgets = tester.allWidgets;
-          final Text text = widgets
-              .firstWhere((Widget widget) => widget is Text) as Text;
+          final Text text =
+              widgets.firstWhere((Widget widget) => widget is Text) as Text;
 
           final TextSpan span = text.textSpan! as TextSpan;
 

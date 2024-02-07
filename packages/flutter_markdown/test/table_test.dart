@@ -74,8 +74,8 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        final Text text = widgets
-            .lastWhere((Widget widget) => widget is Text) as Text;
+        final Text text =
+            widgets.lastWhere((Widget widget) => widget is Text) as Text;
 
         expectTextStrings(widgets, <String>['Header', 'italic']);
         expect(text.textSpan!.style!.fontStyle, FontStyle.italic);
@@ -202,15 +202,15 @@ void defineTests() {
         expectTableSize(2, 2);
 
         expect(find.byType(Text), findsNWidgets(4));
-          final List<String?> cellText = find
-              .byType(Text)
-              .evaluate()
-              .map((Element e) => e.widget)
-              .cast<Text>()
-              .map((Text text) => text.textSpan!)
-              .cast<TextSpan>()
-              .map((TextSpan e) => e.text)
-              .toList();
+        final List<String?> cellText = find
+            .byType(Text)
+            .evaluate()
+            .map((Element e) => e.widget)
+            .cast<Text>()
+            .map((Text text) => text.textSpan!)
+            .cast<TextSpan>()
+            .map((TextSpan e) => e.text)
+            .toList();
         expect(cellText[0], 'Header 1');
         expect(cellText[1], 'Header 2');
         expect(cellText[2], '');

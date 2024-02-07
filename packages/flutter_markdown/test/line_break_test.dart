@@ -131,8 +131,7 @@ void defineTests() {
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
 
-        final Text textWidget =
-            textFinder.evaluate().first.widget as Text;
+        final Text textWidget = textFinder.evaluate().first.widget as Text;
         final String text = textWidget.textSpan!.toPlainText();
         expect(text, 'foo\nbar');
 
@@ -169,8 +168,7 @@ void defineTests() {
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
 
-        final Text textWidget =
-            textFinder.evaluate().first.widget as Text;
+        final Text textWidget = textFinder.evaluate().first.widget as Text;
         final String text = textWidget.textSpan!.toPlainText();
         expect(text, 'foo\nbar');
 
@@ -207,8 +205,7 @@ void defineTests() {
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
 
-        final Text textWidget =
-            textFinder.evaluate().first.widget as Text;
+        final Text textWidget = textFinder.evaluate().first.widget as Text;
         final String text = textWidget.textSpan!.toPlainText();
         expect(text, 'code   span');
 
@@ -233,8 +230,7 @@ void defineTests() {
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
 
-        final Text textWidget =
-            textFinder.evaluate().first.widget as Text;
+        final Text textWidget = textFinder.evaluate().first.widget as Text;
         final String text = textWidget.textSpan!.toPlainText();
         expect(text, r'code\ span');
 

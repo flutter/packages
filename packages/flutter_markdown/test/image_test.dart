@@ -33,8 +33,7 @@ void defineTests() {
           ),
         );
 
-        final Iterable<Text> texts =
-            tester.widgetList(find.byType(Text));
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
         final Text firstTextWidget = texts.first;
         final TextSpan firstTextSpan = firstTextWidget.textSpan! as TextSpan;
         final Image image = tester.widget(find.byType(Image));
@@ -262,8 +261,7 @@ void defineTests() {
             tester.widget(find.byType(GestureDetector));
         detector.onTap!();
 
-        final Iterable<Text> texts =
-            tester.widgetList(find.byType(Text));
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
         final Text firstTextWidget = texts.first;
         final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
         (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
@@ -307,8 +305,7 @@ void defineTests() {
           ),
         );
 
-        final Iterable<Text> texts =
-            tester.widgetList(find.byType(Text));
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
         final Text firstTextWidget = texts.first;
         final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
         (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();

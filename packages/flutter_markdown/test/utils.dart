@@ -117,7 +117,7 @@ void expectValidLink(String linkText) {
 
   // Verify the link text.
   expect(text.textSpan, isNotNull);
-  expect(text.textSpan!, isA<TextSpan>());
+  expect(text.textSpan, isA<TextSpan>());
 
   // Verify the link text is a onTap gesture recognizer.
   final TextSpan textSpan = text.textSpan! as TextSpan;
@@ -143,7 +143,7 @@ void expectInvalidLink(String linkText) {
   final Text text = textFinder.evaluate().first.widget as Text;
 
   expect(text.textSpan, isNotNull);
-  expect(text.textSpan!, isA<TextSpan>());
+  expect(text.textSpan, isA<TextSpan>());
   final String plainText = text.textSpan!.toPlainText();
   expect(plainText, linkText);
 
