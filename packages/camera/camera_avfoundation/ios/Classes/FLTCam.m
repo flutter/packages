@@ -144,6 +144,7 @@ NSString *const errorMethod = @"error";
   _deviceOrientation = orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
+  _fileFormat = FCPFileFormatJPEG;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -218,6 +219,10 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
+- (void)setImageFileFormat:(FCPFileFormat)fileFormat {
+  _fileFormat = fileFormat;
+}
+
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation {
   if (_deviceOrientation == orientation) {
     return;
@@ -254,8 +259,22 @@ NSString *const errorMethod = @"error";
 
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
+
   if (_resolutionPreset == FLTResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
+  }
+
+  NSString *extension;
+
+  BOOL isHEVCCodecAvailable =
+      [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
+
+  if (_fileFormat == FCPFileFormatHEIF && isHEVCCodecAvailable) {
+    settings =
+        [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+    extension = @"heif";
+  } else {
+    extension = @"jpg";
   }
 
   AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(_flashMode);
@@ -263,7 +282,7 @@ NSString *const errorMethod = @"error";
     [settings setFlashMode:avFlashMode];
   }
   NSError *error;
-  NSString *path = [self getTemporaryFilePathWithExtension:@"jpg"
+  NSString *path = [self getTemporaryFilePathWithExtension:extension
                                                  subfolder:@"pictures"
                                                     prefix:@"CAP_"
                                                      error:error];
@@ -514,7 +533,6 @@ NSString *const errorMethod = @"error";
       return;
     }
 
-    CFRetain(sampleBuffer);
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
     if (_videoWriter.status != AVAssetWriterStatusWriting) {
@@ -564,18 +582,18 @@ NSString *const errorMethod = @"error";
       _lastAudioSampleTime = currentSampleTime;
 
       if (_audioTimeOffset.value != 0) {
-        CFRelease(sampleBuffer);
-        sampleBuffer = [self adjustTime:sampleBuffer by:_audioTimeOffset];
+        CMSampleBufferRef adjustedSampleBuffer =
+            [self copySampleBufferWithAdjustedTime:sampleBuffer by:_audioTimeOffset];
+        [self newAudioSample:adjustedSampleBuffer];
+        CFRelease(adjustedSampleBuffer);
+      } else {
+        [self newAudioSample:sampleBuffer];
       }
-
-      [self newAudioSample:sampleBuffer];
     }
-
-    CFRelease(sampleBuffer);
   }
 }
 
-- (CMSampleBufferRef)adjustTime:(CMSampleBufferRef)sample by:(CMTime)offset CF_RETURNS_RETAINED {
+- (CMSampleBufferRef)copySampleBufferWithAdjustedTime:(CMSampleBufferRef)sample by:(CMTime)offset {
   CMItemCount count;
   CMSampleBufferGetSampleTimingInfoArray(sample, 0, nil, &count);
   CMSampleTimingInfo *pInfo = malloc(sizeof(CMSampleTimingInfo) * count);

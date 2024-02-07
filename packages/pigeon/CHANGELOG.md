@@ -6,6 +6,14 @@
   * Expands unit tests for comprehensive name conversion validation.
   * **Migration Note**: This change modifies the naming convention of Kotlin enum cases generated from the Pigeon package. It is recommended to review the impact on your existing codebase and update any dependent code accordingly.
 
+## 16.0.5
+
+* Adds ProxyApi to AST generation.
+
+## 16.0.4
+
+* [swift] Improve style of Swift output.
+
 ## 16.0.3
 
 * [kotlin] Separates message call code generation into separate methods.

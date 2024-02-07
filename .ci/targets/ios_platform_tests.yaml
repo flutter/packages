@@ -6,21 +6,21 @@ tasks:
     script: .ci/scripts/create_simulator.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: download Dart and iOS deps
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps", "--ios", "--supporting-target-platforms-only"]
     infra_step: true
   - name: build examples
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["build-examples", "--ios"]
   - name: xcode analyze
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["xcode-analyze", "--ios"]
   - name: xcode analyze deprecation
     # Ensure we don't accidentally introduce deprecated code.
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["xcode-analyze", "--ios", "--ios-min-version=13.0"]
   - name: native test
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     # Simulator name and version must match name and version in create_simulator.sh
     args: ["native-test", "--ios", "--ios-destination", "platform=iOS Simulator,name=Flutter-iPhone,OS=17.0"]
   - name: boot simulator
@@ -31,7 +31,7 @@ tasks:
     # `drive-examples` contains integration tests, which changes the UI of the application.
     # This UI change sometimes affects `xctest`.
     # So we run `drive-examples` after `native-test`; changing the order will result ci failure.
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["drive-examples", "--ios", "--exclude=script/configs/exclude_integration_ios.yaml"]
   - name: remove simulator
     script: .ci/scripts/remove_simulator.sh

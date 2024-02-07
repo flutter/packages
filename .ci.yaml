@@ -18,6 +18,9 @@ platform_properties:
         [
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
+  # The current android emulator config names can be found here:
+  # https://chromium.googlesource.com/chromium/src.git/+/HEAD/tools/android/avd/proto
+  # You may use those names for the android_virtual_device version.
   linux_android:
     properties:
       os: Ubuntu
@@ -27,7 +30,8 @@ platform_properties:
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
-          {"dependency": "curl", "version": "version:7.64.0"}
+          {"dependency": "curl", "version": "version:7.64.0"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
   linux_android_legacy:
     properties:
@@ -39,7 +43,8 @@ platform_properties:
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "android_virtual_device", "version": "22"}
+          {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
   linux_desktop:
     properties:
@@ -107,20 +112,6 @@ platform_properties:
         }
 
 targets:
-  ### Linux-host general tasks ###
-  - name: Linux repo_tools_tests
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: repo_tools_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
   - name: Linux repo_checks
     recipe: packages/packages
     timeout: 30
@@ -281,19 +272,10 @@ targets:
           "CHANNEL": "stable"
         }
 
-  - name: Linux analyze_downgraded master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: analyze_downgraded.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
+  # This is only run on stable since it's extremely likely that stable will
+  # resolve to packages that are older (or at least as old) than on master, so
+  # running a second copy with master is very unlikely to catch anything that
+  # this doesn't.
   - name: Linux analyze_downgraded stable
     recipe: packages/packages
     timeout: 30
@@ -344,7 +326,7 @@ targets:
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -365,7 +347,7 @@ targets:
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -426,7 +408,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -445,7 +427,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -464,7 +446,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -483,7 +465,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -502,7 +484,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -521,7 +503,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -540,7 +522,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -559,7 +541,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -578,7 +560,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -597,7 +579,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -616,7 +598,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -635,7 +617,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -654,7 +636,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -673,7 +655,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -691,7 +673,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -709,7 +691,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -1071,7 +1053,11 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: macos_check_podspecs.yaml
+      target_file: macos_repo_checks.yaml
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
+        ]
 
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
@@ -1143,6 +1129,10 @@ targets:
         {
           "CHANNEL": "master"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   - name: Mac_arm64 custom_package_tests stable
     recipe: packages/packages
@@ -1156,6 +1146,10 @@ targets:
         {
           "CHANNEL": "stable"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   ### iOS tasks ###
   # ios_platform_tests builds all the packages on ARM, so this build is run

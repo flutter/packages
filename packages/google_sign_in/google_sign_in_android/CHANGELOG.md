@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk version to 34.
+
 ## 6.1.21
 
 * Updates `clearAuthCache` override to match base class declaration.

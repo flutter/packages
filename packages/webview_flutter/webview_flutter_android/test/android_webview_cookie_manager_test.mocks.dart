@@ -444,6 +444,18 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> setOnScrollPositionChange(
+          void Function(_i3.ScrollPositionChange)? onScrollPositionChange) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnScrollPositionChange,
+          [onScrollPositionChange],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i5.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -546,18 +558,6 @@ class MockAndroidWebViewController extends _i1.Mock
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
-
-  @override
-  _i5.Future<void> setOnScrollPositionChange(
-          void Function(_i3.ScrollPositionChange)? onScrollPositionChange) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnScrollPositionChange,
-          [onScrollPositionChange],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
 
   @override
   _i5.Future<void> setOnJavaScriptAlertDialog(
