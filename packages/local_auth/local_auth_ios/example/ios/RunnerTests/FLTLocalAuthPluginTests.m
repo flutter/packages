@@ -490,16 +490,33 @@ static const NSTimeInterval kTimeout = 30.0;
   XCTAssertNil(error);
 }
 
-// TODO(stuartmorgan): Make this multiple tests when fixing
-// https://github.com/flutter/flutter/issues/116179
-// Currently it just always returns true.
-- (void)testIsDeviceSupported {
+- (void)testIsDeviceSupportedHandlesSupported {
+  id mockAuthContext = OCMClassMock([LAContext class]);
+  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
+                                       error:[OCMArg setTo:nil]])
+      .andReturn(YES);
   FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
-      initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[]]];
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];
   XCTAssertTrue([result boolValue]);
+  XCTAssertNil(error);
+}
+
+- (void)testIsDeviceSupportedHandlesUnsupported {
+  id mockAuthContext = OCMClassMock([LAContext class]);
+  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
+                                       error:[OCMArg setTo:nil]])
+      .andReturn(NO);
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
+
+  FlutterError *error;
+  NSNumber *result = [plugin isDeviceSupportedWithError:&error];
+  XCTAssertFalse([result boolValue]);
   XCTAssertNil(error);
 }
 
