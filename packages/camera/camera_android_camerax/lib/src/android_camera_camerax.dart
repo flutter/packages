@@ -516,6 +516,8 @@ class AndroidCameraCameraX extends CameraPlatform {
           'Exposure compensation not supported');
     }
 
+    // (Exposure compensation index) * (exposure offset setep size) =
+    // (exposure offset).
     final int roundedExposureCompensationIndex =
         (offset / exposureOffsetStepSize).round();
 
@@ -1064,7 +1066,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Starts a foucs and metering action.
   ///
-  /// If [meteringPoint] is non-null, this action includes
+  /// This method will merge the current action's metering points with that
+  /// specified such that only one auto-exposure metering point and one
+  /// auto-focus metering point will be part of the action. This method would
+  /// also accommodatate at most on auto-white balance metering point, but that
+  /// mode is currently unused in this plugin.
+  ///
+  /// Thus, if [meteringPoint] is non-null, this action includes:
   ///   * metering points and their modes previously added to
   ///     [currentFocusMeteringAction] that do not share a metering mode with
   ///     [meteringPoint] and
@@ -1072,7 +1080,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// If [meteringPoint] is null, this action includes only metering points and
   /// their modes previously added to [currentFocusMeteringAction] that do not
   /// share a metering mode with [meteringPoint]. If there are no such metering
-  /// points, then any previously enabled focus and metering actions will be
+  /// points, then the previously enabled focus and metering actions will be
   /// canceled.
   Future<void> _startFocusAndMeteringFor(
       {required Point<double>? meteringPoint,
@@ -1105,7 +1113,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         await cameraControl!.cancelFocusAndMetering();
         return;
       }
-
       currentFocusMeteringAction =
           proxy.createFocusMeteringAction(newMeteringPointInfos);
     } else if (meteringPoint.x < 0 ||
@@ -1114,9 +1121,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       throw CameraException('meteringPointInvalid',
           'The coordinates of a metering point for an auto-focus or auto-exposure action must be within (0,0) and (1,1).');
     } else {
-      // Add new metering point with specified meteringMode, which might
-      // involve replacing a metering point with the same specified meteringMode
-      // from the current focus and metering action.
+      // Add new metering point with specified meteringMode, which may involve
+      // replacing a metering point with the same specified meteringMode from
+      // the current focus and metering action.
       List<(MeteringPoint, int?)> newMeteringPointInfos =
           <(MeteringPoint, int?)>[];
 
