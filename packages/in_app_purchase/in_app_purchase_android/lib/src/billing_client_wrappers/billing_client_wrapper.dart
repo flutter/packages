@@ -110,9 +110,8 @@ class BillingClient {
   /// This triggers the creation of a new `BillingClient` instance in Java if
   /// one doesn't already exist.
   Future<BillingResultWrapper> startConnection(
-      {required OnBillingServiceDisconnected
-          onBillingServiceDisconnected,
-          bool enableAlternativeBillingOnly = false}) async {
+      {required OnBillingServiceDisconnected onBillingServiceDisconnected,
+      bool enableAlternativeBillingOnly = false}) async {
     final List<Function> disconnectCallbacks =
         _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
     disconnectCallbacks.add(onBillingServiceDisconnected);
