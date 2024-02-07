@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'ad_event.dart';
 import 'interactive_media_ads_platform.dart';
 
 /// Object specifying creation parameters for creating a
@@ -42,14 +43,17 @@ import 'interactive_media_ads_platform.dart';
 @immutable
 base class PlatformAdsManagerDelegateCreationParams {
   /// Used by the platform implementation to create a new [PlatformAdsManagerDelegate].
-  PlatformAdsManagerDelegateCreationParams({
+  const PlatformAdsManagerDelegateCreationParams({
     this.onAdEvent,
     this.onAdErrorEvent,
   });
 
-  void Function(AdEvent event)? onAdEvent;
+  /// Invoked when there is an [AdEvent].
+  final void Function(AdEvent event)? onAdEvent;
 
-  void Function(AdErrorEvent event)? onAdErrorEvent;
+  /// Invoked when there was an error playing the ad. Log the error and resume
+  /// playing content.
+  final void Function(AdErrorEvent event)? onAdErrorEvent;
 }
 
 /// Interface for a platform implementation of a `AdsManagerDelegate`.
@@ -86,9 +90,3 @@ abstract class PlatformAdsManagerDelegate extends PlatformInterface {
   /// The parameters used to initialize the [PlatformAdsManagerDelegate].
   final PlatformAdsManagerDelegateCreationParams params;
 }
-
-@immutable
-class AdEvent {}
-
-@immutable
-class AdErrorEvent {}

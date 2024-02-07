@@ -6,24 +6,29 @@ import 'package:flutter/foundation.dart';
 
 import 'platform_ads_manager_delegate.dart';
 
-base class AdsManagerInitParams {
+/// Additional parameter passed to an [PlatformAdsManager] on initialization.
+base class AdsManagerInitParams {}
 
-}
-
-base class AdsManagerStartParams {
-
-}
+/// Additional parameter passed to an [PlatformAdsManager] when starting to play
+/// ads.
+base class AdsManagerStartParams {}
 
 /// Interface for a platform implementation of a `AdsManager`.
-abstract base class PlatformAdsManager  {
+abstract base class PlatformAdsManager {
+  /// Creates a [PlatformAdsManager].
   @protected
   PlatformAdsManager();
 
+  /// Initializes the ad experience using default rendering settings.
   Future<void> init(AdsManagerInitParams params);
 
+  /// Starts playing the ads.
   Future<void> start(AdsManagerStartParams params);
 
+  /// /// The [AdsManagerDelegate] to notify with events during ad playback.
   Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate);
 
+  /// Stops the ad and all tracking, then releases all assets that were loaded
+  /// to play the ad.
   Future<void> destroy();
 }

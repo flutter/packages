@@ -78,8 +78,11 @@ class AdsManagerDelegate {
   /// Implementation of [PlatformAdsManagerDelegate] for the current platform.
   final PlatformAdsManagerDelegate platform;
 
+  /// Invoked when there is an [AdEvent].
   void Function(AdEvent event)? get onAdEvent => platform.params.onAdEvent;
 
+  /// Invoked when there was an error playing the ad. Log the error and resume
+  /// playing content.
   void Function(AdErrorEvent event)? get onAdErrorEvent =>
       platform.params.onAdErrorEvent;
 }

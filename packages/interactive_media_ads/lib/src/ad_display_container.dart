@@ -90,6 +90,7 @@ class AdDisplayContainer extends StatelessWidget {
   /// Implementation of [PlatformAdDisplayContainer] for the current platform.
   final PlatformAdDisplayContainer platform;
 
+  /// When
   void Function(PlatformAdDisplayContainer container) get onContainerAdded =>
       platform.params.onContainerAdded;
 

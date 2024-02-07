@@ -91,10 +91,13 @@ class AdsLoader {
   final PlatformAdsLoader platform;
 }
 
+/// Data when ads are successfully loaded from the ad server through an
+/// [AdsLoader].
 @immutable
 class OnAdsLoadedData {
   const OnAdsLoadedData._({required this.manager});
 
+  /// The ads manager instance created by the ads loader.
   final AdsManager manager;
 }
 
@@ -127,18 +130,23 @@ class AdsManager {
   /// Implementation of [PlatformAdsManager] for the current platform.
   final PlatformAdsManager platform;
 
+  /// Initializes the ad experience using default rendering settings.
   Future<void> init() {
     return platform.init(AdsManagerInitParams());
   }
 
+  /// Starts playing the ads.
   Future<void> start() {
     return platform.start(AdsManagerStartParams());
   }
 
+  /// The [AdsManagerDelegate] to notify with events during ad playback.
   Future<void> setAdsManagerDelegate(AdsManagerDelegate delegate) {
     return platform.setAdsManagerDelegate(delegate.platform);
   }
 
+  /// Stops the ad and all tracking, then releases all assets that were loaded
+  /// to play the ad.
   Future<void> destroy() {
     return platform.destroy();
   }

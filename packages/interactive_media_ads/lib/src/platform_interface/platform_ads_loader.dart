@@ -5,6 +5,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'ads_request.dart';
+import 'ad_error.dart';
 import 'interactive_media_ads_platform.dart';
 import 'platform_ad_display_container.dart';
 import 'platform_ads_manager.dart';
@@ -49,12 +51,18 @@ base class PlatformAdsLoaderCreationParams {
     required this.onAdsLoadError,
   });
 
+  /// A container object where ads are rendered.
   final PlatformAdDisplayContainer container;
+
+  /// Callback for the ads manager loaded event.
   final void Function(PlatformOnAdsLoadedData data) onAdsLoaded;
+
+  /// Callback for errors that occur during the ads request.
   final void Function(AdsLoadErrorData data) onAdsLoadError;
 }
 
-/// Interface for a platform implementation of an `AdsLoader`.
+/// Interface for a platform implementation of an object that requests ads and
+/// handles events from ads request responses.
 abstract class PlatformAdsLoader extends PlatformInterface {
   /// Creates a new [PlatformAdsLoader]
   factory PlatformAdsLoader(
@@ -86,25 +94,38 @@ abstract class PlatformAdsLoader extends PlatformInterface {
   /// The parameters used to initialize the [PlatformAdsLoader].
   final PlatformAdsLoaderCreationParams params;
 
+  /// Signal to the SDK that the content has completed.
   Future<void> contentComplete() {
     throw UnimplementedError(
-      'contentComplete is not implemented on the current platform',
+      '`contentComplete` is not implemented on the current platform',
     );
   }
 
-  Future<void> request() {
+  /// Requests ads from a server.
+  Future<void> requestAds(AdsRequest request) {
     throw UnimplementedError(
-      'request is not implemented on the current platform',
+      '`requestAds` is not implemented on the current platform',
     );
   }
 }
 
+/// Data when ads are successfully loaded from the ad server through an
+/// [PlatformAdsLoader].
 @immutable
 class PlatformOnAdsLoadedData {
-  PlatformOnAdsLoadedData({required this.manager});
+  /// Creates a [PlatformOnAdsLoadedData].
+  const PlatformOnAdsLoadedData({required this.manager});
 
+  /// The ads manager instance created by the ads loader.
   final PlatformAdsManager manager;
 }
 
+/// Ad error data that is returned when the ads loader fails to load the ad.
 @immutable
-class AdsLoadErrorData {}
+class AdsLoadErrorData {
+  /// Creates a [AdsLoadErrorData].
+  const AdsLoadErrorData({required this.error});
+
+  /// The ad error that occurred while loading the ad.
+  final AdError error;
+}
