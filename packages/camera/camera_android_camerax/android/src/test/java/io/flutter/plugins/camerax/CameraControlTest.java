@@ -133,7 +133,7 @@ public class CameraControlTest {
       FutureCallback<Void> successfulSetZoomRatioCallback = futureCallbackCaptor.getValue();
 
       successfulSetZoomRatioCallback.onSuccess(mock(Void.class));
-      verify(successfulMockResult).success(null);      
+      verify(successfulMockResult).success(null);
 
       // Test failed behavior.
       @SuppressWarnings("unchecked")
@@ -154,7 +154,8 @@ public class CameraControlTest {
       @SuppressWarnings("unchecked")
       final GeneratedCameraXLibrary.Result<Void> canceledOpResult =
           mock(GeneratedCameraXLibrary.Result.class);
-      final CameraControl.OperationCanceledException canceledOpThrowable = mock(CameraControl.OperationCanceledException.class);
+      final CameraControl.OperationCanceledException canceledOpThrowable =
+          mock(CameraControl.OperationCanceledException.class);
       cameraControlHostApiImpl.setZoomRatio(cameraControlIdentifier, zoomRatio, canceledOpResult);
       mockedFutures.verify(
           () -> Futures.addCallback(eq(setZoomRatioFuture), futureCallbackCaptor.capture(), any()));
@@ -232,7 +233,8 @@ public class CameraControlTest {
       @SuppressWarnings("unchecked")
       final GeneratedCameraXLibrary.Result<Long> canceledOpResult =
           mock(GeneratedCameraXLibrary.Result.class);
-      final CameraControl.OperationCanceledException canceledOpThrowable = mock(CameraControl.OperationCanceledException.class);
+      final CameraControl.OperationCanceledException canceledOpThrowable =
+          mock(CameraControl.OperationCanceledException.class);
       cameraControlHostApiImpl.startFocusAndMetering(
           cameraControlIdentifier, mockActionId, canceledOpResult);
       mockedFutures.verify(
@@ -364,7 +366,8 @@ public class CameraControlTest {
       @SuppressWarnings("unchecked")
       final GeneratedCameraXLibrary.Result<Long> canceledOpResult =
           mock(GeneratedCameraXLibrary.Result.class);
-      final CameraControl.OperationCanceledException canceledOpThrowable = mock(CameraControl.OperationCanceledException.class);
+      final CameraControl.OperationCanceledException canceledOpThrowable =
+          mock(CameraControl.OperationCanceledException.class);
       cameraControlHostApiImpl.setExposureCompensationIndex(
           cameraControlIdentifier, index, canceledOpResult);
       mockedFutures.verify(
