@@ -100,6 +100,9 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
      *
      * <p>Will trigger an auto focus action and enable auto focus/auto exposure/auto white balance
      * metering regions.
+     * 
+     * <p> Will send a {@link GeneratedCameraXLibrary.Result} with a null result if operation was
+     * canceled.
      */
     public void startFocusAndMetering(
         @NonNull CameraControl cameraControl,
@@ -160,6 +163,9 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
      * <p>The exposure compensation value set on the camera must be within the range of {@code
      * ExposureState#getExposureCompensationRange()} for the current {@code ExposureState} for the
      * call to succeed.
+     * 
+     * <p> Will send a {@link GeneratedCameraXLibrary.Result} with a null result if operation was
+     * canceled.
      */
     public void setExposureCompensationIndex(
         @NonNull CameraControl cameraControl, @NonNull Long index, @NonNull Result<Long> result) {

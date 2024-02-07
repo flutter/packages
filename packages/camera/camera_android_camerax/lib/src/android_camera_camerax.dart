@@ -189,6 +189,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The currently set [FocusMeteringAction] used to enable auto-focus and
   /// auto-exposure.
+  @visibleForTesting
   FocusMeteringAction? currentFocusMeteringAction;
 
   /// Error code indicating that exposure compensation is not supported by
@@ -661,7 +662,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// respectively.
   @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
-    CameraControl? cameraControl;
     // Turn off torch mode if it is enabled and not being redundantly set.
     if (mode != FlashMode.torch && torchEnabled) {
       await cameraControl!.enableTorch(false);
@@ -1101,7 +1101,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
 
       currentFocusMeteringAction =
-          FocusMeteringAction(meteringPointInfos: newMeteringPointInfos);
+          proxy.createFocusMeteringAction(newMeteringPointInfos);
     } else if (meteringPoint.x < 0 ||
         meteringPoint.x > 1 ||
         meteringPoint.y < 0 && meteringPoint.y > 1) {
@@ -1125,10 +1125,10 @@ class AndroidCameraCameraX extends CameraPlatform {
             .toList();
       }
       final MeteringPoint newMeteringPoint =
-          MeteringPoint(x: meteringPoint.x, y: meteringPoint.y);
+          proxy.createMeteringPoint(meteringPoint.x, meteringPoint.y);
       newMeteringPointInfos.add((newMeteringPoint, meteringMode));
       currentFocusMeteringAction =
-          FocusMeteringAction(meteringPointInfos: newMeteringPointInfos);
+          proxy.createFocusMeteringAction(newMeteringPointInfos);
     }
 
     await cameraControl!.startFocusAndMetering(currentFocusMeteringAction!);

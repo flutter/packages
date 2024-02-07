@@ -133,7 +133,7 @@ public class CameraControlTest {
       FutureCallback<Void> successfulSetZoomRatioCallback = futureCallbackCaptor.getValue();
 
       successfulSetZoomRatioCallback.onSuccess(mock(Void.class));
-      verify(successfulMockResult).success(null);
+      verify(successfulMockResult).success(null);      
 
       // Test failed behavior.
       @SuppressWarnings("unchecked")
@@ -149,6 +149,21 @@ public class CameraControlTest {
 
       failedSetZoomRatioCallback.onFailure(testThrowable);
       verify(failedMockResult).error(testThrowable);
+
+      // Test response to canceled operation.
+      @SuppressWarnings("unchecked")
+      final GeneratedCameraXLibrary.Result<Void> canceledOpResult =
+          mock(GeneratedCameraXLibrary.Result.class);
+      final CameraControl.OperationCanceledException canceledOpThrowable = mock(CameraControl.OperationCanceledException.class);
+      cameraControlHostApiImpl.setZoomRatio(cameraControlIdentifier, zoomRatio, canceledOpResult);
+      mockedFutures.verify(
+          () -> Futures.addCallback(eq(setZoomRatioFuture), futureCallbackCaptor.capture(), any()));
+      mockedFutures.clearInvocations();
+
+      FutureCallback<Void> canceledOpCallback = futureCallbackCaptor.getValue();
+
+      canceledOpCallback.onFailure(canceledOpThrowable);
+      verify(canceledOpResult).success(null);
     }
   }
 
@@ -212,6 +227,24 @@ public class CameraControlTest {
 
       failedCallback.onFailure(testThrowable);
       verify(failedMockResult).error(testThrowable);
+
+      // Test response to canceled operation.
+      @SuppressWarnings("unchecked")
+      final GeneratedCameraXLibrary.Result<Long> canceledOpResult =
+          mock(GeneratedCameraXLibrary.Result.class);
+      final CameraControl.OperationCanceledException canceledOpThrowable = mock(CameraControl.OperationCanceledException.class);
+      cameraControlHostApiImpl.startFocusAndMetering(
+          cameraControlIdentifier, mockActionId, canceledOpResult);
+      mockedFutures.verify(
+          () ->
+              Futures.addCallback(
+                  eq(startFocusAndMeteringFuture), futureCallbackCaptor.capture(), any()));
+      mockedFutures.clearInvocations();
+
+      FutureCallback<FocusMeteringResult> canceledOpCallback = futureCallbackCaptor.getValue();
+
+      canceledOpCallback.onFailure(canceledOpThrowable);
+      verify(canceledOpResult).success(null);
     }
   }
 
@@ -326,6 +359,24 @@ public class CameraControlTest {
 
       failedCallback.onFailure(testThrowable);
       verify(failedMockResult).error(testThrowable);
+
+      // Test response to canceled operation.
+      @SuppressWarnings("unchecked")
+      final GeneratedCameraXLibrary.Result<Long> canceledOpResult =
+          mock(GeneratedCameraXLibrary.Result.class);
+      final CameraControl.OperationCanceledException canceledOpThrowable = mock(CameraControl.OperationCanceledException.class);
+      cameraControlHostApiImpl.setExposureCompensationIndex(
+          cameraControlIdentifier, index, canceledOpResult);
+      mockedFutures.verify(
+          () ->
+              Futures.addCallback(
+                  eq(setExposureCompensationIndexFuture), futureCallbackCaptor.capture(), any()));
+      mockedFutures.clearInvocations();
+
+      FutureCallback<Integer> canceledOpCallback = futureCallbackCaptor.getValue();
+
+      canceledOpCallback.onFailure(canceledOpThrowable);
+      verify(canceledOpResult).success(null);
     }
   }
 
