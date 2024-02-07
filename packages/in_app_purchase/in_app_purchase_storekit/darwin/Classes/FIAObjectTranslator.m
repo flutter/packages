@@ -376,9 +376,8 @@
   return msg;
 }
 
-
-+ (nullable SKProductSubscriptionPeriodMessage*)convertSKProductSubscriptionPeriodToPigeon:(nullable SKProductSubscriptionPeriod *)period
-API_AVAILABLE(ios(12.2)) {
++ (nullable SKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
+    (nullable SKProductSubscriptionPeriod *)period API_AVAILABLE(ios(12.2)) {
   if (!period) {
     return nil;
   }
@@ -399,13 +398,14 @@ API_AVAILABLE(ios(12.2)) {
       break;
   }
 
-  SKProductSubscriptionPeriodMessage *msg = [SKProductSubscriptionPeriodMessage makeWithNumberOfUnits:period.numberOfUnits unit:unit];
+  SKProductSubscriptionPeriodMessage *msg =
+      [SKProductSubscriptionPeriodMessage makeWithNumberOfUnits:period.numberOfUnits unit:unit];
 
   return msg;
 }
 
-+ (nullable SKProductDiscountMessage*)convertProductDiscountToPigeon:(nullable SKProductDiscount *)productDiscount
-API_AVAILABLE(ios(12.2)) {
++ (nullable SKProductDiscountMessage *)convertProductDiscountToPigeon:
+    (nullable SKProductDiscount *)productDiscount API_AVAILABLE(ios(12.2)) {
   if (!productDiscount) {
     return nil;
   }
@@ -433,55 +433,58 @@ API_AVAILABLE(ios(12.2)) {
       break;
   }
 
-  SKProductDiscountMessage *msg = [SKProductDiscountMessage makeWithPrice:productDiscount.price.description
-                                                       priceLocale:[self convertNSLocaleToPigeon:productDiscount.priceLocale]
-                                                   numberOfPeriods:productDiscount.numberOfPeriods
-                                                       paymentMode:paymentMode
-                                                       subscriptionPeriod:[self convertSKProductSubscriptionPeriodToPigeon:productDiscount.subscriptionPeriod]
-                                                        identifier:productDiscount.identifier
-                                                              type:type];
+  SKProductDiscountMessage *msg = [SKProductDiscountMessage
+           makeWithPrice:productDiscount.price.description
+             priceLocale:[self convertNSLocaleToPigeon:productDiscount.priceLocale]
+         numberOfPeriods:productDiscount.numberOfPeriods
+             paymentMode:paymentMode
+      subscriptionPeriod:[self convertSKProductSubscriptionPeriodToPigeon:productDiscount
+                                                                              .subscriptionPeriod]
+              identifier:productDiscount.identifier
+                    type:type];
 
   return msg;
 }
 
-+ (nullable SKPriceLocaleMessage*)convertNSLocaleToPigeon:(nullable NSLocale *)locale
-API_AVAILABLE(ios(12.2)) {
++ (nullable SKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
+    API_AVAILABLE(ios(12.2)) {
   if (!locale) {
     return nil;
   }
-  SKPriceLocaleMessage *msg = [SKPriceLocaleMessage makeWithCurrencySymbol:locale.currencySymbol 
+  SKPriceLocaleMessage *msg = [SKPriceLocaleMessage makeWithCurrencySymbol:locale.currencySymbol
                                                               currencyCode:locale.currencyCode
                                                                countryCode:locale.countryCode];
 
   return msg;
 }
 
-+ (nullable SKProductMessage*)convertProductToPigeon:(nullable SKProduct *)product
-API_AVAILABLE(ios(12.2)) {
++ (nullable SKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
+    API_AVAILABLE(ios(12.2)) {
   NSArray<SKProductDiscount *> *skProductDiscounts = product.discounts;
-  NSMutableArray<SKProductDiscountMessage *> *pigeonProductDiscounts = [[NSMutableArray alloc] init];
+  NSMutableArray<SKProductDiscountMessage *> *pigeonProductDiscounts =
+      [[NSMutableArray alloc] init];
 
   for (SKProductDiscount *productDiscount in skProductDiscounts) {
     [pigeonProductDiscounts addObject:[self convertProductDiscountToPigeon:productDiscount]];
   };
 
-  SKProductMessage *msg =
-  [SKProductMessage makeWithProductIdentifier:product.productIdentifier
-                               localizedTitle:product.localizedTitle
-                         localizedDescription:product.localizedDescription
-                                  priceLocale:[self convertNSLocaleToPigeon:product.priceLocale]
-                  subscriptionGroupIdentifier:product.subscriptionGroupIdentifier
-                                        price:product.price.description
-                           subscriptionPeriod:[self convertSKProductSubscriptionPeriodToPigeon:product.subscriptionPeriod]
-                            introductoryPrice:[self convertProductDiscountToPigeon:product.introductoryPrice]
-                                    discounts:pigeonProductDiscounts];
+  SKProductMessage *msg = [SKProductMessage
+        makeWithProductIdentifier:product.productIdentifier
+                   localizedTitle:product.localizedTitle
+             localizedDescription:product.localizedDescription
+                      priceLocale:[self convertNSLocaleToPigeon:product.priceLocale]
+      subscriptionGroupIdentifier:product.subscriptionGroupIdentifier
+                            price:product.price.description
+               subscriptionPeriod:
+                   [self convertSKProductSubscriptionPeriodToPigeon:product.subscriptionPeriod]
+                introductoryPrice:[self convertProductDiscountToPigeon:product.introductoryPrice]
+                        discounts:pigeonProductDiscounts];
 
   return msg;
 }
 
-+ (nullable SKProductsResponseMessage*)convertProductsResponseToPigeon:(nullable SKProductsResponse *)productsResponse
-API_AVAILABLE(ios(12.2)) {
-
++ (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
+    (nullable SKProductsResponse *)productsResponse API_AVAILABLE(ios(12.2)) {
   NSArray<SKProduct *> *skProducts = productsResponse.products;
   NSMutableArray<SKProductMessage *> *pigeonProducts = [[NSMutableArray alloc] init];
 
@@ -489,8 +492,9 @@ API_AVAILABLE(ios(12.2)) {
     [pigeonProducts addObject:[self convertProductToPigeon:product]];
   };
 
-  SKProductsResponseMessage *msg = [SKProductsResponseMessage makeWithProducts:pigeonProducts
-                                                     invalidProductIdentifiers:productsResponse.invalidProductIdentifiers];
+  SKProductsResponseMessage *msg =
+      [SKProductsResponseMessage makeWithProducts:pigeonProducts
+                        invalidProductIdentifiers:productsResponse.invalidProductIdentifiers];
   return msg;
 }
 

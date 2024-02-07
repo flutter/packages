@@ -66,11 +66,16 @@ class SkProductResponseWrapper {
   @override
   int get hashCode => Object.hash(products, invalidProductIdentifiers);
 
-  static SkProductResponseWrapper convertFromPigeon(SKProductsResponseMessage msg) {
-      return SkProductResponseWrapper(
-          products: msg.products!.map((SKProductMessage? e) => SKProductWrapper.convertFromPigeon(e!)).toList(),
-          invalidProductIdentifiers: msg.invalidProductIdentifiers != null ? msg.invalidProductIdentifiers!.cast<String>() : <String>[],
-      );
+  static SkProductResponseWrapper convertFromPigeon(
+      SKProductsResponseMessage msg) {
+    return SkProductResponseWrapper(
+      products: msg.products!
+          .map((SKProductMessage? e) => SKProductWrapper.convertFromPigeon(e!))
+          .toList(),
+      invalidProductIdentifiers: msg.invalidProductIdentifiers != null
+          ? msg.invalidProductIdentifiers!.cast<String>()
+          : <String>[],
+    );
   }
 }
 
@@ -98,7 +103,8 @@ enum SKSubscriptionPeriodUnit {
   @JsonValue(3)
   year;
 
-  static SKSubscriptionPeriodUnit convertFromPigeon(SKSubscriptionPeriodUnitMessage msg) {
+  static SKSubscriptionPeriodUnit convertFromPigeon(
+      SKSubscriptionPeriodUnitMessage msg) {
     switch (msg) {
       case SKSubscriptionPeriodUnitMessage.day:
         return SKSubscriptionPeriodUnit.day;
@@ -164,7 +170,8 @@ class SKProductSubscriptionPeriodWrapper {
   @override
   int get hashCode => Object.hash(numberOfUnits, unit);
 
-  static SKProductSubscriptionPeriodWrapper convertFromPigeon(SKProductSubscriptionPeriodMessage msg) {
+  static SKProductSubscriptionPeriodWrapper convertFromPigeon(
+      SKProductSubscriptionPeriodMessage msg) {
     return SKProductSubscriptionPeriodWrapper(
         numberOfUnits: msg.numberOfUnits,
         unit: SKSubscriptionPeriodUnit.convertFromPigeon(msg.unit));
@@ -193,7 +200,8 @@ enum SKProductDiscountPaymentMode {
   @JsonValue(-1)
   unspecified;
 
-  static SKProductDiscountPaymentMode convertFromPigeon(SKProductDiscountPaymentModeMessage msg) {
+  static SKProductDiscountPaymentMode convertFromPigeon(
+      SKProductDiscountPaymentModeMessage msg) {
     switch (msg) {
       case SKProductDiscountPaymentModeMessage.payAsYouGo:
         return SKProductDiscountPaymentMode.payAsYouGo;
@@ -224,7 +232,8 @@ enum SKProductDiscountType {
   @JsonValue(1)
   subscription;
 
-  static SKProductDiscountType convertFromPigeon(SKProductDiscountTypeMessage msg) {
+  static SKProductDiscountType convertFromPigeon(
+      SKProductDiscountTypeMessage msg) {
     switch (msg) {
       case SKProductDiscountTypeMessage.introductory:
         return SKProductDiscountType.introductory;
@@ -315,13 +324,17 @@ class SKProductDiscountWrapper {
   int get hashCode => Object.hash(price, priceLocale, numberOfPeriods,
       paymentMode, subscriptionPeriod, identifier, type);
 
-  static SKProductDiscountWrapper convertFromPigeon(SKProductDiscountMessage msg) {
+  static SKProductDiscountWrapper convertFromPigeon(
+      SKProductDiscountMessage msg) {
     return SKProductDiscountWrapper(
         price: msg.price,
         priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
         numberOfPeriods: msg.numberOfPeriods,
-        paymentMode: SKProductDiscountPaymentMode.convertFromPigeon(msg.paymentMode),
-        subscriptionPeriod: SKProductSubscriptionPeriodWrapper.convertFromPigeon(msg.subscriptionPeriod),
+        paymentMode:
+            SKProductDiscountPaymentMode.convertFromPigeon(msg.paymentMode),
+        subscriptionPeriod:
+            SKProductSubscriptionPeriodWrapper.convertFromPigeon(
+                msg.subscriptionPeriod),
         identifier: msg.identifier,
         type: SKProductDiscountType.convertFromPigeon(msg.type));
   }
@@ -445,16 +458,26 @@ class SKProductWrapper {
       discounts);
 
   static SKProductWrapper convertFromPigeon(SKProductMessage msg) {
-    return SKProductWrapper(productIdentifier: msg.productIdentifier,
+    return SKProductWrapper(
+        productIdentifier: msg.productIdentifier,
         localizedTitle: msg.localizedTitle,
         localizedDescription: msg.localizedDescription,
         priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
         price: msg.price,
         subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
-        subscriptionPeriod: msg.subscriptionPeriod != null ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(msg.subscriptionPeriod!) : null,
-        introductoryPrice: msg.introductoryPrice != null ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!) : null,
-        discounts: msg.discounts != null ? msg.discounts!.map((SKProductDiscountMessage? e) => SKProductDiscountWrapper.convertFromPigeon(e!)).toList() : <SKProductDiscountWrapper>[]
-    );
+        subscriptionPeriod: msg.subscriptionPeriod != null
+            ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
+                msg.subscriptionPeriod!)
+            : null,
+        introductoryPrice: msg.introductoryPrice != null
+            ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!)
+            : null,
+        discounts: msg.discounts != null
+            ? msg.discounts!
+                .map((SKProductDiscountMessage? e) =>
+                    SKProductDiscountWrapper.convertFromPigeon(e!))
+                .toList()
+            : <SKProductDiscountWrapper>[]);
   }
 }
 
@@ -520,7 +543,6 @@ class SKPriceLocaleWrapper {
     return SKPriceLocaleWrapper(
         currencySymbol: msg.currencySymbol,
         currencyCode: msg.currencyCode,
-        countryCode: msg.countryCode
-    );
+        countryCode: msg.countryCode);
   }
 }

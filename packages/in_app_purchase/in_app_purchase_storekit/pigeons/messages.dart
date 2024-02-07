@@ -131,26 +131,23 @@ class SKStorefrontMessage {
 }
 
 class SKProductsResponseMessage {
-  const SKProductsResponseMessage ({
-    required this.products,
-    required this.invalidProductIdentifiers
-});
+  const SKProductsResponseMessage(
+      {required this.products, required this.invalidProductIdentifiers});
   final List<SKProductMessage?>? products;
   final List<String?>? invalidProductIdentifiers;
 }
 
 class SKProductMessage {
-  const SKProductMessage({
-    required this.productIdentifier,
-    required this.localizedTitle,
-    required this.localizedDescription,
-    required this.priceLocale,
-    required this.price,
-    this.subscriptionGroupIdentifier,
-    this.subscriptionPeriod,
-    this.introductoryPrice,
-    this.discounts
-  });
+  const SKProductMessage(
+      {required this.productIdentifier,
+      required this.localizedTitle,
+      required this.localizedDescription,
+      required this.priceLocale,
+      required this.price,
+      this.subscriptionGroupIdentifier,
+      this.subscriptionPeriod,
+      this.introductoryPrice,
+      this.discounts});
 
   final String productIdentifier;
   final String localizedTitle;
@@ -183,12 +180,12 @@ class SKPriceLocaleMessage {
 class SKProductDiscountMessage {
   const SKProductDiscountMessage(
       {required this.price,
-        required this.priceLocale,
-        required this.numberOfPeriods,
-        required this.paymentMode,
-        required this.subscriptionPeriod,
-        required this.identifier,
-        required this.type});
+      required this.priceLocale,
+      required this.numberOfPeriods,
+      required this.paymentMode,
+      required this.subscriptionPeriod,
+      required this.identifier,
+      required this.type});
 
   final String price;
   final SKPriceLocaleMessage priceLocale;
@@ -251,7 +248,8 @@ abstract class InAppPurchaseAPI {
   void addPayment(Map<String, Object?> paymentMap);
 
   @async
-  SKProductsResponseMessage startProductRequest(List<String> productIdentifiers);
+  SKProductsResponseMessage startProductRequest(
+      List<String> productIdentifiers);
 
   void finishTransaction(Map<String, String?> finishMap);
 
@@ -260,5 +258,4 @@ abstract class InAppPurchaseAPI {
   void presentCodeRedemptionSheet();
   //
   // void retrieveReceiptData();
-
 }

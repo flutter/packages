@@ -290,9 +290,25 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  SKProductsResponseMessage startProductRequest(List<String?> productIdentifiers) {
-    // TODO: implement startProductRequest
+  void finishTransaction(Map<String?, String?> finishMap) {
+    // TODO: implement finishTransaction
+  }
+
+  @override
+  void presentCodeRedemptionSheet() {
+    // TODO: implement presentCodeRedemptionSheet
+  }
+
+  @override
+  void restoreTransactions(String? applicationUserName) {
+    // TODO: implement restoreTransactions
+  }
+
+  @override
+  Future<SKProductsResponseMessage> startProductRequest(
+      List<String?> productIdentifiers) {
+    print("hello 2");
+
     throw UnimplementedError();
   }
-  
 }

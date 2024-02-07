@@ -136,8 +136,9 @@
   return [FIAObjectTranslator convertStorefrontToPigeon:storefront];
 }
 
-- (void)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers completion:(void (^)(SKProductsResponseMessage *_Nullable, FlutterError *_Nullable))completion {
-
+- (void)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers
+                                   completion:(void (^)(SKProductsResponseMessage *_Nullable,
+                                                        FlutterError *_Nullable))completion {
   SKProductsRequest *request =
       [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
   FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
@@ -149,14 +150,14 @@
     FlutterError *error = nil;
     if (startProductRequestError != nil) {
       error = [FlutterError errorWithCode:@"storekit_getproductrequest_platform_error"
-                                 message:startProductRequestError.localizedDescription
-                                 details:startProductRequestError.description];
+                                  message:startProductRequestError.localizedDescription
+                                  details:startProductRequestError.description];
     }
     if (!response) {
       error = [FlutterError errorWithCode:@"storekit_platform_no_response"
-                                 message:@"Failed to get SKProductResponse in startRequest "
-                                         @"call. Error occured on iOS platform"
-                                 details:productIdentifiers];
+                                  message:@"Failed to get SKProductResponse in startRequest "
+                                          @"call. Error occured on iOS platform"
+                                  details:productIdentifiers];
     }
     for (SKProduct *product in response.products) {
       [self.productsCache setObject:product forKey:product.productIdentifier];
@@ -224,7 +225,8 @@
   }
 }
 
-- (void)finishTransactionFinishMap:(nonnull NSDictionary<NSString *,NSString *> *)finishMap error:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+- (void)finishTransactionFinishMap:(nonnull NSDictionary<NSString *, NSString *> *)finishMap
+                             error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   NSString *transactionIdentifier = [finishMap objectForKey:@"transactionIdentifier"];
   NSString *productIdentifier = [finishMap objectForKey:@"productIdentifier"];
 
@@ -243,19 +245,22 @@
         [self.paymentQueueHandler finishTransaction:transaction];
       } @catch (NSException *e) {
         *error = [FlutterError errorWithCode:@"storekit_finish_transaction_exception"
-                                   message:e.name
-                                   details:e.description];
+                                     message:e.name
+                                     details:e.description];
         return;
       }
     }
   }
 }
 
-- (void)restoreTransactionsApplicationUserName:(nullable NSString *)applicationUserName error:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+- (void)restoreTransactionsApplicationUserName:(nullable NSString *)applicationUserName
+                                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                   error {
   [self.paymentQueueHandler restoreTransactions:applicationUserName];
 }
 
-- (void)presentCodeRedemptionSheetWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (void)presentCodeRedemptionSheetWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
   [self.paymentQueueHandler presentCodeRedemptionSheet];
 #endif

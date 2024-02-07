@@ -11,8 +11,6 @@ import '../channel.dart';
 import '../messages.g.dart';
 import 'sk_product_wrapper.dart';
 
-
-
 /// A request maker that handles all the requests made by SKRequest subclasses.
 ///
 /// There are multiple [SKRequest](https://developer.apple.com/documentation/storekit/skrequest?language=objc) subclasses handling different requests in the `StoreKit` with multiple delegate methods,
@@ -26,6 +24,7 @@ class SKRequestMaker {
   void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
     _hostApi = api;
   }
+
   /// Fetches product information for a list of given product identifiers.
   ///
   /// The `productIdentifiers` should contain legitimate product identifiers that you declared for the products in the iTunes Connect. Invalid identifiers
@@ -37,7 +36,8 @@ class SKRequestMaker {
   /// A [PlatformException] is thrown if the platform code making the request fails.
   Future<SkProductResponseWrapper> startProductRequest(
       List<String> productIdentifiers) async {
-    final SKProductsResponseMessage productResponsePigeon = await _hostApi.startProductRequest(productIdentifiers);
+    final SKProductsResponseMessage productResponsePigeon =
+        await _hostApi.startProductRequest(productIdentifiers);
 
     // should products be null or <String>[] ?
     if (productResponsePigeon.products == null) {

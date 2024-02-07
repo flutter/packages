@@ -185,9 +185,6 @@ class SKPaymentQueueWrapper {
   /// or [`-[SKPayment restoreCompletedTransactionsWithApplicationUsername:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1505992-restorecompletedtransactionswith?language=objc)
   /// depending on whether the `applicationUserName` is set.
   Future<void> restoreTransactions({String? applicationUserName}) async {
-    // await channel.invokeMethod<void>(
-    //     '-[InAppPurchasePlugin restoreTransactions:result:]',
-    //     applicationUserName);
     await _hostApi.restoreTransactions(applicationUserName);
   }
 
@@ -198,8 +195,7 @@ class SKPaymentQueueWrapper {
   /// This method triggers [`-[SKPayment
   /// presentCodeRedemptionSheet]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3566726-presentcoderedemptionsheet?language=objc)
   Future<void> presentCodeRedemptionSheet() async {
-    await channel.invokeMethod<void>(
-        '-[InAppPurchasePlugin presentCodeRedemptionSheet:result:]');
+    await _hostApi.presentCodeRedemptionSheet();
   }
 
   /// Shows the price consent sheet if the user has not yet responded to a
