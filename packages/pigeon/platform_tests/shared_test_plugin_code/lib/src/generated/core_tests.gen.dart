@@ -34,7 +34,7 @@ enum AnEnum {
   one,
   two,
   three,
-  fourtyTwo,
+  fortyTwo,
   fourHundredTwentyTwo,
 }
 
