@@ -2193,23 +2193,72 @@ abstract class TestMeteringPointHostApi {
   }
 }
 
-abstract class TestDisplayOrientedMeteringPointFactoryHostApi {
+class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
+  const _TestCaptureRequestOptionsHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is CameraPermissionsErrorData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is CameraStateTypeData) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is ExposureCompensationRange) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is MeteringPointInfo) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is ResolutionInfo) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is VideoQualityData) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return CameraPermissionsErrorData.decode(readValue(buffer)!);
+      case 129:
+        return CameraStateTypeData.decode(readValue(buffer)!);
+      case 130:
+        return ExposureCompensationRange.decode(readValue(buffer)!);
+      case 131:
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      case 132:
+        return MeteringPointInfo.decode(readValue(buffer)!);
+      case 133:
+        return ResolutionInfo.decode(readValue(buffer)!);
+      case 134:
+        return VideoQualityData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class TestCaptureRequestOptionsHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
       TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec =
+      _TestCaptureRequestOptionsHostApiCodec();
 
-  void create(int identifier, int cameraInfoId, int width, int height);
+  void create(int identifier, Map<int?, Object?> options);
 
-  int createPoint(int x, int y, int? size);
-
-  int getDefaultPointSize();
-
-  static void setup(TestDisplayOrientedMeteringPointFactoryHostApi? api,
+  static void setup(TestCaptureRequestOptionsHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create',
-          codec,
+          'dev.flutter.pigeon.CaptureRequestOptionsHostApi.create', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
@@ -2219,29 +2268,63 @@ abstract class TestDisplayOrientedMeteringPointFactoryHostApi {
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null.');
+              'Argument for dev.flutter.pigeon.CaptureRequestOptionsHostApi.create was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
-          final int? arg_cameraInfoId = (args[1] as int?);
-          assert(arg_cameraInfoId != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
-          final int? arg_width = (args[2] as int?);
-          assert(arg_width != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
-          final int? arg_height = (args[3] as int?);
-          assert(arg_height != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create was null, expected non-null int.');
-          api.create(
-              arg_identifier!, arg_cameraInfoId!, arg_width!, arg_height!);
+              'Argument for dev.flutter.pigeon.CaptureRequestOptionsHostApi.create was null, expected non-null int.');
+          final Map<int?, Object?>? arg_options =
+              (args[1] as Map<Object?, Object?>?)?.cast<int?, Object?>();
+          assert(arg_options != null,
+              'Argument for dev.flutter.pigeon.CaptureRequestOptionsHostApi.create was null, expected non-null Map<int?, Object?>.');
+          api.create(arg_identifier!, arg_options!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestCamera2CameraControlHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier, int cameraControlIdentifier);
+
+  Future<void> addCaptureRequestOptions(
+      int identifier, int captureRequestOptionsIdentifier);
+
+  static void setup(TestCamera2CameraControlHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraControlHostApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraControlHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraControlHostApi.create was null, expected non-null int.');
+          final int? arg_cameraControlIdentifier = (args[1] as int?);
+          assert(arg_cameraControlIdentifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraControlHostApi.create was null, expected non-null int.');
+          api.create(arg_identifier!, arg_cameraControlIdentifier!);
           return <Object?>[];
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint',
+          'dev.flutter.pigeon.Camera2CameraControlHostApi.addCaptureRequestOptions',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2252,35 +2335,17 @@ abstract class TestDisplayOrientedMeteringPointFactoryHostApi {
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint was null.');
+              'Argument for dev.flutter.pigeon.Camera2CameraControlHostApi.addCaptureRequestOptions was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_x = (args[0] as int?);
-          assert(arg_x != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint was null, expected non-null int.');
-          final int? arg_y = (args[1] as int?);
-          assert(arg_y != null,
-              'Argument for dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint was null, expected non-null int.');
-          final int? arg_size = (args[2] as int?);
-          final int output = api.createPoint(arg_x!, arg_y!, arg_size);
-          return <Object?>[output];
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.getDefaultPointSize',
-          codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(channel,
-                (Object? message) async {
-          // ignore message
-          final int output = api.getDefaultPointSize();
-          return <Object?>[output];
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraControlHostApi.addCaptureRequestOptions was null, expected non-null int.');
+          final int? arg_captureRequestOptionsIdentifier = (args[1] as int?);
+          assert(arg_captureRequestOptionsIdentifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraControlHostApi.addCaptureRequestOptions was null, expected non-null int.');
+          await api.addCaptureRequestOptions(
+              arg_identifier!, arg_captureRequestOptionsIdentifier!);
+          return <Object?>[];
         });
       }
     }

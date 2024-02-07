@@ -62,6 +62,8 @@ void main() {
 
       const List<String> changedFiles = <String>[
         'packages/a_plugin/CHANGELOG.md',
+        // Dev-facing docs.
+        'packages/a_plugin/CONTRIBUTING.md',
         // Analysis.
         'packages/a_plugin/example/android/lint-baseline.xml',
         // Tests.
