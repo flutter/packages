@@ -49,6 +49,7 @@ class _MyAppState extends State<_MyApp> {
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];
   List<String> _consumables = <String>[];
   String _countryCode = '';
+  String _isAlternativeBillingOnlyAvailableResponseCode = '';
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
@@ -211,7 +212,19 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Card _buildFetchButtons() {
-    final ListTile fetchCountryCode = ListTile(
+    const ListTile header = ListTile(title: Text('AlternativeBilling Info'));
+    final List<Widget> entries = <ListTile>[];
+    entries.add(ListTile(
+        title: Text('User Country Code',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_countryCode)));
+    entries.add(ListTile(
+        title: Text('isAlternativeBillingOnlyAvailable response code',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_isAlternativeBillingOnlyAvailableResponseCode)));
+
+    final List<Widget> buttons = <ListTile>[];
+    buttons.add(ListTile(
       title: TextButton(
         style: TextButton.styleFrom(
           backgroundColor: Colors.green[800],
@@ -225,10 +238,47 @@ class _MyAppState extends State<_MyApp> {
         },
         child: const Text('Fetch Country Code'),
       ),
-    );
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(deliverIsAlternativeBillingOnlyAvailable(
+              addition.isAlternativeBillingOnlyAvailable()));
+        },
+        child: const Text('isAlternativeBillingOnlyAvailable'),
+      ),
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(addition.showAlternativeBillingOnlyInformationDialog());
+        },
+        child: const Text('showAlternativeBillingOnlyInformationDialog'),
+      ),
+    ));
     return Card(
       child: Column(
-        children: [fetchCountryCode],
+        children: <Widget>[
+          header,
+          const Divider(),
+          ...entries,
+          const Divider(),
+          ...buttons,
+        ],
       ),
     );
   }
@@ -252,11 +302,6 @@ class _MyAppState extends State<_MyApp> {
           subtitle: const Text(
               'This app needs special configuration to run. Please see example/README.md for instructions.')));
     }
-
-    productList.add(ListTile(
-        title: Text('User Country Code',
-            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
-        subtitle: Text(_countryCode)));
 
     // This loading previous purchases code is just a demo. Please do not use this as it is.
     // In your app you should always verify the purchase data using the `verificationData` inside the [PurchaseDetails] object before trusting it.
@@ -380,6 +425,15 @@ class _MyAppState extends State<_MyApp> {
     final String countryCode = await countryCodeFuture;
     setState(() {
       _countryCode = countryCode;
+    });
+  }
+
+  Future<void> deliverIsAlternativeBillingOnlyAvailable(
+      Future<BillingResultWrapper> billingOnly) async {
+    final BillingResultWrapper wrapper = await billingOnly;
+    setState(() {
+      _isAlternativeBillingOnlyAvailableResponseCode =
+          wrapper.responseCode.name;
     });
   }
 
