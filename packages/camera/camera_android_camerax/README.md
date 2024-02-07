@@ -24,20 +24,19 @@ dependencies:
 
 ## Missing features and limitations
 
-
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX,
 and thus, the plugin will fall back to 480p if configured with a
 `ResolutionPreset`.
 
-### Exposure mode, point, & offset configuration \[[Issue #120468][120468]\]
+### Exposure mode configuration \[[Issue #120468][120468]\]
 
-`setExposureMode`, `setExposurePoint`, & `setExposureOffset` are unimplemented.
+`setExposureMode`is unimplemented.
 
-### Focus mode & point configuration \[[Issue #120467][120467]\]
+### Focus mode configuration \[[Issue #120467][120467]\]
 
-`setFocusMode` & `setFocusPoint` are unimplemented.
+`setFocusMode` is unimplemented.
 
 ### Setting maximum duration and stream options for video capture
 

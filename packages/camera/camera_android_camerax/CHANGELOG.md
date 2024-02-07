@@ -1,3 +1,7 @@
+## 0.5.0+32
+
+* Implements `setFocusPoint`, `setExposurePoint`, and `setExposureOffset`.
+
 ## 0.5.0+31
 
 * Wraps CameraX classes needed to set capture request options, which is needed to implement setting the exposure mode.
