@@ -729,6 +729,18 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
+  _i9.Future<void> setOnScrollPositionChange(
+          void Function(_i3.ScrollPositionChange)? onScrollPositionChange) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnScrollPositionChange,
+          [onScrollPositionChange],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
   _i9.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -834,18 +846,6 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<String?>);
 
   @override
-  _i9.Future<void> setOnScrollPositionChange(
-          void Function(_i3.ScrollPositionChange)? onScrollPositionChange) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnScrollPositionChange,
-          [onScrollPositionChange],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
   _i9.Future<void> setOnJavaScriptAlertDialog(
           _i9.Future<void> Function(_i3.JavaScriptAlertDialogRequest)?
               onJavaScriptAlertDialog) =>
@@ -891,17 +891,43 @@ class MockAndroidWebViewController extends _i1.Mock
 class MockAndroidWebViewProxy extends _i1.Mock
     implements _i10.AndroidWebViewProxy {
   @override
-  _i2.WebView Function() get createAndroidWebView => (super.noSuchMethod(
+  _i2.WebView Function(
+      {dynamic Function(
+        int,
+        int,
+        int,
+        int,
+      )? onScrollChanged}) get createAndroidWebView => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebView),
-        returnValue: () => _FakeWebView_7(
+        returnValue: (
+                {dynamic Function(
+                  int,
+                  int,
+                  int,
+                  int,
+                )? onScrollChanged}) =>
+            _FakeWebView_7(
           this,
           Invocation.getter(#createAndroidWebView),
         ),
-        returnValueForMissingStub: () => _FakeWebView_7(
+        returnValueForMissingStub: (
+                {dynamic Function(
+                  int,
+                  int,
+                  int,
+                  int,
+                )? onScrollChanged}) =>
+            _FakeWebView_7(
           this,
           Invocation.getter(#createAndroidWebView),
         ),
-      ) as _i2.WebView Function());
+      ) as _i2.WebView Function(
+          {dynamic Function(
+            int,
+            int,
+            int,
+            int,
+          )? onScrollChanged}));
 
   @override
   _i2.WebChromeClient Function({

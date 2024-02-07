@@ -99,7 +99,15 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// The native [android_webview.WebView] being controlled.
   late final android_webview.WebView _webView =
-      _androidWebViewParams.androidWebViewProxy.createAndroidWebView();
+      _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
+          onScrollChanged: withWeakReferenceTo(this,
+              (WeakReference<AndroidWebViewController> weakReference) {
+    return (int left, int top, int oldLeft, int oldTop) async {
+      final void Function(ScrollPositionChange)? callback =
+          weakReference.target?._onScrollPositionChangedCallback;
+      callback?.call(ScrollPositionChange(left.toDouble(), top.toDouble()));
+    };
+  }));
 
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(
@@ -340,6 +348,9 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<String> Function(JavaScriptTextInputDialogRequest request)?
       _onJavaScriptPrompt;
 
+  void Function(ScrollPositionChange scrollPositionChange)?
+      _onScrollPositionChangedCallback;
+
   /// Whether to enable the platform's webview content debugging tools.
   ///
   /// Defaults to false.
@@ -558,6 +569,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   @override
   Future<void> setUserAgent(String? userAgent) =>
       _webView.settings.setUserAgentString(userAgent);
+
+  @override
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) async {
+    _onScrollPositionChangedCallback = onScrollPositionChange;
+  }
 
   /// Sets the restrictions that apply on automatic media playback.
   Future<void> setMediaPlaybackRequiresUserGesture(bool require) {
