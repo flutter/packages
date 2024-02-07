@@ -1006,25 +1006,36 @@ void main() {
 
   group('video recording', () {
     test(
-        'startVideoCapturing binds video capture use case and starts the recording',
+        'startVideoCapturing binds video capture use case, updates saved camera instance and its properties, and starts the recording',
         () async {
       // Set up mocks and constants.
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final MockRecording mockRecording = MockRecording();
+      final MockCamera mockCamera = MockCamera();
+      final MockCamera newMockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+      final MockLiveCameraState newMockLiveCameraState = MockLiveCameraState();
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
       // Set directly for test versus calling createCamera.
       camera.processCameraProvider = MockProcessCameraProvider();
-      camera.camera = MockCamera();
+      camera.camera = mockCamera;
       camera.recorder = MockRecorder();
       camera.videoCapture = MockVideoCapture();
       camera.cameraSelector = MockCameraSelector();
+      camera.liveCameraState = mockLiveCameraState;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
+
+      // Tell plugin to create detached Observer when camera info updated.
+      camera.proxy = CameraXProxy(
+          createCameraStateObserver: (void Function(Object) onChanged) =>
+              Observer<CameraState>.detached(onChanged: onChanged));
 
       const int cameraId = 17;
       const String outputPath = '/temp/MOV123.temp';
@@ -1039,12 +1050,30 @@ void main() {
           .thenAnswer((_) async => false);
       when(camera.processCameraProvider!.bindToLifecycle(
               camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
-          .thenAnswer((_) async => camera.camera!);
+          .thenAnswer((_) async => newMockCamera);
+      when(newMockCamera.getCameraInfo())
+          .thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState())
+          .thenAnswer((_) async => newMockLiveCameraState);
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
+      // Verify VideoCapture UseCase is bound and camera & its properties
+      // are updated.
       verify(camera.processCameraProvider!.bindToLifecycle(
           camera.cameraSelector!, <UseCase>[camera.videoCapture!]));
+      expect(camera.camera, equals(newMockCamera));
+      expect(camera.cameraInfo, equals(mockCameraInfo));
+      verify(mockLiveCameraState.removeObservers());
+      expect(
+          await testCameraClosingObserver(
+              camera,
+              cameraId,
+              verify(newMockLiveCameraState.observe(captureAny)).captured.single
+                  as Observer<dynamic>),
+          isTrue);
+
+      // Verify recording is started.
       expect(camera.pendingRecording, equals(mockPendingRecording));
       expect(camera.recording, mockRecording);
     });
@@ -1056,6 +1085,8 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final MockRecording mockRecording = MockRecording();
+      final MockCamera mockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
@@ -1068,6 +1099,11 @@ void main() {
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
+
+      // Tell plugin to create detached Observer when camera info updated.
+      camera.proxy = CameraXProxy(
+          createCameraStateObserver: (void Function(Object) onChanged) =>
+              Observer<CameraState>.detached(onChanged: onChanged));
 
       const int cameraId = 17;
       const String outputPath = '/temp/MOV123.temp';
@@ -1082,7 +1118,11 @@ void main() {
           .thenAnswer((_) async => false);
       when(camera.processCameraProvider!.bindToLifecycle(
               camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
-          .thenAnswer((_) async => MockCamera());
+          .thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo())
+          .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+      when(mockCameraInfo.getCameraState())
+          .thenAnswer((_) async => MockLiveCameraState());
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -1253,7 +1293,9 @@ void main() {
       verifyNoMoreInteractions(recording);
     });
 
-    test('stopVideoRecording stops the recording', () async {
+    test(
+        'stopVideoRecording stops the recording and unbinds video capture use case',
+        () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       final MockProcessCameraProvider processCameraProvider =
@@ -1267,11 +1309,19 @@ void main() {
       camera.videoCapture = videoCapture;
       camera.videoOutputPath = videoOutputPath;
 
+      // Tell plugin that videoCapture use case was bound to start recording.
+      when(camera.processCameraProvider!.isBound(videoCapture))
+          .thenAnswer((_) async => true);
+
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
 
+      // Verify that recording stops.
       verify(recording.close());
       verifyNoMoreInteractions(recording);
+
+      // Verify video capture use case is unbound.
+      verify(camera.processCameraProvider!.unbind(<UseCase>[videoCapture]));
     });
 
     test(

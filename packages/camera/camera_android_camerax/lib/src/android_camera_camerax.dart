@@ -680,11 +680,14 @@ class AndroidCameraCameraX extends CameraPlatform {
               'video recording while no recording is in progress.');
     }
     if (videoOutputPath == null) {
+      print('hi');
       // Stop the current active recording as we will be unable to complete it
       // in this error case.
       await recording!.close();
+      // await _unbindUseCaseFromLifecycle(videoCapture!);
       recording = null;
       pendingRecording = null;
+      print('hi');
       throw CameraException(
           'INVALID_PATH',
           'The platform did not return a path '
@@ -692,7 +695,7 @@ class AndroidCameraCameraX extends CameraPlatform {
               'return a valid path or report an error.');
     }
     await recording!.close();
-    await _unbindUseCaseFromLifecycle(videoCapture!);
+    // await _unbindUseCaseFromLifecycle(videoCapture!);
     recording = null;
     pendingRecording = null;
     return XFile(videoOutputPath!);
