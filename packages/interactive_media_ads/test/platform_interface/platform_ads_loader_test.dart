@@ -9,7 +9,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'platform_ads_manager_loader_test.mocks.dart';
+import 'platform_ads_loader_test.mocks.dart';
 
 @GenerateMocks(<Type>[
   InteractiveMediaAdsPlatform,
