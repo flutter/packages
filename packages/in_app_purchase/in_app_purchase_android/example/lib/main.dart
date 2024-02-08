@@ -462,8 +462,7 @@ class _MyAppState extends State<_MyApp> {
       Future<BillingResultWrapper> billingResult) async {
     final BillingResultWrapper wrapper = await billingResult;
     setState(() {
-      _showAlternativeBillingOnlyDialogResponseCode =
-          wrapper.responseCode.name;
+      _showAlternativeBillingOnlyDialogResponseCode = wrapper.responseCode.name;
     });
   }
 

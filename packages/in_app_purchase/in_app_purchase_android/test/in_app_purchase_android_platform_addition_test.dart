@@ -103,7 +103,7 @@ void main() {
             <String, dynamic>{'handle': 0}),
       );
       // Verify that after connection ended reconnect was called.
-      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
       expect(arguments['enableAlternativeBillingOnly'], isTrue);
     });
 
@@ -123,7 +123,7 @@ void main() {
             <String, dynamic>{'handle': 0}),
       );
       // Verify that after connection ended reconnect was called.
-      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
       expect(arguments['enableAlternativeBillingOnly'], isFalse);
     });
   });

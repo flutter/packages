@@ -130,6 +130,7 @@ class BillingClientManager {
     _enableAlternativeBillingOnly = alternativeBillingOnlyState;
     // Ends connection and triggers OnBillingServiceDisconnected, which causes reconnect;
     await client.endConnection();
+    await _connect();
   }
 
   // If disposed, does nothing.
