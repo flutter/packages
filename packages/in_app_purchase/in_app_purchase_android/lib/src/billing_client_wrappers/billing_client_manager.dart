@@ -36,8 +36,7 @@ class BillingClientManager {
   ///
   /// Callers need to check if AlternativeBillingOnly is available by calling
   /// [BillingClientWrapper.isAlternativeBillingOnlyAvailable] first.
-  BillingClientManager({bool enableAlternativeBillingOnly = false})
-      : _enableAlternativeBillingOnly = enableAlternativeBillingOnly {
+  BillingClientManager() : _enableAlternativeBillingOnly = false {
     _connect();
   }
 
@@ -58,7 +57,7 @@ class BillingClientManager {
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
       StreamController<PurchasesResultWrapper>.broadcast();
 
-  final bool _enableAlternativeBillingOnly;
+  bool _enableAlternativeBillingOnly;
   bool _isConnecting = false;
   bool _isDisposed = false;
 
@@ -123,6 +122,14 @@ class BillingClientManager {
     _isDisposed = true;
     client.endConnection();
     _purchasesUpdatedController.close();
+  }
+
+  /// Ends connection to [BillingClient] and reconnects with [alternativeBillingState].
+  Future<void> reconnectWithAlternativeBillingOnlyState(
+      bool alternativeBillingOnlyState) async {
+    _enableAlternativeBillingOnly = alternativeBillingOnlyState;
+    // Ends connection and triggers OnBillingServiceDisconnected, which causes reconnect;
+    await client.endConnection();
   }
 
   // If disposed, does nothing.

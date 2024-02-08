@@ -81,6 +81,35 @@ void main() {
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
     });
 
+    test('re-connects when host calls reconnectWithAlternativeBillingOnlyState',
+        () async {
+      connectedCompleter.complete();
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
+
+      await manager.reconnectWithAlternativeBillingOnlyState(true);
+      // Verify that connection was ended.
+      expect(stubPlatform.countPreviousCalls(endConnectionCall), equals(1));
+
+      stubPlatform.reset();
+
+      late Map<Object?, Object?> arguments;
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+
+      /// Fake the disconnect that we would expect from a endConnectionCall.
+      await manager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      // Verify that after connection ended reconnect was called.
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
+      expect(arguments['enableAlternativeBillingOnly'], isTrue);
+    });
+
     test(
       're-connects when operation returns BillingResponse.serviceDisconnected',
       () async {

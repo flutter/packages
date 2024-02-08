@@ -179,4 +179,17 @@ class InAppPurchaseAndroidPlatformAddition
             client.showAlternativeBillingOnlyInformationDialog());
     return wrapper;
   }
+
+  /// Disconnects, Sets AlternativeBillingOnly to true, and recoonects to
+  /// the [BillingClient].
+  ///
+  /// [alternativeBillingOnlyState] true will enable alternative billing only.
+  ///
+  /// Play apis have requirements for when this method can be called.
+  /// See: https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
+  Future<void> setAlternativeBillingOnlyState(
+      bool alternativeBillingOnlyState) {
+    return _billingClientManager
+        .reconnectWithAlternativeBillingOnlyState(alternativeBillingOnlyState);
+  }
 }
