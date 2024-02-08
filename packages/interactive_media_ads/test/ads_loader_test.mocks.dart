@@ -3,18 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
+import 'dart:async' as _i4;
 
-import 'package:flutter/cupertino.dart' as _i2;
-import 'package:flutter/foundation.dart' as _i3;
 import 'package:interactive_media_ads/src/platform_interface/ads_request.dart'
-    as _i7;
-import 'package:interactive_media_ads/src/platform_interface/platform_ad_display_container.dart'
-    as _i8;
+    as _i5;
 import 'package:interactive_media_ads/src/platform_interface/platform_ads_loader.dart'
-    as _i4;
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -29,90 +25,40 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeWidget_0 extends _i1.SmartFake implements _i2.Widget {
-  _FakeWidget_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-
-  @override
-  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
-      super.toString();
-}
-
 /// A class which mocks [PlatformAdsLoader].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformAdsLoader extends _i1.Mock implements _i4.PlatformAdsLoader {
+class MockPlatformAdsLoader extends _i1.Mock implements _i2.PlatformAdsLoader {
   MockPlatformAdsLoader() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.PlatformAdsLoaderCreationParams get params => (super.noSuchMethod(
+  _i2.PlatformAdsLoaderCreationParams get params => (super.noSuchMethod(
         Invocation.getter(#params),
-        returnValue: _i5.dummyValue<_i4.PlatformAdsLoaderCreationParams>(
+        returnValue: _i3.dummyValue<_i2.PlatformAdsLoaderCreationParams>(
           this,
           Invocation.getter(#params),
         ),
-      ) as _i4.PlatformAdsLoaderCreationParams);
+      ) as _i2.PlatformAdsLoaderCreationParams);
 
   @override
-  _i6.Future<void> contentComplete() => (super.noSuchMethod(
+  _i4.Future<void> contentComplete() => (super.noSuchMethod(
         Invocation.method(
           #contentComplete,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i6.Future<void> requestAds(_i7.AdsRequest? request) => (super.noSuchMethod(
+  _i4.Future<void> requestAds(_i5.AdsRequest? request) => (super.noSuchMethod(
         Invocation.method(
           #requestAds,
           [request],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
-}
-
-/// A class which mocks [PlatformAdDisplayContainer].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockPlatformAdDisplayContainer extends _i1.Mock
-    implements _i8.PlatformAdDisplayContainer {
-  MockPlatformAdDisplayContainer() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i8.PlatformAdDisplayContainerCreationParams get params =>
-      (super.noSuchMethod(
-        Invocation.getter(#params),
-        returnValue:
-            _i5.dummyValue<_i8.PlatformAdDisplayContainerCreationParams>(
-          this,
-          Invocation.getter(#params),
-        ),
-      ) as _i8.PlatformAdDisplayContainerCreationParams);
-
-  @override
-  _i2.Widget build(_i2.BuildContext? context) => (super.noSuchMethod(
-        Invocation.method(
-          #build,
-          [context],
-        ),
-        returnValue: _FakeWidget_0(
-          this,
-          Invocation.method(
-            #build,
-            [context],
-          ),
-        ),
-      ) as _i2.Widget);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

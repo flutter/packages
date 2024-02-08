@@ -10,7 +10,7 @@ import 'package:mockito/mockito.dart';
 
 import 'ads_loader_test.mocks.dart';
 
-@GenerateMocks(<Type>[PlatformAdsLoader, PlatformAdDisplayContainer])
+@GenerateMocks(<Type>[PlatformAdsLoader])
 void main() {
   test('contentComplete', () async {
     final MockPlatformAdsLoader mockPlatformAdsLoader = MockPlatformAdsLoader();

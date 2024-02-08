@@ -14,7 +14,7 @@ base class AdsManagerInitParams {}
 base class AdsManagerStartParams {}
 
 /// Interface for a platform implementation of a `AdsManager`.
-abstract base class PlatformAdsManager {
+abstract class PlatformAdsManager {
   /// Creates a [PlatformAdsManager].
   @protected
   PlatformAdsManager();
