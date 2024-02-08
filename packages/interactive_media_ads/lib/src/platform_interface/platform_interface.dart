@@ -4,6 +4,7 @@
 
 export 'ad_error.dart';
 export 'ad_event.dart';
+export 'ads_request.dart';
 export 'interactive_media_ads_platform.dart';
 export 'platform_ad_display_container.dart';
 export 'platform_ads_loader.dart';

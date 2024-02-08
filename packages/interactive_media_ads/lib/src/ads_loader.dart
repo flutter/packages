@@ -85,6 +85,16 @@ class AdsLoader {
 
   /// Implementation of [PlatformAdsLoader] for the current platform.
   final PlatformAdsLoader platform;
+
+  /// Signal to the SDK that the content has completed.
+  Future<void> contentComplete() {
+    return platform.contentComplete();
+  }
+
+  /// Requests ads from a server.
+  Future<void> requestAds(AdsRequest request) {
+    return platform.requestAds(request);
+  }
 }
 
 /// Data when ads are successfully loaded from the ad server through an
