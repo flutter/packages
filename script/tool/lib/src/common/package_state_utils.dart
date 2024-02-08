@@ -194,6 +194,8 @@ Future<bool> _isDevChange(List<String> pathComponents,
       // Entry point for the 'custom-test' command, which is only for CI and
       // local testing.
       pathComponents.first == 'run_tests.sh' ||
+      // CONTRIBUTING.md is dev-facing.
+      pathComponents.last == 'CONTRIBUTING.md' ||
       // Lints don't affect clients.
       pathComponents.contains('analysis_options.yaml') ||
       pathComponents.contains('lint-baseline.xml') ||
