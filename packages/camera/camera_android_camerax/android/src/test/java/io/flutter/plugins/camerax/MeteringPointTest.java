@@ -77,7 +77,7 @@ public class MeteringPointTest {
 
     when(mockActivity.getDisplay()).thenReturn(mockDisplay);
     when(proxySpy.getDisplayOrientedMeteringPointFactory(
-            mockDisplay, surfaceWidth, surfaceHeight, mockCameraInfo))
+            mockDisplay, mockCameraInfo, surfaceWidth, surfaceHeight))
         .thenReturn(mockDisplayOrientedMeteringPointFactory);
     when(mockDisplayOrientedMeteringPointFactory.createPoint(x, y, size)).thenReturn(meteringPoint);
 
@@ -120,7 +120,7 @@ public class MeteringPointTest {
     when(mockActivity.getSystemService(Context.WINDOW_SERVICE)).thenReturn(mockWindowManager);
     when(mockWindowManager.getDefaultDisplay()).thenReturn(mockDisplay);
     when(proxySpy.getDisplayOrientedMeteringPointFactory(
-            mockDisplay, surfaceWidth, surfaceHeight, mockCameraInfo))
+            mockDisplay, mockCameraInfo, surfaceWidth, surfaceHeight))
         .thenReturn(mockDisplayOrientedMeteringPointFactory);
     when(mockDisplayOrientedMeteringPointFactory.createPoint(x, y, size)).thenReturn(meteringPoint);
 
@@ -159,7 +159,7 @@ public class MeteringPointTest {
 
     when(mockActivity.getDisplay()).thenReturn(mockDisplay);
     when(proxySpy.getDisplayOrientedMeteringPointFactory(
-            mockDisplay, surfaceWidth, surfaceHeight, mockCameraInfo))
+            mockDisplay, mockCameraInfo, surfaceWidth, surfaceHeight))
         .thenReturn(mockDisplayOrientedMeteringPointFactory);
     when(mockDisplayOrientedMeteringPointFactory.createPoint(x, y)).thenReturn(meteringPoint);
 
@@ -197,7 +197,7 @@ public class MeteringPointTest {
     when(mockActivity.getSystemService(Context.WINDOW_SERVICE)).thenReturn(mockWindowManager);
     when(mockWindowManager.getDefaultDisplay()).thenReturn(mockDisplay);
     when(proxySpy.getDisplayOrientedMeteringPointFactory(
-            mockDisplay, surfaceWidth, surfaceHeight, mockCameraInfo))
+            mockDisplay, mockCameraInfo, surfaceWidth, surfaceHeight))
         .thenReturn(mockDisplayOrientedMeteringPointFactory);
     when(mockDisplayOrientedMeteringPointFactory.createPoint(x, y)).thenReturn(meteringPoint);
 

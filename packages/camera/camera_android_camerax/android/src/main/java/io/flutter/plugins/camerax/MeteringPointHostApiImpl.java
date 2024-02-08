@@ -58,7 +58,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
       }
 
       DisplayOrientedMeteringPointFactory factory =
-          getDisplayOrientedMeteringPointFactory(display, 1f, 1f, cameraInfo);
+          getDisplayOrientedMeteringPointFactory(display, cameraInfo, 1f, 1f);
 
       if (size == null) {
         return factory.createPoint(x.floatValue(), y.floatValue());
@@ -70,7 +70,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
     @VisibleForTesting
     @NonNull
     public DisplayOrientedMeteringPointFactory getDisplayOrientedMeteringPointFactory(
-        Display display, float width, float height, CameraInfo cameraInfo) {
+        @NonNull Display display, @NonNull CameraInfo cameraInfo, float width, float height) {
       return new DisplayOrientedMeteringPointFactory(display, cameraInfo, width, height);
     }
 
