@@ -18,7 +18,7 @@ dev_dependencies:
   build_runner: ^2.1.1
   flutter_test:
     sdk: flutter
-  google_maps: 7.0.0-beta.1 # TODO: migrate to stable 7.0.0 once published
+  google_maps: ^7.0.0
   google_maps_flutter: ^2.2.0 # Needed for projection_test.dart
   http: ">=0.13.0 <2.0.0"
   integration_test:
