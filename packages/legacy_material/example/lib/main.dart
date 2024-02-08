@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:legacy_material/legacy_material.dart';
 import 'package:flutter/material.dart';
+import 'package:legacy_material/legacy_material.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
+/// Flutter Counter App, styled for Material 2.
 class MyApp extends StatelessWidget {
+  /// Creates the classic Flutter Counter App with a LegacyThemeData.
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -23,7 +25,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// The home page of the app, containing the counter.
 class MyHomePage extends StatefulWidget {
+  /// Creates the home page of the Flutter Counter App.
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -34,7 +38,7 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
+  /// The title displayed by the AppBar.
   final String title;
 
   @override

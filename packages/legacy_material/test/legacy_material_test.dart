@@ -5,4 +5,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:legacy_material/legacy_material.dart';
 
-void main() {}
+void main() {
+  test('TODO', (){
+    LegacyThemeData.light();
+  });
+}
