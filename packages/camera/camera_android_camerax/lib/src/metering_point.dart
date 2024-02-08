@@ -23,15 +23,15 @@ class MeteringPoint extends JavaObject {
     InstanceManager? instanceManager,
     required this.x,
     required this.y,
-    required this.cameraInfo,
     this.size,
+    required this.cameraInfo,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
         ) {
     _api = _MeteringPointHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, x, y, cameraInfo, size);
+    _api.createFromInstance(this, x, y, size, cameraInfo);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
@@ -42,8 +42,8 @@ class MeteringPoint extends JavaObject {
     InstanceManager? instanceManager,
     required this.x,
     required this.y,
-    required this.cameraInfo,
     this.size,
+    required this.cameraInfo,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -108,7 +108,7 @@ class _MeteringPointHostApiImpl extends MeteringPointHostApi {
   /// Creates a [MeteringPoint] instance with the specified [x] and [y]
   /// coordinates as well as [size] if non-null.
   Future<void> createFromInstance(MeteringPoint instance, double x, double y,
-      CameraInfo cameraInfo, double? size) {
+      double? size, CameraInfo cameraInfo) {
     int? identifier = instanceManager.getIdentifier(instance);
     identifier ??= instanceManager.addDartCreatedInstance(instance,
         onCopy: (MeteringPoint original) {

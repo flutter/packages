@@ -1069,7 +1069,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// This method will merge the current action's metering points with that
   /// specified such that only one auto-exposure metering point and one
   /// auto-focus metering point will be part of the action. This method would
-  /// also accommodatate at most on auto-white balance metering point, but that
+  /// also accommodate at most one auto-white balance metering point, but that
   /// mode is currently unused in this plugin.
   ///
   /// Thus, if [meteringPoint] is non-null, this action includes:
