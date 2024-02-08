@@ -51,15 +51,6 @@ void main() {
     expect(PlatformAdsLoader(createEmptyParams()), isNotNull);
   });
 
-  test('Can be mocked with `MockPlatformInterfaceMixin`', () {
-    when((InteractiveMediaAdsPlatform.instance!
-                as MockInteractiveMediaAdsPlatform)
-            .createPlatformAdsLoader(any))
-        .thenReturn(MockPlatformAdsLoader());
-
-    expect(PlatformAdsLoader(createEmptyParams()), isNotNull);
-  });
-
   test(
       'Default implementation of contentComplete should throw unimplemented error',
       () {
@@ -95,7 +86,3 @@ class ImplementsPlatformAdsLoader implements PlatformAdsLoader {
 class ExtendsPlatformAdsLoader extends PlatformAdsLoader {
   ExtendsPlatformAdsLoader(super.params) : super.implementation();
 }
-
-class MockPlatformAdsLoader extends Mock
-    with MockPlatformInterfaceMixin
-    implements PlatformAdsLoader {}

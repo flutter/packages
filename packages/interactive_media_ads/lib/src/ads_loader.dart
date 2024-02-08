@@ -43,11 +43,7 @@ class AdsLoader {
           PlatformAdsLoaderCreationParams(
             container: container.platform,
             onAdsLoaded: (PlatformOnAdsLoadedData data) {
-              onAdsLoaded(
-                OnAdsLoadedData._(
-                  manager: AdsManager._fromPlatform(data.manager),
-                ),
-              );
+              onAdsLoaded(OnAdsLoadedData._(platform: data));
             },
             onAdsLoadError: onAdsLoadError,
           ),
@@ -95,10 +91,13 @@ class AdsLoader {
 /// [AdsLoader].
 @immutable
 class OnAdsLoadedData {
-  const OnAdsLoadedData._({required this.manager});
+  OnAdsLoadedData._({required this.platform});
+
+  /// Implementation of [PlatformOnAdsLoadedData] for the current platform.
+  final PlatformOnAdsLoadedData platform;
 
   /// The ads manager instance created by the ads loader.
-  final AdsManager manager;
+  late final AdsManager manager = AdsManager._fromPlatform(platform.manager);
 }
 
 /// Handles playing ads after they've been received from the server.
