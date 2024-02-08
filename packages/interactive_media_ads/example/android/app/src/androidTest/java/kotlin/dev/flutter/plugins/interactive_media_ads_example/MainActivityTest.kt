@@ -7,15 +7,12 @@ package kotlin.dev.flutter.plugins.interactive_media_ads_example
 import androidx.test.rule.ActivityTestRule
 import dev.flutter.plugins.integration_test.FlutterTestRunner
 import io.flutter.embedding.android.FlutterActivity
+import kotlin.dev.flutter.plugins.DartIntegrationTest
 import org.junit.Rule
 import org.junit.runner.RunWith
-import kotlin.dev.flutter.plugins.DartIntegrationTest
-
 
 @DartIntegrationTest
 @RunWith(FlutterTestRunner::class)
 class MainActivityTest {
-  @JvmField
-  @Rule
-  var rule = ActivityTestRule(FlutterActivity::class.java)
+  @JvmField @Rule var rule = ActivityTestRule(FlutterActivity::class.java)
 }
