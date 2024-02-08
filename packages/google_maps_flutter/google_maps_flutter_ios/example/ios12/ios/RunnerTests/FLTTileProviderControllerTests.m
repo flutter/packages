@@ -8,19 +8,12 @@
 
 #import <OCMock/OCMock.h>
 
-@interface FLTTileProviderController ()
-- (void)requestTileForX:(NSUInteger)x
-                      y:(NSUInteger)y
-                   zoom:(NSUInteger)zoom
-               receiver:(id<GMSTileReceiver>)receiver;
-@end
-
 @interface FLTTileProviderControllerTests : XCTestCase
 @end
 
 @implementation FLTTileProviderControllerTests
 
-- (void)testFoo {
+- (void)testCallChannelOnPlatformThread {
   id channel = OCMClassMock(FlutterMethodChannel.class);
   FLTTileProviderController *controller = [[FLTTileProviderController alloc] init:channel
                                                         withTileOverlayIdentifier:@"foo"];
