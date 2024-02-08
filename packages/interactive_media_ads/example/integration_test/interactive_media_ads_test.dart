@@ -8,7 +8,5 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('placeholder test', (WidgetTester tester) async {
-
-  });
+  testWidgets('placeholder test', (WidgetTester tester) async {});
 }
