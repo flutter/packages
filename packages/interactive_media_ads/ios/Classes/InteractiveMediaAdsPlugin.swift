@@ -7,7 +7,8 @@ import UIKit
 
 public class InteractiveMediaAdsPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "interactive_media_ads", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(
+      name: "interactive_media_ads", binaryMessenger: registrar.messenger())
     let instance = InteractiveMediaAdsPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
