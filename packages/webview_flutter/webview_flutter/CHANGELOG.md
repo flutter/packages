@@ -3,6 +3,7 @@
 * Adds support for custom handling of JavaScript dialogs. See
   `WebViewController.setOnJavaScriptAlertDialog`, `WebViewController.setOnJavaScriptConfirmDialog`
   and `WebViewController.setOnJavaScriptTextInputDialog`.
+* Updates minimum Dart version to 3.2.3 and minimum Flutter version to 3.16.6.
 
 ## 4.5.0
 
