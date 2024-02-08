@@ -1,4 +1,4 @@
-## NEXT
+## 0.3.10
 
 * Converts `startProductRequest()`, `finishTransaction()`, `restoreTransactions()`, `presentCodeRedemptionSheet()` to pigeon.
 
