@@ -461,7 +461,8 @@
 - (void)testSKProductResponseCovertToPigeon {
   SKProductsResponseStub *response =
       [[SKProductsResponseStub alloc] initWithMap:self.productResponseMap];
-  SKProductsResponseMessage *responseMsg = [FIAObjectTranslator convertProductsResponseToPigeon:response];
+  SKProductsResponseMessage *responseMsg =
+      [FIAObjectTranslator convertProductsResponseToPigeon:response];
 
   XCTAssertEqual(responseMsg.products.count, 1);
   XCTAssertEqual(responseMsg.invalidProductIdentifiers.count, 0);
