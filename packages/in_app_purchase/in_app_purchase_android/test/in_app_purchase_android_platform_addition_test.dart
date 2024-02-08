@@ -22,6 +22,9 @@ void main() {
   const String startConnectionCall =
       'BillingClient#startConnection(BillingClientStateListener)';
   const String endConnectionCall = 'BillingClient#endConnection()';
+  const String onBillingServiceDisconnectedCallback =
+      'BillingClientStateListener#onBillingServiceDisconnected()';
+  late BillingClientManager manager;
 
   setUpAll(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -39,8 +42,8 @@ void main() {
         name: startConnectionCall,
         value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
-    iapAndroidPlatformAddition =
-        InAppPurchaseAndroidPlatformAddition(BillingClientManager());
+    manager = BillingClientManager();
+    iapAndroidPlatformAddition = InAppPurchaseAndroidPlatformAddition(manager);
   });
 
   group('consume purchases', () {
@@ -79,6 +82,49 @@ void main() {
           await iapAndroidPlatformAddition.getCountryCode();
 
       expect(countryCode, equals(expectedCountryCode));
+    });
+  });
+
+  group('setAlternativeBillingOnlyState', () {
+    late Map<Object?, Object?> arguments;
+    test('setAlternativeBillingOnlyState true', () async {
+      stubPlatform.reset();
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+      stubPlatform.addResponse(name: endConnectionCall);
+      await iapAndroidPlatformAddition.setAlternativeBillingOnlyState(true);
+
+      /// Fake the disconnect that we would expect from a endConnectionCall.
+      await manager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      // Verify that after connection ended reconnect was called.
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
+      expect(arguments['enableAlternativeBillingOnly'], isTrue);
+    });
+
+    test('setAlternativeBillingOnlyState false', () async {
+      stubPlatform.reset();
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+      stubPlatform.addResponse(name: endConnectionCall);
+      await iapAndroidPlatformAddition.setAlternativeBillingOnlyState(false);
+
+      /// Fake the disconnect that we would expect from a endConnectionCall.
+      await manager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      // Verify that after connection ended reconnect was called.
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
+      expect(arguments['enableAlternativeBillingOnly'], isFalse);
     });
   });
 
