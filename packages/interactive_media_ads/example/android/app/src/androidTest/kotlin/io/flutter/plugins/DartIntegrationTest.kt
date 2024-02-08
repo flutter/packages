@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package kotlin.dev.flutter.plugins
+package io.flutter.plugins
 
 /*
  * Annotation to aid repository tooling in determining if a test is
