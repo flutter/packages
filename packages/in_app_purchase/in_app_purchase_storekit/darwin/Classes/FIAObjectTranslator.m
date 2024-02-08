@@ -307,6 +307,10 @@
 }
 
 + (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error {
+  if (!error) {
+    return nil;
+  }
+
   NSMutableDictionary *userInfo = [NSMutableDictionary new];
   for (NSErrorUserInfoKey key in error.userInfo) {
     id value = error.userInfo[key];
@@ -460,6 +464,10 @@
 
 + (nullable SKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
     API_AVAILABLE(ios(12.2)) {
+  if (!product) {
+    return nil;
+  }
+
   NSArray<SKProductDiscount *> *skProductDiscounts = product.discounts;
   NSMutableArray<SKProductDiscountMessage *> *pigeonProductDiscounts =
       [[NSMutableArray alloc] init];
@@ -485,6 +493,9 @@
 
 + (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
     (nullable SKProductsResponse *)productsResponse API_AVAILABLE(ios(12.2)) {
+  if (!productsResponse) {
+    return nil;
+  }
   NSArray<SKProduct *> *skProducts = productsResponse.products;
   NSMutableArray<SKProductMessage *> *pigeonProducts = [[NSMutableArray alloc] init];
 
