@@ -1,7 +1,6 @@
-## 0.6.18+4
+## 0.6.19
 
-* Uses Text.rich to replace RichText so the widget can work with `SelectionArea` when `selectable` set to false.
-* Updates affected tests.
+* Uses `Text.rich` to replace `RichText` so the widget can work with `SelectionArea` when `selectable` set to false.
 
 ## 0.6.18+3
 
