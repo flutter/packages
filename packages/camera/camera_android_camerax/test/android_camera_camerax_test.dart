@@ -662,7 +662,9 @@ void main() {
       'initializeCamera throws a CameraException when createCamera has not been called before initializedCamera',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    expect(() => camera.initializeCamera(3), throwsA(isA<CameraException>()));
+    await expectLater(() async {
+      await camera.initializeCamera(3);
+    }, throwsA(isA<CameraException>()));
   });
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {
@@ -1334,47 +1336,60 @@ void main() {
       camera.recording = null;
       camera.videoOutputPath = videoOutputPath;
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
+      await expectLater(() async {
+        await camera.stopVideoRecording(0);
+      }, throwsA(isA<CameraException>()));
     });
+  });
 
-    test(
-        'stopVideoRecording throws a camera exception if '
-        'videoOutputPath is null, and sets recording to null', () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      final MockRecording recording = MockRecording();
+  test(
+      'stopVideoRecording throws a camera exception if '
+      'videoOutputPath is null, and sets recording to null', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockRecording mockRecording = MockRecording();
+    final MockVideoCapture mockVideoCapture = MockVideoCapture();
 
-      // Set directly for test versus calling startVideoCapturing.
-      camera.recording = recording;
-      camera.videoOutputPath = null;
+    // Set directly for test versus calling startVideoCapturing.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recording = mockRecording;
+    camera.videoOutputPath = null;
+    camera.videoCapture = mockVideoCapture;
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
-      expect(camera.recording, null);
-    });
+    // Tell plugin that videoCapture use case was bound to start recording.
+    when(camera.processCameraProvider!.isBound(mockVideoCapture))
+        .thenAnswer((_) async => true);
 
-    test(
-        'calling stopVideoRecording twice stops the recording '
-        'and then throws a CameraException', () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      final MockRecording recording = MockRecording();
-      final MockProcessCameraProvider processCameraProvider =
-          MockProcessCameraProvider();
-      final MockVideoCapture videoCapture = MockVideoCapture();
-      const String videoOutputPath = '/test/output/path';
+    await expectLater(() async {
+      await camera.stopVideoRecording(0);
+    }, throwsA(isA<CameraException>()));
+    expect(camera.recording, null);
 
-      // Set directly for test versus calling createCamera and startVideoCapturing.
-      camera.processCameraProvider = processCameraProvider;
-      camera.recording = recording;
-      camera.videoCapture = videoCapture;
-      camera.videoOutputPath = videoOutputPath;
+    // Verify video capture use case is unbound.
+    verify(camera.processCameraProvider!.unbind(<UseCase>[mockVideoCapture]));
+  });
 
-      final XFile file = await camera.stopVideoRecording(0);
-      expect(file.path, videoOutputPath);
+  test(
+      'calling stopVideoRecording twice stops the recording '
+      'and then throws a CameraException', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockRecording recording = MockRecording();
+    final MockProcessCameraProvider processCameraProvider =
+        MockProcessCameraProvider();
+    final MockVideoCapture videoCapture = MockVideoCapture();
+    const String videoOutputPath = '/test/output/path';
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
-    });
+    // Set directly for test versus calling createCamera and startVideoCapturing.
+    camera.processCameraProvider = processCameraProvider;
+    camera.recording = recording;
+    camera.videoCapture = videoCapture;
+    camera.videoOutputPath = videoOutputPath;
+
+    final XFile file = await camera.stopVideoRecording(0);
+    expect(file.path, videoOutputPath);
+
+    await expectLater(() async {
+      await camera.stopVideoRecording(0);
+    }, throwsA(isA<CameraException>()));
   });
 
   test(
