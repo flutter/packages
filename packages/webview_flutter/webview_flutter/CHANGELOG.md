@@ -1,8 +1,7 @@
 ## 4.6.0
 
-* Adds support for custom handling of JavaScript dialogs.
-  See `WebViewController.setOnJavaScriptAlertDialog`,
- `WebViewController.setOnJavaScriptConfirmDialog`
+* Adds support for custom handling of JavaScript dialogs. See
+  `WebViewController.setOnJavaScriptAlertDialog`, `WebViewController.setOnJavaScriptConfirmDialog`
   and `WebViewController.setOnJavaScriptTextInputDialog`.
 
 ## 4.5.0
