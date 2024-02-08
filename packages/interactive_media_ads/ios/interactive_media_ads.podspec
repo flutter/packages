@@ -20,5 +20,10 @@ Downloaded by pub (not CocoaPods).
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  s.xcconfig = {
+    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+  }
   s.swift_version = '5.0'
+  s.resource_bundles = {'interactive_media_ads_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
