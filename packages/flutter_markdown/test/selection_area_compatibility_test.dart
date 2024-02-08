@@ -2,16 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/gestures.dart';
 
 void main() => defineTests();
 
 void defineTests() {
-  group('Compatible with SelectionArea when selectable is false', () {
+  group('Compatible with SelectionArea when selectable is default to false', () {
     testWidgets(
       'Text can be selected',
       (WidgetTester tester) async {
@@ -22,7 +22,6 @@ void defineTests() {
             home: SelectionArea(
           child: const Markdown(
             data: data,
-            selectable: false,
           ),
           onSelectionChanged: (SelectedContent? selectedContent) =>
               content = selectedContent,
@@ -53,7 +52,6 @@ void defineTests() {
             home: SelectionArea(
           child: const Markdown(
             data: data,
-            selectable: false,
           ),
           onSelectionChanged: (SelectedContent? selectedContent) =>
               content = selectedContent,
@@ -73,6 +71,5 @@ void defineTests() {
         expect(content!.plainText, '•Item 1•Item 2•Item 3');
       },
     );
-    
   });
 }
