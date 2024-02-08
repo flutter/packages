@@ -27,6 +27,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @VisibleForTesting @Nullable public ImageCaptureHostApiImpl imageCaptureHostApiImpl;
   @VisibleForTesting @Nullable public CameraControlHostApiImpl cameraControlHostApiImpl;
   @VisibleForTesting @Nullable public SystemServicesHostApiImpl systemServicesHostApiImpl;
+  @VisibleForTesting @Nullable public MeteringPointHostApiImpl meteringPointHostApiImpl;
 
   @VisibleForTesting
   public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
@@ -123,8 +124,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new FocusMeteringActionHostApiImpl(instanceManager));
     GeneratedCameraXLibrary.FocusMeteringResultHostApi.setup(
         binaryMessenger, new FocusMeteringResultHostApiImpl(instanceManager));
-    GeneratedCameraXLibrary.MeteringPointHostApi.setup(
-        binaryMessenger, new MeteringPointHostApiImpl(instanceManager));
+    meteringPointHostApiImpl = new MeteringPointHostApiImpl(instanceManager);
+    GeneratedCameraXLibrary.MeteringPointHostApi.setup(binaryMessenger, meteringPointHostApiImpl);
   }
 
   @Override
@@ -243,6 +244,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     }
     if (deviceOrientationManagerHostApiImpl != null) {
       deviceOrientationManagerHostApiImpl.setActivity(activity);
+    }
+    if (meteringPointHostApiImpl != null) {
+      meteringPointHostApiImpl.setActivity(activity);
     }
   }
 }

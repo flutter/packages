@@ -516,7 +516,8 @@ abstract class FocusMeteringResultFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
 abstract class MeteringPointHostApi {
-  void create(int identifier, double x, double y, double? size);
+  void create(
+      int identifier, double x, double y, double? size, int cameraInfoId);
 
   double getDefaultPointSize();
 }

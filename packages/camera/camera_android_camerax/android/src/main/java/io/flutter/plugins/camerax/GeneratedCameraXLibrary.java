@@ -3917,7 +3917,11 @@ public class GeneratedCameraXLibrary {
   public interface MeteringPointHostApi {
 
     void create(
-        @NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size);
+        @NonNull Long identifier,
+        @NonNull Double x,
+        @NonNull Double y,
+        @Nullable Double size,
+        @NonNull Long cameraInfoId);
 
     @NonNull
     Double getDefaultPointSize();
@@ -3945,12 +3949,14 @@ public class GeneratedCameraXLibrary {
                 Double xArg = (Double) args.get(1);
                 Double yArg = (Double) args.get(2);
                 Double sizeArg = (Double) args.get(3);
+                Number cameraInfoIdArg = (Number) args.get(4);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       xArg,
                       yArg,
-                      sizeArg);
+                      sizeArg,
+                      (cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

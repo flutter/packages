@@ -3138,14 +3138,14 @@ class MeteringPointHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(
-      int arg_identifier, double arg_x, double arg_y, double? arg_size) async {
+  Future<void> create(int arg_identifier, double arg_x, double arg_y,
+      double? arg_size, int arg_cameraInfoId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.MeteringPointHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_x, arg_y, arg_size])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_identifier, arg_x, arg_y, arg_size, arg_cameraInfoId])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
+import 'camera_info.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -22,6 +23,7 @@ class MeteringPoint extends JavaObject {
     InstanceManager? instanceManager,
     required this.x,
     required this.y,
+    required this.cameraInfo,
     this.size,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
@@ -29,7 +31,7 @@ class MeteringPoint extends JavaObject {
         ) {
     _api = _MeteringPointHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, x, y, size);
+    _api.createFromInstance(this, x, y, cameraInfo, size);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
@@ -40,6 +42,7 @@ class MeteringPoint extends JavaObject {
     InstanceManager? instanceManager,
     required this.x,
     required this.y,
+    required this.cameraInfo,
     this.size,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
@@ -62,6 +65,10 @@ class MeteringPoint extends JavaObject {
   /// which is a normalized percentage of the sensor width/height (or crop
   /// region width/height if crop region is set).
   final double? size;
+
+  /// The [CameraInfo] used to construct the metering point with a display-
+  /// oriented metering point factory.
+  final CameraInfo cameraInfo;
 
   /// The default size of the [MeteringPoint] width and height (ranging from 0
   /// to 1) which is a (normalized) percentage of the sensor width/height (or
@@ -100,8 +107,8 @@ class _MeteringPointHostApiImpl extends MeteringPointHostApi {
 
   /// Creates a [MeteringPoint] instance with the specified [x] and [y]
   /// coordinates as well as [size] if non-null.
-  Future<void> createFromInstance(
-      MeteringPoint instance, double x, double y, double? size) {
+  Future<void> createFromInstance(MeteringPoint instance, double x, double y,
+      CameraInfo cameraInfo, double? size) {
     int? identifier = instanceManager.getIdentifier(instance);
     identifier ??= instanceManager.addDartCreatedInstance(instance,
         onCopy: (MeteringPoint original) {
@@ -110,9 +117,11 @@ class _MeteringPointHostApiImpl extends MeteringPointHostApi {
           instanceManager: instanceManager,
           x: original.x,
           y: original.y,
+          cameraInfo: original.cameraInfo,
           size: original.size);
     });
+    final int? camInfoId = instanceManager.getIdentifier(cameraInfo);
 
-    return create(identifier, x, y, size);
+    return create(identifier, x, y, size, camInfoId!);
   }
 }

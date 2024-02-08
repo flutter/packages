@@ -117,10 +117,13 @@ void main() {
     return cameraClosingEventSent && cameraErrorSent;
   }
 
-  /// [CameraXProxy] for testing exposure and focus related controls.
+  /// CameraXProxy for testing exposure and focus related controls.
+  ///
+  /// Modifies the creation of MeteringPoints and FocusMeteringActions to return
+  /// objects detached from a native object.
   CameraXProxy getProxyForExposureAndFocus() => CameraXProxy(
-      createMeteringPoint: (double x, double y) =>
-          MeteringPoint.detached(x: x, y: y),
+      createMeteringPoint: (double x, double y, CameraInfo cameraInfo) =>
+          MeteringPoint.detached(x: x, y: y, cameraInfo: cameraInfo),
       createFocusMeteringAction: (List<(MeteringPoint, int?)>
               meteringPointInfos) =>
           FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos));
@@ -1957,8 +1960,12 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 93;
     final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
     camera.proxy = getProxyForExposureAndFocus();
 
     // Verify nothing happens if no current focus and metering action has been
@@ -1968,10 +1975,15 @@ void main() {
     verifyNever(mockCameraControl.cancelFocusAndMetering());
 
     // Verify current auto-exposure metering point is removed if previously set.
-    final (MeteringPoint, int?) autofocusMeteringPointInfo =
-        (MeteringPoint.detached(x: 0.3, y: 0.7), FocusMeteringAction.flagAf);
+    final (MeteringPoint, int?) autofocusMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAf
+    );
     List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
-      (MeteringPoint.detached(x: 0.2, y: 0.5), FocusMeteringAction.flagAe),
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAe
+      ),
       autofocusMeteringPointInfo
     ];
 
@@ -1993,7 +2005,10 @@ void main() {
     // Verify current focus and metering action is cleared if only previously
     // set metering point was for auto-exposure.
     meteringPointInfos = <(MeteringPoint, int?)>[
-      (MeteringPoint.detached(x: 0.2, y: 0.5), FocusMeteringAction.flagAe)
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAe
+      )
     ];
     camera.currentFocusMeteringAction =
         FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
@@ -2010,7 +2025,9 @@ void main() {
     final MockCameraControl mockCameraControl = MockCameraControl();
     const Point<double> invalidExposurePoint = Point<double>(3, -1);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+
     camera.proxy = getProxyForExposureAndFocus();
 
     expect(() => camera.setExposurePoint(cameraId, invalidExposurePoint),
@@ -2023,18 +2040,27 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 9;
     final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
     camera.proxy = getProxyForExposureAndFocus();
 
     // Verify current auto-exposure metering point is removed if previously set.
     double exposurePointX = 0.8;
     double exposurePointY = 0.1;
     Point<double> exposurePoint = Point<double>(exposurePointX, exposurePointY);
-    final (MeteringPoint, int?) autofocusMeteringPointInfo =
-        (MeteringPoint.detached(x: 0.3, y: 0.7), FocusMeteringAction.flagAf);
+    final (MeteringPoint, int?) autofocusMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAf
+    );
     List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
-      (MeteringPoint.detached(x: 0.2, y: 0.5), FocusMeteringAction.flagAe),
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAe
+      ),
       autofocusMeteringPointInfo
     ];
 
@@ -2093,9 +2119,12 @@ void main() {
     const Point<double> exposurePoint =
         Point<double>(exposurePointX, exposurePointY);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
-    camera.proxy = getProxyForExposureAndFocus();
+    camera.cameraInfo = MockCameraInfo();
     camera.currentFocusMeteringAction = null;
+
+    camera.proxy = getProxyForExposureAndFocus();
 
     await camera.setExposurePoint(cameraId, exposurePoint);
 
@@ -2193,8 +2222,12 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 93;
     final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
     camera.proxy = getProxyForExposureAndFocus();
 
     // Verify nothing happens if no current focus and metering action has been
@@ -2204,10 +2237,15 @@ void main() {
     verifyNever(mockCameraControl.cancelFocusAndMetering());
 
     // Verify current auto-exposure metering point is removed if previously set.
-    final (MeteringPoint, int?) autoexposureMeteringPointInfo =
-        (MeteringPoint.detached(x: 0.3, y: 0.7), FocusMeteringAction.flagAe);
+    final (MeteringPoint, int?) autoexposureMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAe
+    );
     List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
-      (MeteringPoint.detached(x: 0.2, y: 0.5), FocusMeteringAction.flagAf),
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAf
+      ),
       autoexposureMeteringPointInfo
     ];
 
@@ -2229,7 +2267,10 @@ void main() {
     // Verify current focus and metering action is cleared if only previously
     // set metering point was for auto-exposure.
     meteringPointInfos = <(MeteringPoint, int?)>[
-      (MeteringPoint.detached(x: 0.2, y: 0.5), FocusMeteringAction.flagAf)
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAf
+      )
     ];
     camera.currentFocusMeteringAction =
         FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
@@ -2246,7 +2287,9 @@ void main() {
     final MockCameraControl mockCameraControl = MockCameraControl();
     const Point<double> invalidFocusPoint = Point<double>(-3, 1);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+
     camera.proxy = getProxyForExposureAndFocus();
 
     expect(() => camera.setFocusPoint(cameraId, invalidFocusPoint),
@@ -2259,18 +2302,27 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 9;
     final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
     camera.proxy = getProxyForExposureAndFocus();
 
     // Verify current auto-exposure metering point is removed if previously set.
     double focusPointX = 0.8;
     double focusPointY = 0.1;
     Point<double> exposurePoint = Point<double>(focusPointX, focusPointY);
-    final (MeteringPoint, int?) autoExposureMeteringPointInfo =
-        (MeteringPoint.detached(x: 0.3, y: 0.7), FocusMeteringAction.flagAe);
+    final (MeteringPoint, int?) autoExposureMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAe
+    );
     List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
-      (MeteringPoint.detached(x: 0.2, y: 0.5), FocusMeteringAction.flagAf),
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAf
+      ),
       autoExposureMeteringPointInfo
     ];
 
@@ -2328,9 +2380,12 @@ void main() {
     const double focusPointY = 0.1;
     const Point<double> exposurePoint = Point<double>(focusPointX, focusPointY);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
-    camera.proxy = getProxyForExposureAndFocus();
+    camera.cameraInfo = MockCameraInfo();
     camera.currentFocusMeteringAction = null;
+
+    camera.proxy = getProxyForExposureAndFocus();
 
     await camera.setFocusPoint(cameraId, exposurePoint);
 

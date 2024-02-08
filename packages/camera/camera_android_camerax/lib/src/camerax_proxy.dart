@@ -5,6 +5,7 @@
 import 'dart:ui' show Size;
 
 import 'analyzer.dart';
+import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
@@ -141,8 +142,10 @@ class CameraXProxy {
   /// rotation constants.
   Future<int> Function() getDefaultDisplayRotation;
 
-  /// Returns a [MeteringPoint] with the specified coordinates.
-  MeteringPoint Function(double x, double y) createMeteringPoint;
+  /// Returns a [MeteringPoint] with the specified coordinates based on
+  /// [cameraInfo].
+  MeteringPoint Function(double x, double y, CameraInfo cameraInfo)
+      createMeteringPoint;
 
   /// Returns a [FocusMeteringAction] based on the specified metering points
   /// and their modes.
@@ -252,8 +255,9 @@ class CameraXProxy {
     return DeviceOrientationManager.getDefaultDisplayRotation();
   }
 
-  static MeteringPoint _createMeteringPoint(double x, double y) {
-    return MeteringPoint(x: x, y: y);
+  static MeteringPoint _createMeteringPoint(
+      double x, double y, CameraInfo cameraInfo) {
+    return MeteringPoint(x: x, y: y, cameraInfo: cameraInfo);
   }
 
   static FocusMeteringAction _createFocusMeteringAction(

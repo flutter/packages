@@ -1137,8 +1137,8 @@ class AndroidCameraCameraX extends CameraPlatform {
                 meteringPointInfo.$2 != meteringMode)
             .toList();
       }
-      final MeteringPoint newMeteringPoint =
-          proxy.createMeteringPoint(meteringPoint.x, meteringPoint.y);
+      final MeteringPoint newMeteringPoint = proxy.createMeteringPoint(
+          meteringPoint.x, meteringPoint.y, cameraInfo!);
       newMeteringPointInfos.add((newMeteringPoint, meteringMode));
       currentFocusMeteringAction =
           proxy.createFocusMeteringAction(newMeteringPointInfos);
