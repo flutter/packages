@@ -24,7 +24,8 @@
         XCTAssertTrue([[NSThread currentThread] isMainThread]);
         [expectation fulfill];
       });
-  [controller requestTileForX:0 y:0 zoom:0 receiver:nil];
+  id receiver = OCMProtocolMock(@protocol(GMSTileReceiver));
+  [controller requestTileForX:0 y:0 zoom:0 receiver:receiver];
   [self waitForExpectations:@[ expectation ] timeout:10.0];
 }
 
