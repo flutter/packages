@@ -50,6 +50,7 @@ class _MyAppState extends State<_MyApp> {
   List<String> _consumables = <String>[];
   String _countryCode = '';
   String _isAlternativeBillingOnlyAvailableResponseCode = '';
+  String _showAlternativeBillingOnlyDialogResponseCode = '';
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
@@ -222,6 +223,10 @@ class _MyAppState extends State<_MyApp> {
         title: Text('isAlternativeBillingOnlyAvailable response code',
             style: TextStyle(color: ThemeData.light().colorScheme.primary)),
         subtitle: Text(_isAlternativeBillingOnlyAvailableResponseCode)));
+    entries.add(ListTile(
+        title: Text('showAlternativeBillingOnlyDialog response code',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_showAlternativeBillingOnlyDialogResponseCode)));
 
     final List<Widget> buttons = <ListTile>[];
     buttons.add(ListTile(
@@ -265,9 +270,25 @@ class _MyAppState extends State<_MyApp> {
           final InAppPurchaseAndroidPlatformAddition addition =
               InAppPurchasePlatformAddition.instance!
                   as InAppPurchaseAndroidPlatformAddition;
-          unawaited(addition.showAlternativeBillingOnlyInformationDialog());
+          unawaited(deliverShowAlternativeBillingOnlyInformationDialogResult(
+              addition.showAlternativeBillingOnlyInformationDialog()));
         },
         child: const Text('showAlternativeBillingOnlyInformationDialog'),
+      ),
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(addition.setAlternativeBillingOnlyState(true));
+        },
+        child: const Text('setAlternativeBillingOnlyState true'),
       ),
     ));
     return Card(
@@ -433,6 +454,15 @@ class _MyAppState extends State<_MyApp> {
     final BillingResultWrapper wrapper = await billingOnly;
     setState(() {
       _isAlternativeBillingOnlyAvailableResponseCode =
+          wrapper.responseCode.name;
+    });
+  }
+
+  Future<void> deliverShowAlternativeBillingOnlyInformationDialogResult(
+      Future<BillingResultWrapper> billingResult) async {
+    final BillingResultWrapper wrapper = await billingResult;
+    setState(() {
+      _showAlternativeBillingOnlyDialogResponseCode =
           wrapper.responseCode.name;
     });
   }
