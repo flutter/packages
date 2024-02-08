@@ -256,6 +256,4 @@ abstract class InAppPurchaseAPI {
   void restoreTransactions(String? applicationUserName);
 
   void presentCodeRedemptionSheet();
-  //
-  // void retrieveReceiptData();
 }

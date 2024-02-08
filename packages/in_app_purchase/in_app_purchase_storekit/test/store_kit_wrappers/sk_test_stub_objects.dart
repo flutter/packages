@@ -153,8 +153,6 @@ final SKProductsResponseMessage dummyProductResponseMessage =
   invalidProductIdentifiers: const <String>['123'],
 );
 
-class SkProductsResponseMessage {}
-
 Map<String, dynamic> buildLocaleMap(SKPriceLocaleWrapper local) {
   return <String, dynamic>{
     'currencySymbol': local.currencySymbol,
