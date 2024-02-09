@@ -1042,6 +1042,7 @@ void main() {
       final MockCamera mockCamera = MockCamera();
       final MockCamera newMockCamera = MockCamera();
       final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockCameraControl mockCameraControl = MockCameraControl();
       final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
       final MockLiveCameraState newMockLiveCameraState = MockLiveCameraState();
       final TestSystemServicesHostApi mockSystemServicesApi =
@@ -1080,6 +1081,8 @@ void main() {
           .thenAnswer((_) async => newMockCamera);
       when(newMockCamera.getCameraInfo())
           .thenAnswer((_) async => mockCameraInfo);
+      when(newMockCamera.getCameraControl())
+          .thenAnswer((_) async => mockCameraControl);
       when(mockCameraInfo.getCameraState())
           .thenAnswer((_) async => newMockLiveCameraState);
 
@@ -1091,6 +1094,7 @@ void main() {
           camera.cameraSelector!, <UseCase>[camera.videoCapture!]));
       expect(camera.camera, equals(newMockCamera));
       expect(camera.cameraInfo, equals(mockCameraInfo));
+      expect(camera.cameraControl, equals(mockCameraControl));
       verify(mockLiveCameraState.removeObservers());
       expect(
           await testCameraClosingObserver(
