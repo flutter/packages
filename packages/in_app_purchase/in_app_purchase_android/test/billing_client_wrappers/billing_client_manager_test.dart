@@ -108,7 +108,7 @@ void main() {
       );
       // Verify that after connection ended reconnect was called.
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
-      expect(arguments['enableAlternativeBillingOnly'], isTrue);
+      expect(arguments['billingChoiceMode'], 1);
     });
 
     test(

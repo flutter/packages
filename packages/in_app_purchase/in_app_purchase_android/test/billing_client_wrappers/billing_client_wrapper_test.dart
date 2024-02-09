@@ -111,11 +111,11 @@ void main() {
           call.arguments,
           equals(<dynamic, dynamic>{
             'handle': 0,
-            'enableAlternativeBillingOnly': false,
+            'billingChoiceMode': 0,
           }));
     });
 
-    test('passes enableAlternativeBillingOnly when set', () async {
+    test('passes billingChoiceMode when set', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
       stubPlatform.addResponse(
@@ -133,7 +133,7 @@ void main() {
           call.arguments,
           equals(<dynamic, dynamic>{
             'handle': 0,
-            'enableAlternativeBillingOnly': true,
+            'billingChoiceMode': 1,
           }));
     });
 
