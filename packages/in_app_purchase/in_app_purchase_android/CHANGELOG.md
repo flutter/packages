@@ -1,6 +1,6 @@
 ## 0.3.1
 
-* Adds Alternitive billing only apis to platform addition.
+* Adds alternative-billing-only APIs to platform addition.
 
 ## 0.3.0+18
 
