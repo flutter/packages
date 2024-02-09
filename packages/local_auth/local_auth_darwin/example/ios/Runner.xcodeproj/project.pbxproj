@@ -49,7 +49,7 @@
 		3398D2D126163948005A052F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3398D2DC261649CD005A052F /* liblocal_auth.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblocal_auth.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3398D2DF26164A03005A052F /* liblocal_auth.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblocal_auth.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3398D2E326164AD8005A052F /* FLTLocalAuthPluginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLTLocalAuthPluginTests.m; sourceTree = "<group>"; };
+		3398D2E326164AD8005A052F /* FLTLocalAuthPluginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FLTLocalAuthPluginTests.m; path = ../../darwin/Tests/FLTLocalAuthPluginTests.m; sourceTree = SOURCE_ROOT; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		658CDD04B21E4EA92F8EF229 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -359,11 +359,11 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/local_auth_ios/local_auth_ios_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/local_auth_darwin/local_auth_darwin_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/local_auth_ios_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/local_auth_darwin_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
