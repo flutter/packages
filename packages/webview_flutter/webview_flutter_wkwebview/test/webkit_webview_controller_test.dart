@@ -23,6 +23,7 @@ import 'webkit_webview_controller_test.mocks.dart';
 @GenerateMocks(<Type>[
   NSUrl,
   UIScrollView,
+  UIScrollViewDelegate,
   WKPreferences,
   WKUserContentController,
   WKWebsiteDataStore,
@@ -36,6 +37,7 @@ void main() {
   group('WebKitWebViewController', () {
     WebKitWebViewController createControllerWithMocks({
       MockUIScrollView? mockScrollView,
+      UIScrollViewDelegate? scrollViewDelegate,
       MockWKPreferences? mockPreferences,
       WKUIDelegate? uiDelegate,
       MockWKUserContentController? mockUserContentController,
@@ -116,6 +118,14 @@ void main() {
                     runJavaScriptTextInputDialog: runJavaScriptTextInputDialog);
           },
           createScriptMessageHandler: WKScriptMessageHandler.detached,
+          createUIScrollViewDelegate: ({
+            void Function(UIScrollView, double, double)? scrollViewDidScroll,
+          }) {
+            return scrollViewDelegate ??
+                CapturingUIScrollViewDelegate(
+                  scrollViewDidScroll: scrollViewDidScroll,
+                );
+          },
         ),
         instanceManager: instanceManager,
       );
@@ -1455,6 +1465,32 @@ window.addEventListener("error", function(e) {
         expect(logs[JavaScriptLogLevel.warning], 'Warning message');
       });
     });
+
+    test('setOnScrollPositionChange', () async {
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      final Completer<ScrollPositionChange> changeCompleter =
+          Completer<ScrollPositionChange>();
+      await controller.setOnScrollPositionChange(
+        (ScrollPositionChange change) {
+          changeCompleter.complete(change);
+        },
+      );
+
+      final void Function(
+        UIScrollView scrollView,
+        double,
+        double,
+      ) onScrollViewDidScroll = CapturingUIScrollViewDelegate
+          .lastCreatedDelegate.scrollViewDidScroll!;
+
+      final MockUIScrollView mockUIScrollView = MockUIScrollView();
+      onScrollViewDidScroll(mockUIScrollView, 1.0, 2.0);
+
+      final ScrollPositionChange change = await changeCompleter.future;
+      expect(change.x, 1.0);
+      expect(change.y, 2.0);
+    });
   });
 
   group('WebKitJavaScriptChannelParams', () {
@@ -1526,4 +1562,16 @@ class CapturingUIDelegate extends WKUIDelegate {
   }
 
   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();
+}
+
+class CapturingUIScrollViewDelegate extends UIScrollViewDelegate {
+  CapturingUIScrollViewDelegate({
+    super.scrollViewDidScroll,
+    super.instanceManager,
+  }) : super.detached() {
+    lastCreatedDelegate = this;
+  }
+
+  static CapturingUIScrollViewDelegate lastCreatedDelegate =
+      CapturingUIScrollViewDelegate();
 }
