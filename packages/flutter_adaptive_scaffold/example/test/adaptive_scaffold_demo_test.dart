@@ -15,13 +15,16 @@ void main() {
   final Finder pnav = find.byKey(const Key('primaryNavigation'));
   final Finder pnav1 = find.byKey(const Key('primaryNavigation1'));
 
-  Future<void> updateScreen(double width, WidgetTester tester) async {
+  Future<void> updateScreen(double width, WidgetTester tester,
+      {int transitionDuration = 1000}) async {
     await tester.binding.setSurfaceSize(Size(width, 800));
     await tester.pumpWidget(
       MaterialApp(
         home: MediaQuery(
             data: MediaQueryData(size: Size(width, 800)),
-            child: const example.MyHomePage()),
+            child: example.MyHomePage(
+              transitionDuration: transitionDuration,
+            )),
       ),
     );
   }
@@ -92,6 +95,23 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
+
+    expect(tester.getTopLeft(b), const Offset(88, 0));
+    expect(tester.getBottomRight(b), const Offset(400, 800));
+    expect(tester.getTopLeft(sBody), const Offset(400, 0));
+    expect(tester.getBottomRight(sBody), const Offset(800, 800));
+  });
+
+  testWidgets('animation plays correctly in declared duration',
+      (WidgetTester tester) async {
+    final Finder b = find.byKey(const Key('body'));
+    final Finder sBody = find.byKey(const Key('sBody'));
+
+    await updateScreen(400, tester, transitionDuration: 500);
+    await updateScreen(800, tester, transitionDuration: 500);
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(tester.getTopLeft(b), const Offset(88, 0));
     expect(tester.getBottomRight(b), const Offset(400, 800));

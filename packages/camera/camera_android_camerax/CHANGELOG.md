@@ -1,6 +1,11 @@
-## 0.5.0+32
+## 0.5.0+33
 
 * Implements `setFocusPoint`, `setExposurePoint`, and `setExposureOffset`.
+
+## 0.5.0+32
+
+* Removes all remaining `unawaited` calls to fix potential race conditions and updates the
+  camera state when video capture starts.
 
 ## 0.5.0+31
 
