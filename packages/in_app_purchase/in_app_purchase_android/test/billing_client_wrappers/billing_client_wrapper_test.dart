@@ -127,7 +127,7 @@ void main() {
       );
       await billingClient.startConnection(
           onBillingServiceDisconnected: () {},
-          enableAlternativeBillingOnly: true);
+          billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
       final MethodCall call = stubPlatform.previousCallMatching(methodName);
       expect(
           call.arguments,

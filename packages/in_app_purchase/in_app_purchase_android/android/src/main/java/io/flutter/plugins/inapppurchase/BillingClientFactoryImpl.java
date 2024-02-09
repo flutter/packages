@@ -8,6 +8,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingClient;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.BillingChoiceMode;
 
 /** The implementation for {@link BillingClientFactory} for the plugin. */
 final class BillingClientFactoryImpl implements BillingClientFactory {
@@ -16,9 +17,9 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
   public BillingClient createBillingClient(
       @NonNull Context context,
       @NonNull MethodChannel channel,
-      boolean enableAlternativeBillingOnly) {
+      int billingChoiceMode) {
     BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
-    if (enableAlternativeBillingOnly) {
+    if (billingChoiceMode == BillingChoiceMode.ALTERNATIVE_BILLING_ONLY) {
       // https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
       builder.enableAlternativeBillingOnly();
     }

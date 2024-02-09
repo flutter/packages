@@ -81,13 +81,14 @@ void main() {
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
     });
 
-    test('re-connects when host calls reconnectWithAlternativeBillingOnlyState',
+    test('re-connects when host calls reconnectWithBillingChoiceMode',
         () async {
       connectedCompleter.complete();
       // Ensures all asynchronous connected code finishes.
       await manager.runWithClientNonRetryable((_) async {});
 
-      await manager.reconnectWithAlternativeBillingOnlyState(true);
+      await manager.reconnectWithBillingChoiceMode(
+          BillingChoiceMode.alternativeBillingOnly);
       // Verify that connection was ended.
       expect(stubPlatform.countPreviousCalls(endConnectionCall), equals(1));
 

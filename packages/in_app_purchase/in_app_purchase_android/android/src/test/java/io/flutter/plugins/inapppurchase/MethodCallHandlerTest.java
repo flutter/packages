@@ -77,6 +77,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.BillingChoiceMode;
 import io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodArgs;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -110,9 +111,9 @@ public class MethodCallHandlerTest {
   public void setUp() {
     MockitoAnnotations.openMocks(this);
     // Use the same client no matter if alternative billing is enabled or not.
-    when(factory.createBillingClient(context, mockMethodChannel, false))
+    when(factory.createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY))
         .thenReturn(mockBillingClient);
-    when(factory.createBillingClient(context, mockMethodChannel, true))
+    when(factory.createBillingClient(context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockMethodChannel, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -157,9 +158,9 @@ public class MethodCallHandlerTest {
 
   @Test
   public void startConnection() {
-    ArgumentCaptor<BillingClientStateListener> captor = mockStartConnection(false);
+    ArgumentCaptor<BillingClientStateListener> captor = mockStartConnection(BillingChoiceMode.PLAY_BILLING_ONLY);
     verify(result, never()).success(any());
-    verify(factory, times(1)).createBillingClient(context, mockMethodChannel, false);
+    verify(factory, times(1)).createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -173,9 +174,9 @@ public class MethodCallHandlerTest {
 
   @Test
   public void startConnectionAlternativeBillingOnly() {
-    ArgumentCaptor<BillingClientStateListener> captor = mockStartConnection(true);
+    ArgumentCaptor<BillingClientStateListener> captor = mockStartConnection(BillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
     verify(result, never()).success(any());
-    verify(factory, times(1)).createBillingClient(context, mockMethodChannel, true);
+    verify(factory, times(1)).createBillingClient(context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -200,7 +201,7 @@ public class MethodCallHandlerTest {
 
     methodChannelHandler.onMethodCall(call, result);
     verify(result, never()).success(any());
-    verify(factory, times(1)).createBillingClient(context, mockMethodChannel, false);
+    verify(factory, times(1)).createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -1049,14 +1050,14 @@ public class MethodCallHandlerTest {
   }
 
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection() {
-    return mockStartConnection(false);
+    return mockStartConnection(BillingChoiceMode.PLAY_BILLING_ONLY);
   }
 
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection(
-      boolean enableAlternativeBillingOnly) {
+      int billingChoiceMode) {
     Map<String, Object> arguments = new HashMap<>();
     arguments.put(MethodArgs.HANDLE, 1);
-    arguments.put(MethodArgs.ENABLE_ALTERNATIVE_BILLING_ONLY, enableAlternativeBillingOnly);
+    arguments.put(MethodArgs.BILLING_CHOICE_MODE, billingChoiceMode);
     MethodCall call = new MethodCall(START_CONNECTION, arguments);
     ArgumentCaptor<BillingClientStateListener> captor =
         ArgumentCaptor.forClass(BillingClientStateListener.class);

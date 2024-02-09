@@ -35,6 +35,7 @@ import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,9 +83,14 @@ class MethodCallHandlerImpl
     // Key for an int argument passed into startConnection
     static final String HANDLE = "handle";
     // Key for a boolean argument passed into startConnection.
-    static final String ENABLE_ALTERNATIVE_BILLING_ONLY = "enableAlternativeBillingOnly";
+    static final String BILLING_CHOICE_MODE = "billingChoiceMode";
 
     private MethodArgs() {}
+  }
+
+  static final class BillingChoiceMode {
+    static final int PLAY_BILLING_ONLY = 0;
+    static final int ALTERNATIVE_BILLING_ONLY = 1;
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -167,12 +173,11 @@ class MethodCallHandlerImpl
         break;
       case MethodNames.START_CONNECTION:
         final int handle = (int) call.argument(MethodArgs.HANDLE);
-        boolean enableAlternativeBillingOnly = false;
-        if (call.hasArgument(MethodArgs.ENABLE_ALTERNATIVE_BILLING_ONLY)
-            && (boolean) call.argument(MethodArgs.ENABLE_ALTERNATIVE_BILLING_ONLY)) {
-          enableAlternativeBillingOnly = true;
+        int billingChoiceMode = BillingChoiceMode.PLAY_BILLING_ONLY;
+        if (call.hasArgument(MethodArgs.BILLING_CHOICE_MODE)) {
+          billingChoiceMode = call.argument(MethodArgs.BILLING_CHOICE_MODE);
         }
-        startConnection(handle, result, enableAlternativeBillingOnly);
+        startConnection(handle, result, billingChoiceMode);
         break;
       case MethodNames.END_CONNECTION:
         endConnection(result);
@@ -497,11 +502,11 @@ class MethodCallHandlerImpl
   }
 
   private void startConnection(
-      final int handle, final MethodChannel.Result result, boolean enableAlternativeBillingOnly) {
+      final int handle, final MethodChannel.Result result, int billingChoiceMode) {
     if (billingClient == null) {
       billingClient =
           billingClientFactory.createBillingClient(
-              applicationContext, methodChannel, enableAlternativeBillingOnly);
+              applicationContext, methodChannel, billingChoiceMode);
     }
 
     billingClient.startConnection(

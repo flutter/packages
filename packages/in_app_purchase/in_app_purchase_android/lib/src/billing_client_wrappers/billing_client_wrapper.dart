@@ -111,7 +111,8 @@ class BillingClient {
   /// one doesn't already exist.
   Future<BillingResultWrapper> startConnection(
       {required OnBillingServiceDisconnected onBillingServiceDisconnected,
-      bool enableAlternativeBillingOnly = false}) async {
+      BillingChoiceMode billingChoiceMode =
+          BillingChoiceMode.playBillingOnly}) async {
     final List<Function> disconnectCallbacks =
         _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
     disconnectCallbacks.add(onBillingServiceDisconnected);
@@ -120,7 +121,7 @@ class BillingClient {
                 'BillingClient#startConnection(BillingClientStateListener)',
                 <String, dynamic>{
               'handle': disconnectCallbacks.length - 1,
-              'enableAlternativeBillingOnly': enableAlternativeBillingOnly,
+              'billingChoiceMode': billingChoiceMode,
             })) ??
         <String, dynamic>{});
   }
@@ -485,6 +486,21 @@ enum BillingResponse {
   /// Network connection failure between the device and Play systems.
   @JsonValue(12)
   networkError,
+}
+
+/// Plugin concept to cover billing modes.
+///
+/// [playBillingOnly] (google play billing only).
+/// [alternativeBillingOnly] (app provided billing with reporting to play).
+@JsonEnum(alwaysCreate: true)
+enum BillingChoiceMode {
+  /// Billing through google play. Default state.
+  @JsonValue(0)
+  playBillingOnly,
+
+  /// Billing through app provided flow.
+  @JsonValue(1)
+  alternativeBillingOnly,
 }
 
 /// Serializer for [BillingResponse].

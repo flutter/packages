@@ -17,12 +17,11 @@ interface BillingClientFactory {
    *
    * @param context The context used to create the {@link BillingClient}.
    * @param channel The method channel used to create the {@link BillingClient}.
-   * @param enableAlternativeBillingOnly Enables the ability to offer alternative billing without
-   *     user choice to use Google Play billing.
+   * @param billingChoiceMode Enables the ability to offer alternative billing or Google Play billing.
    * @return The {@link BillingClient} object that is created.
    */
   BillingClient createBillingClient(
       @NonNull Context context,
       @NonNull MethodChannel channel,
-      boolean enableAlternativeBillingOnly);
+      int billingChoiceMode);
 }

@@ -87,7 +87,7 @@ void main() {
 
   group('setAlternativeBillingOnlyState', () {
     late Map<Object?, Object?> arguments;
-    test('setAlternativeBillingOnlyState true', () async {
+    test('setAlternativeBillingOnlyState', () async {
       stubPlatform.reset();
       stubPlatform.addResponse(
         name: startConnectionCall,
@@ -95,7 +95,7 @@ void main() {
             arguments = value as Map<dynamic, dynamic>,
       );
       stubPlatform.addResponse(name: endConnectionCall);
-      await iapAndroidPlatformAddition.setAlternativeBillingOnlyState(true);
+      await iapAndroidPlatformAddition.setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
       await manager.client.callHandler(
@@ -104,10 +104,10 @@ void main() {
       );
       // Verify that after connection ended reconnect was called.
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
-      expect(arguments['enableAlternativeBillingOnly'], isTrue);
+      expect(arguments['billingChoiceMode'], BillingChoiceMode.alternativeBillingOnly);
     });
 
-    test('setAlternativeBillingOnlyState false', () async {
+    test('setPlayBillingState', () async {
       stubPlatform.reset();
       stubPlatform.addResponse(
         name: startConnectionCall,
@@ -115,7 +115,7 @@ void main() {
             arguments = value as Map<dynamic, dynamic>,
       );
       stubPlatform.addResponse(name: endConnectionCall);
-      await iapAndroidPlatformAddition.setAlternativeBillingOnlyState(false);
+      await iapAndroidPlatformAddition.setBillingChoice(BillingChoiceMode.playBillingOnly);
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
       await manager.client.callHandler(
@@ -124,7 +124,7 @@ void main() {
       );
       // Verify that after connection ended reconnect was called.
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
-      expect(arguments['enableAlternativeBillingOnly'], isFalse);
+      expect(arguments['billingChoiceMode'], BillingChoiceMode.playBillingOnly);
     });
   });
 

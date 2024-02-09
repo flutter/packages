@@ -183,13 +183,13 @@ class InAppPurchaseAndroidPlatformAddition
   /// Disconnects, Sets AlternativeBillingOnly to true, and recoonects to
   /// the [BillingClient].
   ///
-  /// [alternativeBillingOnlyState] true will enable alternative billing only.
+  /// [BillingChoiceMode.playBillingOnly] is the default state used.
+  /// [BillingChoiceMode.alternativeBillingOnly] will enable alternative billing only.
   ///
   /// Play apis have requirements for when this method can be called.
   /// See: https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
-  Future<void> setAlternativeBillingOnlyState(
-      bool alternativeBillingOnlyState) {
+  Future<void> setBillingChoice(BillingChoiceMode billingChoiceMode) {
     return _billingClientManager
-        .reconnectWithAlternativeBillingOnlyState(alternativeBillingOnlyState);
+        .reconnectWithBillingChoiceMode(billingChoiceMode);
   }
 }
