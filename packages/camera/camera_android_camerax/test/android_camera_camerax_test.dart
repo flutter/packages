@@ -1295,9 +1295,7 @@ void main() {
       verifyNoMoreInteractions(recording);
     });
 
-    test(
-        'stopVideoRecording stops the recording and unbinds video capture use case',
-        () async {
+    test('stopVideoRecording stops the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       final MockProcessCameraProvider processCameraProvider =
@@ -1321,9 +1319,6 @@ void main() {
       // Verify that recording stops.
       verify(recording.close());
       verifyNoMoreInteractions(recording);
-
-      // Verify video capture use case is unbound.
-      verify(camera.processCameraProvider!.unbind(<UseCase>[videoCapture]));
     });
 
     test(
@@ -1363,9 +1358,6 @@ void main() {
       await camera.stopVideoRecording(0);
     }, throwsA(isA<CameraException>()));
     expect(camera.recording, null);
-
-    // Verify video capture use case is unbound.
-    verify(camera.processCameraProvider!.unbind(<UseCase>[mockVideoCapture]));
   });
 
   test(

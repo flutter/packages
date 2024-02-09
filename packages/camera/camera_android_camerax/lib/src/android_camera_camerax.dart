@@ -683,7 +683,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       // Stop the current active recording as we will be unable to complete it
       // in this error case.
       await recording!.close();
-      await _unbindUseCaseFromLifecycle(videoCapture!);
       recording = null;
       pendingRecording = null;
       throw CameraException(
@@ -693,7 +692,6 @@ class AndroidCameraCameraX extends CameraPlatform {
               'return a valid path or report an error.');
     }
     await recording!.close();
-    await _unbindUseCaseFromLifecycle(videoCapture!);
     recording = null;
     pendingRecording = null;
     return XFile(videoOutputPath!);

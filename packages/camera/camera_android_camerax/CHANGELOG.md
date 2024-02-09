@@ -1,7 +1,7 @@
 ## 0.5.0+32
 
-* Removes all remaining `unawaited` calls to fix potential race conditions, updates the
-  camera state when video capture starts, and unbinds video capture case when video recording stops.
+* Removes all remaining `unawaited` calls to fix potential race conditions and updates the
+  camera state when video capture starts.
 
 ## 0.5.0+31
 
