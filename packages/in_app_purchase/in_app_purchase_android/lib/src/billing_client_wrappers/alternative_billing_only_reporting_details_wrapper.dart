@@ -14,7 +14,7 @@ part 'alternative_billing_only_reporting_details_wrapper.g.dart';
 
 /// The error message shown when the map representing details is invalid from method channel.
 ///
-/// This usually indicates a serious underlining code issue in the plugin.
+/// This usually indicates a serious underlying code issue in the plugin.
 @visibleForTesting
 const String kInvalidAlternativeBillingReportingDetailsErrorMessage =
     'Invalid AlternativeBillingReportingDetails map from method channel.';
