@@ -364,7 +364,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         return file
             .readAsStringSync()
             .contains('@RunWith(FlutterTestRunner.class)');
-      } else if (file.basename.endsWith('kt')) {
+      } else if (file.basename.endsWith('.kt')) {
         return file
             .readAsStringSync()
             .contains('@RunWith(FlutterTestRunner::class)');
