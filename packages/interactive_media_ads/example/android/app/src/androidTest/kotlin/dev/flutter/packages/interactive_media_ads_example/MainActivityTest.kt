@@ -7,7 +7,7 @@ package kotlin.dev.flutter.plugins.interactive_media_ads_example
 import androidx.test.rule.ActivityTestRule
 import dev.flutter.plugins.integration_test.FlutterTestRunner
 import io.flutter.embedding.android.FlutterActivity
-import kotlin.dev.flutter.plugins.DartIntegrationTest
+import io.flutter.plugins.DartIntegrationTest
 import org.junit.Rule
 import org.junit.runner.RunWith
 
