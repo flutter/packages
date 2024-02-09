@@ -1,6 +1,6 @@
-## 4.5.1
+## 4.6.0
 
-* Adds support to track scroll position changes
+* Adds support to track scroll position changes.
 * Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
 
 ## 4.5.0
