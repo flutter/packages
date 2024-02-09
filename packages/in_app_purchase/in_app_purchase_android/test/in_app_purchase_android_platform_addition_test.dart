@@ -95,7 +95,8 @@ void main() {
             arguments = value as Map<dynamic, dynamic>,
       );
       stubPlatform.addResponse(name: endConnectionCall);
-      await iapAndroidPlatformAddition.setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
+      await iapAndroidPlatformAddition
+          .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
       await manager.client.callHandler(
@@ -104,7 +105,8 @@ void main() {
       );
       // Verify that after connection ended reconnect was called.
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
-      expect(arguments['billingChoiceMode'], BillingChoiceMode.alternativeBillingOnly);
+      expect(arguments['billingChoiceMode'],
+          BillingChoiceMode.alternativeBillingOnly);
     });
 
     test('setPlayBillingState', () async {
@@ -115,7 +117,8 @@ void main() {
             arguments = value as Map<dynamic, dynamic>,
       );
       stubPlatform.addResponse(name: endConnectionCall);
-      await iapAndroidPlatformAddition.setBillingChoice(BillingChoiceMode.playBillingOnly);
+      await iapAndroidPlatformAddition
+          .setBillingChoice(BillingChoiceMode.playBillingOnly);
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
       await manager.client.callHandler(

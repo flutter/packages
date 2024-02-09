@@ -286,7 +286,8 @@ class _MyAppState extends State<_MyApp> {
           final InAppPurchaseAndroidPlatformAddition addition =
               InAppPurchasePlatformAddition.instance!
                   as InAppPurchaseAndroidPlatformAddition;
-          unawaited(addition.setBillingChoice(BillingChoiceMode.alternativeBillingOnly));
+          unawaited(addition
+              .setBillingChoice(BillingChoiceMode.alternativeBillingOnly));
         },
         child: const Text('setAlternativeBillingOnlyState true'),
       ),

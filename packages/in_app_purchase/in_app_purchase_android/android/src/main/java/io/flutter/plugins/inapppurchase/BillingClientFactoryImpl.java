@@ -15,9 +15,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
 
   @Override
   public BillingClient createBillingClient(
-      @NonNull Context context,
-      @NonNull MethodChannel channel,
-      int billingChoiceMode) {
+      @NonNull Context context, @NonNull MethodChannel channel, int billingChoiceMode) {
     BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
     if (billingChoiceMode == BillingChoiceMode.ALTERNATIVE_BILLING_ONLY) {
       // https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
