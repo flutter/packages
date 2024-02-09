@@ -152,12 +152,16 @@
       error = [FlutterError errorWithCode:@"storekit_getproductrequest_platform_error"
                                   message:startProductRequestError.localizedDescription
                                   details:startProductRequestError.description];
+      completion(nil, error);
+      return;
     }
     if (!response) {
       error = [FlutterError errorWithCode:@"storekit_platform_no_response"
                                   message:@"Failed to get SKProductResponse in startRequest "
                                           @"call. Error occured on iOS platform"
                                   details:productIdentifiers];
+      completion(nil, error);
+      return;
     }
     for (SKProduct *product in response.products) {
       [self.productsCache setObject:product forKey:product.productIdentifier];

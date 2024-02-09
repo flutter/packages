@@ -22,15 +22,10 @@ class SKPaymentTransactionMessage {
   });
 
   final SKPaymentMessage payment;
-
   final SKPaymentTransactionStateMessage transactionState;
-
   final SKPaymentTransactionMessage? originalTransaction;
-
   final double? transactionTimeStamp;
-
   final String? transactionIdentifier;
-
   final SKErrorMessage? error;
 }
 
@@ -83,15 +78,10 @@ class SKPaymentMessage {
   });
 
   final String productIdentifier;
-
   final String? applicationUsername;
-
   final String? requestData;
-
   final int quantity;
-
   final bool simulatesAskToBuyInSandbox;
-
   final SKPaymentDiscountMessage? paymentDiscount;
 }
 
@@ -228,11 +218,8 @@ class SKProductSubscriptionPeriodMessage {
 
 enum SKSubscriptionPeriodUnitMessage {
   day,
-
   week,
-
   month,
-
   year,
 }
 

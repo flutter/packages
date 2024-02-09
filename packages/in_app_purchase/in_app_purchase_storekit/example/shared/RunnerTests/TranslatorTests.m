@@ -469,6 +469,7 @@
 
   SKProductMessage *productMsg = responseMsg.products[0];
 
+  // These values are being set in productResponseMap in setUp()
   XCTAssertEqualObjects(productMsg.price, @"1");
   XCTAssertEqualObjects(productMsg.productIdentifier, @"123");
   XCTAssertEqualObjects(productMsg.localizedTitle, @"title");

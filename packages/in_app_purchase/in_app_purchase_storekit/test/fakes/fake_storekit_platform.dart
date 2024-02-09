@@ -204,9 +204,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  void presentCodeRedemptionSheet() {
-    return;
-  }
+  void presentCodeRedemptionSheet() {}
 
   @override
   void restoreTransactions(String? applicationUserName) {

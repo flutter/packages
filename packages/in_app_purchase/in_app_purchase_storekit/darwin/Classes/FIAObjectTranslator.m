@@ -470,7 +470,7 @@
 
   NSArray<SKProductDiscount *> *skProductDiscounts = product.discounts;
   NSMutableArray<SKProductDiscountMessage *> *pigeonProductDiscounts =
-      [[NSMutableArray alloc] init];
+      [[NSMutableArray arrayWithCapacity:skProductDiscounts.count] init];
 
   for (SKProductDiscount *productDiscount in skProductDiscounts) {
     [pigeonProductDiscounts addObject:[self convertProductDiscountToPigeon:productDiscount]];
@@ -497,7 +497,8 @@
     return nil;
   }
   NSArray<SKProduct *> *skProducts = productsResponse.products;
-  NSMutableArray<SKProductMessage *> *pigeonProducts = [[NSMutableArray alloc] init];
+  NSMutableArray<SKProductMessage *> *pigeonProducts =
+      [NSMutableArray arrayWithCapacity:skProducts.count];
 
   for (SKProduct *product in skProducts) {
     [pigeonProducts addObject:[self convertProductToPigeon:product]];

@@ -106,6 +106,8 @@
 
 - (void)testGetProductResponse {
   NSArray *argument = @[ @"123" ];
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:@"completion handler successfully called"];
   [self.plugin
       startProductRequestProductIdentifiers:argument
                                  completion:^(SKProductsResponseMessage *_Nullable response,
@@ -115,7 +117,9 @@
                                    XCTAssertEqual(response.products.count, 1);
                                    XCTAssertEqual(response.invalidProductIdentifiers.count, 0);
                                    XCTAssertEqual(response.products[0].productIdentifier, @"123");
+                                   [expectation fulfill];
                                  }];
+  [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
 - (void)testAddPaymentShouldReturnFlutterErrorWhenPaymentFails {

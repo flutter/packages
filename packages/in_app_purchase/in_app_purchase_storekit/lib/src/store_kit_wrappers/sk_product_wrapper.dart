@@ -80,9 +80,8 @@ class SkProductResponseWrapper {
     );
   }
 
-  @visibleForTesting
-
   /// Convert from [SkProductResponseWrapper] to [SkProductResponseWrapper]
+  @visibleForTesting
   static SKProductsResponseMessage convertToPigeon(
       SkProductResponseWrapper wrapper) {
     return SKProductsResponseMessage(
@@ -133,9 +132,8 @@ enum SKSubscriptionPeriodUnit {
     }
   }
 
-  @visibleForTesting
-
   /// Convert from [SKSubscriptionPeriodUnit] to [SKSubscriptionPeriodUnitMessage]
+  @visibleForTesting
   static SKSubscriptionPeriodUnitMessage convertToPigeon(
       SKSubscriptionPeriodUnit msg) {
     switch (msg) {
@@ -211,9 +209,8 @@ class SKProductSubscriptionPeriodWrapper {
         unit: SKSubscriptionPeriodUnit.convertFromPigeon(msg.unit));
   }
 
-  @visibleForTesting
-
   /// Convert from [SKProductSubscriptionPeriodWrapper] to [SKProductSubscriptionPeriodMessage]
+  @visibleForTesting
   static SKProductSubscriptionPeriodMessage convertToPigeon(
       SKProductSubscriptionPeriodWrapper wrapper) {
     return SKProductSubscriptionPeriodMessage(
@@ -259,9 +256,8 @@ enum SKProductDiscountPaymentMode {
     }
   }
 
-  @visibleForTesting
-
   /// Convert from [SKProductDiscountPaymentModeMessage] to [SKProductDiscountPaymentMode]
+  @visibleForTesting
   static SKProductDiscountPaymentModeMessage convertToPigeon(
       SKProductDiscountPaymentMode wrapper) {
     switch (wrapper) {
@@ -305,9 +301,8 @@ enum SKProductDiscountType {
     }
   }
 
-  @visibleForTesting
-
   /// Convert from [SKProductDiscountType] to [SKProductDiscountTypeMessage]
+  @visibleForTesting
   static SKProductDiscountTypeMessage convertToPigeon(
       SKProductDiscountType wrapper) {
     switch (wrapper) {
@@ -416,9 +411,8 @@ class SKProductDiscountWrapper {
         type: SKProductDiscountType.convertFromPigeon(msg.type));
   }
 
-  @visibleForTesting
-
   /// Convert from [SKProductDiscountWrapper] to [SKProductDiscountMessage]
+  @visibleForTesting
   static SKProductDiscountMessage convertToPigeon(
       SKProductDiscountWrapper wrapper) {
     return SKProductDiscountMessage(
@@ -665,9 +659,8 @@ class SKPriceLocaleWrapper {
         countryCode: msg.countryCode);
   }
 
-  @visibleForTesting
-
   /// Convert from [SKPriceLocaleWrapper] to [SKPriceLocaleMessage]
+  @visibleForTesting
   static SKPriceLocaleMessage convertToPigeon(SKPriceLocaleWrapper msg) {
     return SKPriceLocaleMessage(
         currencySymbol: msg.currencySymbol,
