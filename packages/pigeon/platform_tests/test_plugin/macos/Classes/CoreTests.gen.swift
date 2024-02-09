@@ -53,6 +53,8 @@ enum AnEnum: Int {
   case one = 0
   case two = 1
   case three = 2
+  case fortyTwo = 3
+  case fourHundredTwentyTwo = 4
 }
 
 /// A class containing all supported types.
