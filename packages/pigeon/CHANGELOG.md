@@ -1,3 +1,11 @@
+## 17.0.0
+
+* **Breaking Change** [kotlin] Converts Kotlin enum case generation to SCREAMING_SNAKE_CASE.
+  * Updates `writeEnum` function to adhere to Kotlin naming conventions.
+  * Improves handling of complex names with enhanced regex patterns.
+  * Expands unit tests for comprehensive name conversion validation.
+  * **Migration Note**: This change modifies the naming convention of Kotlin enum cases generated from the Pigeon package. It is recommended to review the impact on your existing codebase and update any dependent code accordingly.
+
 ## 16.0.5
 
 * Adds ProxyApi to AST generation.
