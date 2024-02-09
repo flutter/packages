@@ -122,38 +122,49 @@
                       y:(NSUInteger)y
                    zoom:(NSUInteger)zoom
                receiver:(id<GMSTileReceiver>)receiver {
-  [self.methodChannel
-      invokeMethod:@"tileOverlay#getTile"
-         arguments:@{
-           @"tileOverlayId" : self.tileOverlayIdentifier,
-           @"x" : @(x),
-           @"y" : @(y),
-           @"zoom" : @(zoom)
-         }
-            result:^(id _Nullable result) {
-              UIImage *tileImage;
-              if ([result isKindOfClass:[NSDictionary class]]) {
-                FlutterStandardTypedData *typedData = (FlutterStandardTypedData *)result[@"data"];
-                if (typedData == nil) {
-                  tileImage = kGMSTileLayerNoTile;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.methodChannel
+        invokeMethod:@"tileOverlay#getTile"
+           arguments:@{
+             @"tileOverlayId" : self.tileOverlayIdentifier,
+             @"x" : @(x),
+             @"y" : @(y),
+             @"zoom" : @(zoom)
+           }
+              result:^(id _Nullable result) {
+                UIImage *tileImage;
+                if ([result isKindOfClass:[NSDictionary class]]) {
+                  FlutterStandardTypedData *typedData = (FlutterStandardTypedData *)result[@"data"];
+                  if (typedData == nil) {
+                    tileImage = kGMSTileLayerNoTile;
+                  } else {
+                    tileImage = [UIImage imageWithData:typedData.data];
+                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+                    CGContextRef context = CGBitmapContextCreate(nil, tileImage.size.width, tileImage.size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
+                    CGContextDrawImage(context, CGRectMake(0, 0, tileImage.size.width, tileImage.size.height), tileImage.CGImage);
+                    CGImageRef image = CGBitmapContextCreateImage(context);
+                    tileImage = [UIImage imageWithCGImage:image];
+                    CGImageRelease(image);
+                    CGContextRelease(context);
+                    CGColorSpaceRelease(colorSpace);
+                  }
                 } else {
-                  tileImage = [UIImage imageWithData:typedData.data];
+                  if ([result isKindOfClass:[FlutterError class]]) {
+                    FlutterError *error = (FlutterError *)result;
+                    NSLog(@"Can't get tile: errorCode = %@, errorMessage = %@, details = %@",
+                          [error code], [error message], [error details]);
+                  }
+                  if ([result isKindOfClass:[FlutterMethodNotImplemented class]]) {
+                    NSLog(@"Can't get tile: notImplemented");
+                  }
+                  tileImage = kGMSTileLayerNoTile;
                 }
-              } else {
-                if ([result isKindOfClass:[FlutterError class]]) {
-                  FlutterError *error = (FlutterError *)result;
-                  NSLog(@"Can't get tile: errorCode = %@, errorMessage = %@, details = %@",
-                        [error code], [error message], [error details]);
-                }
-                if ([result isKindOfClass:[FlutterMethodNotImplemented class]]) {
-                  NSLog(@"Can't get tile: notImplemented");
-                }
-                tileImage = kGMSTileLayerNoTile;
-              }
 
-              [receiver receiveTileWithX:x y:y zoom:zoom image:tileImage];
-            }];
+                [receiver receiveTileWithX:x y:y zoom:zoom image:tileImage];
+              }];
+  });
 }
+
 
 @end
 

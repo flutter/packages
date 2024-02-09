@@ -1,3 +1,11 @@
+## 2.4.3
+
+* Downsamples wide gamut tiles before serving them to google maps.
+
+## 2.4.2
+
+* Makes the tile overlay callback invoke the platform channel on the platform thread.
+
 ## 2.4.1
 
 * Restores the workaround to exclude arm64 simulator builds, as it is still necessary for applications targeting iOS 12.
