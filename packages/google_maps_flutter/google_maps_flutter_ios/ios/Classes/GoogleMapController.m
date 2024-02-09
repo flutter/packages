@@ -256,9 +256,7 @@
       UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
         [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
       }];
-      NSData *imageData = UIImagePNGRepresentation(image);
-      FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:imageData];
-      result(typedData);
+      result([FlutterStandardTypedData typedDataWithBytes:UIImagePNGRepresentation(image)]);
     } else {
       result([FlutterError errorWithCode:@"GoogleMap uninitialized"
                                  message:@"takeSnapshot called prior to map initialization"

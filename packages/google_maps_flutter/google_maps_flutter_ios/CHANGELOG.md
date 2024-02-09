@@ -1,6 +1,6 @@
 ## 2.4.2
 
-* Fixes a bug in takeSnapShot function that incorrectly returns a blank image on iOS 17
+* Fixes a bug in "takeSnapshot" function that incorrectly returns a blank image on iOS 17.
 
 ## 2.4.1
 
