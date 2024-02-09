@@ -289,7 +289,7 @@ class _MyAppState extends State<_MyApp> {
           unawaited(addition
               .setBillingChoice(BillingChoiceMode.alternativeBillingOnly));
         },
-        child: const Text('setAlternativeBillingOnlyState true'),
+        child: const Text('setBillingChoice alternativeBillingOnly'),
       ),
     ));
     return Card(
