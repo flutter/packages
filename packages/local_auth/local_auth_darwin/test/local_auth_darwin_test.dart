@@ -4,27 +4,27 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:local_auth_ios/local_auth_ios.dart';
-import 'package:local_auth_ios/src/messages.g.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
+import 'package:local_auth_darwin/src/messages.g.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'local_auth_ios_test.mocks.dart';
+import 'local_auth_darwin_test.mocks.dart';
 
 @GenerateMocks(<Type>[LocalAuthApi])
 void main() {
   late MockLocalAuthApi api;
-  late LocalAuthIOS plugin;
+  late LocalAuthDarwin plugin;
 
   setUp(() {
     api = MockLocalAuthApi();
-    plugin = LocalAuthIOS(api: api);
+    plugin = LocalAuthDarwin(api: api);
   });
 
   test('registers instance', () {
-    LocalAuthIOS.registerWith();
-    expect(LocalAuthPlatform.instance, isA<LocalAuthIOS>());
+    LocalAuthDarwin.registerWith();
+    expect(LocalAuthPlatform.instance, isA<LocalAuthDarwin>());
   });
 
   group('deviceSupportsBiometrics', () {
