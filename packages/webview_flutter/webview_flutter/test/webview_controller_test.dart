@@ -388,7 +388,7 @@ void main() {
     expect(permissionRequestCallbackCalled, isTrue);
   });
 
-  test('setOnConsoleMessage', () async {
+  test('setConsoleLogCallback', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
 

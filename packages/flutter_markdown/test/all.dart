@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-library flutter_markdown.all_test;
-
 import 'blockquote_test.dart' as blockquote_test;
 import 'custom_syntax_test.dart' as custome_syntax_test;
 import 'emphasis_test.dart' as emphasis_test;

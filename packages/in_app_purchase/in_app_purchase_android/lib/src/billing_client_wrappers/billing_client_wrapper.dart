@@ -10,6 +10,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
 import '../channel.dart';
+import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
 
@@ -324,6 +325,21 @@ class BillingClient {
     return result ?? false;
   }
 
+  /// BillingConfig method channel string identifier.
+  //
+  // Must match the value of GET_BILLING_CONFIG in
+  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
+  @visibleForTesting
+  final String getBillingConfigMethodString =
+      'BillingClient#getBillingConfig()';
+
+  /// Fetches billing config info into a [BillingConfigWrapper] object.
+  Future<BillingConfigWrapper> getBillingConfig() async {
+    return BillingConfigWrapper.fromJson((await channel
+            .invokeMapMethod<String, dynamic>(getBillingConfigMethodString)) ??
+        <String, dynamic>{});
+  }
+
   /// The method call handler for [channel].
   @visibleForTesting
   Future<void> callHandler(MethodCall call) async {
@@ -335,7 +351,6 @@ class BillingClient {
             _callbacks[kOnPurchasesUpdated]!.first as PurchasesUpdatedListener;
         listener(PurchasesResultWrapper.fromJson(
             (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>()));
-        break;
       case _kOnBillingServiceDisconnected:
         final int handle =
             (call.arguments as Map<Object?, Object?>)['handle']! as int;
@@ -343,7 +358,6 @@ class BillingClient {
             _callbacks[_kOnBillingServiceDisconnected]!
                 .cast<OnBillingServiceDisconnected>();
         onDisconnected[handle]();
-        break;
     }
   }
 }

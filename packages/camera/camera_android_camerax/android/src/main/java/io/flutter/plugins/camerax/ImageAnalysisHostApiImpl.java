@@ -19,7 +19,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
 
   private InstanceManager instanceManager;
   private BinaryMessenger binaryMessenger;
-  private Context context;
+  @Nullable private Context context;
 
   @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 
@@ -41,9 +41,13 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
 
   /** Creates an {@link ImageAnalysis} instance with the target resolution if specified. */
   @Override
-  public void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId) {
+  public void create(
+      @NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId) {
     ImageAnalysis.Builder imageAnalysisBuilder = cameraXProxy.createImageAnalysisBuilder();
 
+    if (rotation != null) {
+      imageAnalysisBuilder.setTargetRotation(rotation.intValue());
+    }
     if (resolutionSelectorId != null) {
       ResolutionSelector resolutionSelector =
           Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
@@ -61,6 +65,10 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
    */
   @Override
   public void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to set an Analyzer.");
+    }
+
     getImageAnalysisInstance(identifier)
         .setAnalyzer(
             ContextCompat.getMainExecutor(context),
@@ -73,6 +81,13 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     ImageAnalysis imageAnalysis =
         (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
     imageAnalysis.clearAnalyzer();
+  }
+
+  /** Dynamically sets the target rotation of the {@link ImageAnalysis}. */
+  @Override
+  public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
+    ImageAnalysis imageAnalysis = getImageAnalysisInstance(identifier);
+    imageAnalysis.setTargetRotation(rotation.intValue());
   }
 
   /**

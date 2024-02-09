@@ -68,6 +68,27 @@ Navigator.of(context).push(
 );
 ```
 
+The behavior may change depends on the shell route in current screen and the new screen.
+
+If pushing a new screen without any shell route onto the current screen with shell route, the new
+screen is placed entirely on top of the current screen.
+
+![An animation shows a new screen push on top of current screen](https://flutter.github.io/assets-for-api-docs/assets/go_router/push_regular_route.gif)
+
+If pushing a new screen with the same shell route as the current screen, the new
+screen is placed inside of the shell.
+
+![An animation shows pushing a new screen with the same shell as current screen](https://flutter.github.io/assets-for-api-docs/assets/go_router/push_same_shell.gif)
+
+If pushing a new screen with the different shell route as the current screen, the new
+screen along with the shell is placed entirely on top of the current screen.
+
+![An animation shows pushing a new screen with the different shell as current screen](https://flutter.github.io/assets-for-api-docs/assets/go_router/push_different_shell.gif)
+
+To try out the behavior yourself, see
+[push_with_shell_route.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart).
+
+
 ## Returning values
 Waiting for a value to be returned:
 

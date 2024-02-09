@@ -78,9 +78,7 @@ void main() {
       for (final String result in directories!) {
         _verifySampleFile(result, '$type');
       }
-    },
-        // TODO(camsim99): Fix https://github.com/flutter/flutter/issues/139808.
-        skip: true);
+    });
   }
 }
 
@@ -101,6 +99,9 @@ void _verifySampleFile(String? directoryPath, String name) {
 
   file.writeAsStringSync('Hello world!');
   expect(file.readAsStringSync(), 'Hello world!');
-  expect(directory.listSync(), isNotEmpty);
+  // This check intentionally avoids using Directory.listSync due to
+  // https://github.com/dart-lang/sdk/issues/54287.
+  expect(
+      Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
   file.deleteSync();
 }

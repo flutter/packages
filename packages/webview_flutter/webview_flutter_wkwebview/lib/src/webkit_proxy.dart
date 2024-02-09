@@ -73,6 +73,14 @@ class WebKitProxy {
     void Function(WKWebView webView, NSError error)?
         didFailProvisionalNavigation,
     void Function(WKWebView webView)? webViewWebContentProcessDidTerminate,
+    void Function(
+      WKWebView webView,
+      NSUrlAuthenticationChallenge challenge,
+      void Function(
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ) completionHandler,
+    )? didReceiveAuthenticationChallenge,
   }) createNavigationDelegate;
 
   /// Constructs a [WKUIDelegate].
@@ -89,6 +97,19 @@ class WebKitProxy {
       WKFrameInfo frame,
       WKMediaCaptureType type,
     )? requestMediaCapturePermission,
+    Future<void> Function(
+      String message,
+      WKFrameInfo frame,
+    )? runJavaScriptAlertDialog,
+    Future<bool> Function(
+      String message,
+      WKFrameInfo frame,
+    )? runJavaScriptConfirmDialog,
+    Future<String> Function(
+      String prompt,
+      String defaultText,
+      WKFrameInfo frame,
+    )? runJavaScriptTextInputDialog,
     InstanceManager? instanceManager,
   }) createUIDelegate;
 

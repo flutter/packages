@@ -4,7 +4,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/google_maps_f
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+maps%22
 # NOTE: We strongly prefer non-breaking changes, even at the expense of a
 # less-clean API. See https://flutter.dev/go/platform-interface-breaking-changes
-version: 2.4.1
+version: 2.4.3
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -14,14 +14,14 @@ dependencies:
   collection: ^1.15.0
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.1.0
+  plugin_platform_interface: ^2.1.7
   stream_transform: ^2.0.0
 
 dev_dependencies:
   async: ^2.5.0
   flutter_test:
     sdk: flutter
-  mockito: 5.4.3
+  mockito: 5.4.4
 
 topics:
   - google-maps

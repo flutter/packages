@@ -148,3 +148,15 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
     return kCVPixelFormatType_32BGRA;
   }
 }
+
+#pragma mark - file format
+
+FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString) {
+  if ([fileFormatString isEqualToString:@"jpg"]) {
+    return FCPFileFormatJPEG;
+  } else if ([fileFormatString isEqualToString:@"heif"]) {
+    return FCPFileFormatHEIF;
+  } else {
+    return FCPFileFormatInvalid;
+  }
+}

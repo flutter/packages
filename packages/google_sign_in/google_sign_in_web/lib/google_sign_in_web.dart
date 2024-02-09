@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/foundation.dart' show visibleForTesting, kDebugMode;
+import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
@@ -195,12 +195,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
         if (snapshot.hasData) {
           return FlexHtmlElementView(
               viewType: 'gsi_login_button',
-              onPlatformViewCreated: (int viewId) {
-                final web.Element? element =
-                    web.document.querySelector('#sign_in_button_$viewId');
-                assert(element != null,
-                    'Cannot render GSI button. DOM is not ready!');
-                _gisClient.renderButton(element!, config);
+              onElementCreated: (Object element) {
+                _gisClient.renderButton(element, config);
               });
         }
         return const Text('Getting ready');

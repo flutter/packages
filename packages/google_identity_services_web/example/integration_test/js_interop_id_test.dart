@@ -66,6 +66,8 @@ void main() async {
       expectConfigValue('login_uri', 'https://www.example.com/login');
       expectConfigValue('native_callback', utils.isAJs('function'));
       expectConfigValue('cancel_on_tap_outside', isFalse);
+      // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+      // ignore: always_specify_types
       expectConfigValue('allowed_parent_origin', isA<JSArray>());
       expectConfigValue('prompt_parent_id', 'some_dom_id');
       expectConfigValue('nonce', 's0m3_r4ndOM_vALu3');

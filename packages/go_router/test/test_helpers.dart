@@ -356,14 +356,6 @@ StatefulShellRouteBuilder mockStackedShellBuilder = (BuildContext context,
   return navigationShell;
 };
 
-RouteMatch createRouteMatch(RouteBase route, String location) {
-  return RouteMatch(
-    route: route,
-    matchedLocation: location,
-    pageKey: ValueKey<String>(location),
-  );
-}
-
 /// A routing config that is never going to change.
 class ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
   const ConstantRoutingConfig(this.value);

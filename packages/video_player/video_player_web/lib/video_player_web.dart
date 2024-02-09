@@ -56,7 +56,6 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         // Do NOT modify the incoming uri, it can be a Blob, and Safari doesn't
         // like blobs that have changed.
         uri = dataSource.uri ?? '';
-        break;
       case DataSourceType.asset:
         String assetUrl = dataSource.asset!;
         if (dataSource.package != null && dataSource.package!.isNotEmpty) {
@@ -64,7 +63,6 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         }
         assetUrl = ui_web.assetManager.getAssetUrl(assetUrl);
         uri = assetUrl;
-        break;
       case DataSourceType.file:
         return Future<int>.error(UnimplementedError(
             'web implementation of video_player cannot play local files'));

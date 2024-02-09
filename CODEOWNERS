@@ -50,7 +50,16 @@ third_party/packages/cupertino_icons/**                  @MitchellGoodwin
 # matching entry takes precedence.
 
 # - Web
-packages/**/*_web/**                                     @ditman
+packages/camera/camera_web/**                            @ditman
+packages/file_selector/file_selector_web/**              @ditman
+packages/google_maps_flutter/google_maps_flutter_web/**  @ditman
+packages/google_sign_in/google_sign_in_web/**            @ditman
+packages/image_picker/image_picker_for_web/**            @ditman
+packages/pointer_interceptor/pointer_interceptor_web/**  @ditman
+packages/shared_preferences/shared_preferences_web/**    @ditman
+packages/url_launcher/url_launcher_web/**                @ditman
+packages/video_player/video_player_web/**                @ditman
+packages/webview_flutter/webview_flutter_web/**          @ditman
 
 # - Android
 packages/camera/camera_android/**                        @camsim99
@@ -68,20 +77,23 @@ packages/quick_actions/quick_actions_android/**          @camsim99
 packages/shared_preferences/shared_preferences_android/**  @reidbaker
 packages/url_launcher/url_launcher_android/**            @gmackall
 packages/video_player/video_player_android/**            @camsim99
+# Owned by ecosystem team for now during the wrapper evaluation.
+packages/webview_flutter/webview_flutter_android/**      @bparrishMines
 
 # - iOS
 packages/camera/camera_avfoundation/**                   @hellohuanlin
-packages/file_selector/file_selector_ios/**              @stuartmorgan
+packages/file_selector/file_selector_ios/**              @jmagman
 packages/google_maps_flutter/google_maps_flutter_ios/**  @hellohuanlin
 packages/google_sign_in/google_sign_in_ios/**            @vashworth
 packages/image_picker/image_picker_ios/**                @vashworth
 packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
-packages/ios_platform_images/ios/**                      @stuartmorgan
+packages/ios_platform_images/**                          @jmagman
 packages/local_auth/local_auth_ios/**                    @louisehsu
-packages/path_provider/path_provider_foundation/**       @stuartmorgan
+packages/path_provider/path_provider_foundation/**       @jmagman
+packages/pointer_interceptor/pointer_interceptor_ios/**  @ditman
 packages/quick_actions/quick_actions_ios/**              @hellohuanlin
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
-packages/url_launcher/url_launcher_ios/**                @stuartmorgan
+packages/url_launcher/url_launcher_ios/**                @jmagman
 packages/video_player/video_player_avfoundation/**       @hellohuanlin
 packages/webview_flutter/webview_flutter_wkwebview/**    @hellohuanlin
 

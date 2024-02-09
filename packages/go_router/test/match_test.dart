@@ -16,40 +16,16 @@ void main() {
         builder: _builder,
       );
       final Map<String, String> pathParameters = <String, String>{};
-      final RouteMatch? match = RouteMatch.match(
+      final List<RouteMatchBase> matches = RouteMatchBase.match(
         route: route,
-        remainingLocation: '/users/123',
-        matchedLocation: '',
-        matchedPath: '',
         pathParameters: pathParameters,
+        uri: Uri.parse('/users/123'),
+        rootNavigatorKey: GlobalKey<NavigatorState>(),
       );
-      if (match == null) {
-        fail('Null match');
-      }
+      expect(matches.length, 1);
+      final RouteMatchBase match = matches.first;
       expect(match.route, route);
       expect(match.matchedLocation, '/users/123');
-      expect(pathParameters['userId'], '123');
-      expect(match.pageKey, isNotNull);
-    });
-
-    test('matchedLocation', () {
-      final GoRoute route = GoRoute(
-        path: 'users/:userId',
-        builder: _builder,
-      );
-      final Map<String, String> pathParameters = <String, String>{};
-      final RouteMatch? match = RouteMatch.match(
-        route: route,
-        remainingLocation: 'users/123',
-        matchedLocation: '/home',
-        matchedPath: '/home',
-        pathParameters: pathParameters,
-      );
-      if (match == null) {
-        fail('Null match');
-      }
-      expect(match.route, route);
-      expect(match.matchedLocation, '/home/users/123');
       expect(pathParameters['userId'], '123');
       expect(match.pageKey, isNotNull);
     });
@@ -65,17 +41,14 @@ void main() {
         ],
       );
       final Map<String, String> pathParameters = <String, String>{};
-      final RouteMatch? match = RouteMatch.match(
+      final List<RouteMatchBase> matches = RouteMatchBase.match(
         route: route,
-        remainingLocation: 'users/123',
-        matchedLocation: '/home',
-        matchedPath: '/home',
+        uri: Uri.parse('/users/123'),
+        rootNavigatorKey: GlobalKey<NavigatorState>(),
         pathParameters: pathParameters,
       );
-      if (match == null) {
-        fail('Null match');
-      }
-      expect(match.pageKey, isNotNull);
+      expect(matches.length, 1);
+      expect(matches.first.pageKey, isNotNull);
     });
 
     test('ShellRoute Match has stable unique key', () {
@@ -89,49 +62,134 @@ void main() {
         ],
       );
       final Map<String, String> pathParameters = <String, String>{};
-      final RouteMatch? match1 = RouteMatch.match(
+      final List<RouteMatchBase> matches1 = RouteMatchBase.match(
         route: route,
-        remainingLocation: 'users/123',
-        matchedLocation: '/home',
-        matchedPath: '/home',
         pathParameters: pathParameters,
+        uri: Uri.parse('/users/123'),
+        rootNavigatorKey: GlobalKey<NavigatorState>(),
       );
-
-      final RouteMatch? match2 = RouteMatch.match(
+      final List<RouteMatchBase> matches2 = RouteMatchBase.match(
         route: route,
-        remainingLocation: 'users/1234',
-        matchedLocation: '/home',
-        matchedPath: '/home',
         pathParameters: pathParameters,
+        uri: Uri.parse('/users/1234'),
+        rootNavigatorKey: GlobalKey<NavigatorState>(),
       );
-
-      expect(match1!.pageKey, match2!.pageKey);
+      expect(matches1.length, 1);
+      expect(matches2.length, 1);
+      expect(matches1.first.pageKey, matches2.first.pageKey);
     });
 
     test('GoRoute Match has stable unique key', () {
       final GoRoute route = GoRoute(
-        path: 'users/:userId',
+        path: '/users/:userId',
         builder: _builder,
       );
       final Map<String, String> pathParameters = <String, String>{};
-      final RouteMatch? match1 = RouteMatch.match(
+      final List<RouteMatchBase> matches1 = RouteMatchBase.match(
         route: route,
-        remainingLocation: 'users/123',
-        matchedLocation: '/home',
-        matchedPath: '/home',
+        uri: Uri.parse('/users/123'),
+        rootNavigatorKey: GlobalKey<NavigatorState>(),
         pathParameters: pathParameters,
       );
 
-      final RouteMatch? match2 = RouteMatch.match(
+      final List<RouteMatchBase> matches2 = RouteMatchBase.match(
         route: route,
-        remainingLocation: 'users/1234',
-        matchedLocation: '/home',
-        matchedPath: '/home',
+        uri: Uri.parse('/users/1234'),
+        rootNavigatorKey: GlobalKey<NavigatorState>(),
         pathParameters: pathParameters,
       );
-
-      expect(match1!.pageKey, match2!.pageKey);
+      expect(matches1.length, 1);
+      expect(matches2.length, 1);
+      expect(matches1.first.pageKey, matches2.first.pageKey);
     });
+  });
+
+  test('complex parentNavigatorKey works', () {
+    final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> shell1 = GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> shell2 = GlobalKey<NavigatorState>();
+    final GoRoute route = GoRoute(
+      path: '/',
+      builder: _builder,
+      routes: <RouteBase>[
+        ShellRoute(
+          navigatorKey: shell1,
+          builder: _shellBuilder,
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'a',
+              builder: _builder,
+              routes: <RouteBase>[
+                GoRoute(
+                  parentNavigatorKey: root,
+                  path: 'b',
+                  builder: _builder,
+                  routes: <RouteBase>[
+                    ShellRoute(
+                      navigatorKey: shell2,
+                      builder: _shellBuilder,
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'c',
+                          builder: _builder,
+                          routes: <RouteBase>[
+                            GoRoute(
+                              parentNavigatorKey: root,
+                              path: 'd',
+                              builder: _builder,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    final Map<String, String> pathParameters = <String, String>{};
+    final List<RouteMatchBase> matches = RouteMatchBase.match(
+      route: route,
+      pathParameters: pathParameters,
+      uri: Uri.parse('/a/b/c/d'),
+      rootNavigatorKey: root,
+    );
+    expect(matches.length, 4);
+    expect(
+      matches[0].route,
+      isA<GoRoute>().having(
+        (GoRoute route) => route.path,
+        'path',
+        '/',
+      ),
+    );
+    expect(
+      matches[1].route,
+      isA<ShellRoute>().having(
+        (ShellRoute route) => route.navigatorKey,
+        'navigator key',
+        shell1,
+      ),
+    );
+    expect(
+      matches[2].route,
+      isA<GoRoute>().having(
+        (GoRoute route) => route.path,
+        'path',
+        'b',
+      ),
+    );
+    expect(
+      matches[3].route,
+      isA<GoRoute>().having(
+        (GoRoute route) => route.path,
+        'path',
+        'd',
+      ),
+    );
   });
 
   group('ImperativeRouteMatch', () {

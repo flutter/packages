@@ -1,3 +1,19 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 5.7.3
+
+* Adds privacy manifest.
+
+## 5.7.2
+
+* Updates `clearAuthCache` override to match base class declaration.
+
+## 5.7.1
+
+* Changes `pigeon` to a dev dependency.
+
 ## 5.7.0
 
 * Adds support for macOS.

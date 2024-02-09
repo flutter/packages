@@ -28,6 +28,7 @@ const MethodCodec _codec = JSONMethodCodec();
 ///
 /// This is a class instead of an enum to allow future customizability e.g.
 /// opening a link in a specific iframe.
+// ignore: use_enums
 class LinkTarget {
   /// Const private constructor with a [debugLabel] to allow the creation of
   /// multiple distinct const instances.

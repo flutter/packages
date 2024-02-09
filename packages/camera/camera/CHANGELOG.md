@@ -1,3 +1,21 @@
+## NEXT
+
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+
+## 0.10.5+9
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 0.10.5+8
+
+* Fixes new lint warnings.
+
+## 0.10.5+7
+
+* Updates example app to use non-deprecated video_player method.
+
 ## 0.10.5+6
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

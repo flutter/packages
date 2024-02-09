@@ -51,7 +51,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:0 error:&error];
   FWFScrollViewDelegate *delegate =
       (FWFScrollViewDelegate *)[instanceManager instanceForIdentifier:0];
 
@@ -73,10 +73,10 @@
   [instanceManager addDartCreatedInstance:scrollView withIdentifier:1];
 
   [mockDelegate scrollViewDidScroll:scrollView];
-  OCMVerify([mockFlutterAPI scrollViewDidScrollWithIdentifier:@0
-                                       uiScrollViewIdentifier:@1
-                                                            x:@(1.0)
-                                                            y:@(2.0)
+  OCMVerify([mockFlutterAPI scrollViewDidScrollWithIdentifier:0
+                                       UIScrollViewIdentifier:1
+                                                            x:1.0
+                                                            y:2.0
                                                    completion:OCMOCK_ANY]);
 }
 @end

@@ -62,7 +62,7 @@ void main() {
     RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/'), context);
-    List<RouteMatch> matches = matchesObj.matches;
+    List<RouteMatchBase> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matchesObj.uri.toString(), '/');
     expect(matchesObj.extra, isNull);
@@ -238,7 +238,7 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/def'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
     expect(matches.length, 0);
     expect(matchesObj.uri.toString(), '/def');
     expect(matchesObj.extra, isNull);
@@ -303,7 +303,7 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/123/family/456'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/123/family/456');
@@ -347,7 +347,7 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/random/uri'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/123/family/345');
@@ -387,7 +387,7 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/redirect'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/123/family/345');
@@ -440,7 +440,7 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/abd'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches, hasLength(0));
     expect(matchesObj.error, isNotNull);
@@ -484,9 +484,11 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/a'), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
 
-    expect(matches, hasLength(2));
+    expect(matches, hasLength(1));
+    final ShellRouteMatch match = matches.first as ShellRouteMatch;
+    expect(match.matches, hasLength(1));
     expect(matchesObj.error, isNull);
   });
 }
