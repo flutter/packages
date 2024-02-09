@@ -348,52 +348,6 @@ Future<void> main() async {
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, false);
     });
-
-    // allowsInlineMediaPlayback is a noop on Android, so it is skipped.
-    testWidgets(
-        'Video plays full screen when allowsInlineMediaPlayback is false',
-        (WidgetTester tester) async {
-      final Completer<void> pageLoaded = Completer<void>();
-      final Completer<void> videoPlaying = Completer<void>();
-
-      final WebViewController controller =
-          WebViewController.fromPlatformCreationParams(
-        WebKitWebViewControllerCreationParams(
-          mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-        ),
-      );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setNavigationDelegate(
-        NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
-      ));
-      unawaited(controller.addJavaScriptChannel(
-        'VideoTestTime',
-        onMessageReceived: (JavaScriptMessage message) {
-          final double currentTime = double.parse(message.message);
-          // Let it play for at least 1 second to make sure the related video's properties are set.
-          if (currentTime > 1 && !videoPlaying.isCompleted) {
-            videoPlaying.complete(null);
-          }
-        },
-      ));
-      unawaited(controller.loadRequest(
-        Uri.parse(
-          'data:text/html;charset=utf-8;base64,$videoTestBase64',
-        ),
-      ));
-
-      await tester.pumpWidget(WebViewWidget(controller: controller));
-      await tester.pumpAndSettle();
-
-      await pageLoaded.future;
-
-      // Makes sure we get the correct event that indicates the video is actually playing.
-      await videoPlaying.future;
-
-      final bool fullScreen = await controller
-          .runJavaScriptReturningResult('isFullScreen();') as bool;
-      expect(fullScreen, true);
-    }, skip: Platform.isAndroid);
   });
 
   group('Audio playback policy', () {

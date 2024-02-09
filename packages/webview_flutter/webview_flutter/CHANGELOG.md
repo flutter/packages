@@ -1,7 +1,14 @@
-## 4.6.0
+## 4.7.0
 
 * Adds support to track scroll position changes.
 * Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
+
+## 4.6.0
+
+* Adds support for custom handling of JavaScript dialogs. See
+  `WebViewController.setOnJavaScriptAlertDialog`, `WebViewController.setOnJavaScriptConfirmDialog`
+  and `WebViewController.setOnJavaScriptTextInputDialog`.
+* Updates minimum Dart version to 3.2.3 and minimum Flutter version to 3.16.6.
 
 ## 4.5.0
 
