@@ -121,7 +121,8 @@ class BillingClient {
                 'BillingClient#startConnection(BillingClientStateListener)',
                 <String, dynamic>{
               'handle': disconnectCallbacks.length - 1,
-              'billingChoiceMode': billingChoiceMode,
+              'billingChoiceMode':
+                  const BillingChoiceModeConverter().toJson(billingChoiceMode),
             })) ??
         <String, dynamic>{});
   }
@@ -505,6 +506,27 @@ enum BillingChoiceMode {
   /// Billing through app provided flow.
   @JsonValue(1)
   alternativeBillingOnly,
+}
+
+/// Serializer for [BillingChoiceMode].
+///
+/// Use these in `@JsonSerializable()` classes by annotating them with
+/// `@BillingChoiceModeConverter()`.
+class BillingChoiceModeConverter
+    implements JsonConverter<BillingChoiceMode, int?> {
+  /// Default const constructor.
+  const BillingChoiceModeConverter();
+
+  @override
+  BillingChoiceMode fromJson(int? json) {
+    if (json == null) {
+      return BillingChoiceMode.playBillingOnly;
+    }
+    return $enumDecode(_$BillingChoiceModeEnumMap, json);
+  }
+
+  @override
+  int toJson(BillingChoiceMode object) => _$BillingChoiceModeEnumMap[object]!;
 }
 
 /// Serializer for [BillingResponse].
