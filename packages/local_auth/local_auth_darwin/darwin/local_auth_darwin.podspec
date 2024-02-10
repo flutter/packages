@@ -19,7 +19,7 @@ Downloaded by pub (not CocoaPods).
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
   s.ios.deployment_target = '12.0'
-  s.osx.deployment_target = '10.14'
+  s.osx.deployment_target = '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'local_auth_darwin_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
