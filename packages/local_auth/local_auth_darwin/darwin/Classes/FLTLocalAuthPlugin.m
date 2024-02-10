@@ -156,6 +156,28 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
           dismissButtonTitle:(NSString *)dismissButtonTitle
      openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
                   completion:(FLAAuthCompletion)completion {
+#if TARGET_OS_OSX
+  NSAlert *alert = [[NSAlert alloc] init];
+  [alert setMessageText:@""];
+  [alert setInformativeText:message];
+
+  if (openSettingsButtonTitle != nil) {
+    [alert addButtonWithTitle:openSettingsButtonTitle];
+    [alert setShowsHelp:YES];
+    [alert setHelpAnchor:@"OpenSettings"];
+  }
+  [alert addButtonWithTitle:dismissButtonTitle];
+
+  NSModalResponse response = [alert runModal];
+
+  if (response == NSAlertFirstButtonReturn) {
+    NSURL *url = [NSURL URLWithString:@"x-apple.systempreferences:"];
+    [[NSWorkspace sharedWorkspace] openURL:url];
+    [self handleSucceeded:NO withCompletion:completion];
+  } else {
+    [self handleSucceeded:NO withCompletion:completion];
+  }
+#else
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:@""
                                           message:message
@@ -185,6 +207,7 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
   [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:alert
                                                                                      animated:YES
                                                                                    completion:nil];
+#endif
 }
 
 - (void)handleAuthReplyWithSuccess:(BOOL)success
@@ -260,7 +283,12 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
 
 #pragma mark - AppDelegate
 
-- (void)applicationDidBecomeActive:(UIApplication *)application {
+#if TARGET_OS_OSX
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+#else
+- (void)applicationDidBecomeActive:(UIApplication *)application
+#endif
+{
   if (self.lastCallState != nil) {
     [self authenticateWithOptions:_lastCallState.options
                           strings:_lastCallState.strings

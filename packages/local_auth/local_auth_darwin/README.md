@@ -1,6 +1,6 @@
 # local_auth_darwin
 
-The iOS implementation of [`local_auth`][1].
+The iOS and macOS implementation of [`local_auth`][1].
 
 ## Usage
 

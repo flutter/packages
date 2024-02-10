@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:local_auth_darwin/src/messages.g.dart';
+import 'package:local_auth_darwin/types/constant_auth_messages.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -98,11 +99,11 @@ void main() {
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         // These should all be the default values from
-        // auth_messages_ios.dart
-        expect(strings.lockOut, iOSLockOut);
-        expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
-        expect(strings.cancelButton, iOSOkButton);
+        // constant_auth_messages.dart
+        expect(strings.lockOut, lockOutMessage);
+        expect(strings.goToSettingsButton, goToSettingsMessage);
+        expect(strings.goToSettingsDescription, goToSettingsDescriptionMessage);
+        expect(strings.cancelButton, okButtonMessage);
         expect(strings.localizedFallbackTitle, null);
       });
 
@@ -121,11 +122,11 @@ void main() {
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         // These should all be the default values from
-        // auth_messages_ios.dart
-        expect(strings.lockOut, iOSLockOut);
-        expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
-        expect(strings.cancelButton, iOSOkButton);
+        // constant_auth_messages.dart
+        expect(strings.lockOut, lockOutMessage);
+        expect(strings.goToSettingsButton, goToSettingsMessage);
+        expect(strings.goToSettingsDescription, goToSettingsDescriptionMessage);
+        expect(strings.cancelButton, okButtonMessage);
         expect(strings.localizedFallbackTitle, null);
       });
 
@@ -145,6 +146,13 @@ void main() {
         await plugin
             .authenticate(localizedReason: reason, authMessages: <AuthMessages>[
           const IOSAuthMessages(
+            lockOut: lockOut,
+            goToSettingsButton: goToSettingsButton,
+            goToSettingsDescription: gotToSettingsDescription,
+            cancelButton: cancel,
+            localizedFallbackTitle: localizedFallbackTitle,
+          ),
+          const MacOSAuthMessages(
             lockOut: lockOut,
             goToSettingsButton: goToSettingsButton,
             goToSettingsDescription: gotToSettingsDescription,
@@ -183,6 +191,11 @@ void main() {
             localizedFallbackTitle: localizedFallbackTitle,
             cancelButton: cancel,
           ),
+          const MacOSAuthMessages(
+            lockOut: lockOut,
+            localizedFallbackTitle: localizedFallbackTitle,
+            cancelButton: cancel,
+          ),
         ]);
 
         final VerificationResult result =
@@ -194,9 +207,9 @@ void main() {
         expect(strings.localizedFallbackTitle, localizedFallbackTitle);
         expect(strings.cancelButton, cancel);
         // These were not set, so should all be the default values from
-        // auth_messages_ios.dart
-        expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
+        // constant_auth_messages.dart
+        expect(strings.goToSettingsButton, goToSettingsMessage);
+        expect(strings.goToSettingsDescription, goToSettingsDescriptionMessage);
       });
     });
 
