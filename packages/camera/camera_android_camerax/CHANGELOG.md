@@ -1,3 +1,12 @@
+## 0.5.0+32
+
+* Removes all remaining `unawaited` calls to fix potential race conditions and updates the
+  camera state when video capture starts.
+
+## 0.5.0+31
+
+* Wraps CameraX classes needed to set capture request options, which is needed to implement setting the exposure mode.
+
 ## 0.5.0+30
 
 * Adds documentation to clarify how the plugin uses resolution presets as target resolutions for CameraX.
