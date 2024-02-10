@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package kotlin.dev.flutter.plugins.interactive_media_ads_example
+package dev.flutter.packages.interactive_media_ads_example
 
 import androidx.test.rule.ActivityTestRule
 import dev.flutter.plugins.integration_test.FlutterTestRunner
