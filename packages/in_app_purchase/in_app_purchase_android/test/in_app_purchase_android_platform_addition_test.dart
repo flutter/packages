@@ -85,7 +85,7 @@ void main() {
     });
   });
 
-  group('setAlternativeBillingOnlyState', () {
+  group('setBillingChoice', () {
     late Map<Object?, Object?> arguments;
     test('setAlternativeBillingOnlyState', () async {
       stubPlatform.reset();
@@ -105,8 +105,10 @@ void main() {
       );
       // Verify that after connection ended reconnect was called.
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
-      expect(arguments['billingChoiceMode'],
-          BillingChoiceMode.alternativeBillingOnly);
+      expect(
+          arguments['billingChoiceMode'],
+          const BillingChoiceModeConverter()
+              .toJson(BillingChoiceMode.alternativeBillingOnly));
     });
 
     test('setPlayBillingState', () async {
@@ -127,7 +129,10 @@ void main() {
       );
       // Verify that after connection ended reconnect was called.
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
-      expect(arguments['billingChoiceMode'], BillingChoiceMode.playBillingOnly);
+      expect(
+          arguments['billingChoiceMode'],
+          const BillingChoiceModeConverter()
+              .toJson(BillingChoiceMode.playBillingOnly));
     });
   });
 
