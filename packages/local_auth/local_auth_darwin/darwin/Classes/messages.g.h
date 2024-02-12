@@ -33,7 +33,7 @@ typedef NS_ENUM(NSUInteger, FLAAuthResult) {
 - (instancetype)initWithValue:(FLAAuthResult)value;
 @end
 
-/// Pigeon equivalent of the subset of BiometricType used by iOS.
+/// Pigeon equivalent of the subset of BiometricType used by iOS and macOS.
 typedef NS_ENUM(NSUInteger, FLAAuthBiometric) {
   FLAAuthBiometricFace = 0,
   FLAAuthBiometricFingerprint = 1,
@@ -50,9 +50,10 @@ typedef NS_ENUM(NSUInteger, FLAAuthBiometric) {
 @class FLAAuthResultDetails;
 @class FLAAuthBiometricWrapper;
 
-/// Pigeon version of IOSAuthMessages, plus the authorization reason.
+/// Pigeon version of IOSAuthMessages and MacOSAuthMessages, plus the
+/// authorization reason.
 ///
-/// See auth_messages_ios.dart for details.
+/// See auth_messages_ios.dart and auth_messages_macos.dart for details.
 @interface FLAAuthStrings : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;

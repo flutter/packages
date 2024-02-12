@@ -2,19 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
 import 'src/messages.g.dart';
 import 'types/auth_messages_ios.dart';
+import 'types/auth_messages_macos.dart';
+import 'types/constant_auth_messages.dart';
 
 export 'package:local_auth_darwin/types/auth_messages_ios.dart';
+export 'package:local_auth_darwin/types/auth_messages_macos.dart';
 export 'package:local_auth_platform_interface/types/auth_messages.dart';
 export 'package:local_auth_platform_interface/types/auth_options.dart';
 export 'package:local_auth_platform_interface/types/biometric_type.dart';
 
-/// The implementation of [LocalAuthPlatform] for iOS.
+/// The implementation of [LocalAuthPlatform] for iOS and macOS.
 class LocalAuthDarwin extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
   LocalAuthDarwin({
@@ -93,29 +98,43 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   @override
   Future<bool> isDeviceSupported() async => _api.isDeviceSupported();
 
-  /// Always returns false as this method is not supported on iOS.
+  /// Always returns false as this method is not supported on iOS and macOS.
   @override
   Future<bool> stopAuthentication() async => false;
 
   AuthStrings _pigeonStringsFromAuthMessages(
       String localizedReason, Iterable<AuthMessages> messagesList) {
-    IOSAuthMessages? messages;
+    IOSAuthMessages? iosMessages;
+    MacOSAuthMessages? macosMessages;
+
     for (final AuthMessages entry in messagesList) {
-      if (entry is IOSAuthMessages) {
-        messages = entry;
+      if (Platform.isIOS) {
+        if (entry is IOSAuthMessages) {
+          iosMessages = entry;
+          break;
+        }
+      } else if (entry is MacOSAuthMessages) {
+        macosMessages = entry;
         break;
       }
     }
+
     return AuthStrings(
       reason: localizedReason,
-      lockOut: messages?.lockOut ?? iOSLockOut,
-      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
-      goToSettingsDescription:
-          messages?.goToSettingsDescription ?? iOSGoToSettingsDescription,
+      lockOut: iosMessages?.lockOut ?? macosMessages?.lockOut ?? lockOutMessage,
+      goToSettingsButton: iosMessages?.goToSettingsButton ??
+          macosMessages?.goToSettingsButton ??
+          goToSettingsMessage,
+      goToSettingsDescription: iosMessages?.goToSettingsDescription ??
+          macosMessages?.goToSettingsDescription ??
+          goToSettingsDescriptionMessage,
       // TODO(stuartmorgan): The default's name is confusing here for legacy
       // reasons; this should be fixed as part of some future breaking change.
-      cancelButton: messages?.cancelButton ?? iOSOkButton,
-      localizedFallbackTitle: messages?.localizedFallbackTitle,
+      cancelButton: iosMessages?.cancelButton ??
+          macosMessages?.cancelButton ??
+          okButtonMessage,
+      localizedFallbackTitle: iosMessages?.localizedFallbackTitle ??
+          macosMessages?.localizedFallbackTitle,
     );
   }
 }

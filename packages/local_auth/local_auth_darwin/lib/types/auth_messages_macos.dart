@@ -7,12 +7,12 @@ import 'package:local_auth_platform_interface/types/auth_messages.dart';
 
 import 'constant_auth_messages.dart';
 
-/// Class wrapping all authentication messages needed on iOS.
+/// Class wrapping all authentication messages needed on macOS.
 /// Provides default values for all messages.
 @immutable
-class IOSAuthMessages extends AuthMessages {
+class MacOSAuthMessages extends AuthMessages {
   /// Constructs a new instance.
-  const IOSAuthMessages({
+  const MacOSAuthMessages({
     this.lockOut,
     this.goToSettingsButton,
     this.goToSettingsDescription,
@@ -46,7 +46,7 @@ class IOSAuthMessages extends AuthMessages {
     return <String, String>{
       'lockOut': lockOut ?? lockOutMessage,
       'goToSetting': goToSettingsButton ?? goToSettingsMessage,
-      'goToSettingDescriptionIOS':
+      'goToSettingDescriptionMacOS':
           goToSettingsDescription ?? goToSettingsDescriptionMessage,
       'okButton': cancelButton ?? okButtonMessage,
       if (localizedFallbackTitle != null)
@@ -57,7 +57,7 @@ class IOSAuthMessages extends AuthMessages {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is IOSAuthMessages &&
+      other is MacOSAuthMessages &&
           runtimeType == other.runtimeType &&
           lockOut == other.lockOut &&
           goToSettingsButton == other.goToSettingsButton &&

@@ -43,8 +43,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-        <key>NSFaceIDUsageDescription</key>
-        <string>App needs to authenticate using faces.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>App needs to authenticate using faces.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
