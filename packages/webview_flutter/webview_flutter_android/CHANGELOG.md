@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk to 34.
+
 ## 3.15.0
 
 * Adds support for `setOnScrollPositionChange` method to the `AndroidWebViewController`.
