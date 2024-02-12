@@ -217,7 +217,12 @@ Page resource error:
       )
       ..loadRequest(LoadRequestParams(
         uri: Uri.parse('https://flutter.dev'),
-      ));
+      ))
+      ..setOnScrollPositionChange((ScrollPositionChange scrollPositionChange) {
+        debugPrint(
+          'Scroll position change to x = ${scrollPositionChange.x}, y = ${scrollPositionChange.y}',
+        );
+      });
   }
 
   @override
