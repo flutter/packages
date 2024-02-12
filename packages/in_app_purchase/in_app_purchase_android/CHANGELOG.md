@@ -1,6 +1,6 @@
 ## 0.3.1
 
-* Adds alternative-billing-only APIs to platform addition.
+* Adds alternative-billing-only APIs to InAppPurchaseAndroidPlatformAddition.
 
 ## 0.3.0+18
 
