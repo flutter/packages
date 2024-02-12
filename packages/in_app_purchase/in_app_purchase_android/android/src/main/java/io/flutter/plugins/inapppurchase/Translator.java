@@ -247,7 +247,9 @@ import java.util.Map;
   static HashMap<String, Object> fromAlternativeBillingOnlyReportingDetails(
       BillingResult result, AlternativeBillingOnlyReportingDetails details) {
     HashMap<String, Object> info = fromBillingResult(result);
-    info.put("externalTransactionToken", details.getExternalTransactionToken());
+    if (details != null) {
+      info.put("externalTransactionToken", details.getExternalTransactionToken());
+    }
     return info;
   }
 

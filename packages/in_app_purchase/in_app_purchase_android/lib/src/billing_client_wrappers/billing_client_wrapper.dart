@@ -10,7 +10,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
 import '../channel.dart';
-import 'alternative_billing_only_reporting_details_wrapper.dart';
 import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';

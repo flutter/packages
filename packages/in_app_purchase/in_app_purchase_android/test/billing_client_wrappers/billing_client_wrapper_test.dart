@@ -5,7 +5,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
-import 'package:in_app_purchase_android/src/billing_client_wrappers/alternative_billing_only_reporting_details_wrapper.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
 

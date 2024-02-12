@@ -51,6 +51,7 @@ class _MyAppState extends State<_MyApp> {
   String _countryCode = '';
   String _isAlternativeBillingOnlyAvailableResponseCode = '';
   String _showAlternativeBillingOnlyDialogResponseCode = '';
+  String _alternativeBillingOnlyReportingDetailsToken = '';
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
@@ -227,6 +228,10 @@ class _MyAppState extends State<_MyApp> {
         title: Text('showAlternativeBillingOnlyDialog response code',
             style: TextStyle(color: ThemeData.light().colorScheme.primary)),
         subtitle: Text(_showAlternativeBillingOnlyDialogResponseCode)));
+    entries.add(ListTile(
+        title: Text('createAlternativeBillingOnlyReportingDetails contents',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_alternativeBillingOnlyReportingDetailsToken)));
 
     final List<Widget> buttons = <ListTile>[];
     buttons.add(ListTile(
@@ -290,6 +295,22 @@ class _MyAppState extends State<_MyApp> {
               .setBillingChoice(BillingChoiceMode.alternativeBillingOnly));
         },
         child: const Text('setBillingChoice alternativeBillingOnly'),
+      ),
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(deliverCreateAlternativeBillingOnlyReportingDetails(
+              addition.createAlternativeBillingOnlyReportingDetails()));
+        },
+        child: const Text('createAlternativeBillingOnlyReportingDetails'),
       ),
     ));
     return Card(
@@ -464,6 +485,22 @@ class _MyAppState extends State<_MyApp> {
     final BillingResultWrapper wrapper = await billingResult;
     setState(() {
       _showAlternativeBillingOnlyDialogResponseCode = wrapper.responseCode.name;
+    });
+  }
+
+  Future<void> deliverCreateAlternativeBillingOnlyReportingDetails(
+      Future<AlternativeBillingOnlyReportingDetailsWrapper>
+          futureWrapper) async {
+    final AlternativeBillingOnlyReportingDetailsWrapper wrapper =
+        await futureWrapper;
+    setState(() {
+      if (wrapper.responseCode == BillingResponse.ok) {
+        _alternativeBillingOnlyReportingDetailsToken =
+            wrapper.externalTransactionToken;
+      } else {
+        _alternativeBillingOnlyReportingDetailsToken =
+            wrapper.responseCode.name;
+      }
     });
   }
 

@@ -180,6 +180,18 @@ class InAppPurchaseAndroidPlatformAddition
     return wrapper;
   }
 
+  /// The details used to report transactions made via alternative billing
+  /// without user choice to use Google Play billing.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/AlternativeBillingOnlyReportingDetails
+  Future<AlternativeBillingOnlyReportingDetailsWrapper>
+      createAlternativeBillingOnlyReportingDetails() async {
+    final AlternativeBillingOnlyReportingDetailsWrapper wrapper =
+        await _billingClientManager.runWithClient((BillingClient client) =>
+            client.createAlternativeBillingOnlyReportingDetails());
+    return wrapper;
+  }
+
   /// Disconnects, sets AlternativeBillingOnly to true, and reconnects to
   /// the [BillingClient].
   ///
