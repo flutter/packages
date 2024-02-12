@@ -6,5 +6,5 @@ package dev.flutter.plugins.interactive_media_ads_example
 
 import io.flutter.embedding.android.FlutterActivity
 
-/** Test Activity that sets the name of the Dart method entrypoint in the manifest.  */
+/** Test Activity that sets the name of the Dart method entrypoint in the manifest. */
 class DriverExtensionActivity : FlutterActivity()
