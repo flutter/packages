@@ -129,7 +129,7 @@ class BillingClientManager {
   Future<void> reconnectWithBillingChoiceMode(
       BillingChoiceMode billingChoiceMode) async {
     _billingChoiceMode = billingChoiceMode;
-    // Ends connection and triggers OnBillingServiceDisconnected, which causes reconnect;
+    // Ends connection and triggers OnBillingServiceDisconnected, which causes reconnect.
     await client.endConnection();
     await _connect();
   }

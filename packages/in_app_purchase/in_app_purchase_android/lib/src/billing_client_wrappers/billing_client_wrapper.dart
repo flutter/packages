@@ -498,6 +498,8 @@ enum BillingChoiceMode {
   // WARNING: Changes to this class need to be reflected in our generated code.
   // Run `flutter packages pub run build_runner watch` to rebuild and watch for
   // further changes.
+  // Values must match what is used in
+  // in_app_purchase_android/android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
 
   /// Billing through google play. Default state.
   @JsonValue(0)

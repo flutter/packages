@@ -98,7 +98,7 @@ void main() {
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
 
-      /// Fake the disconnect that we would expect from a endConnectionCall.
+      // Fake the disconnect that we would expect from a endConnectionCall.
       await manager.client.callHandler(
         const MethodCall(onBillingServiceDisconnectedCallback,
             <String, dynamic>{'handle': 0}),
@@ -122,7 +122,7 @@ void main() {
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.playBillingOnly);
 
-      /// Fake the disconnect that we would expect from a endConnectionCall.
+      // Fake the disconnect that we would expect from a endConnectionCall.
       await manager.client.callHandler(
         const MethodCall(onBillingServiceDisconnectedCallback,
             <String, dynamic>{'handle': 0}),

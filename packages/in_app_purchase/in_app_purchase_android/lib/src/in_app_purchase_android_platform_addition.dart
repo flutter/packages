@@ -180,7 +180,7 @@ class InAppPurchaseAndroidPlatformAddition
     return wrapper;
   }
 
-  /// Disconnects, Sets AlternativeBillingOnly to true, and recoonects to
+  /// Disconnects, sets AlternativeBillingOnly to true, and reconnects to
   /// the [BillingClient].
   ///
   /// [BillingChoiceMode.playBillingOnly] is the default state used.

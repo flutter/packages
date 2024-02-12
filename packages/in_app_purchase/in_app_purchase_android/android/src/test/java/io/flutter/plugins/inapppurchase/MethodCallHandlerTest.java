@@ -296,8 +296,6 @@ public class MethodCallHandlerTest {
   @Test
   public void createAlternativeBillingOnlyReportingDetailsSuccess() {
     mockStartConnection();
-    // ArgumentCaptor<GetBillingConfigParams> paramsCaptor =
-    //     ArgumentCaptor.forClass(GetBillingConfigParams.class);
     ArgumentCaptor<AlternativeBillingOnlyReportingDetailsListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyReportingDetailsListener.class);
     MethodCall createABOReportingDetailsCall =
@@ -1057,10 +1055,20 @@ public class MethodCallHandlerTest {
     verify(result).success(false);
   }
 
+  /**
+   * Call {@link MethodCallHandlerImpl.START_CONNECTION] with startup params.
+   *
+   * Defaults to play billing only which is the default.
+   */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection() {
     return mockStartConnection(BillingChoiceMode.PLAY_BILLING_ONLY);
   }
 
+  /**
+   * Call {@link MethodCallHandlerImpl.START_CONNECTION] with startup params.
+   *
+   *{@link billingChoiceMode} is one of the int value used from {@link BillingChoiceMode}.
+   */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection(int billingChoiceMode) {
     Map<String, Object> arguments = new HashMap<>();
     arguments.put(MethodArgs.HANDLE, 1);

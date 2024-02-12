@@ -87,6 +87,10 @@ class MethodCallHandlerImpl
     private MethodArgs() {}
   }
 
+  /**
+   * Values here must match values used in
+   * in_app_purchase_android/lib/src/billing_client_wrappers/billing_client_wrapper.dart
+   */
   static final class BillingChoiceMode {
     static final int PLAY_BILLING_ONLY = 0;
     static final int ALTERNATIVE_BILLING_ONLY = 1;
