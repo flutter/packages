@@ -60,7 +60,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FLALocalAuthPluginLocalAuthPlugin *instance = [[FLALocalAuthPluginLocalAuthPlugin alloc] init];
   [registrar addApplicationDelegate:instance];
-  SetUpFLALocalAuthApi([registrar messenger], instance);
+  SetUpFLADLocalAuthApi([registrar messenger], instance);
 }
 
 - (instancetype)init {
@@ -75,7 +75,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   return self;
 }
 
-#pragma mark FLALocalAuthApi
+#pragma mark FLADLocalAuthApi
 
 - (void)authenticateWithOptions:(nonnull FLADAuthOptions *)options
                         strings:(nonnull FLADAuthStrings *)strings

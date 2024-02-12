@@ -6,5 +6,5 @@
 
 #import "messages.g.h"
 
-@interface FLALocalAuthPlugin : NSObject <FlutterPlugin, FLALocalAuthApi>
+@interface FLALocalAuthPlugin : NSObject <FlutterPlugin, FLADLocalAuthApi>
 @end
