@@ -1,5 +1,5 @@
-name: local_auth_ios_example
-description: Demonstrates how to use the local_auth_ios plugin.
+name: local_auth_darwin_example
+description: Demonstrates how to use the local_auth_darwin plugin.
 publish_to: none
 
 environment:
@@ -9,9 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  local_auth_ios:
+  local_auth_darwin:
     # When depending on this package from a real application you should use:
-    #   local_auth: ^x.y.z
+    #   local_auth_darwin: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.

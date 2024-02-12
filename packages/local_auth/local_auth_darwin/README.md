@@ -1,4 +1,4 @@
-# local\_auth\_ios
+# local_auth_darwin
 
 The iOS implementation of [`local_auth`][1].
 

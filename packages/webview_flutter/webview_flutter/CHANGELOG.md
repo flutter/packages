@@ -1,3 +1,8 @@
+## 4.7.0
+
+* Adds support to track scroll position changes.
+* Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
+
 ## 4.6.0
 
 * Adds support for custom handling of JavaScript dialogs. See
