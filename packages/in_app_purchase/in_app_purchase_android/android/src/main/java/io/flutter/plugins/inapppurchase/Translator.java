@@ -7,6 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.AccountIdentifiers;
+import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
@@ -237,6 +238,18 @@ import java.util.Map;
       BillingResult result, BillingConfig billingConfig) {
     HashMap<String, Object> info = fromBillingResult(result);
     info.put("countryCode", billingConfig.getCountryCode());
+    return info;
+  }
+
+  /**
+   * Converter from {@link BillingResult} and {@link AlternativeBillingOnlyReportingDetails} to map.
+   */
+  static HashMap<String, Object> fromAlternativeBillingOnlyReportingDetails(
+      BillingResult result, AlternativeBillingOnlyReportingDetails details) {
+    HashMap<String, Object> info = fromBillingResult(result);
+    if (details != null) {
+      info.put("externalTransactionToken", details.getExternalTransactionToken());
+    }
     return info;
   }
 
