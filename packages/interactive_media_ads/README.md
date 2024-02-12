@@ -13,4 +13,3 @@ A Flutter plugin for using the Interactive Media Ads SDKs on Android and iOS.
 **This package is still in development.**
 
 [1]: https://developers.google.com/interactive-media-ads
-

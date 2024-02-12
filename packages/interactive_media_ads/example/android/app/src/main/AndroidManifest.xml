@@ -30,12 +30,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-
-    <!-- When tests are ran on Firebase Test Lab, a wake lock
-       permission failure prevents tests from running.
-    -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility?hl=en and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.

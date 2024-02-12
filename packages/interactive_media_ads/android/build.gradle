@@ -1,4 +1,4 @@
-group 'dev.flutter.plugins.interactive_media_ads'
+group 'dev.flutter.packages.interactive_media_ads'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 
 android {
     if (project.android.hasProperty("namespace")) {
-        namespace 'dev.flutter.plugins.interactive_media_ads'
+        namespace 'dev.flutter.packages.interactive_media_ads'
     }
 
     compileSdk 34
@@ -69,9 +69,9 @@ android {
         unitTests.all {
             useJUnitPlatform()
             testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen {false}
+                showStandardStreams = true
             }
         }
     }

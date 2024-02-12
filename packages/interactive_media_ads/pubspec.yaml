@@ -12,7 +12,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: dev.flutter.plugins.interactive_media_ads
+        package: dev.flutter.packages.interactive_media_ads
         pluginClass: InteractiveMediaAdsPlugin
       ios:
         pluginClass: InteractiveMediaAdsPlugin
