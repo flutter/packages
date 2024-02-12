@@ -14,7 +14,7 @@ static const NSTimeInterval kTimeout = 30.0;
 /**
  * A context factory that returns preset contexts.
  */
-@interface StubAuthContextFactory : NSObject <FLAAuthContextFactory>
+@interface StubAuthContextFactory : NSObject <FLADAuthContextFactory>
 @property(copy, nonatomic) NSMutableArray *contexts;
 - (instancetype)initWithContexts:(NSArray *)contexts;
 @end
@@ -40,10 +40,10 @@ static const NSTimeInterval kTimeout = 30.0;
 
 #pragma mark -
 
-@interface FLTLocalAuthPluginTests : XCTestCase
+@interface FLALocalAuthPluginTests : XCTestCase
 @end
 
-@implementation FLTLocalAuthPluginTests
+@implementation FLALocalAuthPluginTests
 
 - (void)setUp {
   self.continueAfterFailure = NO;
@@ -51,12 +51,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSuccessfullAuthWithBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
   // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
@@ -73,14 +73,14 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:YES
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:YES
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(resultDetails.result, FLAAuthResultSuccess);
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultSuccess);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -89,12 +89,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSuccessfullAuthWithoutBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
   // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
@@ -111,14 +111,14 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(resultDetails.result, FLAAuthResultSuccess);
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultSuccess);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -127,12 +127,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testFailedAuthWithBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
   // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
@@ -149,18 +149,18 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:YES
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:YES
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
                          // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
                          // behavior, so is preserved as part of the migration, but a failed
                          // authentication should return failure, not an error that results in a
                          // PlatformException.
-                         XCTAssertEqual(resultDetails.result, FLAAuthResultErrorNotAvailable);
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultErrorNotAvailable);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -169,12 +169,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testFailedWithUnknownErrorCode {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
   // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
@@ -191,14 +191,14 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(resultDetails.result, FLAAuthResultErrorNotAvailable);
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultErrorNotAvailable);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -207,12 +207,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSystemCancelledWithoutStickyAuth {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
   // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
@@ -229,14 +229,14 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(resultDetails.result, FLAAuthResultFailure);
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultFailure);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -245,12 +245,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testFailedAuthWithoutBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
   // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
@@ -267,18 +267,18 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
                          // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
                          // behavior, so is preserved as part of the migration, but a failed
                          // authentication should return failure, not an error that results in a
                          // PlatformException.
-                         XCTAssertEqual(resultDetails.result, FLAAuthResultErrorNotAvailable);
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultErrorNotAvailable);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -287,12 +287,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testLocalizedFallbackTitle {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   strings.localizedFallbackTitle = @"a title";
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
@@ -310,11 +310,11 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          OCMVerify([mockAuthContext
                              setLocalizedFallbackTitle:strings.localizedFallbackTitle]);
@@ -325,12 +325,12 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSkippedLocalizedFallbackTitle {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
-  FLAAuthStrings *strings = [self createAuthStrings];
+  FLADAuthStrings *strings = [self createAuthStrings];
   strings.localizedFallbackTitle = nil;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
 
@@ -348,11 +348,11 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(backgroundThreadReplyCaller);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
-  [plugin authenticateWithOptions:[FLAAuthOptions makeWithBiometricOnly:NO
-                                                                 sticky:NO
-                                                        useErrorDialogs:NO]
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          OCMVerify([mockAuthContext setLocalizedFallbackTitle:nil]);
                          [expectation fulfill];
@@ -362,7 +362,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testDeviceSupportsBiometrics_withEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -377,7 +377,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testDeviceSupportsBiometrics_withNonEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -404,7 +404,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testDeviceSupportsBiometrics_withNoBiometricHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -431,7 +431,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testGetEnrolledBiometricsWithFaceID {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -440,15 +440,15 @@ static const NSTimeInterval kTimeout = 30.0;
   OCMStub([mockAuthContext biometryType]).andReturn(LABiometryTypeFaceID);
 
   FlutterError *error;
-  NSArray<FLAAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
+  NSArray<FLADAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
   XCTAssertEqual([result count], 1);
-  XCTAssertEqual(result[0].value, FLAAuthBiometricFace);
+  XCTAssertEqual(result[0].value, FLADAuthBiometricFace);
   XCTAssertNil(error);
 }
 
 - (void)testGetEnrolledBiometricsWithTouchID {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -457,15 +457,15 @@ static const NSTimeInterval kTimeout = 30.0;
   OCMStub([mockAuthContext biometryType]).andReturn(LABiometryTypeTouchID);
 
   FlutterError *error;
-  NSArray<FLAAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
+  NSArray<FLADAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
   XCTAssertEqual([result count], 1);
-  XCTAssertEqual(result[0].value, FLAAuthBiometricFingerprint);
+  XCTAssertEqual(result[0].value, FLADAuthBiometricFingerprint);
   XCTAssertNil(error);
 }
 
 - (void)testGetEnrolledBiometricsWithoutEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -485,7 +485,7 @@ static const NSTimeInterval kTimeout = 30.0;
       .andDo(canEvaluatePolicyHandler);
 
   FlutterError *error;
-  NSArray<FLAAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
+  NSArray<FLADAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
   XCTAssertEqual([result count], 0);
   XCTAssertNil(error);
 }
@@ -495,7 +495,7 @@ static const NSTimeInterval kTimeout = 30.0;
   OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
                                        error:[OCMArg setTo:nil]])
       .andReturn(YES);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -510,7 +510,7 @@ static const NSTimeInterval kTimeout = 30.0;
   OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
                                        error:[OCMArg setTo:nil]])
       .andReturn(NO);
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -520,13 +520,13 @@ static const NSTimeInterval kTimeout = 30.0;
   XCTAssertNil(error);
 }
 
-// Creates an FLAAuthStrings with placeholder values.
-- (FLAAuthStrings *)createAuthStrings {
-  return [FLAAuthStrings makeWithReason:@"a reason"
-                                lockOut:@"locked out"
-                     goToSettingsButton:@"Go To Settings"
-                goToSettingsDescription:@"Settings"
-                           cancelButton:@"Cancel"
-                 localizedFallbackTitle:nil];
+// Creates an FLADAuthStrings with placeholder values.
+- (FLADAuthStrings *)createAuthStrings {
+  return [FLADAuthStrings makeWithReason:@"a reason"
+                                 lockOut:@"locked out"
+                      goToSettingsButton:@"Go To Settings"
+                 goToSettingsDescription:@"Settings"
+                            cancelButton:@"Cancel"
+                  localizedFallbackTitle:nil];
 }
 @end
