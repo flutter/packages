@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -141,6 +142,22 @@ void main() {
       expect(result, isTrue);
       _verifyInit(mockPlatform);
       verify(mockPlatform.isSignedIn());
+    });
+
+    test('signIn should throw exception when user canceled flow', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      when(mockPlatform.signIn()).thenThrow(
+          PlatformException(code: GoogleSignIn.kSignInCanceledError));
+      await expectLater(
+          googleSignIn.signIn(),
+          throwsA(isA<PlatformException>().having(
+              (e) => e.code,
+              'SignIn Canceled Exception',
+              equals(GoogleSignIn.kSignInCanceledError))));
+      _verifyInit(mockPlatform);
+
+      verify(mockPlatform.signIn());
     });
 
     test('signIn works even if a previous call throws error in other zone',
