@@ -1,3 +1,8 @@
+## 0.5.0+34
+
+* Modifies `CameraInitializedEvent` that is sent when camera is initialized to indicate that the initial focus
+  and exposure modes are auto and that developers may set focus points for both modes.
+
 ## 0.5.0+32
 
 * Removes all remaining `unawaited` calls to fix potential race conditions and updates the
