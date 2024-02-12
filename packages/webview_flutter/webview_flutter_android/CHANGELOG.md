@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk to 34.
+
 ## 3.14.0
 
 * Adds support to show JavaScript dialog. See `AndroidWebViewController.setOnJavaScriptAlertDialog`, `AndroidWebViewController.setOnJavaScriptConfirmDialog` and `AndroidWebViewController.setOnJavaScriptTextInputDialog`.
