@@ -10,10 +10,13 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter:
     sdk: flutter
+  flutter_driver:
+    sdk: flutter
   interactive_media_ads:
     path: ../
 
 dev_dependencies:
+  espresso: ^0.2.0
   flutter_test:
     sdk: flutter
   integration_test:

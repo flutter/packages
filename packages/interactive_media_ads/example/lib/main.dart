@@ -4,8 +4,16 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_driver/driver_extension.dart';
 
 // ignore_for_file: public_member_api_docs
+
+/// Entry point for integration tests that require espresso.
+// ignore: unreachable_from_main
+void integrationTestMain() {
+  enableFlutterDriverExtension();
+  main();
+}
 
 void main() {
   runApp(const MyApp());
