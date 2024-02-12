@@ -1,5 +1,8 @@
 ## NEXT
 
+* Switches endorsed iOS implementation to `local_auth_darwin`.
+  * Clients directly importing `local_auth_ios` for auth strings should switch
+    dependencies and imports to `local_auth_darwin`. No other change is necessary.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
