@@ -516,7 +516,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           'Exposure compensation not supported');
     }
 
-    // (Exposure compensation index) * (exposure offset setep size) =
+    // (Exposure compensation index) * (exposure offset step size) =
     // (exposure offset).
     final int roundedExposureCompensationIndex =
         (offset / exposureOffsetStepSize).round();
