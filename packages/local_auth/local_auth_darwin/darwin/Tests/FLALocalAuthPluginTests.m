@@ -40,10 +40,10 @@ static const NSTimeInterval kTimeout = 30.0;
 
 #pragma mark -
 
-@interface FLALocalAuthPluginLocalAuthPluginTests : XCTestCase
+@interface FLALocalAuthPluginTests : XCTestCase
 @end
 
-@implementation FLALocalAuthPluginLocalAuthPluginTests
+@implementation FLALocalAuthPluginTests
 
 - (void)setUp {
   self.continueAfterFailure = NO;
@@ -51,7 +51,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSuccessfullAuthWithBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -89,7 +89,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSuccessfullAuthWithoutBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -127,7 +127,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testFailedAuthWithBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -169,7 +169,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testFailedWithUnknownErrorCode {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -207,7 +207,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSystemCancelledWithoutStickyAuth {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -245,7 +245,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testFailedAuthWithoutBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -287,7 +287,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testLocalizedFallbackTitle {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -325,7 +325,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testSkippedLocalizedFallbackTitle {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -362,7 +362,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testDeviceSupportsBiometrics_withEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -377,7 +377,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testDeviceSupportsBiometrics_withNonEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -404,7 +404,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testDeviceSupportsBiometrics_withNoBiometricHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -431,7 +431,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testGetEnrolledBiometricsWithFaceID {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -448,7 +448,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testGetEnrolledBiometricsWithTouchID {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -465,7 +465,7 @@ static const NSTimeInterval kTimeout = 30.0;
 
 - (void)testGetEnrolledBiometricsWithoutEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -495,7 +495,7 @@ static const NSTimeInterval kTimeout = 30.0;
   OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
                                        error:[OCMArg setTo:nil]])
       .andReturn(YES);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
@@ -510,7 +510,7 @@ static const NSTimeInterval kTimeout = 30.0;
   OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
                                        error:[OCMArg setTo:nil]])
       .andReturn(NO);
-  FLALocalAuthPluginLocalAuthPlugin *plugin = [[FLALocalAuthPluginLocalAuthPlugin alloc]
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
                                  initWithContexts:@[ mockAuthContext ]]];
 
