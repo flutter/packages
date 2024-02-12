@@ -32,10 +32,10 @@ target 'Runner' do
 
   flutter_install_all_macos_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
-      inherit! :search_paths
+    inherit! :search_paths
 
-      pod 'OCMock','3.5'
-    end
+    pod 'OCMock','3.5'
+  end
 end
 
 post_install do |installer|
