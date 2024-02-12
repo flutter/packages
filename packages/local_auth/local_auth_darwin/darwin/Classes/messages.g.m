@@ -31,8 +31,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 
 /// Possible outcomes of an authentication attempt.
-@implementation FLAAuthResultBox
-- (instancetype)initWithValue:(FLAAuthResult)value {
+@implementation FLADAuthResultBox
+- (instancetype)initWithValue:(FLADAuthResult)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -42,8 +42,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 /// Pigeon equivalent of the subset of BiometricType used by iOS.
-@implementation FLAAuthBiometricBox
-- (instancetype)initWithValue:(FLAAuthBiometric)value {
+@implementation FLADAuthBiometricBox
+- (instancetype)initWithValue:(FLADAuthBiometric)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -52,38 +52,38 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface FLAAuthStrings ()
-+ (FLAAuthStrings *)fromList:(NSArray *)list;
-+ (nullable FLAAuthStrings *)nullableFromList:(NSArray *)list;
+@interface FLADAuthStrings ()
++ (FLADAuthStrings *)fromList:(NSArray *)list;
++ (nullable FLADAuthStrings *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@interface FLAAuthOptions ()
-+ (FLAAuthOptions *)fromList:(NSArray *)list;
-+ (nullable FLAAuthOptions *)nullableFromList:(NSArray *)list;
+@interface FLADAuthOptions ()
++ (FLADAuthOptions *)fromList:(NSArray *)list;
++ (nullable FLADAuthOptions *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@interface FLAAuthResultDetails ()
-+ (FLAAuthResultDetails *)fromList:(NSArray *)list;
-+ (nullable FLAAuthResultDetails *)nullableFromList:(NSArray *)list;
+@interface FLADAuthResultDetails ()
++ (FLADAuthResultDetails *)fromList:(NSArray *)list;
++ (nullable FLADAuthResultDetails *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@interface FLAAuthBiometricWrapper ()
-+ (FLAAuthBiometricWrapper *)fromList:(NSArray *)list;
-+ (nullable FLAAuthBiometricWrapper *)nullableFromList:(NSArray *)list;
+@interface FLADAuthBiometricWrapper ()
++ (FLADAuthBiometricWrapper *)fromList:(NSArray *)list;
++ (nullable FLADAuthBiometricWrapper *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation FLAAuthStrings
+@implementation FLADAuthStrings
 + (instancetype)makeWithReason:(NSString *)reason
                        lockOut:(NSString *)lockOut
             goToSettingsButton:(NSString *)goToSettingsButton
        goToSettingsDescription:(NSString *)goToSettingsDescription
                   cancelButton:(NSString *)cancelButton
         localizedFallbackTitle:(nullable NSString *)localizedFallbackTitle {
-  FLAAuthStrings *pigeonResult = [[FLAAuthStrings alloc] init];
+  FLADAuthStrings *pigeonResult = [[FLADAuthStrings alloc] init];
   pigeonResult.reason = reason;
   pigeonResult.lockOut = lockOut;
   pigeonResult.goToSettingsButton = goToSettingsButton;
@@ -92,8 +92,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.localizedFallbackTitle = localizedFallbackTitle;
   return pigeonResult;
 }
-+ (FLAAuthStrings *)fromList:(NSArray *)list {
-  FLAAuthStrings *pigeonResult = [[FLAAuthStrings alloc] init];
++ (FLADAuthStrings *)fromList:(NSArray *)list {
+  FLADAuthStrings *pigeonResult = [[FLADAuthStrings alloc] init];
   pigeonResult.reason = GetNullableObjectAtIndex(list, 0);
   pigeonResult.lockOut = GetNullableObjectAtIndex(list, 1);
   pigeonResult.goToSettingsButton = GetNullableObjectAtIndex(list, 2);
@@ -102,8 +102,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.localizedFallbackTitle = GetNullableObjectAtIndex(list, 5);
   return pigeonResult;
 }
-+ (nullable FLAAuthStrings *)nullableFromList:(NSArray *)list {
-  return (list) ? [FLAAuthStrings fromList:list] : nil;
++ (nullable FLADAuthStrings *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLADAuthStrings fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -117,25 +117,25 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation FLAAuthOptions
+@implementation FLADAuthOptions
 + (instancetype)makeWithBiometricOnly:(BOOL)biometricOnly
                                sticky:(BOOL)sticky
                       useErrorDialogs:(BOOL)useErrorDialogs {
-  FLAAuthOptions *pigeonResult = [[FLAAuthOptions alloc] init];
+  FLADAuthOptions *pigeonResult = [[FLADAuthOptions alloc] init];
   pigeonResult.biometricOnly = biometricOnly;
   pigeonResult.sticky = sticky;
   pigeonResult.useErrorDialogs = useErrorDialogs;
   return pigeonResult;
 }
-+ (FLAAuthOptions *)fromList:(NSArray *)list {
-  FLAAuthOptions *pigeonResult = [[FLAAuthOptions alloc] init];
++ (FLADAuthOptions *)fromList:(NSArray *)list {
+  FLADAuthOptions *pigeonResult = [[FLADAuthOptions alloc] init];
   pigeonResult.biometricOnly = [GetNullableObjectAtIndex(list, 0) boolValue];
   pigeonResult.sticky = [GetNullableObjectAtIndex(list, 1) boolValue];
   pigeonResult.useErrorDialogs = [GetNullableObjectAtIndex(list, 2) boolValue];
   return pigeonResult;
 }
-+ (nullable FLAAuthOptions *)nullableFromList:(NSArray *)list {
-  return (list) ? [FLAAuthOptions fromList:list] : nil;
++ (nullable FLADAuthOptions *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLADAuthOptions fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -146,25 +146,25 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation FLAAuthResultDetails
-+ (instancetype)makeWithResult:(FLAAuthResult)result
+@implementation FLADAuthResultDetails
++ (instancetype)makeWithResult:(FLADAuthResult)result
                   errorMessage:(nullable NSString *)errorMessage
                   errorDetails:(nullable NSString *)errorDetails {
-  FLAAuthResultDetails *pigeonResult = [[FLAAuthResultDetails alloc] init];
+  FLADAuthResultDetails *pigeonResult = [[FLADAuthResultDetails alloc] init];
   pigeonResult.result = result;
   pigeonResult.errorMessage = errorMessage;
   pigeonResult.errorDetails = errorDetails;
   return pigeonResult;
 }
-+ (FLAAuthResultDetails *)fromList:(NSArray *)list {
-  FLAAuthResultDetails *pigeonResult = [[FLAAuthResultDetails alloc] init];
++ (FLADAuthResultDetails *)fromList:(NSArray *)list {
+  FLADAuthResultDetails *pigeonResult = [[FLADAuthResultDetails alloc] init];
   pigeonResult.result = [GetNullableObjectAtIndex(list, 0) integerValue];
   pigeonResult.errorMessage = GetNullableObjectAtIndex(list, 1);
   pigeonResult.errorDetails = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
-+ (nullable FLAAuthResultDetails *)nullableFromList:(NSArray *)list {
-  return (list) ? [FLAAuthResultDetails fromList:list] : nil;
++ (nullable FLADAuthResultDetails *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLADAuthResultDetails fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -175,19 +175,19 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation FLAAuthBiometricWrapper
-+ (instancetype)makeWithValue:(FLAAuthBiometric)value {
-  FLAAuthBiometricWrapper *pigeonResult = [[FLAAuthBiometricWrapper alloc] init];
+@implementation FLADAuthBiometricWrapper
++ (instancetype)makeWithValue:(FLADAuthBiometric)value {
+  FLADAuthBiometricWrapper *pigeonResult = [[FLADAuthBiometricWrapper alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
-+ (FLAAuthBiometricWrapper *)fromList:(NSArray *)list {
-  FLAAuthBiometricWrapper *pigeonResult = [[FLAAuthBiometricWrapper alloc] init];
++ (FLADAuthBiometricWrapper *)fromList:(NSArray *)list {
+  FLADAuthBiometricWrapper *pigeonResult = [[FLADAuthBiometricWrapper alloc] init];
   pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
   return pigeonResult;
 }
-+ (nullable FLAAuthBiometricWrapper *)nullableFromList:(NSArray *)list {
-  return (list) ? [FLAAuthBiometricWrapper fromList:list] : nil;
++ (nullable FLADAuthBiometricWrapper *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLADAuthBiometricWrapper fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -196,39 +196,39 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface FLALocalAuthApiCodecReader : FlutterStandardReader
+@interface FLADLocalAuthApiCodecReader : FlutterStandardReader
 @end
-@implementation FLALocalAuthApiCodecReader
+@implementation FLADLocalAuthApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [FLAAuthBiometricWrapper fromList:[self readValue]];
+      return [FLADAuthBiometricWrapper fromList:[self readValue]];
     case 129:
-      return [FLAAuthOptions fromList:[self readValue]];
+      return [FLADAuthOptions fromList:[self readValue]];
     case 130:
-      return [FLAAuthResultDetails fromList:[self readValue]];
+      return [FLADAuthResultDetails fromList:[self readValue]];
     case 131:
-      return [FLAAuthStrings fromList:[self readValue]];
+      return [FLADAuthStrings fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface FLALocalAuthApiCodecWriter : FlutterStandardWriter
+@interface FLADLocalAuthApiCodecWriter : FlutterStandardWriter
 @end
-@implementation FLALocalAuthApiCodecWriter
+@implementation FLADLocalAuthApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLAAuthBiometricWrapper class]]) {
+  if ([value isKindOfClass:[FLADAuthBiometricWrapper class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLAAuthOptions class]]) {
+  } else if ([value isKindOfClass:[FLADAuthOptions class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLAAuthResultDetails class]]) {
+  } else if ([value isKindOfClass:[FLADAuthResultDetails class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLAAuthStrings class]]) {
+  } else if ([value isKindOfClass:[FLADAuthStrings class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
   } else {
@@ -237,40 +237,40 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface FLALocalAuthApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface FLADLocalAuthApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation FLALocalAuthApiCodecReaderWriter
+@implementation FLADLocalAuthApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLALocalAuthApiCodecWriter alloc] initWithData:data];
+  return [[FLADLocalAuthApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLALocalAuthApiCodecReader alloc] initWithData:data];
+  return [[FLADLocalAuthApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *FLALocalAuthApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *FLADLocalAuthApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FLALocalAuthApiCodecReaderWriter *readerWriter =
-        [[FLALocalAuthApiCodecReaderWriter alloc] init];
+    FLADLocalAuthApiCodecReaderWriter *readerWriter =
+        [[FLADLocalAuthApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
-                          NSObject<FLALocalAuthApi> *api) {
+void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
+                           NSObject<FLADLocalAuthApi> *api) {
   /// Returns true if this device supports authentication.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported"
         binaryMessenger:binaryMessenger
-                  codec:FLALocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(isDeviceSupportedWithError:)],
-          @"FLALocalAuthApi api (%@) doesn't respond to @selector(isDeviceSupportedWithError:)",
+          @"FLADLocalAuthApi api (%@) doesn't respond to @selector(isDeviceSupportedWithError:)",
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
@@ -288,10 +288,10 @@ void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
            initWithName:
                @"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics"
         binaryMessenger:binaryMessenger
-                  codec:FLALocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(deviceCanSupportBiometricsWithError:)],
-                @"FLALocalAuthApi api (%@) doesn't respond to "
+                @"FLADLocalAuthApi api (%@) doesn't respond to "
                 @"@selector(deviceCanSupportBiometricsWithError:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
@@ -309,15 +309,15 @@ void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics"
         binaryMessenger:binaryMessenger
-                  codec:FLALocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(getEnrolledBiometricsWithError:)],
-          @"FLALocalAuthApi api (%@) doesn't respond to @selector(getEnrolledBiometricsWithError:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(getEnrolledBiometricsWithError:)],
+                @"FLADLocalAuthApi api (%@) doesn't respond to "
+                @"@selector(getEnrolledBiometricsWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        NSArray<FLAAuthBiometricWrapper *> *output = [api getEnrolledBiometricsWithError:&error];
+        NSArray<FLADAuthBiometricWrapper *> *output = [api getEnrolledBiometricsWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -330,19 +330,19 @@ void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate"
         binaryMessenger:binaryMessenger
-                  codec:FLALocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(authenticateWithOptions:strings:completion:)],
-                @"FLALocalAuthApi api (%@) doesn't respond to "
+                @"FLADLocalAuthApi api (%@) doesn't respond to "
                 @"@selector(authenticateWithOptions:strings:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        FLAAuthOptions *arg_options = GetNullableObjectAtIndex(args, 0);
-        FLAAuthStrings *arg_strings = GetNullableObjectAtIndex(args, 1);
+        FLADAuthOptions *arg_options = GetNullableObjectAtIndex(args, 0);
+        FLADAuthStrings *arg_strings = GetNullableObjectAtIndex(args, 1);
         [api authenticateWithOptions:arg_options
                              strings:arg_strings
-                          completion:^(FLAAuthResultDetails *_Nullable output,
+                          completion:^(FLADAuthResultDetails *_Nullable output,
                                        FlutterError *_Nullable error) {
                             callback(wrapResult(output, error));
                           }];
