@@ -23,7 +23,7 @@ dependencies:
   flutter:
     sdk: flutter
   local_auth_android: ^1.0.0
-  local_auth_darwin: ^1.2.0
+  local_auth_darwin: ^1.2.0 # UPDATE BEFORE LANDING
   local_auth_platform_interface: ^1.0.1
   local_auth_windows: ^1.0.0
 
