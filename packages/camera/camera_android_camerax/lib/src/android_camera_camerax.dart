@@ -12,12 +12,14 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera2_camera_control.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'camerax_proxy.dart';
+import 'capture_request_options.dart';
 import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
@@ -459,6 +461,35 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<double> getExposureOffsetStepSize(int cameraId) async {
     final ExposureState exposureState = await cameraInfo!.getExposureState();
     return exposureState.exposureCompensationStep;
+  }
+
+  // TODO(camsim99): Move around methods to match camera_platform.dart before landing.
+  /// Sets the focus mode for taking pictures.
+  ///
+  /// [cameraId] is not used.
+  @override
+  Future<void> setFocusMode(int cameraId, FocusMode mode) {
+    throw UnimplementedError('setFocusMode() is not implemented.');
+  }
+
+  /// Sets the exposure mode for taking pictures.
+  ///
+  /// [cameraId] is not used
+  @override
+  Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
+    // TODO(camsim99): In a previous PR, this will be made a field, so use that instead once it lands.
+    final CameraControl cameraControl = await camera!.getCameraControl();
+    final Camera2CameraControl camera2Control =
+        Camera2CameraControl(cameraControl: cameraControl);
+    final bool lockExposureMode = mode == ExposureMode.locked;
+
+    final CaptureRequestOptions captureRequestOptions = CaptureRequestOptions(
+        requestedOptions: <(
+      CaptureRequestKeySupportedType,
+      Object?
+    )>[(CaptureRequestKeySupportedType.controlAeLock, lockExposureMode)]);
+
+    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
   }
 
   /// Gets the maximum supported zoom level for the selected camera.
