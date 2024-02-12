@@ -19,7 +19,7 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.1.1
   fake_async: ^1.2.0
-  mockito: 5.4.3
+  mockito: 5.4.4
   test: ^1.17.11
 
 topics:

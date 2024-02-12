@@ -32,8 +32,6 @@ class BrowserOptions {
   BrowserOptions({required this.showTitle});
 
   /// Whether or not to show the webpage title.
-  ///
-  /// May not be supported on all platforms.
   final bool showTitle;
 }
 

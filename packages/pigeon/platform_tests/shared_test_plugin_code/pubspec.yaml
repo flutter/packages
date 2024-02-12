@@ -18,4 +18,4 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.3
+  mockito: 5.4.4

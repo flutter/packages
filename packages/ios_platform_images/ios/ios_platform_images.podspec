@@ -17,7 +17,7 @@ Downloaded by pub (not CocoaPods).
   s.documentation_url = 'https://pub.dev/packages/ios_platform_images'
   s.source_files = 'Classes/**/*.swift'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '12.0'
 
   s.xcconfig = {
      'DEFINES_MODULE' => 'YES',
@@ -25,4 +25,5 @@ Downloaded by pub (not CocoaPods).
      'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.swift_version = '5.0'
+  s.resource_bundles = {'ios_platform_images_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

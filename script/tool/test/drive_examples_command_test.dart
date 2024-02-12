@@ -450,57 +450,169 @@ void main() {
 
     // This tests the workaround for https://github.com/flutter/flutter/issues/135673
     // and the behavior it tests should be removed once that is fixed.
-    test('runs tests separately on macOS', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
-        packagesDir,
-        extraFiles: <String>[
-          'example/integration_test/first_test.dart',
-          'example/integration_test/second_test.dart',
-          'example/macos/macos.swift',
-        ],
-        platformSupport: <String, PlatformDetails>{
-          platformMacOS: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
+    group('runs tests separately on desktop', () {
+      test('macOS', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          extraFiles: <String>[
+            'example/integration_test/first_test.dart',
+            'example/integration_test/second_test.dart',
+            'example/macos/macos.swift',
+          ],
+          platformSupport: <String, PlatformDetails>{
+            platformMacOS: const PlatformDetails(PlatformSupport.inline),
+          },
+        );
 
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'drive-examples',
-        '--macos',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'drive-examples',
+          '--macos',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('No issues found!'),
-        ]),
-      );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('No issues found!'),
+          ]),
+        );
 
-      expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                getFlutterCommand(mockPlatform),
-                const <String>[
-                  'test',
-                  '-d',
-                  'macos',
-                  'integration_test/first_test.dart',
-                ],
-                pluginExampleDirectory.path),
-            ProcessCall(
-                getFlutterCommand(mockPlatform),
-                const <String>[
-                  'test',
-                  '-d',
-                  'macos',
-                  'integration_test/second_test.dart',
-                ],
-                pluginExampleDirectory.path),
-          ]));
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'test',
+                    '-d',
+                    'macos',
+                    'integration_test/first_test.dart',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'test',
+                    '-d',
+                    'macos',
+                    'integration_test/second_test.dart',
+                  ],
+                  pluginExampleDirectory.path),
+            ]));
+      });
+
+      // This tests the workaround for https://github.com/flutter/flutter/issues/135673
+      // and the behavior it tests should be removed once that is fixed.
+      test('Linux', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          extraFiles: <String>[
+            'example/integration_test/first_test.dart',
+            'example/integration_test/second_test.dart',
+            'example/linux/foo.cc',
+          ],
+          platformSupport: <String, PlatformDetails>{
+            platformLinux: const PlatformDetails(PlatformSupport.inline),
+          },
+        );
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'drive-examples',
+          '--linux',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('No issues found!'),
+          ]),
+        );
+
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'test',
+                    '-d',
+                    'linux',
+                    'integration_test/first_test.dart',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'test',
+                    '-d',
+                    'linux',
+                    'integration_test/second_test.dart',
+                  ],
+                  pluginExampleDirectory.path),
+            ]));
+      });
+
+      // This tests the workaround for https://github.com/flutter/flutter/issues/135673
+      // and the behavior it tests should be removed once that is fixed.
+      test('Windows', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          extraFiles: <String>[
+            'example/integration_test/first_test.dart',
+            'example/integration_test/second_test.dart',
+            'example/windows/foo.cpp',
+          ],
+          platformSupport: <String, PlatformDetails>{
+            platformWindows: const PlatformDetails(PlatformSupport.inline),
+          },
+        );
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'drive-examples',
+          '--windows',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('No issues found!'),
+          ]),
+        );
+
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'test',
+                    '-d',
+                    'windows',
+                    'integration_test/first_test.dart',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'test',
+                    '-d',
+                    'windows',
+                    'integration_test/second_test.dart',
+                  ],
+                  pluginExampleDirectory.path),
+            ]));
+      });
     });
 
     test('driving when plugin does not suppport web is a no-op', () async {

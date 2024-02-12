@@ -343,6 +343,7 @@ class WKNavigationActionData {
 /// See https://developer.apple.com/documentation/webkit/wkframeinfo?language=objc.
 class WKFrameInfoData {
   late bool isMainFrame;
+  late NSUrlRequestData request;
 }
 
 /// Mirror of NSError.
@@ -455,6 +456,10 @@ abstract class UIScrollViewHostApi {
 
   @ObjCSelector('setContentOffsetForScrollViewWithIdentifier:toX:y:')
   void setContentOffset(int identifier, double x, double y);
+
+  @ObjCSelector(
+      'setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:')
+  void setDelegate(int identifier, int? uiScrollViewDelegateIdentifier);
 }
 
 /// Mirror of WKWebViewConfiguration.
@@ -805,6 +810,40 @@ abstract class WKUIDelegateFlutterApi {
     WKFrameInfoData frame,
     WKMediaCaptureTypeData type,
   );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanel`.
+  @ObjCSelector(
+    'runJavaScriptAlertPanelForDelegateWithIdentifier:message:frame:',
+  )
+  @async
+  void runJavaScriptAlertPanel(
+    int identifier,
+    String message,
+    WKFrameInfoData frame,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanel`.
+  @ObjCSelector(
+    'runJavaScriptConfirmPanelForDelegateWithIdentifier:message:frame:',
+  )
+  @async
+  bool runJavaScriptConfirmPanel(
+    int identifier,
+    String message,
+    WKFrameInfoData frame,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanel`.
+  @ObjCSelector(
+    'runJavaScriptTextInputPanelForDelegateWithIdentifier:prompt:defaultText:frame:',
+  )
+  @async
+  String runJavaScriptTextInputPanel(
+    int identifier,
+    String prompt,
+    String defaultText,
+    WKFrameInfoData frame,
+  );
 }
 
 /// Mirror of WKHttpCookieStore.
@@ -847,6 +886,35 @@ abstract class NSUrlHostApi {
 abstract class NSUrlFlutterApi {
   @ObjCSelector('createWithIdentifier:')
   void create(int identifier);
+}
+
+/// Host API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+@HostApi(dartHostTestHandler: 'TestUIScrollViewDelegateHostApi')
+abstract class UIScrollViewDelegateHostApi {
+  @ObjCSelector('createWithIdentifier:')
+  void create(int identifier);
+}
+
+/// Flutter API for `UIScrollViewDelegate`.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+@FlutterApi()
+abstract class UIScrollViewDelegateFlutterApi {
+  @ObjCSelector(
+    'scrollViewDidScrollWithIdentifier:UIScrollViewIdentifier:x:y:',
+  )
+  void scrollViewDidScroll(
+    int identifier,
+    int uiScrollViewIdentifier,
+    double x,
+    double y,
+  );
 }
 
 /// Host API for `NSUrlCredential`.
