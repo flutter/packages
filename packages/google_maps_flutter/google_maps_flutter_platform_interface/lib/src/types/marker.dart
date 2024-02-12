@@ -5,7 +5,7 @@
 import 'dart:ui' show Offset;
 
 import 'package:flutter/foundation.dart'
-    show immutable, ValueChanged, VoidCallback;
+    show ValueChanged, VoidCallback, immutable;
 
 import 'types.dart';
 

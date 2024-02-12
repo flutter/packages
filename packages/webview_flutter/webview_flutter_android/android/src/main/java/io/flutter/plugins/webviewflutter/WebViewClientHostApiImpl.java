@@ -9,6 +9,7 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.view.KeyEvent;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -38,7 +39,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     /**
      * Creates a {@link WebViewClient} that passes arguments of callbacks methods to Dart.
      *
-     * @param flutterApi handles sending messages to Dart
+     * @param flutterApi handles sending messages to Dart.
      */
     public WebViewClientImpl(@NonNull WebViewClientFlutterApiImpl flutterApi) {
       this.flutterApi = flutterApi;
@@ -93,6 +94,15 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public void doUpdateVisitedHistory(
         @NonNull WebView view, @NonNull String url, boolean isReload) {
       flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+    @Override
+    public void onReceivedHttpAuthRequest(
+        @NonNull WebView view,
+        @NonNull HttpAuthHandler handler,
+        @NonNull String host,
+        @NonNull String realm) {
+      flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
     }
 
     @Override
@@ -174,6 +184,16 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public void doUpdateVisitedHistory(
         @NonNull WebView view, @NonNull String url, boolean isReload) {
       flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+    // Handles an HTTP authentication request.
+    //
+    // This callback is invoked when the WebView encounters a website requiring HTTP authentication.
+    // [host] and [realm] are provided for matching against stored credentials, if any.
+    @Override
+    public void onReceivedHttpAuthRequest(
+        @NonNull WebView view, HttpAuthHandler handler, String host, String realm) {
+      flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
     }
 
     @Override

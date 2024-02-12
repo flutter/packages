@@ -104,4 +104,12 @@
   XCTAssertEqualObjects(@"portraitUp", FLTGetStringForUIDeviceOrientation(-1));
 }
 
+#pragma mark - file format tests
+
+- (void)testFLTGetFileFormatForString {
+  XCTAssertEqual(FCPFileFormatJPEG, FCPGetFileFormatFromString(@"jpg"));
+  XCTAssertEqual(FCPFileFormatHEIF, FCPGetFileFormatFromString(@"heif"));
+  XCTAssertEqual(FCPFileFormatInvalid, FCPGetFileFormatFromString(@"unknown"));
+}
+
 @end

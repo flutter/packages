@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:file/file.dart';
-
 import 'common/core.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
@@ -127,30 +125,23 @@ class FetchDepsCommand extends PackageLoopingCommand {
       switch (platform) {
         case FlutterPlatform.android:
           result = await _fetchAndroidDeps(package);
-          break;
         case FlutterPlatform.ios:
           result = await _fetchDarwinDeps(package, platformIOS);
-          break;
         case FlutterPlatform.macos:
           result = await _fetchDarwinDeps(package, platformMacOS);
-          break;
         case FlutterPlatform.linux:
         case FlutterPlatform.web:
         case FlutterPlatform.windows:
           // No native dependency handling yet.
           result = PackageResult.skip('Nothing to do for $platform.');
-          break;
       }
       switch (result.state) {
         case RunState.succeeded:
           fetchedDeps = true;
-          break;
         case RunState.skipped:
           skips.add(result.details.first);
-          break;
         case RunState.failed:
           errors.addAll(result.details);
-          break;
         case RunState.excluded:
           throw StateError('Unreachable');
       }
@@ -216,44 +207,15 @@ class FetchDepsCommand extends PackageLoopingCommand {
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
-      final Directory platformDir =
-          example.platformDirectory(getPlatformByName(platform));
-
-      // Running `pod install` requires `flutter pub get` or `flutter build` to
-      // have been run at some point to create the necessary native build files.
-      // See https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/templates/cocoapods/Podfile-macos#L13-L15
-      // and https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/templates/cocoapods/Podfile-ios-swift#L14-L16
-      final File generatedXCConfig = platform == platformMacOS
-          ? platformDir
-              .childDirectory('Flutter')
-              .childDirectory('ephemeral')
-              .childFile('Flutter-Generated.xcconfig')
-          : platformDir
-              .childDirectory('Flutter')
-              .childFile('Generated.xcconfig');
-      if (!generatedXCConfig.existsSync()) {
-        final int exitCode = await processRunner.runAndStream(
-          flutterCommand,
-          <String>['pub', 'get'],
-          workingDir: example.directory,
-        );
-        if (exitCode != 0) {
-          printError('Unable to prepare native project files.');
-          return PackageResult.fail(<String>['Unable to configure project.']);
-        }
-      }
-
+      // Create the necessary native build files, which will run pub get and pod install if needed.
       final int exitCode = await processRunner.runAndStream(
-        'pod',
-        <String>['install'],
-        workingDir: platformDir,
-        environment: <String, String>{
-          'LANG': 'en_US.UTF-8',
-        },
+        flutterCommand,
+        <String>['build', platform, '--config-only'],
+        workingDir: example.directory,
       );
       if (exitCode != 0) {
-        printError('Unable to "pod install"');
-        return PackageResult.fail(<String>['Unable to "pod install"']);
+        printError('Unable to prepare native project files.');
+        return PackageResult.fail(<String>['Unable to configure project.']);
       }
     }
 

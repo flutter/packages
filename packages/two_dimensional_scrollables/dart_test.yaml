@@ -1,3 +1,0 @@
-# TODO(Piinks): Web cannot support temp golden files, re-enable once mock_canvas
-# makes it to stable. See
-test_on: vm

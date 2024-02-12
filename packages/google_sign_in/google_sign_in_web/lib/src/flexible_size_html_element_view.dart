@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:js_interop';
+import 'dart:ui_web' as ui_web;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 
 /// An HTMLElementView widget that resizes with its contents.
@@ -13,15 +14,15 @@ class FlexHtmlElementView extends StatefulWidget {
   const FlexHtmlElementView({
     super.key,
     required this.viewType,
-    this.onPlatformViewCreated,
+    this.onElementCreated,
     this.initialSize,
   });
 
   /// See [HtmlElementView.viewType].
   final String viewType;
 
-  /// See [HtmlElementView.onPlatformViewCreated].
-  final PlatformViewCreatedCallback? onPlatformViewCreated;
+  /// See [HtmlElementView.fromTagName] `onElementCreated`.
+  final ElementCreatedCallback? onElementCreated;
 
   /// The initial Size for the widget, before it starts tracking its contents.
   final Size? initialSize;
@@ -55,13 +56,15 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   /// Update the state with the new `size`, if needed.
   void _doResize(Size size) {
     if (size != _lastReportedSize) {
-      final String log = <Object?>[
-        'Resizing: ',
-        widget.viewType,
-        size.width,
-        size.height
-      ].join(' ');
-      web.console.debug(log.toJS);
+      if (kDebugMode) {
+        final String log = <Object?>[
+          'Resizing: ',
+          widget.viewType,
+          size.width,
+          size.height
+        ].join(' ');
+        web.console.debug(log.toJS);
+      }
       setState(() {
         _lastReportedSize = size;
       });
@@ -70,6 +73,8 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
 
   /// The function called whenever an observed resize occurs.
   void _onResizeEntries(
+    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+    // ignore: always_specify_types
     JSArray resizes,
     web.ResizeObserver observer,
   ) {
@@ -85,6 +90,8 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   /// When mutations are received, this function attaches a Resize Observer to
   /// the first child of the mutation, which will drive
   void _onMutationRecords(
+    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+    // ignore: always_specify_types
     JSArray mutations,
     web.MutationObserver observer,
   ) {
@@ -105,12 +112,11 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   }
 
   /// Registers a MutationObserver on the root element of the HtmlElementView.
-  void _registerListeners(web.Element? root) {
-    assert(root != null, 'DOM is not ready for the FlexHtmlElementView');
+  void _registerListeners(web.Element root) {
     _mutationObserver = web.MutationObserver(_onMutationRecords.toJS);
     // Monitor the size of the child element, whenever it's created...
     _mutationObserver!.observe(
-      root!,
+      root,
       web.MutationObserverInit(
         childList: true,
       ),
@@ -123,10 +129,13 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
       size: _lastReportedSize ?? widget.initialSize ?? const Size(1, 1),
       child: HtmlElementView(
           viewType: widget.viewType,
-          onPlatformViewCreated: (int viewId) async {
-            _registerListeners(_locatePlatformViewRoot(viewId));
-            if (widget.onPlatformViewCreated != null) {
-              widget.onPlatformViewCreated!(viewId);
+          onPlatformViewCreated: (int viewId) {
+            final ElementCreatedCallback? callback = widget.onElementCreated;
+            final web.Element root =
+                ui_web.platformViewRegistry.getViewById(viewId) as web.Element;
+            _registerListeners(root);
+            if (callback != null) {
+              callback(root);
             }
           }),
     );
@@ -139,12 +148,4 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
 /// element returned by `_locatePlatformViewRoot`.
 web.Element? _locateSizeProvider(web.NodeList elements) {
   return elements.item(0) as web.Element?;
-}
-
-/// Finds the root element of a platform view by its `viewId`.
-///
-/// This element matches the one returned by the registered platform view factory.
-web.Element? _locatePlatformViewRoot(int viewId) {
-  return web.document
-      .querySelector('flt-platform-view[slot\$="-$viewId"] :first-child');
 }

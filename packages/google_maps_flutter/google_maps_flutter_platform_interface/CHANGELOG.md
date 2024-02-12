@@ -1,6 +1,11 @@
-## NEXT
+## 2.4.3
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.4.2
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
 
 ## 2.4.1
 

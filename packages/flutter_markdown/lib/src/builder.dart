@@ -501,13 +501,10 @@ class MarkdownBuilder implements md.NodeVisitor {
           switch (alignAttribute) {
             case 'left':
               align = TextAlign.left;
-              break;
             case 'center':
               align = TextAlign.center;
-              break;
             case 'right':
               align = TextAlign.right;
-              break;
           }
         }
         final Widget child = _buildTableCell(

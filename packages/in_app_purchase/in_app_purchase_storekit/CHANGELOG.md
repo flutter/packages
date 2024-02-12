@@ -1,6 +1,16 @@
-## NEXT
+## 0.3.9
+
+* Converts `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.3.8+1
+
+* Adds privacy manifest.
+
+## 0.3.8
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
 
 ## 0.3.7
 

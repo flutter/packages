@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/services.dart' show DeviceOrientation;
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -17,6 +18,7 @@ import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'camerax_proxy.dart';
+import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
 import 'image_analysis.dart';
@@ -96,6 +98,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  /// Whether or not [preview] has been bound to the lifecycle of the camera by
+  /// [createCamera].
+  @visibleForTesting
+  bool previewInitiallyBound = false;
+
   bool _previewIsPaused = false;
 
   /// The prefix used to create the filename for video recording files.
@@ -155,6 +162,24 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// set for the camera in use.
   static const String zoomStateNotSetErrorCode = 'zoomStateNotSet';
 
+  /// Whether or not the capture orientation is locked.
+  ///
+  /// Indicates a new target rotation should not be set as it has been locked by
+  /// [lockCaptureOrientation].
+  @visibleForTesting
+  bool captureOrientationLocked = false;
+
+  /// Whether or not the default rotation for [UseCase]s needs to be set
+  /// manually because the capture orientation was previously locked.
+  ///
+  /// Currently, CameraX provides no way to unset target rotations for
+  /// [UseCase]s, so once they are set and unset, this plugin must start setting
+  /// the default orientation manually.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int)
+  /// for an example on how setting target rotations for [UseCase]s works.
+  bool shouldSetDefaultRotation = false;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -207,6 +232,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
+  /// The specified [resolutionPreset] is the target resolution that CameraX
+  /// will attempt to select for the [UseCase]s constructed in this method
+  /// ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
+  /// unavailable, a fallback behavior of targeting the next highest resolution
+  /// will be attempted. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
+  ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
@@ -240,20 +271,19 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
-    final int targetRotation =
-        _getTargetRotation(cameraDescription.sensorOrientation);
-    preview = proxy.createPreview(
-        targetRotation: targetRotation,
-        resolutionSelector: presetResolutionSelector);
+    preview = proxy.createPreview(presetResolutionSelector,
+        /* use CameraX default target rotation */ null);
     final int flutterSurfaceTextureId =
         await proxy.setPreviewSurfaceProvider(preview!);
 
     // Configure ImageCapture instance.
-    imageCapture = proxy.createImageCapture(presetResolutionSelector);
+    imageCapture = proxy.createImageCapture(presetResolutionSelector,
+        /* use CameraX default target rotation */ null);
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = proxy.createImageAnalysis(presetResolutionSelector);
+    imageAnalysis = proxy.createImageAnalysis(presetResolutionSelector,
+        /* use CameraX default target rotation */ null);
 
     // Configure VideoCapture and Recorder instances.
     recorder = proxy.createRecorder(presetQualitySelector);
@@ -265,6 +295,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!.bindToLifecycle(
         cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
     await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
+    previewInitiallyBound = true;
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -326,9 +357,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> dispose(int cameraId) async {
     preview?.releaseFlutterSurfaceTexture();
-    unawaited(liveCameraState?.removeObservers());
+    await liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
-    unawaited(imageAnalysis?.clearAnalyzer());
+    await imageAnalysis?.clearAnalyzer();
   }
 
   /// The camera has been initialized.
@@ -368,6 +399,35 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<VideoRecordedEvent> onVideoRecordedEvent(int cameraId) {
     return _cameraEvents(cameraId).whereType<VideoRecordedEvent>();
+  }
+
+  /// Locks the capture orientation.
+  @override
+  Future<void> lockCaptureOrientation(
+    int cameraId,
+    DeviceOrientation orientation,
+  ) async {
+    // Flag that (1) default rotation for UseCases will need to be set manually
+    // if orientation is ever unlocked and (2) the capture orientation is locked
+    // and should not be changed until unlocked.
+    shouldSetDefaultRotation = true;
+    captureOrientationLocked = true;
+
+    // Get target rotation based on locked orientation.
+    final int targetLockedRotation =
+        _getRotationConstantFromDeviceOrientation(orientation);
+
+    // Update UseCases to use target device orientation.
+    await imageCapture!.setTargetRotation(targetLockedRotation);
+    await imageAnalysis!.setTargetRotation(targetLockedRotation);
+    await videoCapture!.setTargetRotation(targetLockedRotation);
+  }
+
+  /// Unlocks the capture orientation.
+  @override
+  Future<void> unlockCaptureOrientation(int cameraId) async {
+    // Flag that default rotation should be set for UseCases as needed.
+    captureOrientationLocked = false;
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -449,7 +509,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return SystemServices.deviceOrientationChangedStreamController.stream;
+    return DeviceOrientationManager
+        .deviceOrientationChangedStreamController.stream;
   }
 
   /// Pause the active preview on the current frame for the selected camera.
@@ -471,21 +532,20 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns a widget showing a live camera preview.
+  ///
+  /// [createCamera] must be called before attempting to build this preview.
   @override
   Widget buildPreview(int cameraId) {
-    return FutureBuilder<void>(
-        future: _bindPreviewToLifecycle(cameraId),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              // Do nothing while waiting for preview to be bound to lifecyle.
-              return const SizedBox.shrink();
-            case ConnectionState.done:
-              return Texture(textureId: cameraId);
-          }
-        });
+    if (!previewInitiallyBound) {
+      // No camera has been created, and thus, the preview UseCase has not been
+      // bound to the camera lifecycle, restricting this preview from being
+      // built.
+      throw CameraException(
+        'cameraNotFound',
+        "Camera not found. Please call the 'create' method before calling 'buildPreview'",
+      );
+    }
+    return Texture(textureId: cameraId);
   }
 
   /// Captures an image and returns the file where it was saved.
@@ -493,6 +553,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
+    // Set flash mode.
     if (_currentFlashMode != null) {
       await imageCapture!.setFlashMode(_currentFlashMode!);
     } else if (torchEnabled) {
@@ -500,6 +561,14 @@ class AndroidCameraCameraX extends CameraPlatform {
       // been enabled.
       await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
     }
+
+    // Set target rotation to default CameraX rotation only if capture
+    // orientation not locked.
+    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+      await imageCapture!
+          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+    }
+
     final String picturePath = await imageCapture!.takePicture();
     return XFile(picturePath);
   }
@@ -529,13 +598,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     switch (mode) {
       case FlashMode.off:
         _currentFlashMode = ImageCapture.flashModeOff;
-        break;
       case FlashMode.auto:
         _currentFlashMode = ImageCapture.flashModeAuto;
-        break;
       case FlashMode.always:
         _currentFlashMode = ImageCapture.flashModeOn;
-        break;
       case FlashMode.torch:
         _currentFlashMode = null;
         if (torchEnabled) {
@@ -545,7 +611,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraControl = await camera!.getCameraControl();
         await cameraControl.enableTorch(true);
         torchEnabled = true;
-        break;
     }
   }
 
@@ -580,6 +645,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (!(await processCameraProvider!.isBound(videoCapture!))) {
       camera = await processCameraProvider!
           .bindToLifecycle(cameraSelector!, <UseCase>[videoCapture!]);
+      await _updateCameraInfoAndLiveCameraState(options.cameraId);
+    }
+
+    // Set target rotation to default CameraX rotation only if capture
+    // orientation not locked.
+    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+      await videoCapture!
+          .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
     videoOutputPath =
@@ -609,7 +682,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (videoOutputPath == null) {
       // Stop the current active recording as we will be unable to complete it
       // in this error case.
-      unawaited(recording!.close());
+      await recording!.close();
       recording = null;
       pendingRecording = null;
       throw CameraException(
@@ -618,7 +691,7 @@ class AndroidCameraCameraX extends CameraPlatform {
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    unawaited(recording!.close());
+    await recording!.close();
     recording = null;
     pendingRecording = null;
     return XFile(videoOutputPath!);
@@ -654,7 +727,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
     cameraImageDataStreamController = StreamController<CameraImageData>(
-      onListen: () => _onFrameStreamListen(cameraId),
+      onListen: () => _configureImageAnalysis(cameraId),
       onCancel: _onFrameStreamCancel,
     );
     return cameraImageDataStreamController!.stream;
@@ -683,7 +756,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Configures the [imageAnalysis] instance for image streaming.
   Future<void> _configureImageAnalysis(int cameraId) async {
-    // Create Analyzer that can read image data for image streaming.
+    // Set target rotation to default CameraX rotation only if capture
+    // orientation not locked.
+    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+      await imageAnalysis!
+          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+    }
+
+    // Create and set Analyzer that can read image data for image streaming.
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
     Future<void> analyze(ImageProxy imageProxy) async {
@@ -708,7 +788,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           width: imageProxy.width);
 
       weakThis.target!.cameraImageDataStreamController!.add(cameraImageData);
-      unawaited(imageProxy.close());
+      await imageProxy.close();
     }
 
     final Analyzer analyzer = proxy.createAnalyzer(analyze);
@@ -728,19 +808,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods for configuring image streaming:
 
-  /// The [onListen] callback for the stream controller used for image
-  /// streaming.
-  Future<void> _onFrameStreamListen(int cameraId) async {
-    await _configureImageAnalysis(cameraId);
-  }
-
   /// The [onCancel] callback for the stream controller used for image
   /// streaming.
   ///
   /// Removes the previously set analyzer on the [imageAnalysis] instance, since
   /// image information should no longer be streamed.
   FutureOr<void> _onFrameStreamCancel() async {
-    unawaited(imageAnalysis!.clearAnalyzer());
+    await imageAnalysis!.clearAnalyzer();
   }
 
   /// Converts between Android ImageFormat constants and [ImageFormatGroup]s.
@@ -816,21 +890,19 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
-  /// Returns [Surface] target rotation constant that maps to specified sensor
-  /// orientation.
-  int _getTargetRotation(int sensorOrientation) {
-    switch (sensorOrientation) {
-      case 90:
-        return Surface.ROTATION_90;
-      case 180:
-        return Surface.ROTATION_180;
-      case 270:
-        return Surface.ROTATION_270;
-      case 0:
+  /// Returns [Surface] constant for counter-clockwise degrees of rotation from
+  /// [DeviceOrientation.portraitUp] required to reach the specified
+  /// [DeviceOrientation].
+  int _getRotationConstantFromDeviceOrientation(DeviceOrientation orientation) {
+    switch (orientation) {
+      case DeviceOrientation.portraitUp:
         return Surface.ROTATION_0;
-      default:
-        throw ArgumentError(
-            '"$sensorOrientation" is not a valid sensor orientation value');
+      case DeviceOrientation.landscapeLeft:
+        return Surface.ROTATION_90;
+      case DeviceOrientation.portraitDown:
+        return Surface.ROTATION_180;
+      case DeviceOrientation.landscapeRight:
+        return Surface.ROTATION_270;
     }
   }
 
@@ -849,19 +921,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     switch (preset) {
       case ResolutionPreset.low:
         boundSize = const Size(320, 240);
-        break;
       case ResolutionPreset.medium:
         boundSize = const Size(720, 480);
-        break;
       case ResolutionPreset.high:
         boundSize = const Size(1280, 720);
-        break;
       case ResolutionPreset.veryHigh:
         boundSize = const Size(1920, 1080);
-        break;
       case ResolutionPreset.ultraHigh:
         boundSize = const Size(3840, 2160);
-        break;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
         resolutionStrategy =
@@ -890,19 +957,14 @@ class AndroidCameraCameraX extends CameraPlatform {
       // 240p is not supported by CameraX.
       case ResolutionPreset.medium:
         videoQuality = VideoQuality.SD;
-        break;
       case ResolutionPreset.high:
         videoQuality = VideoQuality.HD;
-        break;
       case ResolutionPreset.veryHigh:
         videoQuality = VideoQuality.FHD;
-        break;
       case ResolutionPreset.ultraHigh:
         videoQuality = VideoQuality.UHD;
-        break;
       case ResolutionPreset.max:
         videoQuality = VideoQuality.highest;
-        break;
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
