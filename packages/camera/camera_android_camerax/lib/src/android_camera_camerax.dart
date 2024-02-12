@@ -469,7 +469,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<void> setFocusMode(int cameraId, FocusMode mode) {
-    throw UnimplementedError('setFocusMode() is not implemented.');
+    // TODO(camsim99): Clarify implementation.
   }
 
   /// Sets the exposure mode for taking pictures.
