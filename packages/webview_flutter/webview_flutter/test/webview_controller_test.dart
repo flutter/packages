@@ -474,6 +474,24 @@ void main() {
     );
     await expectLater(webViewController.getUserAgent(), completion(userAgent));
   });
+
+  test('setOnScrollPositionChange', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    void onScrollPositionChange(ScrollPositionChange change) {}
+
+    await webViewController.setOnScrollPositionChange(onScrollPositionChange);
+
+    verify(
+      mockPlatformWebViewController
+          .setOnScrollPositionChange(onScrollPositionChange),
+    );
+  });
 }
 
 class TestPlatformWebViewPermissionRequest
