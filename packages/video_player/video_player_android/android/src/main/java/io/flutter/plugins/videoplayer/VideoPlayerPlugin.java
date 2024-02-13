@@ -119,10 +119,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   public @NonNull TextureMessage create(@NonNull CreateMessage arg) {
-    TextureRegistry.SurfaceProducer producer = flutterState.textureRegistry.createSurfaceProducer();
+    TextureRegistry.SurfaceTextureEntry handle =
+        flutterState.textureRegistry.createSurfaceTexture();
     EventChannel eventChannel =
         new EventChannel(
-            flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + producer.id());
+            flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + handle.id());
 
     VideoPlayer player;
     if (arg.getAsset() != null) {
@@ -137,7 +138,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
           new VideoPlayer(
               flutterState.applicationContext,
               eventChannel,
-              producer,
+              handle,
               "asset:///" + assetLookupKey,
               null,
               new HashMap<>(),
@@ -148,15 +149,15 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
           new VideoPlayer(
               flutterState.applicationContext,
               eventChannel,
-              producer,
+              handle,
               arg.getUri(),
               arg.getFormatHint(),
               httpHeaders,
               options);
     }
-    videoPlayers.put(producer.id(), player);
+    videoPlayers.put(handle.id(), player);
 
-    return new TextureMessage.Builder().setTextureId(producer.id()).build();
+    return new TextureMessage.Builder().setTextureId(handle.id()).build();
   }
 
   public void dispose(@NonNull TextureMessage arg) {
