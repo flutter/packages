@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
@@ -65,8 +66,34 @@ class MethodCallHandlerImpl
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
     static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
+    static final String IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE =
+        "BillingClient#isAlternativeBillingOnlyAvailable()";
+    static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
+        "BillingClient#createAlternativeBillingOnlyReportingDetails()";
+    static final String SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG =
+        "BillingClient#showAlternativeBillingOnlyInformationDialog()";
 
     private MethodNames() {}
+  }
+
+  @VisibleForTesting
+  static final class MethodArgs {
+
+    // Key for an int argument passed into startConnection
+    static final String HANDLE = "handle";
+    // Key for a boolean argument passed into startConnection.
+    static final String BILLING_CHOICE_MODE = "billingChoiceMode";
+
+    private MethodArgs() {}
+  }
+
+  /**
+   * Values here must match values used in
+   * in_app_purchase_android/lib/src/billing_client_wrappers/billing_client_wrapper.dart
+   */
+  static final class BillingChoiceMode {
+    static final int PLAY_BILLING_ONLY = 0;
+    static final int ALTERNATIVE_BILLING_ONLY = 1;
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -80,6 +107,7 @@ class MethodCallHandlerImpl
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
       "https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
+  @VisibleForTesting static final String ACTIVITY_UNAVAILABLE = "ACTIVITY_UNAVAILABLE";
 
   @Nullable private BillingClient billingClient;
   private final BillingClientFactory billingClientFactory;
@@ -147,7 +175,12 @@ class MethodCallHandlerImpl
         isReady(result);
         break;
       case MethodNames.START_CONNECTION:
-        startConnection((int) call.argument("handle"), result);
+        final int handle = (int) call.argument(MethodArgs.HANDLE);
+        int billingChoiceMode = BillingChoiceMode.PLAY_BILLING_ONLY;
+        if (call.hasArgument(MethodArgs.BILLING_CHOICE_MODE)) {
+          billingChoiceMode = call.argument(MethodArgs.BILLING_CHOICE_MODE);
+        }
+        startConnection(handle, result, billingChoiceMode);
         break;
       case MethodNames.END_CONNECTION:
         endConnection(result);
@@ -190,12 +223,61 @@ class MethodCallHandlerImpl
       case MethodNames.GET_BILLING_CONFIG:
         getBillingConfig(result);
         break;
+      case MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE:
+        isAlternativeBillingOnlyAvailable(result);
+        break;
+      case MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS:
+        createAlternativeBillingOnlyReportingDetails(result);
+        break;
+      case MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG:
+        showAlternativeBillingOnlyInformationDialog(result);
+        break;
       default:
         result.notImplemented();
     }
   }
 
+  private void showAlternativeBillingOnlyInformationDialog(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
+    if (activity == null) {
+      result.error(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null);
+      return;
+    }
+    billingClient.showAlternativeBillingOnlyInformationDialog(
+        activity,
+        billingResult -> {
+          result.success(fromBillingResult(billingResult));
+        });
+  }
+
+  private void createAlternativeBillingOnlyReportingDetails(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
+    billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
+        ((billingResult, alternativeBillingOnlyReportingDetails) -> {
+          result.success(
+              fromAlternativeBillingOnlyReportingDetails(
+                  billingResult, alternativeBillingOnlyReportingDetails));
+        }));
+  }
+
+  private void isAlternativeBillingOnlyAvailable(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
+    billingClient.isAlternativeBillingOnlyAvailableAsync(
+        billingResult -> {
+          result.success(fromBillingResult(billingResult));
+        });
+  }
+
   private void getBillingConfig(final MethodChannel.Result result) {
+    if (billingClientError(result)) {
+      return;
+    }
     billingClient.getBillingConfigAsync(
         GetBillingConfigParams.newBuilder().build(),
         (billingResult, billingConfig) -> {
@@ -313,7 +395,7 @@ class MethodCallHandlerImpl
 
     if (activity == null) {
       result.error(
-          "ACTIVITY_UNAVAILABLE",
+          ACTIVITY_UNAVAILABLE,
           "Details for product "
               + product
               + " are not available. This method must be run with the app in foreground.",
@@ -422,9 +504,12 @@ class MethodCallHandlerImpl
     result.success(serialized);
   }
 
-  private void startConnection(final int handle, final MethodChannel.Result result) {
+  private void startConnection(
+      final int handle, final MethodChannel.Result result, int billingChoiceMode) {
     if (billingClient == null) {
-      billingClient = billingClientFactory.createBillingClient(applicationContext, methodChannel);
+      billingClient =
+          billingClientFactory.createBillingClient(
+              applicationContext, methodChannel, billingChoiceMode);
     }
 
     billingClient.startConnection(
