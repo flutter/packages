@@ -1,3 +1,8 @@
+## 2.7.3
+
+* Adds documentation to clarify that platform implementations of the plugin use
+  resolution presets as target resolutions.
+
 ## 2.7.2
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

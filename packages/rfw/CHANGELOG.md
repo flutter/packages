@@ -1,3 +1,21 @@
+## 1.0.22
+
+* Adds more testing to restore coverage to 100%.
+* Format documentation.
+
+## 1.0.21
+
+* Adds support for subscribing to the root of a `DynamicContent` object.
+
+## 1.0.20
+
+* Adds `OverflowBox` material widget.
+* Updates `ButtonBar` material widget implementation.
+
+## 1.0.19
+
+* Add `DropdownButton` and `ClipRRect` widgets to rfw widget library.
+
 ## 1.0.18
 
 * Exposes `WidgetLibrary`s registered in `Runtime`.

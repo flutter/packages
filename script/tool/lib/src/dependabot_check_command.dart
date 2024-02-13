@@ -68,10 +68,13 @@ class DependabotCheckCommand extends PackageLoopingCommand {
     bool skipped = true;
     final List<String> errors = <String>[];
 
-    final RunState gradleState = _validateDependabotGradleCoverage(package);
-    skipped = skipped && gradleState == RunState.skipped;
-    if (gradleState == RunState.failed) {
+    final _GradleCoverageResult gradleResult =
+        _validateDependabotGradleCoverage(package);
+    skipped = skipped && gradleResult.runState == RunState.skipped;
+    if (gradleResult.runState == RunState.failed) {
       printError('${indentation}Missing Gradle coverage.');
+      print('${indentation}Add a "gradle" entry to '
+          '${getStringArg(_configPathFlag)} for ${gradleResult.missingPath}');
       errors.add('Missing Gradle coverage');
     }
 
@@ -90,7 +93,8 @@ class DependabotCheckCommand extends PackageLoopingCommand {
   /// - succeeded if it includes gradle and is covered.
   /// - failed if it includes gradle and is not covered.
   /// - skipped if it doesn't include gradle.
-  RunState _validateDependabotGradleCoverage(RepositoryPackage package) {
+  _GradleCoverageResult _validateDependabotGradleCoverage(
+      RepositoryPackage package) {
     final Directory androidDir =
         package.platformDirectory(FlutterPlatform.android);
     final Directory appDir = androidDir.childDirectory('app');
@@ -99,16 +103,23 @@ class DependabotCheckCommand extends PackageLoopingCommand {
       final String dependabotPath =
           '/${getRelativePosixPath(appDir, from: _repoRoot)}';
       return _gradleDirs.contains(dependabotPath)
-          ? RunState.succeeded
-          : RunState.failed;
+          ? _GradleCoverageResult(RunState.succeeded)
+          : _GradleCoverageResult(RunState.failed, missingPath: dependabotPath);
     } else if (androidDir.existsSync()) {
       // It's a library, so only check for the android directory to be covered.
       final String dependabotPath =
           '/${getRelativePosixPath(androidDir, from: _repoRoot)}';
       return _gradleDirs.contains(dependabotPath)
-          ? RunState.succeeded
-          : RunState.failed;
+          ? _GradleCoverageResult(RunState.succeeded)
+          : _GradleCoverageResult(RunState.failed, missingPath: dependabotPath);
     }
-    return RunState.skipped;
+    return _GradleCoverageResult(RunState.skipped);
   }
+}
+
+class _GradleCoverageResult {
+  _GradleCoverageResult(this.runState, {this.missingPath});
+
+  final RunState runState;
+  final String? missingPath;
 }

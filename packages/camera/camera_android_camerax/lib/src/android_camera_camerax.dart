@@ -98,6 +98,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  /// Whether or not [preview] has been bound to the lifecycle of the camera by
+  /// [createCamera].
+  @visibleForTesting
+  bool previewInitiallyBound = false;
+
   bool _previewIsPaused = false;
 
   /// The prefix used to create the filename for video recording files.
@@ -227,6 +232,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
+  /// The specified [resolutionPreset] is the target resolution that CameraX
+  /// will attempt to select for the [UseCase]s constructed in this method
+  /// ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
+  /// unavailable, a fallback behavior of targeting the next highest resolution
+  /// will be attempted. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
+  ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
@@ -284,6 +295,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!.bindToLifecycle(
         cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
     await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
+    previewInitiallyBound = true;
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -345,9 +357,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> dispose(int cameraId) async {
     preview?.releaseFlutterSurfaceTexture();
-    unawaited(liveCameraState?.removeObservers());
+    await liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
-    unawaited(imageAnalysis?.clearAnalyzer());
+    await imageAnalysis?.clearAnalyzer();
   }
 
   /// The camera has been initialized.
@@ -520,21 +532,20 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns a widget showing a live camera preview.
+  ///
+  /// [createCamera] must be called before attempting to build this preview.
   @override
   Widget buildPreview(int cameraId) {
-    return FutureBuilder<void>(
-        future: _bindPreviewToLifecycle(cameraId),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              // Do nothing while waiting for preview to be bound to lifecyle.
-              return const SizedBox.shrink();
-            case ConnectionState.done:
-              return Texture(textureId: cameraId);
-          }
-        });
+    if (!previewInitiallyBound) {
+      // No camera has been created, and thus, the preview UseCase has not been
+      // bound to the camera lifecycle, restricting this preview from being
+      // built.
+      throw CameraException(
+        'cameraNotFound',
+        "Camera not found. Please call the 'create' method before calling 'buildPreview'",
+      );
+    }
+    return Texture(textureId: cameraId);
   }
 
   /// Captures an image and returns the file where it was saved.
@@ -634,6 +645,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (!(await processCameraProvider!.isBound(videoCapture!))) {
       camera = await processCameraProvider!
           .bindToLifecycle(cameraSelector!, <UseCase>[videoCapture!]);
+      await _updateCameraInfoAndLiveCameraState(options.cameraId);
     }
 
     // Set target rotation to default CameraX rotation only if capture
@@ -670,7 +682,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (videoOutputPath == null) {
       // Stop the current active recording as we will be unable to complete it
       // in this error case.
-      unawaited(recording!.close());
+      await recording!.close();
       recording = null;
       pendingRecording = null;
       throw CameraException(
@@ -679,7 +691,7 @@ class AndroidCameraCameraX extends CameraPlatform {
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    unawaited(recording!.close());
+    await recording!.close();
     recording = null;
     pendingRecording = null;
     return XFile(videoOutputPath!);
@@ -802,7 +814,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Removes the previously set analyzer on the [imageAnalysis] instance, since
   /// image information should no longer be streamed.
   FutureOr<void> _onFrameStreamCancel() async {
-    unawaited(imageAnalysis!.clearAnalyzer());
+    await imageAnalysis!.clearAnalyzer();
   }
 
   /// Converts between Android ImageFormat constants and [ImageFormatGroup]s.
