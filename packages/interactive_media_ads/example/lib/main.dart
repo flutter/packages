@@ -29,6 +29,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    debugPrint('THEAPP');
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
