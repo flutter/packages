@@ -152,7 +152,7 @@ void main() {
       await expectLater(
           googleSignIn.signIn(),
           throwsA(isA<PlatformException>().having(
-              (e) => e.code,
+              (PlatformException e) => e.code,
               'SignIn Canceled Exception',
               equals(GoogleSignIn.kSignInCanceledError))));
       _verifyInit(mockPlatform);
