@@ -6,6 +6,10 @@
 
 ## Explicit allowances
 
+# Temporary during transition to local_auth_darwin. Can be removed once
+# the default endorsement changes.
+- local_auth_ios
+
 # Owned by individual Flutter Team members.
 # Ideally we would not do this, since there's no clear plan for what
 # would happen if the individuals left the Flutter Team, and the
