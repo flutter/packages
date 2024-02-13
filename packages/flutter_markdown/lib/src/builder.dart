@@ -56,13 +56,13 @@ class _TableElement {
 /// A collection of widgets that should be placed adjacent to (inline with)
 /// other inline elements in the same parent block.
 ///
-/// Inline elements can be textual (a/em/strong) represented by [RichText]
+/// Inline elements can be textual (a/em/strong) represented by [Text.rich]
 /// widgets or images (img) represented by [Image.network] widgets.
 ///
 /// Inline elements can be nested within other inline elements, inheriting their
 /// parent's style along with the style of the block they are in.
 ///
-/// When laying out inline widgets, first, any adjacent RichText widgets are
+/// When laying out inline widgets, first, any adjacent Text.rich widgets are
 /// merged, then, all inline widgets are enclosed in a parent [Wrap] widget.
 class _InlineElement {
   _InlineElement(this.tag, {this.style});
@@ -517,8 +517,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       } else if (tag == 'sup') {
         final Widget c = current.children.last;
         TextSpan? textSpan;
-        if (c is RichText && c.text is TextSpan) {
-          textSpan = c.text as TextSpan;
+        if (c is Text && c.textSpan is TextSpan) {
+          textSpan = c.textSpan! as TextSpan;
         } else if (c is SelectableText && c.textSpan is TextSpan) {
           textSpan = c.textSpan;
         }
@@ -717,11 +717,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   ) {
     final List<Widget> mergedTexts = <Widget>[];
     for (final Widget child in children) {
-      if (mergedTexts.isNotEmpty &&
-          mergedTexts.last is RichText &&
-          child is RichText) {
-        final RichText previous = mergedTexts.removeLast() as RichText;
-        final TextSpan previousTextSpan = previous.text as TextSpan;
+      if (mergedTexts.isNotEmpty && mergedTexts.last is Text && child is Text) {
+        final Text previous = mergedTexts.removeLast() as Text;
+        final TextSpan previousTextSpan = previous.textSpan! as TextSpan;
         final List<TextSpan> children = previousTextSpan.children != null
             ? previousTextSpan.children!
                 .map((InlineSpan span) => span is! TextSpan
@@ -729,7 +727,7 @@ class MarkdownBuilder implements md.NodeVisitor {
                     : span)
                 .toList()
             : <TextSpan>[previousTextSpan];
-        children.add(child.text as TextSpan);
+        children.add(child.textSpan! as TextSpan);
         final TextSpan? mergedSpan = _mergeSimilarTextSpans(children);
         mergedTexts.add(_buildRichText(
           mergedSpan,
@@ -876,10 +874,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         key: k,
       );
     } else {
-      return RichText(
-        text: text!,
+      return Text.rich(
+        text!,
         // ignore: deprecated_member_use
-        textScaleFactor: styleSheet.textScaleFactor!,
+        textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
         key: k,
       );
