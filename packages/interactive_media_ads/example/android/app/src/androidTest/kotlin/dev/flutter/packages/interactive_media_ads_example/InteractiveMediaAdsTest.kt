@@ -4,8 +4,8 @@
 
 package dev.flutter.packages.interactive_media_ads_example
 
+import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import dev.flutter.plugins.interactive_media_ads_example.DriverExtensionActivity
 import org.junit.Rule
 
 class InteractiveMediaAdsTest {
@@ -13,6 +13,8 @@ class InteractiveMediaAdsTest {
   @Rule
   var myActivityTestRule: ActivityScenarioRule<DriverExtensionActivity> =
       ActivityScenarioRule(DriverExtensionActivity::class.java)
+
+  @JvmField @Rule var intentsRule = IntentsRule()
 
   @org.junit.Test fun placeholderIntegrationTest() {}
 }
