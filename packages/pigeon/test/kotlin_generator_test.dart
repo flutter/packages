@@ -856,10 +856,10 @@ void main() {
 
   test('gen one enum class', () {
     final Enum anEnum = Enum(
-      name: 'Enum1',
+      name: 'SampleEnum',
       members: <EnumMember>[
-        EnumMember(name: 'one'),
-        EnumMember(name: 'two'),
+        EnumMember(name: 'sampleVersion'),
+        EnumMember(name: 'sampleTest'),
       ],
     );
     final Class classDefinition = Class(
@@ -867,11 +867,11 @@ void main() {
       fields: <NamedType>[
         NamedType(
           type: TypeDeclaration(
-            baseName: 'Enum1',
+            baseName: 'SampleEnum',
             associatedEnum: emptyEnum,
             isNullable: true,
           ),
-          name: 'enum1',
+          name: 'sampleEnum',
         ),
       ],
     );
@@ -890,9 +890,9 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('enum class Enum1(val raw: Int)'));
-    expect(code, contains('ONE(0)'));
-    expect(code, contains('TWO(1)'));
+    expect(code, contains('enum class SampleEnum(val raw: Int)'));
+    expect(code, contains('SAMPLE_VERSION(0)'));
+    expect(code, contains('SAMPLE_TEST(1)'));
   });
 
   Iterable<String> makeIterable(String string) sync* {
