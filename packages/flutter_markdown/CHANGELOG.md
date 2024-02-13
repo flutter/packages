@@ -1,6 +1,6 @@
 ## 0.6.19
 
-* Uses `Text.rich` to replace `RichText` so the widget can work with `SelectionArea` when `selectable` set to false.
+* Replaces `RichText` with `Text.rich` so the widget can work with `SelectionArea` when `selectable` is set to false.
 
 ## 0.6.18+3
 
