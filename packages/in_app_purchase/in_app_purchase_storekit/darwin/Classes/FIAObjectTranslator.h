@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
     API_AVAILABLE(ios(12.2));
 
-+ (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error;
++ (nullable SKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error;
 
 + (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
     (nullable SKProductsResponse *)payment;

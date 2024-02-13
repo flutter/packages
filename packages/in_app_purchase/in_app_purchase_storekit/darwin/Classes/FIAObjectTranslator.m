@@ -306,7 +306,7 @@
   return msg;
 }
 
-+ (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error {
++ (nullable SKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error {
   if (!error) {
     return nil;
   }
