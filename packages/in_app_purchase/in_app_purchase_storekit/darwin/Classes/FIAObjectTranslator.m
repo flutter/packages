@@ -306,7 +306,11 @@
   return msg;
 }
 
-+ (nullable SKErrorMessage *)convertSKErrorToPigeon:(NSError *)error {
++ (nullable SKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error {
+  if (!error) {
+    return nil;
+  }
+
   NSMutableDictionary *userInfo = [NSMutableDictionary new];
   for (NSErrorUserInfoKey key in error.userInfo) {
     id value = error.userInfo[key];
@@ -373,6 +377,136 @@
   }
   SKStorefrontMessage *msg = [SKStorefrontMessage makeWithCountryCode:storefront.countryCode
                                                            identifier:storefront.identifier];
+  return msg;
+}
+
++ (nullable SKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
+    (nullable SKProductSubscriptionPeriod *)period API_AVAILABLE(ios(12.2)) {
+  if (!period) {
+    return nil;
+  }
+
+  SKSubscriptionPeriodUnitMessage unit;
+  switch (period.unit) {
+    case SKProductPeriodUnitDay:
+      unit = SKSubscriptionPeriodUnitMessageDay;
+      break;
+    case SKProductPeriodUnitWeek:
+      unit = SKSubscriptionPeriodUnitMessageWeek;
+      break;
+    case SKProductPeriodUnitMonth:
+      unit = SKSubscriptionPeriodUnitMessageMonth;
+      break;
+    case SKProductPeriodUnitYear:
+      unit = SKSubscriptionPeriodUnitMessageYear;
+      break;
+  }
+
+  SKProductSubscriptionPeriodMessage *msg =
+      [SKProductSubscriptionPeriodMessage makeWithNumberOfUnits:period.numberOfUnits unit:unit];
+
+  return msg;
+}
+
++ (nullable SKProductDiscountMessage *)convertProductDiscountToPigeon:
+    (nullable SKProductDiscount *)productDiscount API_AVAILABLE(ios(12.2)) {
+  if (!productDiscount) {
+    return nil;
+  }
+
+  SKProductDiscountPaymentModeMessage paymentMode;
+  switch (productDiscount.paymentMode) {
+    case SKProductDiscountPaymentModeFreeTrial:
+      paymentMode = SKProductDiscountPaymentModeMessageFreeTrial;
+      break;
+    case SKProductDiscountPaymentModePayAsYouGo:
+      paymentMode = SKProductDiscountPaymentModeMessagePayAsYouGo;
+      break;
+    case SKProductDiscountPaymentModePayUpFront:
+      paymentMode = SKProductDiscountPaymentModeMessagePayUpFront;
+      break;
+  }
+
+  SKProductDiscountTypeMessage type;
+  switch (productDiscount.type) {
+    case SKProductDiscountTypeIntroductory:
+      type = SKProductDiscountTypeMessageIntroductory;
+      break;
+    case SKProductDiscountTypeSubscription:
+      type = SKProductDiscountTypeMessageSubscription;
+      break;
+  }
+
+  SKProductDiscountMessage *msg = [SKProductDiscountMessage
+           makeWithPrice:productDiscount.price.description
+             priceLocale:[self convertNSLocaleToPigeon:productDiscount.priceLocale]
+         numberOfPeriods:productDiscount.numberOfPeriods
+             paymentMode:paymentMode
+      subscriptionPeriod:[self convertSKProductSubscriptionPeriodToPigeon:productDiscount
+                                                                              .subscriptionPeriod]
+              identifier:productDiscount.identifier
+                    type:type];
+
+  return msg;
+}
+
++ (nullable SKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
+    API_AVAILABLE(ios(12.2)) {
+  if (!locale) {
+    return nil;
+  }
+  SKPriceLocaleMessage *msg = [SKPriceLocaleMessage makeWithCurrencySymbol:locale.currencySymbol
+                                                              currencyCode:locale.currencyCode
+                                                               countryCode:locale.countryCode];
+
+  return msg;
+}
+
++ (nullable SKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
+    API_AVAILABLE(ios(12.2)) {
+  if (!product) {
+    return nil;
+  }
+
+  NSArray<SKProductDiscount *> *skProductDiscounts = product.discounts;
+  NSMutableArray<SKProductDiscountMessage *> *pigeonProductDiscounts =
+      [NSMutableArray arrayWithCapacity:skProductDiscounts.count];
+
+  for (SKProductDiscount *productDiscount in skProductDiscounts) {
+    [pigeonProductDiscounts addObject:[self convertProductDiscountToPigeon:productDiscount]];
+  };
+
+  SKProductMessage *msg = [SKProductMessage
+        makeWithProductIdentifier:product.productIdentifier
+                   localizedTitle:product.localizedTitle
+             localizedDescription:product.localizedDescription
+                      priceLocale:[self convertNSLocaleToPigeon:product.priceLocale]
+      subscriptionGroupIdentifier:product.subscriptionGroupIdentifier
+                            price:product.price.description
+               subscriptionPeriod:
+                   [self convertSKProductSubscriptionPeriodToPigeon:product.subscriptionPeriod]
+                introductoryPrice:[self convertProductDiscountToPigeon:product.introductoryPrice]
+                        discounts:pigeonProductDiscounts];
+
+  return msg;
+}
+
++ (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
+    (nullable SKProductsResponse *)productsResponse API_AVAILABLE(ios(12.2)) {
+  if (!productsResponse) {
+    return nil;
+  }
+  NSArray<SKProduct *> *skProducts = productsResponse.products;
+  NSMutableArray<SKProductMessage *> *pigeonProducts =
+      [NSMutableArray arrayWithCapacity:skProducts.count];
+
+  for (SKProduct *product in skProducts) {
+    [pigeonProducts addObject:[self convertProductToPigeon:product]];
+  };
+
+  SKProductsResponseMessage *msg =
+      [SKProductsResponseMessage makeWithProducts:pigeonProducts
+                        invalidProductIdentifiers:productsResponse.invalidProductIdentifiers];
   return msg;
 }
 

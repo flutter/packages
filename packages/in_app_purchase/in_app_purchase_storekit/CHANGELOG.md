@@ -1,3 +1,7 @@
+## 0.3.10
+
+* Converts `startProductRequest()`, `finishTransaction()`, `restoreTransactions()`, `presentCodeRedemptionSheet()` to pigeon.
+
 ## 0.3.9
 
 * Converts `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
