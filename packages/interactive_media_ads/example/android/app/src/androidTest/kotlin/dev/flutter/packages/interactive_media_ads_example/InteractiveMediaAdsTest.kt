@@ -8,7 +8,7 @@ import android.content.Intent
 import androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget
 import androidx.test.espresso.flutter.assertion.FlutterAssertions.matches
 import androidx.test.espresso.flutter.matcher.FlutterMatchers.isExisting
-import androidx.test.espresso.flutter.matcher.FlutterMatchers.withValueKey
+import androidx.test.espresso.flutter.matcher.FlutterMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import org.junit.Rule
 
@@ -22,7 +22,7 @@ class InteractiveMediaAdsTest {
   fun launchTest() {
     clearAnySystemDialog()
 
-    onFlutterWidget(withValueKey("Running on: TargetPlatform.android")).check(matches(isExisting()))
+    onFlutterWidget(withText("Running on: TargetPlatform.android")).check(matches(isExisting()))
   }
 
   private fun clearAnySystemDialog() {
