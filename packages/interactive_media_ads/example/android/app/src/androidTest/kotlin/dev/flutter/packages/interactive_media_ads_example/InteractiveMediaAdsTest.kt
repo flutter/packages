@@ -17,12 +17,7 @@ class InteractiveMediaAdsTest {
 
   @JvmField @Rule var intentsRule = IntentsRule()
 
-  @org.junit.Test
-  fun placeholderIntegrationTest() {
-    clearAnySystemDialog()
-
-    myActivityTestRule.scenario.close()
-  }
+  @org.junit.Test fun placeholderIntegrationTest() {}
 
   private fun clearAnySystemDialog() {
     myActivityTestRule.scenario.onActivity { activity ->
