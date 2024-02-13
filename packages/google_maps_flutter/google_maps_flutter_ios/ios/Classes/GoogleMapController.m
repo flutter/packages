@@ -252,7 +252,8 @@
     if (self.mapView != nil) {
       UIGraphicsImageRenderer *renderer =
           [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
-      // For some unknown reason mapView.layer::renderInContext API returns a blank image on iOS 17. So we have to use drawViewHierarchyInRect API.
+      // For some unknown reason mapView.layer::renderInContext API returns a blank image on iOS 17.
+      // So we have to use drawViewHierarchyInRect API.
       UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
         [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
       }];
