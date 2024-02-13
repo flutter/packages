@@ -73,7 +73,7 @@ class CameraStateTypeData {
 ///
 /// On the native side, ensure the following is done:
 ///
-///  * Update `LiveDataHostApiImpl#getValue` is updated to properly return
+///  * Make sure `LiveDataHostApiImpl#getValue` is updated to properly return
 ///    identifiers for instances of type S.
 ///  * Update `ObserverFlutterApiWrapper#onChanged` to properly handle receiving
 ///    calls with instances of type S if a LiveData<S> instance is observed.
@@ -141,6 +141,28 @@ class MeteringPointInfo {
   ///
   /// Metering mode should be one of the [FocusMeteringAction] constants.
   int? meteringMode;
+}
+
+/// The types of capture request options this plugin currently supports.
+///
+/// If you need to add another option to support, ensure the following is done
+/// on the Dart side:
+///
+///  * In `../lib/src/capture_request_options.dart`, add new cases for this
+///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
+///    to create the expected Map entry of option key index and value to send to
+///    the native side.
+///
+/// On the native side, ensure the following is done:
+///
+///  * Update `CaptureRequestOptionsHostApiImpl#create` to set the correct
+///   `CaptureRequest` key with a valid value type for this option.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
+/// for the sorts of capture request options that can be supported via CameraX's
+/// interoperability with Camera2.
+enum CaptureRequestKeySupportedType {
+  controlAeLock,
 }
 
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
@@ -497,4 +519,18 @@ abstract class MeteringPointHostApi {
   void create(int identifier, double x, double y, double? size);
 
   double getDefaultPointSize();
+}
+
+@HostApi(dartHostTestHandler: 'TestCaptureRequestOptionsHostApi')
+abstract class CaptureRequestOptionsHostApi {
+  void create(int identifier, Map<int, Object?> options);
+}
+
+@HostApi(dartHostTestHandler: 'TestCamera2CameraControlHostApi')
+abstract class Camera2CameraControlHostApi {
+  void create(int identifier, int cameraControlIdentifier);
+
+  @async
+  void addCaptureRequestOptions(
+      int identifier, int captureRequestOptionsIdentifier);
 }
