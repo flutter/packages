@@ -86,7 +86,14 @@
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
+/// A block property to dynamically determine video dimensions based on a given
+/// AVCaptureDeviceFormat. It accepts an AVCaptureDeviceFormat object and returns a
+/// CMVideoDimensions struct, indicating the video's width and height.
 @property(nonatomic, copy) VideoDimensionsForFormatBlock videoDimensionsForFormatBlock;
+/// A block property to retrieve an AVCaptureDevice instance without input parameters.
+/// Designed to return a predefined or default capture device, facilitating simple access within the
+/// application.
+@property(nonatomic, copy) CaptureDeviceBlock captureDeviceBlock;
 @end
 
 @implementation FLTCam
@@ -99,16 +106,14 @@ NSString *const errorMethod = @"error";
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
-  return [self initWithCameraName:cameraName
-                   resolutionPreset:resolutionPreset
-                        enableAudio:enableAudio
-                        orientation:orientation
-                videoCaptureSession:[[AVCaptureSession alloc] init]
-                audioCaptureSession:[[AVCaptureSession alloc] init]
-                captureSessionQueue:captureSessionQueue
-                      captureDevice:nil
-      videoDimensionsForFormatBlock:nil
-                              error:error];
+  return [self initWithCameraName:(NSString *)cameraName
+                 resolutionPreset:(NSString *)resolutionPreset
+                      enableAudio:enableAudio
+                      orientation:orientation
+              videoCaptureSession:[[AVCaptureSession alloc] init]
+              audioCaptureSession:[[AVCaptureSession alloc] init]
+              captureSessionQueue:captureSessionQueue
+                            error:error];
 }
 
 - (instancetype)initWithCameraName:(NSString *)cameraName
@@ -119,29 +124,31 @@ NSString *const errorMethod = @"error";
                audioCaptureSession:(AVCaptureSession *)audioCaptureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
-  return [self initWithCameraName:cameraName
-                   resolutionPreset:resolutionPreset
-                        enableAudio:enableAudio
-                        orientation:orientation
-                videoCaptureSession:videoCaptureSession
-                audioCaptureSession:videoCaptureSession
-                captureSessionQueue:captureSessionQueue
-                      captureDevice:nil
-      videoDimensionsForFormatBlock:nil
-                              error:error];
+  return [self initWithResolutionPreset:resolutionPreset
+      enableAudio:enableAudio
+      orientation:orientation
+      videoCaptureSession:videoCaptureSession
+      audioCaptureSession:videoCaptureSession
+      captureSessionQueue:captureSessionQueue
+      captureDeviceBlock:^AVCaptureDevice *(void) {
+        return [AVCaptureDevice deviceWithUniqueID:cameraName];
+      }
+      videoDimensionsForFormatBlock:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+        return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+      }
+      error:error];
 }
 
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                  resolutionPreset:(NSString *)resolutionPreset
-                       enableAudio:(BOOL)enableAudio
-                       orientation:(UIDeviceOrientation)orientation
-               videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-               audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                     captureDevice:(nullable AVCaptureDevice *)captureDevice
-     videoDimensionsForFormatBlock:
-         (nullable VideoDimensionsForFormatBlock)videoDimensionsForFormatBlock
-                             error:(NSError **)error {
+- (instancetype)initWithResolutionPreset:(NSString *)resolutionPreset
+                             enableAudio:(BOOL)enableAudio
+                             orientation:(UIDeviceOrientation)orientation
+                     videoCaptureSession:(AVCaptureSession *)videoCaptureSession
+                     audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+                     captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+                      captureDeviceBlock:(CaptureDeviceBlock)captureDeviceBlock
+           videoDimensionsForFormatBlock:
+               (VideoDimensionsForFormatBlock)videoDimensionsForFormatBlock
+                                   error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
@@ -162,11 +169,8 @@ NSString *const errorMethod = @"error";
   _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
   _videoCaptureSession = videoCaptureSession;
   _audioCaptureSession = audioCaptureSession;
-  if (captureDevice) {
-    _captureDevice = captureDevice;
-  } else {
-    _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
-  }
+  _captureDeviceBlock = captureDeviceBlock;
+  _captureDevice = captureDeviceBlock();
   _videoDimensionsForFormatBlock = videoDimensionsForFormatBlock;
   _flashMode = _captureDevice.hasFlash ? FLTFlashModeAuto : FLTFlashModeOff;
   _exposureMode = FLTExposureModeAuto;
@@ -403,11 +407,11 @@ NSString *const errorMethod = @"error";
       if (bestFormat) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
         if ([_captureDevice lockForConfiguration:NULL] == YES) {
-          // set best device format and finish device configuration
+          // Set the best device format found and finish the device configuration.
           _captureDevice.activeFormat = bestFormat;
           [_captureDevice unlockForConfiguration];
 
-          // set preview size based on values from the current _captureDevice
+          // Set the preview size based on values from the current capture device.
           _previewSize =
               CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
                          _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
@@ -475,13 +479,13 @@ NSString *const errorMethod = @"error";
   return YES;
 }
 
-/// Finds the highest available resolution in terms of pixel count for the given device
+/// Finds the highest available resolution in terms of pixel count for the given device.
 - (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
     (AVCaptureDevice *)captureDevice {
   AVCaptureDeviceFormat *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
   for (AVCaptureDeviceFormat *format in [_captureDevice formats]) {
-    CMVideoDimensions res = [self videoDimensionsForFormat:format];
+    CMVideoDimensions res = self.videoDimensionsForFormatBlock(format);
     NSUInteger height = res.height;
     NSUInteger width = res.width;
     NSUInteger pixelCount = height * width;
@@ -491,14 +495,6 @@ NSString *const errorMethod = @"error";
     }
   }
   return bestFormat;
-}
-
-/// Wrapper for CMVideoFormatDescriptionGetDimensions to use custom code for testing
-- (CMVideoDimensions)videoDimensionsForFormat:(AVCaptureDeviceFormat *)format {
-  if (self.videoDimensionsForFormatBlock) {
-    return self.videoDimensionsForFormatBlock(format);
-  }
-  return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output
@@ -1014,7 +1010,7 @@ NSString *const errorMethod = @"error";
     return;
   }
 
-  _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
+  _captureDevice = self.captureDeviceBlock();
 
   AVCaptureConnection *oldConnection =
       [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];

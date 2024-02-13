@@ -14,8 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef CMVideoDimensions (^VideoDimensionsForFormatBlock)(AVCaptureDeviceFormat *);
-
 /**
  * A class that manages camera's state and performs camera operations.
  */
@@ -46,18 +44,6 @@ typedef CMVideoDimensions (^VideoDimensionsForFormatBlock)(AVCaptureDeviceFormat
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error;
-
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                  resolutionPreset:(NSString *)resolutionPreset
-                       enableAudio:(BOOL)enableAudio
-                       orientation:(UIDeviceOrientation)orientation
-               videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-               audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                     captureDevice:(nullable AVCaptureDevice *)captureDevice
-     videoDimensionsForFormatBlock:
-         (nullable VideoDimensionsForFormatBlock)videoDimensionsForFormatBlock
                              error:(NSError **)error;
 
 - (void)start;

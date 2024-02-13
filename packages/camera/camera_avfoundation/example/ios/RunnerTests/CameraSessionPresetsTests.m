@@ -4,6 +4,7 @@
 
 @import camera_avfoundation;
 @import camera_avfoundation.Test;
+
 @import AVFoundation;
 @import XCTest;
 #import <OCMock/OCMock.h>
@@ -47,7 +48,7 @@
   id videoSessionMock = OCMClassMock([AVCaptureSession class]);
   OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
 
-  // make sure that setting resolution preset for session always succeeds
+  // Make sure that setting resolution preset for session always succeeds.
   OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
@@ -61,12 +62,12 @@
   NSString *expectedPreset = AVCaptureSessionPreset3840x2160;
 
   id videoSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);  // no-op
+  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
 
-  // make sure that setting resolution preset for session always succeeds
+  // Make sure that setting resolution preset for session always succeeds.
   OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  // expect that setting "ultraHigh" resolutionPreset correctly updates videoCaptureSession
+  // Expect that setting "ultraHigh" resolutionPreset correctly updates videoCaptureSession.
   OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
 
   FLTCreateCamWithVideoCaptureSession(videoSessionMock, @"ultraHigh");

@@ -12,11 +12,11 @@ FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue
       .andReturn(inputMock);
 
   id videoSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);  // no-op
+  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   id audioSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);  // no-op
+  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   return [[FLTCam alloc] initWithCameraName:@"camera"
@@ -36,7 +36,7 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
       .andReturn(inputMock);
 
   id audioSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);  // no-op
+  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   return [[FLTCam alloc] initWithCameraName:@"camera"
@@ -46,8 +46,6 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
                         videoCaptureSession:captureSession
                         audioCaptureSession:audioSessionMock
                         captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
-                              captureDevice:nil
-              videoDimensionsForFormatBlock:nil
                                       error:nil];
 }
 
@@ -59,19 +57,21 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormatBlock(
       .andReturn(inputMock);
 
   id audioSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);  // no-op
+  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  return [[FLTCam alloc] initWithCameraName:@"camera"
-                           resolutionPreset:resolutionPreset
-                                enableAudio:true
-                                orientation:UIDeviceOrientationPortrait
-                        videoCaptureSession:captureSession
-                        audioCaptureSession:audioSessionMock
-                        captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
-                              captureDevice:captureDevice
-              videoDimensionsForFormatBlock:videoDimensionsForFormatBlock
-                                      error:nil];
+  return
+      [[FLTCam alloc] initWithResolutionPreset:resolutionPreset
+                                   enableAudio:true
+                                   orientation:UIDeviceOrientationPortrait
+                           videoCaptureSession:captureSession
+                           audioCaptureSession:audioSessionMock
+                           captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
+                            captureDeviceBlock:^AVCaptureDevice *(void) {
+                              return captureDevice;
+                            }
+                 videoDimensionsForFormatBlock:videoDimensionsForFormatBlock
+                                         error:nil];
 }
 
 CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
