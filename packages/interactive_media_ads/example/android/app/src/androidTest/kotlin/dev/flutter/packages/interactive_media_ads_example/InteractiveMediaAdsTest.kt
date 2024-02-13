@@ -5,7 +5,10 @@
 package dev.flutter.packages.interactive_media_ads_example
 
 import android.content.Intent
-import androidx.test.espresso.intent.rule.IntentsRule
+import androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget
+import androidx.test.espresso.flutter.assertion.FlutterAssertions.matches
+import androidx.test.espresso.flutter.matcher.FlutterMatchers.isExisting
+import androidx.test.espresso.flutter.matcher.FlutterMatchers.withValueKey
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import org.junit.Rule
 
@@ -15,9 +18,12 @@ class InteractiveMediaAdsTest {
   var myActivityTestRule: ActivityScenarioRule<DriverExtensionActivity> =
       ActivityScenarioRule(DriverExtensionActivity::class.java)
 
-  @JvmField @Rule var intentsRule = IntentsRule()
+  @org.junit.Test
+  fun launchTest() {
+    clearAnySystemDialog()
 
-  @org.junit.Test fun placeholderIntegrationTest() {}
+    onFlutterWidget(withValueKey("Running on: TargetPlatform.android")).check(matches(isExisting()))
+  }
 
   private fun clearAnySystemDialog() {
     myActivityTestRule.scenario.onActivity { activity ->
