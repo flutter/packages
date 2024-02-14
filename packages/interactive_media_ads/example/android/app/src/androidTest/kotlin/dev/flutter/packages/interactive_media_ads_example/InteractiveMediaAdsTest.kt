@@ -4,7 +4,6 @@
 
 package dev.flutter.packages.interactive_media_ads_example
 
-import android.content.Intent
 import androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget
 import androidx.test.espresso.flutter.assertion.FlutterAssertions.matches
 import androidx.test.espresso.flutter.matcher.FlutterMatchers.isExisting
@@ -20,15 +19,8 @@ class InteractiveMediaAdsTest {
 
   @org.junit.Test
   fun launchTest() {
-    clearAnySystemDialog()
-
+    println("before onFlutterWidget")
     onFlutterWidget(withText("Running on: TargetPlatform.android")).check(matches(isExisting()))
-  }
-
-  private fun clearAnySystemDialog() {
-    myActivityTestRule.scenario.onActivity { activity ->
-      val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-      activity?.sendBroadcast(closeDialog)
-    }
+    println("after onFlutterWidget")
   }
 }
