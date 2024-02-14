@@ -39,3 +39,6 @@ and then deleting everything but `android/` from it:
   jcenter.bintray.com shutdown.
 - Update `compileSdkVersion` from 30 to 33 to maintain compatibility
   with plugins that use API 34.
+- Update `gradle-wrapper.properties` from `6.7` to `6.7.1`, since new
+  Flutter plugins require `6.7.1` as a minimum and instructions for
+  upgrading is now included in the error message.
