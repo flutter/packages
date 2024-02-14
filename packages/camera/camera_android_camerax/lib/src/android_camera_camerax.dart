@@ -465,7 +465,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Sets the exposure mode for taking pictures.
   ///
-  /// [cameraId] is not used
+  /// [cameraId] is not used.
   @override
   Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
     // TODO(camsim99): In a previous PR, this will be made a class field, so use that instead once it lands.
