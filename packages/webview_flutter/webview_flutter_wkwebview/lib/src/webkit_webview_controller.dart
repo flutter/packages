@@ -14,6 +14,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'common/instance_manager.dart';
 import 'common/weak_reference_utils.dart';
 import 'foundation/foundation.dart';
+import 'ui_kit/ui_kit.dart';
 import 'web_kit/web_kit.dart';
 import 'webkit_proxy.dart';
 
@@ -305,6 +306,8 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   late final WKUIDelegate _uiDelegate;
 
+  late final UIScrollViewDelegate? _uiScrollViewDelegate;
+
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
 
@@ -320,6 +323,9 @@ class WebKitWebViewController extends PlatformWebViewController {
       _onJavaScriptConfirmDialog;
   Future<String> Function(JavaScriptTextInputDialogRequest request)?
       _onJavaScriptTextInputDialog;
+
+  void Function(ScrollPositionChange scrollPositionChange)?
+      _onScrollPositionChangeCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -700,6 +706,30 @@ window.addEventListener("error", function(e) {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  @override
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) async {
+    _onScrollPositionChangeCallback = onScrollPositionChange;
+
+    if (onScrollPositionChange != null) {
+      final WeakReference<WebKitWebViewController> weakThis =
+          WeakReference<WebKitWebViewController>(this);
+      _uiScrollViewDelegate =
+          _webKitParams.webKitProxy.createUIScrollViewDelegate(
+        scrollViewDidScroll: (UIScrollView uiScrollView, double x, double y) {
+          weakThis.target?._onScrollPositionChangeCallback?.call(
+            ScrollPositionChange(x, y),
+          );
+        },
+      );
+      return _webView.scrollView.setDelegate(_uiScrollViewDelegate);
+    } else {
+      _uiScrollViewDelegate = null;
+      return _webView.scrollView.setDelegate(null);
+    }
   }
 
   /// Whether to enable tools for debugging the current WKWebView content.

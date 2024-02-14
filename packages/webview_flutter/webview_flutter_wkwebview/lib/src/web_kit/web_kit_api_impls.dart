@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import '../common/instance_manager.dart';
 import '../common/web_kit.g.dart';
 import '../foundation/foundation.dart';
+import '../ui_kit/ui_kit.dart';
+import '../ui_kit/ui_kit_api_impls.dart';
 import 'web_kit.dart';
 
 export '../common/web_kit.g.dart'
@@ -234,6 +236,9 @@ class WebKitFlutterApis {
         webViewConfiguration = WKWebViewConfigurationFlutterApiImpl(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
+        ),
+        uiScrollViewDelegate = UIScrollViewDelegateFlutterApiImpl(
+          instanceManager: instanceManager,
         );
 
   static WebKitFlutterApis _instance = WebKitFlutterApis();
@@ -268,6 +273,10 @@ class WebKitFlutterApis {
   @visibleForTesting
   final WKWebViewConfigurationFlutterApiImpl webViewConfiguration;
 
+  /// Flutter Api for [UIScrollViewDelegate].
+  @visibleForTesting
+  final UIScrollViewDelegateFlutterApiImpl uiScrollViewDelegate;
+
   /// Ensures all the Flutter APIs have been set up to receive calls from native code.
   void ensureSetUp() {
     if (!_hasBeenSetUp) {
@@ -287,6 +296,8 @@ class WebKitFlutterApis {
         webViewConfiguration,
         binaryMessenger: _binaryMessenger,
       );
+      UIScrollViewDelegateFlutterApi.setup(uiScrollViewDelegate,
+          binaryMessenger: _binaryMessenger);
       _hasBeenSetUp = true;
     }
   }

@@ -51,7 +51,9 @@ class CoreTestsError(
 enum class AnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
-  THREE(2);
+  THREE(2),
+  FORTY_TWO(3),
+  FOUR_HUNDRED_TWENTY_TWO(4);
 
   companion object {
     fun ofRaw(raw: Int): AnEnum? {
