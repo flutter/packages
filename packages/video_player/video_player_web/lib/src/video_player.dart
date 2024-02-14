@@ -210,7 +210,8 @@ class VideoPlayer {
   void seekTo(Duration position) {
     assert(!position.isNegative);
     // Don't seek if video is already at position.
-    if (position.inMilliseconds == (_videoElement.currentTime * 1000).round()) {
+    // As seeking when completed will trigger another completed event ('onEnded'), causing an infinite loop
+    if (position.inMilliseconds == _getVideoCurrentTimeInMilliseconds()) {
       return;
     }
 
@@ -220,7 +221,11 @@ class VideoPlayer {
   /// Returns the current playback head position as a [Duration].
   Duration getPosition() {
     _sendBufferingRangesUpdate();
-    return Duration(milliseconds: (_videoElement.currentTime * 1000).round());
+    return Duration(milliseconds: _getVideoCurrentTimeInMilliseconds());
+  }
+
+  int _getVideoCurrentTimeInMilliseconds() {
+    return (_videoElement.currentTime * 1000).round();
   }
 
   /// Sets options
