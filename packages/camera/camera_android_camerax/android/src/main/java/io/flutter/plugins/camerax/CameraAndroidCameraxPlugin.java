@@ -27,7 +27,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @VisibleForTesting @Nullable public ImageCaptureHostApiImpl imageCaptureHostApiImpl;
   @VisibleForTesting @Nullable public CameraControlHostApiImpl cameraControlHostApiImpl;
   @VisibleForTesting @Nullable public SystemServicesHostApiImpl systemServicesHostApiImpl;
-  @VisibleForTesting @Nullable public Camera2CameraControlHostApiImpl camera2CameraControlHostApiImpl;
+
+  @VisibleForTesting @Nullable
+  public Camera2CameraControlHostApiImpl camera2CameraControlHostApiImpl;
 
   @VisibleForTesting
   public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
@@ -121,8 +123,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         new CameraControlHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.CameraControlHostApi.setup(binaryMessenger, cameraControlHostApiImpl);
     camera2CameraControlHostApiImpl = new Camera2CameraControlHostApiImpl(instanceManager, context);
-    GeneratedCameraXLibrary.Camera2CameraControlHostApi.setup(binaryMessenger, camera2CameraControlHostApiImpl);
-    GeneratedCameraXLibrary.CaptureRequestOptionsHostApi.setup(binaryMessenger, new CaptureRequestOptionsHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.Camera2CameraControlHostApi.setup(
+        binaryMessenger, camera2CameraControlHostApiImpl);
+    GeneratedCameraXLibrary.CaptureRequestOptionsHostApi.setup(
+        binaryMessenger, new CaptureRequestOptionsHostApiImpl(instanceManager));
   }
 
   @Override
@@ -214,7 +218,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     if (cameraControlHostApiImpl != null) {
       cameraControlHostApiImpl.setContext(context);
     }
-    if (camera2CameraControlHostApiImpl != null) { 
+    if (camera2CameraControlHostApiImpl != null) {
       camera2CameraControlHostApiImpl.setContext(context);
     }
   }

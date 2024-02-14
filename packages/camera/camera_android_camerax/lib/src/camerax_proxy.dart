@@ -5,9 +5,12 @@
 import 'dart:ui' show Size;
 
 import 'analyzer.dart';
+import 'camera2_camera_control.dart';
+import 'camera_control.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
+import 'capture_request_options.dart';
 import 'device_orientation_manager.dart';
 import 'fallback_strategy.dart';
 import 'image_analysis.dart';
@@ -49,6 +52,8 @@ class CameraXProxy {
         _startListeningForDeviceOrientationChange,
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
     this.getDefaultDisplayRotation = _getDefaultDisplayRotation,
+    this.getCamera2CameraControl = _getCamera2CameraControl,
+    this.createCaptureRequestOptions = _createCaptureRequestOptions,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -136,6 +141,15 @@ class CameraXProxy {
   /// Returns default rotation for [UseCase]s in terms of one of the [Surface]
   /// rotation constants.
   Future<int> Function() getDefaultDisplayRotation;
+
+  /// Get [Camera2CameraControl] instance from [cameraControl].
+  Camera2CameraControl Function(CameraControl cameraControl)
+      getCamera2CameraControl;
+
+  /// Create [CapureRequestOptions] with specified options.
+  CaptureRequestOptions Function(
+          List<(CaptureRequestKeySupportedType, Object?)> options)
+      createCaptureRequestOptions;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -238,5 +252,15 @@ class CameraXProxy {
 
   static Future<int> _getDefaultDisplayRotation() async {
     return DeviceOrientationManager.getDefaultDisplayRotation();
+  }
+
+  static Camera2CameraControl _getCamera2CameraControl(
+      CameraControl cameraControl) {
+    return Camera2CameraControl(cameraControl: cameraControl);
+  }
+
+  static CaptureRequestOptions _createCaptureRequestOptions(
+      List<(CaptureRequestKeySupportedType, Object?)> options) {
+    return CaptureRequestOptions(requestedOptions: options);
   }
 }

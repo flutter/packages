@@ -468,14 +468,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used
   @override
   Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
-    // TODO(camsim99): In a previous PR, this will be made a field, so use that instead once it lands.
+    // TODO(camsim99): In a previous PR, this will be made a class field, so use that instead once it lands.
     final CameraControl cameraControl = await camera!.getCameraControl();
     final Camera2CameraControl camera2Control =
-        Camera2CameraControl(cameraControl: cameraControl);
+        proxy.getCamera2CameraControl(cameraControl);
     final bool lockExposureMode = mode == ExposureMode.locked;
 
-    final CaptureRequestOptions captureRequestOptions = CaptureRequestOptions(
-        requestedOptions: <(
+    final CaptureRequestOptions captureRequestOptions = proxy
+        .createCaptureRequestOptions(<(
       CaptureRequestKeySupportedType,
       Object?
     )>[(CaptureRequestKeySupportedType.controlAeLock, lockExposureMode)]);

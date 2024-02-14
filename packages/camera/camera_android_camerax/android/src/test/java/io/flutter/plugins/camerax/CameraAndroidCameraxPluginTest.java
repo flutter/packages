@@ -161,6 +161,8 @@ public class CameraAndroidCameraxPluginTest {
         mock(ImageAnalysisHostApiImpl.class);
     final CameraControlHostApiImpl mockCameraControlHostApiImpl =
         mock(CameraControlHostApiImpl.class);
+    final Camera2CameraControlHostApiImpl mockCamera2CameraControlHostApiImpl =
+        mock(Camera2CameraControlHostApiImpl.class);
 
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mockContext);
 
@@ -172,6 +174,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.imageAnalysisHostApiImpl = mockImageAnalysisHostApiImpl;
     plugin.cameraControlHostApiImpl = mockCameraControlHostApiImpl;
     plugin.liveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
+    plugin.camera2CameraControlHostApiImpl = mockCamera2CameraControlHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onDetachedFromActivityForConfigChanges();
@@ -183,6 +186,7 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockImageCaptureHostApiImpl).setContext(mockContext);
     verify(mockImageAnalysisHostApiImpl).setContext(mockContext);
     verify(mockCameraControlHostApiImpl).setContext(mockContext);
+    verify(mockCamera2CameraControlHostApiImpl).setContext(mockContext);
   }
 
   @Test
@@ -251,6 +255,8 @@ public class CameraAndroidCameraxPluginTest {
         mock(CameraControlHostApiImpl.class);
     final DeviceOrientationManagerHostApiImpl mockDeviceOrientationManagerHostApiImpl =
         mock(DeviceOrientationManagerHostApiImpl.class);
+    final Camera2CameraControlHostApiImpl mockCamera2CameraControlHostApiImpl =
+        mock(Camera2CameraControlHostApiImpl.class);
     final ArgumentCaptor<PermissionsRegistry> permissionsRegistryCaptor =
         ArgumentCaptor.forClass(PermissionsRegistry.class);
 
@@ -266,6 +272,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.cameraControlHostApiImpl = mockCameraControlHostApiImpl;
     plugin.deviceOrientationManagerHostApiImpl = mockDeviceOrientationManagerHostApiImpl;
     plugin.liveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
+    plugin.camera2CameraControlHostApiImpl = mockCamera2CameraControlHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onReattachedToActivityForConfigChanges(activityPluginBinding);
@@ -282,6 +289,7 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockImageCaptureHostApiImpl).setContext(mockActivity);
     verify(mockImageAnalysisHostApiImpl).setContext(mockActivity);
     verify(mockCameraControlHostApiImpl).setContext(mockActivity);
+    verify(mockCamera2CameraControlHostApiImpl).setContext(mockActivity);
 
     // Check permissions registry reference is set.
     verify(mockSystemServicesHostApiImpl)
@@ -331,6 +339,8 @@ public class CameraAndroidCameraxPluginTest {
     final ImageCaptureHostApiImpl mockImageCaptureHostApiImpl = mock(ImageCaptureHostApiImpl.class);
     final CameraControlHostApiImpl mockCameraControlHostApiImpl =
         mock(CameraControlHostApiImpl.class);
+    final Camera2CameraControlHostApiImpl mockCamera2CameraControlHostApiImpl =
+        mock(Camera2CameraControlHostApiImpl.class);
     final ArgumentCaptor<PermissionsRegistry> permissionsRegistryCaptor =
         ArgumentCaptor.forClass(PermissionsRegistry.class);
 
@@ -344,6 +354,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.imageAnalysisHostApiImpl = mockImageAnalysisHostApiImpl;
     plugin.cameraControlHostApiImpl = mockCameraControlHostApiImpl;
     plugin.liveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
+    plugin.camera2CameraControlHostApiImpl = mockCamera2CameraControlHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onDetachedFromActivity();
@@ -355,5 +366,6 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockImageCaptureHostApiImpl).setContext(mockContext);
     verify(mockImageAnalysisHostApiImpl).setContext(mockContext);
     verify(mockCameraControlHostApiImpl).setContext(mockContext);
+    verify(mockCamera2CameraControlHostApiImpl).setContext(mockContext);
   }
 }
