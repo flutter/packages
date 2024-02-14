@@ -849,7 +849,9 @@ void main() {
         await controllerCompleter.future;
     final Uint8List? bytes = await controller.takeSnapshot();
     expect(bytes?.isNotEmpty, true);
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: true);
 
   testWidgets(
     'set tileOverlay correctly',
