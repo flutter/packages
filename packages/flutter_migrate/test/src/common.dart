@@ -10,15 +10,15 @@ import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/io.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path; // flutter_ignore: package_path_import
-import 'package:test_api/test_api.dart' // ignore: deprecated_member_use
+import 'package:test_api/test_api.dart'
     as test_package show test;
-import 'package:test_api/test_api.dart' // ignore: deprecated_member_use
+import 'package:test_api/test_api.dart'
     hide
         test;
 
 import 'test_utils.dart';
 
-export 'package:test_api/test_api.dart' // ignore: deprecated_member_use
+export 'package:test_api/test_api.dart'
     hide
         isInstanceOf,
         test;

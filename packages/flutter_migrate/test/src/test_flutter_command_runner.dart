@@ -5,7 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:flutter_migrate/src/base/command.dart';
 
-export 'package:test_api/test_api.dart' // ignore: deprecated_member_use
+export 'package:test_api/test_api.dart'
     hide
         isInstanceOf,
         test;

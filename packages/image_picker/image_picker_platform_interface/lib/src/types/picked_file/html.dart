@@ -27,8 +27,6 @@ class PickedFile extends PickedFileBase {
 
   Future<Uint8List> get _bytes async {
     if (_initBytes != null) {
-      // TODO(stuartmorgan): Remove this directive, https://github.com/flutter/flutter/issues/143113
-      // ignore: deprecated_member_use
       return Future<Uint8List>.value(UnmodifiableUint8ListView(_initBytes!));
     }
     return http.readBytes(Uri.parse(path));

@@ -142,9 +142,6 @@ void assertThatImageLoadingFails(
 ) {
   final ImageStreamCompleter completer = subject.loadBuffer(
     subject,
-    // TODO(LongCatIsLooong): migrate to use new `instantiateImageCodecWithSize` API.
-    // https://github.com/flutter/flutter/issues/132856
-    // ignore: deprecated_member_use
     PaintingBinding.instance.instantiateImageCodecFromBuffer,
   );
   completer.addListener(ImageStreamListener(
@@ -162,9 +159,6 @@ void assertThatImageLoadingSucceeds(
 ) {
   final ImageStreamCompleter completer = subject.loadBuffer(
     subject,
-    // TODO(LongCatIsLooong): migrate to use new `instantiateImageCodecWithSize` API.
-    // https://github.com/flutter/flutter/issues/132856
-    // ignore: deprecated_member_use
     PaintingBinding.instance.instantiateImageCodecFromBuffer,
   );
   completer.addListener(ImageStreamListener(
