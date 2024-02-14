@@ -221,7 +221,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
       // ignore: unsafe_html
-      ..innerHTML = sanitizeHtml(markerSnippet);
+      ..innerHTML = _sanitizeHtml(markerSnippet);
     container.appendChild(snippet);
   }
 
@@ -524,4 +524,28 @@ gmaps.LatLng _pixelToLatLng(gmaps.GMap map, int x, int y) {
       gmaps.Point((x / scale) + bottomLeft.x!, (y / scale) + topRight.y!);
 
   return projection.fromPointToLatLng!(point)!;
+}
+
+String _sanitizeHtml(String htmlString) {
+  TrustedTypePolicy? trustedTypePolicy;
+
+  try {
+    trustedTypePolicy = TrustedTypePolicyFactory().createPolicy(
+      'google_maps_flutter_sanitize',
+      TrustedTypePolicyOptions(
+        createHTML: (String html) {
+          return sanitizeHtml(html);
+        }.toJS,
+      ),
+    );
+  } catch (_) {
+    // Firefox and Safari don't support Trusted Types yet.
+    // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
+  }
+
+  if (trustedTypePolicy == null) {
+    return sanitizeHtml(htmlString);
+  }
+
+  return trustedTypePolicy.createHTML(htmlString, null).toString();
 }
