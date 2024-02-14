@@ -8,7 +8,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:interactive_media_ads_example/main.dart' as app;
 
 /// Entry point for integration tests that require espresso.
-// ignore: unreachable_from_main
+@pragma('vm:entry-point')
 void integrationTestMain() {
   enableFlutterDriverExtension();
   app.main();
