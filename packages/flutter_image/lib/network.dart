@@ -99,9 +99,9 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   }
 
   @override
-  ImageStreamCompleter loadBuffer(
+  ImageStreamCompleter loadImage(
     NetworkImageWithRetry key,
-    DecoderBufferCallback decode,
+    ImageDecoderCallback decode,
   ) {
     return OneFrameImageStreamCompleter(_loadWithRetry(key, decode),
         informationCollector: () sync* {
