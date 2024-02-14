@@ -282,8 +282,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     IconButton(
                       icon: const Icon(Icons.exposure),
                       color: Colors.blue,
-                      onPressed:
-                          () {}, // TODO(camsim99): Add functionality back here.
+                      onPressed: controller != null
+                          ? onExposureModeButtonPressed
+                          : null,
                     ),
                     IconButton(
                       icon: const Icon(Icons.filter_center_focus),
@@ -392,16 +393,20 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 children: <Widget>[
                   TextButton(
                     style: styleAuto,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () =>
+                            onSetExposureModeButtonPressed(ExposureMode.auto)
+                        : null,
                     onLongPress:
                         () {}, // TODO(camsim99): Add functionality back here.,
                     child: const Text('AUTO'),
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () =>
+                            onSetExposureModeButtonPressed(ExposureMode.locked)
+                        : null,
                     child: const Text('LOCKED'),
                   ),
                   TextButton(

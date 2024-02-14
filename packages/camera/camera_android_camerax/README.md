@@ -35,10 +35,6 @@ and thus, the plugin will fall back to 480p if configured with a
 
 `setExposureMode`, `setExposurePoint`, & `setExposureOffset` are unimplemented.
 
-### Focus mode & point configuration \[[Issue #120467][120467]\]
-
-`setFocusMode` & `setFocusPoint` are unimplemented.
-
 ### Setting maximum duration and stream options for video capture
 
 Calling `startVideoCapturing` with `VideoCaptureOptions` configured with

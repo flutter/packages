@@ -463,15 +463,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     return exposureState.exposureCompensationStep;
   }
 
-  // TODO(camsim99): Move around methods to match camera_platform.dart before landing.
-  /// Sets the focus mode for taking pictures.
-  ///
-  /// [cameraId] is not used.
-  @override
-  Future<void> setFocusMode(int cameraId, FocusMode mode) {
-    // TODO(camsim99): Clarify implementation.
-  }
-
   /// Sets the exposure mode for taking pictures.
   ///
   /// [cameraId] is not used

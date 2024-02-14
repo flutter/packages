@@ -1,3 +1,7 @@
+## 0.5.0+35
+
+* Implements `setExposureMode`.
+
 ## 0.5.0+32
 
 * Removes all remaining `unawaited` calls to fix potential race conditions and updates the
