@@ -272,11 +272,12 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
     // Create a Blob from bytes, but let the browser figure out the encoding
     final Blob blob;
 
-    if (bytes is Uint8List) {
-      blob = Blob(<JSUint8Array>[bytes.toJS].toJS);
-    } else {
-      blob = Blob(<JSUint8Array>[Uint8List.fromList(bytes).toJS].toJS);
-    }
+    assert(
+      bytes is Uint8List,
+      'The bytes for a BitmapDescriptor icon must be a Uint8List',
+    );
+
+    blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
     icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
 
