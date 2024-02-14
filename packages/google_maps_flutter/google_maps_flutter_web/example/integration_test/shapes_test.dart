@@ -10,9 +10,8 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps/google_maps_geometry.dart' as geometry;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
-
-import 'test_utils.dart';
 
 // This value is used when comparing the results of
 // converting from a byte value to a double between 0 and 1.

@@ -10,6 +10,7 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart'
     hide GoogleMapController;
+import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -17,7 +18,6 @@ import 'package:web/web.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<TileProvider>()])
 import 'overlays_test.mocks.dart';
-import 'test_utils.dart';
 
 MockTileProvider neverTileProvider() {
   final MockTileProvider tileProvider = MockTileProvider();
