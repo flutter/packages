@@ -720,7 +720,6 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    // ignore: deprecated_member_use_from_same_package
     if (instance!.onReceivedError != null) {
       instance.onReceivedError!(
         webViewInstance!,
