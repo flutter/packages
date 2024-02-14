@@ -530,7 +530,7 @@ String _sanitizeHtml(String htmlString) {
   TrustedTypePolicy? trustedTypePolicy;
 
   try {
-    trustedTypePolicy = TrustedTypePolicyFactory().createPolicy(
+    trustedTypePolicy = window.trustedTypes.createPolicy(
       'google_maps_flutter_sanitize',
       TrustedTypePolicyOptions(
         createHTML: (String html) {
