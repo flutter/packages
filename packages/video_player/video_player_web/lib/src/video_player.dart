@@ -209,7 +209,7 @@ class VideoPlayer {
   /// Does nothing if the new position is the same as the current position.
   void seekTo(Duration position) {
     assert(!position.isNegative);
-    //don't seek if video is already at current postiion
+    // Don't seek if video is already at position.
     if (position.inMilliseconds == (_videoElement.currentTime * 1000).round()) {
       return;
     }
