@@ -564,6 +564,47 @@ public class MainActivityTest {
       );
     });
 
+    test('supports kotlin implementation of integration_test runner', () async {
+      const String kotlinTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.kt';
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, extraFiles: <String>[
+        'test/plugin_test.dart',
+        'example/integration_test/bar_test.dart',
+        'example/integration_test/foo_test.dart',
+        'example/integration_test/should_not_run.dart',
+        'example/android/gradlew',
+        kotlinTestFileRelativePath,
+      ]);
+
+      // Kotlin equivalent of the test runner
+      childFileWithSubcomponents(
+              plugin.directory, p.posix.split(kotlinTestFileRelativePath))
+          .writeAsStringSync('''
+@DartIntegrationTest
+@RunWith(FlutterTestRunner::class)
+class MainActivityTest {
+  @JvmField @Rule var rule = ActivityTestRule(MainActivity::class.java)
+}
+''');
+
+      Error? commandError;
+      await runCapturingPrint(
+        runner,
+        <String>[
+          'firebase-test-lab',
+          '--results-bucket=a_bucket',
+          '--device',
+          'model=redfin,version=30',
+        ],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isNull);
+    });
+
     test('skips packages with no android directory', () async {
       createFakePackage('package', packagesDir, extraFiles: <String>[
         'example/integration_test/foo_test.dart',
