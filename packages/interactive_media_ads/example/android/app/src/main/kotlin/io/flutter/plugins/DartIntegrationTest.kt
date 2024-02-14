@@ -12,5 +12,5 @@ package io.flutter.plugins
  * for more infomation.
  */
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.TYPE)
 annotation class DartIntegrationTest
