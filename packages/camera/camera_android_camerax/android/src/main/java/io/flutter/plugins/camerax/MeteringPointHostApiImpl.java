@@ -42,7 +42,6 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
      * on camera information and the device orientation automatically.
      */
     @NonNull
-    @SuppressWarnings("deprecation")
     public MeteringPoint create(
         @NonNull Double x,
         @NonNull Double y,
@@ -53,8 +52,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         display = activity.getDisplay();
       } else {
-        display =
-            ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        display = getDefaultDisplayForAndroidVersionBelowR(activity);
       }
 
       DisplayOrientedMeteringPointFactory factory =
@@ -65,6 +63,13 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
       } else {
         return factory.createPoint(x.floatValue(), y.floatValue(), size.floatValue());
       }
+    }
+
+    @NonNull
+    @SuppressWarnings("deprecation")
+    private Display getDefaultDisplayForAndroidVersionBelowR(@NonNull Activity activity) {
+      return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE))
+          .getDefaultDisplay();
     }
 
     @VisibleForTesting
