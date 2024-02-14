@@ -205,8 +205,14 @@ class VideoPlayer {
   /// Moves the playback head to a new `position`.
   ///
   /// `position` cannot be negative.
+  ///
+  /// Does nothing if the new position is the same as the current position.
   void seekTo(Duration position) {
     assert(!position.isNegative);
+    //don't seek if video is already at current postiion
+    if (position.inMilliseconds == (_videoElement.currentTime * 1000).round()) {
+      return;
+    }
 
     _videoElement.currentTime = position.inMilliseconds.toDouble() / 1000;
   }
