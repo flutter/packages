@@ -10,7 +10,7 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  analyzer: ">=4.4.0 <7.0.0"
+  analyzer: ">=5.2.0 <7.0.0"
   async: ^2.8.0
   build: ^2.0.0
   build_config: ^1.0.0
