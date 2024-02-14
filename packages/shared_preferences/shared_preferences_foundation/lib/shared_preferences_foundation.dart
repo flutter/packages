@@ -2,12 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import './messages.g.dart';
 import 'deprecated_shared_preferences_foundation.dart';
+
+const String _argumentErrorCode = 'Argument Error';
 
 /// iOS and macOS implementation of shared_preferences.
 base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
@@ -21,21 +26,20 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
     SharedPreferencesAsyncPlatform.instance = SharedPreferencesFoundation();
+    // A temporary work-around for having two plugins contained in a single package.
     DeprecatedSharedPreferencesFoundation.registerWith();
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.
   SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
       SharedPreferencesOptions options) {
-    String? suiteName;
-
     if (options is SharedPreferencesFoundationOptions) {
-      suiteName = options.suiteName;
+      final String? suiteName = options.suiteName;
+      return SharedPreferencesPigeonOptions(
+        suiteName: suiteName,
+      );
     }
-
-    return SharedPreferencesPigeonOptions(
-      suiteName: suiteName,
-    );
+    return SharedPreferencesPigeonOptions();
   }
 
   @override
@@ -44,12 +48,20 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-
-    return (await _api.getKeys(
-      filter.allowList?.toList(),
-      _convertOptionsToPigeonOptions(options),
-    ))
-        .toSet();
+    try {
+      return (await _api.getKeys(
+        filter.allowList?.toList(),
+        _convertOptionsToPigeonOptions(options),
+      ))
+          .toSet();
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 
   Future<void> _setValue(
@@ -60,7 +72,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
 
-    await _api.setValue(key, value, pigeonOptions);
+    try {
+      await _api.setValue(key, value, pigeonOptions);
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 
   @override
@@ -69,7 +90,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     String value,
     SharedPreferencesOptions options,
   ) async {
-    await _setValue(key, value, options);
+    try {
+      await _setValue(key, value, options);
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
     return true;
   }
 
@@ -79,7 +109,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     int value,
     SharedPreferencesOptions options,
   ) async {
-    await _setValue(key, value, options);
+    try {
+      await _setValue(key, value, options);
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
     return true;
   }
 
@@ -96,26 +135,44 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
   @override
   Future<bool> setBool(
     String key,
-    Object value,
+    bool value,
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
 
-    await _api.setBool(key, value as bool, pigeonOptions);
+    try {
+      await _api.setValue(key, value, pigeonOptions);
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
     return true;
   }
 
   @override
   Future<bool> setDouble(
     String key,
-    Object value,
+    double value,
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
 
-    await _api.setDouble(key, value as double, pigeonOptions);
+    try {
+      await _api.setValue(key, value, pigeonOptions);
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
     return true;
   }
 
@@ -126,8 +183,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
-
-    return _api.getString(key, pigeonOptions);
+    try {
+      return _api.getString(key, pigeonOptions);
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 
   @override
@@ -138,7 +203,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
 
-    return _api.getBool(key, pigeonOptions);
+    try {
+      return await _api.getValue(key, pigeonOptions) as bool?;
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 
   @override
@@ -149,7 +223,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
 
-    return _api.getDouble(key, pigeonOptions);
+    try {
+      return await _api.getValue(key, pigeonOptions) as double?;
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 
   @override
@@ -160,7 +243,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
 
-    return _api.getInt(key, pigeonOptions);
+    try {
+      return await _api.getValue(key, pigeonOptions) as int?;
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 
   @override
@@ -171,7 +263,16 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
 
-    return _api.getStringList(key, pigeonOptions);
+    try {
+      return _api.getStringList(key, pigeonOptions);
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 
   @override
@@ -180,10 +281,19 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    await _api.clear(
-      filter.allowList?.toList(),
-      _convertOptionsToPigeonOptions(options),
-    );
+    try {
+      await _api.clear(
+        filter.allowList?.toList(),
+        _convertOptionsToPigeonOptions(options),
+      );
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
     return true;
   }
 
@@ -193,11 +303,20 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    final Map<String?, Object?> data = await _api.getAll(
-      filter.allowList?.toList(),
-      _convertOptionsToPigeonOptions(options),
-    );
-    return data.cast<String, Object>();
+    try {
+      final Map<String?, Object?> data = await _api.getAll(
+        filter.allowList?.toList(),
+        _convertOptionsToPigeonOptions(options),
+      );
+      return data.cast<String, Object>();
+    } on PlatformException catch (err) {
+      if (err.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation getString argument error${err.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
   }
 }
 
@@ -206,10 +325,28 @@ class SharedPreferencesFoundationOptions extends SharedPreferencesOptions {
   /// Creates a new instance with the given options.
   SharedPreferencesFoundationOptions({
     this.suiteName,
-  });
+  }) {
+    if (Platform.isIOS && !(suiteName?.startsWith('group.') ?? true)) {
+      throw ArgumentError(
+          'iOS suite name must follow a specific naming convention as outlined in ');
+    }
+  }
 
-  /// Name of Foundation SharedPreferences instance to get/set to.
+  /// Name of Foundation suite to get/set to.
   ///
-  /// If this option is not set, Foundations default SharedPreferences will be used.
+  /// On iOS this represents a container ID which must begin with `group.`
+  /// followed by a custom string in reverse DNS notation.
+  ///
+  /// If this option is not set, the default NSUserDefaults will be used.
   final String? suiteName;
+
+  /// Returns a new instance of [SharedPreferencesFoundationOptions] from an existing
+  /// [SharedPreferencesOptions].
+  static SharedPreferencesFoundationOptions fromSharedPreferencesOptions(
+      SharedPreferencesOptions options) {
+    if (options is SharedPreferencesFoundationOptions) {
+      return options;
+    }
+    return SharedPreferencesFoundationOptions();
+  }
 }

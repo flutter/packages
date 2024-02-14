@@ -117,30 +117,28 @@ class RunnerTests: XCTestCase {
   let emptyOptions = SharedPreferencesPigeonOptions()
 
   func testAsyncSetAndGet() throws {
-
     let plugin = SharedPreferencesPlugin()
 
-    try plugin.setBool(key: "aBool", value: true, options: emptyOptions)
-    try plugin.setDouble(key: "aDouble", value: 3.14, options: emptyOptions)
+    try plugin.setValue(key: "aBool", value: true, options: emptyOptions)
+    try plugin.setValue(key: "aDouble", value: 3.14, options: emptyOptions)
     try plugin.setValue(key: "anInt", value: 42, options: emptyOptions)
     try plugin.setValue(key: "aString", value: "hello world", options: emptyOptions)
     try plugin.setValue(key: "aStringList", value: ["hello", "world"], options: emptyOptions)
 
-    XCTAssertEqual(try plugin.getBool(key: "aBool", options: emptyOptions), true)
+    XCTAssertEqual(((try plugin.getValue(key: "aBool", options: emptyOptions)) != nil), true)
     XCTAssertEqual(
-      try plugin.getDouble(key: "aDouble", options: emptyOptions)!, 3.14, accuracy: 0.0001)
-    XCTAssertEqual(try plugin.getInt(key: "anInt", options: emptyOptions), 42)
+      try plugin.getValue(key: "aDouble", options: emptyOptions) as! Double, 3.14, accuracy: 0.0001)
+    XCTAssertEqual(try plugin.getValue(key: "anInt", options: emptyOptions) as! Int, 42)
     XCTAssertEqual(try plugin.getString(key: "aString", options: emptyOptions), "hello world")
     XCTAssertEqual(
       try plugin.getStringList(key: "aStringList", options: emptyOptions), ["hello", "world"])
   }
 
   func testAsyncGetAll() throws {
-
     let plugin = SharedPreferencesPlugin()
 
-    try plugin.setBool(key: "aBool", value: true, options: emptyOptions)
-    try plugin.setDouble(key: "aDouble", value: 3.14, options: emptyOptions)
+    try plugin.setValue(key: "aBool", value: true, options: emptyOptions)
+    try plugin.setValue(key: "aDouble", value: 3.14, options: emptyOptions)
     try plugin.setValue(key: "anInt", value: 42, options: emptyOptions)
     try plugin.setValue(key: "aString", value: "hello world", options: emptyOptions)
     try plugin.setValue(key: "aStringList", value: ["hello", "world"], options: emptyOptions)
@@ -155,11 +153,10 @@ class RunnerTests: XCTestCase {
   }
 
   func testAsyncGetAllWithAllowList() throws {
-
     let plugin = SharedPreferencesPlugin()
 
-    try plugin.setBool(key: "aBool", value: true, options: emptyOptions)
-    try plugin.setDouble(key: "aDouble", value: 3.14, options: emptyOptions)
+    try plugin.setValue(key: "aBool", value: true, options: emptyOptions)
+    try plugin.setValue(key: "aDouble", value: 3.14, options: emptyOptions)
     try plugin.setValue(key: "anInt", value: 42, options: emptyOptions)
     try plugin.setValue(key: "aString", value: "hello world", options: emptyOptions)
     try plugin.setValue(key: "aStringList", value: ["hello", "world"], options: emptyOptions)
@@ -174,7 +171,6 @@ class RunnerTests: XCTestCase {
   }
 
   func testAsyncRemove() throws {
-
     let plugin = SharedPreferencesPlugin()
     try plugin.setValue(key: testKey, value: testValue, options: emptyOptions)
 
@@ -191,7 +187,6 @@ class RunnerTests: XCTestCase {
   }
 
   func testAsyncClearWithNoAllowlist() throws {
-
     let plugin = SharedPreferencesPlugin()
     try plugin.setValue(key: testKey, value: testValue, options: emptyOptions)
 
@@ -208,7 +203,6 @@ class RunnerTests: XCTestCase {
   }
 
   func testAsyncClearWithAllowlist() throws {
-
     let plugin = SharedPreferencesPlugin()
 
     try plugin.setValue(key: testKey, value: testValue, options: emptyOptions)

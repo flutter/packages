@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Basic options for creating SharedPreferences classes.
+// shared_preferences_async types.
+
+/// Basic options for creating SharedPreferencesAsync classes.
 ///
 /// This class exists to provide extension to platform specific options as
 /// there are currently no general options that are not platform specific.
@@ -11,7 +13,7 @@ class SharedPreferencesOptions {
   const SharedPreferencesOptions();
 }
 
-/// Filter options used to get and clear preferences.
+/// Filter options used to get and clear preferences on shared_preferences_async.
 class PreferencesFilters {
   /// Creates a new instance with the given options.
   const PreferencesFilters({
@@ -23,7 +25,7 @@ class PreferencesFilters {
   final Set<String>? allowList;
 }
 
-/// Parameters for use in [get] methods.
+/// Parameters for use in [get] methods on shared_preferences_async.
 class GetPreferencesParameters {
   /// Creates a new instance with the given options.
   const GetPreferencesParameters({required this.filter});
@@ -32,7 +34,7 @@ class GetPreferencesParameters {
   final PreferencesFilters filter;
 }
 
-/// Parameters for use in [clear] methods.
+/// Parameters for use in [clear] methods on shared_preferences_async.
 class ClearPreferencesParameters {
   /// Creates a new instance with the given options.
   const ClearPreferencesParameters({required this.filter});
@@ -41,11 +43,9 @@ class ClearPreferencesParameters {
   final PreferencesFilters filter;
 }
 
-// ALL CLASSES BELOW HERE ARE DEPRECATED AND SHOULD NOT BE USED.
+// shared_preferences types.
 
-/// Filter options used to get and clear preferences.
-///
-/// Deprecated in favor of [PreferencesFilters].
+/// Filter options used to get and clear preferences on shared_preferences.
 class PreferencesFilter {
   /// Creates a new instance with the given options.
   PreferencesFilter({
@@ -62,9 +62,7 @@ class PreferencesFilter {
   Set<String>? allowList;
 }
 
-/// Parameters for use in [getAll] methods.
-///
-/// Deprecated in favor of [GetPreferencesParameters].
+/// Parameters for use in [getAll] methods on shared_preferences.
 class GetAllParameters {
   /// Creates a new instance with the given options.
   GetAllParameters({required this.filter});
@@ -73,9 +71,7 @@ class GetAllParameters {
   PreferencesFilter filter;
 }
 
-/// Parameters for use in [clear] methods.
-///
-/// Deprecated in favor of [ClearPreferencesParameters].
+/// Parameters for use in [clear] methods on shared_preferences.
 class ClearParameters {
   /// Creates a new instance with the given options.
   ClearParameters({required this.filter});

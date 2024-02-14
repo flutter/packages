@@ -29,20 +29,10 @@ class SharedPreferencesPigeonOptions {
 
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
 abstract class UserDefaultsApi {
-  /// Adds property to shared preferences data set of type bool.
-  void setBool(String key, bool value, SharedPreferencesPigeonOptions options);
-
   /// Adds property to shared preferences data set of type String.
   void setValue(
     String key,
     Object value,
-    SharedPreferencesPigeonOptions options,
-  );
-
-  /// Adds property to shared preferences data set of type double.
-  void setDouble(
-    String key,
-    double value,
     SharedPreferencesPigeonOptions options,
   );
 
@@ -58,26 +48,14 @@ abstract class UserDefaultsApi {
     SharedPreferencesPigeonOptions options,
   );
 
+  /// Gets individual value stored with [key], if any.
+  Object? getValue(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
+
   /// Gets individual String value stored with [key], if any.
   String? getString(
-    String key,
-    SharedPreferencesPigeonOptions options,
-  );
-
-  /// Gets individual bool value stored with [key], if any.
-  bool? getBool(
-    String key,
-    SharedPreferencesPigeonOptions options,
-  );
-
-  /// Gets individual double value stored with [key], if any.
-  double? getDouble(
-    String key,
-    SharedPreferencesPigeonOptions options,
-  );
-
-  /// Gets individual int value stored with [key], if any.
-  int? getInt(
     String key,
     SharedPreferencesPigeonOptions options,
   );

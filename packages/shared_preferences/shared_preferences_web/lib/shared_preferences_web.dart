@@ -269,4 +269,7 @@ Object _decodeValue(String encodedValue) {
 }
 
 /// Web specific SharedPreferences Options.
-class SharedPreferencesWebOptions extends SharedPreferencesOptions {}
+class SharedPreferencesWebOptions extends SharedPreferencesOptions {
+  /// Constructor for SharedPreferencesWebOptions.
+  const SharedPreferencesWebOptions();
+}

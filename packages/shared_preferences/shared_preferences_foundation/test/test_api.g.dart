@@ -288,16 +288,9 @@ abstract class TestSharedPreferencesAsyncApi {
   static const MessageCodec<Object?> pigeonChannelCodec =
       _TestSharedPreferencesAsyncApiCodec();
 
-  /// Adds property to shared preferences data set of type bool.
-  void setBool(String key, bool value, SharedPreferencesPigeonOptions options);
-
   /// Adds property to shared preferences data set of type String.
   void setValue(
       String key, Object value, SharedPreferencesPigeonOptions options);
-
-  /// Adds property to shared preferences data set of type double.
-  void setDouble(
-      String key, double value, SharedPreferencesPigeonOptions options);
 
   /// Removes all properties from shared preferences data set with matching prefix.
   void clear(List<String?>? allowList, SharedPreferencesPigeonOptions options);
@@ -306,17 +299,11 @@ abstract class TestSharedPreferencesAsyncApi {
   Map<String?, Object?> getAll(
       List<String?>? allowList, SharedPreferencesPigeonOptions options);
 
+  /// Gets individual value stored with [key], if any.
+  Object? getValue(String key, SharedPreferencesPigeonOptions options);
+
   /// Gets individual String value stored with [key], if any.
   String? getString(String key, SharedPreferencesPigeonOptions options);
-
-  /// Gets individual bool value stored with [key], if any.
-  bool? getBool(String key, SharedPreferencesPigeonOptions options);
-
-  /// Gets individual double value stored with [key], if any.
-  double? getDouble(String key, SharedPreferencesPigeonOptions options);
-
-  /// Gets individual int value stored with [key], if any.
-  int? getInt(String key, SharedPreferencesPigeonOptions options);
 
   /// Gets individual List<String> value stored with [key], if any.
   List<String?>? getStringList(
@@ -328,44 +315,6 @@ abstract class TestSharedPreferencesAsyncApi {
 
   static void setup(TestSharedPreferencesAsyncApi? api,
       {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_key = (args[0] as String?);
-          assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool was null, expected non-null String.');
-          final bool? arg_value = (args[1] as bool?);
-          assert(arg_value != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool was null, expected non-null bool.');
-          final SharedPreferencesPigeonOptions? arg_options =
-              (args[2] as SharedPreferencesPigeonOptions?);
-          assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool was null, expected non-null SharedPreferencesPigeonOptions.');
-          try {
-            api.setBool(arg_key!, arg_value!, arg_options!);
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
@@ -394,44 +343,6 @@ abstract class TestSharedPreferencesAsyncApi {
               'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setValue was null, expected non-null SharedPreferencesPigeonOptions.');
           try {
             api.setValue(arg_key!, arg_value!, arg_options!);
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_key = (args[0] as String?);
-          assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble was null, expected non-null String.');
-          final double? arg_value = (args[1] as double?);
-          assert(arg_value != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble was null, expected non-null double.');
-          final SharedPreferencesPigeonOptions? arg_options =
-              (args[2] as SharedPreferencesPigeonOptions?);
-          assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble was null, expected non-null SharedPreferencesPigeonOptions.');
-          try {
-            api.setDouble(arg_key!, arg_value!, arg_options!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -514,6 +425,41 @@ abstract class TestSharedPreferencesAsyncApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
+          'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_key = (args[0] as String?);
+          assert(arg_key != null,
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue was null, expected non-null String.');
+          final SharedPreferencesPigeonOptions? arg_options =
+              (args[1] as SharedPreferencesPigeonOptions?);
+          assert(arg_options != null,
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue was null, expected non-null SharedPreferencesPigeonOptions.');
+          try {
+            final Object? output = api.getValue(arg_key!, arg_options!);
+            return <Object?>[output];
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getString',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
@@ -536,111 +482,6 @@ abstract class TestSharedPreferencesAsyncApi {
               'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getString was null, expected non-null SharedPreferencesPigeonOptions.');
           try {
             final String? output = api.getString(arg_key!, arg_options!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getBool',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getBool was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_key = (args[0] as String?);
-          assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getBool was null, expected non-null String.');
-          final SharedPreferencesPigeonOptions? arg_options =
-              (args[1] as SharedPreferencesPigeonOptions?);
-          assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getBool was null, expected non-null SharedPreferencesPigeonOptions.');
-          try {
-            final bool? output = api.getBool(arg_key!, arg_options!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getDouble',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getDouble was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_key = (args[0] as String?);
-          assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getDouble was null, expected non-null String.');
-          final SharedPreferencesPigeonOptions? arg_options =
-              (args[1] as SharedPreferencesPigeonOptions?);
-          assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getDouble was null, expected non-null SharedPreferencesPigeonOptions.');
-          try {
-            final double? output = api.getDouble(arg_key!, arg_options!);
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getInt',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getInt was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_key = (args[0] as String?);
-          assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getInt was null, expected non-null String.');
-          final SharedPreferencesPigeonOptions? arg_options =
-              (args[1] as SharedPreferencesPigeonOptions?);
-          assert(arg_options != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getInt was null, expected non-null SharedPreferencesPigeonOptions.');
-          try {
-            final int? output = api.getInt(arg_key!, arg_options!);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

@@ -10,7 +10,10 @@ import Foundation
   import FlutterMacOS
 #endif
 
+let argumentError: String = "Argument Error"
+
 public class DeprecatedSharedPreferencesPlugin: NSObject, FlutterPlugin, DeprecatedUserDefaultsApi {
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = DeprecatedSharedPreferencesPlugin()
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -84,11 +87,21 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   static private func getUserDefaults(options: SharedPreferencesPigeonOptions) throws
     -> UserDefaults
   {
+    #if os(iOS)
+      if !(options.suiteName?.starts(with: "group.") ?? true) {
+        throw FlutterError(
+          code: argumentError,
+          message:
+            "The provided Suite Name '\(options.suiteName!)' does not follow the predefined requirements",
+          details: "") as! Error
+      }
+    #endif
     let prefs = UserDefaults(suiteName: options.suiteName)
 
     if prefs == nil {
       throw FlutterError(
-        code: "No Such Suite Name", message: "The provided Suite Name '' does not exist",
+        code: argumentError,
+        message: "The provided Suite Name '\(options.suiteName!)' does not exist",
         details: "") as! Error
     }
     return prefs!
@@ -103,14 +116,6 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
     return try SharedPreferencesPlugin.getAllPrefs(allowList: allowList, options: options)
   }
 
-  func setBool(key: String, value: Bool, options: SharedPreferencesPigeonOptions) throws {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).set(value, forKey: key)
-  }
-
-  func setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions) throws {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).set(value, forKey: key)
-  }
-
   func setValue(key: String, value: Any, options: SharedPreferencesPigeonOptions) throws {
     try SharedPreferencesPlugin.getUserDefaults(options: options).set(value, forKey: key)
   }
@@ -119,20 +124,12 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
     return try SharedPreferencesPlugin.getUserDefaults(options: options).string(forKey: key)
   }
 
-  func getBool(key: String, options: SharedPreferencesPigeonOptions) throws -> Bool? {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).value(forKey: key) as! Bool?
-  }
-
-  func getDouble(key: String, options: SharedPreferencesPigeonOptions) throws -> Double? {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).value(forKey: key) as! Double?
-  }
-
-  func getInt(key: String, options: SharedPreferencesPigeonOptions) throws -> Int64? {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).value(forKey: key) as! Int64?
+  func getValue(key: String, options: SharedPreferencesPigeonOptions) throws -> Any? {
+    return try SharedPreferencesPlugin.getUserDefaults(options: options).value(forKey: key)
   }
 
   func getStringList(key: String, options: SharedPreferencesPigeonOptions) throws -> [String]? {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).stringArray(forKey: key)
+    return try SharedPreferencesPlugin.getUserDefaults(options: options).stringArray(forKey: key)
   }
 
   func remove(key: String, options: SharedPreferencesPigeonOptions) throws {
@@ -146,7 +143,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
         defaults.removeObject(forKey: key)
       }
     } else {
-      defaults.dictionaryRepresentation().keys.forEach { key in
+      for key in defaults.dictionaryRepresentation().keys {
         defaults.removeObject(forKey: key)
       }
     }

@@ -30,6 +30,7 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
   /// Registers the Linux implementation.
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesLinux();
+    // A temporary work-around for having two plugins contained in a single package.
     SharedPreferencesAsyncLinux.registerWith();
   }
 

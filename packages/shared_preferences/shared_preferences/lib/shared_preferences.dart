@@ -128,9 +128,9 @@ class SharedPreferences {
   /// exception if it's not a string list.
   List<String>? getStringList(String key) {
     List<dynamic>? list = _preferenceCache[key] as List<dynamic>?;
-    if (list != null && list is! List<String>) {
-      list = list.cast<String>().toList();
-      _preferenceCache[key] = list;
+    list = list?.cast<String>();
+    if (list is List<String>) {
+      _preferenceCache[key] = list.toList();
     }
     // Make a copy of the list so that later mutations won't propagate
     return list?.toList() as List<String>?;

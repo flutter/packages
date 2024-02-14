@@ -101,7 +101,7 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   }
 }
 
-/// Stores data in-memory.
+/// Stores data in memory.
 ///
 /// Data does not persist across application restarts. This is useful in unit-tests.
 class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {

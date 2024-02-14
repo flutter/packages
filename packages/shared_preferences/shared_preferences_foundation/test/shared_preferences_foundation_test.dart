@@ -22,33 +22,54 @@ void main() {
   const double testDouble = 3.14159;
   const List<String> testList = <String>['foo', 'bar'];
 
-  late SharedPreferencesFoundation preferences;
   final SharedPreferencesFoundationOptions emptyOptions =
       SharedPreferencesFoundationOptions();
-  late _FakeSharedPreferencesApi api;
 
-  setUp(() async {
-    api = _FakeSharedPreferencesApi();
-    preferences = SharedPreferencesFoundation(api: api);
+  SharedPreferencesFoundation getPreferences() {
+    final _FakeSharedPreferencesApi api = _FakeSharedPreferencesApi();
+    final SharedPreferencesFoundation preferences =
+        SharedPreferencesFoundation(api: api);
+
+    return preferences;
+  }
+
+  test('set and get String', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
+
+    await preferences.setString(stringKey, testString, emptyOptions);
+    expect(await preferences.getString(stringKey, emptyOptions), testString);
   });
 
-  testWidgets('set and get', (WidgetTester _) async {
-    await Future.wait(<Future<bool>>[
-      preferences.setString(stringKey, testString, emptyOptions),
-      preferences.setBool(boolKey, testBool, emptyOptions),
-      preferences.setInt(intKey, testInt, emptyOptions),
-      preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
-    ]);
+  test('set and get bool', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
 
-    expect(await preferences.getString(stringKey, emptyOptions), testString);
+    await preferences.setBool(boolKey, testBool, emptyOptions);
     expect(await preferences.getBool(boolKey, emptyOptions), testBool);
+  });
+
+  test('set and get int', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
+
+    await preferences.setInt(intKey, testInt, emptyOptions);
     expect(await preferences.getInt(intKey, emptyOptions), testInt);
+  });
+
+  test('set and get double', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
+
+    await preferences.setDouble(doubleKey, testDouble, emptyOptions);
     expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
+  });
+
+  test('set and get StringList', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
+
+    await preferences.setStringList(listKey, testList, emptyOptions);
     expect(await preferences.getStringList(listKey, emptyOptions), testList);
   });
 
-  testWidgets('getPreferences', (WidgetTester _) async {
+  test('getPreferences', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
     await Future.wait(<Future<bool>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -69,7 +90,8 @@ void main() {
     expect(gotAll[listKey], testList);
   });
 
-  testWidgets('getPreferences with filter', (WidgetTester _) async {
+  test('getPreferences with filter', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
     await Future.wait(<Future<bool>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -89,7 +111,8 @@ void main() {
     expect(gotAll[boolKey], testBool);
   });
 
-  testWidgets('getKeys', (WidgetTester _) async {
+  test('getKeys', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
     await Future.wait(<Future<bool>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -111,7 +134,8 @@ void main() {
     expect(keys, contains(listKey));
   });
 
-  testWidgets('getKeys with filter', (WidgetTester _) async {
+  test('getKeys with filter', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
     await Future.wait(<Future<bool>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -132,7 +156,8 @@ void main() {
     expect(keys, contains(boolKey));
   });
 
-  testWidgets('clear', (WidgetTester _) async {
+  test('clear', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
     await Future.wait(<Future<bool>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -150,7 +175,8 @@ void main() {
     expect(await preferences.getStringList(listKey, emptyOptions), null);
   });
 
-  testWidgets('clear with filter', (WidgetTester _) async {
+  test('clear with filter', () async {
+    final SharedPreferencesFoundation preferences = getPreferences();
     await Future.wait(<Future<bool>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -198,24 +224,6 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
-  Future<bool?> getBool(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] as bool?;
-  }
-
-  @override
-  Future<double?> getDouble(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] as double?;
-  }
-
-  @override
-  Future<int?> getInt(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] as int?;
-  }
-
-  @override
   Future<List<String?>> getKeys(
       List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     final List<String> filteredItems = items.keys.toList();
@@ -238,22 +246,14 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
-  Future<bool> setBool(
-      String key, bool value, SharedPreferencesPigeonOptions options) async {
-    items[key] = value;
-    return true;
-  }
-
-  @override
-  Future<bool> setDouble(
-      String key, double value, SharedPreferencesPigeonOptions options) async {
-    items[key] = value;
-    return true;
-  }
-
-  @override
   Future<void> setValue(
       String key, Object value, SharedPreferencesPigeonOptions options) async {
     items[key] = value;
+  }
+
+  @override
+  Future<Object?> getValue(
+      String key, SharedPreferencesPigeonOptions options) async {
+    return items[key];
   }
 }

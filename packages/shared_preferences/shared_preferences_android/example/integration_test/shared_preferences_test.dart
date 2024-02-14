@@ -465,7 +465,7 @@ void main() {
     });
 
     testWidgets('string clash with lists and doubles', (WidgetTester _) async {
-      const String key = 'akey';
+      const String key = 'aKey';
       const String value = 'a string value';
       await preferences.clearWithParameters(
         ClearParameters(
@@ -496,7 +496,7 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    final SharedPreferencesAndroidOptions emptyOptions =
+    const SharedPreferencesAndroidOptions emptyOptions =
         SharedPreferencesAndroidOptions();
 
     const String stringKey = 'testString';
@@ -511,36 +511,52 @@ void main() {
     const double testDouble = 3.14159;
     const List<String> testList = <String>['foo', 'bar'];
 
-    late SharedPreferencesAsyncPlatform preferences;
-
-    setUp(() async {
-      preferences = SharedPreferencesAsyncPlatform.instance;
-    });
-
-    tearDown(() async {
+    Future<SharedPreferencesAsyncPlatform> getPreferences() async {
+      final SharedPreferencesAsyncPlatform preferences =
+          SharedPreferencesAsyncPlatform.instance!;
       await preferences.clear(
-        const ClearPreferencesParameters(filter: PreferencesFilters()),
-        emptyOptions,
-      );
+          const ClearPreferencesParameters(filter: PreferencesFilters()),
+          emptyOptions);
+      return preferences;
+    }
+
+    testWidgets('set and get String', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setString(stringKey, testString, emptyOptions);
+      expect(await preferences.getString(stringKey, emptyOptions), testString);
     });
 
-    testWidgets('set and get', (WidgetTester _) async {
-      await Future.wait(<Future<bool>>[
-        preferences.setString(stringKey, testString, emptyOptions),
-        preferences.setBool(boolKey, testBool, emptyOptions),
-        preferences.setInt(intKey, testInt, emptyOptions),
-        preferences.setDouble(doubleKey, testDouble, emptyOptions),
-        preferences.setStringList(listKey, testList, emptyOptions)
-      ]);
+    testWidgets('set and get bool', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
 
-      expect(await preferences.getString(stringKey, emptyOptions), testString);
+      await preferences.setBool(boolKey, testBool, emptyOptions);
       expect(await preferences.getBool(boolKey, emptyOptions), testBool);
+    });
+
+    testWidgets('set and get int', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setInt(intKey, testInt, emptyOptions);
       expect(await preferences.getInt(intKey, emptyOptions), testInt);
+    });
+
+    testWidgets('set and get double', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setDouble(doubleKey, testDouble, emptyOptions);
       expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
+    });
+
+    testWidgets('set and get StringList', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+
+      await preferences.setStringList(listKey, testList, emptyOptions);
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
 
     testWidgets('getPreferences', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
       await Future.wait(<Future<bool>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -563,6 +579,7 @@ void main() {
     });
 
     testWidgets('getPreferences with filter', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
       await Future.wait(<Future<bool>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -584,6 +601,7 @@ void main() {
     });
 
     testWidgets('getKeys', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
       await Future.wait(<Future<bool>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -606,6 +624,7 @@ void main() {
     });
 
     testWidgets('getKeys with filter', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
       await Future.wait(<Future<bool>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -627,6 +646,7 @@ void main() {
     });
 
     testWidgets('clear', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
       await Future.wait(<Future<bool>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -648,6 +668,7 @@ void main() {
     });
 
     testWidgets('clear with filter', (WidgetTester _) async {
+      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
       await Future.wait(<Future<bool>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),

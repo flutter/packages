@@ -4,23 +4,32 @@
 
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 /// Provides a persistent store for simple data.
 ///
-/// Data is persisted to disk asynchronously.
+/// Data is persisted to and fetched from the disk asynchronously.
+/// If synchronous access to preferences in a locally cached version of preferences
+/// is preferred, consider using [SharedPreferencesWithCache] instead.
 class SharedPreferencesAsync {
   /// Creates a new instance with the given [options].
   SharedPreferencesAsync({required SharedPreferencesOptions options})
-      : _options = options;
+      : _options = options {
+    if (SharedPreferencesAsyncPlatform.instance == null) {
+      throw PlatformException(
+          code: 'The SharedPreferencesAsyncPlatform instance must be set.');
+    } else {
+      _platform = SharedPreferencesAsyncPlatform.instance!;
+    }
+  }
 
   /// Options that determine the behavior of contained methods,  usually
   /// platform specific extensions of the [SharedPreferencesOptions] class.
   final SharedPreferencesOptions _options;
 
-  final SharedPreferencesAsyncPlatform _platform =
-      SharedPreferencesAsyncPlatform.instance;
+  late final SharedPreferencesAsyncPlatform _platform;
 
   /// Returns all keys on the the platform that match provided [parameters].
   ///
@@ -40,20 +49,20 @@ class SharedPreferencesAsync {
     return _platform.getPreferences(parameters, _options);
   }
 
-  /// Reads a value from the platform, throwing an exception if it's not a
+  /// Reads a value from the platform, throwing a [TypeError] if the value is not a
   /// bool.
   Future<bool?> getBool(String key) async => _platform.getBool(key, _options);
 
-  /// Reads a value from the platform, throwing an exception if it's not
+  /// Reads a value from the platform, throwing a [TypeError] if the value is not
   /// an int.
   Future<int?> getInt(String key) async => _platform.getInt(key, _options);
 
-  /// Reads a value from the platform, throwing an exception if it's not a
+  /// Reads a value from the platform, throwing a [TypeError] if the value is not a
   /// double.
   Future<double?> getDouble(String key) async =>
       _platform.getDouble(key, _options);
 
-  /// Reads a value from the platform, throwing an exception if it's not a
+  /// Reads a value from the platform, throwing a [TypeError] if the value is not a
   /// String.
   Future<String?> getString(String key) async =>
       _platform.getString(key, _options);
@@ -62,7 +71,7 @@ class SharedPreferencesAsync {
   /// exception if it's not a string list.
   Future<List<String>?> getStringList(String key) async {
     List<dynamic>? list = await _platform.getStringList(key, _options);
-    if (list != null && list is! List<String>) {
+    if (list is List<String?>) {
       list = list.cast<String>().toList();
     }
     // Make a copy of the list so that later mutations won't propagate
@@ -112,7 +121,9 @@ class SharedPreferencesAsync {
   /// Completes with true once the user preferences for the app have been cleared.
   ///
   /// If no [parameters] are provided, and [SharedPreferencesAsync] has no filter,
-  /// all preferences will be removed.
+  /// all preferences will be removed. This includes anything not set by this plugin,
+  /// which may create some unwanted behaviors. It is highly recommended that
+  /// [PreferencesFilters] be provided to this call.
   Future<bool> clear(ClearPreferencesParameters parameters) {
     return _platform.clear(parameters, _options);
   }
@@ -121,29 +132,51 @@ class SharedPreferencesAsync {
 /// Options necessary to create a [SharedPreferencesWithCache].
 class SharedPreferencesWithCacheOptions {
   /// Creates a new instance with the given options.
-  SharedPreferencesWithCacheOptions({
+  const SharedPreferencesWithCacheOptions({
     required this.filter,
   });
 
   /// Information about what data should be fetched during `getAll` and `init`
   /// methods, as well as what data will be removed by `clear`.
-  PreferencesFilters filter;
+  final PreferencesFilters filter;
 }
 
 /// Provides a persistent store for simple data.
 ///
 /// Cache provided to allow for synchronous gets.
+///
+/// If preferences on the platform may be altered by other means than through
+/// this plugin, consider using [SharedPreferencesAsync] instead. You may also
+/// refresh the cached data using [reloadCache] prior to a get request to prevent
+/// missed changes that may have occurred since the cache was last updated.
 class SharedPreferencesWithCache {
-  /// Creates a new instance with the given [options].
-  SharedPreferencesWithCache({
+  /// Creates a new instance with the given options.
+  SharedPreferencesWithCache._create({
     required this.sharedPreferencesOptions,
     required SharedPreferencesWithCacheOptions cacheOptions,
     Map<String, Object?>? cache,
   })  : _cacheOptions = cacheOptions,
-        directAccess =
+        _directAccess =
             SharedPreferencesAsync(options: sharedPreferencesOptions),
-        _cache = cache ?? <String, Object?>{} {
-    _init();
+        _cache = cache ?? <String, Object?>{};
+
+  /// Creates a new instance with the given options and reloads the cache from
+  /// the platform data.
+  static Future<SharedPreferencesWithCache> create({
+    required SharedPreferencesOptions sharedPreferencesOptions,
+    required SharedPreferencesWithCacheOptions cacheOptions,
+    Map<String, Object?>? cache,
+  }) async {
+    final SharedPreferencesWithCache preferences =
+        SharedPreferencesWithCache._create(
+      sharedPreferencesOptions: sharedPreferencesOptions,
+      cacheOptions: cacheOptions,
+      cache: cache,
+    );
+
+    await preferences._init();
+
+    return preferences;
   }
 
   /// Cache containing in-memory data.
@@ -158,17 +191,22 @@ class SharedPreferencesWithCache {
 
   /// Async access directly to the platform.
   ///
-  /// Methods called through [directAccess] will NOT update the cache.
-  final SharedPreferencesAsync directAccess;
+  /// Methods called through [_directAccess] will NOT update the cache.
+  final SharedPreferencesAsync _directAccess;
 
   Future<void> _init() async {
     await reloadCache();
   }
 
   /// Updates cache with latest values from platform.
+  ///
+  /// This should be called before reading any values if the values may have
+  /// been changed by anything other than this cache instance,
+  /// such as from another isolate or native code that changes the underlying
+  /// preference storage directly.
   Future<void> reloadCache() async {
     _cache.clear();
-    _cache.addAll(await directAccess
+    _cache.addAll(await _directAccess
         .getAll(GetPreferencesParameters(filter: _cacheOptions.filter)));
   }
 
@@ -188,28 +226,29 @@ class SharedPreferencesWithCache {
   /// Reads a value of any type from the cache.
   Object? get(String key) => _cache[key];
 
-  /// Reads a value from the cache, throwing an exception if it's not a
+  /// Reads a value from the cache, throwing a [TypeError] if the value is not a
   /// bool.
   bool? getBool(String key) => get(key) as bool?;
 
-  /// Reads a value from the cache, throwing an exception if it's not
+  /// Reads a value from the cache, throwing a [TypeError] if the value is not
   /// an int.
   int? getInt(String key) => get(key) as int?;
 
-  /// Reads a value from the cache, throwing an exception if it's not a
+  /// Reads a value from the cache, throwing a [TypeError] if the value is not a
   /// double.
   double? getDouble(String key) => get(key) as double?;
 
-  /// Reads a value from the cache, throwing an exception if it's not a
+  /// Reads a value from the cache, throwing a [TypeError] if the value is not a
   /// String.
   String? getString(String key) => get(key) as String?;
 
   /// Reads a set of string values from the cache, throwing an
   /// exception if it's not a string list.
   List<String>? getStringList(String key) {
-    List<dynamic>? list = get(key) as List<dynamic>?;
-    if (list != null && list is! List<String>) {
-      list = list.cast<String>().toList();
+    List<dynamic>? list = _cache[key] as List<dynamic>?;
+    list = list?.cast<String>();
+    if (list is List<String>) {
+      _cache[key] = list.toList();
     }
     // Make a copy of the list so that later mutations won't propagate
     return list?.toList() as List<String>?;
@@ -218,13 +257,13 @@ class SharedPreferencesWithCache {
   /// Saves a boolean [value] to the cache and platform.
   Future<bool> setBool(String key, bool value) async {
     _cache[key] = value;
-    return directAccess.setBool(key, value);
+    return _directAccess.setBool(key, value);
   }
 
   /// Saves an integer [value] to the cache and platform.
   Future<bool> setInt(String key, int value) async {
     _cache[key] = value;
-    return directAccess.setInt(key, value);
+    return _directAccess.setInt(key, value);
   }
 
   /// Saves a double [value] to the cache and platform.
@@ -233,42 +272,42 @@ class SharedPreferencesWithCache {
   /// the value will be stored as a float instead.
   Future<bool> setDouble(String key, double value) async {
     _cache[key] = value;
-    return directAccess.setDouble(key, value);
+    return _directAccess.setDouble(key, value);
   }
 
   /// Saves a string [value] to the cache and platform.
   ///
-  /// Note: Due to limitations on some platform's,
+  /// Note: Due to limitations on some platforms,
   /// values cannot start with the following:
   ///
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu'
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu'
   Future<bool> setString(String key, String value) async {
     _cache[key] = value;
-    return directAccess.setString(key, value);
+    return _directAccess.setString(key, value);
   }
 
   /// Saves a list of strings [value] to the cache and platform.
   Future<bool> setStringList(String key, List<String> value) async {
     _cache[key] = value;
-    return directAccess.setStringList(key, value);
+    return _directAccess.setStringList(key, value);
   }
 
   /// Removes an entry from cache and platform.
   Future<bool> remove(String key) async {
     _cache.remove(key);
-    return directAccess.remove(key);
+    return _directAccess.remove(key);
   }
 
   /// Clears cache and platform preferences that match filter options.
   Future<bool> clear() async {
-    if (_cacheOptions.filter.allowList != null) {
+    if (_cacheOptions.filter.allowList == null) {
+      _cache.clear();
+    } else {
       _cache.removeWhere(
           (String key, _) => _cacheOptions.filter.allowList!.contains(key));
-    } else {
-      _cache.clear();
     }
-    return directAccess
+    return _directAccess
         .clear(ClearPreferencesParameters(filter: _cacheOptions.filter));
   }
 }

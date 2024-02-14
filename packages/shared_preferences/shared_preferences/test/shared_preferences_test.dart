@@ -47,7 +47,7 @@ void main() {
     store.log.clear();
   });
 
-  testWidgets('reading', (WidgetTester _) async {
+  test('reading', () async {
     expect(preferences.get('String'), testString);
     expect(preferences.get('bool'), testBool);
     expect(preferences.get('int'), testInt);
@@ -61,7 +61,7 @@ void main() {
     expect(store.log, <Matcher>[]);
   });
 
-  testWidgets('writing', (WidgetTester _) async {
+  test('writing', () async {
     await Future.wait(<Future<bool>>[
       preferences.setString('String', testString2),
       preferences.setBool('bool', testBool2),
@@ -109,7 +109,7 @@ void main() {
     expect(store.log, equals(<MethodCall>[]));
   });
 
-  testWidgets('removing', (WidgetTester _) async {
+  test('removing', () async {
     const String key = 'testKey';
     await preferences.remove(key);
     expect(
@@ -124,7 +124,7 @@ void main() {
         ));
   });
 
-  testWidgets('containsKey', (WidgetTester _) async {
+  test('containsKey', () async {
     const String key = 'testKey';
 
     expect(false, preferences.containsKey(key));
@@ -133,7 +133,7 @@ void main() {
     expect(true, preferences.containsKey(key));
   });
 
-  testWidgets('clearing', (WidgetTester _) async {
+  test('clearing', () async {
     await preferences.clear();
     expect(preferences.getString('String'), null);
     expect(preferences.getBool('bool'), null);
@@ -143,7 +143,7 @@ void main() {
     expect(store.log, <Matcher>[isMethodCall('clear', arguments: null)]);
   });
 
-  testWidgets('reloading', (WidgetTester _) async {
+  test('reloading', () async {
     await preferences.setString('String', testString);
     expect(preferences.getString('String'), testString);
 
@@ -154,15 +154,13 @@ void main() {
     expect(preferences.getString('String'), testString2);
   });
 
-  testWidgets('back to back calls should return same instance.',
-      (WidgetTester _) async {
+  test('back to back calls should return same instance.', () async {
     final Future<SharedPreferences> first = SharedPreferences.getInstance();
     final Future<SharedPreferences> second = SharedPreferences.getInstance();
     expect(await first, await second);
   });
 
-  testWidgets('string list type is dynamic (usually from method channel)',
-      (WidgetTester _) async {
+  test('string list type is dynamic (usually from method channel)', () async {
     SharedPreferences.setMockInitialValues(<String, Object>{
       'dynamic_list': <dynamic>['1', '2']
     });
@@ -175,7 +173,7 @@ void main() {
     const String key = 'dummy';
     const String prefixedKey = 'flutter.$key';
 
-    testWidgets('test 1', (WidgetTester _) async {
+    test('test 1', () async {
       SharedPreferences.setMockInitialValues(
           <String, Object>{prefixedKey: 'my string'});
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -183,7 +181,7 @@ void main() {
       expect(value, 'my string');
     });
 
-    testWidgets('test 2', (WidgetTester _) async {
+    test('test 2', () async {
       SharedPreferences.setMockInitialValues(
           <String, Object>{prefixedKey: 'my other string'});
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -192,7 +190,7 @@ void main() {
     });
   });
 
-  testWidgets('writing copy of strings list', (WidgetTester _) async {
+  test('writing copy of strings list', () async {
     final List<String> myList = <String>[];
     await preferences.setStringList('myList', myList);
     myList.add('foobar');
@@ -205,8 +203,7 @@ void main() {
     expect(preferences.getStringList('myList'), <String>[]);
   });
 
-  testWidgets('calling mock initial values with non-prefixed keys succeeds',
-      (WidgetTester _) async {
+  test('calling mock initial values with non-prefixed keys succeeds', () async {
     SharedPreferences.setMockInitialValues(<String, Object>{
       'test': 'foo',
     });
@@ -215,8 +212,7 @@ void main() {
     expect(value, 'foo');
   });
 
-  testWidgets('getInstance always returns the same instance',
-      (WidgetTester _) async {
+  test('getInstance always returns the same instance', () async {
     SharedPreferencesStorePlatform.instance = SlowInitSharedPreferencesStore();
 
     final Future<SharedPreferences> firstFuture =
@@ -226,8 +222,7 @@ void main() {
     expect(identical(await firstFuture, await secondFuture), true);
   });
 
-  testWidgets('calling setPrefix after getInstance throws',
-      (WidgetTester _) async {
+  test('calling setPrefix after getInstance throws', () async {
     const String newPrefix = 'newPrefix';
 
     await SharedPreferences.getInstance();
@@ -240,8 +235,7 @@ void main() {
     expect(err, isA<StateError>());
   });
 
-  testWidgets('using setPrefix allows setting and getting',
-      (WidgetTester _) async {
+  test('using setPrefix allows setting and getting', () async {
     const String newPrefix = 'newPrefix';
 
     SharedPreferences.resetStatic();
@@ -263,7 +257,7 @@ void main() {
     expect(testDouble, 3.14);
   });
 
-  testWidgets('allowList only gets allowed items', (WidgetTester _) async {
+  test('allowList only gets allowed items', () async {
     const Set<String> allowList = <String>{'stringKey', 'boolKey'};
 
     SharedPreferences.resetStatic();
@@ -287,8 +281,7 @@ void main() {
     expect(testDouble, null);
   });
 
-  testWidgets('using reload after setPrefix properly reloads the cache',
-      (WidgetTester _) async {
+  test('using reload after setPrefix properly reloads the cache', () async {
     const String newPrefix = 'newPrefix';
 
     SharedPreferences.resetStatic();
@@ -306,8 +299,7 @@ void main() {
     expect(testStrings, 'test');
   });
 
-  testWidgets('unimplemented errors in withParameters methods are updated',
-      (WidgetTester _) async {
+  test('unimplemented errors in withParameters methods are updated', () async {
     final UnimplementedSharedPreferencesStore localStore =
         UnimplementedSharedPreferencesStore();
     SharedPreferencesStorePlatform.instance = localStore;
@@ -327,9 +319,9 @@ void main() {
             "Shared Preferences doesn't yet support the setPrefix method"));
   });
 
-  testWidgets(
+  test(
     'non-Unimplemented errors pass through withParameters methods correctly',
-    (WidgetTester _) async {
+    () async {
       final ThrowingSharedPreferencesStore localStore =
           ThrowingSharedPreferencesStore();
       SharedPreferencesStorePlatform.instance = localStore;

@@ -43,23 +43,42 @@ void main() {
     return prefs;
   }
 
-  testWidgets('set and get', (WidgetTester _) async {
+  test('set and get String', () async {
     final SharedPreferencesAsyncLinux preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);
-    await preferences.setBool(boolKey, testBool, emptyOptions);
-    await preferences.setInt(intKey, testInt, emptyOptions);
-    await preferences.setDouble(doubleKey, testDouble, emptyOptions);
-    await preferences.setStringList(listKey, testList, emptyOptions);
-
     expect(await preferences.getString(stringKey, emptyOptions), testString);
+  });
+
+  test('set and get bool', () async {
+    final SharedPreferencesAsyncLinux preferences = getPreferences();
+
+    await preferences.setBool(boolKey, testBool, emptyOptions);
     expect(await preferences.getBool(boolKey, emptyOptions), testBool);
+  });
+
+  test('set and get int', () async {
+    final SharedPreferencesAsyncLinux preferences = getPreferences();
+
+    await preferences.setInt(intKey, testInt, emptyOptions);
     expect(await preferences.getInt(intKey, emptyOptions), testInt);
+  });
+
+  test('set and get double', () async {
+    final SharedPreferencesAsyncLinux preferences = getPreferences();
+
+    await preferences.setDouble(doubleKey, testDouble, emptyOptions);
     expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
+  });
+
+  test('set and get StringList', () async {
+    final SharedPreferencesAsyncLinux preferences = getPreferences();
+
+    await preferences.setStringList(listKey, testList, emptyOptions);
     expect(await preferences.getStringList(listKey, emptyOptions), testList);
   });
 
-  testWidgets('getPreferences', (WidgetTester _) async {
+  test('getPreferences', () async {
     final SharedPreferencesAsyncLinux preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);
@@ -80,7 +99,7 @@ void main() {
     expect(gotAll[listKey], testList);
   });
 
-  testWidgets('getPreferences with filter', (WidgetTester _) async {
+  test('getPreferences with filter', () async {
     final SharedPreferencesAsyncLinux preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);
@@ -100,7 +119,7 @@ void main() {
     expect(gotAll[boolKey], testBool);
   });
 
-  testWidgets('getKeys', (WidgetTester _) async {
+  test('getKeys', () async {
     final SharedPreferencesAsyncLinux preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);
@@ -122,7 +141,7 @@ void main() {
     expect(keys, contains(listKey));
   });
 
-  testWidgets('getKeys with filter', (WidgetTester _) async {
+  test('getKeys with filter', () async {
     final SharedPreferencesAsyncLinux preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);
@@ -143,7 +162,7 @@ void main() {
     expect(keys, contains(boolKey));
   });
 
-  testWidgets('clear', (WidgetTester _) async {
+  test('clear', () async {
     final SharedPreferencesAsyncLinux preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);
@@ -161,7 +180,7 @@ void main() {
     expect(await preferences.getStringList(listKey, emptyOptions), null);
   });
 
-  testWidgets('clear with filter', (WidgetTester _) async {
+  test('clear with filter', () async {
     final SharedPreferencesAsyncLinux preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);

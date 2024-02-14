@@ -26,6 +26,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
     SharedPreferencesAsyncPlatform.instance = SharedPreferencesAndroid();
+    // A temporary work-around for having two plugins contained in a single package.
     DeprecatedSharedPreferencesAndroid.registerWith();
   }
 
@@ -62,6 +63,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
       throw ArgumentError(
           'StorageError: This string cannot be stored as it clashes with special identifier prefixes');
     }
+
     return _api.setString(key, value, pigeonOptions);
   }
 
@@ -195,4 +197,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
 }
 
 /// Options for the Android specific SharedPreferences plugin.
-class SharedPreferencesAndroidOptions extends SharedPreferencesOptions {}
+class SharedPreferencesAndroidOptions extends SharedPreferencesOptions {
+  /// Constructor for SharedPreferencesAndroidOptions.
+  const SharedPreferencesAndroidOptions();
+}

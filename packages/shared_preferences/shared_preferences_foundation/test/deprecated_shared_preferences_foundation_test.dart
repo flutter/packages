@@ -101,13 +101,13 @@ void main() {
     TestUserDefaultsApi.setup(api);
   });
 
-  testWidgets('registerWith', (WidgetTester _) async {
+  test('registerWith', () async {
     DeprecatedSharedPreferencesFoundation.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
         isA<DeprecatedSharedPreferencesFoundation>());
   });
 
-  testWidgets('remove', (WidgetTester _) async {
+  test('remove', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     api.items['flutter.hi'] = 'world';
@@ -115,7 +115,7 @@ void main() {
     expect(api.items.containsKey('flutter.hi'), isFalse);
   });
 
-  testWidgets('clear', (WidgetTester _) async {
+  test('clear', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     api.items['flutter.hi'] = 'world';
@@ -123,7 +123,7 @@ void main() {
     expect(api.items.containsKey('flutter.hi'), isFalse);
   });
 
-  testWidgets('clearWithPrefix', (WidgetTester _) async {
+  test('clearWithPrefix', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -139,7 +139,7 @@ void main() {
     expect(all.length, 0);
   });
 
-  testWidgets('clearWithParameters', (WidgetTester _) async {
+  test('clearWithParameters', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -167,7 +167,7 @@ void main() {
     expect(all.length, 0);
   });
 
-  testWidgets('clearWithParameters with allow list', (WidgetTester _) async {
+  test('clearWithParameters with allow list', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -198,7 +198,7 @@ void main() {
     expect(all.length, 4);
   });
 
-  testWidgets('getAll', (WidgetTester _) async {
+  test('getAll', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in flutterTestValues.keys) {
@@ -209,7 +209,7 @@ void main() {
     expect(all, flutterTestValues);
   });
 
-  testWidgets('getAllWithPrefix', (WidgetTester _) async {
+  test('getAllWithPrefix', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -220,7 +220,7 @@ void main() {
     expect(all, prefixTestValues);
   });
 
-  testWidgets('getAllWithParameters', (WidgetTester _) async {
+  test('getAllWithParameters', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -235,7 +235,7 @@ void main() {
     expect(all, prefixTestValues);
   });
 
-  testWidgets('getAllWithParameters with allow list', (WidgetTester _) async {
+  test('getAllWithParameters with allow list', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -253,7 +253,7 @@ void main() {
     expect(all['prefix.Bool'], prefixTestValues['prefix.Bool']);
   });
 
-  testWidgets('setValue', (WidgetTester _) async {
+  test('setValue', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     expect(await plugin.setValue('Bool', 'flutter.Bool', true), isTrue);
@@ -271,7 +271,7 @@ void main() {
     expect(api.items['flutter.StringList'], <String>['hi']);
   });
 
-  testWidgets('setValue with unsupported type', (WidgetTester _) async {
+  test('setValue with unsupported type', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     expect(() async {
@@ -279,7 +279,7 @@ void main() {
     }, throwsA(isA<PlatformException>()));
   });
 
-  testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
+  test('getAllWithNoPrefix', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -290,7 +290,7 @@ void main() {
     expect(all, allTestValues);
   });
 
-  testWidgets('clearWithNoPrefix', (WidgetTester _) async {
+  test('clearWithNoPrefix', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -304,7 +304,7 @@ void main() {
     expect(all.length, 0);
   });
 
-  testWidgets('getAllWithNoPrefix with param', (WidgetTester _) async {
+  test('getAllWithNoPrefix with param', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {
@@ -319,7 +319,7 @@ void main() {
     expect(all, allTestValues);
   });
 
-  testWidgets('clearWithNoPrefix with param', (WidgetTester _) async {
+  test('clearWithNoPrefix with param', () async {
     final DeprecatedSharedPreferencesFoundation plugin =
         DeprecatedSharedPreferencesFoundation();
     for (final String key in allTestValues.keys) {

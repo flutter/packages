@@ -14,7 +14,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-const String _defaultFileName = 'shared_preferences.json';
+const String _defaultFileName = 'shared_preferences';
 
 const String _defaultPrefix = 'flutter.';
 
@@ -30,6 +30,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   /// Registers the Windows implementation.
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesWindows();
+    // A temporary work-around for having two plugins contained in a single package.
     SharedPreferencesAsyncWindows.registerWith();
   }
 
@@ -332,7 +333,8 @@ Future<File?> _getLocalDataFile(
   if (directory == null) {
     return null;
   }
-  return fs.file(path.join(directory, fileName));
+  final String fileLocation = path.join(directory, '$fileName.json');
+  return fs.file(fileLocation);
 }
 
 /// Gets the preferences from the stored file.

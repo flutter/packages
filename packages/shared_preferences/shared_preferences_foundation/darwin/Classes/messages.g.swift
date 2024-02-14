@@ -259,24 +259,16 @@ class UserDefaultsApiCodec: FlutterStandardMessageCodec {
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserDefaultsApi {
-  /// Adds property to shared preferences data set of type bool.
-  func setBool(key: String, value: Bool, options: SharedPreferencesPigeonOptions) throws
   /// Adds property to shared preferences data set of type String.
   func setValue(key: String, value: Any, options: SharedPreferencesPigeonOptions) throws
-  /// Adds property to shared preferences data set of type double.
-  func setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions) throws
   /// Removes all properties from shared preferences data set with matching prefix.
   func clear(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws
   /// Gets all properties from shared preferences data set with matching prefix.
   func getAll(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String: Any]
+  /// Gets individual value stored with [key], if any.
+  func getValue(key: String, options: SharedPreferencesPigeonOptions) throws -> Any?
   /// Gets individual String value stored with [key], if any.
   func getString(key: String, options: SharedPreferencesPigeonOptions) throws -> String?
-  /// Gets individual bool value stored with [key], if any.
-  func getBool(key: String, options: SharedPreferencesPigeonOptions) throws -> Bool?
-  /// Gets individual double value stored with [key], if any.
-  func getDouble(key: String, options: SharedPreferencesPigeonOptions) throws -> Double?
-  /// Gets individual int value stored with [key], if any.
-  func getInt(key: String, options: SharedPreferencesPigeonOptions) throws -> Int64?
   /// Gets individual List<String> value stored with [key], if any.
   func getStringList(key: String, options: SharedPreferencesPigeonOptions) throws -> [String]?
   /// Gets all properties from shared preferences data set with matching prefix.
@@ -289,26 +281,6 @@ class UserDefaultsApiSetup {
   static var codec: FlutterStandardMessageCodec { UserDefaultsApiCodec.shared }
   /// Sets up an instance of `UserDefaultsApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UserDefaultsApi?) {
-    /// Adds property to shared preferences data set of type bool.
-    let setBoolChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setBool",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let keyArg = args[0] as! String
-        let valueArg = args[1] as! Bool
-        let optionsArg = args[2] as! SharedPreferencesPigeonOptions
-        do {
-          try api.setBool(key: keyArg, value: valueArg, options: optionsArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setBoolChannel.setMessageHandler(nil)
-    }
     /// Adds property to shared preferences data set of type String.
     let setValueChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setValue",
@@ -328,26 +300,6 @@ class UserDefaultsApiSetup {
       }
     } else {
       setValueChannel.setMessageHandler(nil)
-    }
-    /// Adds property to shared preferences data set of type double.
-    let setDoubleChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.setDouble",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let keyArg = args[0] as! String
-        let valueArg = args[1] as! Double
-        let optionsArg = args[2] as! SharedPreferencesPigeonOptions
-        do {
-          try api.setDouble(key: keyArg, value: valueArg, options: optionsArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setDoubleChannel.setMessageHandler(nil)
     }
     /// Removes all properties from shared preferences data set with matching prefix.
     let clearChannel = FlutterBasicMessageChannel(
@@ -387,6 +339,25 @@ class UserDefaultsApiSetup {
     } else {
       getAllChannel.setMessageHandler(nil)
     }
+    /// Gets individual value stored with [key], if any.
+    let getValueChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getValueChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let keyArg = args[0] as! String
+        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
+        do {
+          let result = try api.getValue(key: keyArg, options: optionsArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getValueChannel.setMessageHandler(nil)
+    }
     /// Gets individual String value stored with [key], if any.
     let getStringChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getString",
@@ -405,63 +376,6 @@ class UserDefaultsApiSetup {
       }
     } else {
       getStringChannel.setMessageHandler(nil)
-    }
-    /// Gets individual bool value stored with [key], if any.
-    let getBoolChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getBool",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let keyArg = args[0] as! String
-        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
-        do {
-          let result = try api.getBool(key: keyArg, options: optionsArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getBoolChannel.setMessageHandler(nil)
-    }
-    /// Gets individual double value stored with [key], if any.
-    let getDoubleChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getDouble",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let keyArg = args[0] as! String
-        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
-        do {
-          let result = try api.getDouble(key: keyArg, options: optionsArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getDoubleChannel.setMessageHandler(nil)
-    }
-    /// Gets individual int value stored with [key], if any.
-    let getIntChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getInt",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let keyArg = args[0] as! String
-        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
-        do {
-          let result = try api.getInt(key: keyArg, options: optionsArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getIntChannel.setMessageHandler(nil)
     }
     /// Gets individual List<String> value stored with [key], if any.
     let getStringListChannel = FlutterBasicMessageChannel(

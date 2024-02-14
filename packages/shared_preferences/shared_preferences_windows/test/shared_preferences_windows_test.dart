@@ -77,13 +77,13 @@ void main() {
     return prefs;
   }
 
-  testWidgets('registered instance', (WidgetTester _) async {
+  test('registered instance', () async {
     SharedPreferencesWindows.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
         isA<SharedPreferencesWindows>());
   });
 
-  testWidgets('getAll', (WidgetTester _) async {
+  test('getAll', () async {
     await writeTestFile(json.encode(allTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -92,7 +92,7 @@ void main() {
     expect(values, flutterTestValues);
   });
 
-  testWidgets('getAllWithPrefix', (WidgetTester _) async {
+  test('getAllWithPrefix', () async {
     await writeTestFile(json.encode(allTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -101,7 +101,7 @@ void main() {
     expect(values, prefixTestValues);
   });
 
-  testWidgets('getAllWithParameters with Prefix', (WidgetTester _) async {
+  test('getAllWithParameters with Prefix', () async {
     await writeTestFile(json.encode(allTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -114,8 +114,7 @@ void main() {
     expect(values, prefixTestValues);
   });
 
-  testWidgets('getAllWithParameters with Prefix with allow list',
-      (WidgetTester _) async {
+  test('getAllWithParameters with Prefix with allow list', () async {
     await writeTestFile(json.encode(allTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -131,7 +130,7 @@ void main() {
     expect(all['prefix.Bool'], prefixTestValues['prefix.Bool']);
   });
 
-  testWidgets('remove', (WidgetTester _) async {
+  test('remove', () async {
     await writeTestFile('{"key1":"one","key2":2}');
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -140,7 +139,7 @@ void main() {
     expect(await readTestFile(), '{"key1":"one"}');
   });
 
-  testWidgets('setValue', (WidgetTester _) async {
+  test('setValue', () async {
     await writeTestFile('{}');
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -150,7 +149,7 @@ void main() {
     expect(await readTestFile(), '{"key1":"one","key2":2}');
   });
 
-  testWidgets('clear', (WidgetTester _) async {
+  test('clear', () async {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -159,7 +158,7 @@ void main() {
     expect(await readTestFile(), '{}');
   });
 
-  testWidgets('clearWithPrefix', (WidgetTester _) async {
+  test('clearWithPrefix', () async {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithPrefix('prefix.');
@@ -172,7 +171,7 @@ void main() {
     expect(values, flutterTestValues);
   });
 
-  testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
+  test('getAllWithNoPrefix', () async {
     await writeTestFile(json.encode(allTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -181,7 +180,7 @@ void main() {
     expect(values, allTestValues);
   });
 
-  testWidgets('clearWithNoPrefix', (WidgetTester _) async {
+  test('clearWithNoPrefix', () async {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithPrefix('');
@@ -189,7 +188,7 @@ void main() {
     expect(noValues, hasLength(0));
   });
 
-  testWidgets('clearWithParameters with Prefix', (WidgetTester _) async {
+  test('clearWithParameters with Prefix', () async {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithParameters(
@@ -209,7 +208,7 @@ void main() {
     expect(values, flutterTestValues);
   });
 
-  testWidgets('clearWithParameters with allow list', (WidgetTester _) async {
+  test('clearWithParameters with allow list', () async {
     await writeTestFile(json.encode(prefixTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithParameters(
@@ -228,7 +227,7 @@ void main() {
     expect(noValues, hasLength(4));
   });
 
-  testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
+  test('getAllWithNoPrefix', () async {
     await writeTestFile(json.encode(allTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
 
@@ -241,7 +240,7 @@ void main() {
     expect(values, allTestValues);
   });
 
-  testWidgets('clearWithNoPrefix', (WidgetTester _) async {
+  test('clearWithNoPrefix', () async {
     await writeTestFile(json.encode(flutterTestValues));
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithParameters(
