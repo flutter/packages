@@ -88,7 +88,7 @@ packages/google_sign_in/google_sign_in_ios/**            @vashworth
 packages/image_picker/image_picker_ios/**                @vashworth
 packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
 packages/ios_platform_images/**                          @jmagman
-packages/local_auth/local_auth_ios/**                    @louisehsu
+packages/local_auth/local_auth_darwin/**                    @louisehsu
 packages/path_provider/path_provider_foundation/**       @jmagman
 packages/pointer_interceptor/pointer_interceptor_ios/**  @ditman
 packages/quick_actions/quick_actions_ios/**              @hellohuanlin

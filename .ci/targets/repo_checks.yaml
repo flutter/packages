@@ -5,18 +5,18 @@ tasks:
   - name: tool unit tests
     script: .ci/scripts/plugin_tools_tests.sh
   - name: format
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     # Skip Swift formatting on Linux builders.
     args: ["format", "--fail-on-change", "--no-swift"]
     always: true
   - name: license validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["license-check"]
     always: true
     # The major and minor version here should match the lowest version analyzed
     # in legacy version analysis (.ci.yaml analyze_legacy).
   - name: pubspec validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args:
       - "pubspec-check"
       - "--min-min-flutter-version=3.10.0"
@@ -24,7 +24,7 @@ tasks:
       - "--allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml"
     always: true
   - name: README validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["readme-check"]
     always: true
     # Re-run with --require-excerpts, skipping packages that still need
@@ -32,23 +32,23 @@ tasks:
     # has been fixed, this can be removed --require-excerpts added to the
     # run above.
   - name: README snippet configuration validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["readme-check", "--require-excerpts", "--exclude=script/configs/temp_exclude_excerpt.yaml"]
     always: true
   - name: README snippet validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["update-excerpts", "--fail-on-change"]
     always: true
   - name: Gradle validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["gradle-check"]
     always: true
   - name: Repository-level package metadata validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["check-repo-package-info"]
     always: true
   - name: Dependabot coverage validation
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["dependabot-check"]
     always: true
   - name: CHANGELOG and version validation
@@ -59,6 +59,6 @@ tasks:
     always: true
   # This is the slowest test, so prefer keeping it last.
   - name: publishability
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["publish-check", "--allow-pre-release"]
     always: true

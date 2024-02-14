@@ -404,8 +404,10 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     // Workaround for https://github.com/flutter/flutter/issues/135673
     // Once that is fixed on stable, this logic can be removed and the command
     // can always just be run with "integration_test".
-    final bool needsMultipleInvocations =
-        testFiles.length > 1 && getBoolArg(platformMacOS);
+    final bool needsMultipleInvocations = testFiles.length > 1 &&
+        (getBoolArg(platformLinux) ||
+            getBoolArg(platformMacOS) ||
+            getBoolArg(platformWindows));
     final Iterable<String> individualRunTargets = needsMultipleInvocations
         ? testFiles
             .map((File f) => getRelativePosixPath(f, from: example.directory))

@@ -1,6 +1,10 @@
-## 13.1.1
+## 13.2.1
 
 - Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
+## 13.2.0
+
+- Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`
 
 ## 13.1.0
 

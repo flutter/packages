@@ -72,6 +72,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // This should be the only place where the last GoRoute exit the screen.
     final GoRoute lastRoute = currentConfiguration.last.route;
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
+      walker.buildState(_configuration, _configuration.);
+      
       return !(await lastRoute.onExit!(navigatorKey.currentContext!));
     }
     return false;

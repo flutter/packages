@@ -1,5 +1,10 @@
-## NEXT
+## 0.3.10
 
+* Converts `startProductRequest()`, `finishTransaction()`, `restoreTransactions()`, `presentCodeRedemptionSheet()` to pigeon.
+
+## 0.3.9
+
+* Converts `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
 
 ## 0.3.8+1
