@@ -1065,7 +1065,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods for configuring auto-focus and auto-exposure:
 
-  /// Starts a foucs and metering action.
+  /// Starts a focus and metering action.
   ///
   /// This method will merge the current action's metering points with that
   /// specified such that only one auto-exposure metering point and one
