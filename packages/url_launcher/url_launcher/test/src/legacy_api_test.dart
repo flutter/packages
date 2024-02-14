@@ -238,8 +238,7 @@ void main() {
           _anonymize(TestWidgetsFlutterBinding.ensureInitialized())!
               as TestWidgetsFlutterBinding;
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      final RenderView renderView =
-          binding.renderView;
+      final RenderView renderView = binding.renderView;
       renderView.automaticSystemUiAdjustment = true;
       final Future<bool> launchResult =
           launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);
@@ -269,8 +268,7 @@ void main() {
           _anonymize(TestWidgetsFlutterBinding.ensureInitialized())!
               as TestWidgetsFlutterBinding;
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      final RenderView renderView =
-          binding.renderView;
+      final RenderView renderView = binding.renderView;
       expect(renderView.automaticSystemUiAdjustment, true);
       final Future<bool> launchResult =
           launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);
