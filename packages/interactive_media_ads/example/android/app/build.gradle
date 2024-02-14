@@ -38,6 +38,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        integrationTest.java.srcDirs += 'src/androidTest/kotlin'
     }
 
     defaultConfig {
