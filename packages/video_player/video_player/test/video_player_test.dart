@@ -1267,7 +1267,6 @@ void main() {
       }
     });
 
-    controller.value = controller.value.copyWith(isPlaying: true);
     fakeVideoEventStream.add(VideoEvent(eventType: VideoEventType.completed));
   });
 
