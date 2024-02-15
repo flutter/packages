@@ -70,7 +70,6 @@ class DartTestCommand extends PackageLoopingCommand {
             platformWeb, package,
             requiredMode: PlatformSupport.inline) &&
         package.directory.basename.endsWith('_web');
-    final String? webRenderer;
     if (webPlatform) {
       if (isFlutterPlugin(package) &&
           !pluginSupportsPlatform(platformWeb, package)) {
@@ -99,14 +98,11 @@ class DartTestCommand extends PackageLoopingCommand {
       platform = 'chrome';
     }
 
-    if (platform == 'chrome') {
-      // All the web tests assume the html renderer currently.
-      webRenderer = 'html';
-    }
-
+    // All the web tests assume the html renderer currently.
+    final String? webRenderer = (platform == 'chrome') ? 'html' : null;
     bool passed;
     if (package.requiresFlutter()) {
-      passed = await _runFlutterTests(package, platform: platform);
+      passed = await _runFlutterTests(package, platform: platform, webRenderer: webRenderer);
     } else {
       passed = await _runDartTests(package, platform: platform);
     }
@@ -115,7 +111,7 @@ class DartTestCommand extends PackageLoopingCommand {
 
   /// Runs the Dart tests for a Flutter package, returning true on success.
   Future<bool> _runFlutterTests(RepositoryPackage package,
-      {String? platform}) async {
+      {String? platform, String? webRenderer}) async {
     final String experiment = getStringArg(kEnableExperiment);
 
     final int exitCode = await processRunner.runAndStream(
@@ -127,6 +123,7 @@ class DartTestCommand extends PackageLoopingCommand {
         // Flutter defaults to VM mode (under a different name) and explicitly
         // setting it is deprecated, so pass nothing in that case.
         if (platform != null && platform != 'vm') '--platform=$platform',
+        if (webRenderer != null) '--web-renderer=$webRenderer',
       ],
       workingDir: package.directory,
     );
@@ -135,7 +132,7 @@ class DartTestCommand extends PackageLoopingCommand {
 
   /// Runs the Dart tests for a non-Flutter package, returning true on success.
   Future<bool> _runDartTests(RepositoryPackage package,
-      {String? platform, String? webRenderer}) async {
+      {String? platform}) async {
     // Unlike `flutter test`, `dart run test` does not automatically get
     // packages
     if (!await runPubGet(package, processRunner, super.platform)) {
@@ -152,7 +149,6 @@ class DartTestCommand extends PackageLoopingCommand {
         if (experiment.isNotEmpty) '--enable-experiment=$experiment',
         'test',
         if (platform != null) '--platform=$platform',
-        if (webRenderer != null) '--web-renderer=$webRenderer',
       ],
       workingDir: package.directory,
     );
