@@ -1,3 +1,4 @@
+<?code-excerpt path-base="./example/lib"?>
 # quick_actions
 
 This Flutter plugin allows you to manage and interact with the application's
@@ -19,23 +20,30 @@ Initialize the library early in your application's lifecycle by providing a
 callback, which will then be called whenever the user launches the app via a
 quick action.
 
+<?code-excerpt "main.dart (Initialize)"?>
 ```dart
-final QuickActions quickActions = const QuickActions();
-quickActions.initialize((shortcutType) {
-  if (shortcutType == 'action_main') {
-    print('The user tapped on the "Main view" action.');
+const QuickActions quickActions = QuickActions();
+quickActions.initialize((String shortcutType) {
+  if (shortcutType == 'ios_action') {
+    debugPrint('You pressed ios action');
+  } else if (shortcutType == 'android_action') {
+    debugPrint('You pressed android action');
   }
-  // More handling code...
+  // ···
 });
 ```
 
 Finally, manage the app's quick actions, for instance:
-
+<?code-excerpt "main.dart (SetShortcuts)"?>
 ```dart
 quickActions.setShortcutItems(<ShortcutItem>[
-  const ShortcutItem(type: 'action_main', localizedTitle: 'Main view', icon: 'icon_main'),
-  const ShortcutItem(type: 'action_help', localizedTitle: 'Help', icon: 'icon_help')
-]);
+  // ···
+    const ShortcutItem(type: 'ios_action', localizedTitle: 'iOS Action', icon: 'AppIcon'),
+  // ···
+    const ShortcutItem(type: 'android_action', localizedTitle: 'Android Action', icon: 'ic_launcher')
+]).then((void _) {
+  // ···
+});
 ```
 
 Please note, that the `type` argument should be unique within your application
