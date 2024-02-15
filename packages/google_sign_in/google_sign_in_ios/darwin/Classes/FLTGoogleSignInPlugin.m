@@ -274,7 +274,7 @@ static FlutterError *getFlutterError(NSError *error) {
 /// provided.
 - (GIDConfiguration *)configurationWithClientIdentifier:(NSString *)runtimeClientIdentifier
                                  serverClientIdentifier:(NSString *)runtimeServerClientIdentifier
-                                           hostedDomain:(id)hostedDomain {
+                                           hostedDomain:(NSString *)hostedDomain {
   NSString *clientID = runtimeClientIdentifier ?: self.googleServiceProperties[kClientIdKey];
   if (!clientID) {
     // Creating a GIDConfiguration requires a client identifier.
