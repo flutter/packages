@@ -354,7 +354,7 @@ class SKError {
   ///
   /// Any key of the map must be a valid [NSErrorUserInfoKey](https://developer.apple.com/documentation/foundation/nserroruserinfokey?language=objc).
   @JsonKey(defaultValue: <String, dynamic>{})
-  final Map<String?, Object?> userInfo;
+  final Map<String?, Object?>? userInfo;
 
   @override
   bool operator ==(Object other) {
