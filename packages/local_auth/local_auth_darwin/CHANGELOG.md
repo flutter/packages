@@ -1,3 +1,7 @@
+## 1.2.2
+
+* Adds compatibility with `intl` 0.19.0.
+
 ## 1.2.1
 
 * Renames the Objective-C plugin classes to avoid runtime conflicts with
