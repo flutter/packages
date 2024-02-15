@@ -1,3 +1,7 @@
+## 1.0.23
+
+* Replaces usage of deprecated Flutter APIs.
+
 ## 1.0.22
 
 * Adds more testing to restore coverage to 100%.
