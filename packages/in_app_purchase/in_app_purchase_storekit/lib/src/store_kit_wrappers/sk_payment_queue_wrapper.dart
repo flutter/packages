@@ -354,7 +354,7 @@ class SKError {
   ///
   /// Any key of the map must be a valid [NSErrorUserInfoKey](https://developer.apple.com/documentation/foundation/nserroruserinfokey?language=objc).
   @JsonKey(defaultValue: <String, dynamic>{})
-  final Map<String?, Object?>? userInfo;
+  final Map<String?, Object?> userInfo;
 
   @override
   bool operator ==(Object other) {
@@ -380,7 +380,10 @@ class SKError {
 
   /// Converts [SKErrorMessage] into the dart equivalent
   static SKError convertFromPigeon(SKErrorMessage msg) {
-    return SKError(code: msg.code, domain: msg.domain, userInfo: msg.userInfo);
+    return SKError(
+        code: msg.code,
+        domain: msg.domain,
+        userInfo: msg.userInfo ?? <String, Object>{});
   }
 }
 

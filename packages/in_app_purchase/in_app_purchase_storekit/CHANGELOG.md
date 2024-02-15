@@ -1,6 +1,6 @@
-## 0.3.10+1
+## 0.3.11
 
-* Fixes issue with SKError not being nullable
+* Fixes SKError.userInfo not being nullable.
 
 ## 0.3.10
 
