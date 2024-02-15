@@ -86,9 +86,6 @@
                                   binaryMessenger:[registrar messenger]];
   return self;
 }
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  result(FlutterMethodNotImplemented);
-}
 
 - (nullable NSNumber *)canMakePaymentsWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {

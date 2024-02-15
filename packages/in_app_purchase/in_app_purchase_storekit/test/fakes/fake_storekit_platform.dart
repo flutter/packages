@@ -122,12 +122,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   Future<dynamic> onMethodCall(MethodCall call) {
     switch (call.method) {
-      case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
-        if (receiptData != null) {
-          return Future<String>.value(receiptData!);
-        } else {
-          throw PlatformException(code: 'no_receipt_data');
-        }
       case '-[InAppPurchasePlugin refreshReceipt:result:]':
         receiptData = 'refreshed receipt data';
         return Future<void>.sync(() {});
@@ -249,8 +243,8 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
-    // TODO: implement refreshReceipt
-    throw UnimplementedError();
+    receiptData = 'refreshed receipt data';
+    return Future<void>.sync(() {});
   }
 
   @override
@@ -265,8 +259,11 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   String retrieveReceiptData() {
-    // TODO: implement retrieveReceiptData
-    throw UnimplementedError();
+    if (receiptData != null) {
+      return receiptData!;
+    } else {
+      throw PlatformException(code: 'no_receipt_data');
+    }
   }
 
   @override
