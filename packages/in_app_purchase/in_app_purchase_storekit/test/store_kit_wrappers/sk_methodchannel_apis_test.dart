@@ -333,7 +333,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
-    // TODO: implement refreshReceipt
+    print("refreshReceipt");
     throw UnimplementedError();
   }
 
