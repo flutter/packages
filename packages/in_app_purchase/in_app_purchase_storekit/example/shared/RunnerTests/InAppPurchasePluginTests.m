@@ -26,20 +26,6 @@
 - (void)tearDown {
 }
 
-- (void)testInvalidMethodCall {
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:@"expect result to be not implemented"];
-  FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"invalid" arguments:NULL];
-  __block id result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           [expectation fulfill];
-                           result = r;
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssertEqual(result, FlutterMethodNotImplemented);
-}
-
 - (void)testCanMakePayments {
   FlutterError *error;
   NSNumber *result = [self.plugin canMakePaymentsWithError:&error];
@@ -299,17 +285,8 @@
 }
 
 - (void)testRetrieveReceiptDataSuccess {
-  XCTestExpectation *expectation = [self expectationWithDescription:@"receipt data retrieved"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
-                     arguments:nil];
-  __block NSDictionary *result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = r;
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
+  FlutterError *error;
+  id result = [self.plugin retrieveReceiptDataWithError:&error];
   XCTAssertNotNil(result);
   XCTAssert([result isKindOfClass:[NSString class]]);
 }
@@ -317,10 +294,10 @@
 - (void)testRetrieveReceiptDataNil {
   NSBundle *mockBundle = OCMPartialMock([NSBundle mainBundle]);
   OCMStub(mockBundle.appStoreReceiptURL).andReturn(nil);
-  XCTestExpectation *expectation = [self expectationWithDescription:@"nil receipt data retrieved"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
-                     arguments:nil];
+//  XCTestExpectation *expectation = [self expectationWithDescription:@"nil receipt data retrieved"];
+//  FlutterMethodCall *call = [FlutterMethodCall
+//      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
+//                     arguments:nil];
   __block NSDictionary *result;
   [self.plugin handleMethodCall:call
                          result:^(id r) {

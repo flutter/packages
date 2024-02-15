@@ -76,10 +76,10 @@ void main() {
     });
 
     test('refreshed receipt', () async {
-      final int receiptCountBefore = fakeStoreKitPlatform.refreshReceipt;
+      final int receiptCountBefore = fakeStoreKitPlatform.refreshReceiptCount;
       await SKRequestMaker().startRefreshReceiptRequest(
           receiptProperties: <String, dynamic>{'isExpired': true});
-      expect(fakeStoreKitPlatform.refreshReceipt, receiptCountBefore + 1);
+      expect(fakeStoreKitPlatform.refreshReceiptCount, receiptCountBefore + 1);
       expect(fakeStoreKitPlatform.refreshReceiptParam,
           <String, dynamic>{'isExpired': true});
     });
@@ -175,9 +175,9 @@ void main() {
     });
 
     test('showPriceConsentIfNeeded should call methodChannel', () async {
-      expect(fakeStoreKitPlatform.showPriceConsentIfNeeded, false);
+      expect(fakeStoreKitPlatform.showPriceConsent, false);
       await SKPaymentQueueWrapper().showPriceConsentIfNeeded();
-      expect(fakeStoreKitPlatform.showPriceConsentIfNeeded, true);
+      expect(fakeStoreKitPlatform.showPriceConsent, true);
     });
   });
 
@@ -205,7 +205,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   bool getReceiptFailTest = false;
 
   // refresh receipt request
-  int refreshReceipt = 0;
+  int refreshReceiptCount = 0;
   late Map<String, dynamic> refreshReceiptParam;
 
   // payment queue
@@ -217,7 +217,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   bool presentCodeRedemption = false;
 
   // show price consent sheet
-  bool showPriceConsentIfNeeded = false;
+  bool showPriceConsent = false;
 
   // indicate if the payment queue delegate is registered
   bool isPaymentQueueDelegateRegistered = false;
@@ -229,7 +229,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     switch (call.method) {
       // request makers
       case '-[InAppPurchasePlugin refreshReceipt:result:]':
-        refreshReceipt++;
+        refreshReceiptCount++;
         refreshReceiptParam = Map.castFrom<dynamic, dynamic, String, dynamic>(
             call.arguments as Map<dynamic, dynamic>);
         return Future<void>.sync(() {});
@@ -252,7 +252,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         isPaymentQueueDelegateRegistered = false;
         return Future<void>.sync(() {});
       case '-[SKPaymentQueue showPriceConsentIfNeeded]':
-        showPriceConsentIfNeeded = true;
+        showPriceConsent = true;
         return Future<void>.sync(() {});
     }
     return Future<dynamic>.error('method not mocked');
@@ -303,6 +303,43 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
           SKProductsResponseMessage());
     }
     return Future<SKProductsResponseMessage>.value(dummyProductResponseMessage);
+  }
+
+  @override
+  void registerPaymentQueueDelegate() {
+    // TODO: implement registerPaymentQueueDelegate
+  }
+
+  @override
+  void removePaymentQueueDelegate() {
+    // TODO: implement removePaymentQueueDelegate
+  }
+
+  @override
+  void startObservingPaymentQueue() {
+    // TODO: implement startObservingPaymentQueue
+  }
+
+  @override
+  void stopObservingPaymentQueue() {
+    // TODO: implement stopObservingPaymentQueue
+  }
+
+  @override
+  String retrieveReceiptData() {
+    // TODO: implement retrieveReceiptData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
+    // TODO: implement refreshReceipt
+    throw UnimplementedError();
+  }
+
+  @override
+  void showPriceConsentIfNeeded() {
+    // TODO: implement showPriceConsentIfNeeded
   }
 }
 

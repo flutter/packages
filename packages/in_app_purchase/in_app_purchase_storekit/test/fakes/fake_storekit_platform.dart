@@ -246,4 +246,41 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     return Future<SKProductsResponseMessage>.value(
         SkProductResponseWrapper.convertToPigeon(response));
   }
+
+  @override
+  Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
+    // TODO: implement refreshReceipt
+    throw UnimplementedError();
+  }
+
+  @override
+  void registerPaymentQueueDelegate() {
+    // TODO: implement registerPaymentQueueDelegate
+  }
+
+  @override
+  void removePaymentQueueDelegate() {
+    // TODO: implement removePaymentQueueDelegate
+  }
+
+  @override
+  String retrieveReceiptData() {
+    // TODO: implement retrieveReceiptData
+    throw UnimplementedError();
+  }
+
+  @override
+  void showPriceConsentIfNeeded() {
+    // TODO: implement showPriceConsentIfNeeded
+  }
+
+  @override
+  void startObservingPaymentQueue() {
+    // TODO: implement startObservingPaymentQueue
+  }
+
+  @override
+  void stopObservingPaymentQueue() {
+    // TODO: implement stopObservingPaymentQueue
+  }
 }

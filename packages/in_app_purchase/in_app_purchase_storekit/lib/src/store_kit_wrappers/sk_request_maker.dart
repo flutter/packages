@@ -54,9 +54,6 @@ class SKRequestMaker {
   /// * isVolumePurchase: whether the receipt is a Volume Purchase Plan receipt.
   Future<void> startRefreshReceiptRequest(
       {Map<String, dynamic>? receiptProperties}) {
-    return channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin refreshReceipt:result:]',
-      receiptProperties,
-    );
+    return _hostApi.refreshReceipt(receiptProperties: receiptProperties);
   }
 }

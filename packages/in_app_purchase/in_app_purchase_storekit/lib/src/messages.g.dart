@@ -15,8 +15,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -33,32 +32,27 @@ enum SKPaymentTransactionStateMessage {
   /// transaction to update to another state. Never complete a transaction that
   /// is still in a purchasing state.
   purchasing,
-
   /// The user's payment has been succesfully processed.
   ///
   /// You should provide the user the content that they purchased.
   purchased,
-
   /// The transaction failed.
   ///
   /// Check the [PaymentTransactionWrapper.error] property from
   /// [PaymentTransactionWrapper] for details.
   failed,
-
   /// This transaction is restoring content previously purchased by the user.
   ///
   /// The previous transaction information can be obtained in
   /// [PaymentTransactionWrapper.originalTransaction] from
   /// [PaymentTransactionWrapper].
   restored,
-
   /// The transaction is in the queue but pending external action. Wait for
   /// another callback to get the final state.
   ///
   /// You should update your UI to indicate that you are waiting for the
   /// transaction to update to another state.
   deferred,
-
   /// Indicates the transaction is in an unspecified state.
   unspecified,
 }
@@ -66,7 +60,6 @@ enum SKPaymentTransactionStateMessage {
 enum SKProductDiscountTypeMessage {
   /// A constant indicating the discount type is an introductory offer.
   introductory,
-
   /// A constant indicating the discount type is a promotional offer.
   subscription,
 }
@@ -74,13 +67,10 @@ enum SKProductDiscountTypeMessage {
 enum SKProductDiscountPaymentModeMessage {
   /// Allows user to pay the discounted price at each payment period.
   payAsYouGo,
-
   /// Allows user to pay the discounted price upfront and receive the product for the rest of time that was paid for.
   payUpFront,
-
   /// User pays nothing during the discounted period.
   freeTrial,
-
   /// Unspecified mode.
   unspecified,
 }
@@ -129,8 +119,7 @@ class SKPaymentTransactionMessage {
     result as List<Object?>;
     return SKPaymentTransactionMessage(
       payment: SKPaymentMessage.decode(result[0]! as List<Object?>),
-      transactionState:
-          SKPaymentTransactionStateMessage.values[result[1]! as int],
+      transactionState: SKPaymentTransactionStateMessage.values[result[1]! as int],
       originalTransaction: result[2] != null
           ? SKPaymentTransactionMessage.decode(result[2]! as List<Object?>)
           : null,
@@ -370,14 +359,12 @@ class SKProductMessage {
       subscriptionGroupIdentifier: result[4] as String?,
       price: result[5]! as String,
       subscriptionPeriod: result[6] != null
-          ? SKProductSubscriptionPeriodMessage.decode(
-              result[6]! as List<Object?>)
+          ? SKProductSubscriptionPeriodMessage.decode(result[6]! as List<Object?>)
           : null,
       introductoryPrice: result[7] != null
           ? SKProductDiscountMessage.decode(result[7]! as List<Object?>)
           : null,
-      discounts:
-          (result[8] as List<Object?>?)?.cast<SKProductDiscountMessage?>(),
+      discounts: (result[8] as List<Object?>?)?.cast<SKProductDiscountMessage?>(),
     );
   }
 }
@@ -459,10 +446,8 @@ class SKProductDiscountMessage {
       price: result[0]! as String,
       priceLocale: SKPriceLocaleMessage.decode(result[1]! as List<Object?>),
       numberOfPeriods: result[2]! as int,
-      paymentMode:
-          SKProductDiscountPaymentModeMessage.values[result[3]! as int],
-      subscriptionPeriod: SKProductSubscriptionPeriodMessage.decode(
-          result[4]! as List<Object?>),
+      paymentMode: SKProductDiscountPaymentModeMessage.values[result[3]! as int],
+      subscriptionPeriod: SKProductSubscriptionPeriodMessage.decode(result[4]! as List<Object?>),
       identifier: result[5] as String?,
       type: SKProductDiscountTypeMessage.values[result[6]! as int],
     );
@@ -537,25 +522,25 @@ class _InAppPurchaseAPICodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return SKErrorMessage.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return SKPaymentDiscountMessage.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return SKPaymentMessage.decode(readValue(buffer)!);
-      case 131:
+      case 131: 
         return SKPaymentTransactionMessage.decode(readValue(buffer)!);
-      case 132:
+      case 132: 
         return SKPriceLocaleMessage.decode(readValue(buffer)!);
-      case 133:
+      case 133: 
         return SKProductDiscountMessage.decode(readValue(buffer)!);
-      case 134:
+      case 134: 
         return SKProductMessage.decode(readValue(buffer)!);
-      case 135:
+      case 135: 
         return SKProductSubscriptionPeriodMessage.decode(readValue(buffer)!);
-      case 136:
+      case 136: 
         return SKProductsResponseMessage.decode(readValue(buffer)!);
-      case 137:
+      case 137: 
         return SKStorefrontMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -571,15 +556,12 @@ class InAppPurchaseAPI {
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _InAppPurchaseAPICodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _InAppPurchaseAPICodec();
 
   /// Returns if the current device is able to make payments
   Future<bool> canMakePayments() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.canMakePayments';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -605,10 +587,8 @@ class InAppPurchaseAPI {
   }
 
   Future<List<SKPaymentTransactionMessage?>> transactions() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.transactions';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -629,16 +609,13 @@ class InAppPurchaseAPI {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as List<Object?>?)!
-          .cast<SKPaymentTransactionMessage?>();
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<SKPaymentTransactionMessage?>();
     }
   }
 
   Future<SKStorefrontMessage> storefront() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.storefront';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -664,10 +641,8 @@ class InAppPurchaseAPI {
   }
 
   Future<void> addPayment(Map<String?, Object?> paymentMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.addPayment';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -687,18 +662,15 @@ class InAppPurchaseAPI {
     }
   }
 
-  Future<SKProductsResponseMessage> startProductRequest(
-      List<String?> productIdentifiers) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.startProductRequest';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<SKProductsResponseMessage> startProductRequest(List<String?> productIdentifiers) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.startProductRequest';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[productIdentifiers]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[productIdentifiers]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -718,10 +690,8 @@ class InAppPurchaseAPI {
   }
 
   Future<void> finishTransaction(Map<String?, String?> finishMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.finishTransaction';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.finishTransaction';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -742,16 +712,14 @@ class InAppPurchaseAPI {
   }
 
   Future<void> restoreTransactions(String? applicationUserName) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.restoreTransactions';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.restoreTransactions';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[applicationUserName]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[applicationUserName]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -766,10 +734,167 @@ class InAppPurchaseAPI {
   }
 
   Future<void> presentCodeRedemptionSheet() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.presentCodeRedemptionSheet';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.presentCodeRedemptionSheet';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<String> retrieveReceiptData() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.retrieveReceiptData';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?)!;
+    }
+  }
+
+  Future<void> refreshReceipt({Map<String?, Object?>? receiptProperties}) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.refreshReceipt';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[receiptProperties]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> startObservingPaymentQueue() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.startObservingPaymentQueue';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> stopObservingPaymentQueue() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.stopObservingPaymentQueue';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> registerPaymentQueueDelegate() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.registerPaymentQueueDelegate';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> removePaymentQueueDelegate() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.removePaymentQueueDelegate';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> showPriceConsentIfNeeded() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.showPriceConsentIfNeeded';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
