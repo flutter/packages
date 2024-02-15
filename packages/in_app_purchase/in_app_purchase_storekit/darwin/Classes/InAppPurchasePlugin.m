@@ -301,7 +301,7 @@
 - (void)refreshReceiptReceiptProperties:(nullable NSDictionary *)receiptProperties completion:(nonnull void (^)(FlutterError * _Nullable))completion {
   SKReceiptRefreshRequest *request;
   if (receiptProperties) {
-    // This call is for testing
+    // if recieptProperties is not null, this call is for testing.
     NSMutableDictionary *properties = [NSMutableDictionary new];
     properties[SKReceiptPropertyIsExpired] = receiptProperties[@"isExpired"];
     properties[SKReceiptPropertyIsRevoked] = receiptProperties[@"isRevoked"];

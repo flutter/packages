@@ -294,54 +294,35 @@
 - (void)testRetrieveReceiptDataNil {
   NSBundle *mockBundle = OCMPartialMock([NSBundle mainBundle]);
   OCMStub(mockBundle.appStoreReceiptURL).andReturn(nil);
-//  XCTestExpectation *expectation = [self expectationWithDescription:@"nil receipt data retrieved"];
-//  FlutterMethodCall *call = [FlutterMethodCall
-//      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
-//                     arguments:nil];
-  __block NSDictionary *result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = r;
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
+  FlutterError *error;
+  id result = [self.plugin retrieveReceiptDataWithError:&error];
   XCTAssertNil(result);
 }
 
 - (void)testRetrieveReceiptDataError {
-  XCTestExpectation *expectation = [self expectationWithDescription:@"receipt data retrieved"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
-                     arguments:nil];
-  __block NSDictionary *result;
   self.receiptManagerStub.returnError = YES;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = r;
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssertNotNil(result);
-  XCTAssert([result isKindOfClass:[FlutterError class]]);
-  NSDictionary *details = ((FlutterError *)result).details;
+
+  FlutterError *error;
+  id result = [self.plugin retrieveReceiptDataWithError:&error];
+
+  XCTAssertNil(result);
+  XCTAssertNotNil(error);
+  NSDictionary *details = error.details;
   XCTAssertNotNil(details[@"error"]);
   NSNumber *errorCode = (NSNumber *)details[@"error"][@"code"];
   XCTAssertEqual(errorCode, [NSNumber numberWithInteger:99]);
 }
 
 - (void)testRefreshReceiptRequest {
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect success"];
-  FlutterMethodCall *call =
-      [FlutterMethodCall methodCallWithMethodName:@"-[InAppPurchasePlugin refreshReceipt:result:]"
-                                        arguments:nil];
-  __block BOOL result = NO;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = YES;
-                           [expectation fulfill];
-                         }];
+    XCTestExpectation *expectation =
+        [self expectationWithDescription:@"completion handler successfully called"];
+  FlutterError *error;
+    [self.plugin
+     refreshReceiptReceiptProperties:nil
+                                   completion:^(FlutterError *_Nullable error) {
+                                     [expectation fulfill];
+                                   }];
   [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssertTrue(result);
 }
 
 - (void)testPresentCodeRedemptionSheet {
