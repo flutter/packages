@@ -1,3 +1,10 @@
+## 0.6.20
+
+* Adds `textScaler` to `MarkdownStyleSheet`, and deprecates `textScaleFactor`.
+  * Clients using `textScaleFactor: someFactor` should replace it with
+    `TextScaler.linear(someFactor)` to preserve behavior.
+* Remove use of deprecated `textScaleFactor` methods from the Flutter framework.
+
 ## 0.6.19
 
 * Replaces `RichText` with `Text.rich` so the widget can work with `SelectionArea` when `selectable` is set to false.
@@ -40,7 +47,7 @@
 
 * Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
   the parent text's `TextStyle`.
-  
+
 ## 0.6.16
 
 * Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
