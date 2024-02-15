@@ -1,3 +1,7 @@
+## 13.2.0
+
+- Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`
+
 ## 13.1.0
 
 - Adds `topRoute` to `GoRouterState`

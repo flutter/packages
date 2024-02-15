@@ -243,16 +243,15 @@ void main() {
 
     test('videoEventsFor', () async {
       const String mockChannel = 'flutter.io/videoPlayer/videoEvents123';
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(
         mockChannel,
         (ByteData? message) async {
           final MethodCall methodCall =
               const StandardMethodCodec().decodeMethodCall(message);
           if (methodCall.method == 'listen') {
-            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-                .defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding
+                .instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
                     const StandardMethodCodec()
@@ -264,8 +263,8 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-                .defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding
+                .instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
                     const StandardMethodCodec()
@@ -274,8 +273,8 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-                .defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding
+                .instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
                     const StandardMethodCodec()
@@ -288,8 +287,8 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-                .defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding
+                .instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
                     const StandardMethodCodec()
@@ -298,8 +297,8 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-                .defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding
+                .instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
                     const StandardMethodCodec()
@@ -308,8 +307,8 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-                .defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding
+                .instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
                     const StandardMethodCodec()
@@ -319,8 +318,8 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-                .defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding
+                .instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
                     const StandardMethodCodec()
@@ -373,9 +372,3 @@ void main() {
     });
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
