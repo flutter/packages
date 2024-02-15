@@ -18,4 +18,3 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  js: ^0.6.3

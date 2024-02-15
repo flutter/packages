@@ -1,3 +1,8 @@
+## NEXT
+
+- Next Dart/Flutter
+- Latest pkg:web
+
 ## 0.3.0+2
 
 * Adds `fedcm_auto` to `CredentialSelectBy` enum.

@@ -3,11 +3,10 @@
 // found in the LICENSE file.
 
 @JS()
-library integration_test_utils;
+library;
 
 import 'dart:html';
-
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
 // Returns the URL to load an asset from this example app as a network source.
 //
