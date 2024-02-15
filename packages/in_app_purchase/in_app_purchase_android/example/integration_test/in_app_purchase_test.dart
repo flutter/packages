@@ -27,7 +27,7 @@ void main() {
     late final BillingClient billingClient;
 
     setUpAll(() {
-      billingClient = BillingClient((PurchasesResultWrapper _) {});
+      billingClient = BillingClient((PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {});
     });
 
     testWidgets('BillingClient.acknowledgePurchase',

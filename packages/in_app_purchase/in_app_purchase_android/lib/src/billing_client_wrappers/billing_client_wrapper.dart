@@ -18,11 +18,14 @@ part 'billing_client_wrapper.g.dart';
 @visibleForTesting
 const String kOnPurchasesUpdated =
     'PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)';
-const String _kOnBillingServiceDisconnected =
-    'BillingClientStateListener#onBillingServiceDisconnected()';
+
+/// Method idendifier for the userSelectedAlternativeBilling method channel method.
 @visibleForTesting
 const String kUserSelectedAlternativeBilling =
     'UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)';
+
+const String _kOnBillingServiceDisconnected =
+    'BillingClientStateListener#onBillingServiceDisconnected()';
 
 /// Callback triggered by Play in response to purchase activity.
 ///
