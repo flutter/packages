@@ -20,6 +20,9 @@ const String kOnPurchasesUpdated =
     'PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)';
 const String _kOnBillingServiceDisconnected =
     'BillingClientStateListener#onBillingServiceDisconnected()';
+@visibleForTesting
+const String kUserSelectedAlternativeBilling =
+    'UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)';
 
 /// Callback triggered by Play in response to purchase activity.
 ///
@@ -39,6 +42,10 @@ const String _kOnBillingServiceDisconnected =
 /// [`PurchasesUpdatedListener`](https://developer.android.com/reference/com/android/billingclient/api/PurchasesUpdatedListener.html).
 typedef PurchasesUpdatedListener = void Function(
     PurchasesResultWrapper purchasesResult);
+
+/// Wraps a [UserChoiceBillingListener](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceBillingListener)
+typedef UserSelectedAlternativeBillingListener = void Function(
+    UserChoiceDetailsWrapper userChoiceDetailsWrapper);
 
 /// This class can be used directly instead of [InAppPurchaseConnection] to call
 /// Play-specific billing APIs.
@@ -60,11 +67,16 @@ typedef PurchasesUpdatedListener = void Function(
 /// transparently.
 class BillingClient {
   /// Creates a billing client.
-  BillingClient(PurchasesUpdatedListener onPurchasesUpdated) {
+  BillingClient(PurchasesUpdatedListener onPurchasesUpdated,
+      UserSelectedAlternativeBillingListener? alternativeBillingListener) {
     channel.setMethodCallHandler(callHandler);
     _callbacks[kOnPurchasesUpdated] = <PurchasesUpdatedListener>[
       onPurchasesUpdated
     ];
+    _callbacks[kUserSelectedAlternativeBilling] = alternativeBillingListener ==
+            null
+        ? <UserSelectedAlternativeBillingListener>[]
+        : <UserSelectedAlternativeBillingListener>[alternativeBillingListener];
   }
 
   // Occasionally methods in the native layer require a Dart callback to be
@@ -114,7 +126,6 @@ class BillingClient {
           BillingChoiceMode.playBillingOnly}) async {
     final List<Function> disconnectCallbacks =
         _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
-    disconnectCallbacks.add(onBillingServiceDisconnected);
     return BillingResultWrapper.fromJson((await channel
             .invokeMapMethod<String, dynamic>(
                 'BillingClient#startConnection(BillingClientStateListener)',
@@ -412,6 +423,12 @@ class BillingClient {
             _callbacks[_kOnBillingServiceDisconnected]!
                 .cast<OnBillingServiceDisconnected>();
         onDisconnected[handle]();
+      case kUserSelectedAlternativeBilling:
+        final UserSelectedAlternativeBillingListener listener =
+            _callbacks[kUserSelectedAlternativeBilling]!.first
+                as UserSelectedAlternativeBillingListener;
+        listener(UserChoiceDetailsWrapper.fromJson(
+            (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>()));
     }
   }
 }
@@ -507,6 +524,10 @@ enum BillingChoiceMode {
   /// Billing through app provided flow.
   @JsonValue(1)
   alternativeBillingOnly,
+
+  /// Users can choose play billing or alternative billing.
+  @JsonValue(2)
+  userChoiceBilling,
 }
 
 /// Serializer for [BillingChoiceMode].

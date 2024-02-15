@@ -112,10 +112,10 @@ public class MethodCallHandlerTest {
     MockitoAnnotations.openMocks(this);
     // Use the same client no matter if alternative billing is enabled or not.
     when(factory.createBillingClient(
-            context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY))
+            context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY, null))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
-            context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
+            context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockMethodChannel, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -164,7 +164,7 @@ public class MethodCallHandlerTest {
         mockStartConnection(BillingChoiceMode.PLAY_BILLING_ONLY);
     verify(result, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY, null);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -183,7 +183,7 @@ public class MethodCallHandlerTest {
     verify(result, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
-            context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+            context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -209,7 +209,7 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(call, result);
     verify(result, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY, null);
 
     BillingResult billingResult =
         BillingResult.newBuilder()

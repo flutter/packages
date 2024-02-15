@@ -14,6 +14,8 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.UserChoiceDetails;
+import com.android.billingclient.api.UserChoiceDetails.Product;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -230,6 +232,17 @@ import java.util.Map;
     HashMap<String, Object> info = new HashMap<>();
     info.put("responseCode", billingResult.getResponseCode());
     info.put("debugMessage", billingResult.getDebugMessage());
+    return info;
+  }
+
+  static HashMap<String, Object> fromUserChoiceDetails(UserChoiceDetails userChoiceDetails) {
+    HashMap<String, Object> info = new HashMap<>();
+    info.put("externalTransactionToken", userChoiceDetails.getExternalTransactionToken());
+    info.put("originalExternalTransactionId", userChoiceDetails.getOriginalExternalTransactionId());
+    List<Product> productsList = userChoiceDetails.getProducts();
+    info.put("productId", productsList.get(0).getId());
+    info.put("productOfferToken", productsList.get(0).getOfferToken());
+    info.put("productType", productsList.get(0).getType());
     return info;
   }
 
