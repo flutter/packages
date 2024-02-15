@@ -129,6 +129,8 @@ class BillingClient {
           BillingChoiceMode.playBillingOnly}) async {
     final List<Function> disconnectCallbacks =
         _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
+    _callbacks[_kOnBillingServiceDisconnected]
+        ?.add(onBillingServiceDisconnected);
     return BillingResultWrapper.fromJson((await channel
             .invokeMapMethod<String, dynamic>(
                 'BillingClient#startConnection(BillingClientStateListener)',
