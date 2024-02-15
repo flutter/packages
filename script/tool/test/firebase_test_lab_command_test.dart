@@ -570,9 +570,7 @@ public class MainActivityTest {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
         'test/plugin_test.dart',
-        'example/integration_test/bar_test.dart',
         'example/integration_test/foo_test.dart',
-        'example/integration_test/should_not_run.dart',
         'example/android/gradlew',
         kotlinTestFileRelativePath,
       ]);
@@ -588,8 +586,7 @@ class MainActivityTest {
 }
 ''');
 
-      Error? commandError;
-      await runCapturingPrint(
+      final List<String> output = await runCapturingPrint(
         runner,
         <String>[
           'firebase-test-lab',
@@ -597,12 +594,16 @@ class MainActivityTest {
           '--device',
           'model=redfin,version=30',
         ],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
       );
 
-      expect(commandError, isNull);
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('Testing example/integration_test/foo_test.dart...'),
+          contains('Ran for 1 package')
+        ]),
+      );
     });
 
     test('skips packages with no android directory', () async {
