@@ -25,7 +25,9 @@ class AndroidWebViewProxy {
   });
 
   /// Constructs a [android_webview.WebView].
-  final android_webview.WebView Function() createAndroidWebView;
+  final android_webview.WebView Function({
+    void Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged,
+  }) createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
   final android_webview.WebChromeClient Function({

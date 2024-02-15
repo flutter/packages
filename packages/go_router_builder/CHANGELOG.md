@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates dependencies to require `analyzer` 5.2.0 or later.
+
 ## 2.4.1
 
 * Fixes new lint warnings.

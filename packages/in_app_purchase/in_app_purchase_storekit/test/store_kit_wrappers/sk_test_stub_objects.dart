@@ -62,6 +62,12 @@ final SKPriceLocaleWrapper dollarLocale = SKPriceLocaleWrapper(
   countryCode: 'US',
 );
 
+final SKPriceLocaleMessage dollarLocaleMessage = SKPriceLocaleMessage(
+  currencySymbol: r'$',
+  currencyCode: 'USD',
+  countryCode: 'US',
+);
+
 final SKPriceLocaleWrapper noSymbolLocale = SKPriceLocaleWrapper(
   currencySymbol: '',
   currencyCode: 'EUR',
@@ -74,6 +80,12 @@ final SKProductSubscriptionPeriodWrapper dummySubscription =
   unit: SKSubscriptionPeriodUnit.month,
 );
 
+final SKProductSubscriptionPeriodMessage dummySubscriptionMessage =
+    SKProductSubscriptionPeriodMessage(
+  numberOfUnits: 1,
+  unit: SKSubscriptionPeriodUnitMessage.month,
+);
+
 final SKProductDiscountWrapper dummyDiscount = SKProductDiscountWrapper(
   price: '1.0',
   priceLocale: dollarLocale,
@@ -82,6 +94,16 @@ final SKProductDiscountWrapper dummyDiscount = SKProductDiscountWrapper(
   subscriptionPeriod: dummySubscription,
   identifier: 'id',
   type: SKProductDiscountType.subscription,
+);
+
+final SKProductDiscountMessage dummyDiscountMessage = SKProductDiscountMessage(
+  price: '1.0',
+  priceLocale: dollarLocaleMessage,
+  numberOfPeriods: 1,
+  paymentMode: SKProductDiscountPaymentModeMessage.payUpFront,
+  subscriptionPeriod: dummySubscriptionMessage,
+  identifier: 'id',
+  type: SKProductDiscountTypeMessage.subscription,
 );
 
 final SKProductDiscountWrapper dummyDiscountMissingIdentifierAndType =
@@ -107,9 +129,27 @@ final SKProductWrapper dummyProductWrapper = SKProductWrapper(
   discounts: <SKProductDiscountWrapper>[dummyDiscount],
 );
 
+final SKProductMessage dummyProductMessage = SKProductMessage(
+  productIdentifier: 'id',
+  localizedTitle: 'title',
+  localizedDescription: 'description',
+  priceLocale: dollarLocaleMessage,
+  subscriptionGroupIdentifier: 'com.group',
+  price: '1.0',
+  subscriptionPeriod: dummySubscriptionMessage,
+  introductoryPrice: dummyDiscountMessage,
+  discounts: <SKProductDiscountMessage>[dummyDiscountMessage],
+);
+
 final SkProductResponseWrapper dummyProductResponseWrapper =
     SkProductResponseWrapper(
   products: <SKProductWrapper>[dummyProductWrapper],
+  invalidProductIdentifiers: const <String>['123'],
+);
+
+final SKProductsResponseMessage dummyProductResponseMessage =
+    SKProductsResponseMessage(
+  products: <SKProductMessage>[dummyProductMessage],
   invalidProductIdentifiers: const <String>['123'],
 );
 

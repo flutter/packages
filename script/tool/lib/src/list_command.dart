@@ -42,7 +42,6 @@ class ListCommand extends PackageCommand {
         await for (final PackageEnumerationEntry entry in getTargetPackages()) {
           print(entry.package.path);
         }
-        break;
       case _example:
         final Stream<RepositoryPackage> examples = getTargetPackages()
             .expand<RepositoryPackage>(
@@ -50,18 +49,15 @@ class ListCommand extends PackageCommand {
         await for (final RepositoryPackage package in examples) {
           print(package.path);
         }
-        break;
       case _allPackage:
         await for (final PackageEnumerationEntry entry
             in getTargetPackagesAndSubpackages()) {
           print(entry.package.path);
         }
-        break;
       case _file:
         await for (final File file in getFiles()) {
           print(file.path);
         }
-        break;
     }
   }
 }
