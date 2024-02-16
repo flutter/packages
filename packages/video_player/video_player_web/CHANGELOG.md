@@ -1,6 +1,6 @@
-## 2.1.4
+## 2.2.0
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.3.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
 
 ## 2.1.3
 
