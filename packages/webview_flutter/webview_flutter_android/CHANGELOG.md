@@ -1,5 +1,6 @@
-## NEXT
+## 3.15.1
 
+* Bumps androidx.webkit:webkit from 1.7.0 to 1.10.0.
 * Updates compileSdk to 34.
 
 ## 3.15.0
