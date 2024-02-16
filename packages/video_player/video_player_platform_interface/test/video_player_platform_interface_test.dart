@@ -22,4 +22,14 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test('default implementation setAndroidOptions throws unimplemented', () async {
+    await expectLater(
+      () => initialInstance.setAndroidOptions(
+        1,
+        const VideoPlayerAndroidOptions(),
+      ),
+      throwsUnimplementedError,
+    );
+  });
 }

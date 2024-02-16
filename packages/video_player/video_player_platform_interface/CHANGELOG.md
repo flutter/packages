@@ -1,3 +1,6 @@
+## 6.2.3
+* Adds Android options to add support for enabling exoplayer extensions like ffmpeg.
+
 ## 6.2.2
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.
