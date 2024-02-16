@@ -238,9 +238,7 @@ void main() {
           _anonymize(TestWidgetsFlutterBinding.ensureInitialized())!
               as TestWidgetsFlutterBinding;
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      // TODO(goderbauer): Migrate to binding.renderViews when that is available in the oldest supported stable.
-      final RenderView renderView =
-          binding.renderView; // ignore: deprecated_member_use
+      final RenderView renderView = binding.renderView;
       renderView.automaticSystemUiAdjustment = true;
       final Future<bool> launchResult =
           launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);
@@ -270,9 +268,7 @@ void main() {
           _anonymize(TestWidgetsFlutterBinding.ensureInitialized())!
               as TestWidgetsFlutterBinding;
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      // TODO(goderbauer): Migrate to binding.renderViews when that is available in the oldest supported stable.
-      final RenderView renderView =
-          binding.renderView; // ignore: deprecated_member_use
+      final RenderView renderView = binding.renderView;
       expect(renderView.automaticSystemUiAdjustment, true);
       final Future<bool> launchResult =
           launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);

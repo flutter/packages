@@ -5,6 +5,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../messages.g.dart';
+
 part 'sk_storefront_wrapper.g.dart';
 
 /// Contains the location and unique identifier of an Apple App Store storefront.
@@ -65,4 +67,10 @@ class SKStorefrontWrapper {
   /// Converts the instance to a key value map which can be used to serialize
   /// to JSON format.
   Map<String, dynamic> toMap() => _$SKStorefrontWrapperToJson(this);
+
+  /// Converts the pigeon equivalent to an instance of SKStorefrontWrapper
+  static SKStorefrontWrapper convertFromPigeon(SKStorefrontMessage msg) {
+    return SKStorefrontWrapper(
+        countryCode: msg.countryCode, identifier: msg.identifier);
+  }
 }

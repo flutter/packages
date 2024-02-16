@@ -255,8 +255,7 @@ abstract class SceneBuilderRecorder extends Recorder {
           _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
             _profile.record('windowRenderDuration', () {
-              // TODO(goderbauer): Migrate to PlatformDispatcher.implicitView once v3.9.0 is the oldest supported Flutter version.
-              window.render(scene); // ignore: deprecated_member_use
+              window.render(scene);
             }, reported: false);
           }, reported: false);
         }, reported: true);

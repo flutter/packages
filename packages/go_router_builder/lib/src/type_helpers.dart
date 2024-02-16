@@ -87,9 +87,6 @@ String encodeField(PropertyAccessorElement element) {
 }
 
 /// Gets the name of the `const` map generated to help encode [Enum] types.
-// TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
-// 5.2+ (when Flutter 3.4+ is on stable).
-// ignore: deprecated_member_use
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {

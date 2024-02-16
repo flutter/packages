@@ -23,7 +23,7 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
   private final InstanceManager instanceManager;
   private final ResolutionSelectorProxy proxy;
 
-  /** Proxy for constructors and static method of {@link ResolutionSelector}. */
+  /** Proxy for constructor of {@link ResolutionSelector}. */
   @VisibleForTesting
   public static class ResolutionSelectorProxy {
     /** Creates an instance of {@link ResolutionSelector}. */
@@ -55,7 +55,7 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
    * Constructs a {@link ResolutionSelectorHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link ResolutionSelector}
+   * @param proxy proxy for constructor of {@link ResolutionSelector}
    */
   @VisibleForTesting
   ResolutionSelectorHostApiImpl(

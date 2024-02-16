@@ -1135,6 +1135,9 @@ abstract class WebViewFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier);
 
+  void onScrollChanged(
+      int webViewInstanceId, int left, int top, int oldLeft, int oldTop);
+
   static void setup(WebViewFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1153,6 +1156,39 @@ abstract class WebViewFlutterApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.create was null, expected non-null int.');
           api.create(arg_identifier!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_webViewInstanceId = (args[0] as int?);
+          assert(arg_webViewInstanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged was null, expected non-null int.');
+          final int? arg_left = (args[1] as int?);
+          assert(arg_left != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged was null, expected non-null int.');
+          final int? arg_top = (args[2] as int?);
+          assert(arg_top != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged was null, expected non-null int.');
+          final int? arg_oldLeft = (args[3] as int?);
+          assert(arg_oldLeft != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged was null, expected non-null int.');
+          final int? arg_oldTop = (args[4] as int?);
+          assert(arg_oldTop != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged was null, expected non-null int.');
+          api.onScrollChanged(arg_webViewInstanceId!, arg_left!, arg_top!,
+              arg_oldLeft!, arg_oldTop!);
           return;
         });
       }

@@ -1074,4 +1074,18 @@ void main() {
     });
     expect(tested, isTrue);
   });
+
+  testWidgets('DynamicContent subscriptions', (WidgetTester tester) async {
+    final List<String> log = <String>[];
+    final DynamicContent data = DynamicContent(<String, Object?>{
+      'a': <Object>[0, 1],
+      'b': <Object>['q', 'r'],
+    });
+    data.subscribe(<Object>[], (Object value) { log.add('root: $value'); });
+    data.subscribe(<Object>['a', 0], (Object value) { log.add('leaf: $value'); });
+    data.update('a', <Object>[2, 3]);
+    expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}']);
+    data.update('c', 'test');
+    expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}', 'root: {a: [2, 3], b: [q, r], c: test}']);
+  });
 }

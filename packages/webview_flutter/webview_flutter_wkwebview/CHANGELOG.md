@@ -1,3 +1,7 @@
+## 3.12.0
+
+* Adds support for `setOnScrollPositionChange` method to the `WebKitWebViewController`.
+
 ## 3.11.0
 
 * Adds support to show JavaScript dialog. See `PlatformWebViewController.setOnJavaScriptAlertDialog`, `PlatformWebViewController.setOnJavaScriptConfirmDialog` and `PlatformWebViewController.setOnJavaScriptTextInputDialog`.

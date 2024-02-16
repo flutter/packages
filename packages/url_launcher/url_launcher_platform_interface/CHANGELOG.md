@@ -1,3 +1,7 @@
+## 2.3.2
+
+* Replaces deprecated RouteInformation API usage.
+
 ## 2.3.1
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

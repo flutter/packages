@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 2.4.3
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

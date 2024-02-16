@@ -22,7 +22,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   private final InstanceManager instanceManager;
   private final MeteringPointProxy proxy;
 
-  /** Proxy for constructors and static method of {@link MeteringPoint}. */
+  /** Proxy for constructor and static methods of {@link MeteringPoint}. */
   @VisibleForTesting
   public static class MeteringPointProxy {
 
@@ -72,7 +72,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
    * Constructs a {@link MeteringPointHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link MeteringPoint}
+   * @param proxy proxy for constructor and static methods of {@link MeteringPoint}
    */
   @VisibleForTesting
   MeteringPointHostApiImpl(

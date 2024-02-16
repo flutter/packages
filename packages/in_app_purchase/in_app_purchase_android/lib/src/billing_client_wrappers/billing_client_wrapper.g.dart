@@ -22,6 +22,11 @@ const _$BillingResponseEnumMap = {
   BillingResponse.networkError: 12,
 };
 
+const _$BillingChoiceModeEnumMap = {
+  BillingChoiceMode.playBillingOnly: 0,
+  BillingChoiceMode.alternativeBillingOnly: 1,
+};
+
 const _$ProductTypeEnumMap = {
   ProductType.inapp: 'inapp',
   ProductType.subs: 'subs',

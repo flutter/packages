@@ -65,7 +65,13 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-enum class AnEnum { one = 0, two = 1, three = 2 };
+enum class AnEnum {
+  one = 0,
+  two = 1,
+  three = 2,
+  fortyTwo = 3,
+  fourHundredTwentyTwo = 4
+};
 
 // A class containing all supported types.
 //

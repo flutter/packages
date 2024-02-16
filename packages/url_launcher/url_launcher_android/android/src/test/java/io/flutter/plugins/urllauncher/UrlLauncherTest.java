@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.test.core.app.ApplicationProvider;
 import java.util.HashMap;
 import org.junit.Test;
@@ -139,6 +140,7 @@ public class UrlLauncherTest {
     boolean enableDomStorage = false;
     HashMap<String, String> headers = new HashMap<>();
     headers.put("key", "value");
+    boolean showTitle = false;
 
     boolean result =
         api.openUrlInApp(
@@ -148,7 +150,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(enableJavaScript)
                 .setEnableDomStorage(enableDomStorage)
                 .setHeaders(headers)
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(showTitle).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -177,7 +180,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(true).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -200,7 +204,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
@@ -227,7 +232,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(headers)
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
@@ -237,6 +243,64 @@ public class UrlLauncherTest {
     final Bundle passedHeaders =
         intentCaptor.getValue().getExtras().getBundle(Browser.EXTRA_HEADERS);
     assertEquals(headers.get(headerKey), passedHeaders.getString(headerKey));
+  }
+
+  @Test
+  public void openWebView_opensUrlInCustomTabsWithShowTitle() {
+    Activity activity = mock(Activity.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    String url = "https://flutter.dev";
+    HashMap<String, String> headers = new HashMap<>();
+
+    boolean result =
+        api.openUrlInApp(
+            url,
+            true,
+            new Messages.WebViewOptions.Builder()
+                .setEnableJavaScript(false)
+                .setEnableDomStorage(false)
+                .setHeaders(headers)
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(true).build());
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    assertTrue(result);
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
+    assertNull(intentCaptor.getValue().getComponent());
+    assertEquals(
+        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
+        CustomTabsIntent.SHOW_PAGE_TITLE);
+  }
+
+  @Test
+  public void openWebView_opensUrlInCustomTabsWithoutShowTitle() {
+    Activity activity = mock(Activity.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    String url = "https://flutter.dev";
+    HashMap<String, String> headers = new HashMap<>();
+
+    boolean result =
+        api.openUrlInApp(
+            url,
+            true,
+            new Messages.WebViewOptions.Builder()
+                .setEnableJavaScript(false)
+                .setEnableDomStorage(false)
+                .setHeaders(headers)
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    assertTrue(result);
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
+    assertNull(intentCaptor.getValue().getComponent());
+    assertEquals(
+        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
+        CustomTabsIntent.NO_TITLE);
   }
 
   @Test
@@ -257,7 +321,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -285,7 +350,8 @@ public class UrlLauncherTest {
             .setEnableJavaScript(enableJavaScript)
             .setEnableDomStorage(false)
             .setHeaders(headers)
-            .build());
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -312,7 +378,8 @@ public class UrlLauncherTest {
             .setEnableJavaScript(false)
             .setEnableDomStorage(false)
             .setHeaders(headers)
-            .build());
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -339,13 +406,41 @@ public class UrlLauncherTest {
             .setEnableJavaScript(false)
             .setEnableDomStorage(enableDomStorage)
             .setHeaders(headers)
-            .build());
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(
         enableDomStorage,
         intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_DOM_EXTRA));
+  }
+
+  @Test
+  public void openWebView_handlesEnableShowTitle() {
+    Activity activity = mock(Activity.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    boolean enableDomStorage = true;
+    HashMap<String, String> headers = new HashMap<>();
+    boolean showTitle = true;
+
+    api.openUrlInApp(
+        "https://flutter.dev",
+        true,
+        new Messages.WebViewOptions.Builder()
+            .setEnableJavaScript(false)
+            .setEnableDomStorage(enableDomStorage)
+            .setHeaders(headers)
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(showTitle).build());
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture(), isNull());
+
+    assertEquals(
+        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
+        CustomTabsIntent.SHOW_PAGE_TITLE);
   }
 
   @Test
@@ -364,7 +459,8 @@ public class UrlLauncherTest {
                         .setEnableJavaScript(false)
                         .setEnableDomStorage(false)
                         .setHeaders(new HashMap<>())
-                        .build()));
+                        .build(),
+                    new Messages.BrowserOptions.Builder().setShowTitle(false).build()));
     assertEquals("NO_ACTIVITY", exception.code);
   }
 
@@ -388,7 +484,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     assertFalse(result);
   }

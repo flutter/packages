@@ -233,8 +233,8 @@ void defineTests() {
           ),
         );
 
-        final RichText widget = tester.widget(find.byType(RichText));
-        expect(widget.text.style!.color, CupertinoColors.link.color);
+        final Text widget = tester.widget(find.byType(Text));
+        expect(widget.textSpan!.style!.color, CupertinoColors.link.color);
       },
     );
 
@@ -326,6 +326,7 @@ void defineTests() {
           Column,
           Padding,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['Header']);

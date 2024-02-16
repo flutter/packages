@@ -41,10 +41,12 @@ void defineTests() {
           Column,
           Column,
           Wrap,
+          Text,
           RichText,
           SizedBox,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
 

@@ -1,6 +1,11 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 2.4.12
+
 * Updates compileSdk version to 34.
+* Adds error handling for `BehindLiveWindowException`, which may occur upon live-video playback failure.
 
 ## 2.4.11
 

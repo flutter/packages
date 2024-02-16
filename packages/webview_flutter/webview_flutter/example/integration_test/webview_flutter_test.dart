@@ -32,6 +32,25 @@ Future<void> main() async {
       request.response.writeln('${request.headers}');
     } else if (request.uri.path == '/favicon.ico') {
       request.response.statusCode = HttpStatus.notFound;
+    } else if (request.uri.path == '/http-basic-authentication') {
+      final List<String>? authHeader =
+          request.headers[HttpHeaders.authorizationHeader];
+      if (authHeader != null) {
+        final String encodedCredential = authHeader.first.split(' ')[1];
+        final String credential =
+            String.fromCharCodes(base64Decode(encodedCredential));
+        if (credential == 'user:password') {
+          request.response.writeln('Authorized');
+        } else {
+          request.response.headers.add(
+              HttpHeaders.wwwAuthenticateHeader, 'Basic realm="Test realm"');
+          request.response.statusCode = HttpStatus.unauthorized;
+        }
+      } else {
+        request.response.headers
+            .add(HttpHeaders.wwwAuthenticateHeader, 'Basic realm="Test realm"');
+        request.response.statusCode = HttpStatus.unauthorized;
+      }
     } else {
       fail('unexpected request: ${request.method} ${request.uri}');
     }
@@ -41,6 +60,7 @@ Future<void> main() async {
   final String primaryUrl = '$prefixUrl/hello.txt';
   final String secondaryUrl = '$prefixUrl/secondary.txt';
   final String headersUrl = '$prefixUrl/headers';
+  final String basicAuthUrl = '$prefixUrl/http-basic-authentication';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
@@ -52,7 +72,6 @@ Future<void> main() async {
     unawaited(controller.loadRequest(Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
-
     await pageFinished.future;
 
     final String? currentUrl = await controller.currentUrl();
@@ -329,52 +348,6 @@ Future<void> main() async {
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, false);
     });
-
-    // allowsInlineMediaPlayback is a noop on Android, so it is skipped.
-    testWidgets(
-        'Video plays full screen when allowsInlineMediaPlayback is false',
-        (WidgetTester tester) async {
-      final Completer<void> pageLoaded = Completer<void>();
-      final Completer<void> videoPlaying = Completer<void>();
-
-      final WebViewController controller =
-          WebViewController.fromPlatformCreationParams(
-        WebKitWebViewControllerCreationParams(
-          mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-        ),
-      );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setNavigationDelegate(
-        NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
-      ));
-      unawaited(controller.addJavaScriptChannel(
-        'VideoTestTime',
-        onMessageReceived: (JavaScriptMessage message) {
-          final double currentTime = double.parse(message.message);
-          // Let it play for at least 1 second to make sure the related video's properties are set.
-          if (currentTime > 1 && !videoPlaying.isCompleted) {
-            videoPlaying.complete(null);
-          }
-        },
-      ));
-      unawaited(controller.loadRequest(
-        Uri.parse(
-          'data:text/html;charset=utf-8;base64,$videoTestBase64',
-        ),
-      ));
-
-      await tester.pumpWidget(WebViewWidget(controller: controller));
-      await tester.pumpAndSettle();
-
-      await pageLoaded.future;
-
-      // Makes sure we get the correct event that indicates the video is actually playing.
-      await videoPlaying.future;
-
-      final bool fullScreen = await controller
-          .runJavaScriptReturningResult('isFullScreen();') as bool;
-      expect(fullScreen, true);
-    }, skip: Platform.isAndroid);
   });
 
   group('Audio playback policy', () {
@@ -530,10 +503,16 @@ Future<void> main() async {
 
       final Completer<void> pageLoaded = Completer<void>();
       final WebViewController controller = WebViewController();
+      ScrollPositionChange? recordedPosition;
       unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
       unawaited(controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
       )));
+      unawaited(controller.setOnScrollPositionChange(
+          (ScrollPositionChange contentOffsetChange) {
+        recordedPosition = contentOffsetChange;
+      }));
+
       unawaited(controller.loadRequest(Uri.parse(
         'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
       )));
@@ -554,17 +533,23 @@ Future<void> main() async {
       // time to settle.
       expect(scrollPos.dx, isNot(X_SCROLL));
       expect(scrollPos.dy, isNot(Y_SCROLL));
+      expect(recordedPosition?.x, isNot(X_SCROLL));
+      expect(recordedPosition?.y, isNot(Y_SCROLL));
 
       await controller.scrollTo(X_SCROLL, Y_SCROLL);
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL);
       expect(scrollPos.dy, Y_SCROLL);
+      expect(recordedPosition?.x, X_SCROLL);
+      expect(recordedPosition?.y, Y_SCROLL);
 
       // Check scrollBy() (on top of scrollTo())
       await controller.scrollBy(X_SCROLL, Y_SCROLL);
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL * 2);
       expect(scrollPos.dy, Y_SCROLL * 2);
+      expect(recordedPosition?.x, X_SCROLL * 2);
+      expect(recordedPosition?.y, Y_SCROLL * 2);
     });
   });
 
@@ -760,6 +745,54 @@ Future<void> main() async {
       );
 
       await expectLater(urlChangeCompleter.future, completion(secondaryUrl));
+    });
+
+    testWidgets('can receive HTTP basic auth requests',
+        (WidgetTester tester) async {
+      final Completer<void> authRequested = Completer<void>();
+      final WebViewController controller = WebViewController();
+
+      unawaited(
+        controller.setNavigationDelegate(
+          NavigationDelegate(
+            onHttpAuthRequest: (HttpAuthRequest request) =>
+                authRequested.complete(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(WebViewWidget(controller: controller));
+
+      unawaited(controller.loadRequest(Uri.parse(basicAuthUrl)));
+
+      await expectLater(authRequested.future, completes);
+    });
+
+    testWidgets('can authenticate to HTTP basic auth requests',
+        (WidgetTester tester) async {
+      final WebViewController controller = WebViewController();
+      final Completer<void> pageFinished = Completer<void>();
+
+      unawaited(
+        controller.setNavigationDelegate(
+          NavigationDelegate(
+            onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
+              const WebViewCredential(
+                user: 'user',
+                password: 'password',
+              ),
+            ),
+            onPageFinished: (_) => pageFinished.complete(),
+            onWebResourceError: (_) => fail('Authentication failed'),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(WebViewWidget(controller: controller));
+
+      unawaited(controller.loadRequest(Uri.parse(basicAuthUrl)));
+
+      await expectLater(pageFinished.future, completes);
     });
   });
 

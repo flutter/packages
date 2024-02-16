@@ -1319,13 +1319,13 @@ class MatchesWebSettings extends Matcher {
   bool matches(
       covariant WebSettings webSettings, Map<dynamic, dynamic> matchState) {
     return _webSettings!.javascriptMode == webSettings.javascriptMode &&
-        _webSettings!.hasNavigationDelegate ==
+        _webSettings.hasNavigationDelegate ==
             webSettings.hasNavigationDelegate &&
-        _webSettings!.debuggingEnabled == webSettings.debuggingEnabled &&
-        _webSettings!.gestureNavigationEnabled ==
+        _webSettings.debuggingEnabled == webSettings.debuggingEnabled &&
+        _webSettings.gestureNavigationEnabled ==
             webSettings.gestureNavigationEnabled &&
-        _webSettings!.userAgent == webSettings.userAgent &&
-        _webSettings!.zoomEnabled == webSettings.zoomEnabled;
+        _webSettings.userAgent == webSettings.userAgent &&
+        _webSettings.zoomEnabled == webSettings.zoomEnabled;
   }
 }
 

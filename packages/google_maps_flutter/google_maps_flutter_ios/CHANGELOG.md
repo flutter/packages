@@ -1,3 +1,7 @@
+## 2.4.2
+
+* Fixes a bug in "takeSnapshot" function that incorrectly returns a blank image on iOS 17.
+
 ## 2.4.1
 
 * Restores the workaround to exclude arm64 simulator builds, as it is still necessary for applications targeting iOS 12.

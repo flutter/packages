@@ -197,6 +197,17 @@ class MockUIScrollView extends _i1.Mock implements _i3.UIScrollView {
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> setDelegate(_i3.UIScrollViewDelegate? delegate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDelegate,
+          [delegate],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i3.UIScrollView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,

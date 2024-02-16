@@ -16,12 +16,12 @@ import 'table_span.dart';
 /// [TableView].
 typedef TableSpanBuilder = TableSpan Function(int index);
 
-/// Signature for a function that creates a child [Widget] for a given
+/// Signature for a function that creates a child [TableViewCell] for a given
 /// [TableVicinity] in a [TableView], but may return null.
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder = Widget? Function(
+typedef TableViewCellBuilder = TableViewCell Function(
   BuildContext context,
   TableVicinity vicinity,
 );
@@ -116,6 +116,10 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
 
 /// A delegate that supplies children for a [TableViewport] on demand using a
 /// builder callback.
+///
+/// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
+/// automatically insert repaint boundaries. Instead, repaint boundaries are
+/// controlled by [TableViewCell.addRepaintBoundaries].
 class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     with TableCellDelegateMixin {
   /// Creates a lazy building delegate to use with a [TableView].
@@ -124,7 +128,6 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     required int rowCount,
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
-    super.addRepaintBoundaries,
     super.addAutomaticKeepAlives,
     required TableViewCellBuilder cellBuilder,
     required TableSpanBuilder columnBuilder,
@@ -144,6 +147,8 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
               cellBuilder(context, vicinity as TableVicinity),
           maxXIndex: columnCount - 1,
           maxYIndex: rowCount - 1,
+          // repaintBoundaries handled by TableViewCell
+          addRepaintBoundaries: false,
         );
 
   @override
@@ -209,15 +214,18 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
 /// The [children] are accessed for each [TableVicinity.row] and
 /// [TableVicinity.column] of the [TwoDimensionalViewport] as
 /// `children[vicinity.row][vicinity.column]`.
+///
+/// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
+/// automatically insert repaint boundaries. Instead, repaint boundaries are
+/// controlled by [TableViewCell.addRepaintBoundaries].
 class TableCellListDelegate extends TwoDimensionalChildListDelegate
     with TableCellDelegateMixin {
   /// Creates a delegate that supplies children for a [TableView].
   TableCellListDelegate({
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
-    super.addRepaintBoundaries,
     super.addAutomaticKeepAlives,
-    required List<List<Widget>> cells,
+    required List<List<TableViewCell>> cells,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
@@ -226,10 +234,16 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
         _rowBuilder = rowBuilder,
         _pinnedColumnCount = pinnedColumnCount,
         _pinnedRowCount = pinnedRowCount,
-        super(children: cells) {
+        super(
+          children: cells,
+          // repaintBoundaries handled by TableViewCell
+          addRepaintBoundaries: false,
+        ) {
     // Even if there are merged cells, they should be represented by the same
-    // child in each cell location. So all arrays of cells should have the same
-    // length.
+    // child in each cell location. This ensures that no matter which direction
+    // the merged cell scrolls into view from, we can build the correct child
+    // without having to explore all possible vicinities of the merged cell
+    // area. So all arrays of cells should have the same length.
     assert(
       children.map((List<Widget> array) => array.length).toSet().length == 1,
       'Each list of Widgets within cells must be of the same length.',

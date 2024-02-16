@@ -265,7 +265,7 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome'],
+              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
               package.path),
         ]),
       );
@@ -289,7 +289,7 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome'],
+              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
               plugin.path),
         ]),
       );
@@ -314,7 +314,7 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome'],
+              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
               plugin.path),
         ]),
       );
@@ -339,7 +339,7 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome'],
+              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
               plugin.path),
         ]),
       );
@@ -409,7 +409,7 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome'],
+              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
               plugin.path),
         ]),
       );

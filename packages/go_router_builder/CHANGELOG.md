@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates dependencies to require `analyzer` 5.2.0 or later.
+
 ## 2.4.1
 
 * Fixes new lint warnings.

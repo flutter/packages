@@ -88,9 +88,11 @@ class _TableExampleState extends State<TableExample> {
     );
   }
 
-  Widget _buildCell(BuildContext context, TableVicinity vicinity) {
-    return Center(
-      child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+  TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
+    return TableViewCell(
+      child: Center(
+        child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+      ),
     );
   }
 

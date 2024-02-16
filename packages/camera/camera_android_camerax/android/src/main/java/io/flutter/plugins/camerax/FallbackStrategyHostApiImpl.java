@@ -23,7 +23,7 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
 
   private final FallbackStrategyProxy proxy;
 
-  /** Proxy for constructors and static method of {@link FallbackStrategy}. */
+  /** Proxy for constructor of {@link FallbackStrategy}. */
   @VisibleForTesting
   public static class FallbackStrategyProxy {
     /** Creates an instance of {@link FallbackStrategy}. */
@@ -59,7 +59,7 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
    * Constructs a {@link FallbackStrategyHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link FallbackStrategy}
+   * @param proxy proxy for constructor of {@link FallbackStrategy}
    */
   FallbackStrategyHostApiImpl(
       @NonNull InstanceManager instanceManager, @NonNull FallbackStrategyProxy proxy) {

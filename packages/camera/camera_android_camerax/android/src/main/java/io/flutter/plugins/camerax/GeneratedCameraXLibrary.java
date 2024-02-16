@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -141,6 +142,16 @@ public class GeneratedCameraXLibrary {
     final int index;
 
     private VideoResolutionFallbackRule(final int index) {
+      this.index = index;
+    }
+  }
+
+  public enum CaptureRequestKeySupportedType {
+    CONTROL_AE_LOCK(0);
+
+    final int index;
+
+    private CaptureRequestKeySupportedType(final int index) {
       this.index = index;
     }
   }
@@ -530,12 +541,12 @@ public class GeneratedCameraXLibrary {
   }
 
   /**
-   * Convenience class for building [FocusMeteringAction] with multiple metering points.
+   * Convenience class for building [FocusMeteringAction]s with multiple metering points.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class MeteringPointInfo {
-    /** Instance manager ID corresponding to [MeteringPoint] that relates to this info. */
+    /** InstanceManager ID for a [MeteringPoint]. */
     private @NonNull Long meteringPointId;
 
     public @NonNull Long getMeteringPointId() {
@@ -549,7 +560,11 @@ public class GeneratedCameraXLibrary {
       this.meteringPointId = setterArg;
     }
 
-    /** Metering mode represented by one of the [FocusMeteringAction] constants. */
+    /**
+     * The metering mode of the [MeteringPoint] whose ID is [meteringPointId].
+     *
+     * <p>Metering mode should be one of the [FocusMeteringAction] constants.
+     */
     private @Nullable Long meteringMode;
 
     public @Nullable Long getMeteringMode() {
@@ -3954,37 +3969,84 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
+  private static class CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
+    public static final CaptureRequestOptionsHostApiCodec INSTANCE =
+        new CaptureRequestOptionsHostApiCodec();
+
+    private CaptureRequestOptionsHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return CameraPermissionsErrorData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
+          return CameraStateTypeData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
+          return ExposureCompensationRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return LiveDataSupportedTypeData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
+          return MeteringPointInfo.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 134:
+          return VideoQualityData.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof CameraPermissionsErrorData) {
+        stream.write(128);
+        writeValue(stream, ((CameraPermissionsErrorData) value).toList());
+      } else if (value instanceof CameraStateTypeData) {
+        stream.write(129);
+        writeValue(stream, ((CameraStateTypeData) value).toList());
+      } else if (value instanceof ExposureCompensationRange) {
+        stream.write(130);
+        writeValue(stream, ((ExposureCompensationRange) value).toList());
+      } else if (value instanceof LiveDataSupportedTypeData) {
+        stream.write(131);
+        writeValue(stream, ((LiveDataSupportedTypeData) value).toList());
+      } else if (value instanceof MeteringPointInfo) {
+        stream.write(132);
+        writeValue(stream, ((MeteringPointInfo) value).toList());
+      } else if (value instanceof ResolutionInfo) {
+        stream.write(133);
+        writeValue(stream, ((ResolutionInfo) value).toList());
+      } else if (value instanceof VideoQualityData) {
+        stream.write(134);
+        writeValue(stream, ((VideoQualityData) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-  public interface DisplayOrientedMeteringPointFactoryHostApi {
+  public interface CaptureRequestOptionsHostApi {
 
-    void create(
-        @NonNull Long identifier,
-        @NonNull Long cameraInfoId,
-        @NonNull Long width,
-        @NonNull Long height);
+    void create(@NonNull Long identifier, @NonNull Map<Long, Object> options);
 
-    @NonNull
-    Long createPoint(@NonNull Long x, @NonNull Long y, @Nullable Long size);
-
-    @NonNull
-    Long getDefaultPointSize();
-
-    /** The codec used by DisplayOrientedMeteringPointFactoryHostApi. */
+    /** The codec used by CaptureRequestOptionsHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return CaptureRequestOptionsHostApiCodec.INSTANCE;
     }
     /**
-     * Sets up an instance of `DisplayOrientedMeteringPointFactoryHostApi` to handle messages
-     * through the `binaryMessenger`.
+     * Sets up an instance of `CaptureRequestOptionsHostApi` to handle messages through the
+     * `binaryMessenger`.
      */
     static void setup(
-        @NonNull BinaryMessenger binaryMessenger,
-        @Nullable DisplayOrientedMeteringPointFactoryHostApi api) {
+        @NonNull BinaryMessenger binaryMessenger, @Nullable CaptureRequestOptionsHostApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create",
+                "dev.flutter.pigeon.CaptureRequestOptionsHostApi.create",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -3992,15 +4054,62 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                Number cameraInfoIdArg = (Number) args.get(1);
-                Number widthArg = (Number) args.get(2);
-                Number heightArg = (Number) args.get(3);
+                Map<Long, Object> optionsArg = (Map<Long, Object>) args.get(1);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(), optionsArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface Camera2CameraControlHostApi {
+
+    void create(@NonNull Long identifier, @NonNull Long cameraControlIdentifier);
+
+    void addCaptureRequestOptions(
+        @NonNull Long identifier,
+        @NonNull Long captureRequestOptionsIdentifier,
+        @NonNull Result<Void> result);
+
+    /** The codec used by Camera2CameraControlHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `Camera2CameraControlHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable Camera2CameraControlHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.Camera2CameraControlHostApi.create",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number cameraControlIdentifierArg = (Number) args.get(1);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
-                      (cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue(),
-                      (widthArg == null) ? null : widthArg.longValue(),
-                      (heightArg == null) ? null : heightArg.longValue());
+                      (cameraControlIdentifierArg == null)
+                          ? null
+                          : cameraControlIdentifierArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -4016,51 +4125,34 @@ public class GeneratedCameraXLibrary {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint",
+                "dev.flutter.pigeon.Camera2CameraControlHostApi.addCaptureRequestOptions",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number xArg = (Number) args.get(0);
-                Number yArg = (Number) args.get(1);
-                Number sizeArg = (Number) args.get(2);
-                try {
-                  Long output =
-                      api.createPoint(
-                          (xArg == null) ? null : xArg.longValue(),
-                          (yArg == null) ? null : yArg.longValue(),
-                          (sizeArg == null) ? null : sizeArg.longValue());
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.getDefaultPointSize",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  Long output = api.getDefaultPointSize();
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Number identifierArg = (Number) args.get(0);
+                Number captureRequestOptionsIdentifierArg = (Number) args.get(1);
+                Result<Void> resultCallback =
+                    new Result<Void>() {
+                      public void success(Void result) {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.addCaptureRequestOptions(
+                    (identifierArg == null) ? null : identifierArg.longValue(),
+                    (captureRequestOptionsIdentifierArg == null)
+                        ? null
+                        : captureRequestOptionsIdentifierArg.longValue(),
+                    resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

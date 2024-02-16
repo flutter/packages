@@ -180,6 +180,13 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       return currentWebChromeClient;
     }
 
+    @Override
+    protected void onScrollChanged(int left, int top, int oldLeft, int oldTop) {
+      super.onScrollChanged(left, top, oldLeft, oldTop);
+      api.onScrollChanged(
+          this, (long) left, (long) top, (long) oldLeft, (long) oldTop, reply -> {});
+    }
+
     /**
      * Flutter API used to send messages back to Dart.
      *

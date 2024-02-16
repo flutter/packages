@@ -86,9 +86,10 @@ void main() {
 
   test('primitive enum host', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Bar', methods: <Method>[
         Method(
             name: 'bar',
+            location: ApiLocation.host,
             returnType: const TypeDeclaration.voidDeclaration(),
             parameters: <Parameter>[
               Parameter(
@@ -123,9 +124,10 @@ void main() {
 
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -252,9 +254,10 @@ void main() {
 
   test('gen one flutter api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -308,9 +311,10 @@ void main() {
 
   test('gen host void api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -350,9 +354,10 @@ void main() {
 
   test('gen flutter void return api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -393,9 +398,10 @@ void main() {
 
   test('gen host void argument api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'Output',
@@ -432,9 +438,10 @@ void main() {
 
   test('gen flutter void argument api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'Output',
@@ -575,9 +582,10 @@ void main() {
 
   test('gen one async Host Api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -631,9 +639,10 @@ void main() {
 
   test('gen one async Flutter Api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -814,9 +823,10 @@ void main() {
   test('host generics argument', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -849,9 +859,10 @@ void main() {
   test('flutter generics argument', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -884,9 +895,10 @@ void main() {
   test('host generics return', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration(
                   baseName: 'List',
                   isNullable: false,
@@ -917,9 +929,10 @@ void main() {
   test('flutter generics return', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration(
                   baseName: 'List',
                   isNullable: false,
@@ -952,9 +965,10 @@ void main() {
 
   test('host multiple args', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'add',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 name: 'x',
@@ -995,9 +1009,10 @@ void main() {
 
   test('flutter multiple args', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'add',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 name: 'x',
@@ -1039,9 +1054,10 @@ void main() {
   test('return nullable host', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration(
                 baseName: 'int',
                 isNullable: true,
@@ -1068,9 +1084,10 @@ void main() {
   test('return nullable host async', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration(
                 baseName: 'int',
                 isNullable: true,
@@ -1101,9 +1118,10 @@ void main() {
   test('nullable argument host', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1137,9 +1155,10 @@ void main() {
   test('nullable argument flutter', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1172,9 +1191,10 @@ void main() {
 
   test('nonnull fields', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -1226,13 +1246,13 @@ void main() {
 
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'api',
-          location: ApiLocation.flutter,
           documentationComments: <String>[comments[count++]],
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
               parameters: <Parameter>[
@@ -1303,12 +1323,12 @@ void main() {
   test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1341,9 +1361,10 @@ void main() {
 
   test('creates custom codecs if custom datatypes present', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -1395,9 +1416,10 @@ void main() {
   test('swift function signature', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
             name: 'set',
+            location: ApiLocation.host,
             parameters: <Parameter>[
               Parameter(
                 type: const TypeDeclaration(
@@ -1438,9 +1460,10 @@ void main() {
   test('swift function signature with same name argument', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
             name: 'set',
+            location: ApiLocation.host,
             parameters: <Parameter>[
               Parameter(
                 type: const TypeDeclaration(
@@ -1474,9 +1497,10 @@ void main() {
   test('swift function signature with no arguments', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
             name: 'clear',
+            location: ApiLocation.host,
             parameters: <Parameter>[],
             swiftFunction: 'removeAll()',
             returnType: const TypeDeclaration.voidDeclaration(),
@@ -1502,12 +1526,12 @@ void main() {
   test('connection error contains channel name', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(

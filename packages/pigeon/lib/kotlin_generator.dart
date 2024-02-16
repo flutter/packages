@@ -127,7 +127,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
-        indent.write('${member.name.toUpperCase()}($index)');
+        final String nameScreamingSnakeCase = member.name
+            .replaceAllMapped(
+                RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
+            .toUpperCase();
+        indent.write('$nameScreamingSnakeCase($index)');
         if (index != anEnum.members.length - 1) {
           indent.addln(',');
         } else {
@@ -307,7 +311,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
+        api is AstHostApi &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
@@ -325,10 +329,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
@@ -388,11 +391,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
-
     final String apiName = api.name;
 
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
@@ -573,10 +574,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     if (hasHostApi) {
       _writeWrapResult(indent);

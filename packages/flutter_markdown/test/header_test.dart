@@ -25,6 +25,7 @@ void defineTests() {
           MarkdownBody,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['Header']);

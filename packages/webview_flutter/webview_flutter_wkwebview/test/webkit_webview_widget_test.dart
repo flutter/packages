@@ -8,10 +8,12 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_wkwebview/src/common/instance_manager.dart';
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart';
+import 'package:webview_flutter_wkwebview/src/ui_kit/ui_kit.dart';
 import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart';
 import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-
+import 'webkit_webview_controller_test.mocks.dart'
+    show MockUIScrollViewDelegate;
 import 'webkit_webview_widget_test.mocks.dart';
 
 @GenerateMocks(<Type>[WKUIDelegate, WKWebViewConfiguration])
@@ -205,6 +207,16 @@ WebKitWebViewController createTestWebViewController(
 
         testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
         return mockWKUIDelegate;
+      }, createUIScrollViewDelegate: ({
+        void Function(UIScrollView, double, double)? scrollViewDidScroll,
+      }) {
+        final MockUIScrollViewDelegate mockScrollViewDelegate =
+            MockUIScrollViewDelegate();
+        when(mockScrollViewDelegate.copy())
+            .thenReturn(MockUIScrollViewDelegate());
+
+        testInstanceManager.addDartCreatedInstance(mockScrollViewDelegate);
+        return mockScrollViewDelegate;
       }),
     ),
   );

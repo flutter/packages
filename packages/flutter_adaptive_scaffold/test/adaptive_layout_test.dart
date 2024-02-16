@@ -14,10 +14,7 @@ void main() {
       (WidgetTester tester) async {
     MediaQuery slot(double width) {
       return MediaQuery(
-        // TODO(stuartmorgan): Replace with .fromView once this package requires
-        // Flutter 3.8+.
-        // ignore: deprecated_member_use
-        data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+        data: MediaQueryData.fromView(tester.view)
             .copyWith(size: Size(width, 800)),
         child: Directionality(
           textDirection: TextDirection.ltr,
@@ -123,11 +120,11 @@ void main() {
   testWidgets(
       'slot layout properly switches between items with the appropriate animation',
       (WidgetTester tester) async {
-    await tester.pumpWidget(slot(300));
+    await tester.pumpWidget(slot(300, tester));
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
 
-    await tester.pumpWidget(slot(500));
+    await tester.pumpWidget(slot(500, tester));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
@@ -149,7 +146,7 @@ void main() {
   testWidgets('AnimatedSwitcher does not spawn duplicate keys on rapid resize',
       (WidgetTester tester) async {
     // Populate the smaller slot layout and let the animation settle.
-    await tester.pumpWidget(slot(300));
+    await tester.pumpWidget(slot(300, tester));
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
@@ -160,12 +157,12 @@ void main() {
     for (int i = 0; i < 2; i++) {
       // Resize between the two slot layouts, but do not pump the animation
       // until completion.
-      await tester.pumpWidget(slot(500));
+      await tester.pumpWidget(slot(500, tester));
       await tester.pump(const Duration(milliseconds: 100));
       expect(begin, findsOneWidget);
       expect(end, findsOneWidget);
 
-      await tester.pumpWidget(slot(300));
+      await tester.pumpWidget(slot(300, tester));
       await tester.pump(const Duration(milliseconds: 100));
       expect(begin, findsOneWidget);
       expect(end, findsOneWidget);
@@ -174,18 +171,18 @@ void main() {
 
   testWidgets('slot layout can tolerate rapid changes in breakpoints',
       (WidgetTester tester) async {
-    await tester.pumpWidget(slot(300));
+    await tester.pumpWidget(slot(300, tester));
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
 
-    await tester.pumpWidget(slot(500));
+    await tester.pumpWidget(slot(500, tester));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
         offsetMoreOrLessEquals(const Offset(-0.1, 0), epsilon: 0.05));
     expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
         offsetMoreOrLessEquals(const Offset(-0.9, 0), epsilon: 0.05));
-    await tester.pumpWidget(slot(300));
+    await tester.pumpWidget(slot(300, tester));
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
@@ -418,13 +415,9 @@ AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
   );
 }
 
-MediaQuery slot(double width) {
+MediaQuery slot(double width, WidgetTester tester) {
   return MediaQuery(
-    // TODO(stuartmorgan): Replace with .fromView once this package requires
-    // Flutter 3.8+.
-    // ignore: deprecated_member_use
-    data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-        .copyWith(size: Size(width, 800)),
+    data: MediaQueryData.fromView(tester.view).copyWith(size: Size(width, 800)),
     child: Directionality(
       textDirection: TextDirection.ltr,
       child: SlotLayout(

@@ -116,12 +116,12 @@ void main() {
         .thenAnswer((Invocation invocation) {
       final List<String> arguments =
           invocation.positionalArguments[0]! as List<String>;
-      final MockProcessResult mockProcessResult = MockProcessResult();
+      String? gitStdOut;
       if (arguments[0] == 'diff') {
-        when<String?>(mockProcessResult.stdout as String?)
-            .thenReturn(gitDiffResponse);
+        gitStdOut = gitDiffResponse;
       }
-      return Future<io.ProcessResult>.value(mockProcessResult);
+      return Future<io.ProcessResult>.value(
+          io.ProcessResult(0, 0, gitStdOut ?? '', ''));
     });
 
     return TestPackageLoopingCommand(
@@ -945,5 +945,3 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
     capturedOutput.addAll(output);
   }
 }
-
-class MockProcessResult extends Mock implements io.ProcessResult {}

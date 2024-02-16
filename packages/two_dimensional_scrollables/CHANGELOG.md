@@ -1,3 +1,7 @@
+## 0.1.0
+
+* [Breaking change] Adds support for merged cells in the TableView.
+
 ## 0.0.6
 
 * Fixes an error in TableSpanDecoration when one or both axes are reversed.

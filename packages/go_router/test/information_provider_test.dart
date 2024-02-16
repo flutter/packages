@@ -26,11 +26,46 @@ void main() {
           GoRouteInformationProvider(
               initialLocation: initialRoute, initialExtra: null);
       provider.addListener(expectAsync0(() {}));
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore_for_file: deprecated_member_use
       provider
-          .didPushRouteInformation(const RouteInformation(location: newRoute));
+          .didPushRouteInformation(RouteInformation(uri: Uri.parse(newRoute)));
+    });
+
+    testWidgets('didPushRouteInformation maintains uri scheme and host',
+        (WidgetTester tester) async {
+      const String expectedScheme = 'https';
+      const String expectedHost = 'www.example.com';
+      const String expectedPath = '/some/path';
+      const String expectedUriString =
+          '$expectedScheme://$expectedHost$expectedPath';
+      late final GoRouteInformationProvider provider =
+          GoRouteInformationProvider(
+              initialLocation: initialRoute, initialExtra: null);
+      provider.addListener(expectAsync0(() {}));
+      provider.didPushRouteInformation(
+          RouteInformation(uri: Uri.parse(expectedUriString)));
+      expect(provider.value.uri.scheme, 'https');
+      expect(provider.value.uri.host, 'www.example.com');
+      expect(provider.value.uri.path, '/some/path');
+      expect(provider.value.uri.toString(), expectedUriString);
+    });
+
+    testWidgets('didPushRoute maintains uri scheme and host',
+        (WidgetTester tester) async {
+      const String expectedScheme = 'https';
+      const String expectedHost = 'www.example.com';
+      const String expectedPath = '/some/path';
+      const String expectedUriString =
+          '$expectedScheme://$expectedHost$expectedPath';
+      late final GoRouteInformationProvider provider =
+          GoRouteInformationProvider(
+              initialLocation: initialRoute, initialExtra: null);
+      provider.addListener(expectAsync0(() {}));
+      provider.didPushRouteInformation(
+          RouteInformation(uri: Uri.parse(expectedUriString)));
+      expect(provider.value.uri.scheme, 'https');
+      expect(provider.value.uri.host, 'www.example.com');
+      expect(provider.value.uri.path, '/some/path');
+      expect(provider.value.uri.toString(), expectedUriString);
     });
   });
 }

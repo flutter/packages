@@ -10,18 +10,12 @@ import 'package:flutter_migrate/src/base/file_system.dart';
 import 'package:flutter_migrate/src/base/io.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path; // flutter_ignore: package_path_import
-import 'package:test_api/test_api.dart' // ignore: deprecated_member_use
-    as test_package show test;
-import 'package:test_api/test_api.dart' // ignore: deprecated_member_use
-    hide
-        test;
+import 'package:test/test.dart' as test_package show test;
+import 'package:test/test.dart' hide test;
 
 import 'test_utils.dart';
 
-export 'package:test_api/test_api.dart' // ignore: deprecated_member_use
-    hide
-        isInstanceOf,
-        test;
+export 'package:test/test.dart' hide isInstanceOf, test;
 
 bool tryToDelete(FileSystemEntity fileEntity) {
   // This should not be necessary, but it turns out that

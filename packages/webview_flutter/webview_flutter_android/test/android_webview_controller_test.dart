@@ -130,7 +130,11 @@ void main() {
                         onJsPrompt,
                   }) =>
                       MockWebChromeClient(),
-              createAndroidWebView: () => nonNullMockWebView,
+              createAndroidWebView: (
+                      {dynamic Function(
+                              int left, int top, int oldLeft, int oldTop)?
+                          onScrollChanged}) =>
+                  nonNullMockWebView,
               createAndroidWebViewClient: ({
                 void Function(android_webview.WebView webView, String url)?
                     onPageFinished,

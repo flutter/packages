@@ -410,6 +410,18 @@ class WebViewFlutterApiImpl implements WebViewFlutterApi {
   void create(int identifier) {
     instanceManager.addHostCreatedInstance(WebView.detached(), identifier);
   }
+
+  @override
+  void onScrollChanged(
+      int webViewInstanceId, int left, int top, int oldLeft, int oldTop) {
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+    );
+    webViewInstance!.onScrollChanged?.call(left, top, oldLeft, oldTop);
+  }
 }
 
 /// Host api implementation for [WebSettings].
@@ -708,7 +720,6 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    // ignore: deprecated_member_use_from_same_package
     if (instance!.onReceivedError != null) {
       instance.onReceivedError!(
         webViewInstance!,

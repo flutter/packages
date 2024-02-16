@@ -18,6 +18,8 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
   AnEnumOne = 0,
   AnEnumTwo = 1,
   AnEnumThree = 2,
+  AnEnumFortyTwo = 3,
+  AnEnumFourHundredTwentyTwo = 4,
 };
 
 /// Wrapper for AnEnum to allow for nullability.

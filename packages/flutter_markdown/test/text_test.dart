@@ -71,6 +71,7 @@ void defineTests() {
           MarkdownBody,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['Hello']);
@@ -97,6 +98,7 @@ void defineTests() {
         MarkdownBody,
         Column,
         Wrap,
+        Text,
         RichText,
       ]);
       expectTextStrings(widgets, <String>['aaa bbb']);
@@ -120,7 +122,7 @@ void defineTests() {
           tester,
         );
         expectWidgetTypes(
-            widgets, <Type>[MarkdownBody, Column, Wrap, RichText]);
+            widgets, <Type>[MarkdownBody, Column, Wrap, Text, RichText]);
         expectTextStrings(widgets, <String>['line 1\nline 2']);
       },
     );
@@ -141,7 +143,7 @@ void defineTests() {
           tester,
         );
         expectWidgetTypes(
-            widgets, <Type>[MarkdownBody, Column, Wrap, RichText]);
+            widgets, <Type>[MarkdownBody, Column, Wrap, Text, RichText]);
         expectTextStrings(widgets, <String>['line 1\nline 2']);
       },
     );
@@ -164,6 +166,7 @@ void defineTests() {
           MarkdownBody,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['line 1. line 2.']);
@@ -188,6 +191,7 @@ void defineTests() {
           MarkdownBody,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['line 1. line 2.']);
@@ -212,7 +216,7 @@ void defineTests() {
           tester,
         );
         expectWidgetTypes(
-            widgets, <Type>[MarkdownBody, Column, Wrap, RichText]);
+            widgets, <Type>[MarkdownBody, Column, Wrap, Text, RichText]);
         expectTextStrings(widgets, <String>['line 1.\nline 2.']);
       },
     );
@@ -297,6 +301,7 @@ void defineTests() {
         MarkdownBody,
         Column,
         Wrap,
+        Text,
         RichText,
       ]);
       expectTextStrings(widgets, <String>['strikethrough']);

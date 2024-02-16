@@ -77,7 +77,9 @@ public class CoreTests {
   public enum AnEnum {
     ONE(0),
     TWO(1),
-    THREE(2);
+    THREE(2),
+    FORTY_TWO(3),
+    FOUR_HUNDRED_TWENTY_TWO(4);
 
     final int index;
 

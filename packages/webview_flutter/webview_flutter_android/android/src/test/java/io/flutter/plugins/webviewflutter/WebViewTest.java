@@ -358,4 +358,25 @@ public class WebViewTest {
 
     verify(mockFlutterView).setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_YES);
   }
+
+  @Test
+  public void onScrollChanged() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
+
+    final WebViewFlutterApiImpl flutterApiImpl =
+        new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
+
+    final WebViewFlutterApi mockFlutterApi = mock(WebViewFlutterApi.class);
+    flutterApiImpl.setApi(mockFlutterApi);
+    flutterApiImpl.create(mockWebView, reply -> {});
+
+    flutterApiImpl.onScrollChanged(mockWebView, 0L, 1L, 2L, 3L, reply -> {});
+
+    final long instanceIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
+    verify(mockFlutterApi)
+        .onScrollChanged(eq(instanceIdentifier), eq(0L), eq(1L), eq(2L), eq(3L), any());
+
+    instanceManager.stopFinalizationListener();
+  }
 }

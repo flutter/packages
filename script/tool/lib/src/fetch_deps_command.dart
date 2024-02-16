@@ -125,30 +125,23 @@ class FetchDepsCommand extends PackageLoopingCommand {
       switch (platform) {
         case FlutterPlatform.android:
           result = await _fetchAndroidDeps(package);
-          break;
         case FlutterPlatform.ios:
           result = await _fetchDarwinDeps(package, platformIOS);
-          break;
         case FlutterPlatform.macos:
           result = await _fetchDarwinDeps(package, platformMacOS);
-          break;
         case FlutterPlatform.linux:
         case FlutterPlatform.web:
         case FlutterPlatform.windows:
           // No native dependency handling yet.
           result = PackageResult.skip('Nothing to do for $platform.');
-          break;
       }
       switch (result.state) {
         case RunState.succeeded:
           fetchedDeps = true;
-          break;
         case RunState.skipped:
           skips.add(result.details.first);
-          break;
         case RunState.failed:
           errors.addAll(result.details);
-          break;
         case RunState.excluded:
           throw StateError('Unreachable');
       }
