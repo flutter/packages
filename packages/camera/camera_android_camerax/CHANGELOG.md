@@ -1,6 +1,6 @@
-## NEXT
+## 0.5.0+33
 
-* Fix typo in `README.md`.
+* Fixes typo in `README.md`.
 
 ## 0.5.0+32
 
