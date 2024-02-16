@@ -72,6 +72,24 @@
                                                     completion:completion];
 }
 
+- (void)decidePolicyForNavigationResponseForDelegate:(FWFNavigationDelegate *)instance
+                                             webView:(WKWebView *)webView
+                                  navigationResponse:(WKNavigationResponse *)navigationResponse
+                                          completion:
+                                              (void (^)(
+                                                  FWFWKNavigationResponsePolicyEnumData *_Nullable,
+                                                  FlutterError *_Nullable))completion {
+  NSNumber *webViewIdentifier =
+      @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
+  FWFWKNavigationResponseData *navigationResponseData =
+      FWFWKNavigationResponseDataFromNativeNavigationResponse(navigationResponse);
+  [self decidePolicyForNavigationResponseForDelegateWithIdentifier:
+            @([self identifierForDelegate:instance])
+                                                 webViewIdentifier:webViewIdentifier
+                                                navigationResponse:navigationResponseData
+                                                        completion:completion];
+}
+
 - (void)didFailNavigationForDelegate:(FWFNavigationDelegate *)instance
                              webView:(WKWebView *)webView
                                error:(NSError *)error
@@ -188,6 +206,22 @@
                                           decisionHandler(WKNavigationActionPolicyCancel);
                                         }
                                       }];
+}
+
+- (void)webView:(WKWebView *)webView
+    decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse
+                      decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
+  [self.navigationDelegateAPI
+      decidePolicyForNavigationResponseForDelegate:self
+                                           webView:webView
+                                navigationResponse:navigationResponse
+                                        completion:^(FWFWKNavigationResponsePolicyEnumData *policy,
+                                                     FlutterError *error) {
+                                          NSAssert(!error, @"%@", error);
+                                          decisionHandler(
+                                              FWFNativeWKNavigationResponsePolicyFromEnumData(
+                                                  policy));
+                                        }];
 }
 
 - (void)webView:(WKWebView *)webView

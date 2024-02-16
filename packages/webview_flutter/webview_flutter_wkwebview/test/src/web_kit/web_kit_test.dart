@@ -598,6 +598,34 @@ void main() {
         expect(policyData.value, WKNavigationActionPolicyEnum.cancel);
       });
 
+      test('decidePolicyForNavigationResponse', () async {
+        WebKitFlutterApis.instance = WebKitFlutterApis(
+          instanceManager: instanceManager,
+        );
+
+        navigationDelegate = WKNavigationDelegate(
+          instanceManager: instanceManager,
+          decidePolicyForNavigationResponse: (
+            WKWebView webView,
+            WKNavigationResponse navigationAction,
+          ) async {
+            return WKNavigationResponsePolicy.cancel;
+          },
+        );
+
+        final WKNavigationResponsePolicyEnumData policyData =
+            await WebKitFlutterApis.instance.navigationDelegate
+                .decidePolicyForNavigationResponse(
+          instanceManager.getIdentifier(navigationDelegate)!,
+          instanceManager.getIdentifier(webView)!,
+          WKNavigationResponseData(
+              response: NSHttpUrlResponseData(statusCode: 401),
+              forMainFrame: true),
+        );
+
+        expect(policyData.value, WKNavigationResponsePolicyEnum.cancel);
+      });
+
       test('didFailNavigation', () async {
         final Completer<List<Object?>> argsCompleter =
             Completer<List<Object?>>();

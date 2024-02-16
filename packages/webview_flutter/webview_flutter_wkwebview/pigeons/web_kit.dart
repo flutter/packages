@@ -132,6 +132,20 @@ class WKNavigationActionPolicyEnumData {
   late WKNavigationActionPolicyEnum value;
 }
 
+/// Mirror of WKNavigationResponsePolicy.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+enum WKNavigationResponsePolicyEnum {
+  allow,
+  cancel,
+}
+
+// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
+class WKNavigationResponsePolicyEnumData {
+  late WKNavigationResponsePolicyEnum value;
+}
+
 /// Mirror of NSHTTPCookiePropertyKey.
 ///
 /// See https://developer.apple.com/documentation/foundation/nshttpcookiepropertykey.
@@ -320,6 +334,13 @@ class NSUrlRequestData {
   late Map<String?, String?> allHttpHeaderFields;
 }
 
+/// Mirror of NSURLResponse.
+///
+/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+class NSHttpUrlResponseData {
+  late int statusCode;
+}
+
 /// Mirror of WKUserScript.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuserscript?language=objc.
@@ -336,6 +357,14 @@ class WKNavigationActionData {
   late NSUrlRequestData request;
   late WKFrameInfoData targetFrame;
   late WKNavigationType navigationType;
+}
+
+/// Mirror of WKNavigationResponse.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
+class WKNavigationResponseData {
+  late NSHttpUrlResponseData response;
+  late bool forMainFrame;
 }
 
 /// Mirror of WKFrameInfo.
@@ -617,6 +646,16 @@ abstract class WKNavigationDelegateFlutterApi {
     int identifier,
     int webViewIdentifier,
     WKNavigationActionData navigationAction,
+  );
+
+  @ObjCSelector(
+    'decidePolicyForNavigationResponseForDelegateWithIdentifier:webViewIdentifier:navigationResponse:',
+  )
+  @async
+  WKNavigationResponsePolicyEnumData decidePolicyForNavigationResponse(
+    int identifier,
+    int webViewIdentifier,
+    WKNavigationResponseData navigationResponse,
   );
 
   @ObjCSelector(
