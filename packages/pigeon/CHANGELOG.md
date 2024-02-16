@@ -1,3 +1,35 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 17.0.0
+
+* **Breaking Change** [kotlin] Converts Kotlin enum case generation to SCREAMING_SNAKE_CASE.
+  * Updates `writeEnum` function to adhere to Kotlin naming conventions.
+  * Improves handling of complex names with enhanced regex patterns.
+  * Expands unit tests for comprehensive name conversion validation.
+  * **Migration Note**: This change modifies the naming convention of Kotlin enum cases generated from the Pigeon package. It is recommended to review the impact on your existing codebase and update any dependent code accordingly.
+
+## 16.0.5
+
+* Adds ProxyApi to AST generation.
+
+## 16.0.4
+
+* [swift] Improve style of Swift output.
+
+## 16.0.3
+
+* [kotlin] Separates message call code generation into separate methods.
+
+## 16.0.2
+
+* [dart] Separates message call code generation into separate methods.
+
+## 16.0.1
+
+* [dart] Fixes test generation for missing wrapResponse method if only host Api.
+
 ## 16.0.0
 
 * [java] Adds `VoidResult` type for `Void` returns.

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
 ## 0.8.9+1
 
 * Adds privacy manifest.

@@ -7,6 +7,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
@@ -278,5 +279,15 @@ void main() {
     '''));
     await tester.pump();
     expect(find.byType(Wrap), findsOneWidget);
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = ClipRRect();
+    '''));
+    await tester.pump();
+    expect(find.byType(ClipRRect), findsOneWidget);
+    final RenderClipRRect renderClip = tester.allRenderObjects.whereType<RenderClipRRect>().first; 
+    expect(renderClip.clipBehavior, equals(Clip.antiAlias));
+    expect(renderClip.borderRadius, equals(BorderRadius.zero));
   });
 }

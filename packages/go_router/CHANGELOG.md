@@ -1,3 +1,16 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 13.2.0
+
+- Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`
+
+## 13.1.0
+
+- Adds `topRoute` to `GoRouterState`
+- Adds `lastOrNull` to `RouteMatchList`
+
 ## 13.0.1
 
 * Fixes new lint warnings.

@@ -78,10 +78,10 @@ void main() {
   });
 
   test('get codec classes from argument type arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
+        location: ApiLocation.flutter,
         parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
@@ -123,10 +123,10 @@ void main() {
   });
 
   test('get codec classes from return value type arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
+        location: ApiLocation.flutter,
         parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
@@ -168,10 +168,10 @@ void main() {
   });
 
   test('get codec classes from all arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
+        location: ApiLocation.flutter,
         parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
@@ -216,9 +216,10 @@ void main() {
 
   test('getCodecClasses: nested type arguments', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'foo',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 name: 'x',
@@ -272,12 +273,12 @@ void main() {
 
   test('getCodecClasses: with Object', () {
     final Root root = Root(apis: <Api>[
-      Api(
+      AstFlutterApi(
         name: 'Api1',
-        location: ApiLocation.flutter,
         methods: <Method>[
           Method(
             name: 'foo',
+            location: ApiLocation.flutter,
             parameters: <Parameter>[
               Parameter(
                   name: 'x',
@@ -311,12 +312,12 @@ void main() {
 
   test('getCodecClasses: unique entries', () {
     final Root root = Root(apis: <Api>[
-      Api(
+      AstFlutterApi(
         name: 'Api1',
-        location: ApiLocation.flutter,
         methods: <Method>[
           Method(
             name: 'foo',
+            location: ApiLocation.flutter,
             parameters: <Parameter>[
               Parameter(
                   name: 'x',
@@ -330,12 +331,12 @@ void main() {
           )
         ],
       ),
-      Api(
+      AstHostApi(
         name: 'Api2',
-        location: ApiLocation.host,
         methods: <Method>[
           Method(
             name: 'foo',
+            location: ApiLocation.host,
             parameters: <Parameter>[
               Parameter(
                   name: 'x',
@@ -371,5 +372,160 @@ void main() {
         deducePackageName('./pigeons/core_tests.dart');
 
     expect(dartPackageName, 'pigeon');
+  });
+
+  test('recursiveGetSuperClassApisChain', () {
+    final AstProxyApi superClassOfSuperClassApi = AstProxyApi(
+      name: 'Api3',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi superClassApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      superClass: TypeDeclaration(
+        baseName: 'Api3',
+        isNullable: false,
+        associatedProxyApi: superClassOfSuperClassApi,
+      ),
+    );
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      superClass: TypeDeclaration(
+        baseName: 'Api2',
+        isNullable: false,
+        associatedProxyApi: superClassApi,
+      ),
+    );
+
+    final List<AstProxyApi> apiChain = recursiveGetSuperClassApisChain(api);
+
+    expect(
+      apiChain,
+      containsAllInOrder(<AstProxyApi>[
+        superClassApi,
+        superClassOfSuperClassApi,
+      ]),
+    );
+  });
+
+  test('recursiveFindAllInterfacesApis', () {
+    final AstProxyApi interfaceOfInterfaceApi2 = AstProxyApi(
+      name: 'Api5',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi interfaceOfInterfaceApi = AstProxyApi(
+      name: 'Api4',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi interfaceApi2 = AstProxyApi(
+      name: 'Api3',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api5',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi2,
+        ),
+      },
+    );
+    final AstProxyApi interfaceApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api4',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi,
+        ),
+        TypeDeclaration(
+          baseName: 'Api5',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi2,
+        ),
+      },
+    );
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api2',
+          isNullable: false,
+          associatedProxyApi: interfaceApi,
+        ),
+        TypeDeclaration(
+          baseName: 'Api3',
+          isNullable: false,
+          associatedProxyApi: interfaceApi2,
+        ),
+      },
+    );
+
+    final Set<AstProxyApi> allInterfaces = recursiveFindAllInterfaceApis(api);
+
+    expect(
+      allInterfaces,
+      containsAll(<AstProxyApi>[
+        interfaceApi,
+        interfaceApi2,
+        interfaceOfInterfaceApi,
+        interfaceOfInterfaceApi2,
+      ]),
+    );
+  });
+
+  test(
+      'recursiveFindAllInterfacesApis throws error if api recursively implements itself',
+      () {
+    final AstProxyApi a = AstProxyApi(
+      name: 'A',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi b = AstProxyApi(
+      name: 'B',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi c = AstProxyApi(
+      name: 'C',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+
+    a.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'B', isNullable: false, associatedProxyApi: b),
+    };
+    b.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'C', isNullable: false, associatedProxyApi: c),
+    };
+    c.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'A', isNullable: false, associatedProxyApi: a),
+    };
+
+    expect(
+      () => recursiveFindAllInterfaceApis(a),
+      throwsArgumentError,
+    );
   });
 }

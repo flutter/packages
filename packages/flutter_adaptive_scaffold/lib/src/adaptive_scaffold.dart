@@ -95,6 +95,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.largeBreakpoint = Breakpoints.large,
     this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
+    this.transitionDuration = const Duration(seconds: 1),
     this.bodyOrientation = Axis.horizontal,
     this.onSelectedIndexChange,
     this.useDrawer = true,
@@ -197,6 +198,11 @@ class AdaptiveScaffold extends StatefulWidget {
   ///
   /// Defaults to true.
   final bool internalAnimations;
+
+  /// Defines the duration of transition between layouts.
+  ///
+  /// Defaults to [Duration(seconds: 1)].
+  final Duration transitionDuration;
 
   /// The orientation of the body and secondaryBody. Either horizontal (side by
   /// side) or vertical (top to bottom).
@@ -522,6 +528,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             )
           : null,
       body: AdaptiveLayout(
+        transitionDuration: widget.transitionDuration,
         bodyOrientation: widget.bodyOrientation,
         bodyRatio: widget.bodyRatio,
         internalAnimations: widget.internalAnimations,

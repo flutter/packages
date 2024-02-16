@@ -1,5 +1,6 @@
-## 6.2.3
-* Adds Android options to add support for enabling exoplayer extensions like ffmpeg.
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 6.2.2
 
