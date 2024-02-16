@@ -146,10 +146,10 @@ typedef NS_ENUM(NSUInteger, SKSubscriptionPeriodUnitMessage) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCode:(NSInteger)code
                       domain:(NSString *)domain
-                    userInfo:(NSDictionary<NSString *, id> *)userInfo;
+                    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo;
 @property(nonatomic, assign) NSInteger code;
 @property(nonatomic, copy) NSString *domain;
-@property(nonatomic, copy) NSDictionary<NSString *, id> *userInfo;
+@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *userInfo;
 @end
 
 @interface SKPaymentDiscountMessage : NSObject
