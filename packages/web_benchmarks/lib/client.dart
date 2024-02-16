@@ -318,7 +318,6 @@ class LocalBenchmarkServerClient {
   /// DevTools Protocol.
   Future<void> startPerformanceTracing(String? benchmarkName) async {
     _checkNotManualMode();
-    // ignore: deprecated_member_use
     await HttpRequest.request(
       '/start-performance-tracing?label=$benchmarkName',
       method: 'POST',
@@ -329,7 +328,6 @@ class LocalBenchmarkServerClient {
   /// Stops the performance tracing session started by [startPerformanceTracing].
   Future<void> stopPerformanceTracing() async {
     _checkNotManualMode();
-    // ignore: deprecated_member_use
     await HttpRequest.request(
       '/stop-performance-tracing',
       method: 'POST',
@@ -358,7 +356,6 @@ class LocalBenchmarkServerClient {
   /// The server will halt the devicelab task and log the error.
   Future<void> reportError(dynamic error, StackTrace stackTrace) async {
     _checkNotManualMode();
-    // ignore: deprecated_member_use
     await HttpRequest.request(
       '/on-error',
       method: 'POST',
@@ -373,7 +370,6 @@ class LocalBenchmarkServerClient {
   /// Reports a message about the demo to the benchmark server.
   Future<void> printToConsole(String report) async {
     _checkNotManualMode();
-    // ignore: deprecated_member_use
     await HttpRequest.request(
       '/print-to-console',
       method: 'POST',
