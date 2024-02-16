@@ -7,7 +7,10 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import '../channel.dart';
+import '../messages.g.dart';
 import 'sk_product_wrapper.dart';
+
+InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
 
 /// A request maker that handles all the requests made by SKRequest subclasses.
 ///
@@ -26,18 +29,18 @@ class SKRequestMaker {
   /// A [PlatformException] is thrown if the platform code making the request fails.
   Future<SkProductResponseWrapper> startProductRequest(
       List<String> productIdentifiers) async {
-    final Map<String, dynamic>? productResponseMap =
-        await channel.invokeMapMethod<String, dynamic>(
-      '-[InAppPurchasePlugin startProductRequest:result:]',
-      productIdentifiers,
-    );
-    if (productResponseMap == null) {
+    final SKProductsResponseMessage productResponsePigeon =
+        await _hostApi.startProductRequest(productIdentifiers);
+
+    // should products be null or <String>[] ?
+    if (productResponsePigeon.products == null) {
       throw PlatformException(
         code: 'storekit_no_response',
         message: 'StoreKit: Failed to get response from platform.',
       );
     }
-    return SkProductResponseWrapper.fromJson(productResponseMap);
+
+    return SkProductResponseWrapper.convertFromPigeon(productResponsePigeon);
   }
 
   /// Uses [SKReceiptRefreshRequest](https://developer.apple.com/documentation/storekit/skreceiptrefreshrequest?language=objc) to request a new receipt.

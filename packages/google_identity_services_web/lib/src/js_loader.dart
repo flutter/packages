@@ -3,11 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
-import 'package:js/js.dart' show allowInterop;
+import 'package:web/web.dart' as web;
 
-import 'js_interop/dom.dart';
 import 'js_interop/load_callback.dart';
+import 'js_interop/package_web_tweaks.dart';
 
 // The URL from which the script should be downloaded.
 const String _url = 'https://accounts.google.com/gsi/client';
@@ -17,39 +18,41 @@ const String _defaultTrustedPolicyName = 'gis-dart';
 
 /// Loads the GIS SDK for web, using Trusted Types API when available.
 Future<void> loadWebSdk({
-  DomHtmlElement? target,
+  web.HTMLElement? target,
   String trustedTypePolicyName = _defaultTrustedPolicyName,
 }) {
   final Completer<void> completer = Completer<void>();
-  onGoogleLibraryLoad = allowInterop(() => completer.complete());
+  onGoogleLibraryLoad = () => completer.complete();
 
   // If TrustedTypes are available, prepare a trusted URL.
-  DomTrustedScriptUrl? trustedUrl;
-  if (trustedTypes != null) {
-    console.debug(
-      'TrustedTypes available. Creating policy:',
-      trustedTypePolicyName,
+  web.TrustedScriptURL? trustedUrl;
+  if (web.window.nullableTrustedTypes != null) {
+    web.console.debug(
+      'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
     );
-    final DomTrustedTypePolicyFactory factory = trustedTypes!;
     try {
-      final DomTrustedTypePolicy policy = factory.createPolicy(
+      final web.TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
           trustedTypePolicyName,
-          DomTrustedTypePolicyOptions(
-            createScriptURL: allowInterop((String url) => _url),
+          web.TrustedTypePolicyOptions(
+            createScriptURL: ((JSString url) => _url).toJS,
           ));
-      trustedUrl = policy.createScriptURL(_url);
+      trustedUrl = policy.createScriptURLNoArgs(_url);
     } catch (e) {
       throw TrustedTypesException(e.toString());
     }
   }
 
-  final DomHtmlScriptElement script =
-      document.createElement('script') as DomHtmlScriptElement
-        ..src = trustedUrl ?? _url
+  final web.HTMLScriptElement script =
+      web.document.createElement('script') as web.HTMLScriptElement
         ..async = true
         ..defer = true;
+  if (trustedUrl != null) {
+    script.srcTT = trustedUrl;
+  } else {
+    script.src = _url;
+  }
 
-  (target ?? document.head).appendChild(script);
+  (target ?? web.document.head!).appendChild(script);
 
   return completer.future;
 }

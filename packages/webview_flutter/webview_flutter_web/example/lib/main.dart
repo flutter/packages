@@ -63,7 +63,6 @@ class _SampleMenu extends StatelessWidget {
         switch (value) {
           case _MenuOptions.doPostRequest:
             _onDoPostRequest(controller);
-            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<_MenuOptions>>[

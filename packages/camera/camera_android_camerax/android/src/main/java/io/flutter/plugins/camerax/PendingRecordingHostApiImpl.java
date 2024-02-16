@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private Context context;
+  @Nullable private Context context;
 
   @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 
@@ -63,6 +63,10 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
   @Nullable
   @VisibleForTesting
   public Executor getExecutor() {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to get an executor to start recording.");
+    }
+
     return ContextCompat.getMainExecutor(context);
   }
 
@@ -75,7 +79,14 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
     if (event instanceof VideoRecordEvent.Finalize) {
       VideoRecordEvent.Finalize castedEvent = (VideoRecordEvent.Finalize) event;
       if (castedEvent.hasError()) {
-        systemServicesFlutterApi.sendCameraError(castedEvent.getCause().toString(), reply -> {});
+        String cameraErrorMessage;
+        if (castedEvent.getCause() != null) {
+          cameraErrorMessage = castedEvent.getCause().toString();
+        } else {
+          cameraErrorMessage =
+              "Error code " + castedEvent.getError() + ": An error occurred while recording video.";
+        }
+        systemServicesFlutterApi.sendCameraError(cameraErrorMessage, reply -> {});
       }
     }
   }

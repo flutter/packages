@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '12.0.1';
+const String pigeonVersion = '17.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -169,6 +169,8 @@ String makeChannelName(Api api, Method func, String dartPackageName) {
   return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
 }
 
+// TODO(tarrinneal): Determine whether HostDataType is needed.
+
 /// Represents the mapping of a Dart datatype to a Host datatype.
 class HostDatatype {
   /// Parametric constructor for HostDatatype.
@@ -199,10 +201,10 @@ class HostDatatype {
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getFieldHostDatatype(
+    NamedType field, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(field.type, classes, enums, builtinResolver,
+  return _getHostDatatype(field.type, builtinResolver,
       customResolver: customResolver, fieldName: field.name);
 }
 
@@ -213,19 +215,19 @@ HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(type, classes, enums, builtinResolver,
+  return _getHostDatatype(type, builtinResolver,
       customResolver: customResolver);
 }
 
-HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype _getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver, String? fieldName}) {
   final String? datatype = builtinResolver(type);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(type.baseName)) {
+    if (type.isClass) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
@@ -235,7 +237,7 @@ HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
         isNullable: type.isNullable,
         isEnum: false,
       );
-    } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
+    } else if (type.isEnum) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
@@ -280,6 +282,24 @@ String getGeneratedCodeWarning() {
 /// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
+/// Prefix for utility classes generated for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String classNamePrefix = 'Pigeon_';
+
+/// Name for the generated InstanceManager for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
+
+/// Prefix for class member names not defined by the user.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String classMemberNamePrefix = 'pigeon_';
+
 /// Collection of keys used in dictionaries across generators.
 class Keys {
   /// The key in the result hash for the 'result' value.
@@ -307,7 +327,7 @@ bool isVoid(TypeMirror type) {
 void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   final String prefix = linePrefix ?? '';
   for (final String line in lines) {
-    indent.writeln('$prefix$line');
+    indent.writeln(line.isNotEmpty ? '$prefix$line' : prefix.trimRight());
   }
 }
 
@@ -412,10 +432,23 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   final _Bag<TypeDeclaration, int> references = _Bag<TypeDeclaration, int>();
   for (final Api api in apis) {
     for (final Method method in api.methods) {
-      for (final NamedType field in method.arguments) {
+      for (final NamedType field in method.parameters) {
         references.addMany(_getTypeArguments(field.type), field.offset);
       }
       references.addMany(_getTypeArguments(method.returnType), method.offset);
+    }
+    if (api is AstProxyApi) {
+      for (final Constructor constructor in api.constructors) {
+        for (final NamedType parameter in constructor.parameters) {
+          references.addMany(
+            _getTypeArguments(parameter.type),
+            parameter.offset,
+          );
+        }
+      }
+      for (final ApiField field in api.fields) {
+        references.addMany(_getTypeArguments(field.type), field.offset);
+      }
     }
   }
 
@@ -478,10 +511,6 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   }
 }
 
-/// Returns true if the [TypeDeclaration] represents an enum.
-bool isEnum(Root root, TypeDeclaration type) =>
-    root.enums.map((Enum e) => e.name).contains(type.baseName);
-
 /// Describes how to format a document comment.
 class DocumentCommentSpecification {
   /// Constructor for [DocumentationCommentSpecification]
@@ -542,9 +571,9 @@ void addDocumentationComments(
 }
 
 /// Returns an ordered list of fields to provide consistent serialization order.
-Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
   // This returns the fields in the order they are declared in the pigeon file.
-  return klass.fields;
+  return classDefinition.fields;
 }
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
@@ -588,6 +617,92 @@ String? deducePackageName(String mainDartFile) {
   } catch (_) {
     return null;
   }
+}
+
+/// Recursively search for all the interfaces apis from a list of names of
+/// interfaces.
+///
+/// This method assumes that all interfaces are ProxyApis and an api doesn't
+/// contains itself as an interface. Otherwise, throws an [ArgumentError].
+Set<AstProxyApi> recursiveFindAllInterfaceApis(
+  AstProxyApi api, {
+  Set<AstProxyApi> seenApis = const <AstProxyApi>{},
+}) {
+  final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
+
+  allInterfaces.addAll(
+    api.interfaces.map(
+      (TypeDeclaration type) {
+        if (!type.isProxyApi) {
+          throw ArgumentError(
+            'Could not find a valid ProxyApi for an interface: $type',
+          );
+        } else if (seenApis.contains(type.associatedProxyApi)) {
+          throw ArgumentError(
+            'A ProxyApi cannot be a super class of itself: ${type.baseName}',
+          );
+        }
+        return type.associatedProxyApi!;
+      },
+    ),
+  );
+
+  // Adds the current api since it would be invalid for it to be an interface
+  // of itself.
+  final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, api};
+
+  for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
+    allInterfaces.addAll(recursiveFindAllInterfaceApis(
+      interfaceApi,
+      seenApis: newSeenApis,
+    ));
+  }
+
+  return allInterfaces;
+}
+
+/// Creates a list of ProxyApis where each `extends` the ProxyApi that follows
+/// it.
+///
+/// Returns an empty list if [proxyApi] does not extend a ProxyApi.
+///
+/// This method assumes the super classes of each ProxyApi doesn't create a
+/// loop. Throws a [ArgumentError] if a loop is found.
+///
+/// This method also assumes that all super classes are ProxyApis. Otherwise,
+/// throws an [ArgumentError].
+List<AstProxyApi> recursiveGetSuperClassApisChain(AstProxyApi api) {
+  final List<AstProxyApi> superClassChain = <AstProxyApi>[];
+
+  if (api.superClass != null && !api.superClass!.isProxyApi) {
+    throw ArgumentError(
+      'Could not find a ProxyApi for super class: ${api.superClass!.baseName}',
+    );
+  }
+
+  AstProxyApi? currentProxyApi = api.superClass?.associatedProxyApi;
+  while (currentProxyApi != null) {
+    if (superClassChain.contains(currentProxyApi)) {
+      throw ArgumentError(
+        'Loop found when processing super classes for a ProxyApi: '
+        '${api.name}, ${superClassChain.map((AstProxyApi api) => api.name)}',
+      );
+    }
+
+    superClassChain.add(currentProxyApi);
+
+    if (currentProxyApi.superClass != null &&
+        !currentProxyApi.superClass!.isProxyApi) {
+      throw ArgumentError(
+        'Could not find a ProxyApi for super class: '
+        '${currentProxyApi.superClass!.baseName}',
+      );
+    }
+
+    currentProxyApi = currentProxyApi.superClass?.associatedProxyApi;
+  }
+
+  return superClassChain;
 }
 
 /// Enum to specify api type when generating code.

@@ -298,4 +298,12 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<void> dispose(int cameraId) {
     throw UnimplementedError('dispose() is not implemented.');
   }
+
+  /// Sets the output image file format for the selected camera.
+  ///
+  // TODO(bmparr): This is only supported on iOS. See
+  // https://github.com/flutter/flutter/issues/139588
+  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
+    throw UnimplementedError('setImageFileFormat() is not implemented.');
+  }
 }

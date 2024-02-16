@@ -61,7 +61,7 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/');
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect((matches.first.route as GoRoute).name, '1');
@@ -135,7 +135,7 @@ void main() {
       );
       router.go('/foo');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
@@ -156,7 +156,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(matches.first.matchedLocation, '/login');
@@ -186,7 +186,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(matches.first.matchedLocation, '/login');
@@ -211,7 +211,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login/');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(matches.first.matchedLocation, '/login');
@@ -231,7 +231,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/profile/');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(matches.first.matchedLocation, '/profile/foo');
@@ -251,7 +251,96 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/profile/?bar=baz');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/profile/foo');
+      expect(find.byType(DummyScreen), findsOneWidget);
+    });
+
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing /',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/?bar=baz');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/');
+      expect(find.byType(HomeScreen), findsOneWidget);
+    });
+
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing / (2)',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/login/');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/login');
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing / (3)',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/profile',
+            builder: dummy,
+            redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile/:kind', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/profile/');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/profile/foo');
+      expect(find.byType(DummyScreen), findsOneWidget);
+    });
+
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing / (4)',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/profile',
+            builder: dummy,
+            redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile/:kind', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/profile/?bar=baz');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(matches.first.matchedLocation, '/profile/foo');
@@ -284,7 +373,7 @@ void main() {
       expect(find.byKey(home), findsNothing);
       expect(find.byKey(settings), findsOneWidget);
 
-      showDialog(
+      showDialog<void>(
         context: navKey.currentContext!,
         builder: (_) => DummyScreen(key: dialog),
       );
@@ -296,7 +385,7 @@ void main() {
       expect(find.byKey(dialog), findsNothing);
       expect(find.byKey(settings), findsOneWidget);
 
-      showDialog(
+      showDialog<void>(
         context: navKey.currentContext!,
         builder: (_) => DummyScreen(key: dialog),
       );
@@ -348,7 +437,7 @@ void main() {
       router.pop();
       await tester.pumpAndSettle();
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches.length, 4);
       expect(find.byType(HomeScreen), findsNothing);
@@ -375,7 +464,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/login');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches.length, 2);
       expect(matches.first.matchedLocation, '/');
@@ -497,7 +586,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/bar');
       await tester.pumpAndSettle();
-      List<RouteMatch> matches =
+      List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(2));
       expect(find.byType(Page1Screen), findsOneWidget);
@@ -621,7 +710,7 @@ void main() {
       const String loc = '/FaMiLy/f2';
       router.go(loc);
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
 
       // NOTE: match the lower case, since location is canonicalized to match the
@@ -650,7 +739,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/user');
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(find.byType(DummyScreen), findsOneWidget);
@@ -774,8 +863,7 @@ void main() {
         'Handles the Android back button when parentNavigatorKey is set to the root navigator',
         (WidgetTester tester) async {
       final List<MethodCall> log = <MethodCall>[];
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -817,8 +905,7 @@ void main() {
     testWidgets("Handles the Android back button when ShellRoute can't pop",
         (WidgetTester tester) async {
       final List<MethodCall> log = <MethodCall>[];
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -908,7 +995,6 @@ void main() {
     );
 
     expect(find.text(notifier.value), findsOneWidget);
-
     notifier.value = 'updated';
     await tester.pump();
     expect(find.text(notifier.value), findsOneWidget);
@@ -918,8 +1004,7 @@ void main() {
       'Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
       (WidgetTester tester) async {
     final List<MethodCall> log = <MethodCall>[];
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform,
             (MethodCall methodCall) async {
       log.add(methodCall);
@@ -1009,8 +1094,7 @@ void main() {
     final List<MethodCall> log = <MethodCall>[];
     setUp(() {
       GoRouter.optionURLReflectsImperativeAPIs = false;
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -1019,8 +1103,7 @@ void main() {
     });
     tearDown(() {
       GoRouter.optionURLReflectsImperativeAPIs = false;
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation, null);
       log.clear();
     });
@@ -1307,10 +1390,7 @@ void main() {
       expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
 
       router.routeInformationProvider.didPushRouteInformation(
-          // TODO(chunhtai): remove this ignore and migrate the code
-          // https://github.com/flutter/flutter/issues/124045.
-          // ignore: deprecated_member_use
-          RouteInformation(location: location, state: state));
+          RouteInformation(uri: Uri.parse(location), state: state));
       await tester.pumpAndSettle();
       // Make sure it has all the imperative routes.
       expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
@@ -1927,7 +2007,7 @@ void main() {
         errorBuilder: (BuildContext context, GoRouterState state) =>
             TestErrorScreen(state.error!),
       );
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
@@ -1955,7 +2035,7 @@ void main() {
             TestErrorScreen(state.error!),
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
@@ -1980,7 +2060,7 @@ void main() {
             TestErrorScreen(state.error!),
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
@@ -2004,7 +2084,7 @@ void main() {
             TestErrorScreen(state.error!),
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
@@ -2066,7 +2146,7 @@ void main() {
         },
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(find.byType(LoginScreen), findsOneWidget);
@@ -2101,7 +2181,7 @@ void main() {
         },
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(2));
     });
@@ -2130,7 +2210,7 @@ void main() {
         initialLocation: loc,
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -2172,7 +2252,7 @@ void main() {
         initialLocation: '/family/f2/person/p1',
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches.length, 3);
       expect(find.byType(HomeScreen, skipOffstage: false), findsOneWidget);
@@ -2194,7 +2274,7 @@ void main() {
         redirectLimit: 10,
       );
 
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
@@ -2441,12 +2521,9 @@ void main() {
         routes,
         tester,
       );
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      expect(router.routeInformationProvider.value.location, '/dummy');
-      TestWidgetsFlutterBinding
-          .instance.platformDispatcher.defaultRouteNameTestValue = '/';
+      expect(router.routeInformationProvider.value.uri.path, '/dummy');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
 
     test('throws assertion if initialExtra is set w/o initialLocation', () {
@@ -2463,6 +2540,60 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  group('_effectiveInitialLocation()', () {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+      ),
+    ];
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path', (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, but trailing slash',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com/';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, and query parameters',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com?param=1';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.toString(), '/?param=1');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
   });
 
@@ -2824,7 +2955,10 @@ void main() {
       RouteMatchList matches = router.routerDelegate.currentConfiguration;
 
       expect(router.routerDelegate.currentConfiguration.uri.toString(), loc);
-      expect(matches.matches, hasLength(4));
+      expect(matches.matches, hasLength(1));
+      final ShellRouteMatch shellRouteMatch =
+          matches.matches.first as ShellRouteMatch;
+      expect(shellRouteMatch.matches, hasLength(3));
       expect(find.byType(PersonScreen), findsOneWidget);
       expect(matches.pathParameters['fid'], fid);
       expect(matches.pathParameters['pid'], pid);
@@ -2927,7 +3061,7 @@ void main() {
         'q2': <String>['v2', 'v3'],
       });
       await tester.pumpAndSettle();
-      final List<RouteMatch> matches =
+      final List<RouteMatchBase> matches =
           router.routerDelegate.currentConfiguration.matches;
 
       expect(matches, hasLength(1));
@@ -2979,7 +3113,7 @@ void main() {
 
     router.go('/page?q1=v1&q2=v2&q2=v3');
     await tester.pumpAndSettle();
-    final List<RouteMatch> matches =
+    final List<RouteMatchBase> matches =
         router.routerDelegate.currentConfiguration.matches;
 
     expect(matches, hasLength(1));
@@ -3030,7 +3164,7 @@ void main() {
 
     router.go('/page?q1=v1&q2=v2&q2=v3');
     await tester.pumpAndSettle();
-    final List<RouteMatch> matches =
+    final List<RouteMatchBase> matches =
         router.routerDelegate.currentConfiguration.matches;
 
     expect(matches, hasLength(1));
@@ -3920,6 +4054,7 @@ void main() {
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
 
+      // This push '/common' on top of entire stateful shell route page.
       router.push('/common', extra: 'X');
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
@@ -3933,8 +4068,7 @@ void main() {
       routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
-      expect(find.text('Screen B'), findsNothing);
-      expect(find.text('Common - X'), findsOneWidget);
+      expect(find.text('Screen B'), findsOneWidget);
     });
 
     testWidgets(
@@ -4371,7 +4505,7 @@ void main() {
         expect(router.canPop(), isFalse);
         expect(find.text('A Screen'), findsOneWidget);
         expect(find.text('Shell'), findsOneWidget);
-        showDialog(
+        showDialog<void>(
             context: root.currentContext!,
             builder: (_) => const Text('A dialog'));
         await tester.pumpAndSettle();
@@ -5009,6 +5143,44 @@ void main() {
           expectedInitialRoute);
     });
   });
+
+  testWidgets(
+      'test the pathParameters in redirect when the Router is recreated',
+      (WidgetTester tester) async {
+    final GoRouter router = GoRouter(
+      initialLocation: '/foo',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/foo',
+          builder: dummy,
+          routes: <GoRoute>[
+            GoRoute(
+              path: ':id',
+              redirect: (_, GoRouterState state) {
+                expect(state.pathParameters['id'], isNotNull);
+                return null;
+              },
+              builder: dummy,
+            ),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
+    router.push('/foo/123');
+    await tester.pump(); // wait reportRouteInformation
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
+  });
 }
 
 class TestInheritedNotifier extends InheritedNotifier<ValueNotifier<String>> {
@@ -5064,9 +5236,3 @@ class IsRouteUpdateCall extends Matcher {
         .addDescriptionOf(replace);
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

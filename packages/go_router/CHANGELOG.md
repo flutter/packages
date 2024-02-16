@@ -1,3 +1,56 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 13.2.0
+
+- Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`
+
+## 13.1.0
+
+- Adds `topRoute` to `GoRouterState`
+- Adds `lastOrNull` to `RouteMatchList`
+
+## 13.0.1
+
+* Fixes new lint warnings.
+
+## 13.0.0
+
+- Refactors `RouteMatchList` and imperative APIs.
+- **BREAKING CHANGE**:
+  - RouteMatchList structure changed.
+  - Matching logic updated.
+
+## 12.1.3
+
+* Fixes a typo in `navigation.md`.
+
+## 12.1.2
+
+* Fixes an incorrect use of `extends` for Dart 3 compatibility.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 12.1.1
+
+- Retains query parameters during refresh and first redirect.
+
+## 12.1.0
+
+- Adds an ability to add a custom codec for serializing/deserializing extra.
+
+## 12.0.3
+
+- Fixes crashes when dynamically updates routing tables with named routes.
+
+## 12.0.2
+
+- Fixes the problem that pathParameters is null in redirect when the Router is recreated.
+
+## 12.0.1
+
+- Fixes deep-link with no path on cold start.
+
 ## 12.0.0
 
 - Adds ability to dynamically update routing table.
@@ -55,7 +108,7 @@
 
 ## 10.1.1
 
-- Fixes mapping from `Page` to `RouteMatch`s. 
+- Fixes mapping from `Page` to `RouteMatch`s.
 - Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 10.1.0

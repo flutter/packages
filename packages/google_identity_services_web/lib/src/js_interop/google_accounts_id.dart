@@ -7,12 +7,9 @@
 
 // ignore_for_file: non_constant_identifier_names
 // * non_constant_identifier_names required to be able to use the same parameter
-//   names as the underlying library.
+//   names as the underlying JS library.
 
-@JS()
-library google_accounts_id;
-
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
 import 'shared.dart';
 
@@ -32,7 +29,9 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   /// An undocumented method.
   ///
   /// Try it with 'debug'.
-  external void setLogLevel(String level);
+  void setLogLevel(String level) => _setLogLevel(level.toJS);
+  @JS('setLogLevel')
+  external void _setLogLevel(JSString level);
 
   /// Initializes the Sign In With Google client based on [IdConfiguration].
   ///
@@ -85,16 +84,40 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   ///
   /// Method: google.accounts.id.prompt
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.prompt
-  external void prompt([PromptMomentListenerFn momentListener]);
+  void prompt([PromptMomentListenerFn? momentListener]) {
+    if (momentListener == null) {
+      return _prompt();
+    }
+    return _promptWithListener(momentListener.toJS);
+  }
+
+  @JS('prompt')
+  external void _prompt();
+  @JS('prompt')
+  external void _promptWithListener(JSFunction momentListener);
 
   /// Renders a Sign In With Google button in your web page.
   ///
   /// Method: google.accounts.id.renderButton
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.renderButton
-  external void renderButton(
+  void renderButton(
     Object parent, [
-    GsiButtonConfiguration options,
-  ]);
+    GsiButtonConfiguration? options,
+  ]) {
+    assert(parent is JSObject,
+        'parent must be a JSObject. Use package:web to retrieve/create one.');
+    parent as JSObject;
+    if (options == null) {
+      return _renderButton(parent);
+    }
+    return _renderButtonWithOptions(parent, options);
+  }
+
+  @JS('renderButton')
+  external void _renderButton(JSObject parent);
+  @JS('renderButton')
+  external void _renderButtonWithOptions(
+      JSObject parent, GsiButtonConfiguration options);
 
   /// Record when the user signs out of your website in cookies.
   ///
@@ -112,7 +135,18 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   ///
   /// Method: google.accounts.id.storeCredential
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.storeCredential
-  external void storeCredential(Credential credential, [VoidFn fallback]);
+  void storeCredential(Credential credential, [VoidFn? callback]) {
+    if (callback == null) {
+      return _jsStoreCredential(credential);
+    }
+    return _jsStoreCredentialWithCallback(credential, callback.toJS);
+  }
+
+  @JS('storeCredential')
+  external void _jsStoreCredential(Credential credential);
+  @JS('storeCredential')
+  external void _jsStoreCredentialWithCallback(
+      Credential credential, JSFunction callback);
 
   /// Cancels the One Tap flow.
   ///
@@ -132,12 +166,19 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   /// The optional [callback] is a function that gets called to report on the
   /// success of the revocation call.
   ///
-  /// The [callback] parameter must be manually wrapped in [allowInterop]
-  /// before being passed to the [revoke] function.
-  ///
   /// Method: google.accounts.id.revoke
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.revoke
-  external void revoke(String hint, [RevocationResponseHandlerFn callback]);
+  void revoke(String hint, [RevocationResponseHandlerFn? callback]) {
+    if (callback == null) {
+      return _revoke(hint.toJS);
+    }
+    return _revokeWithCallback(hint.toJS, callback.toJS);
+  }
+
+  @JS('revoke')
+  external void _revoke(JSString hint);
+  @JS('revoke')
+  external void _revokeWithCallback(JSString hint, JSFunction callback);
 }
 
 /// The configuration object for the [initialize] method.
@@ -149,11 +190,7 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
 @staticInterop
 abstract class IdConfiguration {
   /// Constructs a IdConfiguration object in JavaScript.
-  ///
-  /// The following properties need to be manually wrapped in [allowInterop]
-  /// before being passed to this constructor: [callback], [native_callback],
-  /// and [intermediate_iframe_close_callback].
-  external factory IdConfiguration({
+  factory IdConfiguration({
     /// Your application's client ID, which is found and created in the Google
     /// Developers Console.
     required String client_id,
@@ -228,7 +265,7 @@ abstract class IdConfiguration {
     /// intermediate iframe mode. And it has impact only to the intermediate
     /// iframe, instead of the One Tap iframe. The One Tap UI is removed before
     /// the callback is invoked.
-    Function? intermediate_iframe_close_callback,
+    VoidFn? intermediate_iframe_close_callback,
 
     /// Determines if the upgraded One Tap UX should be enabled on browsers
     /// that support Intelligent Tracking Prevention (ITP). The default value
@@ -264,6 +301,51 @@ abstract class IdConfiguration {
     /// Allow the browser to control user sign-in prompts and mediate the
     /// sign-in flow between your website and Google. Defaults to false.
     bool? use_fedcm_for_prompt,
+  }) {
+    return IdConfiguration._toJS(
+      client_id: client_id.toJS,
+      auto_select: auto_select?.toJS,
+      callback: callback?.toJS,
+      login_uri: login_uri?.toString().toJS,
+      native_callback: native_callback?.toJS,
+      cancel_on_tap_outside: cancel_on_tap_outside?.toJS,
+      prompt_parent_id: prompt_parent_id?.toJS,
+      nonce: nonce?.toJS,
+      context: context?.toString().toJS,
+      state_cookie_domain: state_cookie_domain?.toJS,
+      ux_mode: ux_mode?.toString().toJS,
+      allowed_parent_origin:
+          allowed_parent_origin?.map((String s) => s.toJS).toList().toJS,
+      intermediate_iframe_close_callback:
+          intermediate_iframe_close_callback?.toJS,
+      itp_support: itp_support?.toJS,
+      login_hint: login_hint?.toJS,
+      hd: hd?.toJS,
+      use_fedcm_for_prompt: use_fedcm_for_prompt?.toJS,
+    );
+  }
+
+  // `IdConfiguration`'s external factory, defined as JSTypes. This is the actual JS-interop bit.
+  external factory IdConfiguration._toJS({
+    JSString? client_id,
+    JSBoolean? auto_select,
+    JSFunction? callback,
+    JSString? login_uri,
+    JSFunction? native_callback,
+    JSBoolean? cancel_on_tap_outside,
+    JSString? prompt_parent_id,
+    JSString? nonce,
+    JSString? context,
+    JSString? state_cookie_domain,
+    JSString? ux_mode,
+    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+    // ignore: always_specify_types
+    JSArray? allowed_parent_origin,
+    JSFunction? intermediate_iframe_close_callback,
+    JSBoolean? itp_support,
+    JSString? login_hint,
+    JSString? hd,
+    JSBoolean? use_fedcm_for_prompt,
   });
 }
 
@@ -281,42 +363,53 @@ abstract class PromptMomentNotification {}
 /// The methods of the [PromptMomentNotification] data type:
 extension PromptMomentNotificationExtension on PromptMomentNotification {
   /// Is this notification for a display moment?
-  external bool isDisplayMoment();
+  bool isDisplayMoment() => _isDisplayMoment().toDart;
+  @JS('isDisplayMoment')
+  external JSBoolean _isDisplayMoment();
 
   /// Is this notification for a display moment, and the UI is displayed?
-  external bool isDisplayed();
+  bool isDisplayed() => _isDisplayed().toDart;
+  @JS('isDisplayed')
+  external JSBoolean _isDisplayed();
 
   /// Is this notification for a display moment, and the UI isn't displayed?
-  external bool isNotDisplayed();
+  bool isNotDisplayed() => _isNotDisplayed().toDart;
+  @JS('isNotDisplayed')
+  external JSBoolean _isNotDisplayed();
 
   /// Is this notification for a skipped moment?
-  external bool isSkippedMoment();
+  bool isSkippedMoment() => _isSkippedMoment().toDart;
+  @JS('isSkippedMoment')
+  external JSBoolean _isSkippedMoment();
 
   /// Is this notification for a dismissed moment?
-  external bool isDismissedMoment();
-  @JS('getMomentType')
-  external String _getMomentType();
-  @JS('getNotDisplayedReason')
-  external String? _getNotDisplayedReason();
-  @JS('getSkippedReason')
-  external String? _getSkippedReason();
-  @JS('getDismissedReason')
-  external String? _getDismissedReason();
+  bool isDismissedMoment() => _isDismissedMoment().toDart;
+  @JS('isDismissedMoment')
+  external JSBoolean _isDismissedMoment();
 
   /// The moment type.
-  MomentType getMomentType() => MomentType.values.byName(_getMomentType());
+  MomentType getMomentType() =>
+      MomentType.values.byName(_getMomentType().toDart);
+  @JS('getMomentType')
+  external JSString _getMomentType();
 
   /// The detailed reason why the UI isn't displayed.
-  MomentNotDisplayedReason? getNotDisplayedReason() =>
-      maybeEnum(_getNotDisplayedReason(), MomentNotDisplayedReason.values);
+  MomentNotDisplayedReason? getNotDisplayedReason() => maybeEnum(
+      _getNotDisplayedReason()?.toDart, MomentNotDisplayedReason.values);
+  @JS('getNotDisplayedReason')
+  external JSString? _getNotDisplayedReason();
 
   /// The detailed reason for the skipped moment.
   MomentSkippedReason? getSkippedReason() =>
-      maybeEnum(_getSkippedReason(), MomentSkippedReason.values);
+      maybeEnum(_getSkippedReason()?.toDart, MomentSkippedReason.values);
+  @JS('getSkippedReason')
+  external JSString? _getSkippedReason();
 
   /// The detailed reason for the dismissal.
   MomentDismissedReason? getDismissedReason() =>
-      maybeEnum(_getDismissedReason(), MomentDismissedReason.values);
+      maybeEnum(_getDismissedReason()?.toDart, MomentDismissedReason.values);
+  @JS('getDismissedReason')
+  external JSString? _getDismissedReason();
 }
 
 /// The object passed as the parameter of your [CallbackFn].
@@ -330,21 +423,27 @@ abstract class CredentialResponse {}
 /// The fields that are contained in the credential response object.
 extension CredentialResponseExtension on CredentialResponse {
   /// The ClientID for this Credential.
-  external String? get client_id;
+  String? get client_id => _client_id?.toDart;
+  @JS('client_id')
+  external JSString? get _client_id;
 
   /// Error while signing in.
-  external String? get error;
+  String? get error => _error?.toDart;
+  @JS('error')
+  external JSString? get _error;
 
   /// Details of the error while signing in.
-  external String? get error_detail;
+  String? get error_detail => _error_detail?.toDart;
+  @JS('error_detail')
+  external JSString? get _error_detail;
 
   /// This field is the ID token as a base64-encoded JSON Web Token (JWT)
   /// string.
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#credential
-  external String? get credential;
-  @JS('select_by')
-  external String? get _select_by;
+  String? get credential => _credential?.toDart;
+  @JS('credential')
+  external JSString? get _credential;
 
   /// This field sets how the credential was selected.
   ///
@@ -353,7 +452,9 @@ extension CredentialResponseExtension on CredentialResponse {
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#select_by
   CredentialSelectBy? get select_by =>
-      maybeEnum(_select_by, CredentialSelectBy.values);
+      maybeEnum(_select_by?.toDart, CredentialSelectBy.values);
+  @JS('select_by')
+  external JSString? get _select_by;
 }
 
 /// The type of the `callback` used to create an [IdConfiguration].
@@ -374,41 +475,63 @@ typedef CallbackFn = void Function(CredentialResponse credentialResponse);
 @staticInterop
 abstract class GsiButtonConfiguration {
   /// Constructs an options object for the [renderButton] method.
-  ///
-  /// The following properties need to be manually wrapped in [allowInterop]
-  /// before being passed to this constructor:
-  external factory GsiButtonConfiguration({
+  factory GsiButtonConfiguration({
     /// The button type.
-    ButtonType type,
+    ButtonType? type,
 
     /// The button theme.
-    ButtonTheme theme,
+    ButtonTheme? theme,
 
     /// The button size.
-    ButtonSize size,
+    ButtonSize? size,
 
     /// The button text.
-    ButtonText text,
+    ButtonText? text,
 
     /// The button shape.
-    ButtonShape shape,
+    ButtonShape? shape,
 
     /// The Google logo alignment in the button.
-    ButtonLogoAlignment logo_alignment,
+    ButtonLogoAlignment? logo_alignment,
 
     /// The minimum button width, in pixels.
     ///
     /// The maximum width is 400 pixels.
-    double width,
+    double? width,
 
     /// The pre-set locale of the button text.
     ///
     /// If not set, the browser's default locale or the Google session user's
     /// preference is used.
-    String locale,
+    String? locale,
 
     /// A function to be called when the button is clicked.
-    GsiButtonClickListenerFn click_listener,
+    GsiButtonClickListenerFn? click_listener,
+  }) {
+    return GsiButtonConfiguration._toJS(
+      type: type.toString().toJS,
+      theme: theme.toString().toJS,
+      size: size.toString().toJS,
+      text: text?.toString().toJS,
+      shape: shape?.toString().toJS,
+      logo_alignment: logo_alignment?.toString().toJS,
+      width: width?.toJS,
+      locale: locale?.toJS,
+      click_listener: click_listener?.toJS,
+    );
+  }
+
+  // `GsiButtonConfiguration`'s external factory, defined as JSTypes.
+  external factory GsiButtonConfiguration._toJS({
+    JSString? type,
+    JSString? theme,
+    JSString? size,
+    JSString? text,
+    JSString? shape,
+    JSString? logo_alignment,
+    JSNumber? width,
+    JSString? locale,
+    JSFunction? click_listener,
   });
 }
 
@@ -420,10 +543,14 @@ abstract class GsiButtonData {}
 /// The fields that are contained in the button data.
 extension GsiButtonDataExtension on GsiButtonData {
   /// Nonce
-  external String? get nonce;
+  String? get nonce => _nonce?.toDart;
+  @JS('nonce')
+  external JSString? get _nonce;
 
   /// State
-  external String? get state;
+  String? get state => _state?.toDart;
+  @JS('state')
+  external JSString? get _state;
 }
 
 /// The type of the [GsiButtonConfiguration] `click_listener` function.
@@ -444,19 +571,32 @@ typedef GsiButtonClickListenerFn = void Function(GsiButtonData? gsiButtonData);
 @staticInterop
 abstract class Credential {
   ///
-  external factory Credential({
+  factory Credential({
     required String id,
     required String password,
+  }) =>
+      Credential._toJS(
+        id: id.toJS,
+        password: password.toJS,
+      );
+
+  external factory Credential._toJS({
+    JSString id,
+    JSString password,
   });
 }
 
 /// The fields that are contained in the [Credential] object.
 extension CredentialExtension on Credential {
   /// Identifies the user.
-  external String get id;
+  String? get id => _id.toDart;
+  @JS('id')
+  external JSString get _id;
 
   /// The password.
-  external String get password;
+  String? get password => _password.toDart;
+  @JS('password')
+  external JSString get _password;
 }
 
 /// The type of the `native_callback` used to create an [IdConfiguration].
@@ -489,9 +629,13 @@ abstract class RevocationResponse {}
 extension RevocationResponseExtension on RevocationResponse {
   /// This field is a boolean value set to true if the revoke method call
   /// succeeded or false on failure.
-  external bool get successful;
+  bool get successful => _successful.toDart;
+  @JS('successful')
+  external JSBoolean get _successful;
 
   /// This field is a string value and contains a detailed error message if the
   /// revoke method call failed, it is undefined on success.
-  external String? get error;
+  String? get error => _error?.toDart;
+  @JS('error')
+  external JSString? get _error;
 }

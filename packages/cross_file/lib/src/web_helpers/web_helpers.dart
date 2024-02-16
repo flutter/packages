@@ -2,26 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
+import 'package:web/helpers.dart';
 
 /// Create anchor element with download attribute
-AnchorElement createAnchorElement(String href, String? suggestedName) {
-  final AnchorElement element = AnchorElement(href: href);
-
-  if (suggestedName == null) {
-    element.download = 'download';
-  } else {
-    element.download = suggestedName;
-  }
-
-  return element;
-}
+HTMLAnchorElement createAnchorElement(String href, String? suggestedName) =>
+    (document.createElement('a') as HTMLAnchorElement)
+      ..href = href
+      ..download = suggestedName ?? 'download';
 
 /// Add an element to a container and click it
-void addElementToContainerAndClick(Element container, Element element) {
+void addElementToContainerAndClick(Element container, HTMLElement element) {
   // Add the element and click it
   // All previous elements will be removed before adding the new one
-  container.children.add(element);
+  container.appendChild(element);
   element.click();
 }
 
@@ -29,9 +22,9 @@ void addElementToContainerAndClick(Element container, Element element) {
 Element ensureInitialized(String id) {
   Element? target = querySelector('#$id');
   if (target == null) {
-    final Element targetElement = Element.tag('flt-x-file')..id = id;
+    final Element targetElement = document.createElement('flt-x-file')..id = id;
 
-    querySelector('body')!.children.add(targetElement);
+    querySelector('body')!.appendChild(targetElement);
     target = targetElement;
   }
   return target;

@@ -42,10 +42,8 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // ignore: deprecated_member_use
-                primary: Colors.blue,
-                // ignore: deprecated_member_use
-                onPrimary: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               child: const Text(
                   'Press to ask user to choose multiple directories'),

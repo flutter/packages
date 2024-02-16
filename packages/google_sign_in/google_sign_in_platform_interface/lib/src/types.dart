@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
-import 'package:quiver/core.dart';
 
 /// Default configuration options to use when signing in.
 ///
@@ -132,8 +131,8 @@ class GoogleSignInUserData {
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => hashObjects(
-      <String?>[displayName, email, id, photoUrl, idToken, serverAuthCode]);
+  int get hashCode =>
+      Object.hash(displayName, email, id, photoUrl, idToken, serverAuthCode);
 
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.
@@ -176,7 +175,7 @@ class GoogleSignInTokenData {
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => hash3(idToken, accessToken, serverAuthCode);
+  int get hashCode => Object.hash(idToken, accessToken, serverAuthCode);
 
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.

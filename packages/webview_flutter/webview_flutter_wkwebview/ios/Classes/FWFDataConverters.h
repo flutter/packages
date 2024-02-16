@@ -193,4 +193,26 @@ API_AVAILABLE(ios(15.0))
 extern FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(
     WKMediaCaptureType type);
 
+/**
+ * Converts an FWFNSUrlSessionAuthChallengeDisposition to an NSURLSessionAuthChallengeDisposition.
+ *
+ * @param value The object containing information to create an NSURLSessionAuthChallengeDisposition.
+ *
+ * @return A NSURLSessionAuthChallengeDisposition or -1 if data could not be converted.
+ */
+extern NSURLSessionAuthChallengeDisposition
+FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(
+    FWFNSUrlSessionAuthChallengeDisposition value);
+
+/**
+ * Converts an FWFNSUrlCredentialPersistence to an NSURLCredentialPersistence.
+ *
+ * @param value The object containing information to create an NSURLCredentialPersistence.
+ *
+ * @return A NSURLCredentialPersistence or -1 if data could not be converted.
+ */
+extern NSURLCredentialPersistence
+FWFNativeNSURLCredentialPersistenceFromFWFNSUrlCredentialPersistence(
+    FWFNSUrlCredentialPersistence value);
+
 NS_ASSUME_NONNULL_END

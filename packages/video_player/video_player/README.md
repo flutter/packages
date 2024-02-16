@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web for playing back video on a Widget sur
 
 |             | Android | iOS   | macOS  | Web   |
 |-------------|---------|-------|--------|-------|
-| **Support** | SDK 16+ | 11.0+ | 10.14+ | Any\* |
+| **Support** | SDK 16+ | 12.0+ | 10.14+ | Any\* |
 
 ![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
 

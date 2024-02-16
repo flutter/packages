@@ -1,6 +1,19 @@
-## 2.9.2
+## 2.9.4
 
 * Migrates away from deprecated `UnmodifiableUint8ListView`.
+
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 2.9.3
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.9.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
 
 ## 2.9.1
 

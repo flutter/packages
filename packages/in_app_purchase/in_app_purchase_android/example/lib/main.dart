@@ -48,6 +48,10 @@ class _MyAppState extends State<_MyApp> {
   List<ProductDetails> _products = <ProductDetails>[];
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];
   List<String> _consumables = <String>[];
+  String _countryCode = '';
+  String _isAlternativeBillingOnlyAvailableResponseCode = '';
+  String _showAlternativeBillingOnlyDialogResponseCode = '';
+  String _alternativeBillingOnlyReportingDetailsToken = '';
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
@@ -144,6 +148,7 @@ class _MyAppState extends State<_MyApp> {
             _buildProductList(),
             _buildConsumableBox(),
             const _FeatureCard(),
+            _buildFetchButtons(),
           ],
         ),
       );
@@ -206,6 +211,119 @@ class _MyAppState extends State<_MyApp> {
       ]);
     }
     return Card(child: Column(children: children));
+  }
+
+  Card _buildFetchButtons() {
+    const ListTile header = ListTile(title: Text('AlternativeBilling Info'));
+    final List<Widget> entries = <ListTile>[];
+    entries.add(ListTile(
+        title: Text('User Country Code',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_countryCode)));
+    entries.add(ListTile(
+        title: Text('isAlternativeBillingOnlyAvailable response code',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_isAlternativeBillingOnlyAvailableResponseCode)));
+    entries.add(ListTile(
+        title: Text('showAlternativeBillingOnlyDialog response code',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_showAlternativeBillingOnlyDialogResponseCode)));
+    entries.add(ListTile(
+        title: Text('createAlternativeBillingOnlyReportingDetails contents',
+            style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+        subtitle: Text(_alternativeBillingOnlyReportingDetailsToken)));
+
+    final List<Widget> buttons = <ListTile>[];
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(deliverCountryCode(addition.getCountryCode()));
+        },
+        child: const Text('Fetch Country Code'),
+      ),
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(deliverIsAlternativeBillingOnlyAvailable(
+              addition.isAlternativeBillingOnlyAvailable()));
+        },
+        child: const Text('isAlternativeBillingOnlyAvailable'),
+      ),
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(deliverShowAlternativeBillingOnlyInformationDialogResult(
+              addition.showAlternativeBillingOnlyInformationDialog()));
+        },
+        child: const Text('showAlternativeBillingOnlyInformationDialog'),
+      ),
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(addition
+              .setBillingChoice(BillingChoiceMode.alternativeBillingOnly));
+        },
+        child: const Text('setBillingChoice alternativeBillingOnly'),
+      ),
+    ));
+    buttons.add(ListTile(
+      title: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final InAppPurchaseAndroidPlatformAddition addition =
+              InAppPurchasePlatformAddition.instance!
+                  as InAppPurchaseAndroidPlatformAddition;
+          unawaited(deliverCreateAlternativeBillingOnlyReportingDetails(
+              addition.createAlternativeBillingOnlyReportingDetails()));
+        },
+        child: const Text('createAlternativeBillingOnlyReportingDetails'),
+      ),
+    ));
+    return Card(
+      child: Column(
+        children: <Widget>[
+          header,
+          const Divider(),
+          ...entries,
+          const Divider(),
+          ...buttons,
+        ],
+      ),
+    );
   }
 
   Card _buildProductList() {
@@ -346,6 +464,46 @@ class _MyAppState extends State<_MyApp> {
     });
   }
 
+  Future<void> deliverCountryCode(Future<String> countryCodeFuture) async {
+    final String countryCode = await countryCodeFuture;
+    setState(() {
+      _countryCode = countryCode;
+    });
+  }
+
+  Future<void> deliverIsAlternativeBillingOnlyAvailable(
+      Future<BillingResultWrapper> billingOnly) async {
+    final BillingResultWrapper wrapper = await billingOnly;
+    setState(() {
+      _isAlternativeBillingOnlyAvailableResponseCode =
+          wrapper.responseCode.name;
+    });
+  }
+
+  Future<void> deliverShowAlternativeBillingOnlyInformationDialogResult(
+      Future<BillingResultWrapper> billingResult) async {
+    final BillingResultWrapper wrapper = await billingResult;
+    setState(() {
+      _showAlternativeBillingOnlyDialogResponseCode = wrapper.responseCode.name;
+    });
+  }
+
+  Future<void> deliverCreateAlternativeBillingOnlyReportingDetails(
+      Future<AlternativeBillingOnlyReportingDetailsWrapper>
+          futureWrapper) async {
+    final AlternativeBillingOnlyReportingDetailsWrapper wrapper =
+        await futureWrapper;
+    setState(() {
+      if (wrapper.responseCode == BillingResponse.ok) {
+        _alternativeBillingOnlyReportingDetailsToken =
+            wrapper.externalTransactionToken;
+      } else {
+        _alternativeBillingOnlyReportingDetailsToken =
+            wrapper.responseCode.name;
+      }
+    });
+  }
+
   Future<void> deliverProduct(PurchaseDetails purchaseDetails) async {
     // IMPORTANT!! Always verify purchase details before delivering the product.
     if (purchaseDetails.productID == _kConsumableId) {
@@ -385,6 +543,9 @@ class _MyAppState extends State<_MyApp> {
       if (purchaseDetails.status == PurchaseStatus.pending) {
         showPendingUI();
       } else {
+        final InAppPurchaseAndroidPlatformAddition addition =
+            InAppPurchasePlatformAddition.instance!
+                as InAppPurchaseAndroidPlatformAddition;
         if (purchaseDetails.status == PurchaseStatus.error) {
           handleError(purchaseDetails.error!);
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
@@ -399,10 +560,6 @@ class _MyAppState extends State<_MyApp> {
         }
 
         if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-          final InAppPurchaseAndroidPlatformAddition addition =
-              InAppPurchasePlatformAddition.instance!
-                  as InAppPurchaseAndroidPlatformAddition;
-
           await addition.consumePurchase(purchaseDetails);
         }
 

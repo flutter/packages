@@ -7,6 +7,7 @@ import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/image_proxy.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/resolution_selector.dart';
+import 'package:camera_android_camerax/src/surface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -30,6 +31,24 @@ void main() {
       TestImageAnalysisHostApi.setup(null);
     });
 
+    test('detached create does not call create on the Java side', () {
+      final MockTestImageAnalysisHostApi mockApi =
+          MockTestImageAnalysisHostApi();
+      TestImageAnalysisHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      ImageAnalysis.detached(
+        initialTargetRotation: Surface.ROTATION_270,
+        resolutionSelector: MockResolutionSelector(),
+        instanceManager: instanceManager,
+      );
+
+      verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
+          argThat(isA<ResolutionSelector>())));
+    });
     test('create calls create on the Java side', () {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
@@ -39,6 +58,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
+      const int targetRotation = Surface.ROTATION_90;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
       const int mockResolutionSelectorId = 24;
@@ -50,13 +70,41 @@ void main() {
       });
 
       final ImageAnalysis instance = ImageAnalysis(
+        initialTargetRotation: targetRotation,
         resolutionSelector: mockResolutionSelector,
         instanceManager: instanceManager,
       );
 
       verify(mockApi.create(
           argThat(equals(instanceManager.getIdentifier(instance))),
+          argThat(equals(targetRotation)),
           argThat(equals(mockResolutionSelectorId))));
+    });
+
+    test(
+        'setTargetRotation makes call to set target rotation for ImageAnalysis instance',
+        () async {
+      final MockTestImageAnalysisHostApi mockApi =
+          MockTestImageAnalysisHostApi();
+      TestImageAnalysisHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      const int targetRotation = Surface.ROTATION_180;
+      final ImageAnalysis imageAnalysis = ImageAnalysis.detached(
+        instanceManager: instanceManager,
+      );
+      instanceManager.addHostCreatedInstance(
+        imageAnalysis,
+        0,
+        onCopy: (_) => ImageAnalysis.detached(instanceManager: instanceManager),
+      );
+
+      await imageAnalysis.setTargetRotation(targetRotation);
+
+      verify(mockApi.setTargetRotation(
+          instanceManager.getIdentifier(imageAnalysis), targetRotation));
     });
 
     test('setAnalyzer makes call to set analyzer on ImageAnalysis instance',

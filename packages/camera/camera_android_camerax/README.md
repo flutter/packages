@@ -31,10 +31,6 @@ dependencies:
 and thus, the plugin will fall back to 480p if configured with a
 `ResolutionPreset`.
 
-### Locking/Unlocking capture orientation \[[Issue #125915][125915]\]
-
-`lockCaptureOrientation` & `unLockCaptureOrientation` are unimplemented.
-
 ### Exposure mode, point, & offset configuration \[[Issue #120468][120468]\]
 
 `setExposureMode`, `setExposurePoint`, & `setExposureOffset` are unimplemented.
