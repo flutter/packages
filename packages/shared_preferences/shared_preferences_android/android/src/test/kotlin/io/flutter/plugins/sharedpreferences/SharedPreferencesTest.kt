@@ -12,7 +12,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -40,148 +39,100 @@ internal class SharedPreferencesTest {
 
   private val emptyOptions = SharedPreferencesPigeonOptions()
 
-  private val plugin = SharedPreferencesPlugin()
-  private val binaryMessenger = mockk<BinaryMessenger>()
-  private val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
-  private val testContext: Context = ApplicationProvider.getApplicationContext()
+   private fun pluginSetup(): SharedPreferencesPlugin {
+    val testContext: Context = ApplicationProvider.getApplicationContext()
 
-  @Before
-  fun before() {
+    val plugin = SharedPreferencesPlugin()
+    val binaryMessenger = mockk<BinaryMessenger>()
+    val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
     every { flutterPluginBinding.binaryMessenger } returns binaryMessenger
     every { flutterPluginBinding.applicationContext } returns testContext
-
     plugin.onAttachedToEngine(flutterPluginBinding)
+    return plugin
   }
 
   @Test
-  fun testSetAndGet() {
+  fun testSetAndGetBool() {
+    val plugin = pluginSetup()
+    plugin.setBool(boolKey, testBool, emptyOptions)
+    Assert.assertEquals(plugin.getBool(boolKey, emptyOptions), testBool)
+  }
+
+  @Test
+  fun testSetAndGetString() {
+    val plugin = pluginSetup()
+    plugin.setString(stringKey, testString, emptyOptions)
+    Assert.assertEquals(plugin.getString(stringKey, emptyOptions), testString)
+  }
+
+  @Test
+  fun testSetAndGetInt() {
+    val plugin = pluginSetup()
+    plugin.setInt(intKey, testInt, emptyOptions)
+    Assert.assertEquals(plugin.getInt(intKey, emptyOptions), testInt)
+  }
+
+  @Test
+  fun testSetAndGetDouble() {
+    val plugin = pluginSetup()
+    plugin.setDouble(doubleKey, testDouble, emptyOptions)
+    Assert.assertEquals(plugin.getDouble(doubleKey, emptyOptions), testDouble)
+  }
+
+  @Test
+  fun testSetAndGetStringList() {
+    val plugin = pluginSetup()
+    plugin.setStringList(listKey, testList, emptyOptions)
+    Assert.assertEquals(plugin.getStringList(listKey, emptyOptions), testList)
+  }
+
+  @Test
+  fun testGetKeys() {
+    val plugin = pluginSetup()
     plugin.setBool(boolKey, testBool, emptyOptions)
     plugin.setString(stringKey, testString, emptyOptions)
     plugin.setInt(intKey, testInt, emptyOptions)
     plugin.setDouble(doubleKey, testDouble, emptyOptions)
     plugin.setStringList(listKey, testList, emptyOptions)
-    Assert.assertEquals(plugin.getBool(boolKey, emptyOptions), testBool)
-    Assert.assertEquals(plugin.getString(stringKey, emptyOptions), testString)
-    Assert.assertEquals(plugin.getInt(intKey, emptyOptions), testInt)
-    Assert.assertEquals(plugin.getDouble(doubleKey, emptyOptions), testDouble)
-    Assert.assertEquals(plugin.getStringList(listKey, emptyOptions), testList)
+    val keyList = plugin.getKeys(listOf(boolKey, stringKey), emptyOptions)
+    Assert.assertEquals(keyList.size, 2)
+    Assert.assertTrue(keyList.contains(stringKey))
+    Assert.assertTrue(keyList.contains(boolKey))
   }
 
-  // getKeys
-  // clear
-  // getAll
+  @Test
+  fun testClear() {
+    val plugin = pluginSetup()
+    plugin.setBool(boolKey, testBool, emptyOptions)
+    plugin.setString(stringKey, testString, emptyOptions)
+    plugin.setInt(intKey, testInt, emptyOptions)
+    plugin.setDouble(doubleKey, testDouble, emptyOptions)
+    plugin.setStringList(listKey, testList, emptyOptions)
 
-  // @Test
-  // fun testNullValues() {
-  //   val everything = AllNullableTypes()
-  //   val binaryMessenger = mockk<BinaryMessenger>()
-  //   val api = FlutterIntegrationCoreApi(binaryMessenger)
+    plugin.clear(null, emptyOptions)
 
-  //   every { binaryMessenger.send(any(), any(), any()) } answers
-  //       {
-  //         val codec = FlutterIntegrationCoreApi.codec
-  //         val message = arg<ByteBuffer>(1)
-  //         val reply = arg<BinaryMessenger.BinaryReply>(2)
-  //         message.position(0)
-  //         val args = codec.decodeMessage(message) as ArrayList<*>
-  //         val replyData = codec.encodeMessage(args)
-  //         replyData?.position(0)
-  //         reply.reply(replyData)
-  //       }
+    Assert.assertNull(plugin.getBool(boolKey, emptyOptions))
+    Assert.assertNull(plugin.getBool(stringKey, emptyOptions))
+    Assert.assertNull(plugin.getBool(intKey, emptyOptions))
+    Assert.assertNull(plugin.getBool(doubleKey, emptyOptions))
+    Assert.assertNull(plugin.getBool(listKey, emptyOptions))
+  }
 
-  //   var didCall = false
-  //   api.echoAllNullableTypes(everything) {
-  //     didCall = true
-  //     val output =
-  //         (it.getOrNull())?.let {
-  //           assertNull(it.aNullableBool)
-  //           assertNull(it.aNullableInt)
-  //           assertNull(it.aNullableDouble)
-  //           assertNull(it.aNullableString)
-  //           assertNull(it.aNullableByteArray)
-  //           assertNull(it.aNullable4ByteArray)
-  //           assertNull(it.aNullable8ByteArray)
-  //           assertNull(it.aNullableFloatArray)
-  //           assertNull(it.aNullableList)
-  //           assertNull(it.aNullableMap)
-  //           assertNull(it.nullableMapWithObject)
-  //         }
-  //     assertNotNull(output)
-  //   }
+  @Test
+  fun testGetAll() {
+    val plugin = pluginSetup()
+    plugin.setBool(boolKey, testBool, emptyOptions)
+    plugin.setString(stringKey, testString, emptyOptions)
+    plugin.setInt(intKey, testInt, emptyOptions)
+    plugin.setDouble(doubleKey, testDouble, emptyOptions)
+    plugin.setStringList(listKey, testList, emptyOptions)
 
-  //   assertTrue(didCall)
-  // }
+    val all = plugin.getAll(null, emptyOptions)
 
-  // @Test
-  // fun testHasValues() {
-  //   val everything =
-  //       AllNullableTypes(
-  //           aNullableBool = false,
-  //           aNullableInt = 1234L,
-  //           aNullableDouble = 2.0,
-  //           aNullableString = "hello",
-  //           aNullableByteArray = byteArrayOf(1, 2, 3, 4),
-  //           aNullable4ByteArray = intArrayOf(1, 2, 3, 4),
-  //           aNullable8ByteArray = longArrayOf(1, 2, 3, 4),
-  //           aNullableFloatArray = doubleArrayOf(0.5, 0.25, 1.5, 1.25),
-  //           aNullableList = listOf(1, 2, 3),
-  //           aNullableMap = mapOf("hello" to 1234),
-  //           nullableMapWithObject = mapOf("hello" to 1234),
-  //           aNullableObject = 0,
-  //       )
-  //   val binaryMessenger = mockk<BinaryMessenger>()
-  //   val api = FlutterIntegrationCoreApi(binaryMessenger)
-
-  //   every { binaryMessenger.send(any(), any(), any()) } answers
-  //       {
-  //         val codec = FlutterIntegrationCoreApi.codec
-  //         val message = arg<ByteBuffer>(1)
-  //         val reply = arg<BinaryMessenger.BinaryReply>(2)
-  //         message.position(0)
-  //         val args = codec.decodeMessage(message) as ArrayList<*>
-  //         val replyData = codec.encodeMessage(args)
-  //         replyData?.position(0)
-  //         reply.reply(replyData)
-  //       }
-
-  //   var didCall = false
-  //   api.echoAllNullableTypes(everything) {
-  //     didCall = true
-  //     compareAllNullableTypes(everything, it.getOrNull())
-  //   }
-
-  //   assertTrue(didCall)
-  // }
-
-  // @Test
-  // fun testIntegerToLong() {
-  //   val everything = AllNullableTypes(aNullableInt = 123L)
-  //   val list = everything.toList()
-  //   assertNotNull(list)
-  //   assertNull(list.first())
-  //   assertNotNull(list[1])
-  //   assertTrue(list[1] == 123L)
-
-  //   val list2 =
-  //       listOf(
-  //           null,
-  //           123,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null,
-  //           null)
-  //   val everything2 = AllNullableTypes.fromList(list2)
-
-  //   assertEquals(everything.aNullableInt, everything2.aNullableInt)
-  // }
+    Assert.assertEquals(all[boolKey], testBool)
+    Assert.assertEquals(all[stringKey], testString)
+    Assert.assertEquals(all[intKey], testInt)
+    Assert.assertEquals(all[doubleKey], testDouble)
+    Assert.assertEquals(all[listKey], testList)
+  }
 }
