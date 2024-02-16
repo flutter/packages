@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 5.0.2
 
 * Removes mention of the removed record/replay feature from README.
