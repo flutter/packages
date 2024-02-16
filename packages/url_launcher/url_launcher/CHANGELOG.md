@@ -1,3 +1,7 @@
+## 6.3.0
+
+* Adds `BrowserConfiguration` parameter, to configure in-app browser views, such as Android Custom Tabs or SFSafariViewController.
+* Adds `showTitle` to `BrowserConfiguration`, to allow showing webpage titles in in-app browser views.
 ## 6.2.4
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
