@@ -138,7 +138,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
 
   func clear(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws {
     let defaults = try SharedPreferencesPlugin.getUserDefaults(options: options)
-    if let allowList {
+    if let allowList = allowList {
       for (key) in allowList {
         defaults.removeObject(forKey: key)
       }
