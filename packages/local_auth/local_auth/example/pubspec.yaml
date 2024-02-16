@@ -17,7 +17,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   local_auth_android: ^1.0.0
-  local_auth_darwin: ^1.2.0
+  local_auth_darwin: ^1.2.1
 
 dev_dependencies:
   build_runner: ^2.1.10
