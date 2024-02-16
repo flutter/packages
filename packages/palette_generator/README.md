@@ -12,11 +12,4 @@ To use this package, add `palette_generator` as a
 
 ## Example
 
-Import the library via
-
-```dart
-import 'package:palette_generator/palette_generator.dart';
-```
-
-Then use the `PaletteGenerator` Dart class in your code. To see how this is done,
-check out the [image_colors example app](example/).
+To see how to use the `PaletteGenerator` class in your code, see [the example app](https://pub.dev/packages/palette_generator/example).
