@@ -1,6 +1,6 @@
-## 2.2.3-wip
+## 2.3.0
 
-* Things...latest pkg:web, bump sdk
+* Updates minimum supported SDK version to Dart 3.3.
 
 ## 2.2.2
 
