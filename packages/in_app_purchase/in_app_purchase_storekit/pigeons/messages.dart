@@ -91,7 +91,7 @@ class SKErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?> userInfo;
+  final Map<String?, Object?>? userInfo;
 }
 
 class SKPaymentDiscountMessage {
