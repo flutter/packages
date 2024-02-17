@@ -79,15 +79,16 @@
                                               (void (^)(
                                                   FWFWKNavigationResponsePolicyEnumData *_Nullable,
                                                   FlutterError *_Nullable))completion {
-  NSNumber *webViewIdentifier =
-      @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
+  NSInteger webViewIdentifier =
+      [self.instanceManager identifierWithStrongReferenceForInstance:webView];
   FWFWKNavigationResponseData *navigationResponseData =
       FWFWKNavigationResponseDataFromNativeNavigationResponse(navigationResponse);
-  [self decidePolicyForNavigationResponseForDelegateWithIdentifier:
-            @([self identifierForDelegate:instance])
-                                                 webViewIdentifier:webViewIdentifier
-                                                navigationResponse:navigationResponseData
-                                                        completion:completion];
+  [self
+      decidePolicyForNavigationResponseForDelegateWithIdentifier:[self
+                                                                     identifierForDelegate:instance]
+                                               webViewIdentifier:webViewIdentifier
+                                              navigationResponse:navigationResponseData
+                                                      completion:completion];
 }
 
 - (void)didFailNavigationForDelegate:(FWFNavigationDelegate *)instance

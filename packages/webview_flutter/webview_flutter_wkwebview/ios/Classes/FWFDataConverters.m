@@ -185,7 +185,7 @@ FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNativeNavigationResp
     WKNavigationResponse *response) {
   return [FWFWKNavigationResponseData
       makeWithResponse:FWFNSHttpUrlResponseDataFromNativeNSURLResponse(response.response)
-          forMainFrame:@(response.forMainFrame)];
+          forMainFrame:response.forMainFrame];
 }
 
 /// Cast the NSURLResponse object to NSHTTPURLResponse.
@@ -196,7 +196,7 @@ FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNativeNavigationResp
 /// https://developer.apple.com/documentation/foundation/nsurlresponse#overview
 FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNativeNSURLResponse(NSURLResponse *response) {
   NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-  return [FWFNSHttpUrlResponseData makeWithStatusCode:@(httpResponse.statusCode)];
+  return [FWFNSHttpUrlResponseData makeWithStatusCode:httpResponse.statusCode];
 }
 
 WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
