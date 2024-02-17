@@ -26,7 +26,7 @@ Future<void> loadWebSdk({
 
   // If TrustedTypes are available, prepare a trusted URL.
   TrustedScriptURL? trustedUrl;
-  if (web.window.trustedTypes != null) {
+  if (web.window.nullableTrustedTypes != null) {
     web.console.debug(
       'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
     );

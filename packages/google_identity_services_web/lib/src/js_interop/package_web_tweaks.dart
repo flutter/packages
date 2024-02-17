@@ -11,13 +11,22 @@ import 'package:web/web.dart' as web;
 /// This extension gives web.window a nullable getter to the `trustedTypes`
 /// property, which needs to be used to check for feature support.
 extension NullableTrustedTypesGetter on web.Window {
-  /// Bindings to window.trustedTypes.
+  /// (Nullable) Bindings to window.trustedTypes.
   ///
   /// This may be null if the browser doesn't support the Trusted Types API.
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
   @JS('trustedTypes')
-  external TrustedTypePolicyFactory? get trustedTypes;
+  external TrustedTypePolicyFactory? get nullableTrustedTypes;
+
+  /// Bindings to window.trustedTypes.
+  ///
+  /// This will crash if accessed in a browser that doesn't support the
+  /// Trusted Types API.
+  ///
+  /// See: https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
+  @JS('trustedTypes')
+  external TrustedTypePolicyFactory get trustedTypes;
 }
 
 /// This extension allows setting a TrustedScriptURL as the src of a script element,
