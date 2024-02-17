@@ -439,6 +439,26 @@ class ConstructorCall extends BlobNode {
   String toString() => '$name($arguments)';
 }
 
+/// Representation of functions that return widgets in Remote Flutter library blobs.
+class WidgetBuilderDeclaration extends BlobNode {
+  /// Creates a [WidgetBuilderDeclaration].
+  const WidgetBuilderDeclaration(this.argumentName, this.widget);
+
+  /// The name associated with the passed [DynamicMap].
+  final String argumentName;
+
+  /// The widget that will be returned when the builder is called.
+  ///
+  /// This is usually a [ConstructorCall], but may be a [Switch] (so long as
+  /// that [Switch] resolves to a [ConstructorCall]. Other values (or a [Switch]
+  /// that does not resolve to a constructor call) will result in an
+  /// [ErrorWidget] being used.
+  final BlobNode widget;
+
+  @override
+  String toString() => '($argumentName) => $widget';
+}
+
 /// Base class for various kinds of references in the RFW data structures.
 abstract class Reference extends BlobNode {
   /// Abstract const constructor. This constructor enables subclasses to provide
@@ -532,6 +552,31 @@ class DataReference extends Reference {
 
   @override
   String toString() => 'data.${parts.join(".")}';
+}
+
+/// Reference to the [DynamicMap] passed into the widget builder.
+///
+/// This class is used to represent references to a function argument.
+/// In "(scope) => Container(width: scope.width)" this represents "scope.width".
+///
+/// See also:
+/// 
+///   * [WidgetBuilderDeclaration] which represents a widget builder definition.
+class WidgetBuilderArgReference extends Reference {
+  /// Wraps the given [parts] associated to the [argumentName] as an [WidgetBuilderArgReference].
+  ///
+  /// The parts must not be mutated after the object is created.
+  const WidgetBuilderArgReference(this.argumentName, super.parts);
+
+  /// References the function argument name.
+  final String argumentName;
+
+  WidgetBuilderArgReference constructReference(List<Object> moreParts) {
+    return WidgetBuilderArgReference(argumentName, parts + moreParts);
+  }
+
+  @override
+  String toString() => '$argumentName.${parts.join('.')}';
 }
 
 /// Unbound reference to a [Loop].

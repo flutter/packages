@@ -1088,4 +1088,156 @@ void main() {
     data.update('c', 'test');
     expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}', 'root: {a: [2, 3], b: [q, r], c: test}']);
   });
+
+  group('Widget Builders', () {
+    Widget _setUp(String library) {
+      const LibraryName coreLibraryName = LibraryName(<String>['core']);
+      const LibraryName localLibraryName = LibraryName(<String>['local']);
+      const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+      final DynamicContent data = DynamicContent();
+      final Runtime runtime = Runtime();
+
+      runtime.update(coreLibraryName, createCoreWidgets());
+      runtime.update(remoteLibraryName, parseLibraryFile(library));
+      runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> { 
+        'CoolText': (BuildContext context, DataSource source) {
+          final int count = source.length(['text']);
+          String buffer = '';
+          for (int i = 0; i < count; i++) {
+            final List<Object> key = <Object>['text', i];
+            final Object? text = source.v<String>(key) ?? source.v<int>(key);
+            buffer += text.toString();
+          }
+          return Text(buffer, textDirection: TextDirection.ltr);
+        },
+        'Builder': (BuildContext context, DataSource source) {
+          return source.builder(<String>['builder'], <String, Object?>{});
+        },
+        'Calculator': (BuildContext context, DataSource source) {
+          final int operand1 = source.v<int>(<String>['operand1'])!;
+          final int operand2 = source.v<int>(<String>['operand2'])!;
+          final String operation = source.v<String>(<String>['operation'])!;
+          final int result;
+          switch (operation) {
+            case 'sum':
+              result = operand1 + operand2;
+            case 'multiply': 
+              result = operand1 * operand2;
+            default:
+              throw Exception('operation not supported');
+          }
+          return source.builder(<String>['builder'], <String, Object?>{
+            'result': result,
+          });
+        },
+      }));
+      return RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      );
+    }
+
+    testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test = Builder(
+          builder: (scope) =>  CoolText(text: ['Hello Widget Builders!']),
+        );
+      ''');
+      await tester.pumpWidget(widget);
+
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, 'Hello Widget Builders!');
+    });
+
+    testWidgets('Widget builders - work when scope is used', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test = Calculator(
+          operand1: 1,
+          operand2: 2,
+          operation: 'sum',
+          builder: (result) => CoolText(text: ['1 + 2 = ', result.result]),
+        );
+      ''');
+      await tester.pumpWidget(widget);
+
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, '1 + 2 = 3');
+    });
+
+    testWidgets('Widget builders - works nested', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test = Calculator(
+          operand1: 1,
+          operand2: 2,
+          operation: 'sum',
+          builder: (result1) => Calculator(
+            operand1: result1.result,
+            operand2: 3,
+            operation: 'multiply',
+            builder: (result2) => CoolText(text: ['(1 + 2) * 3 = ', result2.result]),
+          ),
+        );
+      ''');
+      await tester.pumpWidget(widget);
+
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, '(1 + 2) * 3 = 9');
+    });
+
+    testWidgets('Widget builders - swich works with builder', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test {justResult: true} = Calculator(
+          operand1: 1,
+          operand2: 2,
+          operation: 'sum',
+          builder: switch state.justResult {
+            true: (result) => CoolText(text: [result.result]),
+          },
+        );
+      ''');
+      await tester.pumpWidget(widget);
+
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, '3');
+    });
+
+    testWidgets('Widget builders - builder works with switch', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test = Calculator(
+          operand1: 1,
+          operand2: 2,
+          operation: 'sum',
+          builder: (result) => switch result.result {
+            0: CoolText(text: ['The result is zero']),
+            default: CoolText(text: ['The result is not zero']),
+          },
+        );
+      ''');
+      await tester.pumpWidget(widget);
+
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, 'The result is not zero');
+    });
+  });
 }

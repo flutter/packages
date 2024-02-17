@@ -503,4 +503,17 @@ void main() {
     expect((value.widgets.first.root as ConstructorCall).name, 'c');
     expect((value.widgets.first.root as ConstructorCall).arguments, isEmpty);
   });
+
+  testWidgets('Library encoder: widget builders',  (WidgetTester tester) async {
+    final String source = '''
+      widget Foo = Builder(
+        builder: (scope) => Text(text: scope.text),
+      );
+    ''';
+    final RemoteWidgetLibrary library = parseLibraryFile(source);
+    final Uint8List encoded = encodeLibraryBlob(library);
+    final RemoteWidgetLibrary decoded = decodeLibraryBlob(encoded);
+
+    expect(library.toString(), decoded.toString());
+  });
 }
