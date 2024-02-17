@@ -49,8 +49,10 @@ import 'table_span.dart';
 /// ```dart
 /// TableView.builder(
 ///   cellBuilder: (BuildContext context, TableVicinity vicinity) {
-///     return Center(
-///       child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
+///     return TableViewCell(
+///       child: Center(
+///         child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
+///       ),
 ///     );
 ///   },
 ///   columnCount: 10,
