@@ -24,7 +24,8 @@ void main() {
     final VideoPlayer videoPlayer =
         find.byType(VideoPlayer).first.evaluate().single.widget as VideoPlayer;
     final Duration videoDuration = videoPlayer.controller.value.duration;
-    await tester.pump(videoDuration);
+    const Duration wait = Duration(seconds: 1); // add enough delay
+    await tester.pump(videoDuration + wait);
 
     // expect pop _PlayerVideoAndPopPage.
     expect(find.byKey(const Key('home_page')), findsOneWidget);
