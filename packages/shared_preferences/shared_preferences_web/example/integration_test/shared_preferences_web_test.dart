@@ -12,14 +12,6 @@ import 'package:shared_preferences_web/src/keys_extension.dart';
 
 import 'package:web/helpers.dart' as html;
 
-const Map<String, dynamic> kTestValues = <String, dynamic>{
-  'flutter.String': 'hello world',
-  'flutter.Bool': true,
-  'flutter.Int': 42,
-  'flutter.Double': 3.14159,
-  'flutter.StringList': <String>['foo', 'bar'],
-};
-
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 

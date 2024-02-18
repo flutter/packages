@@ -447,9 +447,6 @@ abstract class RouteBaseConfig {
   ) {
     assert(!reader.isNull, 'reader should not be null');
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
-    // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
-    // 5.2+ (when Flutter 3.4+ is on stable).
-    // ignore: deprecated_member_use
     final String typeName = type.element.name;
     final DartType typeParamType = type.typeArguments.single;
     if (typeParamType is! InterfaceType) {
@@ -461,9 +458,6 @@ abstract class RouteBaseConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
-    // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
-    // 5.2+ (when Flutter 3.4+ is on stable).
-    // ignore: deprecated_member_use
     final InterfaceElement classElement = typeParamType.element;
 
     final RouteBaseConfig value;
@@ -485,7 +479,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$observers',
           ),
         );
-        break;
       case 'TypedStatefulShellRoute':
         value = StatefulShellRouteConfig._(
           routeDataClass: classElement,
@@ -503,7 +496,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$navigatorContainerBuilder',
           ),
         );
-        break;
       case 'TypedStatefulShellBranch':
         value = StatefulShellBranchConfig._(
           routeDataClass: classElement,
@@ -521,7 +513,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$initialLocation',
           ),
         );
-        break;
       case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
         if (pathValue.isNull) {
@@ -541,7 +532,6 @@ abstract class RouteBaseConfig {
             parameterName: r'$parentNavigatorKey',
           ),
         );
-        break;
       default:
         throw UnsupportedError('Unrecognized type $typeName');
     }
@@ -705,16 +695,10 @@ $routeDataClassName.$dataConvertionFunctionName(
 String _enumMapConst(InterfaceType type) {
   assert(type.isEnum);
 
-  // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
-  // 5.2+ (when Flutter 3.4+ is on stable).
-  // ignore: deprecated_member_use
   final String enumName = type.element.name;
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
-  // 5.2+ (when Flutter 3.4+ is on stable).
-  // ignore: deprecated_member_use
   for (final FieldElement enumField in type.element.fields
       .where((FieldElement element) => element.isEnumConstant)) {
     buffer.writeln(

@@ -5,7 +5,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/src/channel.dart';
+import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+import '../test_api.g.dart';
 import 'sk_test_stub_objects.dart';
 
 void main() {
@@ -14,8 +16,8 @@ void main() {
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
             SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
   });
@@ -102,12 +104,6 @@ void main() {
       expect(await SKPaymentQueueWrapper.canMakePayments(), true);
     });
 
-    test('canMakePayment returns false if method channel returns null',
-        () async {
-      fakeStoreKitPlatform.testReturnNull = true;
-      expect(await SKPaymentQueueWrapper.canMakePayments(), false);
-    });
-
     test('storefront returns valid SKStoreFrontWrapper object', () async {
       final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
       expect(
@@ -116,12 +112,6 @@ void main() {
             'countryCode': 'USA',
             'identifier': 'unique_identifier',
           }));
-    });
-
-    test('storefront returns null', () async {
-      fakeStoreKitPlatform.testReturnNull = true;
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      expect(await queue.storefront(), isNull);
     });
 
     test('transactions should return a valid list of transactions', () async {
@@ -201,10 +191,9 @@ void main() {
   });
 }
 
-class FakeStoreKitPlatform {
+class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   FakeStoreKitPlatform() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, onMethodCall);
   }
   // get product request
@@ -239,13 +228,6 @@ class FakeStoreKitPlatform {
   Future<dynamic> onMethodCall(MethodCall call) {
     switch (call.method) {
       // request makers
-      case '-[InAppPurchasePlugin startProductRequest:result:]':
-        startProductRequestParam = call.arguments as List<dynamic>;
-        if (getProductRequestFailTest) {
-          return Future<dynamic>.value();
-        }
-        return Future<Map<String, dynamic>>.value(
-            buildProductResponseMap(dummyProductResponseWrapper));
       case '-[InAppPurchasePlugin refreshReceipt:result:]':
         refreshReceipt++;
         refreshReceiptParam = Map.castFrom<dynamic, dynamic, String, dynamic>(
@@ -257,37 +239,6 @@ class FakeStoreKitPlatform {
           throw Exception('some arbitrary error');
         }
         return Future<String>.value('receipt data');
-      // payment queue
-      case '-[SKPaymentQueue canMakePayments:]':
-        if (testReturnNull) {
-          return Future<dynamic>.value();
-        }
-        return Future<bool>.value(true);
-      case '-[SKPaymentQueue transactions]':
-        return Future<List<dynamic>>.value(
-            <dynamic>[buildTransactionMap(dummyTransaction)]);
-      case '-[SKPaymentQueue storefront]':
-        if (testReturnNull) {
-          return Future<dynamic>.value();
-        }
-        return Future<Map<String, dynamic>>.value(const <String, dynamic>{
-          'countryCode': 'USA',
-          'identifier': 'unique_identifier',
-        });
-      case '-[InAppPurchasePlugin addPayment:result:]':
-        payments.add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(
-            call.arguments as Map<dynamic, dynamic>)));
-        return Future<void>.sync(() {});
-      case '-[InAppPurchasePlugin finishTransaction:result:]':
-        transactionsFinished.add(
-            Map<String, String>.from(call.arguments as Map<dynamic, dynamic>));
-        return Future<void>.sync(() {});
-      case '-[InAppPurchasePlugin restoreTransactions:result:]':
-        applicationNameHasTransactionRestored = call.arguments as String;
-        return Future<void>.sync(() {});
-      case '-[InAppPurchasePlugin presentCodeRedemptionSheet:result:]':
-        presentCodeRedemption = true;
-        return Future<void>.sync(() {});
       case '-[SKPaymentQueue startObservingTransactionQueue]':
         queueIsActive = true;
         return Future<void>.sync(() {});
@@ -305,6 +256,53 @@ class FakeStoreKitPlatform {
         return Future<void>.sync(() {});
     }
     return Future<dynamic>.error('method not mocked');
+  }
+
+  @override
+  void addPayment(Map<String?, Object?> paymentMap) {
+    payments
+        .add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(paymentMap)));
+  }
+
+  @override
+  bool canMakePayments() {
+    return true;
+  }
+
+  @override
+  SKStorefrontMessage storefront() {
+    return SKStorefrontMessage(
+        countryCode: 'USA', identifier: 'unique_identifier');
+  }
+
+  @override
+  List<SKPaymentTransactionMessage?> transactions() =>
+      <SKPaymentTransactionMessage>[dummyTransactionMessage];
+
+  @override
+  void finishTransaction(Map<String?, String?> finishMap) {
+    transactionsFinished.add(Map<String, String>.from(finishMap));
+  }
+
+  @override
+  void presentCodeRedemptionSheet() {
+    presentCodeRedemption = true;
+  }
+
+  @override
+  void restoreTransactions(String? applicationUserName) {
+    applicationNameHasTransactionRestored = applicationUserName!;
+  }
+
+  @override
+  Future<SKProductsResponseMessage> startProductRequest(
+      List<String?> productIdentifiers) {
+    startProductRequestParam = productIdentifiers;
+    if (getProductRequestFailTest) {
+      return Future<SKProductsResponseMessage>.value(
+          SKProductsResponseMessage());
+    }
+    return Future<SKProductsResponseMessage>.value(dummyProductResponseMessage);
   }
 }
 
@@ -331,9 +329,3 @@ class TestPaymentTransactionObserver extends SKTransactionObserverWrapper {
     return true;
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

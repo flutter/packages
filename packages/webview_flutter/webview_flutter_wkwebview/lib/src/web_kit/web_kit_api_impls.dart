@@ -2,16 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../common/instance_manager.dart';
 import '../common/web_kit.g.dart';
 import '../foundation/foundation.dart';
+import '../ui_kit/ui_kit.dart';
+import '../ui_kit/ui_kit_api_impls.dart';
 import 'web_kit.dart';
 
 export '../common/web_kit.g.dart'
-    show WKNavigationType, WKPermissionDecision, WKMediaCaptureType;
+    show WKMediaCaptureType, WKNavigationType, WKPermissionDecision;
 
 Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     Iterable<WKWebsiteDataType> types) {
@@ -20,28 +24,20 @@ Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     switch (type) {
       case WKWebsiteDataType.cookies:
         value = WKWebsiteDataTypeEnum.cookies;
-        break;
       case WKWebsiteDataType.memoryCache:
         value = WKWebsiteDataTypeEnum.memoryCache;
-        break;
       case WKWebsiteDataType.diskCache:
         value = WKWebsiteDataTypeEnum.diskCache;
-        break;
       case WKWebsiteDataType.offlineWebApplicationCache:
         value = WKWebsiteDataTypeEnum.offlineWebApplicationCache;
-        break;
       case WKWebsiteDataType.localStorage:
         value = WKWebsiteDataTypeEnum.localStorage;
-        break;
       case WKWebsiteDataType.sessionStorage:
         value = WKWebsiteDataTypeEnum.sessionStorage;
-        break;
       case WKWebsiteDataType.webSQLDatabases:
         value = WKWebsiteDataTypeEnum.webSQLDatabases;
-        break;
       case WKWebsiteDataType.indexedDBDatabases:
         value = WKWebsiteDataTypeEnum.indexedDBDatabases;
-        break;
     }
 
     return WKWebsiteDataTypeEnumData(value: value);
@@ -80,46 +76,32 @@ extension _NSHttpCookiePropertyKeyConverter on NSHttpCookiePropertyKey {
     switch (this) {
       case NSHttpCookiePropertyKey.comment:
         value = NSHttpCookiePropertyKeyEnum.comment;
-        break;
       case NSHttpCookiePropertyKey.commentUrl:
         value = NSHttpCookiePropertyKeyEnum.commentUrl;
-        break;
       case NSHttpCookiePropertyKey.discard:
         value = NSHttpCookiePropertyKeyEnum.discard;
-        break;
       case NSHttpCookiePropertyKey.domain:
         value = NSHttpCookiePropertyKeyEnum.domain;
-        break;
       case NSHttpCookiePropertyKey.expires:
         value = NSHttpCookiePropertyKeyEnum.expires;
-        break;
       case NSHttpCookiePropertyKey.maximumAge:
         value = NSHttpCookiePropertyKeyEnum.maximumAge;
-        break;
       case NSHttpCookiePropertyKey.name:
         value = NSHttpCookiePropertyKeyEnum.name;
-        break;
       case NSHttpCookiePropertyKey.originUrl:
         value = NSHttpCookiePropertyKeyEnum.originUrl;
-        break;
       case NSHttpCookiePropertyKey.path:
         value = NSHttpCookiePropertyKeyEnum.path;
-        break;
       case NSHttpCookiePropertyKey.port:
         value = NSHttpCookiePropertyKeyEnum.port;
-        break;
       case NSHttpCookiePropertyKey.sameSitePolicy:
         value = NSHttpCookiePropertyKeyEnum.sameSitePolicy;
-        break;
       case NSHttpCookiePropertyKey.secure:
         value = NSHttpCookiePropertyKeyEnum.secure;
-        break;
       case NSHttpCookiePropertyKey.value:
         value = NSHttpCookiePropertyKeyEnum.value;
-        break;
       case NSHttpCookiePropertyKey.version:
         value = NSHttpCookiePropertyKeyEnum.version;
-        break;
     }
 
     return NSHttpCookiePropertyKeyEnumData(value: value);
@@ -132,10 +114,8 @@ extension _WKUserScriptInjectionTimeConverter on WKUserScriptInjectionTime {
     switch (this) {
       case WKUserScriptInjectionTime.atDocumentStart:
         value = WKUserScriptInjectionTimeEnum.atDocumentStart;
-        break;
       case WKUserScriptInjectionTime.atDocumentEnd:
         value = WKUserScriptInjectionTimeEnum.atDocumentEnd;
-        break;
     }
 
     return WKUserScriptInjectionTimeEnumData(value: value);
@@ -151,16 +131,12 @@ Iterable<WKAudiovisualMediaTypeEnumData> _toWKAudiovisualMediaTypeEnumData(
     switch (type) {
       case WKAudiovisualMediaType.none:
         value = WKAudiovisualMediaTypeEnum.none;
-        break;
       case WKAudiovisualMediaType.audio:
         value = WKAudiovisualMediaTypeEnum.audio;
-        break;
       case WKAudiovisualMediaType.video:
         value = WKAudiovisualMediaTypeEnum.video;
-        break;
       case WKAudiovisualMediaType.all:
         value = WKAudiovisualMediaTypeEnum.all;
-        break;
     }
 
     return WKAudiovisualMediaTypeEnumData(value: value);
@@ -179,7 +155,10 @@ extension _NavigationActionDataConverter on WKNavigationActionData {
 
 extension _WKFrameInfoDataConverter on WKFrameInfoData {
   WKFrameInfo toWKFrameInfo() {
-    return WKFrameInfo(isMainFrame: isMainFrame);
+    return WKFrameInfo(
+      isMainFrame: isMainFrame,
+      request: request.toNSUrlRequest(),
+    );
   }
 }
 
@@ -257,6 +236,9 @@ class WebKitFlutterApis {
         webViewConfiguration = WKWebViewConfigurationFlutterApiImpl(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
+        ),
+        uiScrollViewDelegate = UIScrollViewDelegateFlutterApiImpl(
+          instanceManager: instanceManager,
         );
 
   static WebKitFlutterApis _instance = WebKitFlutterApis();
@@ -291,6 +273,10 @@ class WebKitFlutterApis {
   @visibleForTesting
   final WKWebViewConfigurationFlutterApiImpl webViewConfiguration;
 
+  /// Flutter Api for [UIScrollViewDelegate].
+  @visibleForTesting
+  final UIScrollViewDelegateFlutterApiImpl uiScrollViewDelegate;
+
   /// Ensures all the Flutter APIs have been set up to receive calls from native code.
   void ensureSetUp() {
     if (!_hasBeenSetUp) {
@@ -310,6 +296,8 @@ class WebKitFlutterApis {
         webViewConfiguration,
         binaryMessenger: _binaryMessenger,
       );
+      UIScrollViewDelegateFlutterApi.setup(uiScrollViewDelegate,
+          binaryMessenger: _binaryMessenger);
       _hasBeenSetUp = true;
     }
   }
@@ -767,6 +755,33 @@ class WKUIDelegateFlutterApiImpl extends WKUIDelegateFlutterApi {
 
     return WKPermissionDecisionData(value: decision);
   }
+
+  @override
+  Future<void> runJavaScriptAlertPanel(
+      int identifier, String message, WKFrameInfoData frame) {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+    return instance.runJavaScriptAlertDialog!
+        .call(message, frame.toWKFrameInfo());
+  }
+
+  @override
+  Future<bool> runJavaScriptConfirmPanel(
+      int identifier, String message, WKFrameInfoData frame) {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+    return instance.runJavaScriptConfirmDialog!
+        .call(message, frame.toWKFrameInfo());
+  }
+
+  @override
+  Future<String> runJavaScriptTextInputPanel(int identifier, String prompt,
+      String defaultText, WKFrameInfoData frame) {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+    return instance.runJavaScriptTextInputDialog!
+        .call(prompt, defaultText, frame.toWKFrameInfo());
+  }
 }
 
 /// Host api implementation for [WKNavigationDelegate].
@@ -903,6 +918,53 @@ class WKNavigationDelegateFlutterApiImpl
       instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
           as WKWebView,
     );
+  }
+
+  @override
+  Future<AuthenticationChallengeResponse> didReceiveAuthenticationChallenge(
+    int identifier,
+    int webViewIdentifier,
+    int challengeIdentifier,
+  ) async {
+    final void Function(
+      WKWebView webView,
+      NSUrlAuthenticationChallenge challenge,
+      void Function(
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ),
+    )? function = _getDelegate(identifier).didReceiveAuthenticationChallenge;
+
+    if (function == null) {
+      return AuthenticationChallengeResponse(
+        disposition: NSUrlSessionAuthChallengeDisposition.rejectProtectionSpace,
+      );
+    }
+
+    final Completer<AuthenticationChallengeResponse> responseCompleter =
+        Completer<AuthenticationChallengeResponse>();
+
+    function.call(
+      instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+          as WKWebView,
+      instanceManager.getInstanceWithWeakReference(challengeIdentifier)!
+          as NSUrlAuthenticationChallenge,
+      (
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ) {
+        responseCompleter.complete(
+          AuthenticationChallengeResponse(
+            disposition: disposition,
+            credentialIdentifier: credential != null
+                ? instanceManager.getIdentifier(credential)
+                : null,
+          ),
+        );
+      },
+    );
+
+    return responseCompleter.future;
   }
 }
 

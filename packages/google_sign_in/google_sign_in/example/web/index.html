@@ -7,8 +7,17 @@ found in the LICENSE file. -->
   <meta charset="UTF-8">
   <meta name="google-signin-client_id" content="your-client_id.apps.googleusercontent.com">
   <title>Google Sign-in Example</title>
+  <script src="flutter.js" defer></script>
 </head>
 <body>
-  <script src="main.dart.js" type="application/javascript"></script>
+  <script>
+    window.addEventListener('load', function(ev) {
+      _flutter.loader.loadEntrypoint({
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.autoStart();
+        }
+      });
+    });
+  </script>
 </body>
 </html>

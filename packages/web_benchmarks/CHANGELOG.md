@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 1.1.1
+
+* Fixes new lint warnings.
+
+## 1.1.0
+
+* Adds `computeAverage` and `computeDelta` methods to support analysis of benchmark results.
+
 ## 1.0.1
 
 * Adds `parse` constructors for the `BenchmarkResults` and `BenchmarkScore` classes.

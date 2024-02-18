@@ -422,7 +422,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           asset: dataSource,
           package: package,
         );
-        break;
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
@@ -430,20 +429,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           formatHint: formatHint,
           httpHeaders: httpHeaders,
         );
-        break;
       case DataSourceType.file:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
           httpHeaders: httpHeaders,
         );
-        break;
       case DataSourceType.contentUri:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.contentUri,
           uri: dataSource,
         );
-        break;
     }
 
     if (videoPlayerOptions?.mixWithOthers != null) {
@@ -475,7 +471,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
-          break;
         case VideoEventType.completed:
           // In this case we need to stop _timer, set isPlaying=false, and
           // position=value.duration. Instead of setting the values directly,
@@ -483,16 +478,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           // and seeks to the last frame of the video.
           pause().then((void pauseResult) => seekTo(value.duration));
           value = value.copyWith(isCompleted: true);
-          break;
         case VideoEventType.bufferingUpdate:
           value = value.copyWith(buffered: event.buffered);
-          break;
         case VideoEventType.bufferingStart:
           value = value.copyWith(isBuffering: true);
-          break;
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
-          break;
         case VideoEventType.isPlayingStateUpdate:
           if (event.isPlaying ?? false) {
             value =
@@ -500,7 +491,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
-          break;
         case VideoEventType.unknown:
           break;
       }

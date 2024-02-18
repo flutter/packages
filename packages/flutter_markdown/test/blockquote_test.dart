@@ -50,9 +50,9 @@ void defineTests() {
         final DecoratedBox blockQuoteContainer = tester.widget(
           find.byType(DecoratedBox),
         );
-        final RichText qouteText = tester.widget(find.byType(RichText));
+        final Text qouteText = tester.widget(find.byType(Text));
         final List<TextSpan> styledTextParts =
-            (qouteText.text as TextSpan).children!.cast<TextSpan>();
+            (qouteText.textSpan! as TextSpan).children!.cast<TextSpan>();
 
         expectTextStrings(
           widgets,

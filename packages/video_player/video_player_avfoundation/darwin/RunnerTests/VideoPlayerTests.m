@@ -255,6 +255,59 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   OCMVerify([mockDisplayLink setRunning:NO]);
 }
 
+- (void)testInitStartsDisplayLinkTemporarily {
+  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
+      OCMProtocolMock(@protocol(FlutterTextureRegistry));
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"InitStartsDisplayLinkTemporarily"];
+  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
+  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  FVPDisplayLink *mockDisplayLink =
+      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
+                                                      callback:^(){
+                                                      }]);
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
+      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
+                                                           output:mockVideoOutput]
+      displayLinkFactory:stubDisplayLinkFactory
+               registrar:partialRegistrar];
+
+  FlutterError *initalizationError;
+  [videoPlayerPlugin initialize:&initalizationError];
+  XCTAssertNil(initalizationError);
+  FVPCreateMessage *create = [FVPCreateMessage
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}];
+  FlutterError *createError;
+  FVPTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&createError];
+  NSInteger textureId = textureMessage.textureId;
+
+  // Init should start the display link temporarily.
+  OCMVerify([mockDisplayLink setRunning:YES]);
+
+  // Simulate a buffer being available.
+  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
+      .andReturn(YES);
+  // Any non-zero value is fine here since it won't actually be used, just NULL-checked.
+  CVPixelBufferRef fakeBufferRef = (CVPixelBufferRef)1;
+  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
+      .ignoringNonObjectArgs()
+      .andReturn(fakeBufferRef);
+  // Simulate a callback from the engine to request a new frame.
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[@(textureId)];
+  [player copyPixelBuffer];
+  // Since a frame was found, and the video is paused, the display link should be paused again.
+  OCMVerify([mockDisplayLink setRunning:NO]);
+}
+
 - (void)testSeekToWhilePlayingDoesNotStopDisplayLink {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
@@ -288,8 +341,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSInteger textureId = textureMessage.textureId;
 
   // Ensure that the video is playing before seeking.
-  FlutterError *pauseError;
-  [videoPlayerPlugin play:textureMessage error:&pauseError];
+  FlutterError *playError;
+  [videoPlayerPlugin play:textureMessage error:&playError];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
   FVPPositionMessage *message = [FVPPositionMessage makeWithTextureId:textureId position:1234];
@@ -315,6 +368,46 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // Simulate a callback from the engine to request a new frame.
   [player copyPixelBuffer];
   // Since the video was playing, the display link should not be paused after getting a buffer.
+  OCMVerify(never(), [mockDisplayLink setRunning:NO]);
+}
+
+- (void)testPauseWhileWaitingForFrameDoesNotStopDisplayLink {
+  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
+      OCMProtocolMock(@protocol(FlutterTextureRegistry));
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"PauseWhileWaitingForFrameDoesNotStopDisplayLink"];
+  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
+  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  FVPDisplayLink *mockDisplayLink =
+      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
+                                                      callback:^(){
+                                                      }]);
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
+      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+      displayLinkFactory:stubDisplayLinkFactory
+               registrar:partialRegistrar];
+
+  FlutterError *initalizationError;
+  [videoPlayerPlugin initialize:&initalizationError];
+  XCTAssertNil(initalizationError);
+  FVPCreateMessage *create = [FVPCreateMessage
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}];
+  FlutterError *createError;
+  FVPTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&createError];
+
+  // Run a play/pause cycle to force the pause codepath to run completely.
+  FlutterError *playPauseError;
+  [videoPlayerPlugin play:textureMessage error:&playPauseError];
+  [videoPlayerPlugin pause:textureMessage error:&playPauseError];
+
+  // Since a buffer hasn't been available yet, the pause should not have stopped the display link.
   OCMVerify(never(), [mockDisplayLink setRunning:NO]);
 }
 

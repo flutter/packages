@@ -7,8 +7,10 @@ import 'package:flutter/widgets.dart' as widgets;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
 
+import 'billing_client_wrappers/billing_client_wrapper_test.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
 import 'stub_in_app_purchase_platform.dart';
 
@@ -20,10 +22,12 @@ void main() {
   const String startConnectionCall =
       'BillingClient#startConnection(BillingClientStateListener)';
   const String endConnectionCall = 'BillingClient#endConnection()';
+  const String onBillingServiceDisconnectedCallback =
+      'BillingClientStateListener#onBillingServiceDisconnected()';
+  late BillingClientManager manager;
 
   setUpAll(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler);
   });
 
@@ -38,8 +42,8 @@ void main() {
         name: startConnectionCall,
         value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
-    iapAndroidPlatformAddition =
-        InAppPurchaseAndroidPlatformAddition(BillingClientManager());
+    manager = BillingClientManager();
+    iapAndroidPlatformAddition = InAppPurchaseAndroidPlatformAddition(manager);
   });
 
   group('consume purchases', () {
@@ -59,6 +63,109 @@ void main() {
               GooglePlayPurchaseDetails.fromPurchase(dummyPurchase).first);
 
       expect(billingResultWrapper, equals(expectedBillingResult));
+    });
+  });
+
+  group('billingConfig', () {
+    test('getCountryCode success', () async {
+      const String expectedCountryCode = 'US';
+      const BillingConfigWrapper expected = BillingConfigWrapper(
+          countryCode: expectedCountryCode,
+          responseCode: BillingResponse.ok,
+          debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: BillingClient.getBillingConfigMethodString,
+        value: buildBillingConfigMap(expected),
+      );
+      final String countryCode =
+          await iapAndroidPlatformAddition.getCountryCode();
+
+      expect(countryCode, equals(expectedCountryCode));
+    });
+  });
+
+  group('setBillingChoice', () {
+    late Map<Object?, Object?> arguments;
+    test('setAlternativeBillingOnlyState', () async {
+      stubPlatform.reset();
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+      stubPlatform.addResponse(name: endConnectionCall);
+      await iapAndroidPlatformAddition
+          .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
+
+      // Fake the disconnect that we would expect from a endConnectionCall.
+      await manager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      // Verify that after connection ended reconnect was called.
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+      expect(
+          arguments['billingChoiceMode'],
+          const BillingChoiceModeConverter()
+              .toJson(BillingChoiceMode.alternativeBillingOnly));
+    });
+
+    test('setPlayBillingState', () async {
+      stubPlatform.reset();
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+      stubPlatform.addResponse(name: endConnectionCall);
+      await iapAndroidPlatformAddition
+          .setBillingChoice(BillingChoiceMode.playBillingOnly);
+
+      // Fake the disconnect that we would expect from a endConnectionCall.
+      await manager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      // Verify that after connection ended reconnect was called.
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+      expect(
+          arguments['billingChoiceMode'],
+          const BillingChoiceModeConverter()
+              .toJson(BillingChoiceMode.playBillingOnly));
+    });
+  });
+
+  group('isAlternativeBillingOnlyAvailable', () {
+    test('isAlternativeBillingOnlyAvailable success', () async {
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok, debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
+        value: buildBillingResultMap(expected),
+      );
+      final BillingResultWrapper result =
+          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+
+      expect(result, equals(expected));
+    });
+  });
+
+  group('showAlternativeBillingOnlyInformationDialog', () {
+    test('showAlternativeBillingOnlyInformationDialog success', () async {
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok, debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: BillingClient
+            .showAlternativeBillingOnlyInformationDialogMethodString,
+        value: buildBillingResultMap(expected),
+      );
+      final BillingResultWrapper result =
+          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+
+      expect(result, equals(expected));
     });
   });
 
@@ -175,9 +282,3 @@ void main() {
     });
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
