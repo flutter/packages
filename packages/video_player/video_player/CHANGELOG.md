@@ -1,5 +1,3 @@
-## NEXT
-
 ## 2.8.3
 
 * Removes added listener before unmounting widget in example
