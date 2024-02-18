@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:html';
+import 'dart:io';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
@@ -130,6 +131,20 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   Stream<VideoEvent> videoEventsFor(int textureId) {
     return _player(textureId).events;
   }
+
+  @override
+  Future<List<TrackSelection>> getTrackSelections(
+    int textureId, {
+    TrackSelectionNameResource? trackSelectionNameResource,
+  }) async {
+    return _videoPlayers[textureId]!.getTrackSelections(
+        trackSelectionNameResource: trackSelectionNameResource);
+  }
+
+  @override
+  Future<void> setTrackSelection(
+          int textureId, TrackSelection trackSelection) async =>
+      Future<void>.value();
 
   @override
   Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {

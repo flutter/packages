@@ -16,9 +16,10 @@ dependencies:
   plugin_platform_interface: ^2.1.7
 
 dev_dependencies:
+  meta: ^1.3.0
   flutter_test:
     sdk: flutter
 
-topics:
-  - video
-  - video-player
+dev_dependencies:
+  pedantic: ^1.10.0
+

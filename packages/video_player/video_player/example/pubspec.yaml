@@ -1,10 +1,12 @@
 name: video_player_example
 description: Demonstrates how to use the video_player plugin.
+version: 0.0.1
 publish_to: none
 
 environment:
   sdk: ^3.1.0
   flutter: ">=3.13.0"
+
 
 dependencies:
   flutter:
@@ -17,14 +19,28 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
 
+# For development / testing purpose only.
+# When using video_player in a real application
+# you won't directly depend on video_player_platform_interface at all.
+# The example app is bundled with the plugin so we use a path dependency on
+# the parent directory to use the current plugin's version.
+dependency_overrides:
+  video_player_platform_interface:
+    path: ../../video_player_platform_interface
+  video_player_web:
+    path: ../../video_player_web
+
 dev_dependencies:
   build_runner: ^2.1.10
   flutter_test:
+    sdk: flutter
+  flutter_driver:
     sdk: flutter
   integration_test:
     sdk: flutter
   path_provider: ^2.0.6
   test: any
+  pedantic: ^1.10.0
 
 flutter:
   uses-material-design: true
@@ -35,3 +51,7 @@ flutter:
     - assets/bumble_bee_captions.srt
     - assets/bumble_bee_captions.vtt
     - assets/Audio.mp3
+    - assets/flutter-mark-square-64.png
+    - assets/Butterfly-209.mp4
+    - assets/bumble_bee_captions.srt
+
