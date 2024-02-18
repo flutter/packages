@@ -1022,6 +1022,14 @@ Future<void> main() async {
 
     testWidgets('onHttpError is not called when no HTTP error is received',
         (WidgetTester tester) async {
+      const String testPage = '''
+        <!DOCTYPE html><html>
+        </head>
+        <body>
+        </body>
+        </html>
+      ''';
+
       final Completer<HttpResponseError> errorCompleter =
           Completer<HttpResponseError>();
       final Completer<void> pageFinishCompleter = Completer<void>();
@@ -1036,10 +1044,11 @@ Future<void> main() async {
       unawaited(delegate.setOnHttpError((HttpResponseError error) {
         errorCompleter.complete(error);
       }));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller.loadRequest(
-        LoadRequestParams(uri: Uri.parse(primaryUrl)),
+      unawaited(delegate.setOnPageFinished(
+        (_) => pageFinishCompleter.complete(),
       ));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.loadHtmlString(testPage));
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
