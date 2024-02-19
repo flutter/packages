@@ -73,6 +73,8 @@ import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
+import com.android.billingclient.api.UserChoiceBillingListener;
+import com.android.billingclient.api.UserChoiceDetails;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -82,11 +84,13 @@ import io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodArgs;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import kotlin.collections.EmptyList;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -116,6 +120,10 @@ public class MethodCallHandlerTest {
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
             context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null))
+        .thenReturn(mockBillingClient);
+    when(factory.createBillingClient(
+        any(Context.class), any(MethodChannel.class), eq(BillingChoiceMode.USER_CHOICE_BILLING), any(
+            UserChoiceBillingListener.class)))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockMethodChannel, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -219,6 +227,35 @@ public class MethodCallHandlerTest {
     captor.getValue().onBillingSetupFinished(billingResult);
 
     verify(result, times(1)).success(fromBillingResult(billingResult));
+  }
+
+  @Test
+  public void startConnectionUserChoiceBilling() {
+    ArgumentCaptor<BillingClientStateListener> captor =
+        mockStartConnection(BillingChoiceMode.USER_CHOICE_BILLING);
+    ArgumentCaptor<UserChoiceBillingListener> billingCaptor = ArgumentCaptor.forClass(UserChoiceBillingListener.class);
+    verify(result, never()).success(any());
+    verify(factory, times(1))
+        .createBillingClient(any(Context.class),
+            any(MethodChannel.class),
+            eq(BillingChoiceMode.USER_CHOICE_BILLING),
+            billingCaptor.capture());
+
+    BillingResult billingResult =
+        BillingResult.newBuilder()
+            .setResponseCode(100)
+            .setDebugMessage("dummy debug message")
+            .build();
+    captor.getValue().onBillingSetupFinished(billingResult);
+
+    verify(result, times(1)).success(fromBillingResult(billingResult));
+    UserChoiceDetails details = mock(UserChoiceDetails.class);
+    final String externalTransactionToken = "someLongTokenId1234";
+    final String originalTransactionId = "originalTransactionId123456";
+    when(details.getExternalTransactionToken()).thenReturn(externalTransactionToken);
+    when(details.getOriginalExternalTransactionId()).thenReturn(originalTransactionId);
+    when(details.getProducts()).thenReturn(Collections.emptyList());
+    billingCaptor.getValue().userSelectedAlternativeBilling(details);
   }
 
   @Test

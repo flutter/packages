@@ -513,16 +513,8 @@ class MethodCallHandlerImpl
   private void startConnection(
       final int handle, final MethodChannel.Result result, int billingChoiceMode) {
     if (billingClient == null) {
-      UserChoiceBillingListener listener = null;
-      if (billingChoiceMode == BillingChoiceMode.USER_CHOICE_BILLING) {
-        listener = new UserChoiceBillingListener() {
-          @Override
-          public void userSelectedAlternativeBilling(@NonNull UserChoiceDetails userChoiceDetails) {
-            final Map<String, Object> arguments = fromUserChoiceDetails(userChoiceDetails);
-            methodChannel.invokeMethod(MethodNames.USER_SELECTED_ALTERNATIVE_BILLING, arguments);
-          }
-        };
-      }
+      UserChoiceBillingListener listener = getUserChoiceBillingListener(
+          billingChoiceMode);
       billingClient =
           billingClientFactory.createBillingClient(
               applicationContext, methodChannel, billingChoiceMode, listener);
@@ -551,6 +543,18 @@ class MethodCallHandlerImpl
             methodChannel.invokeMethod(MethodNames.ON_DISCONNECT, arguments);
           }
         });
+  }
+
+  @Nullable
+  private UserChoiceBillingListener getUserChoiceBillingListener(int billingChoiceMode) {
+    UserChoiceBillingListener listener = null;
+    if (billingChoiceMode == BillingChoiceMode.USER_CHOICE_BILLING) {
+      listener = userChoiceDetails -> {
+        final Map<String, Object> arguments = fromUserChoiceDetails(userChoiceDetails);
+        methodChannel.invokeMethod(MethodNames.USER_SELECTED_ALTERNATIVE_BILLING, arguments);
+      };
+    }
+    return listener;
   }
 
   private void acknowledgePurchase(String purchaseToken, final MethodChannel.Result result) {

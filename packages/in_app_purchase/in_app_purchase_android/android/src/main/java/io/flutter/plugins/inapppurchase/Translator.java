@@ -239,10 +239,25 @@ import java.util.Map;
     HashMap<String, Object> info = new HashMap<>();
     info.put("externalTransactionToken", userChoiceDetails.getExternalTransactionToken());
     info.put("originalExternalTransactionId", userChoiceDetails.getOriginalExternalTransactionId());
-    List<Product> productsList = userChoiceDetails.getProducts();
-    info.put("productId", productsList.get(0).getId());
-    info.put("productOfferToken", productsList.get(0).getOfferToken());
-    info.put("productType", productsList.get(0).getType());
+    info.put("productsList", fromProductsList(userChoiceDetails.getProducts()));
+    return info;
+  }
+  static List<HashMap<String, Object>> fromProductsList(List<Product> productsList) {
+    if (productsList.isEmpty()) {
+      return Collections.emptyList();
+    }
+    ArrayList<HashMap<String, Object>> output = new ArrayList<>();
+    for (Product product : productsList) {
+      output.add(fromProduct(product));
+    }
+    return output;
+  }
+  static HashMap<String, Object> fromProduct(Product product) {
+    HashMap<String, Object> info = new HashMap<>();
+    info.put("productId", product.getId());
+    info.put("productOfferToken", product.getOfferToken());
+    info.put("productType", product.getType());
+
     return info;
   }
 
