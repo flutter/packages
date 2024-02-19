@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Adds UserChoiceBillingapis to platform addition.
+
 ## 0.3.1
 
 * Adds alternative-billing-only APIs to InAppPurchaseAndroidPlatformAddition.
