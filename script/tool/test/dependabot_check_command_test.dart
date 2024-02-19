@@ -91,6 +91,8 @@ ${gradleEntries.join('\n')}
         output,
         containsAllInOrder(<Matcher>[
           contains('Missing Gradle coverage.'),
+          contains(
+              'Add a "gradle" entry to .github/dependabot.yml for /packages/a_package/example/android/app'),
           contains('a_package/example:\n'
               '    Missing Gradle coverage')
         ]));
@@ -112,6 +114,8 @@ ${gradleEntries.join('\n')}
         output,
         containsAllInOrder(<Matcher>[
           contains('Missing Gradle coverage.'),
+          contains(
+              'Add a "gradle" entry to .github/dependabot.yml for /packages/a_plugin/android'),
           contains('a_plugin:\n'
               '    Missing Gradle coverage')
         ]));

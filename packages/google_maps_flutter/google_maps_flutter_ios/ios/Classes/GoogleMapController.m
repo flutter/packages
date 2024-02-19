@@ -250,13 +250,12 @@
     result(nil);
   } else if ([call.method isEqualToString:@"map#takeSnapshot"]) {
     if (self.mapView != nil) {
-      UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
-      format.scale = [[UIScreen mainScreen] scale];
       UIGraphicsImageRenderer *renderer =
-          [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.frame.size format:format];
-
+          [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
+      // For some unknown reason mapView.layer::renderInContext API returns a blank image on iOS 17.
+      // So we have to use drawViewHierarchyInRect API.
       UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
-        [self.mapView.layer renderInContext:context.CGContext];
+        [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
       }];
       result([FlutterStandardTypedData typedDataWithBytes:UIImagePNGRepresentation(image)]);
     } else {

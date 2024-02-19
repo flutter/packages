@@ -1,6 +1,8 @@
 ## 2.1.4
 
 * Fixes infinite pause loop caused by seekTo marking the video as completed when already completed.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 
 ## 2.1.3
 
