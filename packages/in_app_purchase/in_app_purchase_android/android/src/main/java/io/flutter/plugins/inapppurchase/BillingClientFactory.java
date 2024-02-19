@@ -27,6 +27,5 @@ interface BillingClientFactory {
       @NonNull Context context,
       @NonNull MethodChannel channel,
       int billingChoiceMode,
-      @Nullable UserChoiceBillingListener userChoiceBillingListener
-  );
+      @Nullable UserChoiceBillingListener userChoiceBillingListener);
 }

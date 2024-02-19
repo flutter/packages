@@ -242,6 +242,7 @@ import java.util.Map;
     info.put("productsList", fromProductsList(userChoiceDetails.getProducts()));
     return info;
   }
+
   static List<HashMap<String, Object>> fromProductsList(List<Product> productsList) {
     if (productsList.isEmpty()) {
       return Collections.emptyList();
@@ -252,6 +253,7 @@ import java.util.Map;
     }
     return output;
   }
+
   static HashMap<String, Object> fromProduct(Product product) {
     HashMap<String, Object> info = new HashMap<>();
     info.put("productId", product.getId());

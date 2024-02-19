@@ -92,7 +92,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import kotlin.collections.EmptyList;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -127,8 +126,10 @@ public class MethodCallHandlerTest {
             context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
-        any(Context.class), any(MethodChannel.class), eq(BillingChoiceMode.USER_CHOICE_BILLING), any(
-            UserChoiceBillingListener.class)))
+            any(Context.class),
+            any(MethodChannel.class),
+            eq(BillingChoiceMode.USER_CHOICE_BILLING),
+            any(UserChoiceBillingListener.class)))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockMethodChannel, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -238,10 +239,12 @@ public class MethodCallHandlerTest {
   public void startConnectionUserChoiceBilling() {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(BillingChoiceMode.USER_CHOICE_BILLING);
-    ArgumentCaptor<UserChoiceBillingListener> billingCaptor = ArgumentCaptor.forClass(UserChoiceBillingListener.class);
+    ArgumentCaptor<UserChoiceBillingListener> billingCaptor =
+        ArgumentCaptor.forClass(UserChoiceBillingListener.class);
     verify(result, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(any(Context.class),
+        .createBillingClient(
+            any(Context.class),
             any(MethodChannel.class),
             eq(BillingChoiceMode.USER_CHOICE_BILLING),
             billingCaptor.capture());
@@ -262,9 +265,10 @@ public class MethodCallHandlerTest {
     when(details.getProducts()).thenReturn(Collections.emptyList());
     billingCaptor.getValue().userSelectedAlternativeBilling(details);
 
-    verify(mockMethodChannel, times(1)).invokeMethod(USER_SELECTED_ALTERNATIVE_BILLING,
-        fromUserChoiceDetails(details));
+    verify(mockMethodChannel, times(1))
+        .invokeMethod(USER_SELECTED_ALTERNATIVE_BILLING, fromUserChoiceDetails(details));
   }
+
   @Test
   public void userChoiceBillingOnSecondConnection() {
     // First connection.
@@ -301,10 +305,12 @@ public class MethodCallHandlerTest {
     // Second connection.
     ArgumentCaptor<BillingClientStateListener> captor2 =
         mockStartConnection(BillingChoiceMode.USER_CHOICE_BILLING);
-    ArgumentCaptor<UserChoiceBillingListener> billingCaptor = ArgumentCaptor.forClass(UserChoiceBillingListener.class);
+    ArgumentCaptor<UserChoiceBillingListener> billingCaptor =
+        ArgumentCaptor.forClass(UserChoiceBillingListener.class);
     verify(result, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(any(Context.class),
+        .createBillingClient(
+            any(Context.class),
             any(MethodChannel.class),
             eq(BillingChoiceMode.USER_CHOICE_BILLING),
             billingCaptor.capture());
@@ -325,8 +331,8 @@ public class MethodCallHandlerTest {
     when(details.getProducts()).thenReturn(Collections.emptyList());
     billingCaptor.getValue().userSelectedAlternativeBilling(details);
 
-    verify(mockMethodChannel, times(1)).invokeMethod(USER_SELECTED_ALTERNATIVE_BILLING,
-        fromUserChoiceDetails(details));
+    verify(mockMethodChannel, times(1))
+        .invokeMethod(USER_SELECTED_ALTERNATIVE_BILLING, fromUserChoiceDetails(details));
   }
 
   @Test

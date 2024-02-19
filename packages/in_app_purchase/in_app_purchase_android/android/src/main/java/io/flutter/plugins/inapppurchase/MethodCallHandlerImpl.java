@@ -35,7 +35,6 @@ import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import com.android.billingclient.api.UserChoiceBillingListener;
-import com.android.billingclient.api.UserChoiceDetails;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
@@ -513,8 +512,7 @@ class MethodCallHandlerImpl
   private void startConnection(
       final int handle, final MethodChannel.Result result, int billingChoiceMode) {
     if (billingClient == null) {
-      UserChoiceBillingListener listener = getUserChoiceBillingListener(
-          billingChoiceMode);
+      UserChoiceBillingListener listener = getUserChoiceBillingListener(billingChoiceMode);
       billingClient =
           billingClientFactory.createBillingClient(
               applicationContext, methodChannel, billingChoiceMode, listener);
@@ -549,10 +547,11 @@ class MethodCallHandlerImpl
   private UserChoiceBillingListener getUserChoiceBillingListener(int billingChoiceMode) {
     UserChoiceBillingListener listener = null;
     if (billingChoiceMode == BillingChoiceMode.USER_CHOICE_BILLING) {
-      listener = userChoiceDetails -> {
-        final Map<String, Object> arguments = fromUserChoiceDetails(userChoiceDetails);
-        methodChannel.invokeMethod(MethodNames.USER_SELECTED_ALTERNATIVE_BILLING, arguments);
-      };
+      listener =
+          userChoiceDetails -> {
+            final Map<String, Object> arguments = fromUserChoiceDetails(userChoiceDetails);
+            methodChannel.invokeMethod(MethodNames.USER_SELECTED_ALTERNATIVE_BILLING, arguments);
+          };
     }
     return listener;
   }

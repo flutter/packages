@@ -18,8 +18,10 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
 
   @Override
   public BillingClient createBillingClient(
-      @NonNull Context context, @NonNull MethodChannel channel, int billingChoiceMode, @Nullable
-      UserChoiceBillingListener userChoiceBillingListener) {
+      @NonNull Context context,
+      @NonNull MethodChannel channel,
+      int billingChoiceMode,
+      @Nullable UserChoiceBillingListener userChoiceBillingListener) {
     BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
     switch (billingChoiceMode) {
       case BillingChoiceMode.ALTERNATIVE_BILLING_ONLY:
@@ -30,7 +32,8 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         if (userChoiceBillingListener != null) {
           builder.enableUserChoiceBilling(userChoiceBillingListener);
         } else {
-          Log.e("BillingClientFactoryImpl",
+          Log.e(
+              "BillingClientFactoryImpl",
               "userChoiceBillingListener null when USER_CHOICE_BILLING set. Defaulting to PLAY_BILLING_ONLY");
         }
         break;

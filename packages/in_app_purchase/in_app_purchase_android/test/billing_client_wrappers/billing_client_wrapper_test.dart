@@ -37,7 +37,8 @@ void main() {
       .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler));
 
   setUp(() {
-    billingClient = BillingClient((PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {});
+    billingClient = BillingClient(
+        (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {});
     stubPlatform.reset();
   });
 
