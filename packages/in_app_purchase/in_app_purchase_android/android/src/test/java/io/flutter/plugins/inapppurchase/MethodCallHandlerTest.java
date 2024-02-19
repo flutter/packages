@@ -20,6 +20,7 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.START_CONNECTION;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.USER_SELECTED_ALTERNATIVE_BILLING;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
 import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
@@ -27,6 +28,7 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.fromUserChoiceDetails;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -256,6 +258,8 @@ public class MethodCallHandlerTest {
     when(details.getOriginalExternalTransactionId()).thenReturn(originalTransactionId);
     when(details.getProducts()).thenReturn(Collections.emptyList());
     billingCaptor.getValue().userSelectedAlternativeBilling(details);
+    verify(mockMethodChannel, times(1)).invokeMethod(USER_SELECTED_ALTERNATIVE_BILLING,
+        fromUserChoiceDetails(details));
   }
 
   @Test
