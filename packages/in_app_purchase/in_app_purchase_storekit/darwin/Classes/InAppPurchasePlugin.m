@@ -246,30 +246,6 @@
 #endif
 }
 
-- (void)registerPaymentQueueDelegateWithError:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-#if TARGET_OS_IOS
-  if (@available(iOS 13.0, *)) {
-    _paymentQueueDelegateCallbackChannel = [FlutterMethodChannel
-        methodChannelWithName:@"plugins.flutter.io/in_app_purchase_payment_queue_delegate"
-              binaryMessenger:[_registrar messenger]];
-
-    _paymentQueueDelegate = [[FIAPPaymentQueueDelegate alloc]
-        initWithMethodChannel:_paymentQueueDelegateCallbackChannel];
-    _paymentQueueHandler.delegate = _paymentQueueDelegate;
-  }
-#endif
-}
-
-- (void)removePaymentQueueDelegateWithError:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  if (@available(iOS 13.0, *)) {
-    _paymentQueueHandler.delegate = nil;
-  }
-  _paymentQueueDelegate = nil;
-  _paymentQueueDelegateCallbackChannel = nil;
-}
-
 - (NSString *_Nullable)retrieveReceiptDataWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   FlutterError *flutterError;
@@ -279,24 +255,6 @@
     return nil;
   }
   return receiptData;
-}
-
-- (void)showPriceConsentIfNeededWithError:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-#if TARGET_OS_IOS
-  if (@available(iOS 13.4, *)) {
-    [_paymentQueueHandler showPriceConsentIfNeeded];
-  }
-#endif
-}
-
-- (void)startObservingPaymentQueueWithError:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  [_paymentQueueHandler startObservingPaymentQueue];
-}
-
-- (void)stopObservingPaymentQueueWithError:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  [_paymentQueueHandler stopObservingPaymentQueue];
 }
 
 - (void)refreshReceiptReceiptProperties:(nullable NSDictionary *)receiptProperties
@@ -328,6 +286,48 @@
     completion(nil);
     [weakSelf.requestHandlers removeObject:handler];
   }];
+}
+
+- (void)registerPaymentQueueDelegateWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+#if TARGET_OS_IOS
+  if (@available(iOS 13.0, *)) {
+    _paymentQueueDelegateCallbackChannel = [FlutterMethodChannel
+        methodChannelWithName:@"plugins.flutter.io/in_app_purchase_payment_queue_delegate"
+              binaryMessenger:[_registrar messenger]];
+
+    _paymentQueueDelegate = [[FIAPPaymentQueueDelegate alloc]
+        initWithMethodChannel:_paymentQueueDelegateCallbackChannel];
+    _paymentQueueHandler.delegate = _paymentQueueDelegate;
+  }
+#endif
+}
+
+- (void)removePaymentQueueDelegateWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  if (@available(iOS 13.0, *)) {
+    _paymentQueueHandler.delegate = nil;
+  }
+  _paymentQueueDelegate = nil;
+  _paymentQueueDelegateCallbackChannel = nil;
+}
+
+- (void)showPriceConsentIfNeededWithError:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+#if TARGET_OS_IOS
+  if (@available(iOS 13.4, *)) {
+    [_paymentQueueHandler showPriceConsentIfNeeded];
+  }
+#endif
+}
+
+- (void)startObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [_paymentQueueHandler startObservingPaymentQueue];
+}
+
+- (void)stopObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [_paymentQueueHandler stopObservingPaymentQueue];
 }
 
 - (id)getNonNullValueFromDictionary:(NSDictionary *)dictionary forKey:(NSString *)key {
