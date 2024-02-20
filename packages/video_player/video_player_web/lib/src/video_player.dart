@@ -209,9 +209,9 @@ class VideoPlayer {
   /// Does nothing if the new position is the same as the current position.
   void seekTo(Duration position) {
     assert(!position.isNegative);
-    // Don't seek if video is already at position.
-    // As seeking when completed will trigger another completed event ('onEnded')
-    // to avoid potentially firing extra 'onEnded' events when the video is already over
+    // Don't seek if video is already at target position
+    // as seeking when completed will trigger another completed event ('onEnded').
+    // This avoids potentially firing extra 'onEnded' events.
     if (position.inMilliseconds == _videoCurrentTimeInMilliseconds) {
       return;
     }
