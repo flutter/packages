@@ -4,8 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
-import 'http.dart';
+import 'package:http/http.dart' as http;
 
 /// An interface that can be implemented to support decoding vector graphic
 /// binary assets from different byte sources.
@@ -145,7 +144,8 @@ class NetworkBytesLoader extends BytesLoader {
   const NetworkBytesLoader(
     this.url, {
     this.headers,
-  });
+    http.Client? httpClient,
+  }) : _httpClient = httpClient;
 
   /// The HTTP headers to use for the network request.
   final Map<String, String>? headers;
@@ -153,9 +153,12 @@ class NetworkBytesLoader extends BytesLoader {
   /// The [Uri] of the resource to request.
   final Uri url;
 
+  final http.Client? _httpClient;
+
   @override
   Future<ByteData> loadBytes(BuildContext? context) async {
-    final Uint8List bytes = await httpGet(url, headers: headers);
+    final http.Client client = _httpClient ?? http.Client();
+    final Uint8List bytes = (await client.get(url, headers: headers)).bodyBytes;
     return bytes.buffer.asByteData();
   }
 

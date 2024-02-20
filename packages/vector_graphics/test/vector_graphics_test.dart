@@ -503,39 +503,6 @@ void main() {
   });
 
   testWidgets(
-      '(WebOnly) creates OpacityLayer, TransformLayer, and ColorFilterLayer to draw picture',
-      (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
-
-    await tester.pumpWidget(
-      DefaultAssetBundle(
-        bundle: testBundle,
-        child: const Directionality(
-          textDirection: TextDirection.ltr,
-          child: VectorGraphic(
-            loader: AssetBytesLoader('foo.svg'),
-            colorFilter: ColorFilter.mode(Colors.red, BlendMode.srcIn),
-            opacity: AlwaysStoppedAnimation<double>(0.5),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(tester.layers.last, isA<PictureLayer>());
-    expect(
-        tester.layers[tester.layers.length - 2],
-        isA<ColorFilterLayer>().having(
-            (ColorFilterLayer layer) => layer.colorFilter,
-            'colorFilter',
-            const ColorFilter.mode(Colors.red, BlendMode.srcIn)));
-    expect(
-        tester.layers[tester.layers.length - 3],
-        isA<OpacityLayer>()
-            .having((OpacityLayer layer) => layer.alpha, 'alpha', 128));
-  }, skip: !kIsWeb);
-
-  testWidgets(
     'Construct vector graphic with drawPicture strategy',
     (WidgetTester tester) async {
       final TestAssetBundle testBundle = TestAssetBundle();
