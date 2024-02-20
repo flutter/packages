@@ -1,5 +1,9 @@
 # CHANGES
 
+## 2.0.10+1
+
+- Relax http dependency.
+
 ## 2.0.10
 
 - Use package:http for network requests, and allow injection of the client.

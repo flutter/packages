@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -7,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg_test/flutter_svg_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   group('finds', () {
@@ -24,12 +24,14 @@ void main() {
       });
 
       testWidgets('network svg', (WidgetTester widgetTester) async {
-        await HttpOverrides.runZoned(() async {
-          final SvgPicture asset = SvgPicture.network('svg.dart');
-          await widgetTester.pumpWidget(asset);
+        final http.Client fakeClient = _FakeHttpClient();
+        final SvgPicture asset = SvgPicture.network(
+          'svg.dart',
+          httpClient: fakeClient,
+        );
+        await widgetTester.pumpWidget(asset);
 
-          expect(find.svg(asset.bytesLoader), findsOneWidget);
-        }, createHttpClient: (SecurityContext? c) => _setupFakeClient);
+        expect(find.svg(asset.bytesLoader), findsOneWidget);
       });
 
       testWidgets('string svg', (WidgetTester widgetTester) async {
@@ -68,12 +70,10 @@ void main() {
     });
 
     testWidgets('network svg with url', (WidgetTester widgetTester) async {
-      await HttpOverrides.runZoned(() async {
-        const String svgUri = 'svg.dart';
-        await widgetTester.pumpWidget(SvgPicture.network(svgUri));
+      const String svgUri = 'svg.dart';
+      await widgetTester.pumpWidget(SvgPicture.network(svgUri));
 
-        expect(find.svgNetworkWithUrl(svgUri), findsOneWidget);
-      }, createHttpClient: (SecurityContext? c) => _setupFakeClient);
+      expect(find.svgNetworkWithUrl(svgUri), findsOneWidget);
     });
 
     testWidgets('file svg wit path', (WidgetTester widgetTester) async {
@@ -93,13 +93,6 @@ void main() {
   });
 }
 
-HttpClient get _setupFakeClient {
-  final _FakeHttpClientResponse fakeResponse = _FakeHttpClientResponse();
-  final _FakeHttpClientRequest fakeRequest =
-      _FakeHttpClientRequest(fakeResponse);
-  return _FakeHttpClient(fakeRequest);
-}
-
 class _FakeAssetBundle extends Fake implements AssetBundle {
   @override
   Future<String> loadString(String key, {bool cache = true}) async {
@@ -112,65 +105,10 @@ class _FakeAssetBundle extends Fake implements AssetBundle {
   }
 }
 
-class _FakeHttpClient extends Fake implements HttpClient {
-  _FakeHttpClient(this.request);
-
-  _FakeHttpClientRequest request;
-
+class _FakeHttpClient extends Fake implements http.Client {
   @override
-  Future<HttpClientRequest> getUrl(Uri url) async => request;
-}
-
-class _FakeHttpHeaders extends Fake implements HttpHeaders {
-  final Map<String, String?> values = <String, String?>{};
-
-  @override
-  void add(String name, Object value, {bool preserveHeaderCase = false}) {
-    values[name] = value.toString();
-  }
-
-  @override
-  List<String>? operator [](String key) {
-    return <String>[values[key]!];
-  }
-}
-
-class _FakeHttpClientRequest extends Fake implements HttpClientRequest {
-  _FakeHttpClientRequest(this.response);
-
-  _FakeHttpClientResponse response;
-
-  @override
-  final HttpHeaders headers = _FakeHttpHeaders();
-
-  @override
-  Future<HttpClientResponse> close() async => response;
-}
-
-class _FakeHttpClientResponse extends Fake implements HttpClientResponse {
-  @override
-  int statusCode = 200;
-
-  @override
-  int contentLength = _svgStr.length;
-
-  @override
-  HttpClientResponseCompressionState get compressionState =>
-      HttpClientResponseCompressionState.notCompressed;
-
-  @override
-  StreamSubscription<List<int>> listen(
-    void Function(List<int> event)? onData, {
-    Function? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    return Stream<Uint8List>.fromIterable(<Uint8List>[_svgBytes]).listen(
-      onData,
-      onDone: onDone,
-      onError: onError,
-      cancelOnError: cancelOnError,
-    );
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
+    return http.Response(_svgStr, 200);
   }
 }
 
