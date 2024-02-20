@@ -13,6 +13,8 @@ import '../../billing_client_wrappers.dart';
 part 'user_choice_details_wrapper.g.dart';
 
 /// This wraps [`com.android.billingclient.api.UserChoiceDetails`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails)
+// See https://docs.flutter.dev/data-and-backend/serialization/json#generating-code-for-nested-classes
+// for explination for why this uses explicitToJson.
 @JsonSerializable(createToJson: true, explicitToJson: true)
 @immutable
 class UserChoiceDetailsWrapper {
@@ -74,6 +76,9 @@ class UserChoiceDetailsWrapper {
 /// This class includes a subset of fields in [UserChoiceDetailsWrapper].
 ///
 /// This wraps [`com.android.billingclient.api.UserChoiceDetails`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails)
+//
+// See https://docs.flutter.dev/data-and-backend/serialization/json#generating-code-for-nested-classes
+// for explination for why this uses explicitToJson.
 @JsonSerializable(createToJson: true, explicitToJson: true)
 @ProductTypeConverter()
 @immutable
