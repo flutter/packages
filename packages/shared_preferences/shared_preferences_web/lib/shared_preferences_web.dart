@@ -100,16 +100,33 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     return json.encode(value);
   }
 
+
   Object _decodeValue(String encodedValue) {
-    final Object? decodedValue = json.decode(encodedValue);
-
-    if (decodedValue is List) {
-      // JSON does not preserve generics. The encode/decode roundtrip is
-      // `List<String>` => JSON => `List<dynamic>`. We have to explicitly
-      // restore the RTTI.
-      return decodedValue.cast<String>();
+    try {
+      // Attempt to decode the string as JSON
+      final Object? decodedValue = json.decode(encodedValue);
+  
+      if (decodedValue is List) {
+        // JSON does not preserve generics. The encode/decode roundtrip results in
+        // `List<String>` => JSON => `List<dynamic>`. Explicit restoration of RTTI is required.
+        return decodedValue.cast<String>();
+      }
+  
+      return decodedValue!;
+    } on FormatException {
+      // If there is a FormatException, try adding double quotes and parsing again
+      try {
+        return json.decode('\"$encodedValue\"');
+      } catch (e) {
+        // If parsing still fails, return the original string
+        // This indicates the string may not be a valid JSON format
+        return encodedValue;
+      }
+    } catch (e) {
+      // Print the exception and return an empty string
+      print(e.toString());
+      return '';
     }
-
-    return decodedValue!;
   }
+
 }
