@@ -12,12 +12,14 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera2_camera_control.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'camerax_proxy.dart';
+import 'capture_request_options.dart';
 import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
@@ -448,6 +450,28 @@ class AndroidCameraCameraX extends CameraPlatform {
     final ExposureState exposureState = await cameraInfo!.getExposureState();
     return exposureState.exposureCompensationRange.maxCompensation *
         exposureState.exposureCompensationStep;
+  }
+
+  /// Sets the focus mode for taking pictures.
+  @override
+  Future<void> setFocusMode(int cameraId, FocusMode mode) async {
+    final CameraControl cameraControl = await camera!.getCameraControl();
+    final Camera2CameraControl camera2cameraControl =
+        Camera2CameraControl(cameraControl: cameraControl);
+    switch (mode) {
+      case FocusMode.auto:
+        // CameraX defaults to auto mode, so simply ensure that the autofocus
+        // trigger is not idle, as set by previously setting FocusMode.locked.
+        // TODO(camsim99): Clear af trigger.
+        break;
+      case FocusMode.locked:
+        // Set autofocus trigger to idle to keep current focus setting.
+        final CaptureRequestOptions options = CaptureRequestOptions(
+            requestedOptions: const <(CaptureRequestKeySupportedType, Object?)>[
+              (CaptureRequestKeySupportedType.controlAfTrigger, 0)
+            ]); // TODO(camsim99): Add constants for AF trigger values.
+        await camera2cameraControl.addCaptureRequestOptions(options);
+    }
   }
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.

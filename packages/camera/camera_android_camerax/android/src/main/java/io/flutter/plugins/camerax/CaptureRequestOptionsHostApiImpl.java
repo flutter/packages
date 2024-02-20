@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CameraMetadata;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
@@ -51,6 +52,9 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
             builder.setCaptureRequestOption(
                 (CaptureRequest.Key<Boolean>) optionKey, (Boolean) optionValue);
             break;
+          case CONTROL_AF_TRIGGER:
+            builder.setCaptureRequestOption( (CaptureRequest.Key<Integer>) optionKey, CameraMetadata.CONTROL_AF_TRIGGER_IDLE); //(Integer) optionValue);
+            break;
           default:
             throw new IllegalArgumentException(
                 "The capture request key "
@@ -68,6 +72,9 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
       switch (type) {
         case CONTROL_AE_LOCK:
           key = CaptureRequest.CONTROL_AE_LOCK;
+          break;
+        case CONTROL_AF_TRIGGER:
+          key = CaptureRequest.CONTROL_AF_TRIGGER;
           break;
         default:
           throw new IllegalArgumentException(
@@ -110,8 +117,8 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
     Map<CaptureRequestKeySupportedType, Object> decodedOptions =
         new HashMap<CaptureRequestKeySupportedType, Object>();
     for (Map.Entry<Long, Object> option : options.entrySet()) {
-      decodedOptions.put(
-          CaptureRequestKeySupportedType.values()[option.getKey().intValue()], option.getValue());
+      Integer index = ((Number) option.getKey()).intValue();
+      decodedOptions.put(CaptureRequestKeySupportedType.values()[index], option.getValue());
     }
     instanceManager.addDartCreatedInstance(proxy.create(decodedOptions), identifier);
   }
