@@ -1,5 +1,10 @@
 # CHANGES
 
+## 2.0.10
+
+- Use package:http for network requests, and allow injection of the client.
+- Bump vector_graphics dependency.
+
 ## 2.0.9
 
 - Adds back `SvgPicture(theme:)` parameter with a deprecation. Although this

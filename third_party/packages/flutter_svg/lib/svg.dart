@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:vector_graphics/vector_graphics_compat.dart';
 
 import 'src/cache.dart';
@@ -248,7 +249,13 @@ class SvgPicture extends StatelessWidget {
     this.clipBehavior = Clip.hardEdge,
     @deprecated bool cacheColorFilter = false,
     SvgTheme? theme,
-  })  : bytesLoader = SvgNetworkLoader(url, headers: headers, theme: theme),
+    http.Client? httpClient,
+  })  : bytesLoader = SvgNetworkLoader(
+          url,
+          headers: headers,
+          theme: theme,
+          httpClient: httpClient,
+        ),
         colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
         super(key: key);
 

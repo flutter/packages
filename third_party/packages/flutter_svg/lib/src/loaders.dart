@@ -3,6 +3,7 @@ import 'dart:convert' show utf8;
 import 'package:flutter/foundation.dart' hide compute;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:vector_graphics/vector_graphics.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart' as vg;
 
@@ -10,7 +11,6 @@ import '../svg.dart' show svg;
 import 'default_theme.dart';
 import 'utilities/compute.dart';
 import 'utilities/file.dart';
-import 'utilities/http.dart';
 
 /// A theme used when decoding an SVG picture.
 @immutable
@@ -109,6 +109,7 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
 
 /// A [BytesLoader] that parses a SVG data in an isolate and creates a
 /// vector_graphics binary representation.
+@immutable
 abstract class SvgLoader<T> extends BytesLoader {
   /// See class doc.
   const SvgLoader({
@@ -423,7 +424,8 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
     this.headers,
     super.theme,
     super.colorMapper,
-  });
+    http.Client? httpClient,
+  }) : _httpClient = httpClient;
 
   /// The [Uri] encoded resource address.
   final String url;
@@ -431,9 +433,12 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   /// Optional HTTP headers to send as part of the request.
   final Map<String, String>? headers;
 
+  final http.Client? _httpClient;
+
   @override
-  Future<Uint8List?> prepareMessage(BuildContext? context) {
-    return httpGet(url, headers: headers);
+  Future<Uint8List?> prepareMessage(BuildContext? context) async {
+    final http.Client client = _httpClient ?? http.Client();
+    return (await client.get(Uri.parse(url), headers: headers)).bodyBytes;
   }
 
   @override

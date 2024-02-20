@@ -1,12 +1,11 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 class _TolerantComparator extends LocalFileComparator {
   _TolerantComparator(Uri testFile) : super(testFile);
@@ -39,9 +38,6 @@ Future<void> _checkWidgetAndGolden(Key key, String filename) async {
 }
 
 void main() {
-  late FakeHttpClientResponse fakeResponse;
-  late FakeHttpClientRequest fakeRequest;
-  late FakeHttpClient fakeHttpClient;
   final MediaQueryData mediaQueryData =
       MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!);
 
@@ -52,12 +48,6 @@ void main() {
         Uri.parse(oldComparator.basedir.toString() + 'test'));
     expect(oldComparator.basedir, newComparator.basedir);
     goldenFileComparator = newComparator;
-  });
-
-  setUp(() {
-    fakeResponse = FakeHttpClientResponse();
-    fakeRequest = FakeHttpClientRequest(fakeResponse);
-    fakeHttpClient = FakeHttpClient(fakeRequest);
   });
 
   testWidgets(
@@ -306,40 +296,41 @@ void main() {
   });
 
   testWidgets('SvgPicture.network', (WidgetTester tester) async {
-    await HttpOverrides.runZoned(() async {
-      final GlobalKey key = GlobalKey();
-      await tester.pumpWidget(
-        MediaQuery(
-          data: mediaQueryData,
-          child: RepaintBoundary(
-            key: key,
-            child: SvgPicture.network(
-              'test.svg',
-            ),
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: mediaQueryData,
+        child: RepaintBoundary(
+          key: key,
+          child: SvgPicture.network(
+            'test.svg',
+            httpClient: FakeHttpClient(),
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'flutter_logo.network.png');
-    }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.network.png');
   });
 
   testWidgets('SvgPicture.network with headers', (WidgetTester tester) async {
-    await HttpOverrides.runZoned(() async {
-      final GlobalKey key = GlobalKey();
-      await tester.pumpWidget(
-        MediaQuery(
-          data: mediaQueryData,
-          child: RepaintBoundary(
-            key: key,
-            child: SvgPicture.network('test.svg',
-                headers: const <String, String>{'a': 'b'}),
+    final GlobalKey key = GlobalKey();
+    final FakeHttpClient client = FakeHttpClient();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: mediaQueryData,
+        child: RepaintBoundary(
+          key: key,
+          child: SvgPicture.network(
+            'test.svg',
+            headers: const <String, String>{'a': 'b'},
+            httpClient: client,
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      expect(fakeRequest.headers['a']!.single, 'b');
-    }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(client.headers['a'], 'b');
   });
 
   testWidgets('SvgPicture can be created without a MediaQuery',
@@ -361,19 +352,18 @@ void main() {
   });
 
   testWidgets('SvgPicture.network HTTP exception', (WidgetTester tester) async {
-    await HttpOverrides.runZoned(() async {
-      expect(() async {
-        fakeResponse.statusCode = 400;
-        await tester.pumpWidget(
-          MediaQuery(
-            data: mediaQueryData,
-            child: SvgPicture.network(
-              'notFound.svg',
-            ),
+    expect(() async {
+      final http.Client client = FakeHttpClient(400);
+      await tester.pumpWidget(
+        MediaQuery(
+          data: mediaQueryData,
+          child: SvgPicture.network(
+            'notFound.svg',
+            httpClient: client,
           ),
-        );
-      }, isNotNull);
-    }, createHttpClient: (SecurityContext? c) => fakeHttpClient);
+        ),
+      );
+    }, isNotNull);
   });
 
   testWidgets('SvgPicture semantics', (WidgetTester tester) async {
@@ -791,65 +781,19 @@ class FakeAssetBundle extends Fake implements AssetBundle {
   }
 }
 
-class FakeHttpClient extends Fake implements HttpClient {
-  FakeHttpClient(this.request);
+class FakeHttpClient extends Fake implements http.Client {
+  FakeHttpClient([this.statusCode = 200]);
 
-  FakeHttpClientRequest request;
+  final int statusCode;
 
-  @override
-  Future<HttpClientRequest> getUrl(Uri url) async => request;
-}
-
-class FakeHttpHeaders extends Fake implements HttpHeaders {
-  final Map<String, String?> values = <String, String?>{};
+  final Map<String, String> headers = <String, String>{};
 
   @override
-  void add(String name, Object value, {bool preserveHeaderCase = false}) {
-    values[name] = value.toString();
-  }
-
-  @override
-  List<String>? operator [](String key) {
-    return <String>[values[key]!];
-  }
-}
-
-class FakeHttpClientRequest extends Fake implements HttpClientRequest {
-  FakeHttpClientRequest(this.response);
-
-  FakeHttpClientResponse response;
-
-  @override
-  final HttpHeaders headers = FakeHttpHeaders();
-
-  @override
-  Future<HttpClientResponse> close() async => response;
-}
-
-class FakeHttpClientResponse extends Fake implements HttpClientResponse {
-  @override
-  int statusCode = 200;
-
-  @override
-  int contentLength = svgStr.length;
-
-  @override
-  HttpClientResponseCompressionState get compressionState =>
-      HttpClientResponseCompressionState.notCompressed;
-
-  @override
-  StreamSubscription<List<int>> listen(
-    void Function(List<int> event)? onData, {
-    Function? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    return Stream<Uint8List>.fromIterable(<Uint8List>[svgBytes]).listen(
-      onData,
-      onDone: onDone,
-      onError: onError,
-      cancelOnError: cancelOnError,
-    );
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
+    if (headers != null) {
+      this.headers.addAll(headers);
+    }
+    return http.Response(svgStr, statusCode);
   }
 }
 
