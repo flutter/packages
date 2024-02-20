@@ -209,9 +209,13 @@ class VideoPlayer {
   /// Does nothing if the new position is the same as the current position.
   void seekTo(Duration position) {
     assert(!position.isNegative);
-    // Don't seek if video is already at target position
-    // as seeking when completed will trigger another completed event ('onEnded').
-    // This avoids potentially firing extra 'onEnded' events.
+    // Don't seek if video is already at target position.
+    //
+    // This is needed because the core plugin will pause and seek to the end of
+    // the video when it finishes, and that causes an infinite loop of `ended`
+    // events on the web.
+    //
+    // See: https://github.com/flutter/flutter/issues/77674
     if (position.inMilliseconds == _videoCurrentTimeInMilliseconds) {
       return;
     }
