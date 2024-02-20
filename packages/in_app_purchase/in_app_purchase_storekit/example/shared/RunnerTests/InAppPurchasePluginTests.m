@@ -324,6 +324,7 @@
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
+#if TARGET_OS_IOS
 - (void)testPresentCodeRedemptionSheet {
   FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
   self.plugin.paymentQueueHandler = mockHandler;
@@ -333,6 +334,7 @@
 
   OCMVerify(times(1), [mockHandler presentCodeRedemptionSheet]);
 }
+#endif
 
 - (void)testGetPendingTransactions {
   SKPaymentQueue *mockQueue = OCMClassMock(SKPaymentQueue.class);
