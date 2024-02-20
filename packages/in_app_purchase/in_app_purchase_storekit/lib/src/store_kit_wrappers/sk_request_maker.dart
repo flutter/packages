@@ -6,7 +6,6 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-import '../channel.dart';
 import '../messages.g.dart';
 import 'sk_product_wrapper.dart';
 

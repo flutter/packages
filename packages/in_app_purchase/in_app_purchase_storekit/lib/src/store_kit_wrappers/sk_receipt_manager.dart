@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import '../channel.dart';
 import '../messages.g.dart';
 
 InAppPurchaseAPI _hostApi = InAppPurchaseAPI();

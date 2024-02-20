@@ -4,7 +4,6 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:in_app_purchase_storekit/src/channel.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import '../test_api.g.dart';
@@ -17,9 +16,6 @@ void main() {
 
   setUpAll(() {
     TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-            SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
   });
 
   setUp(() {});
@@ -192,10 +188,6 @@ void main() {
 }
 
 class FakeStoreKitPlatform implements TestInAppPurchaseApi {
-  FakeStoreKitPlatform() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, onMethodCall);
-  }
   // get product request
   List<dynamic> startProductRequestParam = <dynamic>[];
   bool getProductRequestFailTest = false;
@@ -224,39 +216,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   // Listen to purchase updates
   bool? queueIsActive;
-
-  Future<dynamic> onMethodCall(MethodCall call) {
-    switch (call.method) {
-      // request makers
-      case '-[InAppPurchasePlugin refreshReceipt:result:]':
-        refreshReceiptCount++;
-        refreshReceiptParam = Map.castFrom<dynamic, dynamic, String, dynamic>(
-            call.arguments as Map<dynamic, dynamic>);
-        return Future<void>.sync(() {});
-      // receipt manager
-      case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
-        if (getReceiptFailTest) {
-          throw Exception('some arbitrary error');
-        }
-        return Future<String>.value('receipt data');
-      case '-[SKPaymentQueue startObservingTransactionQueue]':
-        queueIsActive = true;
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue stopObservingTransactionQueue]':
-        queueIsActive = false;
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue registerDelegate]':
-        isPaymentQueueDelegateRegistered = true;
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue removeDelegate]':
-        isPaymentQueueDelegateRegistered = false;
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue showPriceConsentIfNeeded]':
-        showPriceConsent = true;
-        return Future<void>.sync(() {});
-    }
-    return Future<dynamic>.error('method not mocked');
-  }
 
   @override
   void addPayment(Map<String?, Object?> paymentMap) {
@@ -307,39 +266,43 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   void registerPaymentQueueDelegate() {
-    // TODO: implement registerPaymentQueueDelegate
+    isPaymentQueueDelegateRegistered = true;
   }
 
   @override
   void removePaymentQueueDelegate() {
-    // TODO: implement removePaymentQueueDelegate
+    isPaymentQueueDelegateRegistered = false;
   }
 
   @override
   void startObservingPaymentQueue() {
-    // TODO: implement startObservingPaymentQueue
+    queueIsActive = true;
   }
 
   @override
   void stopObservingPaymentQueue() {
-    // TODO: implement stopObservingPaymentQueue
+    queueIsActive = false;
   }
 
   @override
   String retrieveReceiptData() {
-    // TODO: implement retrieveReceiptData
-    throw UnimplementedError();
+    if (getReceiptFailTest) {
+      throw Exception('some arbitrary error');
+    }
+    return 'receipt data';
   }
 
   @override
   Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
-    print("refreshReceipt");
-    throw UnimplementedError();
+    refreshReceiptCount++;
+    refreshReceiptParam = Map.castFrom<dynamic, dynamic, String, dynamic>(
+        receiptProperties! as Map<dynamic, dynamic>);
+    return Future<void>.sync(() {});
   }
 
   @override
   void showPriceConsentIfNeeded() {
-    // TODO: implement showPriceConsentIfNeeded
+    showPriceConsent = true;
   }
 }
 
