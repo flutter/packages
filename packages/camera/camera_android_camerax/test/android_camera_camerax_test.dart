@@ -407,7 +407,7 @@ void main() {
     // Verify the camera's CameraInfo instance got updated.
     expect(camera.cameraInfo, equals(mockCameraInfo));
 
-    // Verify camera's CameraControl instance gotu pdated.
+    // Verify camera's CameraControl instance got updated.
     expect(camera.cameraControl, equals(mockCameraControl));
 
     // Verify preview has been marked as bound to the camera lifecycle by
