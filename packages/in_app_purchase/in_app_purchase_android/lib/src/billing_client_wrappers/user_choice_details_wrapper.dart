@@ -13,7 +13,7 @@ import '../../billing_client_wrappers.dart';
 part 'user_choice_details_wrapper.g.dart';
 
 /// This wraps [`com.android.billingclient.api.UserChoiceDetails`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails)
-@JsonSerializable()
+@JsonSerializable(createToJson: true, explicitToJson: true)
 @immutable
 class UserChoiceDetailsWrapper {
   /// Creates a purchase wrapper with the given purchase details.
@@ -28,6 +28,9 @@ class UserChoiceDetailsWrapper {
   /// the user choice details.
   factory UserChoiceDetailsWrapper.fromJson(Map<String, dynamic> map) =>
       _$UserChoiceDetailsWrapperFromJson(map);
+
+  /// Creates a JSON representation of this product.
+  Map<String, dynamic> toJson() => _$UserChoiceDetailsWrapperToJson(this);
 
   @override
   bool operator ==(Object other) {
@@ -71,7 +74,8 @@ class UserChoiceDetailsWrapper {
 /// This class includes a subset of fields in [UserChoiceDetailsWrapper].
 ///
 /// This wraps [`com.android.billingclient.api.UserChoiceDetails`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails)
-@JsonSerializable()
+@JsonSerializable(createToJson: true, explicitToJson: true)
+@ProductTypeConverter()
 @immutable
 class UserChoiceDetailsProductWrapper {
   /// Creates a [UserChoiceDetailsProductWrapper] with the given record details.
@@ -86,6 +90,9 @@ class UserChoiceDetailsProductWrapper {
   factory UserChoiceDetailsProductWrapper.fromJson(Map<String, dynamic> map) =>
       _$UserChoiceDetailsProductWrapperFromJson(map);
 
+  /// Creates a JSON representation of this product.
+  Map<String, dynamic> toJson() => _$UserChoiceDetailsProductWrapperToJson(this);
+
   /// Returns the id of the product being purchased.
   @JsonKey(defaultValue: '')
   final String id;
@@ -95,8 +102,7 @@ class UserChoiceDetailsProductWrapper {
   final String offerToken;
 
   /// Returns the [ProductType] of the product being purchased.
-  @JsonKey(defaultValue: '')
-  final String productType;
+  final ProductType productType;
 
   @override
   bool operator ==(Object other) {

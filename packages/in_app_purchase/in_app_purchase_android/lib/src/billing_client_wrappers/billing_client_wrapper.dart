@@ -429,11 +429,14 @@ class BillingClient {
                 .cast<OnBillingServiceDisconnected>();
         onDisconnected[handle]();
       case kUserSelectedAlternativeBilling:
-        final UserSelectedAlternativeBillingListener listener =
-            _callbacks[kUserSelectedAlternativeBilling]!.first
-                as UserSelectedAlternativeBillingListener;
-        listener(UserChoiceDetailsWrapper.fromJson(
-            (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>()));
+        if (_callbacks[kUserSelectedAlternativeBilling]!.isNotEmpty) {
+          final UserSelectedAlternativeBillingListener listener =
+              _callbacks[kUserSelectedAlternativeBilling]!.first
+                  as UserSelectedAlternativeBillingListener;
+          listener(UserChoiceDetailsWrapper.fromJson(
+              (call.arguments as Map<dynamic, dynamic>)
+                  .cast<String, dynamic>()));
+        }
     }
   }
 }

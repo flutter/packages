@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
@@ -115,7 +117,7 @@ void main() {
           }));
     });
 
-    test('passes billingChoiceMode when set', () async {
+    test('passes billingChoiceMode alternativeBillingOnly when set', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
       stubPlatform.addResponse(
@@ -135,6 +137,52 @@ void main() {
             'handle': 0,
             'billingChoiceMode': 1,
           }));
+    });
+
+    test('passes billingChoiceMode userChoiceBilling when set', () async {
+      const String debugMessage = 'dummy message';
+      const BillingResponse responseCode = BillingResponse.ok;
+      stubPlatform.addResponse(
+        name: methodName,
+        value: <String, dynamic>{
+          'responseCode': const BillingResponseConverter().toJson(responseCode),
+          'debugMessage': debugMessage,
+        },
+      );
+      final Completer<UserChoiceDetailsWrapper> completer =
+          Completer<UserChoiceDetailsWrapper>();
+
+      billingClient = BillingClient((PurchasesResultWrapper _) {},
+          (UserChoiceDetailsWrapper details) => completer.complete(details));
+      stubPlatform.reset();
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.userChoiceBilling);
+      final MethodCall call = stubPlatform.previousCallMatching(methodName);
+      expect(
+          call.arguments,
+          equals(<dynamic, dynamic>{
+            'handle': 0,
+            'billingChoiceMode': 2,
+          }));
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      await billingClient.callHandler(
+          MethodCall(kUserSelectedAlternativeBilling, expected.toJson()));
+      expect(completer.isCompleted, isTrue);
+      expect(await completer.future, expected);
     });
 
     test('handles method channel returning null', () async {
