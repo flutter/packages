@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.11+
+
+- Relax package:http constraint.
+
 ## 1.1.11
 
 - Use package:http to drop dependency on dart:html.
