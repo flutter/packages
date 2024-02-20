@@ -69,10 +69,10 @@ void main() {
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
       final html.Response response =
-          (await html.window.fetch(file.path.toJS).toDart)! as html.Response;
+          await html.window.fetch(file.path.toJS).toDart;
 
-      final JSAny? arrayBuffer = await response.arrayBuffer().toDart;
-      final ByteBuffer data = (arrayBuffer! as JSArrayBuffer).toDart;
+      final JSAny arrayBuffer = await response.arrayBuffer().toDart;
+      final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
       expect(data.asUint8List(), equals(bytes));
     });
 
