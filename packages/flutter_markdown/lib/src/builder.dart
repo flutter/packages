@@ -867,7 +867,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (selectable) {
       return SelectableText.rich(
         text!,
-        textScaleFactor: styleSheet.textScaleFactor,
+        textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
         key: k,
@@ -875,7 +875,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       return Text.rich(
         text!,
-        textScaleFactor: styleSheet.textScaleFactor,
+        textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
         key: k,
       );
