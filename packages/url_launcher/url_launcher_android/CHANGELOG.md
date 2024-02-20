@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 6.3.0
 
 * Adds support for `BrowserConfiguration`.

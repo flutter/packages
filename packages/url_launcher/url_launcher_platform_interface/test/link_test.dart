@@ -83,7 +83,6 @@ class _RouteDelegate extends RouterDelegate<RouteInformation>
     if (_history.isEmpty) {
       return const Placeholder(key: Key('empty'));
     }
-    // ignore: unnecessary_string_interpolations
-    return Placeholder(key: Key('${_history.last.location}'));
+    return Placeholder(key: Key(_history.last.uri.path));
   }
 }

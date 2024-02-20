@@ -3,7 +3,8 @@
 * Adds `textScaler` to `MarkdownStyleSheet`, and deprecates `textScaleFactor`.
   * Clients using `textScaleFactor: someFactor` should replace it with
     `TextScaler.linear(someFactor)` to preserve behavior.
-* Remove use of deprecated `textScaleFactor` methods from the Flutter framework.
+* Removes use of deprecated Flutter framework `textScaleFactor` methods.
+* Updates minimum supported SDK version to Flutter 3.16.
 
 ## 0.6.19
 

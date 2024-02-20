@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import 'test_breakpoints.dart';
 
@@ -149,9 +150,9 @@ enum SimulatedLayout {
     );
   }
 
-  MediaQuery get slot {
+  MediaQuery slot(WidgetTester tester) {
     return MediaQuery(
-      data: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+      data: MediaQueryData.fromView(tester.view)
           .copyWith(size: Size(_width, _height)),
       child: Theme(
         data: ThemeData(),
