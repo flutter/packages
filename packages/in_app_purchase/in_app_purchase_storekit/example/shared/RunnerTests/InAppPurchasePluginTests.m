@@ -316,7 +316,6 @@
 - (void)testRefreshReceiptRequest {
     XCTestExpectation *expectation =
         [self expectationWithDescription:@"completion handler successfully called"];
-  FlutterError *error;
     [self.plugin
      refreshReceiptReceiptProperties:nil
                                    completion:^(FlutterError *_Nullable error) {

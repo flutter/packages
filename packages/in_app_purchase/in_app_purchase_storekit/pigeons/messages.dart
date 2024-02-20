@@ -244,7 +244,7 @@ abstract class InAppPurchaseAPI {
 
   void presentCodeRedemptionSheet();
 
-  String retrieveReceiptData();
+  String? retrieveReceiptData();
 
   @async
   void refreshReceipt({Map<String, Object?>? receiptProperties});

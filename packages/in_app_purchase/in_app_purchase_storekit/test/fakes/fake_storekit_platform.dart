@@ -5,7 +5,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-import 'package:in_app_purchase_storekit/src/channel.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
@@ -14,8 +13,8 @@ import '../test_api.g.dart';
 
 class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   FakeStoreKitPlatform() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, onMethodCall);
+    // TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+    //     .setMockMethodCallHandler(channel, onMethodCall);
   }
 
   // pre-configured store information
@@ -32,6 +31,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   SKError? testRestoredError;
   bool queueIsActive = false;
   Map<String, dynamic> discountReceived = <String, dynamic>{};
+  bool isPaymentQueueDelegateRegistered = false;
 
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
@@ -57,6 +57,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     testRestoredError = null;
     queueIsActive = false;
     discountReceived = <String, dynamic>{};
+    isPaymentQueueDelegateRegistered = false;
   }
 
   SKPaymentTransactionWrapper createPendingTransaction(String id,
@@ -118,19 +119,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         transactionState: SKPaymentTransactionStateWrapper.restored,
         transactionTimeStamp: 123123.121,
         transactionIdentifier: transactionId);
-  }
-
-  Future<dynamic> onMethodCall(MethodCall call) {
-    switch (call.method) {
-      case '-[InAppPurchasePlugin refreshReceipt:result:]':
-        receiptData = 'refreshed receipt data';
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue startObservingTransactionQueue]':
-        queueIsActive = true;
-      case '-[SKPaymentQueue stopObservingTransactionQueue]':
-        queueIsActive = false;
-    }
-    return Future<void>.sync(() {});
   }
 
   @override
@@ -249,12 +237,12 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   void registerPaymentQueueDelegate() {
-    // TODO: implement registerPaymentQueueDelegate
+    isPaymentQueueDelegateRegistered = true;
   }
 
   @override
   void removePaymentQueueDelegate() {
-    // TODO: implement removePaymentQueueDelegate
+    isPaymentQueueDelegateRegistered = false;
   }
 
   @override
@@ -268,16 +256,15 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   void showPriceConsentIfNeeded() {
-    // TODO: implement showPriceConsentIfNeeded
   }
 
   @override
   void startObservingPaymentQueue() {
-    // TODO: implement startObservingPaymentQueue
+    queueIsActive = true;
   }
 
   @override
   void stopObservingPaymentQueue() {
-    // TODO: implement stopObservingPaymentQueue
+    queueIsActive = false;
   }
 }
