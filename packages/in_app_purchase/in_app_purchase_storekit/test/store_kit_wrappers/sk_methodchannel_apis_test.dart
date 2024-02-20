@@ -295,8 +295,8 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
     refreshReceiptCount++;
-    refreshReceiptParam = Map.castFrom<dynamic, dynamic, String, dynamic>(
-        receiptProperties! as Map<dynamic, dynamic>);
+    refreshReceiptParam =
+        Map.castFrom<dynamic, dynamic, String, dynamic>(receiptProperties!);
     return Future<void>.sync(() {});
   }
 
