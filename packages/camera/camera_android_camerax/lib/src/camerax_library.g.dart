@@ -27,7 +27,7 @@ enum CameraStateType {
 /// If you need to add another type to support a type S to use a LiveData<S> in
 /// this plugin, ensure the following is done on the Dart side:
 ///
-///  * In `../lib/src/live_data.dart`, add new cases for S in
+///  * In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
 ///    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
 ///    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
 ///    to create the expected type of LiveData<S> when requested.
@@ -73,7 +73,7 @@ enum VideoResolutionFallbackRule {
 /// If you need to add another option to support, ensure the following is done
 /// on the Dart side:
 ///
-///  * In `../lib/src/capture_request_options.dart`, add new cases for this
+///  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
 ///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
 ///    to create the expected Map entry of option key index and value to send to
 ///    the native side.
