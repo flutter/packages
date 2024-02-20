@@ -255,8 +255,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  void showPriceConsentIfNeeded() {
-  }
+  void showPriceConsentIfNeeded() {}
 
   @override
   void startObservingPaymentQueue() {

@@ -314,13 +314,12 @@
 }
 
 - (void)testRefreshReceiptRequest {
-    XCTestExpectation *expectation =
-        [self expectationWithDescription:@"completion handler successfully called"];
-    [self.plugin
-     refreshReceiptReceiptProperties:nil
-                                   completion:^(FlutterError *_Nullable error) {
-                                     [expectation fulfill];
-                                   }];
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:@"completion handler successfully called"];
+  [self.plugin refreshReceiptReceiptProperties:nil
+                                    completion:^(FlutterError *_Nullable error) {
+                                      [expectation fulfill];
+                                    }];
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
@@ -448,7 +447,6 @@
 
   FlutterError *error;
   [self.plugin showPriceConsentIfNeededWithError:&error];
-
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"

@@ -1,3 +1,7 @@
+## 0.3.11
+
+* Converts `refreshReceipt()`, `startObservingPaymentQueue()`, `stopObservingPaymentQueue()`, `registerPaymentQueueDelegate()`, `removePaymentQueueDelegate()`, `showPriceConsentIfNeeded()` to pigeon.
+
 ## 0.3.10
 
 * Converts `startProductRequest()`, `finishTransaction()`, `restoreTransactions()`, `presentCodeRedemptionSheet()` to pigeon.

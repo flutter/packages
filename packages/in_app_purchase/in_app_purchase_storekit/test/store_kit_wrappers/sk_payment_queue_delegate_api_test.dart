@@ -13,7 +13,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
-  
 
   setUpAll(() {
     TestInAppPurchaseApi.setup(fakeStoreKitPlatform);

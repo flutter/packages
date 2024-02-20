@@ -246,7 +246,8 @@
 #endif
 }
 
-- (void)registerPaymentQueueDelegateWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (void)registerPaymentQueueDelegateWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
   if (@available(iOS 13.0, *)) {
     _paymentQueueDelegateCallbackChannel = [FlutterMethodChannel
@@ -260,7 +261,8 @@
 #endif
 }
 
-- (void)removePaymentQueueDelegateWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (void)removePaymentQueueDelegateWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   if (@available(iOS 13.0, *)) {
     _paymentQueueHandler.delegate = nil;
   }
@@ -268,8 +270,8 @@
   _paymentQueueDelegateCallbackChannel = nil;
 }
 
-
-- (NSString * _Nullable)retrieveReceiptDataWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+- (NSString *_Nullable)retrieveReceiptDataWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   FlutterError *flutterError;
   NSString *receiptData = [self.receiptManager retrieveReceiptWithError:&flutterError];
   if (flutterError) {
@@ -279,7 +281,7 @@
   return receiptData;
 }
 
-- (void)showPriceConsentIfNeededWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (void)showPriceConsentIfNeededWithError:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
   if (@available(iOS 13.4, *)) {
     [_paymentQueueHandler showPriceConsentIfNeeded];
@@ -287,15 +289,18 @@
 #endif
 }
 
-- (void)startObservingPaymentQueueWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (void)startObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [_paymentQueueHandler startObservingPaymentQueue];
 }
 
-- (void)stopObservingPaymentQueueWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+- (void)stopObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [_paymentQueueHandler stopObservingPaymentQueue];
 }
 
-- (void)refreshReceiptReceiptProperties:(nullable NSDictionary *)receiptProperties completion:(nonnull void (^)(FlutterError * _Nullable))completion {
+- (void)refreshReceiptReceiptProperties:(nullable NSDictionary *)receiptProperties
+                             completion:(nonnull void (^)(FlutterError *_Nullable))completion {
   SKReceiptRefreshRequest *request;
   if (receiptProperties) {
     // if recieptProperties is not null, this call is for testing.
@@ -316,8 +321,8 @@
     FlutterError *requestError;
     if (error) {
       requestError = [FlutterError errorWithCode:@"storekit_refreshreceiptrequest_platform_error"
-                                 message:error.localizedDescription
-                                 details:error.description];
+                                         message:error.localizedDescription
+                                         details:error.description];
       completion(requestError);
     }
     completion(nil);

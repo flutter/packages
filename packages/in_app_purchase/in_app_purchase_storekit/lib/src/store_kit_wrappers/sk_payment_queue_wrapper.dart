@@ -86,14 +86,16 @@ class SKPaymentQueueWrapper {
   ///
   /// Call this method when the first listener is subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> startObservingTransactionQueue() => _hostApi.startObservingPaymentQueue();
+  Future<void> startObservingTransactionQueue() =>
+      _hostApi.startObservingPaymentQueue();
 
   /// Instructs the iOS implementation to remove the transaction observer and
   /// stop listening to it.
   ///
   /// Call this when there are no longer any listeners subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> stopObservingTransactionQueue() => _hostApi.stopObservingPaymentQueue();
+  Future<void> stopObservingTransactionQueue() =>
+      _hostApi.stopObservingPaymentQueue();
 
   /// Sets an implementation of the [SKPaymentQueueDelegateWrapper].
   ///
