@@ -4,8 +4,8 @@
 
 package io.flutter.plugins.camerax;
 
-import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
@@ -53,7 +53,9 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
                 (CaptureRequest.Key<Boolean>) optionKey, (Boolean) optionValue);
             break;
           case CONTROL_AF_TRIGGER:
-            builder.setCaptureRequestOption( (CaptureRequest.Key<Integer>) optionKey, CameraMetadata.CONTROL_AF_TRIGGER_IDLE); //(Integer) optionValue);
+            builder.setCaptureRequestOption(
+                (CaptureRequest.Key<Integer>) optionKey,
+                CameraMetadata.CONTROL_AF_TRIGGER_IDLE); //(Integer) optionValue);
             break;
           default:
             throw new IllegalArgumentException(

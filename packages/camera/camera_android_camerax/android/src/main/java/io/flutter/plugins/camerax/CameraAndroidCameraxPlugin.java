@@ -37,11 +37,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
   @VisibleForTesting public @Nullable LiveDataHostApiImpl liveDataHostApiImpl;
 
-    @VisibleForTesting @Nullable
+  @VisibleForTesting @Nullable
   public Camera2CameraControlHostApiImpl camera2CameraControlHostApiImpl;
 
-    @VisibleForTesting @Nullable public MeteringPointHostApiImpl meteringPointHostApiImpl;
-
+  @VisibleForTesting @Nullable public MeteringPointHostApiImpl meteringPointHostApiImpl;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -126,7 +125,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     cameraControlHostApiImpl =
         new CameraControlHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.CameraControlHostApi.setup(binaryMessenger, cameraControlHostApiImpl);
-        camera2CameraControlHostApiImpl = new Camera2CameraControlHostApiImpl(instanceManager, context);
+    camera2CameraControlHostApiImpl = new Camera2CameraControlHostApiImpl(instanceManager, context);
     GeneratedCameraXLibrary.Camera2CameraControlHostApi.setup(
         binaryMessenger, camera2CameraControlHostApiImpl);
     GeneratedCameraXLibrary.CaptureRequestOptionsHostApi.setup(
@@ -228,7 +227,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     if (cameraControlHostApiImpl != null) {
       cameraControlHostApiImpl.setContext(context);
     }
-        if (camera2CameraControlHostApiImpl != null) {
+    if (camera2CameraControlHostApiImpl != null) {
       camera2CameraControlHostApiImpl.setContext(context);
     }
   }

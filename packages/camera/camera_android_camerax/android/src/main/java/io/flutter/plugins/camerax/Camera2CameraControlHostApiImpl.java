@@ -5,6 +5,8 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
@@ -17,9 +19,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Camera2CameraControlHostApi;
 import java.util.Objects;
-
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CameraMetadata;
 
 /**
  * Host API implementation for {@link Camera2CameraControl}.
@@ -60,8 +59,15 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
 
       // ListenableFuture<Void> addCaptureRequestOptionsFuture =
       //     camera2CameraControl.addCaptureRequestOptions(bundle);
-      CaptureRequestOptions options = new CaptureRequestOptions.Builder().setCaptureRequestOption(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO).setCaptureRequestOption(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE).build();
-      ListenableFuture<Void> addCaptureRequestOptionsFuture = camera2CameraControl.setCaptureRequestOptions(options);
+      CaptureRequestOptions options =
+          new CaptureRequestOptions.Builder()
+              .setCaptureRequestOption(
+                  CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO)
+              .setCaptureRequestOption(
+                  CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE)
+              .build();
+      ListenableFuture<Void> addCaptureRequestOptionsFuture =
+          camera2CameraControl.setCaptureRequestOptions(options);
 
       Futures.addCallback(
           addCaptureRequestOptionsFuture,
