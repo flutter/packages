@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 17.0.0
 
 * **Breaking Change** [kotlin] Converts Kotlin enum case generation to SCREAMING_SNAKE_CASE.

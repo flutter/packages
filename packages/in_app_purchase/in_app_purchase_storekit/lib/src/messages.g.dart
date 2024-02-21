@@ -195,14 +195,14 @@ class SKErrorMessage {
   SKErrorMessage({
     required this.code,
     required this.domain,
-    required this.userInfo,
+    this.userInfo,
   });
 
   int code;
 
   String domain;
 
-  Map<String?, Object?> userInfo;
+  Map<String?, Object?>? userInfo;
 
   Object encode() {
     return <Object?>[
@@ -217,7 +217,7 @@ class SKErrorMessage {
     return SKErrorMessage(
       code: result[0]! as int,
       domain: result[1]! as String,
-      userInfo: (result[2] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      userInfo: (result[2] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
     );
   }
 }
