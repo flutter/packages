@@ -74,7 +74,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   CameraInfo? cameraInfo;
 
   /// The [CameraControl] instance that corresponds to the [camera] instance.
-  CameraControl? cameraControl;
+  late CameraControl cameraControl;
 
   /// The [LiveData] of the [CameraState] that represents the state of the
   /// [camera] instance.
@@ -481,18 +481,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
   ///
+  /// Returns 0 if exposure compensation is not supported for the device.
+  ///
   /// [cameraId] not used.
   @override
   Future<double> getExposureOffsetStepSize(int cameraId) async {
     final ExposureState exposureState = await cameraInfo!.getExposureState();
     final double exposureOffsetStepSize =
         exposureState.exposureCompensationStep;
-    if (exposureOffsetStepSize == 0) {
-      // CameraX returns a step size of 0 if exposure compensation is not
-      // supported for the device.
-      throw CameraException(exposureCompensationNotSupported,
-          'Exposure compensation not supported for the device.');
-    }
     return exposureOffsetStepSize;
   }
 
@@ -524,7 +520,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         (offset / exposureOffsetStepSize).round();
 
     try {
-      await cameraControl!
+      await cameraControl
           .setExposureCompensationIndex(roundedExposureCompensationIndex);
     } on PlatformException catch (e) {
       throw CameraException(
@@ -588,7 +584,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Throws a `CameraException` when an illegal zoom level is supplied.
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
-    await cameraControl!.setZoomRatio(zoom);
+    await cameraControl.setZoomRatio(zoom);
   }
 
   /// The ui orientation changed.
@@ -674,7 +670,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
     // Turn off torch mode if it is enabled and not being redundantly set.
     if (mode != FlashMode.torch && torchEnabled) {
-      await cameraControl!.enableTorch(false);
+      await cameraControl.enableTorch(false);
       torchEnabled = false;
     }
 
@@ -691,7 +687,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           // Torch mode enabled already.
           return;
         }
-        await cameraControl!.enableTorch(true);
+        await cameraControl.enableTorch(true);
         torchEnabled = true;
     }
   }
@@ -1112,7 +1108,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       if (newMeteringPointInfos.isEmpty) {
         // If no other metering points were specified, cancel any previously
         // started focus and metering actions.
-        await cameraControl!.cancelFocusAndMetering();
+        await cameraControl.cancelFocusAndMetering();
         currentFocusMeteringAction = null;
         return;
       }
@@ -1145,6 +1141,6 @@ class AndroidCameraCameraX extends CameraPlatform {
           proxy.createFocusMeteringAction(newMeteringPointInfos);
     }
 
-    await cameraControl!.startFocusAndMetering(currentFocusMeteringAction!);
+    await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
   }
 }

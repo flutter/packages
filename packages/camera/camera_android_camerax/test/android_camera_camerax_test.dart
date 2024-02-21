@@ -1630,26 +1630,6 @@ void main() {
     expect(await camera.getExposureOffsetStepSize(55), 0.2);
   });
 
-  test(
-      'getExposureOffsetStepSize throws exception when exposure compensation not supported on device',
-      () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 0, maxCompensation: 0),
-        exposureCompensationStep: 0);
-
-    // Set directly for test versus calling createCamera.
-    camera.cameraInfo = mockCameraInfo;
-
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
-
-    expect(() => camera.getExposureOffsetStepSize(25),
-        throwsA(isA<CameraException>()));
-  });
-
   test('getMaxZoomLevel returns expected exposure offset', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
