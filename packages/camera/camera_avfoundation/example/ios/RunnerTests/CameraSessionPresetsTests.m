@@ -30,13 +30,13 @@
   OCMExpect([captureDeviceMock lockForConfiguration:NULL]).andReturn(YES);
   OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
 
-  FLTCreateCamWithVideoDimensionsForFormatBlock(videoSessionMock, @"max", captureDeviceMock,
-                                                ^CMVideoDimensions(AVCaptureDeviceFormat *format) {
-                                                  CMVideoDimensions videoDimensions;
-                                                  videoDimensions.width = 1;
-                                                  videoDimensions.height = 1;
-                                                  return videoDimensions;
-                                                });
+  FLTCreateCamWithVideoDimensionsForFormat(videoSessionMock, @"max", captureDeviceMock,
+                                           ^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+                                             CMVideoDimensions videoDimensions;
+                                             videoDimensions.width = 1;
+                                             videoDimensions.height = 1;
+                                             return videoDimensions;
+                                           });
 
   OCMVerifyAll(captureDeviceMock);
   OCMVerifyAll(videoSessionMock);

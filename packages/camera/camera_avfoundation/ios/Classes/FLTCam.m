@@ -86,14 +86,11 @@
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
-/// A block property to dynamically determine video dimensions based on a given
-/// AVCaptureDeviceFormat. It accepts an AVCaptureDeviceFormat object and returns a
-/// CMVideoDimensions struct, indicating the video's width and height.
-@property(nonatomic, copy) VideoDimensionsForFormatBlock videoDimensionsForFormatBlock;
-/// A block property to retrieve an AVCaptureDevice instance without input parameters.
-/// Designed to return a predefined or default capture device, facilitating simple access within the
-/// application.
-@property(nonatomic, copy) CaptureDeviceBlock captureDeviceBlock;
+/// A wrapper for CMVideoFormatDescriptionGetDimensions.
+/// Allows for alternate implementations in tests.
+@property(nonatomic, copy) VideoDimensionsForFormatBlock videoDimensionsForFormat;
+/// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
+@property(nonatomic, copy) CaptureDeviceBlock captureDeviceFactory;
 @end
 
 @implementation FLTCam
@@ -106,8 +103,8 @@ NSString *const errorMethod = @"error";
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
-  return [self initWithCameraName:(NSString *)cameraName
-                 resolutionPreset:(NSString *)resolutionPreset
+  return [self initWithCameraName:cameraName
+                 resolutionPreset:resolutionPreset
                       enableAudio:enableAudio
                       orientation:orientation
               videoCaptureSession:[[AVCaptureSession alloc] init]
@@ -130,10 +127,10 @@ NSString *const errorMethod = @"error";
       videoCaptureSession:videoCaptureSession
       audioCaptureSession:videoCaptureSession
       captureSessionQueue:captureSessionQueue
-      captureDeviceBlock:^AVCaptureDevice *(void) {
+      captureDeviceFactory:^AVCaptureDevice *(void) {
         return [AVCaptureDevice deviceWithUniqueID:cameraName];
       }
-      videoDimensionsForFormatBlock:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+      videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
         return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
       }
       error:error];
@@ -145,9 +142,8 @@ NSString *const errorMethod = @"error";
                      videoCaptureSession:(AVCaptureSession *)videoCaptureSession
                      audioCaptureSession:(AVCaptureSession *)audioCaptureSession
                      captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                      captureDeviceBlock:(CaptureDeviceBlock)captureDeviceBlock
-           videoDimensionsForFormatBlock:
-               (VideoDimensionsForFormatBlock)videoDimensionsForFormatBlock
+                    captureDeviceFactory:(CaptureDeviceBlock)captureDeviceFactory
+                videoDimensionsForFormat:(VideoDimensionsForFormatBlock)videoDimensionsForFormat
                                    error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -169,9 +165,9 @@ NSString *const errorMethod = @"error";
   _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
   _videoCaptureSession = videoCaptureSession;
   _audioCaptureSession = audioCaptureSession;
-  _captureDeviceBlock = captureDeviceBlock;
-  _captureDevice = captureDeviceBlock();
-  _videoDimensionsForFormatBlock = videoDimensionsForFormatBlock;
+  _captureDeviceFactory = captureDeviceFactory;
+  _captureDevice = captureDeviceFactory();
+  _videoDimensionsForFormat = videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FLTFlashModeAuto : FLTFlashModeOff;
   _exposureMode = FLTExposureModeAuto;
   _focusMode = FLTFocusModeAuto;
@@ -485,7 +481,7 @@ NSString *const errorMethod = @"error";
   AVCaptureDeviceFormat *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
   for (AVCaptureDeviceFormat *format in [_captureDevice formats]) {
-    CMVideoDimensions res = self.videoDimensionsForFormatBlock(format);
+    CMVideoDimensions res = self.videoDimensionsForFormat(format);
     NSUInteger height = res.height;
     NSUInteger width = res.width;
     NSUInteger pixelCount = height * width;
@@ -1010,7 +1006,7 @@ NSString *const errorMethod = @"error";
     return;
   }
 
-  _captureDevice = self.captureDeviceBlock();
+  _captureDevice = self.captureDeviceFactory();
 
   AVCaptureConnection *oldConnection =
       [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];

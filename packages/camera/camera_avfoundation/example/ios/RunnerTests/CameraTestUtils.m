@@ -49,9 +49,9 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
                                       error:nil];
 }
 
-FLTCam *FLTCreateCamWithVideoDimensionsForFormatBlock(
+FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
     AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
-    VideoDimensionsForFormatBlock videoDimensionsForFormatBlock) {
+    VideoDimensionsForFormatBlock videoDimensionsForFormat) {
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
       .andReturn(inputMock);
@@ -67,10 +67,10 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormatBlock(
                            videoCaptureSession:captureSession
                            audioCaptureSession:audioSessionMock
                            captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
-                            captureDeviceBlock:^AVCaptureDevice *(void) {
-                              return captureDevice;
-                            }
-                 videoDimensionsForFormatBlock:videoDimensionsForFormatBlock
+                          captureDeviceFactory:^AVCaptureDevice *(void) {
+                            return captureDevice;
+                          }
+                      videoDimensionsForFormat:videoDimensionsForFormat
                                          error:nil];
 }
 

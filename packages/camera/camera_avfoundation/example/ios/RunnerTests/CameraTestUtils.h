@@ -24,9 +24,9 @@ extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSess
 /// @param captureDevice AVCaptureDevice to be used
 /// @param videoDimensionsForFormatBlock custom code to determine video dimensions
 /// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithVideoDimensionsForFormatBlock(
+extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
     AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
-    VideoDimensionsForFormatBlock videoDimensionsForFormatBlock);
+    VideoDimensionsForFormatBlock videoDimensionsForFormat);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.
