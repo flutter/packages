@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 2.5.3
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.

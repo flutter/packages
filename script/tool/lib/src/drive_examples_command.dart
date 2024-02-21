@@ -119,6 +119,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
+          '--web-renderer=html',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
         ],

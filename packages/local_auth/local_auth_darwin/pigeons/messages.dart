@@ -9,7 +9,7 @@ import 'package:pigeon/pigeon.dart';
   objcHeaderOut: 'darwin/Classes/messages.g.h',
   objcSourceOut: 'darwin/Classes/messages.g.m',
   objcOptions: ObjcOptions(
-    prefix: 'FLA',
+    prefix: 'FLAD', // Avoid runtime collisions with old local_auth_ios classes.
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))

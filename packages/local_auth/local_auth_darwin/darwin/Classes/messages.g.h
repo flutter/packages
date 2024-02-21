@@ -14,46 +14,46 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Possible outcomes of an authentication attempt.
-typedef NS_ENUM(NSUInteger, FLAAuthResult) {
+typedef NS_ENUM(NSUInteger, FLADAuthResult) {
   /// The user authenticated successfully.
-  FLAAuthResultSuccess = 0,
+  FLADAuthResultSuccess = 0,
   /// The user failed to successfully authenticate.
-  FLAAuthResultFailure = 1,
+  FLADAuthResultFailure = 1,
   /// The authentication system was not available.
-  FLAAuthResultErrorNotAvailable = 2,
+  FLADAuthResultErrorNotAvailable = 2,
   /// No biometrics are enrolled.
-  FLAAuthResultErrorNotEnrolled = 3,
+  FLADAuthResultErrorNotEnrolled = 3,
   /// No passcode is set.
-  FLAAuthResultErrorPasscodeNotSet = 4,
+  FLADAuthResultErrorPasscodeNotSet = 4,
 };
 
-/// Wrapper for FLAAuthResult to allow for nullability.
-@interface FLAAuthResultBox : NSObject
-@property(nonatomic, assign) FLAAuthResult value;
-- (instancetype)initWithValue:(FLAAuthResult)value;
+/// Wrapper for FLADAuthResult to allow for nullability.
+@interface FLADAuthResultBox : NSObject
+@property(nonatomic, assign) FLADAuthResult value;
+- (instancetype)initWithValue:(FLADAuthResult)value;
 @end
 
 /// Pigeon equivalent of the subset of BiometricType used by iOS.
-typedef NS_ENUM(NSUInteger, FLAAuthBiometric) {
-  FLAAuthBiometricFace = 0,
-  FLAAuthBiometricFingerprint = 1,
+typedef NS_ENUM(NSUInteger, FLADAuthBiometric) {
+  FLADAuthBiometricFace = 0,
+  FLADAuthBiometricFingerprint = 1,
 };
 
-/// Wrapper for FLAAuthBiometric to allow for nullability.
-@interface FLAAuthBiometricBox : NSObject
-@property(nonatomic, assign) FLAAuthBiometric value;
-- (instancetype)initWithValue:(FLAAuthBiometric)value;
+/// Wrapper for FLADAuthBiometric to allow for nullability.
+@interface FLADAuthBiometricBox : NSObject
+@property(nonatomic, assign) FLADAuthBiometric value;
+- (instancetype)initWithValue:(FLADAuthBiometric)value;
 @end
 
-@class FLAAuthStrings;
-@class FLAAuthOptions;
-@class FLAAuthResultDetails;
-@class FLAAuthBiometricWrapper;
+@class FLADAuthStrings;
+@class FLADAuthOptions;
+@class FLADAuthResultDetails;
+@class FLADAuthBiometricWrapper;
 
 /// Pigeon version of IOSAuthMessages, plus the authorization reason.
 ///
 /// See auth_messages_ios.dart for details.
-@interface FLAAuthStrings : NSObject
+@interface FLADAuthStrings : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithReason:(NSString *)reason
@@ -70,7 +70,7 @@ typedef NS_ENUM(NSUInteger, FLAAuthBiometric) {
 @property(nonatomic, copy, nullable) NSString *localizedFallbackTitle;
 @end
 
-@interface FLAAuthOptions : NSObject
+@interface FLADAuthOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithBiometricOnly:(BOOL)biometricOnly
@@ -81,31 +81,31 @@ typedef NS_ENUM(NSUInteger, FLAAuthBiometric) {
 @property(nonatomic, assign) BOOL useErrorDialogs;
 @end
 
-@interface FLAAuthResultDetails : NSObject
+@interface FLADAuthResultDetails : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithResult:(FLAAuthResult)result
++ (instancetype)makeWithResult:(FLADAuthResult)result
                   errorMessage:(nullable NSString *)errorMessage
                   errorDetails:(nullable NSString *)errorDetails;
 /// The result of authenticating.
-@property(nonatomic, assign) FLAAuthResult result;
+@property(nonatomic, assign) FLADAuthResult result;
 /// A system-provided error message, if any.
 @property(nonatomic, copy, nullable) NSString *errorMessage;
 /// System-provided error details, if any.
 @property(nonatomic, copy, nullable) NSString *errorDetails;
 @end
 
-@interface FLAAuthBiometricWrapper : NSObject
+@interface FLADAuthBiometricWrapper : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithValue:(FLAAuthBiometric)value;
-@property(nonatomic, assign) FLAAuthBiometric value;
++ (instancetype)makeWithValue:(FLADAuthBiometric)value;
+@property(nonatomic, assign) FLADAuthBiometric value;
 @end
 
-/// The codec used by FLALocalAuthApi.
-NSObject<FlutterMessageCodec> *FLALocalAuthApiGetCodec(void);
+/// The codec used by FLADLocalAuthApi.
+NSObject<FlutterMessageCodec> *FLADLocalAuthApiGetCodec(void);
 
-@protocol FLALocalAuthApi
+@protocol FLADLocalAuthApi
 /// Returns true if this device supports authentication.
 ///
 /// @return `nil` only when `error != nil`.
@@ -119,17 +119,17 @@ NSObject<FlutterMessageCodec> *FLALocalAuthApiGetCodec(void);
 /// without additional setup.
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<FLAAuthBiometricWrapper *> *)getEnrolledBiometricsWithError:
+- (nullable NSArray<FLADAuthBiometricWrapper *> *)getEnrolledBiometricsWithError:
     (FlutterError *_Nullable *_Nonnull)error;
 /// Attempts to authenticate the user with the provided [options], and using
 /// [strings] for any UI.
-- (void)authenticateWithOptions:(FLAAuthOptions *)options
-                        strings:(FLAAuthStrings *)strings
-                     completion:(void (^)(FLAAuthResultDetails *_Nullable,
+- (void)authenticateWithOptions:(FLADAuthOptions *)options
+                        strings:(FLADAuthStrings *)strings
+                     completion:(void (^)(FLADAuthResultDetails *_Nullable,
                                           FlutterError *_Nullable))completion;
 @end
 
-extern void SetUpFLALocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                 NSObject<FLALocalAuthApi> *_Nullable api);
+extern void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                  NSObject<FLADLocalAuthApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
