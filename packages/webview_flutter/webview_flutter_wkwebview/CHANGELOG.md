@@ -1,7 +1,7 @@
 ## 3.13.0
 
 * Adds `decidePolicyForNavigationResponse` to internal WKNavigationDelegate to support the
-  `PlatformNavigationDelegateonHttpError` callback.
+  `PlatformNavigationDelegate.onHttpError` callback.
 
 ## 3.12.0
 

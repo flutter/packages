@@ -171,4 +171,36 @@
 - (void)testWKNavigationTypeConversionReturnsUnknownIfUnrecognized {
   XCTAssertEqual(FWFWKNavigationTypeFromNativeWKNavigationType(-15), FWFWKNavigationTypeUnknown);
 }
+
+- (void)testFWFWKNavigationResponseDataFromNativeNavigationResponse {
+  WKNavigationResponse *mockResponse = OCMClassMock([WKNavigationResponse class]);
+  OCMStub([mockResponse isForMainFrame]).andReturn(YES);
+
+  NSHTTPURLResponse *mockURLResponse = OCMClassMock([NSHTTPURLResponse class]);
+  OCMStub([mockURLResponse statusCode]).andReturn(1);
+  OCMStub([mockResponse response]).andReturn(mockURLResponse);
+
+  FWFWKNavigationResponseData *data =
+      FWFWKNavigationResponseDataFromNativeNavigationResponse(mockResponse);
+  XCTAssertEqual(data.forMainFrame, YES);
+}
+
+- (void)testFWFNSHttpUrlResponseDataFromNativeNSURLResponse {
+  NSHTTPURLResponse *mockResponse = OCMClassMock([NSHTTPURLResponse class]);
+  OCMStub([mockResponse statusCode]).andReturn(1);
+
+  FWFNSHttpUrlResponseData *data = FWFNSHttpUrlResponseDataFromNativeNSURLResponse(mockResponse);
+  XCTAssertEqual(data.statusCode, 1);
+}
+
+- (void)testFWFNativeWKNavigationResponsePolicyFromEnumData {
+  FWFWKNavigationResponsePolicyEnumData *allowData =
+      [FWFWKNavigationResponsePolicyEnumData makeWithValue:FWFWKNavigationResponsePolicyEnumAllow];
+  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnumData(allowData),
+                 WKNavigationResponsePolicyAllow);
+  FWFWKNavigationResponsePolicyEnumData *cancelData =
+      [FWFWKNavigationResponsePolicyEnumData makeWithValue:FWFWKNavigationResponsePolicyEnumCancel];
+  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnumData(cancelData),
+                 WKNavigationResponsePolicyCancel);
+}
 @end
