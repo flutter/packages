@@ -6,11 +6,13 @@
 import 'dart:async' as _i3;
 
 import 'package:camera_android_camerax/src/camera_control.dart' as _i2;
-import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i5;
-import 'package:camera_android_camerax/src/capture_request_options.dart' as _i4;
+import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i7;
+import 'package:camera_android_camerax/src/capture_request_options.dart' as _i6;
+import 'package:camera_android_camerax/src/focus_metering_action.dart' as _i5;
+import 'package:camera_android_camerax/src/focus_metering_result.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i6;
+import 'test_camerax_library.g.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -53,6 +55,37 @@ class MockCameraControl extends _i1.Mock implements _i2.CameraControl {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<_i4.FocusMeteringResult?> startFocusAndMetering(
+          _i5.FocusMeteringAction? action) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #startFocusAndMetering,
+          [action],
+        ),
+        returnValue: _i3.Future<_i4.FocusMeteringResult?>.value(),
+      ) as _i3.Future<_i4.FocusMeteringResult?>);
+
+  @override
+  _i3.Future<void> cancelFocusAndMetering() => (super.noSuchMethod(
+        Invocation.method(
+          #cancelFocusAndMetering,
+          [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<int?> setExposureCompensationIndex(int? index) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setExposureCompensationIndex,
+          [index],
+        ),
+        returnValue: _i3.Future<int?>.value(),
+      ) as _i3.Future<int?>);
 }
 
 /// A class which mocks [CaptureRequestOptions].
@@ -60,36 +93,24 @@ class MockCameraControl extends _i1.Mock implements _i2.CameraControl {
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
 class MockCaptureRequestOptions extends _i1.Mock
-    implements _i4.CaptureRequestOptions {
+    implements _i6.CaptureRequestOptions {
   MockCaptureRequestOptions() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  List<(_i5.CaptureRequestKeySupportedType, dynamic)> get requestedOptions =>
+  List<(_i7.CaptureRequestKeySupportedType, Object?)> get requestedOptions =>
       (super.noSuchMethod(
         Invocation.getter(#requestedOptions),
-        returnValue: <(_i5.CaptureRequestKeySupportedType, dynamic)>[],
-      ) as List<(_i5.CaptureRequestKeySupportedType, dynamic)>);
-
-  @override
-  set requestedOptions(
-          List<(_i5.CaptureRequestKeySupportedType, dynamic)>?
-              _requestedOptions) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #requestedOptions,
-          _requestedOptions,
-        ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: <(_i7.CaptureRequestKeySupportedType, Object?)>[],
+      ) as List<(_i7.CaptureRequestKeySupportedType, Object?)>);
 }
 
 /// A class which mocks [TestCamera2CameraControlHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestCamera2CameraControlHostApi extends _i1.Mock
-    implements _i6.TestCamera2CameraControlHostApi {
+    implements _i8.TestCamera2CameraControlHostApi {
   MockTestCamera2CameraControlHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -132,7 +153,7 @@ class MockTestCamera2CameraControlHostApi extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i6.TestInstanceManagerHostApi {
+    implements _i8.TestInstanceManagerHostApi {
   MockTestInstanceManagerHostApi() {
     _i1.throwOnMissingStub(this);
   }

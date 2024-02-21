@@ -73,13 +73,10 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
 
   /// The function called whenever an observed resize occurs.
   void _onResizeEntries(
-    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-    // ignore: always_specify_types
-    JSArray resizes,
+    JSArray<web.ResizeObserverEntry> resizes,
     web.ResizeObserver observer,
   ) {
-    final web.DOMRectReadOnly rect =
-        resizes.toDart.cast<web.ResizeObserverEntry>().last.contentRect;
+    final web.DOMRectReadOnly rect = resizes.toDart.last.contentRect;
     if (rect.width > 0 && rect.height > 0) {
       _doResize(Size(rect.width.toDouble(), rect.height.toDouble()));
     }
@@ -90,14 +87,10 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   /// When mutations are received, this function attaches a Resize Observer to
   /// the first child of the mutation, which will drive
   void _onMutationRecords(
-    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-    // ignore: always_specify_types
-    JSArray mutations,
+    JSArray<web.MutationRecord> mutations,
     web.MutationObserver observer,
   ) {
-    mutations.toDart
-        .cast<web.MutationRecord>()
-        .forEach((web.MutationRecord mutation) {
+    for (final web.MutationRecord mutation in mutations.toDart) {
       if (mutation.addedNodes.length > 0) {
         final web.Element? element = _locateSizeProvider(mutation.addedNodes);
         if (element != null) {
@@ -108,7 +101,7 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
           return;
         }
       }
-    });
+    }
   }
 
   /// Registers a MutationObserver on the root element of the HtmlElementView.
