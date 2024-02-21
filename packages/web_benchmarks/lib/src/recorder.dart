@@ -248,6 +248,7 @@ abstract class SceneBuilderRecorder extends Recorder {
       }
     };
     PlatformDispatcher.instance.onDrawFrame = () {
+      final FlutterView? view = PlatformDispatcher.instance.implicitView;
       try {
         _profile.record('drawFrameDuration', () {
           final SceneBuilder sceneBuilder = SceneBuilder();
@@ -255,7 +256,9 @@ abstract class SceneBuilderRecorder extends Recorder {
           _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
             _profile.record('windowRenderDuration', () {
-              window.render(scene);
+              assert(view != null,
+                  'Cannot profile windowRenderDuration on a null View.');
+              view!.render(scene);
             }, reported: false);
           }, reported: false);
         }, reported: true);
