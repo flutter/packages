@@ -1,3 +1,7 @@
+## 0.5.0+34
+
+* Implements `setFocusPoint`, `setExposurePoint`, and `setExposureOffset`.
+
 ## 0.5.0+33
 
 * Fixes typo in `README.md`.
