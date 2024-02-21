@@ -1,3 +1,8 @@
+## 0.6.21
+
+* Adds `onSelectionChanged` to the constructors of `Markdown` and `MarkdownBody`.
+* Documents the selection capabilities in README.
+
 ## 0.6.20
 
 * Adds `textScaler` to `MarkdownStyleSheet`, and deprecates `textScaleFactor`.
