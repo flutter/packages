@@ -1,3 +1,7 @@
+## 0.6.20+1
+
+* Updates minimum supported SDK version to Flutter 3.19.
+
 ## 0.6.20
 
 * Adds `textScaler` to `MarkdownStyleSheet`, and deprecates `textScaleFactor`.
