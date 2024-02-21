@@ -1212,7 +1212,7 @@ NSString *const errorMethod = @"error";
   if (_isAudioSetup) {
     return;
   }
-  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth error:nil];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetooth error:nil];
 
   NSError *error = nil;
   // Create a device input with the device and add it to the session.
