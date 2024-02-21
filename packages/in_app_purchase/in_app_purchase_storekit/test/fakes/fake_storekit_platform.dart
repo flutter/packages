@@ -12,11 +12,6 @@ import '../store_kit_wrappers/sk_test_stub_objects.dart';
 import '../test_api.g.dart';
 
 class FakeStoreKitPlatform implements TestInAppPurchaseApi {
-  FakeStoreKitPlatform() {
-    // TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-    //     .setMockMethodCallHandler(channel, onMethodCall);
-  }
-
   // pre-configured store information
   String? receiptData;
   late Set<String> validProductIDs;
