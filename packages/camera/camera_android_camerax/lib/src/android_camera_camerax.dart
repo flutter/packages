@@ -347,16 +347,13 @@ class AndroidCameraCameraX extends CameraPlatform {
     final ResolutionInfo previewResolutionInfo =
         await preview!.getResolutionInfo();
 
-    // Retrieve exposure and focus mode configurations:
-    // TODO(camsim99): Implement support for retrieving exposure mode configuration.
-    // https://github.com/flutter/flutter/issues/120468
+    // Mark auto-focus, auto-exposure and setting points for focus & exposure
+    // as available operations as CameraX does its best across devices to
+    // support these by default.
     const ExposureMode exposureMode = ExposureMode.auto;
-    const bool exposurePointSupported = false;
-
-    // TODO(camsim99): Implement support for retrieving focus mode configuration.
-    // https://github.com/flutter/flutter/issues/120467
     const FocusMode focusMode = FocusMode.auto;
-    const bool focusPointSupported = false;
+    const bool exposurePointSupported = true;
+    const bool focusPointSupported = true;
 
     cameraEventStreamController.add(CameraInitializedEvent(
         cameraId,
