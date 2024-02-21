@@ -11,6 +11,11 @@ import 'package:markdown/markdown.dart' as md;
 
 import '../flutter_markdown.dart';
 import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
+/// TBD
+///
+/// TBD
+typedef MarkdownOnSelectionChangedCallback = void Function(
+    String text, TextSelection selection, SelectionChangedCause? cause);
 
 /// Signature for callbacks used by [MarkdownWidget] when the user taps a link.
 /// The callback will return the link text, destination, and title from the
