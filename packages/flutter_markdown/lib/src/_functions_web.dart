@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
-import 'dart:js_interop_unsafe';
 
 import 'package:flutter/cupertino.dart' show CupertinoTheme;
 import 'package:flutter/material.dart' show Theme;
@@ -52,13 +51,12 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   MarkdownStyleSheetBaseTheme? baseTheme,
 ) {
   final MarkdownStyleSheet result = switch (baseTheme) {
-    MarkdownStyleSheetBaseTheme.platform when _userAgent.contains('Mac OS X') =>
+    MarkdownStyleSheetBaseTheme.platform
+        when _userAgent.toDart.contains('Mac OS X') =>
       MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
     MarkdownStyleSheetBaseTheme.cupertino =>
       MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
-    MarkdownStyleSheetBaseTheme.material ||
-    _ =>
-      MarkdownStyleSheet.fromTheme(Theme.of(context)),
+    _ => MarkdownStyleSheet.fromTheme(Theme.of(context)),
   };
 
   return result.copyWith(
@@ -81,8 +79,5 @@ Widget _handleDataSchemeUri(
   return const SizedBox();
 }
 
-final String _userAgent = globalContext
-    .getProperty<JSObject>('window'.toJS)
-    .getProperty<JSObject>('navigator'.toJS)
-    .getProperty<JSString>('userAgent'.toJS)
-    .toDart;
+@JS('window.navigator.userAgent')
+external JSString get _userAgent;
