@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/link.dart';
+
 import './text_linker.dart';
 
 /// Singature for a function that builds the [Widget] output by [LinkedText].
@@ -49,6 +52,9 @@ class LinkedText extends StatefulWidget {
   /// Creates an instance of [LinkedText] from the given [text] or [spans],
   /// turning any URLs into interactive links.
   ///
+  /// By default, tapping on a URL will open it in the browser. To override this
+  /// behavior, pass `onTapUri`.
+  ///
   /// See also:
   ///
   ///  * [LinkedText.regExp], which matches based on any given [RegExp].
@@ -56,7 +62,7 @@ class LinkedText extends StatefulWidget {
   ///    control over matching and building different types of links.
   LinkedText({
     super.key,
-    required ValueChanged<Uri> onTapUri,
+    ValueChanged<Uri>? onTapUri,
     this.builder = _defaultBuilder,
     List<InlineSpan>? spans,
     String? text,
@@ -66,7 +72,7 @@ class LinkedText extends StatefulWidget {
            text: text,
          ),
        ],
-       onTap = _getOnTap(onTapUri),
+       onTap = _getOnTap(onTapUri ?? _defaultOnTapUri),
        regExp = defaultUriRegExp,
        textLinkers = null;
 
@@ -185,6 +191,13 @@ class LinkedText extends StatefulWidget {
   /// addresses.
   static final RegExp defaultUriRegExp = RegExp(r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)');
 
+  // By default, launch the Uri in the browser.
+  static _defaultOnTapUri(Uri uri) async {
+    if (!await launchUrl(uri)) {
+      throw 'Could not launch $uri.';
+    }
+  }
+
   /// Returns a generic [ValueChanged]<String> given a callback specifically for
   /// tapping on a [Uri].
   static ValueChanged<String> _getOnTap(ValueChanged<Uri> onTapUri) {
@@ -192,7 +205,7 @@ class LinkedText extends StatefulWidget {
       Uri uri = Uri.parse(linkString);
       if (uri.host.isEmpty) {
         // defaultUriRegExp matches Uris without a host, but packages like
-        // url_launcher require a host to launch a Uri. So add the host.
+        // url_launcher require a host to launch a Uri.
         uri = Uri.parse('https://$linkString');
       }
       onTapUri(uri);
@@ -253,14 +266,23 @@ class _LinkedTextState extends State<LinkedText> {
        TextLinker(
          regExp: widget.regExp ?? LinkedText.defaultUriRegExp,
          linkBuilder: (String displayString, String linkString) {
-           final TapGestureRecognizer recognizer = TapGestureRecognizer()
-               ..onTap = () => widget.onTap!(linkString);
-           // Keep track of created recognizers so that they can be disposed.
-           _recognizers.add(recognizer);
-           return _InlineLinkSpan(
-             recognizer: recognizer,
-             style: LinkedText.defaultLinkStyle,
-             text: displayString,
+           return WidgetSpan(
+             child: Link(
+               uri: Uri.parse(linkString),
+               builder: (BuildContext context, FollowLink? followLink) {
+                 final TapGestureRecognizer recognizer = TapGestureRecognizer()
+                     ..onTap = () => widget.onTap!(linkString);
+                 // Keep track of created recognizers so that they can be disposed.
+                 _recognizers.add(recognizer);
+                 return Text.rich(
+                   _InlineLinkSpan(
+                     recognizer: recognizer,
+                     style: LinkedText.defaultLinkStyle,
+                     text: displayString,
+                   ),
+                 );
+               },
+             ),
            );
          },
        ),

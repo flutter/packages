@@ -12,5 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  url_launcher: ^6.2.5
+
 dev_dependencies:
   test: ^1.24.0
