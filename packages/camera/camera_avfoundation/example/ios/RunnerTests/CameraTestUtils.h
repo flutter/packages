@@ -22,7 +22,7 @@ extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSess
 /// @param captureSession AVCaptureSession for video
 /// @param resolutionPreset preset for camera's captureSession resolution
 /// @param captureDevice AVCaptureDevice to be used
-/// @param videoDimensionsForFormatBlock custom code to determine video dimensions
+/// @param videoDimensionsForFormat custom code to determine video dimensions
 /// @return an FLTCam object.
 extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
     AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
