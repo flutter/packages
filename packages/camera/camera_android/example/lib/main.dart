@@ -75,7 +75,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   @override
   void initState() {
     super.initState();
-    _ambiguate(WidgetsBinding.instance)?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     _flashModeControlRowAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -105,7 +105,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   @override
   void dispose() {
-    _ambiguate(WidgetsBinding.instance)?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _flashModeControlRowAnimationController.dispose();
     _exposureModeControlRowAnimationController.dispose();
     super.dispose();
@@ -368,16 +368,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Widget _exposureModeControlRowWidget() {
     final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.auto
+      foregroundColor: controller?.value.exposureMode == ExposureMode.auto
           ? Colors.orange
           : Colors.blue,
     );
     final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.locked
+      foregroundColor: controller?.value.exposureMode == ExposureMode.locked
           ? Colors.orange
           : Colors.blue,
     );
@@ -385,7 +381,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _exposureModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[
@@ -456,16 +452,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Widget _focusModeControlRowWidget() {
     final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.auto
+      foregroundColor: controller?.value.focusMode == FocusMode.auto
           ? Colors.orange
           : Colors.blue,
     );
     final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.locked
+      foregroundColor: controller?.value.focusMode == FocusMode.locked
           ? Colors.orange
           : Colors.blue,
     );
@@ -473,7 +465,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _focusModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[
@@ -588,7 +580,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     if (_cameras.isEmpty) {
-      _ambiguate(SchedulerBinding.instance)?.addPostFrameCallback((_) async {
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
         showInSnackBar('No camera found.');
       });
       return const Text('None');
@@ -685,30 +677,23 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       switch (e.code) {
         case 'CameraAccessDenied':
           showInSnackBar('You have denied camera access.');
-          break;
         case 'CameraAccessDeniedWithoutPrompt':
           // iOS only
           showInSnackBar('Please go to Settings app to enable camera access.');
-          break;
         case 'CameraAccessRestricted':
           // iOS only
           showInSnackBar('Camera access is restricted.');
-          break;
         case 'AudioAccessDenied':
           showInSnackBar('You have denied audio access.');
-          break;
         case 'AudioAccessDeniedWithoutPrompt':
           // iOS only
           showInSnackBar('Please go to Settings app to enable audio access.');
-          break;
         case 'AudioAccessRestricted':
           // iOS only
           showInSnackBar('Audio access is restricted.');
-          break;
         case 'cameraPermission':
           // Android & web only
           showInSnackBar('Unknown permission error.');
-          break;
         default:
           _showCameraException(e);
           break;
@@ -1002,11 +987,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     final VideoPlayerController vController = kIsWeb
-        // TODO(gabrielokura): remove the ignore once the following line can migrate to
-        // use VideoPlayerController.networkUrl after the issue is resolved.
-        // https://github.com/flutter/flutter/issues/121927
-        // ignore: deprecated_member_use
-        ? VideoPlayerController.network(videoFile!.path)
+        ? VideoPlayerController.networkUrl(Uri.parse(videoFile!.path))
         : VideoPlayerController.file(File(videoFile!.path));
 
     videoPlayerListener = () {
@@ -1083,9 +1064,3 @@ Future<void> main() async {
   }
   runApp(const CameraApp());
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

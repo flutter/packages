@@ -24,18 +24,12 @@ dependencies:
 
 ## Missing features and limitations
 
-### Resolution configuration \[[Issue #120462][120462]\]
 
-Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
-`onCameraResolutionChanged` is unimplemented.
+### 240p resolution configuration for video recording
 
-### Locking/Unlocking capture orientation \[[Issue #125915][125915]\]
-
-`lockCaptureOrientation` & `unLockCaptureOrientation` are unimplemented.
-
-### Flash mode configuration \[[Issue #120715][120715]\]
-
-Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
+240p resolution configuration for video recording is unsupported by CameraX,
+and thus, the plugin will fall back to 480p if configured with a
+`ResolutionPreset`.
 
 ### Exposure mode, point, & offset configuration \[[Issue #120468][120468]\]
 
@@ -45,14 +39,12 @@ Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
 
 `setFocusMode` & `setFocusPoint` are unimplemented.
 
-### Zoom configuration \[[Issue #125371][125371]\]
+### Setting maximum duration and stream options for video capture
 
-`setZoomLevel` is unimplemented.
-
-### Some video capture functionality \[[Issue #127896][127896], [Issue #126477][126477]\]
-
-`startVideoCapturing` is unimplemented; use `startVideoRecording` instead.
-`onVideoRecordedEvent` is also unimplemented.
+Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
+`maxVideoDuration` and `streamOptions` is currently unsupported do to the
+limitations of the CameraX library and the platform interface, respectively,
+and thus, those parameters will silently be ignored.
 
 ## Contributing
 

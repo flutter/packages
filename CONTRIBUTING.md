@@ -18,7 +18,14 @@ Additional resources specific to the packages repository:
   [**PRs need tests**](https://github.com/flutter/flutter/wiki/Tree-hygiene#tests), so
   this is critical to read before submitting a plugin PR.
 
-## Notes
+### Code review processes and automation
+
+PRs will automatically be assigned to
+[code owners](https://github.com/flutter/packages/blob/main/CODEOWNERS)
+for review.
+If a code owner is creating a PR, they should explicitly pick another
+[Flutter team member](https://github.com/flutter/flutter/wiki/Contributor-access)
+as a code reviewer.
 
 ### Style
 
@@ -33,6 +40,8 @@ use, and use auto-formatters:
     for more details, and exceptions.
 - [Java](https://google.github.io/styleguide/javaguide.html) formatted with
   `google-java-format`
+- [Kotlin](https://developer.android.com/kotlin/style-guide) formatted with
+  `ktfmt`
 - [Objective-C](https://google.github.io/styleguide/objcguide.html) formatted with
   `clang-format`
 - [Swift](https://google.github.io/swift/) formatted with `swift-format`

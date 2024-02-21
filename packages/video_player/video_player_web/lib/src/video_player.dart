@@ -45,6 +45,7 @@ class VideoPlayer {
 
   final StreamController<VideoEvent> _eventController;
   final html.VideoElement _videoElement;
+  void Function(html.Event)? _onContextMenu;
 
   bool _isInitialized = false;
   bool _isBuffering = false;
@@ -57,23 +58,31 @@ class VideoPlayer {
   /// This method sets the required DOM attributes so videos can [play] programmatically,
   /// and attaches listeners to the internal events from the [html.VideoElement]
   /// to react to them / expose them through the [VideoPlayer.events] stream.
-  void initialize() {
+  ///
+  /// The [src] parameter is the URL of the video. It is passed in from the plugin
+  /// `create` method so it can be set in the VideoElement *last*. This way, all
+  /// the event listeners needed to integrate the videoElement with the plugin
+  /// are attached before any events start firing (events start to fire when the
+  /// `src` attribute is set).
+  ///
+  /// The `src` parameter is nullable for testing purposes.
+  void initialize({
+    String? src,
+  }) {
     _videoElement
       ..autoplay = false
       ..controls = false;
 
-    // Allows Safari iOS to play the video inline
-    _videoElement.setAttribute('playsinline', 'true');
+    // Allows Safari iOS to play the video inline.
+    //
+    // This property is not exposed through dart:html so we use the
+    // HTML Boolean attribute form (when present with any value => true)
+    // See: https://developer.mozilla.org/en-US/docs/Glossary/Boolean/HTML
+    _videoElement.setAttribute('playsinline', true);
 
-    // Set autoplay to false since most browsers won't autoplay a video unless it is muted
-    _videoElement.setAttribute('autoplay', 'false');
-
-    _videoElement.onCanPlay.listen((dynamic _) {
-      if (!_isInitialized) {
-        _isInitialized = true;
-        _sendInitialized();
-      }
-    });
+    _videoElement.onCanPlay.listen(_onVideoElementInitialization);
+    // Needed for Safari iOS 17, which may not send `canplay`.
+    _videoElement.onLoadedMetadata.listen(_onVideoElementInitialization);
 
     _videoElement.onCanPlayThrough.listen((dynamic _) {
       setBuffering(false);
@@ -120,6 +129,12 @@ class VideoPlayer {
       setBuffering(false);
       _eventController.add(VideoEvent(eventType: VideoEventType.completed));
     });
+
+    // The `src` of the _videoElement is the last property that is set, so all
+    // the listeners for the events that the plugin cares about are attached.
+    if (src != null) {
+      _videoElement.src = src;
+    }
   }
 
   /// Attempts to play the video.
@@ -202,10 +217,66 @@ class VideoPlayer {
     return Duration(milliseconds: (_videoElement.currentTime * 1000).round());
   }
 
+  /// Sets options
+  Future<void> setOptions(VideoPlayerWebOptions options) async {
+    // In case this method is called multiple times, reset options.
+    _resetOptions();
+
+    if (options.controls.enabled) {
+      _videoElement.controls = true;
+      final String controlsList = options.controls.controlsList;
+      if (controlsList.isNotEmpty) {
+        _videoElement.setAttribute('controlsList', controlsList);
+      }
+
+      if (!options.controls.allowPictureInPicture) {
+        _videoElement.setAttribute('disablePictureInPicture', true);
+      }
+    }
+
+    if (!options.allowContextMenu) {
+      _onContextMenu = (html.Event event) => event.preventDefault();
+      _videoElement.addEventListener('contextmenu', _onContextMenu);
+    }
+
+    if (!options.allowRemotePlayback) {
+      _videoElement.setAttribute('disableRemotePlayback', true);
+    }
+  }
+
+  void _resetOptions() {
+    _videoElement.controls = false;
+    _videoElement.removeAttribute('controlsList');
+    _videoElement.removeAttribute('disablePictureInPicture');
+    if (_onContextMenu != null) {
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _onContextMenu = null;
+    }
+    _videoElement.removeAttribute('disableRemotePlayback');
+  }
+
   /// Disposes of the current [html.VideoElement].
   void dispose() {
     _videoElement.removeAttribute('src');
+    if (_onContextMenu != null) {
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _onContextMenu = null;
+    }
     _videoElement.load();
+  }
+
+  // Handler to mark (and broadcast) when this player [_isInitialized].
+  //
+  // (Used as a JS event handler for "canplay" and "loadedmetadata")
+  //
+  // This function can be called multiple times by different JS Events, but it'll
+  // only broadcast an "initialized" event the first time it's called, and ignore
+  // the rest of the calls.
+  void _onVideoElementInitialization(Object? _) {
+    if (!_isInitialized) {
+      _isInitialized = true;
+      _sendInitialized();
+    }
   }
 
   // Sends an [VideoEventType.initialized] [VideoEvent] with info about the wrapped video.

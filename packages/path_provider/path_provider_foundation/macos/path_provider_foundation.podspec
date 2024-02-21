@@ -1,1 +1,0 @@
-../darwin/path_provider_foundation.podspec

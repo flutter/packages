@@ -1,3 +1,54 @@
+## 0.12.4
+
+* Updates dependencies to `web: ^0.5.0` and `google_identity_services_web: ^0.3.1`.
+
+## 0.12.3+3
+
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+* Prepares update to package `web: ^0.5.0`.
+
+## 0.12.3+2
+
+* Fixes new lint warnings.
+
+## 0.12.3+1
+
+* Updates `FlexHtmlElementView` (the widget backing `renderButton`) to not
+  rely on web engine knowledge (a platform view CSS selector) to operate.
+
+## 0.12.3
+
+* Migrates to `package:web`.
+* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
+## 0.12.2+1
+
+* Re-publishes `0.12.2` with a small fix to the CodeClient initialization.
+
+## 0.12.2 (withdrawn)
+
+* Adds server auth code retrieval to google_sign_in_web.
+* Adds `web_only` library to access web-only methods more easily.
+
+## 0.12.1
+
+* Enables FedCM on browsers that support this authentication mechanism.
+* Uses the expiration timestamps of Credential and Token responses to improve
+  the accuracy of `isSignedIn` and `canAccessScopes` methods.
+* Deprecates `signIn()` method.
+  * Users should migrate to `renderButton` and `silentSignIn`, as described in
+    the README.
+
+## 0.12.0+5
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 0.12.0+4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.12.0+3
 
 * Fixes null cast error on accounts without picture or name details.

@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String?>? _appDocumentsDirectory;
   Future<String?>? _appCacheDirectory;
   Future<String?>? _externalDocumentsDirectory;
+  Future<String?>? _externalDownloadsDirectory;
   Future<List<String>?>? _externalStorageDirectories;
   Future<List<String>?>? _externalCacheDirectories;
 
@@ -115,6 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _requestExternalCacheDirectories() {
     setState(() {
       _externalCacheDirectories = provider.getExternalCachePaths();
+    });
+  }
+
+  void _requestDownloadsDirectory() {
+    setState(() {
+      _externalDownloadsDirectory = provider.getDownloadsPath();
     });
   }
 
@@ -199,6 +206,15 @@ class _MyHomePageState extends State<MyHomePage> {
             ]),
             FutureBuilder<List<String>?>(
                 future: _externalCacheDirectories, builder: _buildDirectories),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: _requestDownloadsDirectory,
+                child: const Text('Get Downloads Directory'),
+              ),
+            ),
+            FutureBuilder<String?>(
+                future: _externalDownloadsDirectory, builder: _buildDirectory),
           ],
         ),
       ),

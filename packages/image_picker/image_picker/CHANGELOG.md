@@ -1,3 +1,32 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+
+## 1.0.7
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 1.0.6
+
+* Fixes new lint warnings.
+
+## 1.0.5
+
+* Updates example app to use non-deprecated video_player method.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 1.0.4
+
+* Updates README to fix broken link.
+
+## 1.0.3
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 1.0.2
 
 * Adds compatibility with `image_picker_for_web` 3.0.

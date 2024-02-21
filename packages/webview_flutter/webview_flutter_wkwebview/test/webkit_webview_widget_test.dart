@@ -8,10 +8,12 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_wkwebview/src/common/instance_manager.dart';
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart';
+import 'package:webview_flutter_wkwebview/src/ui_kit/ui_kit.dart';
 import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart';
 import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-
+import 'webkit_webview_controller_test.mocks.dart'
+    show MockUIScrollViewDelegate;
 import 'webkit_webview_widget_test.mocks.dart';
 
 @GenerateMocks(<Type>[WKUIDelegate, WKWebViewConfiguration])
@@ -66,7 +68,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(ObjectKey(webViewWidget.params)), findsOneWidget);
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
 
       // Pump WebViewWidget with second controller.
       final WebKitWebViewController controller2 =
@@ -85,7 +94,81 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(ObjectKey(webViewWidget2.params)), findsOneWidget);
+      expect(webViewWidget.params != webViewWidget2.params, isTrue);
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget2.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'Key of the PlatformView is the same when the creation params are equal',
+        (WidgetTester tester) async {
+      final InstanceManager testInstanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final WebKitWebViewController controller =
+          createTestWebViewController(testInstanceManager);
+
+      final WebKitWebViewWidget webViewWidget = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+
+      final WebKitWebViewWidget webViewWidget2 = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget2.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Can find the new widget with the key of the first widget.
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
     });
   });
 }
@@ -114,6 +197,9 @@ WebKitWebViewController createTestWebViewController(
       }, createUIDelegate: ({
         dynamic onCreateWebView,
         dynamic requestMediaCapturePermission,
+        dynamic runJavaScriptAlertDialog,
+        dynamic runJavaScriptConfirmDialog,
+        dynamic runJavaScriptTextInputDialog,
         InstanceManager? instanceManager,
       }) {
         final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
@@ -121,6 +207,16 @@ WebKitWebViewController createTestWebViewController(
 
         testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
         return mockWKUIDelegate;
+      }, createUIScrollViewDelegate: ({
+        void Function(UIScrollView, double, double)? scrollViewDidScroll,
+      }) {
+        final MockUIScrollViewDelegate mockScrollViewDelegate =
+            MockUIScrollViewDelegate();
+        when(mockScrollViewDelegate.copy())
+            .thenReturn(MockUIScrollViewDelegate());
+
+        testInstanceManager.addDartCreatedInstance(mockScrollViewDelegate);
+        return mockScrollViewDelegate;
       }),
     ),
   );

@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ImagePickerTestImages : NSObject
 
 @property(class, copy, readonly) NSData *JPGTestData;
+@property(class, copy, readonly) NSData *JPGTallTestData;
 @property(class, copy, readonly) NSData *PNGTestData;
 @property(class, copy, readonly) NSData *GIFTestData;
 

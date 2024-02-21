@@ -1,3 +1,17 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 3.0.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Removes input element after completion
+
+## 3.0.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 3.0.0
 
 * **BREAKING CHANGE:** Removes all code and tests mentioning `PickedFile`.

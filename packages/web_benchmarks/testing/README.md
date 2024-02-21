@@ -11,7 +11,7 @@ do the following:
 * Fetch dependencies for the `test_app` directory inside `testing`:
 
   ```bash
-  flutter pub get testing/test_app
+  flutter pub get --directory testing/test_app
   ```
 
 * Fetch dependencies for the `web_benchmarks` directory:

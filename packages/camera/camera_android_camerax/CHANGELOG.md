@@ -1,3 +1,95 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 0.5.0+32
+
+* Removes all remaining `unawaited` calls to fix potential race conditions and updates the
+  camera state when video capture starts.
+
+## 0.5.0+31
+
+* Wraps CameraX classes needed to set capture request options, which is needed to implement setting the exposure mode.
+
+## 0.5.0+30
+
+* Adds documentation to clarify how the plugin uses resolution presets as target resolutions for CameraX.
+
+## 0.5.0+29
+
+* Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
+  that `createCamera` should have been called before building the preview. Fixes
+  https://github.com/flutter/flutter/issues/140567.
+
+## 0.5.0+28
+
+* Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.
+* Updates compileSdk version to 34.
+
+## 0.5.0+27
+
+* Removes or updates any references to an `ActivityPluginBinding` when the plugin is detached
+  or attached/re-attached, respectively, to an `Activity.`
+
+## 0.5.0+26
+
+* Fixes new lint warnings.
+
+## 0.5.0+25
+
+* Implements `lockCaptureOrientation` and `unlockCaptureOrientation`.
+
+## 0.5.0+24
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.5.0+23
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Adds `CameraXProxy` class to test `JavaObject` creation and their method calls in the plugin.
+
+## 0.5.0+22
+
+* Fixes `_getResolutionSelectorFromPreset` null pointer error.
+
+## 0.5.0+21
+
+* Changes fallback resolution strategies for camera use cases to look for a higher resolution if neither the desired
+  resolution nor any lower resolutions are available.
+
+## 0.5.0+20
+
+* Implements `setZoomLevel`.
+
+## 0.5.0+19
+
+* Implements torch flash mode.
+
+## 0.5.0+18
+
+* Implements `startVideoCapturing`.
+
+## 0.5.0+17
+
+* Implements resolution configuration for all camera use cases.
+
+## 0.5.0+16
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.5.0+15
+
+* Explicitly removes `READ_EXTERNAL_STORAGE` permission that may otherwise be implied from `WRITE_EXTERNAL_STORAGE`.
+
+## 0.5.0+14
+
+* Wraps classes needed to implement resolution configuration for video recording.
+
+## 0.5.0+13
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.5.0+12
 
 * Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.

@@ -1,5 +1,12 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
+## 2.2.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 * Deletes deprecated splash screen meta-data element.
 
 ## 2.2.0

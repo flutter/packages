@@ -16,8 +16,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.browser.customtabs.CustomTabsClient;
+import androidx.browser.customtabs.CustomTabsIntent;
+import io.flutter.plugins.urllauncher.Messages.BrowserOptions;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 /** Implements the Pigeon-defined interface for calls from Dart. */
@@ -93,17 +98,33 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options) {
+  public @NonNull Boolean openUrlInApp(
+      @NonNull String url,
+      @NonNull Boolean allowCustomTab,
+      @NonNull WebViewOptions webViewOptions,
+      @NonNull BrowserOptions browserOptions) {
     ensureActivity();
     assert activity != null;
 
+    Bundle headersBundle = extractBundle(webViewOptions.getHeaders());
+
+    // Try to launch using Custom Tabs if they have the necessary functionality, unless the caller
+    // specifically requested a web view.
+    if (allowCustomTab && !containsRestrictedHeader(webViewOptions.getHeaders())) {
+      Uri uri = Uri.parse(url);
+      if (openCustomTab(activity, uri, headersBundle, browserOptions)) {
+        return true;
+      }
+    }
+
+    // Fall back to a web view if necessary.
     Intent launchIntent =
         WebViewActivity.createIntent(
             activity,
             url,
-            options.getEnableJavaScript(),
-            options.getEnableDomStorage(),
-            extractBundle(options.getHeaders()));
+            webViewOptions.getEnableJavaScript(),
+            webViewOptions.getEnableDomStorage(),
+            headersBundle);
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {
@@ -116,6 +137,45 @@ final class UrlLauncher implements UrlLauncherApi {
   @Override
   public void closeWebView() {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
+  }
+
+  @Override
+  public @NonNull Boolean supportsCustomTabs() {
+    return CustomTabsClient.getPackageName(applicationContext, Collections.emptyList()) != null;
+  }
+
+  private static boolean openCustomTab(
+      @NonNull Context context,
+      @NonNull Uri uri,
+      @NonNull Bundle headersBundle,
+      @NonNull BrowserOptions options) {
+    CustomTabsIntent customTabsIntent =
+        new CustomTabsIntent.Builder().setShowTitle(options.getShowTitle()).build();
+    customTabsIntent.intent.putExtra(Browser.EXTRA_HEADERS, headersBundle);
+
+    try {
+      customTabsIntent.launchUrl(context, uri);
+    } catch (ActivityNotFoundException ex) {
+      return false;
+    }
+    return true;
+  }
+
+  // Checks if headers contains a CORS restricted header.
+  //  https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_request_header
+  private static boolean containsRestrictedHeader(Map<String, String> headersMap) {
+    for (String key : headersMap.keySet()) {
+      switch (key.toLowerCase(Locale.US)) {
+        case "accept":
+        case "accept-language":
+        case "content-language":
+        case "content-type":
+          continue;
+        default:
+          return true;
+      }
+    }
+    return false;
   }
 
   private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {

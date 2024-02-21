@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Directory?>? _appSupportDirectory;
   Future<Directory?>? _appLibraryDirectory;
   Future<Directory?>? _appDocumentsDirectory;
+  Future<Directory?>? _appCacheDirectory;
   Future<Directory?>? _externalDocumentsDirectory;
   Future<List<Directory>?>? _externalStorageDirectories;
   Future<List<Directory>?>? _externalCacheDirectories;
@@ -99,6 +100,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _requestAppLibraryDirectory() {
     setState(() {
       _appLibraryDirectory = getLibraryDirectory();
+    });
+  }
+
+  void _requestAppCacheDirectory() {
+    setState(() {
+      _appCacheDirectory = getApplicationCacheDirectory();
     });
   }
 
@@ -202,6 +209,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 FutureBuilder<Directory?>(
                   future: _appLibraryDirectory,
+                  builder: _buildDirectory,
+                ),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: _requestAppCacheDirectory,
+                    child: const Text(
+                      'Get Application Cache Directory',
+                    ),
+                  ),
+                ),
+                FutureBuilder<Directory?>(
+                  future: _appCacheDirectory,
                   builder: _buildDirectory,
                 ),
               ],

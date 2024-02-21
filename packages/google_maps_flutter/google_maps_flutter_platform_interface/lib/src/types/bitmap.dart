@@ -8,7 +8,7 @@ import 'dart:ui' show Size;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart'
-    show ImageConfiguration, AssetImage, AssetBundleImageKey;
+    show AssetBundleImageKey, AssetImage, ImageConfiguration;
 import 'package:flutter/services.dart' show AssetBundle;
 
 /// Defines a bitmap image. For a marker, this class can be used to set the
@@ -32,12 +32,10 @@ class BitmapDescriptor {
           final num secondElement = jsonList[1] as num;
           assert(0 <= secondElement && secondElement < 360);
         }
-        break;
       case _fromBytes:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is List<int>);
         assert((jsonList[1] as List<int>).isNotEmpty);
-        break;
       case _fromAsset:
         assert(jsonList.length <= 3);
         assert(jsonList[1] != null && jsonList[1] is String);
@@ -46,7 +44,6 @@ class BitmapDescriptor {
           assert(jsonList[2] != null && jsonList[2] is String);
           assert((jsonList[2] as String).isNotEmpty);
         }
-        break;
       case _fromAssetImage:
         assert(jsonList.length <= 4);
         assert(jsonList[1] != null && jsonList[1] is String);
@@ -56,7 +53,6 @@ class BitmapDescriptor {
           assert(jsonList[3] != null && jsonList[3] is List<dynamic>);
           assert((jsonList[3] as List<dynamic>).length == 2);
         }
-        break;
       default:
         break;
     }

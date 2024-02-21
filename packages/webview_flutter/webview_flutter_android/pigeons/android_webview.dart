@@ -57,10 +57,40 @@ enum FileChooserMode {
   save,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class FileChooserModeEnumData {
-  late FileChooserMode value;
+/// Indicates the type of message logged to the console.
+///
+/// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel.
+enum ConsoleMessageLevel {
+  /// Indicates a message is logged for debugging.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#DEBUG.
+  debug,
+
+  /// Indicates a message is provided as an error.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#ERROR.
+  error,
+
+  /// Indicates a message is provided as a basic log message.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#LOG.
+  log,
+
+  /// Indicates a message is provided as a tip.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#TIP.
+  tip,
+
+  /// Indicates a message is provided as a warning.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#WARNING.
+  warning,
+
+  /// Indicates a message with an unknown level.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 class WebResourceRequestData {
@@ -93,6 +123,16 @@ class WebViewPoint {
 
   int x;
   int y;
+}
+
+/// Represents a JavaScript console message from WebCore.
+///
+/// See https://developer.android.com/reference/android/webkit/ConsoleMessage
+class ConsoleMessage {
+  late int lineNumber;
+  late String message;
+  late ConsoleMessageLevel level;
+  late String sourceId;
 }
 
 /// Handles methods calls to the native Java Object class.
@@ -228,6 +268,14 @@ abstract class WebViewHostApi {
 abstract class WebViewFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier);
+
+  void onScrollChanged(
+    int webViewInstanceId,
+    int left,
+    int top,
+    int oldLeft,
+    int oldTop,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')
@@ -259,6 +307,8 @@ abstract class WebSettingsHostApi {
   void setAllowFileAccess(int instanceId, bool enabled);
 
   void setTextZoom(int instanceId, int textZoom);
+
+  String getUserAgentString(int instanceId);
 }
 
 @HostApi(dartHostTestHandler: 'TestJavaScriptChannelHostApi')
@@ -316,6 +366,14 @@ abstract class WebViewClientFlutterApi {
     String url,
     bool isReload,
   );
+
+  void onReceivedHttpAuthRequest(
+    int instanceId,
+    int webViewInstanceId,
+    int httpAuthHandlerInstanceId,
+    String host,
+    String realm,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestDownloadListenerHostApi')
@@ -343,6 +401,26 @@ abstract class WebChromeClientHostApi {
     int instanceId,
     bool value,
   );
+
+  void setSynchronousReturnValueForOnConsoleMessage(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsAlert(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsConfirm(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsPrompt(
+    int instanceId,
+    bool value,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestAssetManagerHostApi')
@@ -366,6 +444,16 @@ abstract class WebChromeClientFlutterApi {
   /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
   void onPermissionRequest(int instanceId, int requestInstanceId);
 
+  /// Callback to Dart function `WebChromeClient.onShowCustomView`.
+  void onShowCustomView(
+    int instanceId,
+    int viewIdentifier,
+    int callbackIdentifier,
+  );
+
+  /// Callback to Dart function `WebChromeClient.onHideCustomView`.
+  void onHideCustomView(int instanceId);
+
   /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`.
   void onGeolocationPermissionsShowPrompt(
     int instanceId,
@@ -375,6 +463,19 @@ abstract class WebChromeClientFlutterApi {
 
   /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`.
   void onGeolocationPermissionsHidePrompt(int identifier);
+
+  /// Callback to Dart function `WebChromeClient.onConsoleMessage`.
+  void onConsoleMessage(int instanceId, ConsoleMessage message);
+
+  @async
+  void onJsAlert(int instanceId, String url, String message);
+
+  @async
+  bool onJsConfirm(int instanceId, String url, String message);
+
+  @async
+  String onJsPrompt(
+      int instanceId, String url, String message, String defaultValue);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')
@@ -393,7 +494,7 @@ abstract class FileChooserParamsFlutterApi {
     int instanceId,
     bool isCaptureEnabled,
     List<String> acceptTypes,
-    FileChooserModeEnumData mode,
+    FileChooserMode mode,
     String? filenameHint,
   );
 }
@@ -427,6 +528,45 @@ abstract class PermissionRequestFlutterApi {
   void create(int instanceId, List<String> resources);
 }
 
+/// Host API for `CustomViewCallback`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+@HostApi(dartHostTestHandler: 'TestCustomViewCallbackHostApi')
+abstract class CustomViewCallbackHostApi {
+  /// Handles Dart method `CustomViewCallback.onCustomViewHidden`.
+  void onCustomViewHidden(int identifier);
+}
+
+/// Flutter API for `CustomViewCallback`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+@FlutterApi()
+abstract class CustomViewCallbackFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int identifier);
+}
+
+/// Flutter API for `View`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/view/View.
+@FlutterApi()
+abstract class ViewFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int identifier);
+}
+
 /// Host API for `GeolocationPermissionsCallback`.
 ///
 /// This class may handle instantiating and adding native object instances that
@@ -449,6 +589,38 @@ abstract class GeolocationPermissionsCallbackHostApi {
 /// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
 @FlutterApi()
 abstract class GeolocationPermissionsCallbackFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId);
+}
+
+/// Host API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+@HostApi(dartHostTestHandler: 'TestHttpAuthHandlerHostApi')
+abstract class HttpAuthHandlerHostApi {
+  /// Handles Dart method `HttpAuthHandler.useHttpAuthUsernamePassword`.
+  bool useHttpAuthUsernamePassword(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.cancel`.
+  void cancel(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.proceed`.
+  void proceed(int instanceId, String username, String password);
+}
+
+/// Flutter API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+@FlutterApi()
+abstract class HttpAuthHandlerFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int instanceId);
 }

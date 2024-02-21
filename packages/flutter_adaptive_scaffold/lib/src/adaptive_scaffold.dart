@@ -95,6 +95,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.largeBreakpoint = Breakpoints.large,
     this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
+    this.transitionDuration = const Duration(seconds: 1),
     this.bodyOrientation = Axis.horizontal,
     this.onSelectedIndexChange,
     this.useDrawer = true,
@@ -198,6 +199,11 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Defaults to true.
   final bool internalAnimations;
 
+  /// Defines the duration of transition between layouts.
+  ///
+  /// Defaults to [Duration(seconds: 1)].
+  final Duration transitionDuration;
+
   /// The orientation of the body and secondaryBody. Either horizontal (side by
   /// side) or vertical (top to bottom).
   ///
@@ -228,7 +234,7 @@ class AdaptiveScaffold extends StatefulWidget {
   final PreferredSizeWidget? appBar;
 
   /// Callback function for when the index of a [NavigationRail] changes.
-  final Function(int)? onSelectedIndexChange;
+  final void Function(int)? onSelectedIndexChange;
 
   /// The width used for the internal [NavigationRail] at the medium [Breakpoint].
   final double navigationRailWidth;
@@ -267,7 +273,7 @@ class AdaptiveScaffold extends StatefulWidget {
     EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
     Widget? leading,
     Widget? trailing,
-    Function(int)? onDestinationSelected,
+    void Function(int)? onDestinationSelected,
     double? groupAlignment,
     IconThemeData? selectedIconTheme,
     IconThemeData? unselectedIconTheme,
@@ -328,20 +334,25 @@ class AdaptiveScaffold extends StatefulWidget {
         final NavigationBarThemeData currentNavBarTheme =
             NavigationBarTheme.of(context);
         return NavigationBarTheme(
-            data: currentNavBarTheme.copyWith(
-              iconTheme: MaterialStateProperty.resolveWith(
-                  (Set<MaterialState> states) {
+          data: currentNavBarTheme.copyWith(
+            iconTheme: MaterialStateProperty.resolveWith(
+              (Set<MaterialState> states) {
                 return currentNavBarTheme.iconTheme
                         ?.resolve(states)
                         ?.copyWith(size: iconSize) ??
                     IconTheme.of(context).copyWith(size: iconSize);
-              }),
+              },
             ),
+          ),
+          child: MediaQuery(
+            data: MediaQuery.of(context).removePadding(removeTop: true),
             child: NavigationBar(
               selectedIndex: currentIndex ?? 0,
               destinations: destinations,
               onDestinationSelected: onDestinationSelected,
-            ));
+            ),
+          ),
+        );
       },
     );
   }
@@ -509,13 +520,15 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
                     .toList(),
                 onDestinationSelected: widget.onSelectedIndexChange,
               ),
             )
           : null,
       body: AdaptiveLayout(
+        transitionDuration: widget.transitionDuration,
         bodyOrientation: widget.bodyOrientation,
         bodyRatio: widget.bodyRatio,
         internalAnimations: widget.internalAnimations,
@@ -529,7 +542,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
                     .toList(),
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,
@@ -548,7 +562,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 trailing: widget.trailingNavRail,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
-                    .map((_) => AdaptiveScaffold.toRailDestination(_))
+                    .map((NavigationDestination destination) =>
+                        AdaptiveScaffold.toRailDestination(destination))
                     .toList(),
                 onDestinationSelected: widget.onSelectedIndexChange,
                 backgroundColor: navRailTheme.backgroundColor,

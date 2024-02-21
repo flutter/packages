@@ -1,3 +1,29 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 1.0.37
+
+* Adds compatibility with `intl` 0.19.0.
+* Updates compileSdk version to 34.
+
+## 1.0.36
+
+* Updates androidx.fragment version to 1.6.2.
+
+## 1.0.35
+
+* Updates androidx.fragment version to 1.6.1.
+
+## 1.0.34
+
+* Updates pigeon to 11.0.0 and removes enum wrappers.
+
+## 1.0.33
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 1.0.32
 
 * Fixes stale ignore: prefer_const_constructors.

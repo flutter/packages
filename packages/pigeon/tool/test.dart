@@ -9,6 +9,8 @@
 ///
 /// usage: dart run tool/test.dart
 ////////////////////////////////////////////////////////////////////////////////
+library;
+
 import 'dart:io' show Platform, exit;
 import 'dart:math';
 
@@ -18,11 +20,17 @@ import 'shared/test_runner.dart';
 import 'shared/test_suites.dart';
 
 const String _testFlag = 'test';
+const String _noGen = 'no-generation';
 const String _listFlag = 'list';
+const String _format = 'format';
 
 Future<void> main(List<String> args) async {
   final ArgParser parser = ArgParser()
     ..addMultiOption(_testFlag, abbr: 't', help: 'Only run specified tests.')
+    ..addFlag(_noGen,
+        abbr: 'g', help: 'Skips the generation step.', negatable: false)
+    ..addFlag(_format,
+        abbr: 'f', help: 'Formats generated test files before running tests.')
     ..addFlag(_listFlag,
         negatable: false, abbr: 'l', help: 'List available tests.')
     ..addFlag('help',
@@ -105,5 +113,9 @@ ${parser.usage}''');
     }
   }
 
-  await runTests(testsToRun);
+  await runTests(
+    testsToRun,
+    runGeneration: !argResults.wasParsed(_noGen),
+    runFormat: argResults.wasParsed(_format),
+  );
 }

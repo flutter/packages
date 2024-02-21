@@ -10,6 +10,7 @@ import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/create_all_packages_app_command.dart';
 import 'package:platform/platform.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -67,7 +68,7 @@ dependencies {
       ..writeAsStringSync('''
 android {
     namespace 'dev.flutter.packages.foo.example'
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -205,6 +206,38 @@ project 'Runner', {
           ]));
     });
 
+    test(
+        'pubspec special-cases camera_android to remove it from deps but not overrides',
+        () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      final Directory cameraDir = packagesDir.childDirectory('camera');
+      createFakePlugin('camera', cameraDir);
+      createFakePlugin('camera_android', cameraDir);
+      createFakePlugin('camera_android_camerax', cameraDir);
+
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+      final Pubspec pubspec = command.app.parsePubspec();
+
+      final Dependency? cameraDependency = pubspec.dependencies['camera'];
+      final Dependency? cameraAndroidDependency =
+          pubspec.dependencies['camera_android'];
+      final Dependency? cameraCameraXDependency =
+          pubspec.dependencies['camera_android_camerax'];
+      expect(cameraDependency, isA<PathDependency>());
+      expect((cameraDependency! as PathDependency).path,
+          endsWith('/packages/camera/camera'));
+      expect(cameraCameraXDependency, isA<PathDependency>());
+      expect((cameraCameraXDependency! as PathDependency).path,
+          endsWith('/packages/camera/camera_android_camerax'));
+      expect(cameraAndroidDependency, null);
+
+      final Dependency? cameraAndroidOverride =
+          pubspec.dependencyOverrides['camera_android'];
+      expect(cameraAndroidOverride, isA<PathDependency>());
+      expect((cameraAndroidOverride! as PathDependency).path,
+          endsWith('/packages/camera/camera_android'));
+    });
+
     test('legacy files are copied when requested', () async {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
@@ -267,7 +300,7 @@ project 'Runner', {
       const String legacyAppBuildGradleContents = '''
 # This is the legacy file
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
     defaultConfig {
         minSdkVersion flutter.minSdkVersion
     }
@@ -295,7 +328,7 @@ android {
           containsAll(<Matcher>[
             contains('This is the legacy file'),
             contains('minSdkVersion 21'),
-            contains('compileSdkVersion 33'),
+            contains('compileSdk 34'),
           ]));
     });
 
@@ -329,7 +362,7 @@ android {
           buildGradle,
           containsAll(<Matcher>[
             contains('minSdkVersion 21'),
-            contains('compileSdkVersion 33'),
+            contains('compileSdk 34'),
             contains('multiDexEnabled true'),
             contains('androidx.lifecycle:lifecycle-runtime'),
           ]));

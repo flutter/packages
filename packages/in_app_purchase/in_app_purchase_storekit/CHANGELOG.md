@@ -1,3 +1,42 @@
+## 0.3.11
+
+* Fixes SKError.userInfo not being nullable.
+
+## 0.3.10
+
+* Converts `startProductRequest()`, `finishTransaction()`, `restoreTransactions()`, `presentCodeRedemptionSheet()` to pigeon.
+
+## 0.3.9
+
+* Converts `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.3.8+1
+
+* Adds privacy manifest.
+
+## 0.3.8
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 0.3.7
+
+* Adds `Future<SKStorefrontWrapper?> storefront()` in SKPaymentQueueWrapper class. 
+
+## 0.3.6+7
+
+* Updates example code for current versions of Flutter.
+
+## 0.3.6+6
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.6+5
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.3.6+4
 
 * Removes obsolete null checks on non-nullable values.

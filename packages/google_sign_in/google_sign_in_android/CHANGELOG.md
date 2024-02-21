@@ -1,3 +1,22 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
+## 6.1.21
+
+* Updates `clearAuthCache` override to match base class declaration.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 6.1.20
+
+* Updates play-services-auth version to 20.7.0.
+
+## 6.1.19
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 6.1.18
 
 * Updates play-services-auth version to 20.6.0.

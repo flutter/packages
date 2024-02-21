@@ -7,8 +7,10 @@
 # options.
 
 # DO NOT move or delete this file without updating
-# https://github.com/dart-lang/sdk/blob/master/tools/bots/flutter/analyze_flutter_plugins.sh
-# which references this file from source, but out-of-repo.
+# https://github.com/dart-lang/sdk/blob/main/tools/bots/flutter/analyze_flutter_packages.sh
+# and
+# https://github.com/flutter/flutter/blob/main/dev/bots/test.dart
+# which reference this file from source, but out-of-repo.
 # Contact stuartmorgan or devoncarew for assistance if necessary.
 
 # Opts out of unawaited_futures, matching flutter/flutter's disabling due

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 // Default values for when the gmaps objects return null/undefined values.
 final gmaps.LatLng _nullGmapsLatLng = gmaps.LatLng(0, 0);
@@ -81,6 +81,8 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.streetViewControl = false;
 
   options.styles = styles;
+
+  options.mapId = configuration.cloudMapId;
 
   return options;
 }
@@ -261,7 +263,7 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(
     // iconConfig[2] contains the DPIs of the screen, but that information is
     // already encoded in the iconConfig[1]
     icon = gmaps.Icon()
-      ..url = ui.webOnlyAssetManager.getAssetUrl(iconConfig[1]! as String);
+      ..url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
     if (size != null) {
@@ -444,16 +446,13 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
         gmaps.LatLng(latLng[0] as num?, latLng[1] as num?),
       );
       map.tilt = position['tilt'] as num?;
-      break;
     case 'newLatLng':
       final List<Object?> latLng = asJsonList(json[1]);
       map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
-      break;
     case 'newLatLngZoom':
       final List<Object?> latLng = asJsonList(json[1]);
       map.zoom = json[2] as num?;
       map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
-      break;
     case 'newLatLngBounds':
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
@@ -466,10 +465,8 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
         ),
         padding,
       );
-      break;
     case 'scrollBy':
       map.panBy(json[1] as num?, json[2] as num?);
-      break;
     case 'zoomBy':
       gmaps.LatLng? focusLatLng;
       final double zoomDelta = json[1] as double? ?? 0;
@@ -491,16 +488,12 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
       if (focusLatLng != null) {
         map.panTo(focusLatLng);
       }
-      break;
     case 'zoomIn':
       map.zoom = (map.zoom ?? 0) + 1;
-      break;
     case 'zoomOut':
       map.zoom = (map.zoom ?? 0) - 1;
-      break;
     case 'zoomTo':
       map.zoom = json[1] as num?;
-      break;
     default:
       throw UnimplementedError('Unimplemented CameraMove: ${json[0]}.');
   }

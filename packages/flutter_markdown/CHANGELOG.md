@@ -1,12 +1,54 @@
-## NEXT
+## 0.6.20
+
+* Adds `textScaler` to `MarkdownStyleSheet`, and deprecates `textScaleFactor`.
+  * Clients using `textScaleFactor: someFactor` should replace it with
+    `TextScaler.linear(someFactor)` to preserve behavior.
+* Removes use of deprecated Flutter framework `textScaleFactor` methods.
+* Updates minimum supported SDK version to Flutter 3.16.
+
+## 0.6.19
+
+* Replaces `RichText` with `Text.rich` so the widget can work with `SelectionArea` when `selectable` is set to false.
+
+## 0.6.18+3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
+
+## 0.6.18+2
+
+* Removes leading whitespace from list items.
+
+## 0.6.18+1
+
+* Fixes a typo in README.
+
+## 0.6.18
+
+* Adds support for `footnote`.
+
+## 0.6.17+4
+
+* Fixes an issue where a code block would overlap its container decoration.
+
+## 0.6.17+3
+
+* Fixes an incorrect note about SDK versions in the 0.6.17+2 CHANGELOG.md entry.
+
+## 0.6.17+2
+
+* Adds pub topics to package metadata.
+
+## 0.6.17+1
 
 * Deletes deprecated splash screen meta-data element.
+* Updates README to improve examples of using Markdown.
 
 ## 0.6.17
 
 * Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
   the parent text's `TextStyle`.
-  
+
 ## 0.6.16
 
 * Adds `tableVerticalAlignment` property to allow aligning table cells vertically.

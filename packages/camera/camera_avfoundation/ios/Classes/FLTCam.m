@@ -118,10 +118,16 @@ NSString *const errorMethod = @"error";
                              error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  @try {
-    _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
-  } @catch (NSError *e) {
-    *error = e;
+  _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
+  if (_resolutionPreset == FLTResolutionPresetInvalid) {
+    *error = [NSError
+        errorWithDomain:NSCocoaErrorDomain
+                   code:NSURLErrorUnknown
+               userInfo:@{
+                 NSLocalizedDescriptionKey :
+                     [NSString stringWithFormat:@"Unknown resolution preset %@", resolutionPreset]
+               }];
+    return nil;
   }
   _enableAudio = enableAudio;
   _captureSessionQueue = captureSessionQueue;
@@ -138,6 +144,7 @@ NSString *const errorMethod = @"error";
   _deviceOrientation = orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
+  _fileFormat = FCPFileFormatJPEG;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -162,7 +169,9 @@ NSString *const errorMethod = @"error";
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  [self setCaptureSessionPreset:_resolutionPreset];
+  if (![self setCaptureSessionPreset:_resolutionPreset withError:error]) {
+    return nil;
+  }
   [self updateOrientation];
 
   return self;
@@ -210,6 +219,10 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
+- (void)setImageFileFormat:(FCPFileFormat)fileFormat {
+  _fileFormat = fileFormat;
+}
+
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation {
   if (_deviceOrientation == orientation) {
     return;
@@ -246,8 +259,22 @@ NSString *const errorMethod = @"error";
 
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
+
   if (_resolutionPreset == FLTResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
+  }
+
+  NSString *extension;
+
+  BOOL isHEVCCodecAvailable =
+      [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
+
+  if (_fileFormat == FCPFileFormatHEIF && isHEVCCodecAvailable) {
+    settings =
+        [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+    extension = @"heif";
+  } else {
+    extension = @"jpg";
   }
 
   AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(_flashMode);
@@ -255,7 +282,7 @@ NSString *const errorMethod = @"error";
     [settings setFlashMode:avFlashMode];
   }
   NSError *error;
-  NSString *path = [self getTemporaryFilePathWithExtension:@"jpg"
+  NSString *path = [self getTemporaryFilePathWithExtension:extension
                                                  subfolder:@"pictures"
                                                     prefix:@"CAP_"
                                                      error:error];
@@ -337,7 +364,7 @@ NSString *const errorMethod = @"error";
   return file;
 }
 
-- (void)setCaptureSessionPreset:(FLTResolutionPreset)resolutionPreset {
+- (BOOL)setCaptureSessionPreset:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
   switch (resolutionPreset) {
     case FLTResolutionPresetMax:
     case FLTResolutionPresetUltraHigh:
@@ -382,17 +409,17 @@ NSString *const errorMethod = @"error";
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetLow;
         _previewSize = CGSizeMake(352, 288);
       } else {
-        NSError *error =
-            [NSError errorWithDomain:NSCocoaErrorDomain
-                                code:NSURLErrorUnknown
-                            userInfo:@{
-                              NSLocalizedDescriptionKey :
-                                  @"No capture session available for current capture session."
-                            }];
-        @throw error;
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain
+                                     code:NSURLErrorUnknown
+                                 userInfo:@{
+                                   NSLocalizedDescriptionKey :
+                                       @"No capture session available for current capture session."
+                                 }];
+        return NO;
       }
   }
   _audioCaptureSession.sessionPreset = _videoCaptureSession.sessionPreset;
+  return YES;
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output
@@ -500,7 +527,12 @@ NSString *const errorMethod = @"error";
       return;
     }
 
-    CFRetain(sampleBuffer);
+    // ignore audio samples until the first video sample arrives to avoid black frames
+    // https://github.com/flutter/flutter/issues/57831
+    if (_videoWriter.status != AVAssetWriterStatusWriting && output != _captureVideoOutput) {
+      return;
+    }
+
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
     if (_videoWriter.status != AVAssetWriterStatusWriting) {
@@ -550,18 +582,18 @@ NSString *const errorMethod = @"error";
       _lastAudioSampleTime = currentSampleTime;
 
       if (_audioTimeOffset.value != 0) {
-        CFRelease(sampleBuffer);
-        sampleBuffer = [self adjustTime:sampleBuffer by:_audioTimeOffset];
+        CMSampleBufferRef adjustedSampleBuffer =
+            [self copySampleBufferWithAdjustedTime:sampleBuffer by:_audioTimeOffset];
+        [self newAudioSample:adjustedSampleBuffer];
+        CFRelease(adjustedSampleBuffer);
+      } else {
+        [self newAudioSample:sampleBuffer];
       }
-
-      [self newAudioSample:sampleBuffer];
     }
-
-    CFRelease(sampleBuffer);
   }
 }
 
-- (CMSampleBufferRef)adjustTime:(CMSampleBufferRef)sample by:(CMTime)offset CF_RETURNS_RETAINED {
+- (CMSampleBufferRef)copySampleBufferWithAdjustedTime:(CMSampleBufferRef)sample by:(CMTime)offset {
   CMItemCount count;
   CMSampleBufferGetSampleTimingInfoArray(sample, 0, nil, &count);
   CMSampleTimingInfo *pInfo = malloc(sizeof(CMSampleTimingInfo) * count);
@@ -720,11 +752,17 @@ NSString *const errorMethod = @"error";
 
 - (void)lockCaptureOrientationWithResult:(FLTThreadSafeFlutterResult *)result
                              orientation:(NSString *)orientationStr {
-  UIDeviceOrientation orientation;
-  @try {
-    orientation = FLTGetUIDeviceOrientationForString(orientationStr);
-  } @catch (NSError *e) {
-    [result sendError:e];
+  UIDeviceOrientation orientation = FLTGetUIDeviceOrientationForString(orientationStr);
+  // "Unknown" should never be sent, so is used to represent an unexpected
+  // value.
+  if (orientation == UIDeviceOrientationUnknown) {
+    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
+                                          code:NSURLErrorUnknown
+                                      userInfo:@{
+                                        NSLocalizedDescriptionKey : [NSString
+                                            stringWithFormat:@"Unknown device orientation %@",
+                                                             orientationStr]
+                                      }]];
     return;
   }
 
@@ -743,11 +781,14 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)setFlashModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
-  FLTFlashMode mode;
-  @try {
-    mode = FLTGetFLTFlashModeForString(modeStr);
-  } @catch (NSError *e) {
-    [result sendError:e];
+  FLTFlashMode mode = FLTGetFLTFlashModeForString(modeStr);
+  if (mode == FLTFlashModeInvalid) {
+    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
+                                          code:NSURLErrorUnknown
+                                      userInfo:@{
+                                        NSLocalizedDescriptionKey : [NSString
+                                            stringWithFormat:@"Unknown flash mode %@", modeStr]
+                                      }]];
     return;
   }
   if (mode == FLTFlashModeTorch) {
@@ -794,11 +835,14 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)setExposureModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
-  FLTExposureMode mode;
-  @try {
-    mode = FLTGetFLTExposureModeForString(modeStr);
-  } @catch (NSError *e) {
-    [result sendError:e];
+  FLTExposureMode mode = FLTGetFLTExposureModeForString(modeStr);
+  if (mode == FLTExposureModeInvalid) {
+    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
+                                          code:NSURLErrorUnknown
+                                      userInfo:@{
+                                        NSLocalizedDescriptionKey : [NSString
+                                            stringWithFormat:@"Unknown exposure mode %@", modeStr]
+                                      }]];
     return;
   }
   _exposureMode = mode;
@@ -819,16 +863,24 @@ NSString *const errorMethod = @"error";
         [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
       }
       break;
+    case FLTExposureModeInvalid:
+      // This state is not intended to be reachable; it exists only for error handling during
+      // message deserialization.
+      NSAssert(false, @"");
+      break;
   }
   [_captureDevice unlockForConfiguration];
 }
 
 - (void)setFocusModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
-  FLTFocusMode mode;
-  @try {
-    mode = FLTGetFLTFocusModeForString(modeStr);
-  } @catch (NSError *e) {
-    [result sendError:e];
+  FLTFocusMode mode = FLTGetFLTFocusModeForString(modeStr);
+  if (mode == FLTFocusModeInvalid) {
+    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
+                                          code:NSURLErrorUnknown
+                                      userInfo:@{
+                                        NSLocalizedDescriptionKey : [NSString
+                                            stringWithFormat:@"Unknown focus mode %@", modeStr]
+                                      }]];
     return;
   }
   _focusMode = mode;
@@ -854,6 +906,11 @@ NSString *const errorMethod = @"error";
       } else if ([captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
       }
+      break;
+    case FLTFocusModeInvalid:
+      // This state is not intended to be reachable; it exists only for error handling during
+      // message deserialization.
+      NSAssert(false, @"");
       break;
   }
   [captureDevice unlockForConfiguration];

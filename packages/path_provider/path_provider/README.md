@@ -9,7 +9,7 @@ Not all methods are supported on all platforms.
 
 |             | Android | iOS   | Linux | macOS  | Windows     |
 |-------------|---------|-------|-------|--------|-------------|
-| **Support** | SDK 16+ | 11.0+ | Any   | 10.14+ | Windows 10+ |
+| **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Windows 10+ |
 
 ## Usage
 
@@ -35,6 +35,7 @@ Directories support by platform:
 | Application Support | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 | Application Library | ❌️ | ✔️ | ❌️ | ✔️ | ❌️ |
 | Application Documents | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Application Cache | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 | External Storage | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Cache Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Storage Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |

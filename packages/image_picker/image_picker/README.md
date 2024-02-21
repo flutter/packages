@@ -8,7 +8,7 @@ and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 21+ | iOS 11+ | Any   | 10.14+ | [See `image_picker_for_web`][1] | Windows 10+ |
+| **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Installation
 
@@ -104,7 +104,7 @@ functionality.
 
 Launching the image picker from an `Activity` with `launchMode: singleInstance`
 will always return `RESULT_CANCELED`.
-In this launch mode, new activities are created in a separate [Task][2].
+In this launch mode, new activities are created in a separate [Task](https://developer.android.com/guide/components/activities/tasks-and-back-stack).
 As activities cannot communicate between tasks, the image picker activity cannot
 send back its eventual result to the calling activity.
 To work around this problem, consider using `launchMode: singleTask` instead.
@@ -158,7 +158,7 @@ encourage the community to build packages that implement
 
 Since the macOS implementation uses `file_selector`, you will need to
 add a filesystem access
-[entitlement][https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox]:
+[entitlement](https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox):
 ```xml
   <key>com.apple.security.files.user-selected.read-only</key>
   <true/>
@@ -202,6 +202,3 @@ plugin's own `PickedFile` instances. The previous methods were supported through
 | `List<PickedFile> images = await _picker.getMultiImage(...)` | `List<XFile> images = await _picker.pickMultiImage(...)` |
 | `PickedFile video = await _picker.getVideo(...)` | `XFile video = await _picker.pickVideo(...)` |
 | `LostData response = await _picker.getLostData()` | `LostDataResponse response = await _picker.retrieveLostData()` |
-
-[1]: https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
-[2]: https://developer.android.com/guide/components/activities/tasks-and-back-stack

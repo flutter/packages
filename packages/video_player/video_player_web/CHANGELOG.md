@@ -1,6 +1,36 @@
-## NEXT
+## 2.2.0
 
-* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+
+## 2.1.3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 2.1.2
+
+* Listens to `loadedmetadata` as an event that marks that initialization is
+  complete. (Fixes playback in Safari iOS 17).
+* Sets the `src` of the underlying video element after every other attribute.
+
+## 2.1.1
+
+* Ensures that the `autoplay` attribute of the underlying video element is set
+  to **false**.
+
+## 2.1.0
+
+* Adds web options to customize the control list and context menu display.
+
+## 2.0.18
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 2.0.17
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 2.0.16
 

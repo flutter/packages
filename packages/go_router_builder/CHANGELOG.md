@@ -1,3 +1,34 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates dependencies to require `analyzer` 5.2.0 or later.
+
+## 2.4.1
+
+* Fixes new lint warnings.
+
+## 2.4.0
+
+* Adds support for passing observers to the ShellRoute for the nested Navigator.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.4
+
+* Fixes a bug of typeArguments losing NullabilitySuffix
+
+## 2.3.3
+
+* Adds `initialLocation` for `StatefulShellBranchConfig`
+
+## 2.3.2
+
+* Supports the latest `package:analyzer`.
+
+## 2.3.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.3.0
 
 * Adds Support for StatefulShellRoute

@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
+import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
 import androidx.test.core.app.ApplicationProvider;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -56,16 +57,18 @@ public class RecorderTest {
   }
 
   @Test
-  public void createTest() {
+  public void create_createsExpectedRecorderInstance() {
     final int recorderId = 0;
     final int aspectRatio = 1;
     final int bitRate = 2;
+    final int qualitySelectorId = 3;
 
     final RecorderHostApiImpl recorderHostApi =
         new RecorderHostApiImpl(mockBinaryMessenger, testInstanceManager, context);
 
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
     final Recorder.Builder mockRecorderBuilder = mock(Recorder.Builder.class);
+    final QualitySelector mockQualitySelector = mock(QualitySelector.class);
     recorderHostApi.cameraXProxy = mockCameraXProxy;
     when(mockCameraXProxy.createRecorderBuilder()).thenReturn(mockRecorderBuilder);
     when(mockRecorderBuilder.setAspectRatio(aspectRatio)).thenReturn(mockRecorderBuilder);
@@ -73,12 +76,18 @@ public class RecorderTest {
         .thenReturn(mockRecorderBuilder);
     when(mockRecorderBuilder.setExecutor(any(Executor.class))).thenReturn(mockRecorderBuilder);
     when(mockRecorderBuilder.build()).thenReturn(mockRecorder);
+    testInstanceManager.addDartCreatedInstance(
+        mockQualitySelector, Long.valueOf(qualitySelectorId));
 
     recorderHostApi.create(
-        Long.valueOf(recorderId), Long.valueOf(aspectRatio), Long.valueOf(bitRate));
+        Long.valueOf(recorderId),
+        Long.valueOf(aspectRatio),
+        Long.valueOf(bitRate),
+        Long.valueOf(qualitySelectorId));
     verify(mockCameraXProxy).createRecorderBuilder();
     verify(mockRecorderBuilder).setAspectRatio(aspectRatio);
     verify(mockRecorderBuilder).setTargetVideoEncodingBitRate(bitRate);
+    verify(mockRecorderBuilder).setQualitySelector(mockQualitySelector);
     verify(mockRecorderBuilder).build();
     assertEquals(testInstanceManager.getInstance(Long.valueOf(recorderId)), mockRecorder);
     testInstanceManager.remove(Long.valueOf(recorderId));

@@ -1,3 +1,33 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.8.9+1
+
+* Adds privacy manifest.
+
+## 0.8.9
+
+* Fixes resizing bug and updates rounding to be more accurate.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.8.8+4
+
+* Updates to Pigeon 13.
+
+## 0.8.8+3
+
+* Fixes a possible crash when calling a picker method while another is waiting on permissions.
+
+## 0.8.8+2
+
+* Adds pub topics to package metadata.
+
+## 0.8.8+1
+
+* Fixes exception when canceling pickMultipleMedia.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.8.8
 
 * Adds `getMedia` and `getMultipleMedia` methods.

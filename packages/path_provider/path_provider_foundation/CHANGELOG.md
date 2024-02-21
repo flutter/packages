@@ -1,3 +1,17 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 2.3.2
+
+* Adds privacy manifest.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.3.0
 
 * Adds getApplicationCachePath() for storing app-specific cache files.

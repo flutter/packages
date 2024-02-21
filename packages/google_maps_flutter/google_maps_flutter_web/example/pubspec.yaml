@@ -3,13 +3,13 @@ publish_to: none
 
 # Tests require flutter beta or greater to run.
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ^3.1.0
+  flutter: ">=3.13.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter_platform_interface: ^2.2.1
+  google_maps_flutter_platform_interface: ^2.4.0
   google_maps_flutter_web:
     path: ../
 
@@ -22,7 +22,7 @@ dev_dependencies:
   http: ">=0.13.0 <2.0.0"
   integration_test:
     sdk: flutter
-  mockito: 5.4.1
+  mockito: 5.4.4
 
 dependency_overrides:
   # Override the google_maps_flutter dependency on google_maps_flutter_web.

@@ -192,6 +192,42 @@ void main() {
           .called(1);
     });
 
+    test('setDescription waits for initialize before calling dispose',
+        () async {
+      final CameraController cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+        imageFormatGroup: ImageFormatGroup.bgra8888,
+      );
+
+      final Completer<void> initializeCompleter = Completer<void>();
+      when(CameraPlatform.instance.initializeCamera(
+        mockInitializeCamera,
+        imageFormatGroup: ImageFormatGroup.bgra8888,
+      )).thenAnswer(
+        (_) => initializeCompleter.future,
+      );
+
+      unawaited(cameraController.initialize());
+
+      final Future<void> setDescriptionFuture = cameraController.setDescription(
+        const CameraDescription(
+            name: 'cam2',
+            lensDirection: CameraLensDirection.front,
+            sensorOrientation: 90),
+      );
+      verifyNever(CameraPlatform.instance.dispose(mockInitializeCamera));
+
+      initializeCompleter.complete();
+
+      await setDescriptionFuture;
+      verify(CameraPlatform.instance.dispose(mockInitializeCamera));
+    });
+
     test('prepareForVideoRecording() calls $CameraPlatform ', () async {
       final CameraController cameraController = CameraController(
           const CameraDescription(

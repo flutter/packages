@@ -1,3 +1,55 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
+## 0.10.8+16
+
+* Fixes new lint warnings.
+
+## 0.10.8+15
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.10.8+14
+
+* Fixes `pausePreview` null pointer error. `pausePreview` should not be called 
+  when camera is closed or not configured.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.10.8+13
+
+* Updates annotations lib to 1.7.0.
+
+## 0.10.8+12
+
+* Fixes handling of autofocus state when taking a picture.
+
+## 0.10.8+11
+
+* Downgrades AGP version for compatibility with legacy projects.
+
+## 0.10.8+10
+
+* Sets android.defaults.buildfeatures.buildconfig to true for compatibility with AGP 8.0+.
+
+## 0.10.8+9
+
+* Removes usage of `_ambiguate` method in example.
+
+## 0.10.8+8
+
+* Adds pub topics to package metadata.
+
+## 0.10.8+7
+
+* Fixes video record crash on Android versions lower than 12.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.10.8+6
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.10.8+5
 
 * Provides a default exposure point if null.

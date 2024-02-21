@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// The `CircleController` class wraps a [gmaps.Circle] and its `onTap` behavior.
 class CircleController {
@@ -10,7 +10,7 @@ class CircleController {
   CircleController({
     required gmaps.Circle circle,
     bool consumeTapEvents = false,
-    ui.VoidCallback? onTap,
+    VoidCallback? onTap,
   })  : _circle = circle,
         _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {

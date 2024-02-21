@@ -15,11 +15,15 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/ios_platform_images' }
   s.documentation_url = 'https://pub.dev/packages/ios_platform_images'
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'Classes/**/*.swift'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '12.0'
 
-  # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.xcconfig = {
+     'DEFINES_MODULE' => 'YES',
+     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+  }
   s.swift_version = '5.0'
+  s.resource_bundles = {'ios_platform_images_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

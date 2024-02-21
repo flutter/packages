@@ -1,9 +1,11 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_ios/google_maps_flutter_ios.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -25,8 +27,7 @@ void main() {
     required Future<dynamic>? Function(MethodCall call) handler,
   }) {
     final MethodChannel channel = maps.ensureChannelInitialized(mapId);
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
       channel,
       (MethodCall methodCall) {
@@ -40,8 +41,7 @@ void main() {
       int mapId, String method, Map<dynamic, dynamic> data) async {
     final ByteData byteData =
         const StandardMethodCodec().encodeMethodCall(MethodCall(method, data));
-    await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .handlePlatformMessage('plugins.flutter.dev/google_maps_ios_$mapId',
             byteData, (ByteData? data) {});
   }
@@ -126,10 +126,54 @@ void main() {
     expect((await markerDragEndStream.next).value.value,
         equals('drag-end-marker'));
   });
-}
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+  testWidgets('cloudMapId is passed', (WidgetTester tester) async {
+    const String cloudMapId = '000000000000000'; // Dummy map ID.
+    final Completer<String> passedCloudMapIdCompleter = Completer<String>();
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      SystemChannels.platform_views,
+      (MethodCall methodCall) {
+        if (methodCall.method == 'create') {
+          final Map<String, dynamic> args = Map<String, dynamic>.from(
+              methodCall.arguments as Map<dynamic, dynamic>);
+          if (args.containsKey('params')) {
+            final Uint8List paramsUint8List = args['params'] as Uint8List;
+            const StandardMessageCodec codec = StandardMessageCodec();
+            final ByteData byteData = ByteData.sublistView(paramsUint8List);
+            final Map<String, dynamic> creationParams =
+                Map<String, dynamic>.from(
+                    codec.decodeMessage(byteData) as Map<dynamic, dynamic>);
+            if (creationParams.containsKey('options')) {
+              final Map<String, dynamic> options = Map<String, dynamic>.from(
+                  creationParams['options'] as Map<dynamic, dynamic>);
+              if (options.containsKey('cloudMapId')) {
+                passedCloudMapIdCompleter
+                    .complete(options['cloudMapId'] as String);
+              }
+            }
+          }
+        }
+        return null;
+      },
+    );
+
+    final GoogleMapsFlutterIOS maps = GoogleMapsFlutterIOS();
+
+    await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: maps.buildViewWithConfiguration(1, (int id) {},
+            widgetConfiguration: const MapWidgetConfiguration(
+                initialCameraPosition:
+                    CameraPosition(target: LatLng(0, 0), zoom: 1),
+                textDirection: TextDirection.ltr),
+            mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId))));
+
+    expect(
+      await passedCloudMapIdCompleter.future,
+      cloudMapId,
+      reason: 'Should pass cloudMapId on PlatformView creation message',
+    );
+  });
+}
