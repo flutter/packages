@@ -323,8 +323,8 @@
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
-#if TARGET_OS_IOS
 /// presentCodeRedemptionSheetWithError:error is only available on iOS
+#if TARGET_OS_IOS
 - (void)testPresentCodeRedemptionSheet {
   FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
   self.plugin.paymentQueueHandler = mockHandler;
