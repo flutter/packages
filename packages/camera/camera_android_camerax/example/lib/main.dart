@@ -290,7 +290,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                       icon: const Icon(Icons.filter_center_focus),
                       color: Colors.blue,
                       onPressed:
-                          () {}, // TODO(camsim99): Add functionality back here.
+                          controller != null ? onFocusModeButtonPressed : null,
                     )
                   ]
                 : <Widget>[],
@@ -397,8 +397,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                         ? () =>
                             onSetExposureModeButtonPressed(ExposureMode.auto)
                         : null,
-                    onLongPress:
-                        () {}, // TODO(camsim99): Add functionality back here.,
+                    onLongPress: () {
+                      if (controller != null) {
+                        CameraPlatform.instance
+                            .setExposurePoint(controller!.cameraId, null);
+                        showInSnackBar('Resetting exposure point');
+                      }
+                    },
                     child: const Text('AUTO'),
                   ),
                   TextButton(
@@ -411,8 +416,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () => controller!.setExposureOffset(0.0)
+                        : null,
                     child: const Text('RESET OFFSET'),
                   ),
                 ],
@@ -473,8 +479,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     style: styleAuto,
                     onPressed:
                         () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onLongPress: () {
+                      if (controller != null) {
+                        CameraPlatform.instance
+                            .setFocusPoint(controller!.cameraId, null);
+                      }
+                      showInSnackBar('Resetting focus point');
+                    },
                     child: const Text('AUTO'),
                   ),
                   TextButton(

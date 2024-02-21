@@ -7,7 +7,7 @@ import 'dart:convert' show json;
 import 'dart:js_interop';
 import 'dart:math' as math;
 
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 import 'src/common.dart';
 import 'src/recorder.dart';
@@ -157,9 +157,7 @@ void _printResultsToScreen(Profile profile) {
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
     body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    // TODO(kevmoo): remove `NodeGlue` cast when we no longer need to support
-    // pkg:web 0.3.0
-    NodeGlue(body).append(TimeseriesVisualization(timeseries).render());
+    body.appendChild(TimeseriesVisualization(timeseries).render());
   });
 }
 
@@ -168,7 +166,7 @@ class TimeseriesVisualization {
   /// Creates a visualization for a [Timeseries].
   TimeseriesVisualization(this._timeseries) {
     _stats = _timeseries.computeStats();
-    _canvas = CanvasElement();
+    _canvas = HTMLCanvasElement();
     _screenWidth = window.screen.width;
     _canvas.width = _screenWidth;
     _canvas.height = (_kCanvasHeight * window.devicePixelRatio).round();
@@ -192,7 +190,7 @@ class TimeseriesVisualization {
 
   final Timeseries _timeseries;
   late TimeseriesStats _stats;
-  late CanvasElement _canvas;
+  late HTMLCanvasElement _canvas;
   late CanvasRenderingContext2D _ctx;
   late int _screenWidth;
 
@@ -215,7 +213,7 @@ class TimeseriesVisualization {
   }
 
   /// Renders the timeseries into a `<canvas>` and returns the canvas element.
-  CanvasElement render() {
+  HTMLCanvasElement render() {
     _ctx.translate(0, _kCanvasHeight * window.devicePixelRatio);
     _ctx.scale(1, -window.devicePixelRatio);
 

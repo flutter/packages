@@ -2,6 +2,15 @@
 
 * Implements `setExposureMode`.
 
+## 0.5.0+34
+
+* Implements `setFocusPoint`, `setExposurePoint`, and `setExposureOffset`.
+
+## 0.5.0+33
+
+* Fixes typo in `README.md`.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 0.5.0+32
 
 * Removes all remaining `unawaited` calls to fix potential race conditions and updates the

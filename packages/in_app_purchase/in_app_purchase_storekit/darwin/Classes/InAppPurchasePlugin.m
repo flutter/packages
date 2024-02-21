@@ -88,18 +88,7 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"-[InAppPurchasePlugin startProductRequest:result:]" isEqualToString:call.method]) {
-    [self handleProductRequestMethodCall:call result:result];
-  } else if ([@"-[InAppPurchasePlugin finishTransaction:result:]" isEqualToString:call.method]) {
-    [self finishTransaction:call result:result];
-  } else if ([@"-[InAppPurchasePlugin restoreTransactions:result:]" isEqualToString:call.method]) {
-    [self restoreTransactions:call result:result];
-#if TARGET_OS_IOS
-  } else if ([@"-[InAppPurchasePlugin presentCodeRedemptionSheet:result:]"
-                 isEqualToString:call.method]) {
-    [self presentCodeRedemptionSheet:call result:result];
-#endif
-  } else if ([@"-[InAppPurchasePlugin retrieveReceiptData:result:]" isEqualToString:call.method]) {
+  if ([@"-[InAppPurchasePlugin retrieveReceiptData:result:]" isEqualToString:call.method]) {
     [self retrieveReceiptData:call result:result];
   } else if ([@"-[InAppPurchasePlugin refreshReceipt:result:]" isEqualToString:call.method]) {
     [self refreshReceipt:call result:result];
@@ -147,38 +136,38 @@
   return [FIAObjectTranslator convertStorefrontToPigeon:storefront];
 }
 
-- (void)handleProductRequestMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if (![call.arguments isKindOfClass:[NSArray class]]) {
-    result([FlutterError errorWithCode:@"storekit_invalid_argument"
-                               message:@"Argument type of startRequest is not array"
-                               details:call.arguments]);
-    return;
-  }
-  NSArray *productIdentifiers = (NSArray *)call.arguments;
+- (void)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers
+                                   completion:(void (^)(SKProductsResponseMessage *_Nullable,
+                                                        FlutterError *_Nullable))completion {
   SKProductsRequest *request =
       [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
   FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
+
   [handler startProductRequestWithCompletionHandler:^(SKProductsResponse *_Nullable response,
-                                                      NSError *_Nullable error) {
-    if (error) {
-      result([FlutterError errorWithCode:@"storekit_getproductrequest_platform_error"
-                                 message:error.localizedDescription
-                                 details:error.description]);
+                                                      NSError *_Nullable startProductRequestError) {
+    FlutterError *error = nil;
+    if (startProductRequestError != nil) {
+      error = [FlutterError errorWithCode:@"storekit_getproductrequest_platform_error"
+                                  message:startProductRequestError.localizedDescription
+                                  details:startProductRequestError.description];
+      completion(nil, error);
       return;
     }
     if (!response) {
-      result([FlutterError errorWithCode:@"storekit_platform_no_response"
-                                 message:@"Failed to get SKProductResponse in startRequest "
-                                         @"call. Error occured on iOS platform"
-                                 details:call.arguments]);
+      error = [FlutterError errorWithCode:@"storekit_platform_no_response"
+                                  message:@"Failed to get SKProductResponse in startRequest "
+                                          @"call. Error occured on iOS platform"
+                                  details:productIdentifiers];
+      completion(nil, error);
       return;
     }
     for (SKProduct *product in response.products) {
       [self.productsCache setObject:product forKey:product.productIdentifier];
     }
-    result([FIAObjectTranslator getMapFromSKProductsResponse:response]);
+
+    completion([FIAObjectTranslator convertProductsResponseToPigeon:response], error);
     [weakSelf.requestHandlers removeObject:handler];
   }];
 }
@@ -240,16 +229,10 @@
   }
 }
 
-- (void)finishTransaction:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if (![call.arguments isKindOfClass:[NSDictionary class]]) {
-    result([FlutterError errorWithCode:@"storekit_invalid_argument"
-                               message:@"Argument type of finishTransaction is not a Dictionary"
-                               details:call.arguments]);
-    return;
-  }
-  NSDictionary *paymentMap = (NSDictionary *)call.arguments;
-  NSString *transactionIdentifier = [paymentMap objectForKey:@"transactionIdentifier"];
-  NSString *productIdentifier = [paymentMap objectForKey:@"productIdentifier"];
+- (void)finishTransactionFinishMap:(nonnull NSDictionary<NSString *, NSString *> *)finishMap
+                             error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  NSString *transactionIdentifier = [finishMap objectForKey:@"transactionIdentifier"];
+  NSString *productIdentifier = [finishMap objectForKey:@"productIdentifier"];
 
   NSArray<SKPaymentTransaction *> *pendingTransactions =
       [self.paymentQueueHandler getUnfinishedTransactions];
@@ -265,35 +248,27 @@
       @try {
         [self.paymentQueueHandler finishTransaction:transaction];
       } @catch (NSException *e) {
-        result([FlutterError errorWithCode:@"storekit_finish_transaction_exception"
-                                   message:e.name
-                                   details:e.description]);
+        *error = [FlutterError errorWithCode:@"storekit_finish_transaction_exception"
+                                     message:e.name
+                                     details:e.description];
         return;
       }
     }
   }
-
-  result(nil);
 }
 
-- (void)restoreTransactions:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if (call.arguments && ![call.arguments isKindOfClass:[NSString class]]) {
-    result([FlutterError
-        errorWithCode:@"storekit_invalid_argument"
-              message:@"Argument is not nil and the type of finishTransaction is not a string."
-              details:call.arguments]);
-    return;
-  }
-  [self.paymentQueueHandler restoreTransactions:call.arguments];
-  result(nil);
+- (void)restoreTransactionsApplicationUserName:(nullable NSString *)applicationUserName
+                                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                   error {
+  [self.paymentQueueHandler restoreTransactions:applicationUserName];
 }
 
+- (void)presentCodeRedemptionSheetWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
-- (void)presentCodeRedemptionSheet:(FlutterMethodCall *)call result:(FlutterResult)result {
   [self.paymentQueueHandler presentCodeRedemptionSheet];
-  result(nil);
-}
 #endif
+}
 
 - (void)retrieveReceiptData:(FlutterMethodCall *)call result:(FlutterResult)result {
   FlutterError *error = nil;

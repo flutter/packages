@@ -105,22 +105,21 @@
 }
 
 - (void)testGetProductResponse {
+  NSArray *argument = @[ @"123" ];
   XCTestExpectation *expectation =
-      [self expectationWithDescription:@"expect response contains 1 item"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin startProductRequest:result:]"
-                     arguments:@[ @"123" ]];
-  __block id result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           [expectation fulfill];
-                           result = r;
-                         }];
+      [self expectationWithDescription:@"completion handler successfully called"];
+  [self.plugin
+      startProductRequestProductIdentifiers:argument
+                                 completion:^(SKProductsResponseMessage *_Nullable response,
+                                              FlutterError *_Nullable startProductRequestError) {
+                                   XCTAssert(
+                                       [response isKindOfClass:[SKProductsResponseMessage class]]);
+                                   XCTAssertEqual(response.products.count, 1);
+                                   XCTAssertEqual(response.invalidProductIdentifiers.count, 0);
+                                   XCTAssertEqual(response.products[0].productIdentifier, @"123");
+                                   [expectation fulfill];
+                                 }];
   [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssert([result isKindOfClass:[NSDictionary class]]);
-  NSArray *resultArray = [result objectForKey:@"products"];
-  XCTAssertEqual(resultArray.count, 1);
-  XCTAssertTrue([resultArray.firstObject[@"productIdentifier"] isEqualToString:@"123"]);
 }
 
 - (void)testAddPaymentShouldReturnFlutterErrorWhenPaymentFails {
@@ -273,11 +272,10 @@
 - (void)testRestoreTransactions {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"result successfully restore transactions"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin restoreTransactions:result:]"
-                     arguments:nil];
+
   SKPaymentQueueStub *queue = [SKPaymentQueueStub new];
   queue.testState = SKPaymentTransactionStatePurchased;
+
   __block BOOL callbackInvoked = NO;
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
@@ -292,9 +290,10 @@
       updatedDownloads:nil
       transactionCache:OCMClassMock(FIATransactionCache.class)];
   [queue addTransactionObserver:self.plugin.paymentQueueHandler];
-  [self.plugin handleMethodCall:call
-                         result:^(id r){
-                         }];
+
+  FlutterError *error;
+  [self.plugin restoreTransactionsApplicationUserName:nil error:&error];
+
   [self waitForExpectations:@[ expectation ] timeout:5];
   XCTAssertTrue(callbackInvoked);
 }

@@ -66,9 +66,7 @@ class XFile extends XFileBase {
         super(path) {
     if (path == null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
-      // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
-      // ignore: unnecessary_cast
-      _path = URL.createObjectURL(_browserBlob! as JSObject);
+      _path = URL.createObjectURL(_browserBlob!);
     } else {
       _path = path;
     }
@@ -131,9 +129,7 @@ class XFile extends XFileBase {
 
     // Attempt to re-hydrate the blob from the `path` via a (local) HttpRequest.
     // Note that safari hangs if the Blob is >=4GB, so bail out in that case.
-    // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
-    // ignore: unnecessary_non_null_assertion
-    if (isSafari() && _length != null && _length! >= _fourGigabytes) {
+    if (isSafari() && _length != null && _length >= _fourGigabytes) {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
 

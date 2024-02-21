@@ -649,6 +649,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       }
       text = builder.toString();
     }
+    final double? textScaleFactor = source.v<double>(['textScaleFactor']);
     return Text(
       text,
       style: ArgumentDecoders.textStyle(source, ['style']),
@@ -658,7 +659,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       locale: ArgumentDecoders.locale(source, ['locale']),
       softWrap: source.v<bool>(['softWrap']),
       overflow: ArgumentDecoders.enumValue<TextOverflow>(TextOverflow.values, source, ['overflow']),
-      textScaleFactor: source.v<double>(['textScaleFactor']),  // ignore: deprecated_member_use
+      textScaler: textScaleFactor == null ? null : TextScaler.linear(textScaleFactor),
       maxLines: source.v<int>(['maxLines']),
       semanticsLabel: source.v<String>(['semanticsLabel']),
       textWidthBasis: ArgumentDecoders.enumValue<TextWidthBasis>(TextWidthBasis.values, source, ['textWidthBasis']),
