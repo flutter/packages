@@ -481,7 +481,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
   ///
-  /// Returns 0 if exposure compensation is not supported for the device.
+  /// Returns -1 if exposure compensation is not supported for the device.
   ///
   /// [cameraId] not used.
   @override
@@ -489,6 +489,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     final ExposureState exposureState = await cameraInfo!.getExposureState();
     final double exposureOffsetStepSize =
         exposureState.exposureCompensationStep;
+    if (exposureOffsetStepSize == 0) {
+      // CameraX returns a step size of 0 if exposure compensation is not
+      // supported for the device.
+      return -1;
+    }
     return exposureOffsetStepSize;
   }
 
