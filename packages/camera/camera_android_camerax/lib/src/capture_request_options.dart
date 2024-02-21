@@ -112,11 +112,6 @@ class _CaptureRequestOptionsHostApiImpl extends CaptureRequestOptionsHostApi {
             throw ArgumentError(
                 'A controlAeLock value must be specified as a bool, but a $valueRuntimeType was specified.');
           }
-        case CaptureRequestKeySupportedType.controlAfTrigger:
-          if (valueRuntimeType != int) {
-            throw ArgumentError(
-                'A controlAfTrigger value must be specified as a int, but a $valueRuntimeType was specified.');
-          }
         // This ignore statement is safe beause this error will be useful when
         // a new CaptureRequestKeySupportedType is being added, but the logic in
         // this method has not yet been updated.

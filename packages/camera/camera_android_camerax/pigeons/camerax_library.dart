@@ -163,7 +163,6 @@ class MeteringPointInfo {
 /// interoperability with Camera2.
 enum CaptureRequestKeySupportedType {
   controlAeLock,
-  controlAfTrigger,
 }
 
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')

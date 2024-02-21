@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -111,6 +110,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     super.dispose();
   }
 
+  // #docregion AppLifecycle
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = controller;
@@ -123,9 +123,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      _initializeCameraController(cameraController.description);
+      onNewCameraSelected(cameraController.description);
     }
   }
+  // #enddocregion AppLifecycle
 
   @override
   Widget build(BuildContext context) {
@@ -218,8 +219,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     _currentScale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await CameraPlatform.instance
-        .setZoomLevel(controller!.cameraId, _currentScale);
+    await controller!.setZoomLevel(_currentScale);
   }
 
   /// Display the thumbnail of the captured image or video.
@@ -393,10 +393,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 children: <Widget>[
                   TextButton(
                     style: styleAuto,
-                    onPressed: controller != null
-                        ? () =>
-                            onSetExposureModeButtonPressed(ExposureMode.auto)
-                        : null,
+                    onPressed:
+                        () {}, // TODO(camsim99): Add functionality back here.
                     onLongPress: () {
                       if (controller != null) {
                         CameraPlatform.instance
@@ -408,10 +406,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed: controller != null
-                        ? () =>
-                            onSetExposureModeButtonPressed(ExposureMode.locked)
-                        : null,
+                    onPressed:
+                        () {}, // TODO(camsim99): Add functionality back here.
                     child: const Text('LOCKED'),
                   ),
                   TextButton(
@@ -524,35 +520,29 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         IconButton(
           icon: const Icon(Icons.videocam),
           color: Colors.blue,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  !cameraController.value.isRecordingVideo
-              ? onVideoRecordButtonPressed
-              : null,
+          onPressed:
+              cameraController == null ? null : onVideoRecordButtonPressed,
         ),
         IconButton(
           icon: cameraController != null &&
-                  (!cameraController.value.isRecordingVideo ||
-                      cameraController.value.isRecordingPaused)
+                  cameraController.value.isRecordingPaused
               ? const Icon(Icons.play_arrow)
               : const Icon(Icons.pause),
           color: Colors.blue,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  cameraController.value.isRecordingVideo
-              ? (cameraController.value.isRecordingPaused)
-                  ? onResumeButtonPressed
-                  : onPauseButtonPressed
-              : null,
+          onPressed: () {
+            if (cameraController == null) {
+              return;
+            } else if (cameraController.value.isRecordingPaused) {
+              return onResumeButtonPressed();
+            } else {
+              return onPauseButtonPressed();
+            }
+          },
         ),
         IconButton(
           icon: const Icon(Icons.stop),
           color: Colors.red,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  cameraController.value.isRecordingVideo
-              ? onStopButtonPressed
-              : null,
+          onPressed: cameraController == null ? null : onStopButtonPressed,
         ),
         IconButton(
           icon: const Icon(Icons.pause_presentation),
@@ -593,7 +583,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: onChanged,
+              onChanged:
+                  controller != null && controller!.value.isRecordingVideo
+                      ? null
+                      : onChanged,
             ),
           ),
         );
@@ -617,24 +610,26 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = controller!;
 
-    final Point<double> point = Point<double>(
+    final Offset offset = Offset(
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
-    CameraPlatform.instance.setExposurePoint(cameraController.cameraId, point);
-    CameraPlatform.instance.setFocusPoint(cameraController.cameraId, point);
+    cameraController.setExposurePoint(offset);
+    cameraController.setFocusPoint(offset);
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    // if (controller != null) {
-    //   return controller!.setDescription(cameraDescription);
-    // } else {
-    return _initializeCameraController(cameraDescription);
-    // }
-  }
+    final CameraController? oldController = controller;
+    if (oldController != null) {
+      // `controller` needs to be set to null before getting disposed,
+      // to avoid a race condition when we use the controller that is being
+      // disposed. This happens when camera permission dialog shows up,
+      // which triggers `didChangeAppLifecycleState`, which disposes and
+      // re-creates the controller.
+      controller = null;
+      await oldController.dispose();
+    }
 
-  Future<void> _initializeCameraController(
-      CameraDescription cameraDescription) async {
     final CameraController cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
@@ -649,6 +644,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       if (mounted) {
         setState(() {});
       }
+      if (cameraController.value.hasError) {
+        showInSnackBar(
+            'Camera error ${cameraController.value.errorDescription}');
+      }
     });
 
     try {
@@ -657,20 +656,18 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         // The exposure mode is currently not supported on the web.
         ...!kIsWeb
             ? <Future<Object?>>[
-                CameraPlatform.instance
-                    .getMinExposureOffset(cameraController.cameraId)
-                    .then(
-                        (double value) => _minAvailableExposureOffset = value),
-                CameraPlatform.instance
-                    .getMaxExposureOffset(cameraController.cameraId)
+                cameraController.getMinExposureOffset().then(
+                    (double value) => _minAvailableExposureOffset = value),
+                cameraController
+                    .getMaxExposureOffset()
                     .then((double value) => _maxAvailableExposureOffset = value)
               ]
             : <Future<Object?>>[],
-        CameraPlatform.instance
-            .getMaxZoomLevel(cameraController.cameraId)
+        cameraController
+            .getMaxZoomLevel()
             .then((double value) => _maxAvailableZoom = value),
-        CameraPlatform.instance
-            .getMinZoomLevel(cameraController.cameraId)
+        cameraController
+            .getMinZoomLevel()
             .then((double value) => _minAvailableZoom = value),
       ]);
     } on CameraException catch (e) {
@@ -691,9 +688,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         case 'AudioAccessRestricted':
           // iOS only
           showInSnackBar('Audio access is restricted.');
-        case 'cameraPermission':
-          // Android & web only
-          showInSnackBar('Unknown permission error.');
         default:
           _showCameraException(e);
           break;
@@ -1058,7 +1052,7 @@ Future<void> main() async {
   // Fetch the available cameras before initializing the app.
   try {
     WidgetsFlutterBinding.ensureInitialized();
-    _cameras = await CameraPlatform.instance.availableCameras();
+    _cameras = await availableCameras();
   } on CameraException catch (e) {
     _logError(e.code, e.description);
   }

@@ -149,7 +149,7 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
         return Future<FocusMeteringResult?>.value();
       }
       return instanceManager.getInstanceWithWeakReference<FocusMeteringResult>(
-          focusMeteringResultId!);
+          focusMeteringResultId);
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController
           .add(e.message ?? 'Starting focus and metering failed.');

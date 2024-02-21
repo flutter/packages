@@ -5,8 +5,6 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
@@ -57,17 +55,8 @@ public class Camera2CameraControlHostApiImpl implements Camera2CameraControlHost
         throw new IllegalStateException("Context must be set to add capture request options.");
       }
 
-      // ListenableFuture<Void> addCaptureRequestOptionsFuture =
-      //     camera2CameraControl.addCaptureRequestOptions(bundle);
-      CaptureRequestOptions options =
-          new CaptureRequestOptions.Builder()
-              .setCaptureRequestOption(
-                  CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO)
-              .setCaptureRequestOption(
-                  CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE)
-              .build();
       ListenableFuture<Void> addCaptureRequestOptionsFuture =
-          camera2CameraControl.setCaptureRequestOptions(options);
+          camera2CameraControl.addCaptureRequestOptions(bundle);
 
       Futures.addCallback(
           addCaptureRequestOptionsFuture,
