@@ -9,9 +9,9 @@ import 'dart:io';
 import 'package:lcov_parser/lcov_parser.dart' as lcov;
 import 'package:meta/meta.dart';
 
-// After you run this script, `.../rfw/coverage/lcov.info` will represent the
-// latest coverage information for the package. Load that file into your IDE's
-// coverage mode to see what lines need coverage.
+// After you run `flutter test --coverage`, `.../rfw/coverage/lcov.info` will
+// represent the latest coverage information for the package. Load that file
+// into your IDE's coverage mode to see what lines need coverage.
 // In Emacs, that's `M-x coverlay-load-file`, for example.
 // (If you're using Emacs, you may need to set the variable `coverlay:base-path`
 // first (make sure it has a trailing slash), then load the overlay file, and
@@ -20,9 +20,10 @@ import 'package:meta/meta.dart';
 
 // Please update these targets when you update this package.
 // Please ensure that test coverage continues to be 100%.
-const int targetLines = 3122;
+// Don't forget to update the lastUpdate date too!
+const int targetLines = 3273;
 const String targetPercent = '100';
-const String lastUpdate = '2023-06-29';
+const String lastUpdate = '2024-01-30';
 
 @immutable
 /* final */ class LcovLine {
@@ -47,7 +48,7 @@ const String lastUpdate = '2023-06-29';
 }
 
 Future<void> main(List<String> arguments) async {
-  // This script is mentioned in the README.md file.
+  // This script is mentioned in the CONTRIBUTING.md file.
 
   final Directory coverageDirectory = Directory('coverage');
 
@@ -196,14 +197,14 @@ Future<void> main(List<String> arguments) async {
       print(
         'Total lines of covered code has increased, and coverage script is now out of date.\n'
         'Coverage is now $coveredPercent%, $coveredLines/$totalLines lines, whereas previously there were only $targetLines lines.\n'
-        'Update the "\$targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $coveredLines).',
+        'Update the "targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $coveredLines).',
       );
     }
     if (targetLines > totalLines) {
       print(
         'Total lines of code has reduced, and coverage script is now out of date.\n'
         'Coverage is now $coveredPercent%, $coveredLines/$totalLines lines, but previously there were $targetLines lines.\n'
-        'Update the "\$targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $totalLines).',
+        'Update the "targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $totalLines).',
       );
       exit(1);
     }

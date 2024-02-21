@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
@@ -19,7 +20,7 @@ import java.io.IOException;
 public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private Context context;
+  @Nullable private Context context;
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
   @VisibleForTesting public @NonNull SystemServicesFlutterApiImpl systemServicesFlutterApi;
@@ -46,7 +47,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
     this.activity = activity;
   }
 
-  public void setPermissionsRegistry(@NonNull PermissionsRegistry permissionsRegistry) {
+  public void setPermissionsRegistry(@Nullable PermissionsRegistry permissionsRegistry) {
     this.permissionsRegistry = permissionsRegistry;
   }
 
@@ -59,6 +60,10 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   @Override
   public void requestCameraPermissions(
       @NonNull Boolean enableAudio, @NonNull Result<CameraPermissionsErrorData> result) {
+    if (activity == null) {
+      throw new IllegalStateException("Activity must be set to request camera permissions.");
+    }
+
     CameraPermissionsManager cameraPermissionsManager =
         cameraXProxy.createCameraPermissionsManager();
     cameraPermissionsManager.requestPermissions(
@@ -84,6 +89,10 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   @Override
   @NonNull
   public String getTempFilePath(@NonNull String prefix, @NonNull String suffix) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to create a temporary file.");
+    }
+
     try {
       File path = File.createTempFile(prefix, suffix, context.getCacheDir());
       return path.toString();

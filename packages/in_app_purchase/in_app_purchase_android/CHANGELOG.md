@@ -1,3 +1,16 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 0.3.1
+
+* Adds alternative-billing-only APIs to InAppPurchaseAndroidPlatformAddition.
+
+## 0.3.0+18
+
+* Adds new getCountryCode() method to InAppPurchaseAndroidPlatformAddition to get a customer's country code.
+* Updates compileSdk version to 34.
+
 ## 0.3.0+17
 
 * Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.

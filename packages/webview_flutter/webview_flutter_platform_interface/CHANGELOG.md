@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 2.10.0
+
+* Adds `WebResourceRequest` and `WebResourceResponse` to `HttpResponseError`.
+
 ## 2.9.1
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

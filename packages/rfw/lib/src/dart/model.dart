@@ -20,6 +20,157 @@ typedef DynamicMap = Map<String, Object?>;
 /// Part of the data type for [DynamicContent] objects.
 typedef DynamicList = List<Object?>;
 
+/// Reference to a location in a source file.
+///
+/// This is used in a [SourceRange] object to indicate the location of a
+/// [BlobNode] in the original source text.
+///
+/// Locations are given as offsets (in UTF-16 code units) into the decoded
+/// string.
+///
+/// See also:
+///
+///  * [BlobNode.source], which exposes the source location of a [BlobNode].
+@immutable
+class SourceLocation implements Comparable<SourceLocation> {
+  /// Create a [SourceLocation] object.
+  ///
+  /// The [source] and [offset] properties are initialized from the
+  /// given arguments.
+  const SourceLocation(this.source, this.offset);
+
+  /// An object that identifies the file or other origin of the source.
+  ///
+  /// For files parsed using [parseLibraryFile], this is the value that
+  /// is given as the `sourceIdentifier` argument.
+  final Object source;
+
+  /// The offset of the given source location, in UTF-16 code units.
+  final int offset;
+
+  @override
+  int compareTo(SourceLocation other) {
+    if (source != other.source) {
+      throw StateError('Cannot compare locations from different sources.');
+    }
+    return offset - other.offset;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != SourceLocation) {
+      return false;
+    }
+    return other is SourceLocation
+        && source == other.source
+        && offset == other.offset;
+  }
+
+  @override
+  int get hashCode => Object.hash(source, offset);
+
+  /// Whether this location is earlier in the file than `other`.
+  ///
+  /// Can only be used to compare locations in the same [source].
+  bool operator <(SourceLocation other) {
+    if (source != other.source) {
+      throw StateError('Cannot compare locations from different sources.');
+    }
+    return offset < other.offset;
+  }
+
+  /// Whether this location is later in the file than `other`.
+  ///
+  /// Can only be used to compare locations in the same [source].
+  bool operator >(SourceLocation other) {
+    if (source != other.source) {
+      throw StateError('Cannot compare locations from different sources.');
+    }
+    return offset > other.offset;
+  }
+
+  /// Whether this location is earlier in the file than `other`, or equal to
+  /// `other`.
+  ///
+  /// Can only be used to compare locations in the same [source].
+  bool operator <=(SourceLocation other) {
+    if (source != other.source) {
+      throw StateError('Cannot compare locations from different sources.');
+    }
+    return offset <= other.offset;
+  }
+
+  /// Whether this location is later in the file than `other`, or equal to
+  /// `other`.
+  ///
+  /// Can only be used to compare locations in the same [source].
+  bool operator >=(SourceLocation other) {
+    if (source != other.source) {
+      throw StateError('Cannot compare locations from different sources.');
+    }
+    return offset >= other.offset;
+  }
+
+  @override
+  String toString() {
+    return '$source@$offset';
+  }
+}
+
+/// Reference to a range of a source file.
+///
+/// This is used to indicate the region of a source file that corresponds to a
+/// particular [BlobNode].
+///
+/// By default, [BlobNode]s are not associated with [SourceRange]s. Source
+/// location information can be enabled for the [parseLibraryFile] parser by
+/// providing the `sourceIdentifier` argument.
+///
+/// See also:
+///
+///  * [BlobNode.source], which exposes the source location of a [BlobNode].
+@immutable
+class SourceRange {
+  /// Create a [SourceRange] object.
+  ///
+  /// The [start] and [end] locations are initialized from the given arguments.
+  ///
+  /// They must have identical [SourceLocation.source] objects.
+  SourceRange(this.start, this.end)
+   : assert(start.source == end.source, 'The start and end locations have inconsistent source information.'),
+     assert(start < end, 'The start location must be before the end location.');
+
+  /// The start of a contiguous region of a source file that corresponds to a
+  /// particular [BlobNode].
+  ///
+  /// The range contains the start.
+  final SourceLocation start;
+
+  /// The end of a contiguous region of a source file that corresponds to a
+  /// particular [BlobNode].
+  ///
+  /// The range does not contain the end.
+  final SourceLocation end;
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != SourceRange) {
+      return false;
+    }
+    return other is SourceRange
+        && start == other.start
+        && end == other.end;
+  }
+
+  @override
+  int get hashCode => Object.hash(start, end);
+
+  @override
+  String toString() {
+    return '${start.source}@${start.offset}..${end.offset}';
+  }
+}
+
 /// Base class of nodes that appear in the output of [decodeDataBlob] and
 /// [decodeLibraryBlob].
 ///
@@ -35,6 +186,59 @@ abstract class BlobNode {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const BlobNode();
+
+  // We use an [Expando] so that there is no (or minimal) overhead in production
+  // environments that don't need to track source locations. It would be cleaner
+  // to store the information directly on the [BlobNode], as then we could enforce
+  // that that information is always propagated, instead of relying on remembering
+  // to do so. However, that would require growing the size of every [BlobNode]
+  // object, and would require additional logic even in the binary parser (which
+  // does not track source locations currently).
+  static final Expando<SourceRange> _sources = Expando<SourceRange>('BlobNode._sources');
+
+  /// The source location that corresponds to this [BlobNode], if known.
+  ///
+  /// In normal use, this returns null. However, if source location tracking is
+  /// enabled (e.g. by specifying the `sourceIdentifier` argument to
+  /// [parseLibraryFile]), then this will return the range of the source file
+  /// that corresponds to this [BlobNode].
+  ///
+  /// A [BlobNode] can also be manually associated with a given [SourceRange]
+  /// using [associateSource] or [propagateSource].
+  SourceRange? get source {
+    return _sources[this];
+  }
+
+  /// Assign a [SourceRange] to this [BlobNode]'s [source] property.
+  ///
+  /// Typically, this is used exclusively by the parser (notably,
+  /// [parseLibraryFile]).
+  ///
+  /// Tracking source location information introduces a memory overhead and
+  /// should therefore only be used when necessary (e.g. for creating IDEs).
+  ///
+  /// Calling this method replaces any existing association.
+  void associateSource(SourceRange source) {
+    _sources[this] = source;
+  }
+
+  /// Assign another [BlobNode]'s [SourceRange] to this [BlobNode]'s [source]
+  /// property.
+  ///
+  /// Typically, this is used exclusively by the [Runtime].
+  ///
+  /// If the `original` [BlobNode] is null or has no [source], then this has no
+  /// effect. Otherwise, the [source] for this [BlobNode] is set to match that
+  /// of the given `original` [BlobNode], replacing any existing association.
+  void propagateSource(BlobNode? original) {
+    if (original == null) {
+      return;
+    }
+    final SourceRange? source = _sources[original];
+    if (source != null) {
+      _sources[this] = source;
+    }
+  }
 }
 
 bool _listEquals<T>(List<T>? a, List<T>? b) {
@@ -192,7 +396,9 @@ class Switch extends BlobNode {
   /// [Switch] is an error.
   const Switch(this.input, this.outputs);
 
-  /// The value to switch on (after resolution).
+  /// The value to switch on. This is typically a reference, e.g. an
+  /// [ArgsReference], which must be resolved by the runtime to determine the
+  /// actual value on which to switch.
   final Object input;
 
   /// The cases for this switch. Keys correspond to values to compare with
