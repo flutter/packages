@@ -2027,6 +2027,7 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.camera = MockCamera();
+    camera.cameraControl = mockCameraControl;
 
     // Tell plugin to create detached Camera2CameraControl and
     // CaptureRequestOptions instances for testing.
@@ -2039,9 +2040,6 @@ void main() {
           (List<(CaptureRequestKeySupportedType, Object?)> options) =>
               CaptureRequestOptions.detached(requestedOptions: options),
     );
-
-    when(camera.camera!.getCameraControl())
-        .thenAnswer((_) async => mockCameraControl);
 
     // Test auto mode.
     await camera.setExposureMode(cameraId, ExposureMode.auto);
