@@ -165,8 +165,7 @@ public class GeneratedCameraXLibrary {
    * Camera2.
    */
   public enum CaptureRequestKeySupportedType {
-    CONTROL_AE_LOCK(0),
-    CONTROL_AF_TRIGGER(1);
+    CONTROL_AE_LOCK(0);
 
     final int index;
 

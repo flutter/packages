@@ -88,7 +88,6 @@ enum VideoResolutionFallbackRule {
 /// interoperability with Camera2.
 enum CaptureRequestKeySupportedType {
   controlAeLock,
-  controlAfTrigger,
 }
 
 class ResolutionInfo {
