@@ -288,6 +288,16 @@
   }];
 }
 
+- (void)startObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [_paymentQueueHandler startObservingPaymentQueue];
+}
+
+- (void)stopObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [_paymentQueueHandler stopObservingPaymentQueue];
+}
+
 - (void)registerPaymentQueueDelegateWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
@@ -318,16 +328,6 @@
     [_paymentQueueHandler showPriceConsentIfNeeded];
   }
 #endif
-}
-
-- (void)startObservingPaymentQueueWithError:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  [_paymentQueueHandler startObservingPaymentQueue];
-}
-
-- (void)stopObservingPaymentQueueWithError:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  [_paymentQueueHandler stopObservingPaymentQueue];
 }
 
 - (id)getNonNullValueFromDictionary:(NSDictionary *)dictionary forKey:(NSString *)key {
