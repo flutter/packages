@@ -96,7 +96,8 @@ class UserChoiceDetailsProductWrapper {
       _$UserChoiceDetailsProductWrapperFromJson(map);
 
   /// Creates a JSON representation of this product.
-  Map<String, dynamic> toJson() => _$UserChoiceDetailsProductWrapperToJson(this);
+  Map<String, dynamic> toJson() =>
+      _$UserChoiceDetailsProductWrapperToJson(this);
 
   /// Returns the id of the product being purchased.
   @JsonKey(defaultValue: '')
