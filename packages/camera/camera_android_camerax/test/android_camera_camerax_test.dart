@@ -755,19 +755,15 @@ void main() {
       startListeningForDeviceOrientationChange: (_, __) {},
     );
 
-    // TODO(camsim99): Modify this when camera configuration is supported and
-    // default values no longer being used.
-    // https://github.com/flutter/flutter/issues/120468
-    // https://github.com/flutter/flutter/issues/120467
     final CameraInitializedEvent testCameraInitializedEvent =
         CameraInitializedEvent(
             cameraId,
             resolutionWidth.toDouble(),
             resolutionHeight.toDouble(),
             ExposureMode.auto,
-            false,
+            true,
             FocusMode.auto,
-            false);
+            true);
 
     // Call createCamera.
     when(mockPreview.setSurfaceProvider()).thenAnswer((_) async => cameraId);
