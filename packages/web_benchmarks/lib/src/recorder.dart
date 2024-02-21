@@ -15,7 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
-import 'package:web/helpers.dart' as html;
+import 'package:web/web.dart' as html;
 
 import 'common.dart';
 

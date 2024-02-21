@@ -25,15 +25,15 @@ Future<void> loadWebSdk({
   onGoogleLibraryLoad = () => completer.complete();
 
   // If TrustedTypes are available, prepare a trusted URL.
-  web.TrustedScriptURL? trustedUrl;
+  TrustedScriptURL? trustedUrl;
   if (web.window.nullableTrustedTypes != null) {
     web.console.debug(
       'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
     );
     try {
-      final web.TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
+      final TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
           trustedTypePolicyName,
-          web.TrustedTypePolicyOptions(
+          TrustedTypePolicyOptions(
             createScriptURL: ((JSString url) => _url).toJS,
           ));
       trustedUrl = policy.createScriptURLNoArgs(_url);
@@ -47,7 +47,7 @@ Future<void> loadWebSdk({
         ..async = true
         ..defer = true;
   if (trustedUrl != null) {
-    script.srcTT = trustedUrl;
+    script.trustedSrc = trustedUrl;
   } else {
     script.src = _url;
   }
