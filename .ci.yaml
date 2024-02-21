@@ -1491,7 +1491,6 @@ targets:
 
   - name: Windows_x64 windows-build_all_packages stable
     recipe: packages/packages
-    presubmit: false
     timeout: 30
     properties:
       target_file: windows_build_all_packages.yaml
@@ -1508,6 +1507,7 @@ targets:
 
   - name: Windows_arm64 windows-build_all_packages stable
     recipe: packages/packages
+    presubmit: false
     timeout: 30
     bringup: true
     properties:
