@@ -286,7 +286,7 @@
 
 - (void)testRetrieveReceiptDataSuccess {
   FlutterError *error;
-  id result = [self.plugin retrieveReceiptDataWithError:&error];
+  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
   XCTAssertNotNil(result);
   XCTAssert([result isKindOfClass:[NSString class]]);
 }
@@ -295,7 +295,7 @@
   NSBundle *mockBundle = OCMPartialMock([NSBundle mainBundle]);
   OCMStub(mockBundle.appStoreReceiptURL).andReturn(nil);
   FlutterError *error;
-  id result = [self.plugin retrieveReceiptDataWithError:&error];
+  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
   XCTAssertNil(result);
 }
 
@@ -303,7 +303,7 @@
   self.receiptManagerStub.returnError = YES;
 
   FlutterError *error;
-  id result = [self.plugin retrieveReceiptDataWithError:&error];
+  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
 
   XCTAssertNil(result);
   XCTAssertNotNil(error);
@@ -324,6 +324,7 @@
 }
 
 #if TARGET_OS_IOS
+/// presentCodeRedemptionSheetWithError:error is only available on iOS
 - (void)testPresentCodeRedemptionSheet {
   FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
   self.plugin.paymentQueueHandler = mockHandler;

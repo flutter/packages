@@ -246,7 +246,7 @@
 #endif
 }
 
-- (NSString *_Nullable)retrieveReceiptDataWithError:
+- (nullable NSString *)retrieveReceiptDataWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   FlutterError *flutterError;
   NSString *receiptData = [self.receiptManager retrieveReceiptWithError:&flutterError];
