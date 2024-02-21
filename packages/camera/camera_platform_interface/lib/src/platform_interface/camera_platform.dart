@@ -221,8 +221,7 @@ abstract class CameraPlatform extends PlatformInterface {
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
   ///
-  /// Returns 0 when the camera supports using a free value without stepping, and
-  /// returns -1 when exposure compensation is not supported.
+  /// Returns 0 when the camera supports using a free value without stepping.
   Future<double> getExposureOffsetStepSize(int cameraId) {
     throw UnimplementedError('getMinExposureOffset() is not implemented.');
   }
