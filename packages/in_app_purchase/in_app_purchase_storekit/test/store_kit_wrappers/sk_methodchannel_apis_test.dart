@@ -228,13 +228,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   Future<dynamic> onMethodCall(MethodCall call) {
     switch (call.method) {
       // request makers
-      case '-[InAppPurchasePlugin startProductRequest:result:]':
-        startProductRequestParam = call.arguments as List<dynamic>;
-        if (getProductRequestFailTest) {
-          return Future<dynamic>.value();
-        }
-        return Future<Map<String, dynamic>>.value(
-            buildProductResponseMap(dummyProductResponseWrapper));
       case '-[InAppPurchasePlugin refreshReceipt:result:]':
         refreshReceipt++;
         refreshReceiptParam = Map.castFrom<dynamic, dynamic, String, dynamic>(
@@ -246,16 +239,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
           throw Exception('some arbitrary error');
         }
         return Future<String>.value('receipt data');
-      case '-[InAppPurchasePlugin finishTransaction:result:]':
-        transactionsFinished.add(
-            Map<String, String>.from(call.arguments as Map<dynamic, dynamic>));
-        return Future<void>.sync(() {});
-      case '-[InAppPurchasePlugin restoreTransactions:result:]':
-        applicationNameHasTransactionRestored = call.arguments as String;
-        return Future<void>.sync(() {});
-      case '-[InAppPurchasePlugin presentCodeRedemptionSheet:result:]':
-        presentCodeRedemption = true;
-        return Future<void>.sync(() {});
       case '-[SKPaymentQueue startObservingTransactionQueue]':
         queueIsActive = true;
         return Future<void>.sync(() {});
@@ -295,6 +278,32 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   List<SKPaymentTransactionMessage?> transactions() =>
       <SKPaymentTransactionMessage>[dummyTransactionMessage];
+
+  @override
+  void finishTransaction(Map<String?, String?> finishMap) {
+    transactionsFinished.add(Map<String, String>.from(finishMap));
+  }
+
+  @override
+  void presentCodeRedemptionSheet() {
+    presentCodeRedemption = true;
+  }
+
+  @override
+  void restoreTransactions(String? applicationUserName) {
+    applicationNameHasTransactionRestored = applicationUserName!;
+  }
+
+  @override
+  Future<SKProductsResponseMessage> startProductRequest(
+      List<String?> productIdentifiers) {
+    startProductRequestParam = productIdentifiers;
+    if (getProductRequestFailTest) {
+      return Future<SKProductsResponseMessage>.value(
+          SKProductsResponseMessage());
+    }
+    return Future<SKProductsResponseMessage>.value(dummyProductResponseMessage);
+  }
 }
 
 class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {}
