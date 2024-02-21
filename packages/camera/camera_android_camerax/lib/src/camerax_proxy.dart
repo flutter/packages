@@ -5,14 +5,17 @@
 import 'dart:ui' show Size;
 
 import 'analyzer.dart';
+import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'device_orientation_manager.dart';
 import 'fallback_strategy.dart';
+import 'focus_metering_action.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
+import 'metering_point.dart';
 import 'observer.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
@@ -49,6 +52,8 @@ class CameraXProxy {
         _startListeningForDeviceOrientationChange,
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
     this.getDefaultDisplayRotation = _getDefaultDisplayRotation,
+    this.createMeteringPoint = _createMeteringPoint,
+    this.createFocusMeteringAction = _createFocusMeteringAction,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -136,6 +141,16 @@ class CameraXProxy {
   /// Returns default rotation for [UseCase]s in terms of one of the [Surface]
   /// rotation constants.
   Future<int> Function() getDefaultDisplayRotation;
+
+  /// Returns a [MeteringPoint] with the specified coordinates based on
+  /// [cameraInfo].
+  MeteringPoint Function(double x, double y, CameraInfo cameraInfo)
+      createMeteringPoint;
+
+  /// Returns a [FocusMeteringAction] based on the specified metering points
+  /// and their modes.
+  FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos)
+      createFocusMeteringAction;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -238,5 +253,15 @@ class CameraXProxy {
 
   static Future<int> _getDefaultDisplayRotation() async {
     return DeviceOrientationManager.getDefaultDisplayRotation();
+  }
+
+  static MeteringPoint _createMeteringPoint(
+      double x, double y, CameraInfo cameraInfo) {
+    return MeteringPoint(x: x, y: y, cameraInfo: cameraInfo);
+  }
+
+  static FocusMeteringAction _createFocusMeteringAction(
+      List<(MeteringPoint, int?)> meteringPointInfos) {
+    return FocusMeteringAction(meteringPointInfos: meteringPointInfos);
   }
 }
