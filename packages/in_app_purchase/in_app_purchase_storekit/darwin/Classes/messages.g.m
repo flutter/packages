@@ -218,7 +218,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation SKErrorMessage
 + (instancetype)makeWithCode:(NSInteger)code
                       domain:(NSString *)domain
-                    userInfo:(NSDictionary<NSString *, id> *)userInfo {
+                    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo {
   SKErrorMessage *pigeonResult = [[SKErrorMessage alloc] init];
   pigeonResult.code = code;
   pigeonResult.domain = domain;

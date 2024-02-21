@@ -12,7 +12,7 @@ the title, which will be actively triaged.
 
 This package is [non-endorsed][3]; the endorsed Android implementation of `camera`
 is [`camera_android`][4]. To use this implementation of the plugin instead of
-`camera_android`, you will need to specify it in your `pubsepc.yaml` file as a
+`camera_android`, you will need to specify it in your `pubspec.yaml` file as a
 dependency in addition to `camera`:
 
 ```yaml
