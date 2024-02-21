@@ -59,7 +59,7 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
         }
       }
 
-      return focusMeteringActionBuilder.build();
+      return focusMeteringActionBuilder.disableAutoCancel().build();
     }
 
     @VisibleForTesting

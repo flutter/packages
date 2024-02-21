@@ -133,10 +133,10 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
         instanceManager.getIdentifier(instance)!;
     final int actionIdentifier = instanceManager.getIdentifier(action)!;
     try {
-      final int focusMeteringResultId = await startFocusAndMetering(
+      final int? focusMeteringResultId = await startFocusAndMetering(
           cameraControlIdentifier, actionIdentifier);
       return instanceManager.getInstanceWithWeakReference<FocusMeteringResult>(
-          focusMeteringResultId);
+          focusMeteringResultId!);
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController
           .add(e.message ?? 'Starting focus and metering failed.');

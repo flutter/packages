@@ -23,10 +23,12 @@ import 'capture_request_options.dart';
 import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
+import 'focus_metering_action.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
 import 'live_data.dart';
+import 'metering_point.dart';
 import 'observer.dart';
 import 'pending_recording.dart';
 import 'plane_proxy.dart';
@@ -465,12 +467,20 @@ class AndroidCameraCameraX extends CameraPlatform {
         // TODO(camsim99): Clear af trigger.
         break;
       case FocusMode.locked:
-        // Set autofocus trigger to idle to keep current focus setting.
-        final CaptureRequestOptions options = CaptureRequestOptions(
-            requestedOptions: const <(CaptureRequestKeySupportedType, Object?)>[
-              (CaptureRequestKeySupportedType.controlAfTrigger, 0)
-            ]); // TODO(camsim99): Add constants for AF trigger values.
-        await camera2cameraControl.addCaptureRequestOptions(options);
+        // this will construct an action with a MeteringRectangle that represents the whole FoV.
+        MeteringPoint point =
+            MeteringPoint(x: 0.5, y: 0.5, size: 1, cameraInfo: cameraInfo!);
+        FocusMeteringAction action = FocusMeteringAction(meteringPointInfos: <(
+          MeteringPoint meteringPoint,
+          int? meteringMode
+        )>[(point, FocusMeteringAction.flagAf)]);
+        await cameraControl.startFocusAndMetering(action);
+      // Set autofocus trigger to idle to keep current focus setting.
+      // final CaptureRequestOptions options = CaptureRequestOptions(
+      //     requestedOptions: const <(CaptureRequestKeySupportedType, Object?)>[
+      //       (CaptureRequestKeySupportedType.controlAfTrigger, 0)
+      //     ]); // TODO(camsim99): Add constants for AF trigger values.
+      // await camera2cameraControl.addCaptureRequestOptions(options);
     }
   }
 

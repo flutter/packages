@@ -85,7 +85,7 @@ public class GeneratedCameraXLibrary {
    * If you need to add another type to support a type S to use a LiveData<S> in
    * this plugin, ensure the following is done on the Dart side:
    *
-   *  * In `../lib/src/live_data.dart`, add new cases for S in
+   *  * In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
    *    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
    *    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
    *    to create the expected type of LiveData<S> when requested.
@@ -155,7 +155,7 @@ public class GeneratedCameraXLibrary {
    * If you need to add another option to support, ensure the following is done
    * on the Dart side:
    *
-   *  * In `../lib/src/capture_request_options.dart`, add new cases for this
+   *  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
    *    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
    *    to create the expected Map entry of option key index and value to send to
    *    the native side.
@@ -3582,7 +3582,7 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface MeteringPointHostApi {
 
-    void create(@NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size);
+    void create(@NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size, @NonNull Long cameraInfoId);
 
     @NonNull 
     Double getDefaultPointSize();
@@ -3606,8 +3606,9 @@ public class GeneratedCameraXLibrary {
                 Double xArg = (Double) args.get(1);
                 Double yArg = (Double) args.get(2);
                 Double sizeArg = (Double) args.get(3);
+                Number cameraInfoIdArg = (Number) args.get(4);
                 try {
-                  api.create((identifierArg == null) ? null : identifierArg.longValue(), xArg, yArg, sizeArg);
+                  api.create((identifierArg == null) ? null : identifierArg.longValue(), xArg, yArg, sizeArg, (cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
