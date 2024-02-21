@@ -484,11 +484,22 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> setFocusMode(int cameraId, FocusMode mode) async {
     switch (mode) {
       case FocusMode.auto:
-        // CameraX defaults to auto mode, so simply ensure that the autofocus
-        // trigger is not idle, as set by previously setting FocusMode.locked.
-        // TODO(camsim99): Clear af trigger.
+        // CameraX defaults to auto mode, so simply ensure that focus points
+        // are cancelable?
+        // TODO(camsim99): If no AF point specified, we are good
+        // TODO(camsim99): If AF point specified, resubmit same action with auto-canceled enabled
         break;
       case FocusMode.locked:
+        // TODO(camsim99): if AF point specified, lock it + handle exposure mode accordingly
+        // TODO(camsim99): if AF point not specified, set 0.5f, 0.5f + lock it + handle exposure mode accordingly
+        if (currentFocusMeteringAction != null) {
+          final bool focusPointSpecified = currentFocusMeteringAction!
+              .meteringPointInfos
+              .where(((MeteringPoint, int?) meteringPointInfo) =>
+                  meteringPointInfo.$2 != FocusMeteringAction.flagAf)
+              .toList()
+              .isNotEmpty;
+        }
         // this will construct an action with a MeteringRectangle that represents the whole FoV.
         final MeteringPoint point =
             MeteringPoint(x: 0.5, y: 0.5, size: 1, cameraInfo: cameraInfo!);
