@@ -29,7 +29,9 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
   public static class FocusMeteringActionProxy {
     /** Creates an instance of {@link FocusMeteringAction}. */
     public @NonNull FocusMeteringAction create(
-        @NonNull List<MeteringPoint> meteringPoints, @NonNull List<Integer> meteringPointModes, @Nullable Boolean disableAutoCancel) {
+        @NonNull List<MeteringPoint> meteringPoints,
+        @NonNull List<Integer> meteringPointModes,
+        @Nullable Boolean disableAutoCancel) {
       if (meteringPoints.size() >= 1 && meteringPoints.size() != meteringPointModes.size()) {
         throw new IllegalArgumentException(
             "One metering point must be specified and the number of specified metering points must match the number of specified metering point modes.");
@@ -104,7 +106,9 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
 
   @Override
   public void create(
-      @NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos, @Nullable Boolean disableAutoCancel) {
+      @NonNull Long identifier,
+      @NonNull List<MeteringPointInfo> meteringPointInfos,
+      @Nullable Boolean disableAutoCancel) {
     final List<MeteringPoint> meteringPoints = new ArrayList<MeteringPoint>();
     final List<Integer> meteringPointModes = new ArrayList<Integer>();
     for (MeteringPointInfo meteringPointInfo : meteringPointInfos) {
