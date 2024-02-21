@@ -1,7 +1,7 @@
-## 0.5.0+34
+## 0.5.0+35
 
-* Modifies `CameraInitializedEvent` that is sent when camera is initialized to indicate that the initial focus
-  and exposure modes are auto and that developers may set focus points for both modes.
+* Modifies `CameraInitializedEvent` that is sent when the camera is initialized to indicate that the initial focus
+  and exposure modes are auto and that developers may set focus and exposure points.
 
 ## 0.5.0+32
 
