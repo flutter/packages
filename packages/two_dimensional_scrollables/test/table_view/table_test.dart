@@ -1766,34 +1766,35 @@ void main() {
         final ScrollController verticalController = ScrollController();
         final ScrollController horizontalController = ScrollController();
         final TableView tableView = TableView.builder(
-            verticalDetails: ScrollableDetails.vertical(
-              controller: verticalController,
-            ),
-            horizontalDetails: ScrollableDetails.horizontal(
-              controller: horizontalController,
-            ),
-            columnCount: 20,
-            rowCount: 20,
-            pinnedRowCount: 2,
-            pinnedColumnCount: 2,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            cellBuilder: (_, TableVicinity vicinity) {
-              return TableViewCell(
-                columnMergeStart: bothMerged[vicinity]?.start ??
-                    columnMerged[vicinity]?.start,
-                columnMergeSpan:
-                    bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
-                rowMergeStart:
-                    bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
-                rowMergeSpan:
-                    bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
-                child: Text(
-                  'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
-                  'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
-                ),
-              );
-            });
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
         await tester.pumpWidget(MaterialApp(home: tableView));
         await tester.pumpAndSettle();
 
@@ -1875,35 +1876,36 @@ void main() {
         final ScrollController verticalController = ScrollController();
         final ScrollController horizontalController = ScrollController();
         final TableView tableView = TableView.builder(
-            verticalDetails: ScrollableDetails.vertical(
-              reverse: true,
-              controller: verticalController,
-            ),
-            horizontalDetails: ScrollableDetails.horizontal(
-              controller: horizontalController,
-            ),
-            columnCount: 20,
-            rowCount: 20,
-            pinnedRowCount: 2,
-            pinnedColumnCount: 2,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            cellBuilder: (_, TableVicinity vicinity) {
-              return TableViewCell(
-                columnMergeStart: bothMerged[vicinity]?.start ??
-                    columnMerged[vicinity]?.start,
-                columnMergeSpan:
-                    bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
-                rowMergeStart:
-                    bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
-                rowMergeSpan:
-                    bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
-                child: Text(
-                  'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
-                  'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
-                ),
-              );
-            });
+          verticalDetails: ScrollableDetails.vertical(
+            reverse: true,
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
         await tester.pumpWidget(MaterialApp(home: tableView));
         await tester.pumpAndSettle();
 
@@ -1985,35 +1987,36 @@ void main() {
         final ScrollController verticalController = ScrollController();
         final ScrollController horizontalController = ScrollController();
         final TableView tableView = TableView.builder(
-            verticalDetails: ScrollableDetails.vertical(
-              controller: verticalController,
-            ),
-            horizontalDetails: ScrollableDetails.horizontal(
-              reverse: true,
-              controller: horizontalController,
-            ),
-            columnCount: 20,
-            rowCount: 20,
-            pinnedRowCount: 2,
-            pinnedColumnCount: 2,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            cellBuilder: (_, TableVicinity vicinity) {
-              return TableViewCell(
-                columnMergeStart: bothMerged[vicinity]?.start ??
-                    columnMerged[vicinity]?.start,
-                columnMergeSpan:
-                    bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
-                rowMergeStart:
-                    bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
-                rowMergeSpan:
-                    bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
-                child: Text(
-                  'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
-                  'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
-                ),
-              );
-            });
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            reverse: true,
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
         await tester.pumpWidget(MaterialApp(home: tableView));
         await tester.pumpAndSettle();
 
@@ -2095,36 +2098,37 @@ void main() {
         final ScrollController verticalController = ScrollController();
         final ScrollController horizontalController = ScrollController();
         final TableView tableView = TableView.builder(
-            verticalDetails: ScrollableDetails.vertical(
-              reverse: true,
-              controller: verticalController,
-            ),
-            horizontalDetails: ScrollableDetails.horizontal(
-              reverse: true,
-              controller: horizontalController,
-            ),
-            columnCount: 20,
-            rowCount: 20,
-            pinnedRowCount: 2,
-            pinnedColumnCount: 2,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            cellBuilder: (_, TableVicinity vicinity) {
-              return TableViewCell(
-                columnMergeStart: bothMerged[vicinity]?.start ??
-                    columnMerged[vicinity]?.start,
-                columnMergeSpan:
-                    bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
-                rowMergeStart:
-                    bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
-                rowMergeSpan:
-                    bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
-                child: Text(
-                  'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
-                  'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
-                ),
-              );
-            });
+          verticalDetails: ScrollableDetails.vertical(
+            reverse: true,
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            reverse: true,
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
         await tester.pumpWidget(MaterialApp(home: tableView));
         await tester.pumpAndSettle();
 
