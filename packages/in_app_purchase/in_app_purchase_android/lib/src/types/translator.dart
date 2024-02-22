@@ -19,8 +19,11 @@ class Translator {
             detailsWrapper.originalExternalTransactionId,
         externalTransactionToken: detailsWrapper.externalTransactionToken,
         products: detailsWrapper.products
-            .map((UserChoiceDetailsProductWrapper e) => convertToUserChoiceDetailsProduct(e)).toList());
+            .map((UserChoiceDetailsProductWrapper e) =>
+                convertToUserChoiceDetailsProduct(e))
+            .toList());
   }
+
   /// Converts from [UserChoiceDetailsProductWrapper] to [GooglePlayUserChoiceDetailsProduct].
   @visibleForTesting
   static GooglePlayUserChoiceDetailsProduct convertToUserChoiceDetailsProduct(

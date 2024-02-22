@@ -19,7 +19,6 @@ class InAppPurchaseAndroidPlatformAddition
   /// Creates a [InAppPurchaseAndroidPlatformAddition] which uses the supplied
   /// `BillingClientManager` to provide Android specific features.
   InAppPurchaseAndroidPlatformAddition(this._billingClientManager) {
-
     _billingClientManager.userChoiceDetailsStream
         .map(Translator.convertToUserChoiceDetails)
         .listen(_userChoiceDetailsStreamController.add);

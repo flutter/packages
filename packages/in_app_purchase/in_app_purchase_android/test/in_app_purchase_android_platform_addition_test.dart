@@ -303,7 +303,8 @@ void main() {
         ],
       );
       manager.onUserChoiceAlternativeBilling(expected);
-      expect(await futureDetails, Translator.convertToUserChoiceDetails(expected));
+      expect(
+          await futureDetails, Translator.convertToUserChoiceDetails(expected));
     });
   });
 }
