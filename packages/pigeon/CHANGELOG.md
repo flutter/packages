@@ -1,5 +1,6 @@
-## NEXT
+## 17.0.1
 
+* [kotlin] Adds `includeErrorClass` to `KotlinOptions`.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 17.0.0
