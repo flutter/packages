@@ -124,9 +124,12 @@ void main() {
   CameraXProxy getProxyForExposureAndFocus() => CameraXProxy(
       createMeteringPoint: (double x, double y, CameraInfo cameraInfo) =>
           MeteringPoint.detached(x: x, y: y, cameraInfo: cameraInfo),
-      createFocusMeteringAction: (List<(MeteringPoint, int?)>
-              meteringPointInfos) =>
-          FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos));
+      createFocusMeteringAction:
+          (List<(MeteringPoint, int?)> meteringPointInfos,
+                  bool? disableAutoCancel) =>
+              FocusMeteringAction.detached(
+                  meteringPointInfos: meteringPointInfos,
+                  disableAutoCancel: disableAutoCancel));
 
   test('Should fetch CameraDescription instances for available cameras',
       () async {
@@ -2087,6 +2090,7 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
 
     camera.proxy = getProxyForExposureAndFocus();
 
@@ -2349,6 +2353,7 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
 
     camera.proxy = getProxyForExposureAndFocus();
 

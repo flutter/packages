@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.MeteringPoint;
@@ -61,7 +62,7 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
         }
       }
 
-      if (disableAutoCancel == true) {
+      if (disableAutoCancel != null && disableAutoCancel == true) {
         focusMeteringActionBuilder.disableAutoCancel();
       }
 
@@ -118,6 +119,6 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
     }
 
     instanceManager.addDartCreatedInstance(
-        proxy.create(meteringPoints, meteringPointModes), identifier, disableAutoCancel);
+        proxy.create(meteringPoints, meteringPointModes, disableAutoCancel), identifier);
   }
 }
