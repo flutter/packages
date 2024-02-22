@@ -281,4 +281,27 @@ void main() {
       expect(arguments['feature'], equals('subscriptions'));
     });
   });
+
+  group('userChoiceDetails', () {
+    test('called', () async {
+      final Future<UserChoiceDetailsWrapper> futureDetails =
+          iapAndroidPlatformAddition.userChoiceDetailsStream.first;
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      manager.onUserChoiceAlternativeBilling(expected);
+      expect(await futureDetails, expected);
+    });
+  });
 }

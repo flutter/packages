@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
@@ -14,7 +16,20 @@ class InAppPurchaseAndroidPlatformAddition
     extends InAppPurchasePlatformAddition {
   /// Creates a [InAppPurchaseAndroidPlatformAddition] which uses the supplied
   /// `BillingClientManager` to provide Android specific features.
-  InAppPurchaseAndroidPlatformAddition(this._billingClientManager);
+  InAppPurchaseAndroidPlatformAddition(this._billingClientManager) {
+
+    _billingClientManager.userChoiceDetailsStream
+        .asyncMap(_getUserChoiceDetailsFromResult)
+        .listen(_userChoiceDetailsStreamController.add);
+  }
+
+  final StreamController<UserChoiceDetailsWrapper>
+      _userChoiceDetailsStreamController =
+      StreamController<UserChoiceDetailsWrapper>.broadcast();
+
+  /// [UserChoiceDetailsWrapper] emits each time user selects alternative billing.
+  late final Stream<UserChoiceDetailsWrapper> userChoiceDetailsStream =
+      _userChoiceDetailsStreamController.stream;
 
   /// Whether pending purchase is enabled.
   ///
@@ -54,6 +69,11 @@ class InAppPurchaseAndroidPlatformAddition
       (BillingClient client) =>
           client.consumeAsync(purchase.verificationData.serverVerificationData),
     );
+  }
+
+  Future<UserChoiceDetailsWrapper> _getUserChoiceDetailsFromResult(
+      UserChoiceDetailsWrapper resultWrapper) async {
+    return resultWrapper;
   }
 
   /// Query all previous purchases.
