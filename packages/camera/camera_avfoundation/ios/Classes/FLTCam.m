@@ -88,9 +88,9 @@
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
-@property(nonatomic, copy) VideoDimensionsForFormatBlock videoDimensionsForFormat;
+@property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
-@property(nonatomic, copy) CaptureDeviceBlock captureDeviceFactory;
+@property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @end
 
 @implementation FLTCam
@@ -142,8 +142,8 @@ NSString *const errorMethod = @"error";
                      videoCaptureSession:(AVCaptureSession *)videoCaptureSession
                      audioCaptureSession:(AVCaptureSession *)audioCaptureSession
                      captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                    captureDeviceFactory:(CaptureDeviceBlock)captureDeviceFactory
-                videoDimensionsForFormat:(VideoDimensionsForFormatBlock)videoDimensionsForFormat
+                    captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+                videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
                                    error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");

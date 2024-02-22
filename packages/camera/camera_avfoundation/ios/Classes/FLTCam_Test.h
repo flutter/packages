@@ -7,11 +7,11 @@
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
-typedef CMVideoDimensions (^VideoDimensionsForFormatBlock)(AVCaptureDeviceFormat *);
+typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
 
 /// Factory block returning an AVCaptureDevice.
 /// Used in tests to inject a device into FLTCam.
-typedef AVCaptureDevice * (^CaptureDeviceBlock)(void);
+typedef AVCaptureDevice * (^CaptureDeviceFactory)(void);
 
 @interface FLTImageStreamHandler : NSObject <FlutterStreamHandler>
 
@@ -72,8 +72,8 @@ typedef AVCaptureDevice * (^CaptureDeviceBlock)(void);
                      videoCaptureSession:(AVCaptureSession *)videoCaptureSession
                      audioCaptureSession:(AVCaptureSession *)audioCaptureSession
                      captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                    captureDeviceFactory:(CaptureDeviceBlock)captureDeviceFactory
-                videoDimensionsForFormat:(VideoDimensionsForFormatBlock)videoDimensionsForFormat
+                    captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+                videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
                                    error:(NSError **)error;
 
 /// Start streaming images.

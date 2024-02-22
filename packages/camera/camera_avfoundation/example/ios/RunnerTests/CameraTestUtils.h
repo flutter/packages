@@ -18,7 +18,8 @@ extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessi
 extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
                                                    NSString *resolutionPreset);
 
-/// Creates an `FLTCam` with a given captureSession and resolutionPreset
+/// Creates an `FLTCam` with a given captureSession and resolutionPreset.
+/// Allows to inject a capture device and a block to compute the video dimensions.
 /// @param captureSession AVCaptureSession for video
 /// @param resolutionPreset preset for camera's captureSession resolution
 /// @param captureDevice AVCaptureDevice to be used
@@ -26,7 +27,7 @@ extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSess
 /// @return an FLTCam object.
 extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
     AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
-    VideoDimensionsForFormatBlock videoDimensionsForFormat);
+    VideoDimensionsForFormat videoDimensionsForFormat);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.

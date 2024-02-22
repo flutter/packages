@@ -51,7 +51,7 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
 
 FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
     AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
-    VideoDimensionsForFormatBlock videoDimensionsForFormat) {
+    VideoDimensionsForFormat videoDimensionsForFormat) {
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
       .andReturn(inputMock);
