@@ -58,7 +58,7 @@ class BillingClientManager {
   /// and [runWithClientNonRetryable] methods.
   @visibleForTesting
   late final BillingClient client =
-      BillingClient(_onPurchasesUpdated, _onUserChoiceAlternativeBilling);
+      BillingClient(_onPurchasesUpdated, onUserChoiceAlternativeBilling);
 
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
       StreamController<PurchasesResultWrapper>.broadcast();
@@ -183,7 +183,10 @@ class BillingClientManager {
     );
   }
 
-  void _onUserChoiceAlternativeBilling(UserChoiceDetailsWrapper event) {
+  /// Callback passed to [BillingClient] to use when customer chooses
+  /// alternative billing.
+  @visibleForTesting
+  void onUserChoiceAlternativeBilling(UserChoiceDetailsWrapper event) {
     if (_isDisposed) {
       return;
     }
