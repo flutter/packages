@@ -1,3 +1,7 @@
+## 6.2.5
+
+* Removes use of deprecated `renderView` API.
+
 ## 6.2.4
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
