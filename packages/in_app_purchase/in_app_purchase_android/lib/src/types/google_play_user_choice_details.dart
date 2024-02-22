@@ -7,10 +7,11 @@ import 'package:flutter/foundation.dart';
 /// Data structure representing a UserChoiceDetails.
 ///
 /// This wraps [`com.android.billingclient.api.UserChoiceDetails`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails)
+@immutable
 class GooglePlayUserChoiceDetails {
   /// Creates a new Google Play specific user choice billing details object with
   /// the provided details.
-  GooglePlayUserChoiceDetails({
+  const GooglePlayUserChoiceDetails({
     required this.originalExternalTransactionId,
     required this.externalTransactionToken,
     required this.products,
@@ -53,9 +54,10 @@ class GooglePlayUserChoiceDetails {
 /// Data structure representing a UserChoiceDetails product.
 ///
 /// This wraps [`com.android.billingclient.api.UserChoiceDetails.Product`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails.Product)
+@immutable
 class GooglePlayUserChoiceDetailsProduct {
   /// Creates UserChoiceDetailsProduct.
-  GooglePlayUserChoiceDetailsProduct(
+  const GooglePlayUserChoiceDetailsProduct(
       {required this.id, required this.offerToken, required this.productType});
 
   /// Returns the id of the product being purchased.
