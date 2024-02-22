@@ -71,11 +71,9 @@ class UserChoiceDetailsWrapper {
   final List<UserChoiceDetailsProductWrapper> products;
 }
 
-/// Data structure representing a UserChoiceDetails produce.
+/// Data structure representing a UserChoiceDetails product.
 ///
-/// This class includes a subset of fields in [UserChoiceDetailsWrapper].
-///
-/// This wraps [`com.android.billingclient.api.UserChoiceDetails`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails)
+/// This wraps [`com.android.billingclient.api.UserChoiceDetails.Product`](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceDetails.Product)
 //
 // See https://docs.flutter.dev/data-and-backend/serialization/json#generating-code-for-nested-classes
 // for explination for why this uses explicitToJson.
