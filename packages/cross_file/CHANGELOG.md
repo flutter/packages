@@ -1,9 +1,6 @@
 ## 0.3.4+1
 
-* Removes the following deprecated APIs from the web implementation:
-  * The `package:web/helpers.dart` import.
-  * `HttpRequest` from `package:web` (reimplemented with `XMLHttpRequest`)
-  * The `querySelector` and `createElement` top-level helpers from `package:web`.
+* Removes a few deprecated API usages.
 
 ## 0.3.4
 

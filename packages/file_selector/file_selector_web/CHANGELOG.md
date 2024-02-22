@@ -1,6 +1,6 @@
 ## 0.9.4+1
 
-* Removes uses of `package:web/helpers.dart`.
+* Removes a few deprecated API usages.
 
 ## 0.9.4
 

@@ -1,9 +1,6 @@
 ## 1.2.1
 
-* Removes usages of the following deprecated APIs:
-  * `window` from `dart:ui` (replaced by `PlatformDispatcher.instance.implicitView`)
-  * `HttpRequest` from `package:web` (reimplemented with an internal method)
-* Removes unused dependency on `package:http`.
+* Removes a few deprecated API usages.
 
 ## 1.2.0
 
