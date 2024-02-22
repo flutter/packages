@@ -115,6 +115,8 @@ class MapConfiguration {
   final String? cloudMapId;
 
   /// Locally configured JSON style.
+  ///
+  /// To clear a previously set style, set this to an empty string.
   final String? style;
 
   /// Returns a new options object containing only the values of this instance
