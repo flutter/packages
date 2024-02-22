@@ -1169,6 +1169,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   // TODO(camsim99): Clarify behavior when there is no current action.
+  // TODO(camsim99): Throw exception for AWB because I'm not handling this at all.
   /// Starts a focus and metering action.
   ///
   /// This method will modify and start the current action's metering points
