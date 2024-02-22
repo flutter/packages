@@ -613,6 +613,7 @@ void main() {
       fail('expected MapStyleException');
     } on MapStyleException catch (e) {
       expect(e.cause, isNotNull);
+      expect(await controller.getStyleError(), isNotNull);
     }
   });
 
