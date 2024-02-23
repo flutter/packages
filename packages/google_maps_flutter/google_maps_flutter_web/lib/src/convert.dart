@@ -532,14 +532,15 @@ String _sanitizeHtml(String htmlString) {
   try {
     // Firefox and Safari don't support Trusted Types yet.
     // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
-    trustedTypePolicy = window.trustedTypesNullable?.createPolicy(
-      'google_maps_flutter_sanitize',
-      TrustedTypePolicyOptions(
-        createHTML: (String html, JSAny? arguments) {
-          return sanitizeHtml(html);
-        }.toJS,
-      ),
-    );
+    trustedTypePolicy =
+        WindowWithTrustedTypes(window).trustedTypesNullable?.createPolicy(
+              'google_maps_flutter_sanitize',
+              TrustedTypePolicyOptions(
+                createHTML: (String html, JSAny? arguments) {
+                  return sanitizeHtml(html);
+                }.toJS,
+              ),
+            );
   } catch (_) {
     // Fallback to not using the trusted types policy.
   }
