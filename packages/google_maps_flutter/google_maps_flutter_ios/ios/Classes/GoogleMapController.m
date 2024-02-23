@@ -665,7 +665,7 @@
   if (myLocationButtonEnabled && myLocationButtonEnabled != (id)[NSNull null]) {
     [self setMyLocationButtonEnabled:[myLocationButtonEnabled boolValue]];
   }
-  NSString* style = data[@"style"];
+  NSString *style = data[@"style"];
   if (style) {
     self.styleError = [self setMapStyle:style];
   }

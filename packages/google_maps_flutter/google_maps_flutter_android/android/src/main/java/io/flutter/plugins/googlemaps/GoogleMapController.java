@@ -466,23 +466,23 @@ final class GoogleMapController
           break;
         }
       case "map#setStyle":
-      {
-        Object arg = call.arguments;
-        final String style = arg instanceof String ? (String) arg : null;
-        final boolean mapStyleSet = updateMapStyle(style);
-        ArrayList<Object> mapStyleResult = new ArrayList<>(2);
-        mapStyleResult.add(mapStyleSet);
-        if (!mapStyleSet) {
-          mapStyleResult.add(lastStyleError);
+        {
+          Object arg = call.arguments;
+          final String style = arg instanceof String ? (String) arg : null;
+          final boolean mapStyleSet = updateMapStyle(style);
+          ArrayList<Object> mapStyleResult = new ArrayList<>(2);
+          mapStyleResult.add(mapStyleSet);
+          if (!mapStyleSet) {
+            mapStyleResult.add(lastStyleError);
+          }
+          result.success(mapStyleResult);
+          break;
         }
-        result.success(mapStyleResult);
-        break;
-      }
       case "map#getStyleError":
-      {
-        result.success(lastStyleError);
-        break;
-      }
+        {
+          result.success(lastStyleError);
+          break;
+        }
       case "tileOverlays#update":
         {
           List<Map<String, ?>> tileOverlaysToAdd = call.argument("tileOverlaysToAdd");
@@ -941,9 +941,11 @@ final class GoogleMapController
 
   private boolean updateMapStyle(String style) {
     // Dart passes an empty string to indicate that the style should be cleared.
-    final MapStyleOptions mapStyleOptions = style == null || style.isEmpty() ? null : new MapStyleOptions(style);
+    final MapStyleOptions mapStyleOptions =
+        style == null || style.isEmpty() ? null : new MapStyleOptions(style);
     final boolean set = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
-    lastStyleError = set ? null : "Unable to set the map style. Please check console logs for errors.";
+    lastStyleError =
+        set ? null : "Unable to set the map style. Please check console logs for errors.";
     return set;
   }
 }

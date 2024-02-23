@@ -5,7 +5,6 @@
 package io.flutter.plugins.googlemaps;
 
 import androidx.annotation.Nullable;
-
 import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.List;
 import java.util.Map;
