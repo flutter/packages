@@ -144,6 +144,12 @@ class ExampleGoogleMapController {
         .moveCamera(cameraUpdate, mapId: mapId);
   }
 
+  /// Sets the styling of the base map.
+  Future<void> setMapStyle(String? mapStyle) {
+    return GoogleMapsFlutterPlatform.instance
+        .setMapStyle(mapStyle, mapId: mapId);
+  }
+
   /// Return [LatLngBounds] defining the region that is visible in a map.
   Future<LatLngBounds> getVisibleRegion() {
     return GoogleMapsFlutterPlatform.instance.getVisibleRegion(mapId: mapId);
@@ -187,11 +193,6 @@ class ExampleGoogleMapController {
   /// Returns the image bytes of the map
   Future<Uint8List?> takeSnapshot() {
     return GoogleMapsFlutterPlatform.instance.takeSnapshot(mapId: mapId);
-  }
-
-  /// Returns the last style error, if any.
-  Future<String?> getStyleError() {
-    return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
   }
 
   /// Disposes of the platform resources
@@ -244,7 +245,6 @@ class ExampleGoogleMap extends StatefulWidget {
     this.onTap,
     this.onLongPress,
     this.cloudMapId,
-    this.style,
   });
 
   /// Callback method for when the map is ready to be used.
@@ -352,9 +352,6 @@ class ExampleGoogleMap extends StatefulWidget {
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
   final String? cloudMapId;
-
-  /// The locally configured style for the map.
-  final String? style;
 
   /// Creates a [State] for this [ExampleGoogleMap].
   @override
@@ -542,6 +539,5 @@ MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
     cloudMapId: map.cloudMapId,
-    style: map.style,
   );
 }

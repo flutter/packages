@@ -444,46 +444,6 @@ void main() {
           expect(capturedOptions!.zoom, 12);
           expect(capturedOptions!.center, isNotNull);
         });
-
-        testWidgets('translates style option', (WidgetTester tester) async {
-          const String style = '''
-[{
-  "featureType": "poi.park",
-  "elementType": "labels.text.fill",
-  "stylers": [{"color": "#6b9a76"}]
-}]''';
-          controller = createController(
-              mapConfiguration: const MapConfiguration(style: style));
-          controller.debugSetOverrides(
-              createMap: (_, gmaps.MapOptions options) {
-            capturedOptions = options;
-            return map;
-          });
-
-          controller.init();
-
-          expect(capturedOptions, isNotNull);
-          expect(capturedOptions!.styles?.length, 1);
-        });
-
-        testWidgets('stores style errors for later querying',
-            (WidgetTester tester) async {
-          controller = createController(
-              mapConfiguration: const MapConfiguration(
-                  style: '[[invalid style', zoomControlsEnabled: true));
-          controller.debugSetOverrides(
-              createMap: (_, gmaps.MapOptions options) {
-            capturedOptions = options;
-            return map;
-          });
-
-          controller.init();
-
-          expect(controller.lastStyleError, isNotNull);
-          // Style failures should not prevent other options from being set.
-          expect(capturedOptions, isNotNull);
-          expect(capturedOptions!.zoomControl, true);
-        });
       });
 
       group('Traffic Layer', () {
@@ -521,7 +481,7 @@ void main() {
           ..init();
       });
 
-      group('updateMapConfiguration', () {
+      group('updateRawOptions', () {
         testWidgets('can update `options`', (WidgetTester tester) async {
           controller.updateMapConfiguration(const MapConfiguration(
             mapType: MapType.satellite,
@@ -544,27 +504,6 @@ void main() {
           ));
 
           expect(controller.trafficLayer, isNull);
-        });
-
-        testWidgets('can update style', (WidgetTester tester) async {
-          const String style = '''
-[{
-  "featureType": "poi.park",
-  "elementType": "labels.text.fill",
-  "stylers": [{"color": "#6b9a76"}]
-}]''';
-          controller
-              .updateMapConfiguration(const MapConfiguration(style: style));
-
-          expect(controller.styles.length, 1);
-        });
-
-        testWidgets('can update style', (WidgetTester tester) async {
-          controller.updateMapConfiguration(
-              const MapConfiguration(style: '[[[invalid style'));
-
-          expect(controller.styles, isEmpty);
-          expect(controller.lastStyleError, isNotNull);
         });
       });
 

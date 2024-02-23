@@ -67,11 +67,6 @@
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
-// The resulting error message, if any, from the last attempt to set the map style.
-// This is used to provide access to errors after the fact, since the map style is generally set at
-// creation time and there's no mechanism to return non-fatal error details during platform view
-// initialization.
-@property(nonatomic, copy) NSString *styleError;
 
 @end
 
@@ -405,15 +400,13 @@
     NSNumber *isBuildingsEnabled = @(self.mapView.buildingsEnabled);
     result(isBuildingsEnabled);
   } else if ([call.method isEqualToString:@"map#setStyle"]) {
-    id mapStyle = [call arguments];
-    self.styleError = [self setMapStyle:(mapStyle == [NSNull null] ? nil : mapStyle)];
-    if (self.styleError == nil) {
+    NSString *mapStyle = [call arguments];
+    NSString *error = [self setMapStyle:mapStyle];
+    if (error == nil) {
       result(@[ @(YES) ]);
     } else {
-      result(@[ @(NO), self.styleError ]);
+      result(@[ @(NO), error ]);
     }
-  } else if ([call.method isEqualToString:@"map#getStyleError"]) {
-    result(self.styleError);
   } else if ([call.method isEqualToString:@"map#getTileOverlayInfo"]) {
     NSString *rawTileOverlayId = call.arguments[@"tileOverlayId"];
     result([self.tileOverlaysController tileOverlayInfoWithIdentifier:rawTileOverlayId]);
@@ -513,7 +506,7 @@
 }
 
 - (NSString *)setMapStyle:(NSString *)mapStyle {
-  if (mapStyle.length == 0) {
+  if (mapStyle == (id)[NSNull null] || mapStyle.length == 0) {
     self.mapView.mapStyle = nil;
     return nil;
   }
@@ -664,10 +657,6 @@
   NSNumber *myLocationButtonEnabled = data[@"myLocationButtonEnabled"];
   if (myLocationButtonEnabled && myLocationButtonEnabled != (id)[NSNull null]) {
     [self setMyLocationButtonEnabled:[myLocationButtonEnabled boolValue]];
-  }
-  NSString *style = data[@"style"];
-  if (style) {
-    self.styleError = [self setMapStyle:style];
   }
 }
 

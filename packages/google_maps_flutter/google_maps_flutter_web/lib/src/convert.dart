@@ -80,7 +80,6 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
-  // See updateMapConfiguration for why this is not using configuration.style.
   options.styles = styles;
 
   options.mapId = configuration.cloudMapId;
