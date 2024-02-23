@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -437,5 +438,80 @@ void main() {
           'goldens/material_test.overflow_bar_properties.overflow.png'),
       skip: !runGoldens,
     );
+  });
+
+    testWidgets('Implement InkResponse properties', (WidgetTester tester) async {
+    final Runtime runtime = setupRuntime();
+    final DynamicContent data = DynamicContent();
+    final List<String> eventLog = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: RemoteWidget(
+          runtime: runtime,
+          data: data,
+          widget: const FullyQualifiedWidgetName(testName, 'root'),
+          onEvent: (String eventName, DynamicMap eventArguments) {
+            eventLog.add('$eventName $eventArguments');
+          },
+        ),
+      ),
+    );
+    expect(
+      tester.takeException().toString(),
+      contains('Could not find remote widget named'),
+    );
+
+    runtime.update(testName, parseLibraryFile('''
+      import core;
+      import material;
+      widget root = Scaffold(
+        body: Center(
+          child: InkResponse(
+            onTap: event 'onTap' {},
+            onHover: event 'onHover' {},
+            radius: 1.0,
+            borderRadius: [{x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}],
+            hoverColor: 0xFF00FF00,
+            splashColor: 0xAA0000FF,
+            highlightColor: 0xAAFF0000,
+            containedInkWell: true,
+            highlightShape: 'circle',
+            child: Text(text: 'InkResponse'),
+          ),
+        ),
+      );
+    '''));
+    await tester.pump();
+
+    // Hover
+    final Offset center = tester.getCenter(find.byType(InkResponse));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    addTearDown(gesture.removePointer);
+    await gesture.moveTo(center);
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(RemoteWidget),
+      matchesGoldenFile('goldens/material_test.ink_response_hover.png'),
+      skip: !runGoldens,
+    );
+    expect(eventLog, contains('onHover {}'));
+
+    // Tap
+    await gesture.down(center);
+    await tester.pump(); // start gesture
+    await tester.pump(const Duration(milliseconds: 200)); // wait for splash to be well under way
+
+    await expectLater(
+      find.byType(RemoteWidget),
+      matchesGoldenFile('goldens/material_test.ink_response_tap.png'),
+      skip: !runGoldens,
+    );
+    await gesture.up();
+    await tester.pump();
+
+    expect(eventLog, contains('onTap {}'));
   });
 }
