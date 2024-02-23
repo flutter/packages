@@ -89,7 +89,7 @@ void main() {
       () async {
         final GoogleMapsFlutterPlatform platform =
             BuildViewGoogleMapsFlutterPlatform();
-        expect(await platform.getStyleError(), null);
+        expect(await platform.getStyleError(mapId: 0), null);
       },
     );
   });
