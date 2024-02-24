@@ -106,7 +106,10 @@ void main() {
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
-      widget root = Opacity(onEnd: event 'end' {});
+      widget root = Opacity(
+        onEnd: event 'end' {},
+        child: Placeholder(),
+      );
     '''));
     await tester.pump();
     expect(tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).onEnd, isNot(isNull));

@@ -35,6 +35,7 @@ import 'runtime.dart';
 ///  * [InkWell]
 ///  * [LinearProgressIndicator]
 ///  * [ListTile]
+///  * [Material]
 ///  * [OutlinedButton]
 ///  * [Scaffold]
 ///  * [TextButton]
@@ -339,44 +340,44 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
-  'InkResponse': (BuildContext context, DataSource source) {
-    return InkResponse(
-      onTap: source.voidHandler(['onTap']),
-      onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
-      onTapUp: source.handler(['onTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
-      onTapCancel: source.voidHandler(['onTapCancel']),
-      onDoubleTap: source.voidHandler(['onDoubleTap']),
-      onLongPress: source.voidHandler(['onLongPress']),
-      onSecondaryTap: source.voidHandler(['onSecondaryTap']),
-      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
-      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
-      onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
-      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
-      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
-      // MouseCursor? mouseCursor,
-      containedInkWell: source.v<bool>(['containedInkWell']) ?? false,
-      highlightShape: ArgumentDecoders.enumValue<BoxShape>(BoxShape.values, source, ['highlightShape']) ?? BoxShape.circle,
-      radius: source.v<double>(['radius']),
-      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])
-          ?.resolve(Directionality.of(context)),
-      customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
-      focusColor: ArgumentDecoders.color(source, ['focusColor']),
-      hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
-      highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
-      // MaterialStateProperty<Color?>? overlayColor,
-      splashColor: ArgumentDecoders.color(source, ['splashColor']),
-      // InteractiveInkFeatureFactory? splashFactory,
-      enableFeedback: source.v<bool>(['enableFeedback']) ?? true,
-      excludeFromSemantics: source.v<bool>(['excludeFromSemantics']) ?? false,
-      // FocusNode? focusNode,
-      canRequestFocus: source.v<bool>(['canRequestFocus']) ?? true,
-      onFocusChange: source.handler(['onFocusChange'], (VoidCallback trigger) => (bool focus) => trigger()),
-      autofocus: source.v<bool>(['autofocus']) ?? false,
-      hoverDuration:
-          ArgumentDecoders.duration(source, ['hoverDuration'], context),
-      child: source.child(['child']),
-    );
-  },
+  // 'InkResponse': (BuildContext context, DataSource source) {
+  //   return InkResponse(
+  //     onTap: source.voidHandler(['onTap']),
+  //     onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+  //     onTapUp: source.handler(['onTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+  //     onTapCancel: source.voidHandler(['onTapCancel']),
+  //     onDoubleTap: source.voidHandler(['onDoubleTap']),
+  //     onLongPress: source.voidHandler(['onLongPress']),
+  //     onSecondaryTap: source.voidHandler(['onSecondaryTap']),
+  //     onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+  //     onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+  //     onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
+  //     onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
+  //     onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+  //     // MouseCursor? mouseCursor,
+  //     containedInkWell: source.v<bool>(['containedInkWell']) ?? false,
+  //     highlightShape: ArgumentDecoders.enumValue<BoxShape>(BoxShape.values, source, ['highlightShape']) ?? BoxShape.circle,
+  //     radius: source.v<double>(['radius']),
+  //     borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])
+  //         ?.resolve(Directionality.of(context)),
+  //     customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
+  //     focusColor: ArgumentDecoders.color(source, ['focusColor']),
+  //     hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
+  //     highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
+  //     // MaterialStateProperty<Color?>? overlayColor,
+  //     splashColor: ArgumentDecoders.color(source, ['splashColor']),
+  //     // InteractiveInkFeatureFactory? splashFactory,
+  //     enableFeedback: source.v<bool>(['enableFeedback']) ?? true,
+  //     excludeFromSemantics: source.v<bool>(['excludeFromSemantics']) ?? false,
+  //     // FocusNode? focusNode,
+  //     canRequestFocus: source.v<bool>(['canRequestFocus']) ?? true,
+  //     onFocusChange: source.handler(['onFocusChange'], (VoidCallback trigger) => (bool focus) => trigger()),
+  //     autofocus: source.v<bool>(['autofocus']) ?? false,
+  //     hoverDuration:
+  //         ArgumentDecoders.duration(source, ['hoverDuration'], context),
+  //     child: source.child(['child']),
+  //   );
+  // },
 
   'InkWell': (BuildContext context, DataSource source) {
     // not implemented: onHighlightChanged, onHover; mouseCursor; focusColor, hoverColor, highlightColor, overlayColor, splashColor; splashFactory; focusNode, onFocusChange
@@ -433,6 +434,23 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       horizontalTitleGap: source.v<double>(['horizontalTitleGap']),
       minVerticalPadding: source.v<double>(['minVerticalPadding']),
       minLeadingWidth: source.v<double>(['minLeadingWidth']),
+    );
+  },
+
+  'Material': (BuildContext context, DataSource source) {
+    return Material(
+      type: ArgumentDecoders.enumValue<MaterialType>(MaterialType.values,source, ['type']) ?? MaterialType.canvas,
+      elevation: source.v<double>(['elevation']) ?? 0.0,
+      color: ArgumentDecoders.color(source, ['color']),
+      shadowColor: ArgumentDecoders.color(source, ['shadowColor']),
+      surfaceTintColor: ArgumentDecoders.color(source, ['surfaceTintColor']),
+      textStyle: ArgumentDecoders.textStyle(source, ['textStyle']),
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']),
+      shape: ArgumentDecoders.shapeBorder(source, ['shape']),
+      borderOnForeground: source.v<bool>(['borderOnForeground']) ?? true,
+      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      animationDuration: ArgumentDecoders.duration(source, ['animationDuration'], context),
+      child: source.child(['child']),
     );
   },
 
