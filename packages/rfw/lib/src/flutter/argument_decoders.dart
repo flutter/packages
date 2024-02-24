@@ -21,7 +21,7 @@ import 'runtime.dart';
 /// This inherited widget allows a duration and a curve (defaulting to 200ms and
 /// [Curves.fastOutSlowIn]) to be set as the default to use when local widgets
 /// use the [ArgumentsDecoder.curve] and [ArgumentsDecoder.duration] methods and
-/// find that the [DataSource] has no explicit curve or duration.f
+/// find that the [DataSource] has no explicit curve or duration.
 class AnimationDefaults extends InheritedWidget {
   /// Configures an [AnimanionDefaults] widget.
   ///
@@ -485,7 +485,7 @@ class ArgumentDecoders {
         return BoxDecoration(
           color: color(source, [...key, 'color']),
           image: decorationImage(source, [...key, 'image']),
-          border: border(source, [...key, 'bordefr']),
+          border: border(source, [...key, 'border']),
           borderRadius: borderRadius(source, [...key, 'borderRadius']),
           boxShadow: list<BoxShadow>(source, [...key, 'boxShadow'], boxShadow),
           gradient: gradient(source, [...key, 'gradient']),
