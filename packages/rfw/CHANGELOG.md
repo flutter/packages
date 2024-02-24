@@ -1,3 +1,8 @@
+## 1.0.24
+* Adds `InkResponse` material widget.
+* Adds `Material` material widget.
+* Fixes the `Opacity` core widget.
+
 ## 1.0.23
 
 * Replaces usage of deprecated Flutter APIs.
