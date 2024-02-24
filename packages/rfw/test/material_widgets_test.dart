@@ -470,7 +470,6 @@ void main() {
           child: InkResponse(
             onTap: event 'onTap' {},
             onHover: event 'onHover' {},
-            radius: 1.0,
             borderRadius: [{x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}],
             hoverColor: 0xFF00FF00,
             splashColor: 0xAA0000FF,
