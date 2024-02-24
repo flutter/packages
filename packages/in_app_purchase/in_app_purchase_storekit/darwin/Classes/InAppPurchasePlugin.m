@@ -87,30 +87,6 @@
   return self;
 }
 
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"-[InAppPurchasePlugin retrieveReceiptData:result:]" isEqualToString:call.method]) {
-    [self retrieveReceiptData:call result:result];
-  } else if ([@"-[InAppPurchasePlugin refreshReceipt:result:]" isEqualToString:call.method]) {
-    [self refreshReceipt:call result:result];
-  } else if ([@"-[SKPaymentQueue startObservingTransactionQueue]" isEqualToString:call.method]) {
-    [self startObservingPaymentQueue:result];
-  } else if ([@"-[SKPaymentQueue stopObservingTransactionQueue]" isEqualToString:call.method]) {
-    [self stopObservingPaymentQueue:result];
-#if TARGET_OS_IOS
-  } else if ([@"-[SKPaymentQueue registerDelegate]" isEqualToString:call.method]) {
-    [self registerPaymentQueueDelegate:result];
-#endif
-  } else if ([@"-[SKPaymentQueue removeDelegate]" isEqualToString:call.method]) {
-    [self removePaymentQueueDelegate:result];
-#if TARGET_OS_IOS
-  } else if ([@"-[SKPaymentQueue showPriceConsentIfNeeded]" isEqualToString:call.method]) {
-    [self showPriceConsentIfNeeded:result];
-#endif
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
-}
-
 - (nullable NSNumber *)canMakePaymentsWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return @([SKPaymentQueue canMakePayments]);
@@ -270,62 +246,61 @@
 #endif
 }
 
-- (void)retrieveReceiptData:(FlutterMethodCall *)call result:(FlutterResult)result {
-  FlutterError *error = nil;
-  NSString *receiptData = [self.receiptManager retrieveReceiptWithError:&error];
-  if (error) {
-    result(error);
-    return;
+- (nullable NSString *)retrieveReceiptDataWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  FlutterError *flutterError;
+  NSString *receiptData = [self.receiptManager retrieveReceiptWithError:&flutterError];
+  if (flutterError) {
+    *error = flutterError;
+    return nil;
   }
-  result(receiptData);
+  return receiptData;
 }
 
-- (void)refreshReceipt:(FlutterMethodCall *)call result:(FlutterResult)result {
-  NSDictionary *arguments = call.arguments;
+- (void)refreshReceiptReceiptProperties:(nullable NSDictionary *)receiptProperties
+                             completion:(nonnull void (^)(FlutterError *_Nullable))completion {
   SKReceiptRefreshRequest *request;
-  if (arguments) {
-    if (![arguments isKindOfClass:[NSDictionary class]]) {
-      result([FlutterError errorWithCode:@"storekit_invalid_argument"
-                                 message:@"Argument type of startRequest is not array"
-                                 details:call.arguments]);
-      return;
-    }
+  if (receiptProperties) {
+    // if recieptProperties is not null, this call is for testing.
     NSMutableDictionary *properties = [NSMutableDictionary new];
-    properties[SKReceiptPropertyIsExpired] = arguments[@"isExpired"];
-    properties[SKReceiptPropertyIsRevoked] = arguments[@"isRevoked"];
-    properties[SKReceiptPropertyIsVolumePurchase] = arguments[@"isVolumePurchase"];
+    properties[SKReceiptPropertyIsExpired] = receiptProperties[@"isExpired"];
+    properties[SKReceiptPropertyIsRevoked] = receiptProperties[@"isRevoked"];
+    properties[SKReceiptPropertyIsVolumePurchase] = receiptProperties[@"isVolumePurchase"];
     request = [self getRefreshReceiptRequest:properties];
   } else {
     request = [self getRefreshReceiptRequest:nil];
   }
+
   FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
   [handler startProductRequestWithCompletionHandler:^(SKProductsResponse *_Nullable response,
                                                       NSError *_Nullable error) {
+    FlutterError *requestError;
     if (error) {
-      result([FlutterError errorWithCode:@"storekit_refreshreceiptrequest_platform_error"
-                                 message:error.localizedDescription
-                                 details:error.description]);
-      return;
+      requestError = [FlutterError errorWithCode:@"storekit_refreshreceiptrequest_platform_error"
+                                         message:error.localizedDescription
+                                         details:error.description];
+      completion(requestError);
     }
-    result(nil);
+    completion(nil);
     [weakSelf.requestHandlers removeObject:handler];
   }];
 }
 
-- (void)startObservingPaymentQueue:(FlutterResult)result {
+- (void)startObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [_paymentQueueHandler startObservingPaymentQueue];
-  result(nil);
 }
 
-- (void)stopObservingPaymentQueue:(FlutterResult)result {
+- (void)stopObservingPaymentQueueWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [_paymentQueueHandler stopObservingPaymentQueue];
-  result(nil);
 }
 
+- (void)registerPaymentQueueDelegateWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
-- (void)registerPaymentQueueDelegate:(FlutterResult)result {
   if (@available(iOS 13.0, *)) {
     _paymentQueueDelegateCallbackChannel = [FlutterMethodChannel
         methodChannelWithName:@"plugins.flutter.io/in_app_purchase_payment_queue_delegate"
@@ -335,27 +310,25 @@
         initWithMethodChannel:_paymentQueueDelegateCallbackChannel];
     _paymentQueueHandler.delegate = _paymentQueueDelegate;
   }
-  result(nil);
-}
 #endif
+}
 
-- (void)removePaymentQueueDelegate:(FlutterResult)result {
+- (void)removePaymentQueueDelegateWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   if (@available(iOS 13.0, *)) {
     _paymentQueueHandler.delegate = nil;
   }
   _paymentQueueDelegate = nil;
   _paymentQueueDelegateCallbackChannel = nil;
-  result(nil);
 }
 
+- (void)showPriceConsentIfNeededWithError:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
-- (void)showPriceConsentIfNeeded:(FlutterResult)result {
   if (@available(iOS 13.4, *)) {
     [_paymentQueueHandler showPriceConsentIfNeeded];
   }
-  result(nil);
-}
 #endif
+}
 
 - (id)getNonNullValueFromDictionary:(NSDictionary *)dictionary forKey:(NSString *)key {
   id value = dictionary[key];

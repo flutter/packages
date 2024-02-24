@@ -6,7 +6,6 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-import '../channel.dart';
 import '../messages.g.dart';
 import 'sk_product_wrapper.dart';
 
@@ -54,9 +53,6 @@ class SKRequestMaker {
   /// * isVolumePurchase: whether the receipt is a Volume Purchase Plan receipt.
   Future<void> startRefreshReceiptRequest(
       {Map<String, dynamic>? receiptProperties}) {
-    return channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin refreshReceipt:result:]',
-      receiptProperties,
-    );
+    return _hostApi.refreshReceipt(receiptProperties: receiptProperties);
   }
 }
