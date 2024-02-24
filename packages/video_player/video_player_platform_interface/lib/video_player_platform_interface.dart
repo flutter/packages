@@ -441,6 +441,7 @@ class VideoPlayerAndroidOptions {
 
   /// Sets whether to enable fallback to lower-priority decoders if decoder initialization fails.
   /// This may result in using a decoder that is less efficient or slower than the primary decoder.
+  /// Defaults to false.
   final bool enableDecoderFallback;
 }
 
