@@ -23,7 +23,8 @@ void main() {
     );
   });
 
-  test('default implementation setAndroidOptions throws unimplemented', () async {
+  test('default implementation setAndroidOptions throws unimplemented',
+      () async {
     await expectLater(
       () => initialInstance.setAndroidOptions(
         1,

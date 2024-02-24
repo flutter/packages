@@ -13,12 +13,12 @@ void main() {
       expect(options.enableDecoderFallback, false);
     },
   );
-
   test(
     'VideoPlayerAndroidOptions extensionMode defaults to extensionRendererModeOff',
     () {
       const VideoPlayerAndroidOptions options = VideoPlayerAndroidOptions();
-      expect(options.extensionMode, AndroidVideoPlayerExtensionMode.extensionRendererModeOff);
+      expect(options.extensionMode,
+          AndroidVideoPlayerExtensionMode.extensionRendererModeOff);
     },
   );
 }
