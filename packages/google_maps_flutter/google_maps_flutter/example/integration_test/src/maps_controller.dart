@@ -454,9 +454,9 @@ void runTests() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: kInitialCameraPosition,
         style: '[[[this is an invalid style',
@@ -464,7 +464,7 @@ void runTests() {
           controllerCompleter.complete(controller);
         },
       ),
-    ));
+    );
 
     final GoogleMapController controller = await controllerCompleter.future;
     final String? error = await controller.getStyleError();
