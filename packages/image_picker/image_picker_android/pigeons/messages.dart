@@ -14,9 +14,10 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 class GeneralOptions {
-  GeneralOptions(this.allowMultiple, this.usePhotoPicker);
+  GeneralOptions(this.allowMultiple, this.usePhotoPicker, this.limit);
   bool allowMultiple;
   bool usePhotoPicker;
+  int? limit;
 }
 
 /// Options for image selection and output.
