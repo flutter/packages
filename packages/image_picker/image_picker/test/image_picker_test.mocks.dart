@@ -158,6 +158,7 @@ class MockImagePickerPlatform extends _i1.Mock
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -167,6 +168,7 @@ class MockImagePickerPlatform extends _i1.Mock
             #maxWidth: maxWidth,
             #maxHeight: maxHeight,
             #imageQuality: imageQuality,
+            #limit: limit,
           },
         ),
         returnValue: _i4.Future<List<_i5.XFile>?>.value(),
