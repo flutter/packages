@@ -190,7 +190,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)pickMultiImageWithMaxSize:(nonnull FLTMaxSize *)maxSize
                           quality:(nullable NSNumber *)imageQuality
                      fullMetadata:(BOOL)fullMetadata
-                     limit:(nullable NSNumber *)limit
+                            limit:(nullable NSNumber *)limit
                        completion:(nonnull void (^)(NSArray<NSString *> *_Nullable,
                                                     FlutterError *_Nullable))completion {
   [self cancelInProgressCall];
@@ -200,7 +200,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.imageQuality = imageQuality;
   context.requestFullMetadata = fullMetadata;
   context.maxImageCount = limit.intValue;
-  
+
   if (@available(iOS 14, *)) {
     [self launchPHPickerWithContext:context];
   } else {
