@@ -110,7 +110,8 @@ class MediaSelectionOptions {
   static MediaSelectionOptions decode(Object result) {
     result as List<Object?>;
     return MediaSelectionOptions(
-      imageSelectionOptions: ImageSelectionOptions.decode(result[0]! as List<Object?>),
+      imageSelectionOptions:
+          ImageSelectionOptions.decode(result[0]! as List<Object?>),
     );
   }
 }
@@ -160,9 +161,7 @@ class SourceSpecification {
     result as List<Object?>;
     return SourceSpecification(
       type: SourceType.values[result[0]! as int],
-      camera: result[1] != null
-          ? SourceCamera.values[result[1]! as int]
-          : null,
+      camera: result[1] != null ? SourceCamera.values[result[1]! as int] : null,
     );
   }
 }
@@ -269,19 +268,19 @@ class _ImagePickerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return CacheRetrievalError.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return CacheRetrievalResult.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return GeneralOptions.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return ImageSelectionOptions.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return MediaSelectionOptions.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return SourceSpecification.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return VideoSelectionOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -303,12 +302,16 @@ class ImagePickerApi {
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
-  Future<List<String?>> pickImages(SourceSpecification arg_source, ImageSelectionOptions arg_options, GeneralOptions arg_generalOptions) async {
+  Future<List<String?>> pickImages(
+      SourceSpecification arg_source,
+      ImageSelectionOptions arg_options,
+      GeneralOptions arg_generalOptions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.pickImages', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_source, arg_options, arg_generalOptions]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_source, arg_options, arg_generalOptions])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -334,12 +337,16 @@ class ImagePickerApi {
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
-  Future<List<String?>> pickVideos(SourceSpecification arg_source, VideoSelectionOptions arg_options, GeneralOptions arg_generalOptions) async {
+  Future<List<String?>> pickVideos(
+      SourceSpecification arg_source,
+      VideoSelectionOptions arg_options,
+      GeneralOptions arg_generalOptions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.pickVideos', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_source, arg_options, arg_generalOptions]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_source, arg_options, arg_generalOptions])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -365,12 +372,15 @@ class ImagePickerApi {
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
-  Future<List<String?>> pickMedia(MediaSelectionOptions arg_mediaSelectionOptions, GeneralOptions arg_generalOptions) async {
+  Future<List<String?>> pickMedia(
+      MediaSelectionOptions arg_mediaSelectionOptions,
+      GeneralOptions arg_generalOptions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.pickMedia', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_mediaSelectionOptions, arg_generalOptions]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_mediaSelectionOptions, arg_generalOptions])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -397,8 +407,7 @@ class ImagePickerApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.retrieveLostResults', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

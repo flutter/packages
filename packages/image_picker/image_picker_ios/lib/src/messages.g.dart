@@ -142,11 +142,11 @@ class _ImagePickerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return MaxSize.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return MediaSelectionOptions.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return SourceSpecification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -164,15 +164,21 @@ class ImagePickerApi {
 
   static const MessageCodec<Object?> codec = _ImagePickerApiCodec();
 
-  Future<String?> pickImage(SourceSpecification arg_source, MaxSize arg_maxSize, int? arg_imageQuality, bool arg_requestFullMetadata) async {
-    const String channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage';
+  Future<String?> pickImage(SourceSpecification arg_source, MaxSize arg_maxSize,
+      int? arg_imageQuality, bool arg_requestFullMetadata) async {
+    const String channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_source, arg_maxSize, arg_imageQuality, arg_requestFullMetadata]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_source,
+      arg_maxSize,
+      arg_imageQuality,
+      arg_requestFullMetadata
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -186,15 +192,24 @@ class ImagePickerApi {
     }
   }
 
-  Future<List<String?>> pickMultiImage(MaxSize arg_maxSize, int? arg_imageQuality, bool arg_requestFullMetadata, int? arg_limit) async {
-    const String channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage';
+  Future<List<String?>> pickMultiImage(
+      MaxSize arg_maxSize,
+      int? arg_imageQuality,
+      bool arg_requestFullMetadata,
+      int? arg_limit) async {
+    const String channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_maxSize, arg_imageQuality, arg_requestFullMetadata, arg_limit]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_maxSize,
+      arg_imageQuality,
+      arg_requestFullMetadata,
+      arg_limit
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -213,15 +228,17 @@ class ImagePickerApi {
     }
   }
 
-  Future<String?> pickVideo(SourceSpecification arg_source, int? arg_maxDurationSeconds) async {
-    const String channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo';
+  Future<String?> pickVideo(
+      SourceSpecification arg_source, int? arg_maxDurationSeconds) async {
+    const String channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_source, arg_maxDurationSeconds]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_source, arg_maxDurationSeconds]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -236,15 +253,17 @@ class ImagePickerApi {
   }
 
   /// Selects images and videos and returns their paths.
-  Future<List<String?>> pickMedia(MediaSelectionOptions arg_mediaSelectionOptions) async {
-    const String channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia';
+  Future<List<String?>> pickMedia(
+      MediaSelectionOptions arg_mediaSelectionOptions) async {
+    const String channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_mediaSelectionOptions]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_mediaSelectionOptions]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

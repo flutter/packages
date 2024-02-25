@@ -34,11 +34,11 @@ class _TestHostImagePickerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return MaxSize.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return MediaSelectionOptions.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return SourceSpecification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -47,31 +47,40 @@ class _TestHostImagePickerApiCodec extends StandardMessageCodec {
 }
 
 abstract class TestHostImagePickerApi {
-  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestHostImagePickerApiCodec();
 
-  Future<String?> pickImage(SourceSpecification source, MaxSize maxSize, int? imageQuality, bool requestFullMetadata);
+  Future<String?> pickImage(SourceSpecification source, MaxSize maxSize,
+      int? imageQuality, bool requestFullMetadata);
 
-  Future<List<String?>> pickMultiImage(MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit);
+  Future<List<String?>> pickMultiImage(
+      MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit);
 
-  Future<String?> pickVideo(SourceSpecification source, int? maxDurationSeconds);
+  Future<String?> pickVideo(
+      SourceSpecification source, int? maxDurationSeconds);
 
   /// Selects images and videos and returns their paths.
   Future<List<String?>> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 
-  static void setup(TestHostImagePickerApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestHostImagePickerApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage was null.');
+              'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final SourceSpecification? arg_source = (args[0] as SourceSpecification?);
+          final SourceSpecification? arg_source =
+              (args[0] as SourceSpecification?);
           assert(arg_source != null,
               'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage was null, expected non-null SourceSpecification.');
           final MaxSize? arg_maxSize = (args[1] as MaxSize?);
@@ -82,26 +91,32 @@ abstract class TestHostImagePickerApi {
           assert(arg_requestFullMetadata != null,
               'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage was null, expected non-null bool.');
           try {
-            final String? output = await api.pickImage(arg_source!, arg_maxSize!, arg_imageQuality, arg_requestFullMetadata!);
+            final String? output = await api.pickImage(arg_source!,
+                arg_maxSize!, arg_imageQuality, arg_requestFullMetadata!);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage', codec,
+          'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage was null.');
+              'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final MaxSize? arg_maxSize = (args[0] as MaxSize?);
           assert(arg_maxSize != null,
@@ -112,12 +127,14 @@ abstract class TestHostImagePickerApi {
               'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage was null, expected non-null bool.');
           final int? arg_limit = (args[3] as int?);
           try {
-            final List<String?> output = await api.pickMultiImage(arg_maxSize!, arg_imageQuality, arg_requestFullMetadata!, arg_limit);
+            final List<String?> output = await api.pickMultiImage(arg_maxSize!,
+                arg_imageQuality, arg_requestFullMetadata!, arg_limit);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -127,23 +144,29 @@ abstract class TestHostImagePickerApi {
           'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo was null.');
+              'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final SourceSpecification? arg_source = (args[0] as SourceSpecification?);
+          final SourceSpecification? arg_source =
+              (args[0] as SourceSpecification?);
           assert(arg_source != null,
               'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo was null, expected non-null SourceSpecification.');
           final int? arg_maxDurationSeconds = (args[1] as int?);
           try {
-            final String? output = await api.pickVideo(arg_source!, arg_maxDurationSeconds);
+            final String? output =
+                await api.pickVideo(arg_source!, arg_maxDurationSeconds);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -153,22 +176,28 @@ abstract class TestHostImagePickerApi {
           'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia was null.');
+              'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final MediaSelectionOptions? arg_mediaSelectionOptions = (args[0] as MediaSelectionOptions?);
+          final MediaSelectionOptions? arg_mediaSelectionOptions =
+              (args[0] as MediaSelectionOptions?);
           assert(arg_mediaSelectionOptions != null,
               'Argument for dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia was null, expected non-null MediaSelectionOptions.');
           try {
-            final List<String?> output = await api.pickMedia(arg_mediaSelectionOptions!);
+            final List<String?> output =
+                await api.pickMedia(arg_mediaSelectionOptions!);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
