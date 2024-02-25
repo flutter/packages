@@ -27,7 +27,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.4
-  pigeon: ^9.2.5
+  pigeon: ^17.0.0
 
 topics:
   - camera
