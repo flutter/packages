@@ -331,6 +331,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -372,6 +373,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -379,6 +381,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -386,6 +389,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -393,6 +397,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -400,6 +405,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -407,6 +413,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -414,6 +421,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -771,6 +779,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -812,6 +821,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -819,6 +829,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -826,6 +837,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -833,6 +845,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -840,6 +853,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -847,6 +861,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -854,6 +869,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -1503,6 +1519,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -1555,6 +1572,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1562,6 +1580,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1569,6 +1588,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1576,6 +1596,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1583,6 +1604,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1590,6 +1612,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1597,6 +1620,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -1663,6 +1687,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -1685,6 +1710,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': false,
+                'limit': null,
               }),
         ],
       );
