@@ -50,11 +50,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) async {
     final List<dynamic> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
+      limit: limit,
     );
     if (paths.isEmpty) {
       return null;
@@ -67,6 +69,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
@@ -81,6 +84,10 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
+    if (limit != null && limit < 0) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
+    }
+
     return _hostApi.pickImages(
       SourceSpecification(type: SourceType.gallery),
       ImageSelectionOptions(
@@ -88,7 +95,9 @@ class ImagePickerAndroid extends ImagePickerPlatform {
           maxHeight: maxHeight,
           quality: imageQuality ?? 100),
       GeneralOptions(
-          allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker),
+          allowMultiple: true,
+          usePhotoPicker: useAndroidPhotoPicker,
+          limit: limit),
     );
   }
 
@@ -196,11 +205,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) async {
     final List<dynamic> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
+      limit: limit,
     );
     if (paths.isEmpty) {
       return null;
@@ -218,6 +229,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       GeneralOptions(
         allowMultiple: options.allowMultiple,
         usePhotoPicker: useAndroidPhotoPicker,
+        limit: options.limit,
       ),
     ))
         .map((String? path) => XFile(path!))

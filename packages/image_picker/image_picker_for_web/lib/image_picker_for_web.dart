@@ -199,12 +199,15 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   }
 
   /// Injects a file input, and returns a list of XFile images that the user selected locally.
+  /// `limit` arguments is not currently supported. If these argument is supplied,
+  /// it will be silently ignored.
   @override
   @Deprecated('Use getMultiImageWithOptions instead.')
   Future<List<XFile>> getMultiImage({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) async {
     return getMultiImageWithOptions(
       options: MultiImagePickerOptions(
@@ -213,6 +216,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
           maxHeight: maxHeight,
           imageQuality: imageQuality,
         ),
+        limit: limit,
       ),
     );
   }

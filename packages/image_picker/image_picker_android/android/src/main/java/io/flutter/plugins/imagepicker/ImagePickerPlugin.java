@@ -6,7 +6,10 @@ package io.flutter.plugins.imagepicker;
 
 import android.app.Activity;
 import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ext.SdkExtensions;
+import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -317,7 +320,18 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
     setCameraDevice(delegate, source);
     if (generalOptions.getAllowMultiple()) {
-      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+      Long limit = generalOptions.getLimit();
+      int effectiveLimit;
+
+      if (limit != null) {
+          effectiveLimit = Math.toIntExact(limit);
+      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
+          effectiveLimit = MediaStore.getPickImagesMaxLimit();
+      } else {
+          effectiveLimit = Integer.MAX_VALUE;
+      }
+
+      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), effectiveLimit, result);
     } else {
       switch (source.getType()) {
         case GALLERY:

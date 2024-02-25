@@ -61,12 +61,14 @@ class _ApiLogger implements TestHostImagePickerApi {
     MaxSize maxSize,
     int? imageQuality,
     bool requestFullMetadata,
+    int? limit,
   ) async {
     calls.add(_LoggedMethodCall('pickMultiImage', arguments: <String, dynamic>{
       'maxWidth': maxSize.width,
       'maxHeight': maxSize.height,
       'imageQuality': imageQuality,
       'requestFullMetadata': requestFullMetadata,
+      'limit': limit,
     }));
     return returnValue as List<String?>;
   }

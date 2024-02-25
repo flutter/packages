@@ -6,6 +6,8 @@ package io.flutter.plugins.imagepicker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.os.Bundle;
+import android.os.ext.SdkExtensions;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
@@ -297,8 +299,19 @@ public class ImagePickerDelegate
     Intent pickMediaIntent;
     if (generalOptions.getUsePhotoPicker()) {
       if (generalOptions.getAllowMultiple()) {
+        Long limit = generalOptions.getLimit();
+        int effectiveLimit;
+
+        if (limit != null) {
+            effectiveLimit = Math.toIntExact(limit);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
+            effectiveLimit = MediaStore.getPickImagesMaxLimit();
+        } else {
+            effectiveLimit = Integer.MAX_VALUE;
+        }
+
         pickMediaIntent =
-            new ActivityResultContracts.PickMultipleVisualMedia()
+            new ActivityResultContracts.PickMultipleVisualMedia(effectiveLimit)
                 .createIntent(
                     activity,
                     new PickVisualMediaRequest.Builder()
@@ -426,13 +439,14 @@ public class ImagePickerDelegate
   public void chooseMultiImageFromGallery(
       @NonNull ImageSelectionOptions options,
       boolean usePhotoPicker,
+      int limit,
       @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
     }
 
-    launchMultiPickImageFromGalleryIntent(usePhotoPicker);
+    launchMultiPickImageFromGalleryIntent(usePhotoPicker, limit);
   }
 
   private void launchPickImageFromGalleryIntent(Boolean usePhotoPicker) {
@@ -452,11 +466,11 @@ public class ImagePickerDelegate
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
-  private void launchMultiPickImageFromGalleryIntent(Boolean usePhotoPicker) {
+  private void launchMultiPickImageFromGalleryIntent(Boolean usePhotoPicker, int limit) {
     Intent pickMultiImageIntent;
     if (usePhotoPicker) {
       pickMultiImageIntent =
-          new ActivityResultContracts.PickMultipleVisualMedia()
+          new ActivityResultContracts.PickMultipleVisualMedia(limit)
               .createIntent(
                   activity,
                   new PickVisualMediaRequest.Builder()
