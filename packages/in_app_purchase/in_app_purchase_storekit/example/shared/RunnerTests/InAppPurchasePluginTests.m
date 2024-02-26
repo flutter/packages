@@ -108,6 +108,129 @@
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
+- (void)testFinishTransactionSucceeds {
+  NSDictionary *args = @{
+    @"transactionIdentifier" : @"567",
+    @"productIdentifier" : @"unique_identifier",
+  };
+
+  NSDictionary *transactionMap = @{
+    @"transactionIdentifier" : @"567",
+    @"transactionState" : @(SKPaymentTransactionStatePurchasing),
+    @"payment" : [NSNull null],
+    @"error" : [FIAObjectTranslator getMapFromNSError:[NSError errorWithDomain:@"test_stub"
+                                                                          code:123
+                                                                      userInfo:@{}]],
+    @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
+  };
+
+  SKPaymentTransactionStub *paymentTransaction =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  NSArray *array = [NSArray arrayWithObjects:paymentTransaction,nil];
+
+  FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
+  OCMStub([mockHandler getUnfinishedTransactions]).andReturn(array);
+//  OCMStub([mockHandler finishTransaction:[OCMArg any]]).andReturn(array);
+
+  self.plugin.paymentQueueHandler = mockHandler;
+
+  FlutterError *error;
+  [self.plugin finishTransactionFinishMap:args error:&error];
+
+  XCTAssertNil(error);
+}
+
+- (void)testFinishTransactionSucceedsWithNilTransaction {
+  NSDictionary *args = @{
+    @"transactionIdentifier" : [NSNull null],
+    @"productIdentifier" : @"unique_identifier",
+  };
+
+  NSDictionary *paymentMap = @{
+    @"productIdentifier" : @"123",
+    @"requestData" : @"abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh",
+    @"quantity" : @(2),
+    @"applicationUsername" : @"app user name",
+    @"simulatesAskToBuyInSandbox" : @(NO)
+  };
+
+  SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:paymentMap];
+
+  NSDictionary *transactionMap = @{
+    @"transactionState" : @(SKPaymentTransactionStatePurchasing),
+    @"payment" :paymentMap,
+    @"error" : [FIAObjectTranslator getMapFromNSError:[NSError errorWithDomain:@"test_stub"
+                                                                          code:123
+                                                                      userInfo:@{}]],
+    @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
+  };
+
+  SKPaymentTransactionStub *paymentTransaction =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+
+  FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
+  OCMStub([mockHandler getUnfinishedTransactions]).andReturn(@[paymentTransaction]);
+
+  self.plugin.paymentQueueHandler = mockHandler;
+
+  FlutterError *error;
+  [self.plugin finishTransactionFinishMap:args error:&error];
+
+  XCTAssertNil(error);
+}
+
+- (void)testGetProductResponseWithRequestError {
+  NSArray *argument = @[ @"123" ];
+
+  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  OCMStub([mockHandler alloc]).andReturn(mockHandler);
+  OCMStub([mockHandler initWithRequest:OCMOCK_ANY]).andReturn(mockHandler);
+
+  FlutterError *error = [NSError errorWithDomain:@"errorDomain"
+                                            code:0
+                                        userInfo:@{
+                                          NSLocalizedDescriptionKey : @"description"
+  }];
+
+  OCMStub([mockHandler
+      startProductRequestWithCompletionHandler:
+          ([OCMArg invokeBlockWithArgs:[NSNull null],
+            error,
+            nil])]);
+
+  [self.plugin
+      startProductRequestProductIdentifiers:argument
+                                 completion:^(SKProductsResponseMessage *_Nullable response,
+                                              FlutterError *_Nullable startProductRequestError) {
+    XCTAssertNotNil(error);
+    XCTAssertNotNil(startProductRequestError);
+    XCTAssertEqualObjects(startProductRequestError.code, @"storekit_getproductrequest_platform_error");
+  }];
+  [mockHandler stopMocking];
+}
+
+- (void)testGetProductResponseWithNoResponse {
+  NSArray *argument = @[ @"123" ];
+
+  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  OCMStub([mockHandler alloc]).andReturn(mockHandler);
+  OCMStub([mockHandler initWithRequest:OCMOCK_ANY]).andReturn(mockHandler);
+  OCMStub([mockHandler
+      startProductRequestWithCompletionHandler:
+          ([OCMArg invokeBlockWithArgs:[NSNull null],
+            [NSNull null],
+            nil])]);
+
+  [self.plugin
+      startProductRequestProductIdentifiers:argument
+                                 completion:^(SKProductsResponseMessage *_Nullable response,
+                                              FlutterError *_Nullable startProductRequestError) {
+    XCTAssertNotNil(startProductRequestError);
+    XCTAssertEqualObjects(startProductRequestError.code, @"storekit_platform_no_response");
+  }];
+  [mockHandler stopMocking];
+}
+
 - (void)testAddPaymentShouldReturnFlutterErrorWhenPaymentFails {
   NSDictionary *argument = @{
     @"productIdentifier" : @"123",
@@ -129,6 +252,27 @@
                         @"Please either wait for it to be finished or finish it manually "
                         @"using `completePurchase` to avoid edge cases.",
                         error.message);
+  XCTAssertEqualObjects(argument, error.details);
+}
+
+- (void)testAddPaymentShouldReturnFlutterErrorWhenInvalidProduct {
+  NSDictionary *argument = @{
+    // stubbed function will return nil for an empty productIdentifier
+    @"productIdentifier" : @"",
+    @"quantity" : @(1),
+    @"simulatesAskToBuyInSandbox" : @YES,
+  };
+
+  FlutterError *error;
+
+  [self.plugin addPaymentPaymentMap:argument error:&error];
+
+  XCTAssertEqualObjects(@"storekit_invalid_payment_object", error.code);
+  XCTAssertEqualObjects(
+      @"You have requested a payment for an invalid product. Either the "
+      @"`productIdentifier` of the payment is not valid or the product has not been "
+      @"fetched before adding the payment to the payment queue.",
+      error.message);
   XCTAssertEqualObjects(argument, error.details);
 }
 
@@ -323,6 +467,53 @@
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
+- (void)testRefreshReceiptRequestWithParams {
+  NSDictionary *properties = @{
+    @"isExpired" : @NO,
+    @"isRevoked" : @NO,
+    @"isVolumePurchase" : @NO,
+  };
+
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:@"completion handler successfully called"];
+  [self.plugin refreshReceiptReceiptProperties:properties
+                                    completion:^(FlutterError *_Nullable error) {
+                                      [expectation fulfill];
+                                    }];
+  [self waitForExpectations:@[ expectation ] timeout:5];
+}
+
+- (void)testRefreshReceiptRequestWithError {
+  NSDictionary *properties = @{
+    @"isExpired" : @NO,
+    @"isRevoked" : @NO,
+    @"isVolumePurchase" : @NO,
+  };
+
+  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  OCMStub([mockHandler alloc]).andReturn(mockHandler);
+  OCMStub([mockHandler initWithRequest:OCMOCK_ANY]).andReturn(mockHandler);
+
+  FlutterError *recieptError = [NSError errorWithDomain:@"errorDomain"
+                                            code:0
+                                        userInfo:@{
+                                          NSLocalizedDescriptionKey : @"description"
+  }];
+
+  OCMStub([mockHandler
+      startProductRequestWithCompletionHandler:
+          ([OCMArg invokeBlockWithArgs:[NSNull null],
+            recieptError,
+            nil])]);
+
+  [self.plugin refreshReceiptReceiptProperties:properties
+                                    completion:^(FlutterError *_Nullable error) {
+    XCTAssertNotNil(error);
+    XCTAssertEqualObjects(error.code, @"storekit_refreshreceiptrequest_platform_error");
+                                    }];
+  [mockHandler stopMocking];
+}
+
 /// presentCodeRedemptionSheetWithError:error is only available on iOS
 #if TARGET_OS_IOS
 - (void)testPresentCodeRedemptionSheet {
@@ -380,6 +571,16 @@
   [self.plugin startObservingPaymentQueueWithError:&error];
 
   OCMVerify(times(1), [mockHandler startObservingPaymentQueue]);
+}
+
+- (void)testStartObservingPaymentQueue2 {
+  //  FIAPRequestHandler *mockHandler = OCMClassMock(FIAPRequestHandler.class);
+  //
+  //  OCMStub(mockHandler.storefront).andReturn(nil);
+  //
+  //  [self.plugin startObservingPaymentQueueWithError:&error];
+  //
+  //  OCMVerify(times(1), [mockHandler startObservingPaymentQueue]);
 }
 
 - (void)testStopObservingPaymentQueue {

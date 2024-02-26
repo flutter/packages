@@ -117,7 +117,7 @@
                                                         FlutterError *_Nullable))completion {
   SKProductsRequest *request =
       [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
-  FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
+  FIAPRequestHandler *handler = [self getHandler:request];
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
 
@@ -282,6 +282,7 @@
                                          message:error.localizedDescription
                                          details:error.description];
       completion(requestError);
+      return;
     }
     completion(nil);
     [weakSelf.requestHandlers removeObject:handler];
@@ -395,5 +396,9 @@
 
 - (SKReceiptRefreshRequest *)getRefreshReceiptRequest:(NSDictionary *)properties {
   return [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:properties];
+}
+
+- (FIAPRequestHandler *)getHandler:(SKRequest *)request {
+  return [[FIAPRequestHandler alloc] initWithRequest:request];
 }
 @end
