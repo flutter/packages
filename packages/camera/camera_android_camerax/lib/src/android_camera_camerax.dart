@@ -196,8 +196,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Current focus mode.
   ///
-  /// CameraX defaults to autofocus.
+  /// CameraX defaults to auto-focus mode.
   FocusMode currentFocusMode = FocusMode.auto;
+
+  /// Current exposure mode.
+  ///
+  /// CameraX defaults to auto-exposure mode.
+  ExposureMode currentExposureMode = ExposureMode.auto;
 
   /// Whether or not a default focus point of the dentire sensor area was added
   /// to lock focus.
@@ -492,7 +497,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Sets the focus mode for taking pictures.
   @override
   Future<void> setFocusMode(int cameraId, FocusMode mode) async {
-    // TODO(camsim99): deal with exposure mode.
     switch (mode) {
       case FocusMode.auto:
         if (currentFocusMode == FocusMode.auto) {
@@ -532,15 +536,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
     currentFocusMode = mode;
     if (currentExposureMode == ExposureMode.auto &&
-            currentFocusMode == ExposureMode.locked ||
-        currentExposureMode == ExposureMode.locked &&
-            currentFocusMode == ExposureMode.auto) {
+        currentFocusMode == FocusMode.locked) {
       await setExposureMode(cameraId, currentExposureMode);
     }
-    // setExposureMode(cameraId, mode)
   }
-
-  ExposureMode currentExposureMode = ExposureMode.auto;
 
   /// Sets the exposure mode for taking pictures.
   ///
