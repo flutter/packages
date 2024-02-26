@@ -160,7 +160,6 @@ class _WebViewExampleState extends State<WebViewExample> {
       WebKitWebViewControllerCreationParams(allowsInlineMediaPlayback: true),
     )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      //..setBackgroundColor(const Color(0x80000000))
       ..setPlatformNavigationDelegate(
         PlatformNavigationDelegate(
           const PlatformNavigationDelegateCreationParams(),
@@ -219,8 +218,10 @@ Page resource error:
         uri: Uri.parse('https://flutter.dev'),
       ));
 
-    // setOnScrollPositionChange is not supported on macOS.
+    // setBackgroundColor and setOnScrollPositionChange are not supported on
+    // macOS.
     if (Platform.isIOS) {
+      _controller.setBackgroundColor(const Color(0x80000000));
       _controller.setOnScrollPositionChange(
           (ScrollPositionChange scrollPositionChange) {
         debugPrint(
