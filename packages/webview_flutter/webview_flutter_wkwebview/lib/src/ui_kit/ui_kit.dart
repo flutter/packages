@@ -18,7 +18,7 @@ import 'ui_kit_api_impls.dart';
 ///
 /// Wraps [UIScrollView](https://developer.apple.com/documentation/uikit/uiscrollview?language=objc).
 @immutable
-class UIScrollView extends UIView {
+class UIScrollView extends UIViewBase {
   /// Constructs a [UIScrollView] that is owned by [webView].
   factory UIScrollView.fromWebView(
     WKWebView webView, {
@@ -94,17 +94,36 @@ class UIScrollView extends UIView {
   }
 }
 
+/// Methods that anything implementing a class that inherits from UIView on the
+/// native side must implement.
+///
+/// Classes without a multiple inheritence problem should extend UIViewBase
+/// instead of implementing this directly.
+abstract class UIView implements NSObject {
+  /// The view’s background color.
+  ///
+  /// The default value is null, which results in a transparent background color.
+  ///
+  /// Sets [UIView.backgroundColor](https://developer.apple.com/documentation/uikit/uiview/1622591-backgroundcolor?language=objc).
+  Future<void> setBackgroundColor(Color? color);
+
+  /// Determines whether the view is opaque.
+  ///
+  /// Sets [UIView.opaque](https://developer.apple.com/documentation/uikit/uiview?language=objc).
+  Future<void> setOpaque(bool opaque);
+}
+
 /// Manages the content for a rectangular area on the screen.
 ///
 /// Wraps [UIView](https://developer.apple.com/documentation/uikit/uiview?language=objc).
 @immutable
-class UIView extends NSObject {
+class UIViewBase extends NSObject implements UIView {
   /// Constructs a [UIView] without creating the associated
   /// Objective-C object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  UIView.detached({
+  UIViewBase.detached({
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -116,25 +135,19 @@ class UIView extends NSObject {
 
   final UIViewHostApiImpl _viewApi;
 
-  /// The view’s background color.
-  ///
-  /// The default value is null, which results in a transparent background color.
-  ///
-  /// Sets [UIView.backgroundColor](https://developer.apple.com/documentation/uikit/uiview/1622591-backgroundcolor?language=objc).
+  @override
   Future<void> setBackgroundColor(Color? color) {
     return _viewApi.setBackgroundColorForInstances(this, color);
   }
 
-  /// Determines whether the view is opaque.
-  ///
-  /// Sets [UIView.opaque](https://developer.apple.com/documentation/uikit/uiview?language=objc).
+  @override
   Future<void> setOpaque(bool opaque) {
     return _viewApi.setOpaqueForInstances(this, opaque);
   }
 
   @override
   UIView copy() {
-    return UIView.detached(
+    return UIViewBase.detached(
       observeValue: observeValue,
       binaryMessenger: _viewApi.binaryMessenger,
       instanceManager: _viewApi.instanceManager,

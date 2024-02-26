@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../common/instance_manager.dart';
 import '../foundation/foundation.dart';
 import '../ui_kit/ui_kit.dart';
+import '../ui_kit/ui_kit_api_impls.dart' show UIViewHostApiImpl;
 import 'web_kit_api_impls.dart';
 
 export 'web_kit_api_impls.dart'
@@ -970,8 +971,7 @@ class WKNavigationDelegate extends NSObject {
 /// implementation details; the concrete implementations are [WKWebViewIOS] and
 /// [WKWebViewMacOS].
 @immutable
-// TODO(stuartmorgan): Deal with WKWebView on macOS not being a UIView.
-abstract class WKWebView extends UIView {
+abstract class WKWebView extends NSObject {
   /// Constructs a [WKWebView].
   ///
   /// [configuration] contains the configuration details for the web view. This
@@ -1176,21 +1176,29 @@ abstract class WKWebView extends UIView {
 }
 
 /// The iOS version of a WKWebView.
-class WKWebViewIOS extends WKWebView {
+class WKWebViewIOS extends WKWebView implements UIView {
   /// Constructs a new iOS WKWebView; see [WKWebView] for details.
   WKWebViewIOS(
     super.configuration, {
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
-  }) : super();
+  })  : _viewApi = UIViewHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super();
 
   /// See [WKWebView.detached].
   WKWebViewIOS.detached({
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
-  }) : super.detached();
+  })  : _viewApi = UIViewHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
 
   /// The scrollable view associated with the web view.
   late final UIScrollView scrollView = UIScrollView.fromWebView(
@@ -1206,6 +1214,25 @@ class WKWebViewIOS extends WKWebView {
       binaryMessenger: _webViewApi.binaryMessenger,
       instanceManager: _webViewApi.instanceManager,
     );
+  }
+
+  final UIViewHostApiImpl _viewApi;
+
+  // UIView implementations. This is duplicated from the UIViewBase class since
+  // WKWebView can't inherit from UIView, so this is a workaround to multiple
+  // inheritance limitations. This is a way of dealing with the lack of
+  // preprocessor in Dart, which is how the native side has different base
+  // classes. If the amount of code here grows, this could become a mixin used
+  // by both UIViewBase and this class (at the cost of exposing the view API
+  // object, or adjusting files to allow it to stay private).
+  @override
+  Future<void> setBackgroundColor(Color? color) {
+    return _viewApi.setBackgroundColorForInstances(this, color);
+  }
+
+  @override
+  Future<void> setOpaque(bool opaque) {
+    return _viewApi.setOpaqueForInstances(this, opaque);
   }
 }
 
