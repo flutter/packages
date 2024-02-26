@@ -487,7 +487,8 @@ void main() {
 
     // Hover
     final Offset center = tester.getCenter(find.byType(InkResponse));
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    final TestGesture gesture =
+        await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer();
     addTearDown(gesture.removePointer);
     await gesture.moveTo(center);
@@ -503,7 +504,8 @@ void main() {
     // Tap
     await gesture.down(center);
     await tester.pump(); // start gesture
-    await tester.pump(const Duration(milliseconds: 200)); // wait for splash to be well under way
+    await tester.pump(const Duration(
+        milliseconds: 200)); // wait for splash to be well under way
 
     await expectLater(
       find.byType(RemoteWidget),
@@ -557,8 +559,10 @@ void main() {
     '''));
     await tester.pump();
 
-    expect(tester.widget<Material>(find.byType(Material)).animationDuration, const Duration(milliseconds: 300));
-    expect(tester.widget<Material>(find.byType(Material)).borderOnForeground, false);
+    expect(tester.widget<Material>(find.byType(Material)).animationDuration,
+        const Duration(milliseconds: 300));
+    expect(tester.widget<Material>(find.byType(Material)).borderOnForeground,
+        false);
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.material_properties.png'),
@@ -579,6 +583,7 @@ void main() {
     '''));
     await tester.pump();
 
-    expect(tester.widget<Material>(find.byType(Material)).clipBehavior, Clip.antiAlias);
+    expect(tester.widget<Material>(find.byType(Material)).clipBehavior,
+        Clip.antiAlias);
   });
 }
