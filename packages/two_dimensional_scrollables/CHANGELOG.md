@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Fixes a layout issue when pinned cells are merged.
+
 ## 0.1.0
 
 * [Breaking change] Adds support for merged cells in the TableView.

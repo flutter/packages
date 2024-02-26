@@ -23,9 +23,6 @@ void main() {
 
   setUpAll(() {
     TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-            SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
   });
 
   setUp(() {
