@@ -213,4 +213,58 @@
                                                   webViewIdentifier:1
                                                          completion:OCMOCK_ANY]);
 }
+
+- (void)testDidReceiveAuthenticationChallenge {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  FWFNavigationDelegate *mockDelegate = [self mockNavigationDelegateWithManager:instanceManager
+                                                                     identifier:0];
+  FWFNavigationDelegateFlutterApiImpl *mockFlutterAPI =
+      [self mockFlutterApiWithManager:instanceManager];
+
+  OCMStub([mockDelegate navigationDelegateAPI]).andReturn(mockFlutterAPI);
+
+  WKWebView *mockWebView = OCMClassMock([WKWebView class]);
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
+
+  NSURLAuthenticationChallenge *mockChallenge = OCMClassMock([NSURLAuthenticationChallenge class]);
+  NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:@"host"
+                                                                                port:0
+                                                                            protocol:nil
+                                                                               realm:@"realm"
+                                                                authenticationMethod:nil];
+  OCMStub([mockChallenge protectionSpace]).andReturn(protectionSpace);
+  [instanceManager addDartCreatedInstance:mockChallenge withIdentifier:2];
+
+  NSURLCredential *credential = [NSURLCredential credentialWithUser:@"user"
+                                                           password:@"password"
+                                                        persistence:NSURLCredentialPersistenceNone];
+  [instanceManager addDartCreatedInstance:credential withIdentifier:5];
+
+  OCMStub([mockFlutterAPI
+      didReceiveAuthenticationChallengeForDelegateWithIdentifier:0
+                                               webViewIdentifier:1
+                                             challengeIdentifier:2
+                                                      completion:
+                                                          ([OCMArg
+                                                              invokeBlockWithArgs:
+                                                                  [FWFAuthenticationChallengeResponse
+                                                                       makeWithDisposition:
+                                                                           FWFNSUrlSessionAuthChallengeDispositionCancelAuthenticationChallenge
+                                                                      credentialIdentifier:@(5)],
+                                                                  [NSNull null], nil])]);
+
+  NSURLSessionAuthChallengeDisposition __block callbackDisposition = -1;
+  NSURLCredential *__block callbackCredential;
+  [mockDelegate webView:mockWebView
+      didReceiveAuthenticationChallenge:mockChallenge
+                      completionHandler:^(NSURLSessionAuthChallengeDisposition disposition,
+                                          NSURLCredential *credential) {
+                        callbackDisposition = disposition;
+                        callbackCredential = credential;
+                      }];
+
+  XCTAssertEqual(callbackDisposition, NSURLSessionAuthChallengeCancelAuthenticationChallenge);
+  XCTAssertEqualObjects(callbackCredential, credential);
+}
 @end

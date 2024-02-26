@@ -75,11 +75,9 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
         // The iOS implementation doesn't distinguish between these two modes;
         // both are treated as inAppBrowserView.
         inApp = true;
-        break;
       case PreferredLaunchMode.externalApplication:
       case PreferredLaunchMode.externalNonBrowserApplication:
         inApp = false;
-        break;
       case PreferredLaunchMode.platformDefault:
       // Intentionally treat any new values as platformDefault; support for any
       // new mode requires intentional opt-in, otherwise falling back is the

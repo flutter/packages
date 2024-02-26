@@ -171,7 +171,7 @@ FWFWKNavigationActionData *FWFWKNavigationActionDataFromNativeWKNavigationAction
 
 FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *request) {
   return [FWFNSUrlRequestData
-              makeWithUrl:request.URL.absoluteString
+              makeWithUrl:request.URL.absoluteString == nil ? @"" : request.URL.absoluteString
                httpMethod:request.HTTPMethod
                  httpBody:request.HTTPBody
                               ? [FlutterStandardTypedData typedDataWithBytes:request.HTTPBody]
@@ -180,7 +180,9 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *req
 }
 
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *info) {
-  return [FWFWKFrameInfoData makeWithIsMainFrame:info.isMainFrame];
+  return [FWFWKFrameInfoData
+      makeWithIsMainFrame:info.isMainFrame
+                  request:FWFNSUrlRequestDataFromNativeNSURLRequest(info.request)];
 }
 
 WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
@@ -288,4 +290,37 @@ FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType
   }
 
   return nil;
+}
+
+NSURLSessionAuthChallengeDisposition
+FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(
+    FWFNSUrlSessionAuthChallengeDisposition value) {
+  switch (value) {
+    case FWFNSUrlSessionAuthChallengeDispositionUseCredential:
+      return NSURLSessionAuthChallengeUseCredential;
+    case FWFNSUrlSessionAuthChallengeDispositionPerformDefaultHandling:
+      return NSURLSessionAuthChallengePerformDefaultHandling;
+    case FWFNSUrlSessionAuthChallengeDispositionCancelAuthenticationChallenge:
+      return NSURLSessionAuthChallengeCancelAuthenticationChallenge;
+    case FWFNSUrlSessionAuthChallengeDispositionRejectProtectionSpace:
+      return NSURLSessionAuthChallengeRejectProtectionSpace;
+  }
+
+  return -1;
+}
+
+NSURLCredentialPersistence FWFNativeNSURLCredentialPersistenceFromFWFNSUrlCredentialPersistence(
+    FWFNSUrlCredentialPersistence value) {
+  switch (value) {
+    case FWFNSUrlCredentialPersistenceNone:
+      return NSURLCredentialPersistenceNone;
+    case FWFNSUrlCredentialPersistenceSession:
+      return NSURLCredentialPersistenceForSession;
+    case FWFNSUrlCredentialPersistencePermanent:
+      return NSURLCredentialPersistencePermanent;
+    case FWFNSUrlCredentialPersistenceSynchronizable:
+      return NSURLCredentialPersistenceSynchronizable;
+  }
+
+  return -1;
 }

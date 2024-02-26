@@ -282,28 +282,31 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     IconButton(
                       icon: const Icon(Icons.exposure),
                       color: Colors.blue,
-                      onPressed:
-                          () {}, // TODO(camsim99): Add functionality back here.
+                      onPressed: controller != null
+                          ? onExposureModeButtonPressed
+                          : null,
                     ),
                     IconButton(
                       icon: const Icon(Icons.filter_center_focus),
                       color: Colors.blue,
                       onPressed:
-                          () {}, // TODO(camsim99): Add functionality back here.
+                          controller != null ? onFocusModeButtonPressed : null,
                     )
                   ]
                 : <Widget>[],
             IconButton(
               icon: Icon(enableAudio ? Icons.volume_up : Icons.volume_mute),
               color: Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null ? onAudioModeButtonPressed : null,
             ),
             IconButton(
               icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
                   ? Icons.screen_lock_rotation
                   : Icons.screen_rotation),
               color: Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null
+                  ? onCaptureOrientationLockButtonPressed
+                  : null,
             ),
           ],
         ),
@@ -378,7 +381,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _exposureModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[
@@ -392,8 +395,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     style: styleAuto,
                     onPressed:
                         () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress:
-                        () {}, // TODO(camsim99): Add functionality back here.,
+                    onLongPress: () {
+                      if (controller != null) {
+                        CameraPlatform.instance
+                            .setExposurePoint(controller!.cameraId, null);
+                        showInSnackBar('Resetting exposure point');
+                      }
+                    },
                     child: const Text('AUTO'),
                   ),
                   TextButton(
@@ -404,8 +412,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () => controller!.setExposureOffset(0.0)
+                        : null,
                     child: const Text('RESET OFFSET'),
                   ),
                 ],
@@ -452,7 +461,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _focusModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[
@@ -466,8 +475,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     style: styleAuto,
                     onPressed:
                         () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onLongPress: () {
+                      if (controller != null) {
+                        CameraPlatform.instance
+                            .setFocusPoint(controller!.cameraId, null);
+                      }
+                      showInSnackBar('Resetting focus point');
+                    },
                     child: const Text('AUTO'),
                   ),
                   TextButton(
@@ -658,26 +672,20 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       switch (e.code) {
         case 'CameraAccessDenied':
           showInSnackBar('You have denied camera access.');
-          break;
         case 'CameraAccessDeniedWithoutPrompt':
           // iOS only
           showInSnackBar('Please go to Settings app to enable camera access.');
-          break;
         case 'CameraAccessRestricted':
           // iOS only
           showInSnackBar('Camera access is restricted.');
-          break;
         case 'AudioAccessDenied':
           showInSnackBar('You have denied audio access.');
-          break;
         case 'AudioAccessDeniedWithoutPrompt':
           // iOS only
           showInSnackBar('Please go to Settings app to enable audio access.');
-          break;
         case 'AudioAccessRestricted':
           // iOS only
           showInSnackBar('Audio access is restricted.');
-          break;
         default:
           _showCameraException(e);
           break;
@@ -971,11 +979,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     final VideoPlayerController vController = kIsWeb
-        // TODO(gabrielokura): remove the ignore once the following line can migrate to
-        // use VideoPlayerController.networkUrl after the issue is resolved.
-        // https://github.com/flutter/flutter/issues/121927
-        // ignore: deprecated_member_use
-        ? VideoPlayerController.network(videoFile!.path)
+        ? VideoPlayerController.networkUrl(Uri.parse(videoFile!.path))
         : VideoPlayerController.file(File(videoFile!.path));
 
     videoPlayerListener = () {

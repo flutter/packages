@@ -3,19 +3,19 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/foundation.dart' show visibleForTesting, kDebugMode;
+import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:google_identity_services_web/loader.dart' as loader;
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
+import 'package:web/web.dart' as web;
 
 import 'src/button_configuration.dart' show GSIButtonConfiguration;
-import 'src/dom.dart';
 import 'src/flexible_size_html_element_view.dart';
 import 'src/gis_client.dart';
 
@@ -54,7 +54,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   })  : _gisSdkClient = debugOverrideGisSdkClient,
         _userDataController = debugOverrideUserDataController ??
             StreamController<GoogleSignInUserData?>.broadcast() {
-    autoDetectedClientId = html
+    autoDetectedClientId = web.document
         .querySelector(clientIdMetaSelector)
         ?.getAttribute(clientIdAttributeName);
 
@@ -175,7 +175,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     ui_web.platformViewRegistry.registerViewFactory(
       'gsi_login_button',
       (int viewId) {
-        final DomElement element = createDomElement('div');
+        final web.Element element = web.document.createElement('div');
         element.setAttribute('style',
             'width: 100%; height: 100%; overflow: hidden; display: flex; flex-wrap: wrap; align-content: center; justify-content: center;');
         element.id = 'sign_in_button_$viewId';
@@ -195,12 +195,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
         if (snapshot.hasData) {
           return FlexHtmlElementView(
               viewType: 'gsi_login_button',
-              onPlatformViewCreated: (int viewId) {
-                final DomElement? element =
-                    domDocument.querySelector('#sign_in_button_$viewId');
-                assert(element != null,
-                    'Cannot render GSI button. DOM is not ready!');
-                _gisClient.renderButton(element!, config);
+              onElementCreated: (Object element) {
+                _gisClient.renderButton(element, config);
               });
         }
         return const Text('Getting ready');
@@ -219,10 +215,11 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   @override
   Future<GoogleSignInUserData?> signIn() async {
     if (kDebugMode) {
-      domConsole.warn(
+      web.console.warn(
           "The `signIn` method is discouraged on the web because it can't reliably provide an `idToken`.\n"
-          'Use `signInSilently` and `renderButton` to authenticate your users instead.\n'
-          'Read more: https://pub.dev/packages/google_sign_in_web');
+                  'Use `signInSilently` and `renderButton` to authenticate your users instead.\n'
+                  'Read more: https://pub.dev/packages/google_sign_in_web'
+              .toJS);
     }
     await initialized;
 

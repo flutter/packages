@@ -3,9 +3,14 @@
 // found in the LICENSE file.
 
 #import "FWFScrollViewHostApi.h"
+#import "FWFScrollViewDelegateHostApi.h"
 #import "FWFWebViewHostApi.h"
 
 @interface FWFScrollViewHostApiImpl ()
+// BinaryMessenger must be weak to prevent a circular reference with the host API it
+// references.
+@property(nonatomic, weak) id<FlutterBinaryMessenger> binaryMessenger;
+
 // InstanceManager must be weak to prevent a circular reference with the object it stores.
 @property(nonatomic, weak) FWFInstanceManager *instanceManager;
 @end
@@ -66,6 +71,18 @@
                                               error:(FlutterError *_Nullable *_Nonnull)error {
 #if TARGET_OS_IOS
   [[self scrollViewForIdentifier:identifier] setContentOffset:CGPointMake(x, y)];
+#endif
+}
+
+- (void)setDelegateForScrollViewWithIdentifier:(NSInteger)identifier
+                uiScrollViewDelegateIdentifier:(nullable NSNumber *)uiScrollViewDelegateIdentifier
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+#if TARGET_OS_IOS
+  [[self scrollViewForIdentifier:identifier]
+      setDelegate:uiScrollViewDelegateIdentifier
+                      ? (FWFScrollViewDelegate *)[self.instanceManager
+                            instanceForIdentifier:uiScrollViewDelegateIdentifier.longValue]
+                      : nil];
 #endif
 }
 @end

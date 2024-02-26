@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'common/instance_manager.dart';
 import 'foundation/foundation.dart';
+import 'ui_kit/ui_kit.dart';
 import 'web_kit/web_kit.dart';
 
 // This convenience method was added because Dart doesn't support constant
@@ -42,6 +43,7 @@ class WebKitProxy {
     this.defaultWebsiteDataStore = _defaultWebsiteDataStore,
     this.createNavigationDelegate = WKNavigationDelegate.new,
     this.createUIDelegate = WKUIDelegate.new,
+    this.createUIScrollViewDelegate = UIScrollViewDelegate.new,
   }) : createWebView = createWebView ??
             (Platform.isIOS ? WKWebViewIOS.new : WKWebViewMacOS.new);
 
@@ -77,6 +79,14 @@ class WebKitProxy {
     void Function(WKWebView webView, NSError error)?
         didFailProvisionalNavigation,
     void Function(WKWebView webView)? webViewWebContentProcessDidTerminate,
+    void Function(
+      WKWebView webView,
+      NSUrlAuthenticationChallenge challenge,
+      void Function(
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ) completionHandler,
+    )? didReceiveAuthenticationChallenge,
   }) createNavigationDelegate;
 
   /// Constructs a [WKUIDelegate].
@@ -93,6 +103,28 @@ class WebKitProxy {
       WKFrameInfo frame,
       WKMediaCaptureType type,
     )? requestMediaCapturePermission,
+    Future<void> Function(
+      String message,
+      WKFrameInfo frame,
+    )? runJavaScriptAlertDialog,
+    Future<bool> Function(
+      String message,
+      WKFrameInfo frame,
+    )? runJavaScriptConfirmDialog,
+    Future<String> Function(
+      String prompt,
+      String defaultText,
+      WKFrameInfo frame,
+    )? runJavaScriptTextInputDialog,
     InstanceManager? instanceManager,
   }) createUIDelegate;
+
+  /// Constructs a [UIScrollViewDelegate].
+  final UIScrollViewDelegate Function({
+    void Function(
+      UIScrollView scrollView,
+      double x,
+      double y,
+    )? scrollViewDidScroll,
+  }) createUIScrollViewDelegate;
 }

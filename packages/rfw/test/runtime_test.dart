@@ -349,6 +349,18 @@ void main() {
 
   testWidgets('Runtime', (WidgetTester tester) async {
     final Runtime runtime = Runtime()
+          ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    expect(runtime.libraries.length, 1);
+    final LibraryName libraryName = runtime.libraries.entries.first.key;
+    expect('$libraryName', 'core');
+    final WidgetLibrary widgetLibrary = runtime.libraries.entries.first.value;
+    expect(widgetLibrary, isA<LocalWidgetLibrary>());
+    widgetLibrary as LocalWidgetLibrary;
+    expect(widgetLibrary.widgets.length, greaterThan(1));
+  });
+
+  testWidgets('Runtime', (WidgetTester tester) async {
+    final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     final DynamicContent data = DynamicContent();
     await tester.pumpWidget(
@@ -1061,5 +1073,19 @@ void main() {
       return false;
     });
     expect(tested, isTrue);
+  });
+
+  testWidgets('DynamicContent subscriptions', (WidgetTester tester) async {
+    final List<String> log = <String>[];
+    final DynamicContent data = DynamicContent(<String, Object?>{
+      'a': <Object>[0, 1],
+      'b': <Object>['q', 'r'],
+    });
+    data.subscribe(<Object>[], (Object value) { log.add('root: $value'); });
+    data.subscribe(<Object>['a', 0], (Object value) { log.add('leaf: $value'); });
+    data.update('a', <Object>[2, 3]);
+    expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}']);
+    data.update('c', 'test');
+    expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}', 'root: {a: [2, 3], b: [q, r], c: test}']);
   });
 }

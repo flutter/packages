@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Platform;
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
-const Widget cell = SizedBox.shrink();
+const TableViewCell cell = TableViewCell(child: SizedBox.shrink());
 
 TableSpan getTappableSpan(int index, VoidCallback callback) {
   return TableSpan(
@@ -40,14 +38,6 @@ TableSpan getMouseTrackingSpan(
   );
 }
 
-final bool masterChannel = !Platform.environment.containsKey('CHANNEL') ||
-    Platform.environment['CHANNEL'] == 'master';
-
-// TODO(Piinks): Remove once painting can be validated by mock_canvas in
-//  flutter_test, and re-enable web tests in https://github.com/flutter/flutter/issues/132782
-// Regenerate goldens on a Mac computer by running `flutter test --update-goldens`
-final bool runGoldens = Platform.isMacOS && masterChannel;
-
 void main() {
   group('TableView.builder', () {
     test('creates correct delegate', () {
@@ -69,7 +59,7 @@ void main() {
       expect(
         delegate.builder(
           _NullBuildContext(),
-          const TableVicinity(row: 0, column: 0),
+          TableVicinity.zero,
         ),
         cell,
       );
@@ -198,9 +188,9 @@ void main() {
       final TableView tableView = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
-        cells: const <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell]
+        cells: const <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell]
         ],
       );
       final TableCellListDelegate delegate =
@@ -219,8 +209,8 @@ void main() {
       expect(
         () {
           tableView = TableView.list(
-            cells: const <List<Widget>>[
-              <Widget>[cell]
+            cells: const <List<TableViewCell>>[
+              <TableViewCell>[cell]
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -238,8 +228,8 @@ void main() {
       expect(
         () {
           tableView = TableView.list(
-            cells: const <List<Widget>>[
-              <Widget>[cell]
+            cells: const <List<TableViewCell>>[
+              <TableViewCell>[cell]
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -271,7 +261,12 @@ void main() {
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
       TableViewParentData parentDataOf(RenderBox child) {
@@ -286,7 +281,7 @@ void main() {
       );
       expect(viewport.mainAxis, Axis.vertical);
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -353,7 +348,12 @@ void main() {
         rowBuilder: (_) => rowSpan,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
       TableViewParentData parentDataOf(RenderBox child) {
@@ -367,7 +367,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -416,7 +416,12 @@ void main() {
         rowBuilder: (_) => rowSpan,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
 
@@ -427,7 +432,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      vicinity = const TableVicinity(column: 0, row: 0);
+      vicinity = TableVicinity.zero;
       parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -464,9 +469,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -508,9 +515,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -558,9 +567,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -615,9 +626,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -648,7 +661,9 @@ void main() {
         columnBuilder: (_) => TableSpan(extent: columnExtent),
         rowBuilder: (_) => TableSpan(extent: rowExtent),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(dimension: 100);
+          return const TableViewCell(
+            child: SizedBox.square(dimension: 100),
+          );
         },
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -703,9 +718,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -734,9 +751,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -767,9 +786,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -795,9 +816,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -823,9 +846,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -850,9 +875,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -882,9 +909,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -960,9 +989,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1038,9 +1069,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1117,9 +1150,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1195,9 +1230,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1253,11 +1290,6 @@ void main() {
 
     testWidgets('paints decorations in correct order',
         (WidgetTester tester) async {
-      // TODO(Piinks): Rewrite this to remove golden files from this repo when
-      //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
-      //  * foreground, background, and precedence per mainAxis
-      //  * Break out a separate test for padding and radius decorations to
-      //    validate paint rect calls
       TableView tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
@@ -1300,21 +1332,129 @@ void main() {
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
-            child: const Center(child: FlutterLogo()),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(TableView),
-        matchesGoldenFile('goldens/tableSpanDecoration.defaultMainAxis.png'),
-        skip: !runGoldens,
+      expect(
+        find.byType(TableViewport),
+        paints
+          // background row
+          ..rrect(
+            rrect: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 210.0, 410.0, 410.0),
+              const Radius.circular(30.0),
+            ),
+            color: const Color(0xff2196f3),
+          )
+          // background column
+          ..rrect(
+            rrect: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 0.0, 210.0, 410.0),
+              const Radius.circular(30.0),
+            ),
+            color: const Color(0xfff44336),
+          )
+          // child at 0,0
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 0,1
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 210.0, 200.0, 410.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,0
+          ..rect(
+            rect: const Rect.fromLTRB(210.0, 0.0, 410.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,1
+          ..rect(
+            rect: const Rect.fromLTRB(210.0, 210.0, 410.0, 410.0),
+            color: const Color(0x809e9e9e),
+          )
+          // foreground row border (1)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 0.0, 410.0, 200.0),
+              const Radius.circular(30.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              0.0,
+              3.0,
+              410.0,
+              200.0,
+              topLeft: const Radius.elliptical(30.0, 27.0),
+              topRight: const Radius.elliptical(30.0, 27.0),
+              bottomRight: const Radius.circular(30.0),
+              bottomLeft: const Radius.circular(30.0),
+            ),
+            color: const Color(0xff4caf50),
+          )
+          // foreground row border (2)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 200.0, 410.0, 410.0),
+              const Radius.circular(30.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              0.0,
+              203.0,
+              410.0,
+              410.0,
+              topLeft: const Radius.elliptical(30.0, 27.0),
+              topRight: const Radius.elliptical(30.0, 27.0),
+              bottomRight: const Radius.circular(30.0),
+              bottomLeft: const Radius.circular(30.0),
+            ),
+            color: const Color(0xff4caf50),
+          )
+          // foreground column border (1)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(0.0, 0.0, 200.0, 410.0),
+              const Radius.circular(10.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              0.0,
+              0.0,
+              197.0,
+              410.0,
+              topLeft: const Radius.circular(10.0),
+              topRight: const Radius.elliptical(7.0, 10.0),
+              bottomRight: const Radius.elliptical(7.0, 10.0),
+              bottomLeft: const Radius.circular(10.0),
+            ),
+            color: const Color(0xffff9800),
+          )
+          // foreground column border (2)
+          ..drrect(
+            outer: RRect.fromRectAndRadius(
+              const Rect.fromLTRB(210.0, 0.0, 410.0, 410.0),
+              const Radius.circular(10.0),
+            ),
+            inner: RRect.fromLTRBAndCorners(
+              210.0,
+              0.0,
+              407.0,
+              410.0,
+              topLeft: const Radius.circular(10.0),
+              topRight: const Radius.elliptical(7.0, 10.0),
+              bottomRight: const Radius.elliptical(7.0, 10.0),
+              bottomLeft: const Radius.circular(10.0),
+            ),
+            color: const Color(0xffff9800),
+          ),
       );
 
       // Switch main axis
@@ -1351,27 +1491,92 @@ void main() {
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(
-            dimension: 200,
-            child: Center(child: FlutterLogo()),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(TableView),
-        matchesGoldenFile('goldens/tableSpanDecoration.horizontalMainAxis.png'),
-        skip: !runGoldens,
+      expect(
+        find.byType(TableViewport),
+        paints
+          // background column goes first this time
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 400.0),
+            color: const Color(0xfff44336),
+          )
+          // background row
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 200.0, 400.0, 400.0),
+            color: const Color(0xff2196f3),
+          )
+          // child at 0,0
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,0
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 200.0, 200.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 0,1
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, 0.0, 400.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          // child at 1,1
+          ..rect(
+            rect: const Rect.fromLTRB(200.0, 200.0, 400.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          // foreground column border (1)
+          ..path(
+            includes: <Offset>[
+              const Offset(200.0, 0.0),
+              const Offset(200.0, 200.0),
+              const Offset(200.0, 400.0),
+            ],
+            color: const Color(0xffff9800),
+          )
+          // foreground column border (2)
+          ..path(
+            includes: <Offset>[
+              const Offset(400.0, 0.0),
+              const Offset(400.0, 200.0),
+              const Offset(400.0, 400.0),
+            ],
+            color: const Color(0xffff9800),
+          )
+          // foreground row border
+          ..path(
+            includes: <Offset>[
+              Offset.zero,
+              const Offset(200.0, 0.0),
+              const Offset(400.0, 0.0),
+            ],
+            color: const Color(0xff4caf50),
+          )
+          // foreground row border(2)
+          ..path(
+            includes: <Offset>[
+              const Offset(0.0, 200.0),
+              const Offset(200.0, 200.0),
+              const Offset(400.0, 200.0),
+            ],
+            color: const Color(0xff4caf50),
+          ),
       );
     });
 
-    testWidgets('paint rects are correct when reversed and pinned',
+    testWidgets('child paint rects are correct when reversed and pinned',
         (WidgetTester tester) async {
-      // TODO(Piinks): Rewrite this to remove golden files from this repo when
-      //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
-      //  * foreground, background, and precedence per mainAxis
       // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
       TableView tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
@@ -1380,48 +1585,45 @@ void main() {
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder: (int index) => TableSpan(
-          extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
-              trailing: BorderSide(
-                color: Colors.orange,
-                width: 3,
-              ),
-            ),
-          ),
-          backgroundDecoration: TableSpanDecoration(
-            color: index.isEven ? Colors.red : null,
-          ),
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
         ),
-        rowBuilder: (int index) => TableSpan(
-          extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
-              leading: BorderSide(
-                color: Colors.green,
-                width: 3,
-              ),
-            ),
-          ),
-          backgroundDecoration: TableSpanDecoration(
-            color: index.isOdd ? Colors.blue : null,
-          ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(
-            dimension: 200,
-            child: Center(child: FlutterLogo()),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(TableView),
-        matchesGoldenFile('goldens/reversed.pinned.painting.png'),
-        skip: !runGoldens,
+      // All children are painted in the right place
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 200.0, 600.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 200.0, 800.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 400.0, 600.0, 600.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0),
+            color: const Color(0x809e9e9e),
+          ),
       );
 
       // Only one axis reversed - Regression test for https://github.com/flutter/flutter/issues/136897
@@ -1431,48 +1633,44 @@ void main() {
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder: (int index) => TableSpan(
-          extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
-              trailing: BorderSide(
-                color: Colors.orange,
-                width: 3,
-              ),
-            ),
-          ),
-          backgroundDecoration: TableSpanDecoration(
-            color: index.isEven ? Colors.red : null,
-          ),
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
         ),
-        rowBuilder: (int index) => TableSpan(
-          extent: const FixedTableSpanExtent(200.0),
-          foregroundDecoration: const TableSpanDecoration(
-            border: TableSpanBorder(
-              leading: BorderSide(
-                color: Colors.green,
-                width: 3,
-              ),
-            ),
-          ),
-          backgroundDecoration: TableSpanDecoration(
-            color: index.isOdd ? Colors.blue : null,
-          ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(
-            dimension: 200,
-            child: Center(child: FlutterLogo()),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(TableView),
-        matchesGoldenFile('goldens/single-reversed.pinned.painting.png'),
-        skip: !runGoldens,
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 200.0, 600.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 200.0, 800.0, 400.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(400.0, 0.0, 600.0, 200.0),
+            color: const Color(0x809e9e9e),
+          )
+          ..rect(
+            rect: const Rect.fromLTRB(600.0, 0.0, 800.0, 200.0),
+            color: const Color(0x809e9e9e),
+          ),
       );
     });
 
@@ -1491,9 +1689,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -1529,6 +1729,482 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         SystemMouseCursors.basic,
       );
+    });
+
+    group('Merged pinned cells layout', () {
+      // Regression tests for https://github.com/flutter/flutter/issues/143526
+      // These tests all use the same collection of merged pinned cells in a
+      // variety of combinations.
+      final Map<TableVicinity, ({int start, int span})> bothMerged =
+          <TableVicinity, ({int start, int span})>{
+        TableVicinity.zero: (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 0): (start: 0, span: 2),
+        const TableVicinity(row: 0, column: 1): (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 1): (start: 0, span: 2),
+      };
+
+      final Map<TableVicinity, ({int start, int span})> rowMerged =
+          <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 2, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 3, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 4, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 5, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 6, column: 1): (start: 4, span: 3),
+      };
+
+      final Map<TableVicinity, ({int start, int span})> columnMerged =
+          <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 0, column: 2): (start: 2, span: 2),
+        const TableVicinity(row: 0, column: 3): (start: 2, span: 2),
+        const TableVicinity(row: 1, column: 4): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 5): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 6): (start: 4, span: 3),
+      };
+      const TableSpan span = TableSpan(extent: FixedTableSpanExtent(75));
+
+      testWidgets('Normal axes', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 150.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 300.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 290.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(140.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(290.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 290.0, 75.0, 225.0),
+        );
+      });
+
+      testWidgets('Vertical reversed', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            reverse: true,
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 300.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 75.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 85.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(140.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(290.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 85.0, 75.0, 225.0),
+        );
+      });
+
+      testWidgets('Horizontal reversed', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            reverse: true,
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 150.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 300.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 290.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(510.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(285.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 290.0, 75.0, 225.0),
+        );
+      });
+
+      testWidgets('Both reversed', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            reverse: true,
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            reverse: true,
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 300.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 75.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 85.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(510.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(285.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 85.0, 75.0, 225.0),
+        );
+      });
     });
   });
 }

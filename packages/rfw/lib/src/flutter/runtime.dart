@@ -4,10 +4,13 @@
 
 // This file is hand-formatted.
 
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../dart/model.dart';
+import '../../formats.dart';
+
 import 'content.dart';
 
 /// Signature of builders for local widgets.
@@ -169,6 +172,22 @@ class LocalWidgetLibrary extends WidgetLibrary {
   LocalWidgetBuilder? findConstructor(String name) {
     return _widgets[name];
   }
+
+  /// The widgets defined by this [LocalWidgetLibrary].
+  ///
+  /// The returned map is an immutable view of the map provided to the constructor.
+  /// They keys are the unqualified widget names, and the values are the corresponding
+  /// [LocalWidgetBuilder]s.
+  ///
+  /// The map never changes during the lifetime of the [LocalWidgetLibrary], but a new
+  /// instance of an [UnmodifiableMapView] is returned each time this getter is used.
+  ///
+  /// See also:
+  ///
+  ///  * [createCoreWidgets], a function that creates a [Map] of local widgets.
+  UnmodifiableMapView<String, LocalWidgetBuilder> get widgets {
+    return UnmodifiableMapView<String, LocalWidgetBuilder>(_widgets);
+  }
 }
 
 class _ResolvedConstructor {
@@ -226,6 +245,24 @@ class Runtime extends ChangeNotifier {
     _clearCache();
   }
 
+  /// The widget libraries imported in this [Runtime].
+  ///
+  /// The returned map is an immutable view of the map updated by calls to
+  /// [update] and [clearLibraries].
+  /// 
+  /// The keys are instances [LibraryName] which encode fully qualified library
+  /// names, and the values are the corresponding [WidgetLibrary]s.
+  /// 
+  /// The returned map is an immutable copy of the registered libraries
+  /// at the time of this call. 
+  ///
+  /// See also:
+  ///
+  ///  * [update] and [clearLibraries], functions that populate this map.
+  UnmodifiableMapView<LibraryName, WidgetLibrary> get libraries {
+    return UnmodifiableMapView<LibraryName, WidgetLibrary>(Map<LibraryName, WidgetLibrary>.from(_libraries));
+  }
+
   final Map<FullyQualifiedWidgetName, _ResolvedConstructor?> _cachedConstructors = <FullyQualifiedWidgetName, _ResolvedConstructor?>{};
   final Map<FullyQualifiedWidgetName, _CurriedWidget> _widgets = <FullyQualifiedWidgetName, _CurriedWidget>{};
 
@@ -251,10 +288,38 @@ class Runtime extends ChangeNotifier {
     _CurriedWidget? boundWidget = _widgets[widget];
     if (boundWidget == null) {
       _checkForImportLoops(widget.library);
-      boundWidget = _applyConstructorAndBindArguments(widget, const <String, Object?>{}, -1, <FullyQualifiedWidgetName>{});
+      boundWidget = _applyConstructorAndBindArguments(widget, const <String, Object?>{}, -1, <FullyQualifiedWidgetName>{}, null);
       _widgets[widget] = boundWidget;
     }
     return boundWidget.build(context, data, remoteEventTarget, const <_WidgetState>[]);
+  }
+
+  /// Returns the [BlobNode] that most closely corresponds to a given [BuildContext].
+  ///
+  /// If the `context` is not a remote widget and has no ancestor remote widget,
+  /// then this function returns null.
+  ///
+  /// The [BlobNode] is typically either a [WidgetDeclaration] (whose
+  /// [WidgetDeclaration.root] argument is a [ConstructorCall] or a [Switch]
+  /// that resolves to a [ConstructorCall]), indicating the [BuildContext] maps
+  /// to a remote widget, or a [ConstructorCall] directly, in the case where it
+  /// maps to a local widget. Widgets that correspond to render objects (i.e.
+  /// anything that might be found by hit testing on the screen) are always
+  /// local widgets.
+  static BlobNode? blobNodeFor(BuildContext context) {
+    if (context.widget is! _Widget) {
+      context.visitAncestorElements((Element element) {
+        if (element.widget is _Widget) {
+          context = element;
+          return false;
+        }
+        return true;
+      });
+    }
+    if (context.widget is! _Widget) {
+      return null;
+    }
+    return (context.widget as _Widget).curriedWidget;
   }
 
   void _checkForImportLoops(LibraryName name, [ Set<LibraryName>? visited ]) {
@@ -339,12 +404,19 @@ class Runtime extends ChangeNotifier {
   ///
   /// Widgets can't reference each other recursively; this is enforced using the
   /// `usedWidgets` argument.
-  _CurriedWidget _applyConstructorAndBindArguments(FullyQualifiedWidgetName fullName, DynamicMap arguments, int stateDepth, Set<FullyQualifiedWidgetName> usedWidgets) {
+  ///
+  /// The `source` argument is the [BlobNode] that referenced the widget
+  /// constructor, in the event that the widget comes from a
+  /// [LocalWidgetBuilder] rather than a [WidgetDeclaration], and is used to
+  /// provide source information for local widgets (which otherwise could not be
+  /// associated with a part of the source). See also [Runtime.blobNodeFor].
+  _CurriedWidget _applyConstructorAndBindArguments(FullyQualifiedWidgetName fullName, DynamicMap arguments, int stateDepth, Set<FullyQualifiedWidgetName> usedWidgets, BlobNode? source) {
     final _ResolvedConstructor? widget = _findConstructor(fullName);
     if (widget != null) {
       if (widget.constructor is WidgetDeclaration) {
         if (usedWidgets.contains(widget.fullName)) {
-          return _CurriedLocalWidget.error(fullName, 'Widget loop: Tried to call ${widget.fullName} constructor reentrantly.');
+          return _CurriedLocalWidget.error(fullName, 'Widget loop: Tried to call ${widget.fullName} constructor reentrantly.')
+            ..propagateSource(source);
         }
         usedWidgets = usedWidgets.toSet()..add(widget.fullName);
         final WidgetDeclaration constructor = widget.constructor as WidgetDeclaration;
@@ -356,17 +428,20 @@ class Runtime extends ChangeNotifier {
         }
         Object result = _bindArguments(widget.fullName, constructor.root, arguments, newDepth, usedWidgets);
         if (result is Switch) {
-          result = _CurriedSwitch(widget.fullName, result, arguments, constructor.initialState);
+          result = _CurriedSwitch(widget.fullName, result, arguments, constructor.initialState)
+            ..propagateSource(result);
         } else {
           result as _CurriedWidget;
           if (constructor.initialState != null) {
-            result = _CurriedRemoteWidget(widget.fullName, result, arguments, constructor.initialState);
+            result = _CurriedRemoteWidget(widget.fullName, result, arguments, constructor.initialState)
+              ..propagateSource(result);
           }
         }
         return result as _CurriedWidget;
       }
       assert(widget.constructor is LocalWidgetBuilder);
-      return _CurriedLocalWidget(widget.fullName, widget.constructor as LocalWidgetBuilder, arguments);
+      return _CurriedLocalWidget(widget.fullName, widget.constructor as LocalWidgetBuilder, arguments)
+        ..propagateSource(source);
     }
     final Set<LibraryName> missingLibraries = _findMissingLibraries(fullName.library).toSet();
     if (missingLibraries.isNotEmpty) {
@@ -374,15 +449,16 @@ class Runtime extends ChangeNotifier {
         fullName,
         'Could not find remote widget named ${fullName.widget} in ${fullName.library}, '
         'possibly because some dependencies were missing: ${missingLibraries.join(", ")}',
-      );
+      )..propagateSource(source);
     }
-    return _CurriedLocalWidget.error(fullName, 'Could not find remote widget named ${fullName.widget} in ${fullName.library}.');
+    return _CurriedLocalWidget.error(fullName, 'Could not find remote widget named ${fullName.widget} in ${fullName.library}.')
+      ..propagateSource(source);
   }
 
   Object _bindArguments(FullyQualifiedWidgetName context, Object node, Object arguments, int stateDepth, Set<FullyQualifiedWidgetName> usedWidgets) {
     if (node is ConstructorCall) {
       final DynamicMap subArguments = _bindArguments(context, node.arguments, arguments, stateDepth, usedWidgets) as DynamicMap;
-      return _applyConstructorAndBindArguments(FullyQualifiedWidgetName(context.library, node.name), subArguments, stateDepth, usedWidgets);
+      return _applyConstructorAndBindArguments(FullyQualifiedWidgetName(context.library, node.name), subArguments, stateDepth, usedWidgets, node);
     }
     if (node is DynamicMap) {
       return node.map<String, Object?>(
@@ -399,7 +475,8 @@ class Runtime extends ChangeNotifier {
     if (node is Loop) {
       final Object input = _bindArguments(context, node.input, arguments, stateDepth, usedWidgets);
       final Object output = _bindArguments(context, node.output, arguments, stateDepth, usedWidgets);
-      return Loop(input, output);
+      return Loop(input, output)
+        ..propagateSource(node);
     }
     if (node is Switch) {
       return Switch(
@@ -412,21 +489,23 @@ class Runtime extends ChangeNotifier {
             );
           },
         ),
-      );
+      )..propagateSource(node);
     }
     if (node is ArgsReference) {
-      return node.bind(arguments);
+      return node.bind(arguments)..propagateSource(node);
     }
     if (node is StateReference) {
-      return node.bind(stateDepth);
+      return node.bind(stateDepth)..propagateSource(node);
     }
     if (node is EventHandler) {
-      return EventHandler(node.eventName, _bindArguments(context, node.eventArguments, arguments, stateDepth, usedWidgets) as DynamicMap);
+      return EventHandler(node.eventName, _bindArguments(context, node.eventArguments, arguments, stateDepth, usedWidgets) as DynamicMap)
+        ..propagateSource(node);
     }
     if (node is SetStateHandler) {
       assert(node.stateReference is StateReference);
       final BoundStateReference stateReference = (node.stateReference as StateReference).bind(stateDepth);
-      return SetStateHandler(stateReference, _bindArguments(context, node.value, arguments, stateDepth, usedWidgets));
+      return SetStateHandler(stateReference, _bindArguments(context, node.value, arguments, stateDepth, usedWidgets))
+        ..propagateSource(node);
     }
     assert(node is! WidgetDeclaration);
     return node;
@@ -471,7 +550,8 @@ abstract class _CurriedWidget extends BlobNode {
       );
     }
     if (node is Loop) {
-      return Loop(_bindLoopVariable(node.input, argument, depth), _bindLoopVariable(node.output, argument, depth + 1));
+      return Loop(_bindLoopVariable(node.input, argument, depth), _bindLoopVariable(node.output, argument, depth + 1))
+        ..propagateSource(node);
     }
     if (node is Switch) {
       return Switch(
@@ -482,14 +562,14 @@ abstract class _CurriedWidget extends BlobNode {
             _bindLoopVariable(value, argument, depth),
           ),
         )
-      );
+      )..propagateSource(node);
     }
     if (node is _CurriedLocalWidget) {
       return _CurriedLocalWidget(
         node.fullName,
         node.child,
         _bindLoopVariable(node.arguments, argument, depth) as DynamicMap,
-      );
+      )..propagateSource(node);
     }
     if (node is _CurriedRemoteWidget) {
       return _CurriedRemoteWidget(
@@ -497,7 +577,7 @@ abstract class _CurriedWidget extends BlobNode {
         _bindLoopVariable(node.child, argument, depth) as _CurriedWidget,
         _bindLoopVariable(node.arguments, argument, depth) as DynamicMap,
         node.initialState,
-      );
+      )..propagateSource(node);
     }
     if (node is _CurriedSwitch) {
       return _CurriedSwitch(
@@ -505,22 +585,25 @@ abstract class _CurriedWidget extends BlobNode {
         _bindLoopVariable(node.root, argument, depth) as Switch,
         _bindLoopVariable(node.arguments, argument, depth) as DynamicMap,
         node.initialState,
-      );
+      )..propagateSource(node);
     }
     if (node is LoopReference) {
       if (node.loop == depth) {
-        return node.bind(argument);
+        return node.bind(argument)..propagateSource(node);
       }
       return node;
     }
     if (node is BoundArgsReference) {
-      return BoundArgsReference(_bindLoopVariable(node.arguments, argument, depth), node.parts);
+      return BoundArgsReference(_bindLoopVariable(node.arguments, argument, depth), node.parts)
+        ..propagateSource(node);
     }
     if (node is EventHandler) {
-      return EventHandler(node.eventName, _bindLoopVariable(node.eventArguments, argument, depth) as DynamicMap);
+      return EventHandler(node.eventName, _bindLoopVariable(node.eventArguments, argument, depth) as DynamicMap)
+        ..propagateSource(node);
     }
     if (node is SetStateHandler) {
-      return SetStateHandler(node.stateReference, _bindLoopVariable(node.value, argument, depth));
+      return SetStateHandler(node.stateReference, _bindLoopVariable(node.value, argument, depth))
+        ..propagateSource(node);
     }
     return node;
   }
