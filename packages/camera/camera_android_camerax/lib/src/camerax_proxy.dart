@@ -55,10 +55,10 @@ class CameraXProxy {
         _startListeningForDeviceOrientationChange,
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
     this.getDefaultDisplayRotation = _getDefaultDisplayRotation,
-    this.createMeteringPoint = _createMeteringPoint,
-    this.createFocusMeteringAction = _createFocusMeteringAction,
+    this.createMeteringPoint = _createAttachedMeteringPoint,
+    this.createFocusMeteringAction = _createAttachedFocusMeteringAction,
     this.getCamera2CameraControl = _getCamera2CameraControl,
-    this.createCaptureRequestOptions = _createCaptureRequestOptions,
+    this.createCaptureRequestOptions = _createAttachedCaptureRequestOptions,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -158,11 +158,11 @@ class CameraXProxy {
   FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos,
       bool? disableAutoCancel) createFocusMeteringAction;
 
-  /// Get [Camera2CameraControl] instance from [cameraControl].
+  /// Retrieves [Camera2CameraControl] instance from [cameraControl].
   Camera2CameraControl Function(CameraControl cameraControl)
       getCamera2CameraControl;
 
-  /// Create [CapureRequestOptions] with specified options.
+  /// Returns a [CapureRequestOptions] with specified options.
   CaptureRequestOptions Function(
           List<(CaptureRequestKeySupportedType, Object?)> options)
       createCaptureRequestOptions;
@@ -270,12 +270,12 @@ class CameraXProxy {
     return DeviceOrientationManager.getDefaultDisplayRotation();
   }
 
-  static MeteringPoint _createMeteringPoint(
+  static MeteringPoint _createAttachedMeteringPoint(
       double x, double y, double? size, CameraInfo cameraInfo) {
     return MeteringPoint(x: x, y: y, size: size, cameraInfo: cameraInfo);
   }
 
-  static FocusMeteringAction _createFocusMeteringAction(
+  static FocusMeteringAction _createAttachedFocusMeteringAction(
       List<(MeteringPoint, int?)> meteringPointInfos, bool? disableAutoCancel) {
     return FocusMeteringAction(
         meteringPointInfos: meteringPointInfos,
@@ -287,7 +287,7 @@ class CameraXProxy {
     return Camera2CameraControl(cameraControl: cameraControl);
   }
 
-  static CaptureRequestOptions _createCaptureRequestOptions(
+  static CaptureRequestOptions _createAttachedCaptureRequestOptions(
       List<(CaptureRequestKeySupportedType, Object?)> options) {
     return CaptureRequestOptions(requestedOptions: options);
   }

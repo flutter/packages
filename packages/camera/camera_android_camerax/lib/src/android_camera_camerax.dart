@@ -194,19 +194,23 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   FocusMeteringAction? currentFocusMeteringAction;
 
-  /// Current focus mode.
+  /// Current focus mode set via [setFocusMode].
   ///
   /// CameraX defaults to auto-focus mode.
   FocusMode currentFocusMode = FocusMode.auto;
 
-  /// Current exposure mode.
+  /// Current exposure mode set via [setExposureMode].
   ///
   /// CameraX defaults to auto-exposure mode.
   ExposureMode currentExposureMode = ExposureMode.auto;
 
-  /// Whether or not a default focus point of the dentire sensor area was added
-  /// to lock focus.
-  bool defaultFocusPointAdded = false;
+  /// Whether or not a default focus point of the entire sensor area was focused
+  /// and locked.
+  ///
+  /// This should only be true if [setExposureMode] was called to set
+  /// [FocusMode.locked] and no previous focus point was set via
+  /// [setFocusPoint].
+  bool defaultFocusPointLocked = false;
 
   /// Error code indicating that exposure compensation is not supported by
   /// CameraX for the device.
@@ -468,10 +472,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<void> setExposurePoint(int cameraId, Point<double>? point) async {
+    // We lock the new focus and metering action if focus mode has been locked
+    // to ensure that the current focus point remains locked. Any exposure mode
+    // setting will not be impacted by this lock (setting an exposure mode
+    // is implemented with Camera2 interop that will override any settings
+    // to achieve the expected exposure mode as needed).
+    final bool disableAutoCancel = currentFocusMode == FocusMode.locked;
     await _startFocusAndMeteringForPoint(
         point: point,
         meteringMode: FocusMeteringAction.flagAe,
-        disableAutoCancel: currentFocusMode == FocusMode.locked);
+        disableAutoCancel: disableAutoCancel);
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -495,14 +505,24 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Sets the focus mode for taking pictures.
+  ///
+  /// Setting [FocusMode.locked] will lock current focus point if one exists or
+  /// center of entire sensor area if not and will stay locked until either:
+  ///   * Another focus point is set via [setFocusPoint], or
+  ///   * Locked focus mode is unset by setting [FocusMode.auto].
   @override
   Future<void> setFocusMode(int cameraId, FocusMode mode) async {
     switch (mode) {
       case FocusMode.auto:
         if (currentFocusMode == FocusMode.auto) {
+          // CameraX uses auto-focus mode by default, so no need to reconfigure
+          // auto-focus if already set.
           return;
         }
-        final MeteringPoint? autoAfPoint = defaultFocusPointAdded
+
+        // Determine auto-focus point to restore, if any. We do not restore
+        // default auto-focus point if set previously to lock focus.
+        final MeteringPoint? autoAfPoint = defaultFocusPointLocked
             ? null
             : currentFocusMeteringAction!.meteringPointInfos
                 .where(((MeteringPoint, int?) meteringPointInfo) =>
@@ -510,11 +530,14 @@ class AndroidCameraCameraX extends CameraPlatform {
                 .toList()
                 .first
                 .$1;
-        defaultFocusPointAdded = false;
+        defaultFocusPointLocked = false;
+
         await _startFocusAndMeteringFor(
             point: autoAfPoint, meteringMode: FocusMeteringAction.flagAf);
       case FocusMode.locked:
         MeteringPoint? lockedAfPoint;
+
+        // Determine if there is an auto-focus point set currently to lock.
         if (currentFocusMeteringAction != null) {
           final List<(MeteringPoint, int?)> possibleCurrentAfPoints =
               currentFocusMeteringAction!.meteringPointInfos
@@ -525,16 +548,24 @@ class AndroidCameraCameraX extends CameraPlatform {
               ? null
               : possibleCurrentAfPoints.first.$1;
         }
+
+        // If there isn't, lock center of entire sensor area by default.
         if (lockedAfPoint == null) {
           lockedAfPoint = proxy.createMeteringPoint(0.5, 0.5, 1, cameraInfo!);
-          defaultFocusPointAdded = true;
+          defaultFocusPointLocked = true;
         }
+
         await _startFocusAndMeteringFor(
             point: lockedAfPoint,
             meteringMode: FocusMeteringAction.flagAf,
             disableAutoCancel: true);
     }
+    // Update current focus mode.
     currentFocusMode = mode;
+
+    // If focus mode was just locked and exposure mode is not, unlock exposure
+    // mode to ensure that disabling auto-cancel does not interfere with
+    // automatic exposure metering.
     if (currentExposureMode == ExposureMode.auto &&
         currentFocusMode == FocusMode.locked) {
       await setExposureMode(cameraId, currentExposureMode);
@@ -625,6 +656,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<void> setFocusPoint(int cameraId, Point<double>? point) async {
+    // We lock the new focus and metering action if focus mode has been locked
+    // to ensure that the current focus point remains locked. Any exposure mode
+    // setting will not be impacted by this lock (setting an exposure mode
+    // is implemented with Camera2 interop that will override any settings
+    // to achieve the expected exposure mode as needed).
     await _startFocusAndMeteringForPoint(
         point: point,
         meteringMode: FocusMeteringAction.flagAf,
@@ -1164,26 +1200,25 @@ class AndroidCameraCameraX extends CameraPlatform {
         disableAutoCancel: disableAutoCancel);
   }
 
-  // TODO(camsim99): Clarify behavior when there is no current action.
-  // TODO(camsim99): Throw exception for AWB because I'm not handling this at all.
   /// Starts a focus and metering action.
   ///
   /// This method will modify and start the current action's metering points
   /// overriden with the [point] provided for the specified [meteringMode] type
-  /// only, with all other points of other modes left untouched. Thus, the
-  /// focus and metering action started will contain only the one most recently
-  /// set point for each metering mode: AF, AE, AWB.
+  /// only, with all other points of other modes left untouched. If no current
+  /// action exists, only the specified [point] will be set. Thus, the focus
+  /// and metering action started will only contain at most the one most
+  /// recently set point for each metering mode: AF, AE, AWB.
   ///
   /// Thus, if [point] is non-null, this action includes:
   ///   * metering points and their modes previously added to
   ///     [currentFocusMeteringAction] that do not share a metering mode with
-  ///     [point] and
+  ///     [point] (if [currentFocusMeteringAction] is non-null) and
   ///   * [point] with the specified [meteringMode].
   /// If [point] is null, this action includes only metering points and
   /// their modes previously added to [currentFocusMeteringAction] that do not
-  /// share a metering mode with [point]. If there are no such metering
-  /// points, then the previously enabled focus and metering actions will be
-  /// canceled.
+  /// share a metering mode with [point] (if [currentFocusMeteringAction] is
+  /// non-null). If there are no such metering points, then the previously
+  /// enabled focus and metering actions will be canceled.
   Future<void> _startFocusAndMeteringFor(
       {required MeteringPoint? point,
       required int meteringMode,
