@@ -23,7 +23,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   google_maps: ^6.1.0
-  google_maps_flutter_platform_interface: ^2.4.0
+  google_maps_flutter_platform_interface: ^2.5.0
   sanitize_html: ^2.0.0
   stream_transform: ^2.0.0
 
@@ -39,8 +39,3 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/web/index.html
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {google_maps_flutter_platform_interface: {path: ../../google_maps_flutter/google_maps_flutter_platform_interface}}

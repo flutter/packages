@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter_platform_interface: ^2.4.0
+  google_maps_flutter_platform_interface: ^2.5.0
   google_maps_flutter_web:
     path: ../
 
@@ -24,15 +24,9 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.4
 
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
 dependency_overrides:
-
   # Override the google_maps_flutter dependency on google_maps_flutter_web.
   # TODO(ditman): Unwind the circular dependency. This will create problems
   # if we need to make a breaking change to google_maps_flutter_web.
-  google_maps_flutter_platform_interface:
-    path: ../../../google_maps_flutter/google_maps_flutter_platform_interface
   google_maps_flutter_web:
     path: ../
