@@ -549,6 +549,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Sets the exposure mode for taking pictures.
   ///
+  /// Setting [ExposureMode.locked] will lock current exposure point until it
+  /// is unset by setting [ExposureMode.auto].
+  ///
   /// [cameraId] is not used.
   @override
   Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
