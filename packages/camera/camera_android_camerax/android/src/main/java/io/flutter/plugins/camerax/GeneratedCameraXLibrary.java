@@ -83,14 +83,14 @@ public class GeneratedCameraXLibrary {
    * <p>If you need to add another type to support a type S to use a LiveData<S> in this plugin,
    * ensure the following is done on the Dart side:
    *
-   * <p>* In `../lib/src/live_data.dart`, add new cases for S in
+   * <p>* In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
    * `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of type S from a
    * LiveData<S> instance and in `LiveDataFlutterApiImpl#create` to create the expected type of
    * LiveData<S> when requested.
    *
    * <p>On the native side, ensure the following is done:
    *
-   * <p>* Update `LiveDataHostApiImpl#getValue` is updated to properly return identifiers for
+   * <p>* Make sure `LiveDataHostApiImpl#getValue` is updated to properly return identifiers for
    * instances of type S. * Update `ObserverFlutterApiWrapper#onChanged` to properly handle
    * receiving calls with instances of type S if a LiveData<S> instance is observed.
    */
@@ -146,6 +146,24 @@ public class GeneratedCameraXLibrary {
     }
   }
 
+  /**
+   * The types of capture request options this plugin currently supports.
+   *
+   * <p>If you need to add another option to support, ensure the following is done on the Dart side:
+   *
+   * <p>* In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
+   * option in `_CaptureRequestOptionsHostApiImpl#createFromInstances` to create the expected Map
+   * entry of option key index and value to send to the native side.
+   *
+   * <p>On the native side, ensure the following is done:
+   *
+   * <p>* Update `CaptureRequestOptionsHostApiImpl#create` to set the correct `CaptureRequest` key
+   * with a valid value type for this option.
+   *
+   * <p>See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest for the
+   * sorts of capture request options that can be supported via CameraX's interoperability with
+   * Camera2.
+   */
   public enum CaptureRequestKeySupportedType {
     CONTROL_AE_LOCK(0);
 
@@ -3899,7 +3917,11 @@ public class GeneratedCameraXLibrary {
   public interface MeteringPointHostApi {
 
     void create(
-        @NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size);
+        @NonNull Long identifier,
+        @NonNull Double x,
+        @NonNull Double y,
+        @Nullable Double size,
+        @NonNull Long cameraInfoId);
 
     @NonNull
     Double getDefaultPointSize();
@@ -3927,12 +3949,14 @@ public class GeneratedCameraXLibrary {
                 Double xArg = (Double) args.get(1);
                 Double yArg = (Double) args.get(2);
                 Double sizeArg = (Double) args.get(3);
+                Number cameraInfoIdArg = (Number) args.get(4);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       xArg,
                       yArg,
-                      sizeArg);
+                      sizeArg,
+                      (cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

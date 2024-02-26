@@ -91,7 +91,7 @@ class SKErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?> userInfo;
+  final Map<String?, Object?>? userInfo;
 }
 
 class SKPaymentDiscountMessage {
@@ -243,4 +243,19 @@ abstract class InAppPurchaseAPI {
   void restoreTransactions(String? applicationUserName);
 
   void presentCodeRedemptionSheet();
+
+  String? retrieveReceiptData();
+
+  @async
+  void refreshReceipt({Map<String, Object?>? receiptProperties});
+
+  void startObservingPaymentQueue();
+
+  void stopObservingPaymentQueue();
+
+  void registerPaymentQueueDelegate();
+
+  void removePaymentQueueDelegate();
+
+  void showPriceConsentIfNeeded();
 }
