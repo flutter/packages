@@ -1,7 +1,8 @@
 ## 1.0.24
 * Adds `InkResponse` material widget.
 * Adds `Material` material widget.
-* Fixes the `Opacity` core widget.
+* Adds the `child` to `Opacity` core widget.
+* Implements more `InkWell` parameters.
 
 ## 1.0.23
 

@@ -10,7 +10,6 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'argument_decoders.dart';
 import 'runtime.dart';
@@ -358,8 +357,7 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       containedInkWell: source.v<bool>(['containedInkWell']) ?? false,
       highlightShape: ArgumentDecoders.enumValue<BoxShape>(BoxShape.values, source, ['highlightShape']) ?? BoxShape.circle,
       radius: source.v<double>(['radius']),
-      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])
-          ?.resolve(Directionality.of(context)),
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
       customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
       focusColor: ArgumentDecoders.color(source, ['focusColor']),
       hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
@@ -370,20 +368,29 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       canRequestFocus: source.v<bool>(['canRequestFocus']) ?? true,
       onFocusChange: source.handler(['onFocusChange'], (VoidCallback trigger) => (bool focus) => trigger()),
       autofocus: source.v<bool>(['autofocus']) ?? false,
-      hoverDuration:
-          ArgumentDecoders.duration(source, ['hoverDuration'], context),
-      child: source.child(['child']),
+      hoverDuration: ArgumentDecoders.duration(source, ['hoverDuration'], context),
+      child: source.optionalChild(['child']),
     );
   },
 
   'InkWell': (BuildContext context, DataSource source) {
-    // not implemented: onHighlightChanged, onHover; mouseCursor; focusColor, hoverColor, highlightColor, overlayColor, splashColor; splashFactory; focusNode, onFocusChange
+    // not implemented: mouseCursor; overlayColor, splashFactory; focusNode, onFocusChange
     return InkWell(
       onTap: source.voidHandler(['onTap']),
       onDoubleTap: source.voidHandler(['onDoubleTap']),
       onLongPress: source.voidHandler(['onLongPress']),
       onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
       onTapCancel: source.voidHandler(['onTapCancel']),
+      onSecondaryTap: source.voidHandler(['onSecondaryTap']),
+      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
+      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
+      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+      focusColor: ArgumentDecoders.color(source, ['focusColor']),
+      hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
+      highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
+      splashColor: ArgumentDecoders.color(source, ['splashColor']),
       radius: source.v<double>(['radius']),
       borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
       customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
