@@ -362,6 +362,12 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
+  /// If the last attempt to set the style via [MapConfiguration.style] failed,
+  /// returns the error information, otherwise returns null.
+  Future<String?> getStyleError({required int mapId}) async {
+    return null;
+  }
+
   /// Returns a widget displaying the map view - deprecated, use
   /// [buildViewWithConfiguration] instead.
   Widget buildView(

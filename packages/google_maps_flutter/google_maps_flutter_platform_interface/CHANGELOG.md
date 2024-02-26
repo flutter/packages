@@ -1,5 +1,9 @@
-## NEXT
+## 2.5.0
 
+* Adds `style` to the `MapConfiguration` to allow setting style as part of
+  map creation.
+* Adds `getStyleError` to the platform interface, to allow asynchronous access
+  to style errors that occur during initialization.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 2.4.3
