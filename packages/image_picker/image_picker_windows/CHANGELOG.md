@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.2
 
+* Add limit parameter to `pickMultiImage` and `pickMultipleMedia` to ios and Android.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 0.2.1+1

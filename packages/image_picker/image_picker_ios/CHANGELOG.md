@@ -1,3 +1,7 @@
+## 0.8.10
+
+* Add limit parameter to `pickMultiImage` and `pickMultipleMedia` to ios and Android.
+
 ## 0.8.9+2
 
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.

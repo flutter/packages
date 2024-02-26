@@ -1,3 +1,7 @@
+## 0.8.10
+
+* Add limit parameter to `pickMultiImage` and `pickMultipleMedia` to ios and Android.
+
 ## 0.8.9+4
 
 * Minimizes scope of deprecation warning suppression to only the versions where it is required.
