@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Implements `setFocusMode`, reaching feature parity with `camera/camera_android_camerax`.
+
 ## 0.5.0+35
 
 * Modifies `CameraInitializedEvent` that is sent when the camera is initialized to indicate that the initial focus

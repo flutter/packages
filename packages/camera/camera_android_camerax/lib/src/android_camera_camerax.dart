@@ -210,7 +210,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// This should only be true if [setExposureMode] was called to set
   /// [FocusMode.locked] and no previous focus point was set via
   /// [setFocusPoint].
-  bool defaultFocusPointLocked = false;
+  bool _defaultFocusPointLocked = false;
 
   /// Error code indicating that exposure compensation is not supported by
   /// CameraX for the device.
@@ -522,15 +522,15 @@ class AndroidCameraCameraX extends CameraPlatform {
 
         // Determine auto-focus point to restore, if any. We do not restore
         // default auto-focus point if set previously to lock focus.
-        final MeteringPoint? autoAfPoint = defaultFocusPointLocked
+        final MeteringPoint? autoAfPoint = _defaultFocusPointLocked
             ? null
             : currentFocusMeteringAction!.meteringPointInfos
                 .where(((MeteringPoint, int?) meteringPointInfo) =>
-                    meteringPointInfo.$2 != FocusMeteringAction.flagAf)
+                    meteringPointInfo.$2 == FocusMeteringAction.flagAf)
                 .toList()
                 .first
                 .$1;
-        defaultFocusPointLocked = false;
+        _defaultFocusPointLocked = false;
 
         await _startFocusAndMeteringFor(
             point: autoAfPoint, meteringMode: FocusMeteringAction.flagAf);
@@ -552,7 +552,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         // If there isn't, lock center of entire sensor area by default.
         if (lockedAfPoint == null) {
           lockedAfPoint = proxy.createMeteringPoint(0.5, 0.5, 1, cameraInfo!);
-          defaultFocusPointLocked = true;
+          _defaultFocusPointLocked = true;
         }
 
         await _startFocusAndMeteringFor(
