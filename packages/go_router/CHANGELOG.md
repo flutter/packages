@@ -1,6 +1,6 @@
 ## 13.2.1
 
-* Updates the redirection documentation for clarity.
+* Updates the `redirect` documentation for clarity.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 13.2.0
