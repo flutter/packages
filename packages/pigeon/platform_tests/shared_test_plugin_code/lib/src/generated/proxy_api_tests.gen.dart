@@ -397,8 +397,8 @@ enum ProxyApiTestEnum {
   three,
 }
 
-/// The core interface that each host language plugin must implement in
-/// platform_test integration tests.
+/// The core ProxyApi test class that each supported host language must
+/// implement in platform_tests integration tests.
 class ProxyApiTestClass extends ProxyApiSuperClass
     implements ProxyApiInterface {
   ProxyApiTestClass({
@@ -635,7 +635,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -656,7 +656,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -677,7 +677,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -699,7 +699,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -723,7 +723,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -747,7 +747,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -771,7 +771,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -795,7 +795,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -819,7 +819,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -844,7 +844,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -868,7 +868,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -893,7 +893,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -917,7 +917,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -941,7 +941,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -965,7 +965,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -989,7 +989,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1013,7 +1013,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1037,7 +1037,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1061,7 +1061,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1085,7 +1085,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1109,7 +1109,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1133,7 +1133,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1157,7 +1157,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1182,7 +1182,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -1204,7 +1204,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
@@ -4765,7 +4765,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 }
 
-/// ProxyApi to serve as a super class to the core ProxyApi interface.
+/// ProxyApi to serve as a super class to the core ProxyApi class.
 class ProxyApiSuperClass extends PigeonProxyApiBaseClass {
   ProxyApiSuperClass({
     super.pigeon_binaryMessenger,
@@ -4898,7 +4898,7 @@ class ProxyApiSuperClass extends PigeonProxyApiBaseClass {
   }
 }
 
-/// ProxyApi to serve as an interface to the core ProxyApi interface.
+/// ProxyApi to serve as an interface to the core ProxyApi class.
 class ProxyApiInterface extends PigeonProxyApiBaseClass {
   /// Constructs [ProxyApiInterface] without creating the associated native object.
   ///
@@ -4917,7 +4917,7 @@ class ProxyApiInterface extends PigeonProxyApiBaseClass {
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
   /// references a non-local variable, it is strongly recommended to access it
-  /// from a `WeakReference`:
+  /// with a `WeakReference`:
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);

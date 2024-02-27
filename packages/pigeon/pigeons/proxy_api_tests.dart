@@ -10,8 +10,8 @@ enum ProxyApiTestEnum {
   three,
 }
 
-/// The core interface that each host language plugin must implement in
-/// platform_test integration tests.
+/// The core ProxyApi test class that each supported host language must
+/// implement in platform_tests integration tests.
 @ProxyApi()
 abstract class ProxyApiTestClass extends ProxyApiSuperClass
     implements ProxyApiInterface {
@@ -454,7 +454,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
   String callFlutterEchoAsyncString(String aString);
 }
 
-/// ProxyApi to serve as a super class to the core ProxyApi interface.
+/// ProxyApi to serve as a super class to the core ProxyApi class.
 @ProxyApi()
 abstract class ProxyApiSuperClass {
   ProxyApiSuperClass();
@@ -462,7 +462,7 @@ abstract class ProxyApiSuperClass {
   void aSuperMethod();
 }
 
-/// ProxyApi to serve as an interface to the core ProxyApi interface.
+/// ProxyApi to serve as an interface to the core ProxyApi class.
 @ProxyApi()
 abstract class ProxyApiInterface {
   late void Function()? anInterfaceMethod;

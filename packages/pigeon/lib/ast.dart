@@ -4,6 +4,7 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+import 'generator_tools.dart';
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
@@ -176,6 +177,46 @@ class AstProxyApi extends Api {
   Iterable<ApiField> get unattachedFields => fields.where(
         (ApiField field) => !field.isAttached,
       );
+
+  /// A list of AstProxyApis where each `extends` the API that follows it.
+  Iterable<AstProxyApi> get allSuperClasses => recursiveGetSuperClassApisChain(
+        this,
+      );
+
+  /// All ProxyApis this API `implements` and all the interfaces those APIs
+  /// `implements`.
+  Iterable<AstProxyApi> get apisOfInterfaces =>
+      recursiveFindAllInterfaceApis(this);
+
+  /// All methods inherited from interfaces and the interfaces of interfaces.
+  Iterable<Method> flutterMethodsFromInterfaces() sync* {
+    for (final AstProxyApi proxyApi in apisOfInterfaces) {
+      yield* proxyApi.methods;
+    }
+  }
+
+  /// A list of Flutter methods inherited from the ProxyApi that this ProxyApi
+  /// `extends`.
+  ///
+  /// This also recursively checks the ProxyApi that the super class `extends`
+  /// and so on.
+  ///
+  /// This also includes methods that super classes inherited from interfaces
+  /// with `implements`.
+  Iterable<Method> flutterMethodsFromSuperClasses() sync* {
+    for (final AstProxyApi proxyApi in allSuperClasses.toList().reversed) {
+      yield* proxyApi.flutterMethods;
+    }
+    if (superClass != null) {
+      final Set<AstProxyApi> interfaceApisFromSuperClasses =
+          recursiveFindAllInterfaceApis(
+        superClass!.associatedProxyApi!,
+      );
+      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
+        yield* proxyApi.methods;
+      }
+    }
+  }
 
   @override
   String toString() {

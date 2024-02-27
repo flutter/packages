@@ -455,9 +455,9 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.writeln(proxyApiBaseClass);
+    indent.format(proxyApiBaseClass);
 
-    indent.writeln(
+    indent.format(
       instanceManagerTemplate(
         allProxyApiNames: root.apis
             .whereType<AstProxyApi>()
@@ -473,7 +473,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.writeln(
+    indent.format(
       instanceManagerApiTemplate(
         dartPackageName: dartPackageName,
         pigeonChannelCodecVarName: _pigeonChannelCodec,
@@ -487,7 +487,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     Root root,
     Indent indent,
   ) {
-    indent.writeln(proxyApiBaseCodec);
+    indent.format(proxyApiBaseCodec);
   }
 
   @override
@@ -500,48 +500,11 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
   }) {
     const String codecName = '_${classNamePrefix}ProxyApiBaseCodec';
 
-    // Each api has a private codec instance used by every host method,
+    // Each API has a private codec instance used by every host method,
     // constructor, or non-static field.
     final String codecInstanceName = '${_varNamePrefix}codec${api.name}';
 
-    // A list of ProxyApis where each `extends` the API that follows it.
-    final List<AstProxyApi> superClassApisChain =
-        recursiveGetSuperClassApisChain(
-      api,
-    );
-
-    // All ProxyApis this API `implements` and all the interfaces those APIs
-    // `implements`.
-    final Set<AstProxyApi> apisOfInterfaces =
-        recursiveFindAllInterfaceApis(api);
-
-    // All methods inherited from interfaces and the interfaces of interfaces.
-    final List<Method> flutterMethodsFromInterfaces = <Method>[];
-    for (final AstProxyApi proxyApi in apisOfInterfaces) {
-      flutterMethodsFromInterfaces.addAll(proxyApi.methods);
-    }
-
-    // A list of Flutter methods inherited from the ProxyApi that this ProxyApi
-    // `extends`. This also recursively checks the ProxyApi that the super class
-    // `extends` and so on.
-    //
-    // This also includes methods that super classes inherited from interfaces
-    // with `implements`.
-    final List<Method> flutterMethodsFromSuperClasses = <Method>[];
-    for (final AstProxyApi proxyApi in superClassApisChain.reversed) {
-      flutterMethodsFromSuperClasses.addAll(proxyApi.flutterMethods);
-    }
-    if (api.superClass != null) {
-      final Set<AstProxyApi> interfaceApisFromSuperClasses =
-          recursiveFindAllInterfaceApis(
-        api.superClass!.associatedProxyApi!,
-      );
-      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
-        flutterMethodsFromSuperClasses.addAll(proxyApi.methods);
-      }
-    }
-
-    // Ast class used by code_builder to generate the code.
+    // AST class used by code_builder to generate the code.
     final cb.Class proxyApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = api.name
@@ -564,8 +527,8 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           codecInstanceName: codecInstanceName,
           superClassApi: api.superClass?.associatedProxyApi,
           unattachedFields: api.unattachedFields,
-          flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-          flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+          flutterMethodsFromSuperClasses: api.flutterMethodsFromSuperClasses(),
+          flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
           declaredFlutterMethods: api.flutterMethods,
         ))
         ..constructors.add(
@@ -573,8 +536,9 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
             apiName: api.name,
             superClassApi: api.superClass?.associatedProxyApi,
             unattachedFields: api.unattachedFields,
-            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+            flutterMethodsFromSuperClasses:
+                api.flutterMethodsFromSuperClasses(),
+            flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
             declaredFlutterMethods: api.flutterMethods,
           ),
         )
@@ -592,7 +556,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           api.flutterMethods,
           apiName: api.name,
         ))
-        ..fields.addAll(_proxyApiInterfaceApiFields(apisOfInterfaces))
+        ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces))
         ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
         ..methods.add(
           _proxyApiSetUpMessageHandlerMethod(
@@ -602,8 +566,8 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
             codecName: codecName,
             unattachedFields: api.unattachedFields,
             hasCallbackConstructor: api.flutterMethods
-                .followedBy(flutterMethodsFromSuperClasses)
-                .followedBy(flutterMethodsFromInterfaces)
+                .followedBy(api.flutterMethodsFromSuperClasses())
+                .followedBy(api.flutterMethodsFromInterfaces())
                 .every((Method method) => !method.isRequired),
           ),
         )
@@ -623,17 +587,20 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           codecInstanceName: codecInstanceName,
           codecName: codecName,
         ))
-        ..methods.add(_proxyApiCopyMethod(
-          apiName: api.name,
-          unattachedFields: api.unattachedFields,
-          declaredAndInheritedFlutterMethods: flutterMethodsFromSuperClasses
-              .followedBy(flutterMethodsFromInterfaces)
-              .followedBy(api.flutterMethods),
-        )),
+        ..methods.add(
+          _proxyApiCopyMethod(
+            apiName: api.name,
+            unattachedFields: api.unattachedFields,
+            declaredAndInheritedFlutterMethods: api
+                .flutterMethodsFromSuperClasses()
+                .followedBy(api.flutterMethodsFromInterfaces())
+                .followedBy(api.flutterMethods),
+          ),
+        ),
     );
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.write(DartFormatter().format('${proxyApi.accept(emitter)}'));
+    indent.format(DartFormatter().format('${proxyApi.accept(emitter)}'));
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
@@ -1140,8 +1107,8 @@ if (${_varNamePrefix}replyList == null) {
   /// The detached constructor present for every ProxyApi.
   ///
   /// This constructor doesn't include a host method call to create a new native
-  /// class instance. It is mainly used when the native side once to create a
-  /// Dart instance and when the `InstanceManager` wants to create a copy for
+  /// class instance. It is mainly used when the native side wants to create a
+  /// Dart instance or when the `InstanceManager` wants to create a copy for
   /// automatic garbage collection.
   cb.Constructor _proxyApiDetachedConstructor({
     required String apiName,
@@ -1260,17 +1227,13 @@ if (${_varNamePrefix}replyList == null) {
             <String>[
               ...method.documentationComments,
               ...<String>[
-                if (method.documentationComments.isNotEmpty)
-                  ''
-                else ...<String>[
-                  'Callback method.',
-                  '',
-                ],
+                if (method.documentationComments.isEmpty) 'Callback method.',
+                '',
                 'For the associated Native object to be automatically garbage collected,',
                 "it is required that the implementation of this `Function` doesn't have a",
                 'strong reference to the encapsulating class instance. When this `Function`',
                 'references a non-local variable, it is strongly recommended to access it',
-                'from a `WeakReference`:',
+                'with a `WeakReference`:',
                 '',
                 '```dart',
                 'final WeakReference weakMyVariable = WeakReference(myVariable);',
