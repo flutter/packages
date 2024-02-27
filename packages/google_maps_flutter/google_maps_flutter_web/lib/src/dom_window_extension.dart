@@ -4,35 +4,62 @@
 
 import 'dart:js_interop';
 
-import 'package:web/web.dart';
+import 'package:web/web.dart' as web;
 
-/// This extension type exists to handle unsupported features by certain browsers.
-@JS()
-extension type WindowWithTrustedTypes(Window _) implements JSObject {
-  /// Get the `trustedTypes` object from the window, if it is supported.
+/// This extension gives [web.Window] a nullable getter to the `trustedTypes`
+/// property, which is used to check for feature support.
+extension NullableTrustedTypesGetter on web.Window {
+  /// (Nullable) Bindings to window.trustedTypes.
+  ///
+  /// This may be null if the browser doesn't support the Trusted Types API.
+  ///
+  /// See: https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
   @JS('trustedTypes')
-  external TrustedTypePolicyFactory? get trustedTypesNullable;
+  external GoogleMapsTrustedTypePolicyFactory? get nullableTrustedTypes;
 }
 
 // TODO(ditman): remove this extension type when we depend on package:web 0.5.1
 /// This extension exists as a stop gap until `package:web 0.5.1` is released.
 /// That version provides the `TrustedTypes` API.
-@JS()
-extension type TrustedTypePolicyFactory._(JSObject _) implements JSObject {
-  /// Create a new `TrustedTypePolicy` instance
-  /// with the given [policyName] and [policyOptions].
-  external TrustedTypePolicy createPolicy(
+@JS('TrustedTypePolicyFactory')
+extension type GoogleMapsTrustedTypePolicyFactory._(JSObject _)
+    implements JSObject {
+  /// The `TrustedTypePolicy` for Google Maps Flutter.
+  static GoogleMapsTrustedTypePolicy? _policy;
+
+  @JS('createPolicy')
+  external GoogleMapsTrustedTypePolicy _createPolicy(
     String policyName, [
-    TrustedTypePolicyOptions policyOptions,
+    GoogleMapsTrustedTypePolicyOptions policyOptions,
   ]);
+
+  /// Get a new [GoogleMapsTrustedTypePolicy].
+  ///
+  /// If a policy already exists, it will be returned.
+  /// Otherwise, a new policy is created.
+  GoogleMapsTrustedTypePolicy getTrustedTypesPolicy(
+    String policyName, [
+    GoogleMapsTrustedTypePolicyOptions? policyOptions,
+  ]) {
+    if (_policy == null) {
+      if (policyOptions != null) {
+        _policy = _createPolicy(policyName, policyOptions);
+      } else {
+        _policy = _createPolicy(policyName);
+      }
+    }
+
+    return _policy!;
+  }
 }
 
 // TODO(ditman): remove this extension type when we depend on package:web 0.5.1
 /// This extension exists as a stop gap until `package:web 0.5.1` is released.
 /// That version provides the `TrustedTypes` API.
-extension type TrustedTypePolicy._(JSObject _) implements JSObject {
+@JS('TrustedTypePolicy')
+extension type GoogleMapsTrustedTypePolicy._(JSObject _) implements JSObject {
   /// Create a new `TrustedHTML` instance with the given [input] and [arguments].
-  external TrustedHTML createHTML(
+  external GoogleMapsTrustedHTML createHTML(
     String input,
     JSAny? arguments,
   );
@@ -41,10 +68,11 @@ extension type TrustedTypePolicy._(JSObject _) implements JSObject {
 // TODO(ditman): remove this extension type when we depend on package:web 0.5.1
 /// This extension exists as a stop gap until `package:web 0.5.1` is released.
 /// That version provides the `TrustedTypes` API.
-@JS()
-extension type TrustedTypePolicyOptions._(JSObject _) implements JSObject {
+@JS('TrustedTypePolicyOptions')
+extension type GoogleMapsTrustedTypePolicyOptions._(JSObject _)
+    implements JSObject {
   /// Create a new `TrustedTypePolicyOptions` instance.
-  external factory TrustedTypePolicyOptions({
+  external factory GoogleMapsTrustedTypePolicyOptions({
     JSFunction createHTML,
   });
 }
@@ -52,8 +80,13 @@ extension type TrustedTypePolicyOptions._(JSObject _) implements JSObject {
 // TODO(ditman): remove this extension type when we depend on package:web 0.5.1
 /// This extension exists as a stop gap until `package:web 0.5.1` is released.
 /// That version provides the `TrustedTypes` API.
-@JS()
-extension type TrustedHTML._(JSObject _) implements JSObject {
-  // This type inherits `toString()` from `Object`.
-  // See also: https://developer.mozilla.org/en-US/docs/Web/API/TrustedHTML/toString
+@JS('TrustedHTML')
+extension type GoogleMapsTrustedHTML._(JSObject _) implements JSObject {}
+
+/// This extension provides a setter for the [web.HTMLElement] `innerHTML` property,
+/// that accepts trusted HTML only.
+extension TrustedInnerHTML on web.HTMLElement {
+  /// Set the inner HTML of this element to the given [trustedHTML].
+  @JS('innerHTML')
+  external set trustedInnerHTML(GoogleMapsTrustedHTML trustedHTML);
 }

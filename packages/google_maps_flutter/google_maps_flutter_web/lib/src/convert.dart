@@ -216,13 +216,32 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
   }
   if (markerSnippet.isNotEmpty) {
     final HTMLElement snippet = createDivElement()
-      ..className = 'infowindow-snippet'
+      ..className = 'infowindow-snippet';
+
+    // Firefox and Safari don't support Trusted Types yet.
+    // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
+    if (window.nullableTrustedTypes != null) {
+      final GoogleMapsTrustedTypePolicy trustedTypePolicy =
+          window.nullableTrustedTypes!.getTrustedTypesPolicy(
+        'google_maps_flutter_sanitize',
+        GoogleMapsTrustedTypePolicyOptions(
+          createHTML: (String html, JSAny? arguments) {
+            return sanitizeHtml(html);
+          }.toJS,
+        ),
+      );
+
+      snippet.trustedInnerHTML =
+          trustedTypePolicy.createHTML(markerSnippet, null);
+    } else {
       // `sanitizeHtml` is used to clean the (potential) user input from (potential)
       // XSS attacks through the contents of the marker InfoWindow.
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
       // ignore: unsafe_html
-      ..innerHTML = _sanitizeHtml(markerSnippet);
+      snippet.innerHTML = sanitizeHtml(markerSnippet);
+    }
+
     container.appendChild(snippet);
   }
 
@@ -527,30 +546,4 @@ gmaps.LatLng _pixelToLatLng(gmaps.GMap map, int x, int y) {
       gmaps.Point((x / scale) + bottomLeft.x!, (y / scale) + topRight.y!);
 
   return projection.fromPointToLatLng!(point)!;
-}
-
-String _sanitizeHtml(String htmlString) {
-  TrustedTypePolicy? trustedTypePolicy;
-
-  try {
-    // Firefox and Safari don't support Trusted Types yet.
-    // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
-    trustedTypePolicy =
-        WindowWithTrustedTypes(window).trustedTypesNullable?.createPolicy(
-              'google_maps_flutter_sanitize',
-              TrustedTypePolicyOptions(
-                createHTML: (String html, JSAny? arguments) {
-                  return sanitizeHtml(html);
-                }.toJS,
-              ),
-            );
-  } catch (_) {
-    // Fallback to not using the trusted types policy.
-  }
-
-  if (trustedTypePolicy == null) {
-    return sanitizeHtml(htmlString);
-  }
-
-  return trustedTypePolicy.createHTML(htmlString, null).toString();
 }
