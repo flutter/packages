@@ -15,7 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
-import 'package:web/helpers.dart' as html;
+import 'package:web/web.dart' as html;
 
 import 'common.dart';
 
@@ -248,6 +248,7 @@ abstract class SceneBuilderRecorder extends Recorder {
       }
     };
     PlatformDispatcher.instance.onDrawFrame = () {
+      final FlutterView? view = PlatformDispatcher.instance.implicitView;
       try {
         _profile.record('drawFrameDuration', () {
           final SceneBuilder sceneBuilder = SceneBuilder();
@@ -255,8 +256,9 @@ abstract class SceneBuilderRecorder extends Recorder {
           _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
             _profile.record('windowRenderDuration', () {
-              // TODO(goderbauer): Migrate to PlatformDispatcher.implicitView once v3.9.0 is the oldest supported Flutter version.
-              window.render(scene); // ignore: deprecated_member_use
+              assert(view != null,
+                  'Cannot profile windowRenderDuration on a null View.');
+              view!.render(scene);
             }, reported: false);
           }, reported: false);
         }, reported: true);

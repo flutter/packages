@@ -22,15 +22,10 @@ class SKPaymentTransactionMessage {
   });
 
   final SKPaymentMessage payment;
-
   final SKPaymentTransactionStateMessage transactionState;
-
   final SKPaymentTransactionMessage? originalTransaction;
-
   final double? transactionTimeStamp;
-
   final String? transactionIdentifier;
-
   final SKErrorMessage? error;
 }
 
@@ -83,15 +78,10 @@ class SKPaymentMessage {
   });
 
   final String productIdentifier;
-
   final String? applicationUsername;
-
   final String? requestData;
-
   final int quantity;
-
   final bool simulatesAskToBuyInSandbox;
-
   final SKPaymentDiscountMessage? paymentDiscount;
 }
 
@@ -101,7 +91,7 @@ class SKErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?> userInfo;
+  final Map<String?, Object?>? userInfo;
 }
 
 class SKPaymentDiscountMessage {
@@ -130,6 +120,109 @@ class SKStorefrontMessage {
   final String identifier;
 }
 
+class SKProductsResponseMessage {
+  const SKProductsResponseMessage(
+      {required this.products, required this.invalidProductIdentifiers});
+  final List<SKProductMessage?>? products;
+  final List<String?>? invalidProductIdentifiers;
+}
+
+class SKProductMessage {
+  const SKProductMessage(
+      {required this.productIdentifier,
+      required this.localizedTitle,
+      required this.localizedDescription,
+      required this.priceLocale,
+      required this.price,
+      this.subscriptionGroupIdentifier,
+      this.subscriptionPeriod,
+      this.introductoryPrice,
+      this.discounts});
+
+  final String productIdentifier;
+  final String localizedTitle;
+  final String localizedDescription;
+  final SKPriceLocaleMessage priceLocale;
+  final String? subscriptionGroupIdentifier;
+  final String price;
+  final SKProductSubscriptionPeriodMessage? subscriptionPeriod;
+  final SKProductDiscountMessage? introductoryPrice;
+  final List<SKProductDiscountMessage?>? discounts;
+}
+
+class SKPriceLocaleMessage {
+  SKPriceLocaleMessage({
+    required this.currencySymbol,
+    required this.currencyCode,
+    required this.countryCode,
+  });
+
+  ///The currency symbol for the locale, e.g. $ for US locale.
+  final String currencySymbol;
+
+  ///The currency code for the locale, e.g. USD for US locale.
+  final String currencyCode;
+
+  ///The country code for the locale, e.g. US for US locale.
+  final String countryCode;
+}
+
+class SKProductDiscountMessage {
+  const SKProductDiscountMessage(
+      {required this.price,
+      required this.priceLocale,
+      required this.numberOfPeriods,
+      required this.paymentMode,
+      required this.subscriptionPeriod,
+      required this.identifier,
+      required this.type});
+
+  final String price;
+  final SKPriceLocaleMessage priceLocale;
+  final int numberOfPeriods;
+  final SKProductDiscountPaymentModeMessage paymentMode;
+  final SKProductSubscriptionPeriodMessage subscriptionPeriod;
+  final String? identifier;
+  final SKProductDiscountTypeMessage type;
+}
+
+enum SKProductDiscountTypeMessage {
+  /// A constant indicating the discount type is an introductory offer.
+  introductory,
+
+  /// A constant indicating the discount type is a promotional offer.
+  subscription,
+}
+
+enum SKProductDiscountPaymentModeMessage {
+  /// Allows user to pay the discounted price at each payment period.
+  payAsYouGo,
+
+  /// Allows user to pay the discounted price upfront and receive the product for the rest of time that was paid for.
+  payUpFront,
+
+  /// User pays nothing during the discounted period.
+  freeTrial,
+
+  /// Unspecified mode.
+  unspecified,
+}
+
+class SKProductSubscriptionPeriodMessage {
+  SKProductSubscriptionPeriodMessage(
+      {required this.numberOfUnits, required this.unit});
+
+  final int numberOfUnits;
+  final SKSubscriptionPeriodUnitMessage unit;
+}
+
+enum SKSubscriptionPeriodUnitMessage {
+  day,
+  week,
+  month,
+  year,
+}
+
 @HostApi(dartHostTestHandler: 'TestInAppPurchaseApi')
 abstract class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
@@ -140,4 +233,29 @@ abstract class InAppPurchaseAPI {
   SKStorefrontMessage storefront();
 
   void addPayment(Map<String, Object?> paymentMap);
+
+  @async
+  SKProductsResponseMessage startProductRequest(
+      List<String> productIdentifiers);
+
+  void finishTransaction(Map<String, String?> finishMap);
+
+  void restoreTransactions(String? applicationUserName);
+
+  void presentCodeRedemptionSheet();
+
+  String? retrieveReceiptData();
+
+  @async
+  void refreshReceipt({Map<String, Object?>? receiptProperties});
+
+  void startObservingPaymentQueue();
+
+  void stopObservingPaymentQueue();
+
+  void registerPaymentQueueDelegate();
+
+  void removePaymentQueueDelegate();
+
+  void showPriceConsentIfNeeded();
 }

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
@@ -18,10 +19,12 @@ import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_android_camerax/src/device_orientation_manager.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/fallback_strategy.dart';
+import 'package:camera_android_camerax/src/focus_metering_action.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/image_proxy.dart';
 import 'package:camera_android_camerax/src/live_data.dart';
+import 'package:camera_android_camerax/src/metering_point.dart';
 import 'package:camera_android_camerax/src/observer.dart';
 import 'package:camera_android_camerax/src/pending_recording.dart';
 import 'package:camera_android_camerax/src/plane_proxy.dart';
@@ -38,7 +41,8 @@ import 'package:camera_android_camerax/src/use_case.dart';
 import 'package:camera_android_camerax/src/video_capture.dart';
 import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/services.dart' show DeviceOrientation, Uint8List;
+import 'package:flutter/services.dart'
+    show DeviceOrientation, PlatformException, Uint8List;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -112,6 +116,17 @@ void main() {
 
     return cameraClosingEventSent && cameraErrorSent;
   }
+
+  /// CameraXProxy for testing exposure and focus related controls.
+  ///
+  /// Modifies the creation of MeteringPoints and FocusMeteringActions to return
+  /// objects detached from a native object.
+  CameraXProxy getProxyForExposureAndFocus() => CameraXProxy(
+      createMeteringPoint: (double x, double y, CameraInfo cameraInfo) =>
+          MeteringPoint.detached(x: x, y: y, cameraInfo: cameraInfo),
+      createFocusMeteringAction: (List<(MeteringPoint, int?)>
+              meteringPointInfos) =>
+          FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos));
 
   test('Should fetch CameraDescription instances for available cameras',
       () async {
@@ -331,6 +346,7 @@ void main() {
     final MockVideoCapture mockVideoCapture = MockVideoCapture();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCameraControl mockCameraControl = MockCameraControl();
 
     // Tell plugin to create mock/detached objects and stub method calls for the
     // testing of createCamera.
@@ -377,6 +393,8 @@ void main() {
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
+    when(mockCamera.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
     camera.processCameraProvider = mockProcessCameraProvider;
 
     await camera.createCamera(testCameraDescription, testResolutionPreset,
@@ -388,6 +406,9 @@ void main() {
 
     // Verify the camera's CameraInfo instance got updated.
     expect(camera.cameraInfo, equals(mockCameraInfo));
+
+    // Verify camera's CameraControl instance got updated.
+    expect(camera.cameraControl, equals(mockCameraControl));
 
     // Verify preview has been marked as bound to the camera lifecycle by
     // createCamera.
@@ -662,7 +683,9 @@ void main() {
       'initializeCamera throws a CameraException when createCamera has not been called before initializedCamera',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    expect(() => camera.initializeCamera(3), throwsA(isA<CameraException>()));
+    await expectLater(() async {
+      await camera.initializeCamera(3);
+    }, throwsA(isA<CameraException>()));
   });
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {
@@ -732,19 +755,15 @@ void main() {
       startListeningForDeviceOrientationChange: (_, __) {},
     );
 
-    // TODO(camsim99): Modify this when camera configuration is supported and
-    // default values no longer being used.
-    // https://github.com/flutter/flutter/issues/120468
-    // https://github.com/flutter/flutter/issues/120467
     final CameraInitializedEvent testCameraInitializedEvent =
         CameraInitializedEvent(
             cameraId,
             resolutionWidth.toDouble(),
             resolutionHeight.toDouble(),
             ExposureMode.auto,
-            false,
+            true,
             FocusMode.auto,
-            false);
+            true);
 
     // Call createCamera.
     when(mockPreview.setSurfaceProvider()).thenAnswer((_) async => cameraId);
@@ -938,6 +957,7 @@ void main() {
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCameraControl mockCameraControl = MockCameraControl();
     final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
 
     // Set directly for test versus calling createCamera.
@@ -959,6 +979,8 @@ void main() {
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => mockLiveCameraState);
+    when(mockCamera.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
 
     await camera.resumePreview(78);
 
@@ -972,6 +994,7 @@ void main() {
                 as Observer<dynamic>),
         isTrue);
     expect(camera.cameraInfo, equals(mockCameraInfo));
+    expect(camera.cameraControl, equals(mockCameraControl));
   });
 
   test(
@@ -1006,25 +1029,37 @@ void main() {
 
   group('video recording', () {
     test(
-        'startVideoCapturing binds video capture use case and starts the recording',
+        'startVideoCapturing binds video capture use case, updates saved camera instance and its properties, and starts the recording',
         () async {
       // Set up mocks and constants.
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final MockRecording mockRecording = MockRecording();
+      final MockCamera mockCamera = MockCamera();
+      final MockCamera newMockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final MockCameraControl mockCameraControl = MockCameraControl();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+      final MockLiveCameraState newMockLiveCameraState = MockLiveCameraState();
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
       // Set directly for test versus calling createCamera.
       camera.processCameraProvider = MockProcessCameraProvider();
-      camera.camera = MockCamera();
+      camera.camera = mockCamera;
       camera.recorder = MockRecorder();
       camera.videoCapture = MockVideoCapture();
       camera.cameraSelector = MockCameraSelector();
+      camera.liveCameraState = mockLiveCameraState;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
+
+      // Tell plugin to create detached Observer when camera info updated.
+      camera.proxy = CameraXProxy(
+          createCameraStateObserver: (void Function(Object) onChanged) =>
+              Observer<CameraState>.detached(onChanged: onChanged));
 
       const int cameraId = 17;
       const String outputPath = '/temp/MOV123.temp';
@@ -1039,12 +1074,33 @@ void main() {
           .thenAnswer((_) async => false);
       when(camera.processCameraProvider!.bindToLifecycle(
               camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
-          .thenAnswer((_) async => camera.camera!);
+          .thenAnswer((_) async => newMockCamera);
+      when(newMockCamera.getCameraInfo())
+          .thenAnswer((_) async => mockCameraInfo);
+      when(newMockCamera.getCameraControl())
+          .thenAnswer((_) async => mockCameraControl);
+      when(mockCameraInfo.getCameraState())
+          .thenAnswer((_) async => newMockLiveCameraState);
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
+      // Verify VideoCapture UseCase is bound and camera & its properties
+      // are updated.
       verify(camera.processCameraProvider!.bindToLifecycle(
           camera.cameraSelector!, <UseCase>[camera.videoCapture!]));
+      expect(camera.camera, equals(newMockCamera));
+      expect(camera.cameraInfo, equals(mockCameraInfo));
+      expect(camera.cameraControl, equals(mockCameraControl));
+      verify(mockLiveCameraState.removeObservers());
+      expect(
+          await testCameraClosingObserver(
+              camera,
+              cameraId,
+              verify(newMockLiveCameraState.observe(captureAny)).captured.single
+                  as Observer<dynamic>),
+          isTrue);
+
+      // Verify recording is started.
       expect(camera.pendingRecording, equals(mockPendingRecording));
       expect(camera.recording, mockRecording);
     });
@@ -1056,6 +1112,8 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final MockRecording mockRecording = MockRecording();
+      final MockCamera mockCamera = MockCamera();
+      final MockCameraInfo mockCameraInfo = MockCameraInfo();
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
@@ -1068,6 +1126,11 @@ void main() {
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
+
+      // Tell plugin to create detached Observer when camera info updated.
+      camera.proxy = CameraXProxy(
+          createCameraStateObserver: (void Function(Object) onChanged) =>
+              Observer<CameraState>.detached(onChanged: onChanged));
 
       const int cameraId = 17;
       const String outputPath = '/temp/MOV123.temp';
@@ -1082,7 +1145,11 @@ void main() {
           .thenAnswer((_) async => false);
       when(camera.processCameraProvider!.bindToLifecycle(
               camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
-          .thenAnswer((_) async => MockCamera());
+          .thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo())
+          .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+      when(mockCameraInfo.getCameraState())
+          .thenAnswer((_) async => MockLiveCameraState());
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -1267,9 +1334,14 @@ void main() {
       camera.videoCapture = videoCapture;
       camera.videoOutputPath = videoOutputPath;
 
+      // Tell plugin that videoCapture use case was bound to start recording.
+      when(camera.processCameraProvider!.isBound(videoCapture))
+          .thenAnswer((_) async => true);
+
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
 
+      // Verify that recording stops.
       verify(recording.close());
       verifyNoMoreInteractions(recording);
     });
@@ -1284,47 +1356,57 @@ void main() {
       camera.recording = null;
       camera.videoOutputPath = videoOutputPath;
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
+      await expectLater(() async {
+        await camera.stopVideoRecording(0);
+      }, throwsA(isA<CameraException>()));
     });
+  });
 
-    test(
-        'stopVideoRecording throws a camera exception if '
-        'videoOutputPath is null, and sets recording to null', () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      final MockRecording recording = MockRecording();
+  test(
+      'stopVideoRecording throws a camera exception if '
+      'videoOutputPath is null, and sets recording to null', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockRecording mockRecording = MockRecording();
+    final MockVideoCapture mockVideoCapture = MockVideoCapture();
 
-      // Set directly for test versus calling startVideoCapturing.
-      camera.recording = recording;
-      camera.videoOutputPath = null;
+    // Set directly for test versus calling startVideoCapturing.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recording = mockRecording;
+    camera.videoOutputPath = null;
+    camera.videoCapture = mockVideoCapture;
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
-      expect(camera.recording, null);
-    });
+    // Tell plugin that videoCapture use case was bound to start recording.
+    when(camera.processCameraProvider!.isBound(mockVideoCapture))
+        .thenAnswer((_) async => true);
 
-    test(
-        'calling stopVideoRecording twice stops the recording '
-        'and then throws a CameraException', () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
-      final MockRecording recording = MockRecording();
-      final MockProcessCameraProvider processCameraProvider =
-          MockProcessCameraProvider();
-      final MockVideoCapture videoCapture = MockVideoCapture();
-      const String videoOutputPath = '/test/output/path';
+    await expectLater(() async {
+      await camera.stopVideoRecording(0);
+    }, throwsA(isA<CameraException>()));
+    expect(camera.recording, null);
+  });
 
-      // Set directly for test versus calling createCamera and startVideoCapturing.
-      camera.processCameraProvider = processCameraProvider;
-      camera.recording = recording;
-      camera.videoCapture = videoCapture;
-      camera.videoOutputPath = videoOutputPath;
+  test(
+      'calling stopVideoRecording twice stops the recording '
+      'and then throws a CameraException', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockRecording recording = MockRecording();
+    final MockProcessCameraProvider processCameraProvider =
+        MockProcessCameraProvider();
+    final MockVideoCapture videoCapture = MockVideoCapture();
+    const String videoOutputPath = '/test/output/path';
 
-      final XFile file = await camera.stopVideoRecording(0);
-      expect(file.path, videoOutputPath);
+    // Set directly for test versus calling createCamera and startVideoCapturing.
+    camera.processCameraProvider = processCameraProvider;
+    camera.recording = recording;
+    camera.videoCapture = videoCapture;
+    camera.videoOutputPath = videoOutputPath;
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
-    });
+    final XFile file = await camera.stopVideoRecording(0);
+    expect(file.path, videoOutputPath);
+
+    await expectLater(() async {
+      await camera.stopVideoRecording(0);
+    }, throwsA(isA<CameraException>()));
   });
 
   test(
@@ -1396,17 +1478,13 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 77;
-    final MockCameraControl mockCameraControl = MockCameraControl();
 
     // Set directly for test versus calling createCamera.
     camera.imageCapture = MockImageCapture();
-    camera.camera = MockCamera();
+    camera.cameraControl = MockCameraControl();
 
     // Ignore setting target rotation for this test; tested seprately.
     camera.captureOrientationLocked = true;
-
-    when(camera.camera!.getCameraControl())
-        .thenAnswer((_) async => mockCameraControl);
 
     await camera.setFlashMode(cameraId, FlashMode.torch);
     await camera.takePicture(cameraId);
@@ -1422,13 +1500,10 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.imageCapture = MockImageCapture();
-    camera.camera = MockCamera();
+    camera.cameraControl = mockCameraControl;
 
     // Ignore setting target rotation for this test; tested seprately.
     camera.captureOrientationLocked = true;
-
-    when(camera.camera!.getCameraControl())
-        .thenAnswer((_) async => mockCameraControl);
 
     for (final FlashMode flashMode in FlashMode.values) {
       await camera.setFlashMode(cameraId, flashMode);
@@ -1463,10 +1538,7 @@ void main() {
     final MockCameraControl mockCameraControl = MockCameraControl();
 
     // Set directly for test versus calling createCamera.
-    camera.camera = MockCamera();
-
-    when(camera.camera!.getCameraControl())
-        .thenAnswer((_) async => mockCameraControl);
+    camera.cameraControl = mockCameraControl;
 
     await camera.setFlashMode(cameraId, FlashMode.torch);
 
@@ -1481,10 +1553,7 @@ void main() {
     final MockCameraControl mockCameraControl = MockCameraControl();
 
     // Set directly for test versus calling createCamera.
-    camera.camera = MockCamera();
-
-    when(camera.camera!.getCameraControl())
-        .thenAnswer((_) async => mockCameraControl);
+    camera.cameraControl = mockCameraControl;
 
     for (final FlashMode flashMode in FlashMode.values) {
       camera.torchEnabled = true;
@@ -1557,6 +1626,25 @@ void main() {
     expect(await camera.getExposureOffsetStepSize(55), 0.2);
   });
 
+  test(
+      'getExposureOffsetStepSize returns -1 when exposure compensation not supported on device',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureCompensationRange(minCompensation: 0, maxCompensation: 0),
+        exposureCompensationStep: 0);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+
+    expect(await camera.getExposureOffsetStepSize(55), -1);
+  });
+
   test('getMaxZoomLevel returns expected exposure offset', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
@@ -1600,10 +1688,7 @@ void main() {
     final MockCameraControl mockCameraControl = MockCameraControl();
 
     // Set directly for test versus calling createCamera.
-    camera.camera = MockCamera();
-
-    when(camera.camera!.getCameraControl())
-        .thenAnswer((_) async => mockCameraControl);
+    camera.cameraControl = mockCameraControl;
 
     await camera.setZoomLevel(cameraId, zoomRatio);
 
@@ -1923,5 +2008,453 @@ void main() {
     camera.captureOrientationLocked = true;
     await camera.unlockCaptureOrientation(cameraId);
     expect(camera.captureOrientationLocked, isFalse);
+  });
+
+  test(
+      'setExposurePoint clears current auto-exposure metering point as expected',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 93;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    // Verify nothing happens if no current focus and metering action has been
+    // enabled.
+    await camera.setExposurePoint(cameraId, null);
+    verifyNever(mockCameraControl.startFocusAndMetering(any));
+    verifyNever(mockCameraControl.cancelFocusAndMetering());
+
+    // Verify current auto-exposure metering point is removed if previously set.
+    final (MeteringPoint, int?) autofocusMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAf
+    );
+    List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAe
+      ),
+      autofocusMeteringPointInfo
+    ];
+
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setExposurePoint(cameraId, null);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(
+        capturedMeteringPointInfos.first, equals(autofocusMeteringPointInfo));
+
+    // Verify current focus and metering action is cleared if only previously
+    // set metering point was for auto-exposure.
+    meteringPointInfos = <(MeteringPoint, int?)>[
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAe
+      )
+    ];
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setExposurePoint(cameraId, null);
+
+    verify(mockCameraControl.cancelFocusAndMetering());
+  });
+
+  test('setExposurePoint throws CameraException if invalid point specified',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 23;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    const Point<double> invalidExposurePoint = Point<double>(3, -1);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    expect(() => camera.setExposurePoint(cameraId, invalidExposurePoint),
+        throwsA(isA<CameraException>()));
+  });
+
+  test(
+      'setExposurePoint adds new exposure point to focus metering action to start as expected when previous metering points have been set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 9;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    // Verify current auto-exposure metering point is removed if previously set.
+    double exposurePointX = 0.8;
+    double exposurePointY = 0.1;
+    Point<double> exposurePoint = Point<double>(exposurePointX, exposurePointY);
+    final (MeteringPoint, int?) autofocusMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAf
+    );
+    List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAe
+      ),
+      autofocusMeteringPointInfo
+    ];
+
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setExposurePoint(cameraId, exposurePoint);
+
+    VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(2));
+    expect(
+        capturedMeteringPointInfos.first, equals(autofocusMeteringPointInfo));
+    expect(capturedMeteringPointInfos[1].$1.x, equals(exposurePointX));
+    expect(capturedMeteringPointInfos[1].$1.y, equals(exposurePointY));
+    expect(
+        capturedMeteringPointInfos[1].$2, equals(FocusMeteringAction.flagAe));
+
+    // Verify exposure point is set when no auto-exposure metering point
+    // previously set, but an auto-focus point metering point has been.
+    exposurePointX = 0.2;
+    exposurePointY = 0.9;
+    exposurePoint = Point<double>(exposurePointX, exposurePointY);
+    meteringPointInfos = <(MeteringPoint, int?)>[autofocusMeteringPointInfo];
+
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setExposurePoint(cameraId, exposurePoint);
+
+    verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    capturedAction = verificationResult.captured.single as FocusMeteringAction;
+    capturedMeteringPointInfos = capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(2));
+    expect(
+        capturedMeteringPointInfos.first, equals(autofocusMeteringPointInfo));
+    expect(capturedMeteringPointInfos[1].$1.x, equals(exposurePointX));
+    expect(capturedMeteringPointInfos[1].$1.y, equals(exposurePointY));
+    expect(
+        capturedMeteringPointInfos[1].$2, equals(FocusMeteringAction.flagAe));
+  });
+
+  test(
+      'setExposurePoint adds new exposure point to focus metering action to start as expected when no previous metering points have been set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 19;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    const double exposurePointX = 0.8;
+    const double exposurePointY = 0.1;
+    const Point<double> exposurePoint =
+        Point<double>(exposurePointX, exposurePointY);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+    camera.currentFocusMeteringAction = null;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    await camera.setExposurePoint(cameraId, exposurePoint);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(capturedMeteringPointInfos.first.$1.x, equals(exposurePointX));
+    expect(capturedMeteringPointInfos.first.$1.y, equals(exposurePointY));
+    expect(capturedMeteringPointInfos.first.$2,
+        equals(FocusMeteringAction.flagAe));
+  });
+
+  test(
+      'setExposureOffset throws exception if exposure compensation not supported',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 6;
+    const double offset = 2;
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
+        exposureCompensationStep: 0);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+
+    expect(() => camera.setExposureOffset(cameraId, offset),
+        throwsA(isA<CameraException>()));
+  });
+
+  test(
+      'setExposureOffset throws exception if exposure compensation could not be set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 11;
+    const double offset = 3;
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final CameraControl mockCameraControl = MockCameraControl();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
+        exposureCompensationStep: 0.2);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = mockCameraInfo;
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+    when(mockCameraControl.setExposureCompensationIndex(15)).thenThrow(
+        PlatformException(
+            code: 'TEST_ERROR',
+            message:
+                'This is a test error message indicating exposure offset could not be set.'));
+
+    expect(() => camera.setExposureOffset(cameraId, offset),
+        throwsA(isA<CameraException>()));
+  });
+
+  test(
+      'setExposureOffset behaves as expected to successful attempt to set exposure compensation index',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 11;
+    const double offset = 3;
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final CameraControl mockCameraControl = MockCameraControl();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
+        exposureCompensationStep: 0.2);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = mockCameraInfo;
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+
+    // Exposure index * exposure offset step size = exposure offset, i.e.
+    // 15 * 0.2 = 3.
+    expect(await camera.setExposureOffset(cameraId, offset), equals(3));
+  });
+
+  test('setFocusPoint clears current auto-exposure metering point as expected',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 93;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    // Verify nothing happens if no current focus and metering action has been
+    // enabled.
+    await camera.setFocusPoint(cameraId, null);
+    verifyNever(mockCameraControl.startFocusAndMetering(any));
+    verifyNever(mockCameraControl.cancelFocusAndMetering());
+
+    // Verify current auto-exposure metering point is removed if previously set.
+    final (MeteringPoint, int?) autoexposureMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAe
+    );
+    List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAf
+      ),
+      autoexposureMeteringPointInfo
+    ];
+
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setFocusPoint(cameraId, null);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(capturedMeteringPointInfos.first,
+        equals(autoexposureMeteringPointInfo));
+
+    // Verify current focus and metering action is cleared if only previously
+    // set metering point was for auto-exposure.
+    meteringPointInfos = <(MeteringPoint, int?)>[
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAf
+      )
+    ];
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setFocusPoint(cameraId, null);
+
+    verify(mockCameraControl.cancelFocusAndMetering());
+  });
+
+  test('setFocusPoint throws CameraException if invalid point specified',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 23;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    const Point<double> invalidFocusPoint = Point<double>(-3, 1);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    expect(() => camera.setFocusPoint(cameraId, invalidFocusPoint),
+        throwsA(isA<CameraException>()));
+  });
+
+  test(
+      'setFocusPoint adds new exposure point to focus metering action to start as expected when previous metering points have been set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 9;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    // Verify current auto-exposure metering point is removed if previously set.
+    double focusPointX = 0.8;
+    double focusPointY = 0.1;
+    Point<double> exposurePoint = Point<double>(focusPointX, focusPointY);
+    final (MeteringPoint, int?) autoExposureMeteringPointInfo = (
+      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+      FocusMeteringAction.flagAe
+    );
+    List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
+      (
+        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+        FocusMeteringAction.flagAf
+      ),
+      autoExposureMeteringPointInfo
+    ];
+
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setFocusPoint(cameraId, exposurePoint);
+
+    VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(2));
+    expect(capturedMeteringPointInfos.first,
+        equals(autoExposureMeteringPointInfo));
+    expect(capturedMeteringPointInfos[1].$1.x, equals(focusPointX));
+    expect(capturedMeteringPointInfos[1].$1.y, equals(focusPointY));
+    expect(
+        capturedMeteringPointInfos[1].$2, equals(FocusMeteringAction.flagAf));
+
+    // Verify exposure point is set when no auto-exposure metering point
+    // previously set, but an auto-focus point metering point has been.
+    focusPointX = 0.2;
+    focusPointY = 0.9;
+    exposurePoint = Point<double>(focusPointX, focusPointY);
+    meteringPointInfos = <(MeteringPoint, int?)>[autoExposureMeteringPointInfo];
+
+    camera.currentFocusMeteringAction =
+        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+
+    await camera.setFocusPoint(cameraId, exposurePoint);
+
+    verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    capturedAction = verificationResult.captured.single as FocusMeteringAction;
+    capturedMeteringPointInfos = capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(2));
+    expect(capturedMeteringPointInfos.first,
+        equals(autoExposureMeteringPointInfo));
+    expect(capturedMeteringPointInfos[1].$1.x, equals(focusPointX));
+    expect(capturedMeteringPointInfos[1].$1.y, equals(focusPointY));
+    expect(
+        capturedMeteringPointInfos[1].$2, equals(FocusMeteringAction.flagAf));
+  });
+
+  test(
+      'setFocusPoint adds new exposure point to focus metering action to start as expected when no previous metering points have been set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 19;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    const double focusPointX = 0.8;
+    const double focusPointY = 0.1;
+    const Point<double> exposurePoint = Point<double>(focusPointX, focusPointY);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+    camera.currentFocusMeteringAction = null;
+
+    camera.proxy = getProxyForExposureAndFocus();
+
+    await camera.setFocusPoint(cameraId, exposurePoint);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(capturedMeteringPointInfos.first.$1.x, equals(focusPointX));
+    expect(capturedMeteringPointInfos.first.$1.y, equals(focusPointY));
+    expect(capturedMeteringPointInfos.first.$2,
+        equals(FocusMeteringAction.flagAf));
   });
 }

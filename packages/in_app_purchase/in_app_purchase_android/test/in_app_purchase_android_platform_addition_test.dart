@@ -22,6 +22,9 @@ void main() {
   const String startConnectionCall =
       'BillingClient#startConnection(BillingClientStateListener)';
   const String endConnectionCall = 'BillingClient#endConnection()';
+  const String onBillingServiceDisconnectedCallback =
+      'BillingClientStateListener#onBillingServiceDisconnected()';
+  late BillingClientManager manager;
 
   setUpAll(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -39,8 +42,8 @@ void main() {
         name: startConnectionCall,
         value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
-    iapAndroidPlatformAddition =
-        InAppPurchaseAndroidPlatformAddition(BillingClientManager());
+    manager = BillingClientManager();
+    iapAndroidPlatformAddition = InAppPurchaseAndroidPlatformAddition(manager);
   });
 
   group('consume purchases', () {
@@ -64,7 +67,6 @@ void main() {
   });
 
   group('billingConfig', () {
-    const String billingConfigMethodName = 'BillingClient#getBillingConfig()';
     test('getCountryCode success', () async {
       const String expectedCountryCode = 'US';
       const BillingConfigWrapper expected = BillingConfigWrapper(
@@ -73,13 +75,97 @@ void main() {
           debugMessage: 'dummy message');
 
       stubPlatform.addResponse(
-        name: billingConfigMethodName,
+        name: BillingClient.getBillingConfigMethodString,
         value: buildBillingConfigMap(expected),
       );
       final String countryCode =
           await iapAndroidPlatformAddition.getCountryCode();
 
       expect(countryCode, equals(expectedCountryCode));
+    });
+  });
+
+  group('setBillingChoice', () {
+    late Map<Object?, Object?> arguments;
+    test('setAlternativeBillingOnlyState', () async {
+      stubPlatform.reset();
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+      stubPlatform.addResponse(name: endConnectionCall);
+      await iapAndroidPlatformAddition
+          .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
+
+      // Fake the disconnect that we would expect from a endConnectionCall.
+      await manager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      // Verify that after connection ended reconnect was called.
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+      expect(
+          arguments['billingChoiceMode'],
+          const BillingChoiceModeConverter()
+              .toJson(BillingChoiceMode.alternativeBillingOnly));
+    });
+
+    test('setPlayBillingState', () async {
+      stubPlatform.reset();
+      stubPlatform.addResponse(
+        name: startConnectionCall,
+        additionalStepBeforeReturn: (dynamic value) =>
+            arguments = value as Map<dynamic, dynamic>,
+      );
+      stubPlatform.addResponse(name: endConnectionCall);
+      await iapAndroidPlatformAddition
+          .setBillingChoice(BillingChoiceMode.playBillingOnly);
+
+      // Fake the disconnect that we would expect from a endConnectionCall.
+      await manager.client.callHandler(
+        const MethodCall(onBillingServiceDisconnectedCallback,
+            <String, dynamic>{'handle': 0}),
+      );
+      // Verify that after connection ended reconnect was called.
+      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+      expect(
+          arguments['billingChoiceMode'],
+          const BillingChoiceModeConverter()
+              .toJson(BillingChoiceMode.playBillingOnly));
+    });
+  });
+
+  group('isAlternativeBillingOnlyAvailable', () {
+    test('isAlternativeBillingOnlyAvailable success', () async {
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok, debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
+        value: buildBillingResultMap(expected),
+      );
+      final BillingResultWrapper result =
+          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+
+      expect(result, equals(expected));
+    });
+  });
+
+  group('showAlternativeBillingOnlyInformationDialog', () {
+    test('showAlternativeBillingOnlyInformationDialog success', () async {
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok, debugMessage: 'dummy message');
+
+      stubPlatform.addResponse(
+        name: BillingClient
+            .showAlternativeBillingOnlyInformationDialogMethodString,
+        value: buildBillingResultMap(expected),
+      );
+      final BillingResultWrapper result =
+          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+
+      expect(result, equals(expected));
     });
   });
 
