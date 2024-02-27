@@ -1,3 +1,7 @@
+## 13.2.4
+
+- Updates the redirection documentation for clarity
+
 ## 13.2.3
 
 - Fixes an issue where deep links without path caused an exception
