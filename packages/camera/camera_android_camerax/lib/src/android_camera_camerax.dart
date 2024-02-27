@@ -572,25 +572,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
-  /// Sets the exposure mode for taking pictures.
-  ///
-  /// [cameraId] is not used.
-  @override
-  Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
-    final Camera2CameraControl camera2Control =
-        proxy.getCamera2CameraControl(cameraControl);
-    final bool lockExposureMode = mode == ExposureMode.locked;
-
-    final CaptureRequestOptions captureRequestOptions = proxy
-        .createCaptureRequestOptions(<(
-      CaptureRequestKeySupportedType,
-      Object?
-    )>[(CaptureRequestKeySupportedType.controlAeLock, lockExposureMode)]);
-
-    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
-    _currentExposureMode = mode;
-  }
-
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
   ///
   /// Returns -1 if exposure compensation is not supported for the device.
