@@ -139,10 +139,11 @@ List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
       styles =
           (json.decode(mapStyleJson, reviver: (Object? key, Object? value) {
         if (value is Map && _isJsonMapStyle(value as Map<String, Object?>)) {
-          List<Object?> stylers = <Object?>[];
+          List<MapStyler> stylers = <MapStyler>[];
           if (value['stylers'] != null) {
             stylers = (value['stylers']! as List<Object?>)
-                .map<Object?>((Object? e) => e != null ? jsify(e) : null)
+                .whereType<Map<String, Object?>>()
+                .map(MapStyler.fromJson)
                 .toList();
           }
           return gmaps.MapTypeStyle()
@@ -277,6 +278,8 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
       'The bytes for a BitmapDescriptor icon must be a Uint8List',
     );
 
+    // TODO(ditman): Improve this conversion
+    // See https://github.com/dart-lang/web/issues/180
     blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
     icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
