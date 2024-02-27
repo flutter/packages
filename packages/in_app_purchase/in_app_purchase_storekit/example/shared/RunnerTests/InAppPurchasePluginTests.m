@@ -154,8 +154,6 @@
     @"simulatesAskToBuyInSandbox" : @(NO)
   };
 
-  SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:paymentMap];
-
   NSDictionary *transactionMap = @{
     @"transactionState" : @(SKPaymentTransactionStatePurchasing),
     @"payment" :paymentMap,
@@ -571,16 +569,6 @@
   [self.plugin startObservingPaymentQueueWithError:&error];
 
   OCMVerify(times(1), [mockHandler startObservingPaymentQueue]);
-}
-
-- (void)testStartObservingPaymentQueue2 {
-  //  FIAPRequestHandler *mockHandler = OCMClassMock(FIAPRequestHandler.class);
-  //
-  //  OCMStub(mockHandler.storefront).andReturn(nil);
-  //
-  //  [self.plugin startObservingPaymentQueueWithError:&error];
-  //
-  //  OCMVerify(times(1), [mockHandler startObservingPaymentQueue]);
 }
 
 - (void)testStopObservingPaymentQueue {
