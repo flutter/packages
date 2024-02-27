@@ -1119,8 +1119,8 @@ void main() {
           return source.builder(<String>['builder'], <String, Object?>{});
         },
         'Calculator': (BuildContext context, DataSource source) {
-          final int operand1 = source.v<int>(<String>['operand1']) ?? 0;
-          final int operand2 = source.v<int>(<String>['operand2']) ?? 0;
+          final int operand1 = source.v<int>(<String>['operand1'])!;
+          final int operand2 = source.v<int>(<String>['operand2'])!;
           final String operation = source.v<String>(<String>['operation'])!;
           final int result;
           switch (operation) {
