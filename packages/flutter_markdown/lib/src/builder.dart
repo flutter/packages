@@ -765,9 +765,24 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
 
       if (spans.isNotEmpty) {
-        mergedTexts.add(RichText(
-          text: TextSpan(children: spans),
-        ));
+        Widget merged;
+
+        if (selectable) {
+          merged = SelectableText.rich(
+            TextSpan(children: spans),
+            textScaler: styleSheet.textScaler,
+            textAlign: textAlign ?? TextAlign.start,
+            onTap: onTapText,
+          );
+        } else {
+          merged = Text.rich(
+            TextSpan(children: spans),
+            textScaler: styleSheet.textScaler,
+            textAlign: textAlign ?? TextAlign.start,
+          );
+        }
+
+        mergedTexts.add(merged);
       } else {
         mergedTexts.add(child);
       }
