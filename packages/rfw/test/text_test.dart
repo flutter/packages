@@ -341,21 +341,21 @@ void main() {
     expect(result.widgets.single.initialState, <String, Object?>{'b': 0});
   });
 
-  testWidgets('parseLibraryFile: functions work', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilders work', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = Builder(builder: (scope) => Container());
     ''');
     expect(libraryFile.toString(), 'widget a = Builder({builder: (scope) => Container({})});');
   });
 
-  testWidgets('parseLibraryFile: functions work with arguments', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilders work with arguments', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = Builder(builder: (scope) => Container(width: scope.width));
     ''');
     expect(libraryFile.toString(), 'widget a = Builder({builder: (scope) => Container({width: scope.width})});');
   });
 
-    testWidgets('parseLibraryFile: function arguments are lexical scoped', (WidgetTester tester) async {
+    testWidgets('parseLibraryFile: widgetBuilder arguments are lexical scoped', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         a: (s1) => B(
@@ -366,7 +366,7 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({a: (s1) => B({b: (s2) => T({s1: s1.s1, s2: s2.s2})})});');
   });
 
-  testWidgets('parseLibraryFile: function arguments can be shadowed', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilder arguments can be shadowed', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         a: (s1) => B(
@@ -377,7 +377,35 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({a: (s1) => B({b: (s1) => T({t: s1.foo})})});');
   });
 
-  testWidgets('parseLibraryFile: function check reserved words', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilders check the returned value', (WidgetTester tester) async {
+    void test(String input, String expectedMessage) {
+      try {
+        parseLibraryFile(input);
+        fail('parsing `$input` did not result in an error (expected "$expectedMessage").');
+      } on ParserException catch (e) {
+        expect('$e', expectedMessage);
+      }
+    }
+
+    const expectedErrorMessage = 'Expecting a switch or constructor call got 1 at line 1 column 27.';
+    test('widget a = B(b: (foo) => 1);', expectedErrorMessage);
+  });
+
+  testWidgets('parseLibraryFile: widgetBuilders check reserved words', (WidgetTester tester) async {
+    void test(String input, String expectedMessage) {
+      try {
+        parseLibraryFile(input);
+        fail('parsing `$input` did not result in an error (expected "$expectedMessage").');
+      } on ParserException catch (e) {
+        expect('$e', expectedMessage);
+      }
+    }
+
+    const expectedErrorMessage = 'args is a reserved word at line 1 column 34.';
+    test('widget a = Builder(builder: (args) => Container(width: args.width));', expectedErrorMessage);
+  });
+
+  testWidgets('parseLibraryFile: widgetBuilders check reserved words', (WidgetTester tester) async {
    void test(String input, String expectedMessage) {
       try {
         parseDataFile(input);
@@ -391,7 +419,7 @@ void main() {
    test('widget a = Builder(builder: (args) => Container(width: args.width));', expectedErrorMessage);
   });
 
-  testWidgets('parseLibraryFile: switch works with functions', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: switch works with widgetBuilders', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         b: switch args.down {
@@ -403,7 +431,7 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({b: switch args.down {true: (foo) => B({}), false: (bar) => C({})}});');
   });
 
-  testWidgets('parseLibraryFile: widgetBuilder works with switch', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilders work with switch', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         b: (foo) => switch foo.letter {
@@ -415,7 +443,7 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({b: (foo) => switch foo.letter {a: A({}), b: B({})}});');
   });
 
-  testWidgets('parseLibraryFile: widgetBuilder works with lists', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilders work with lists', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         b: (s1) => B(c: [s1.c]),
@@ -424,7 +452,7 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({b: (s1) => B({c: [s1.c]})});' );
   });
 
-  testWidgets('parseLibraryFile: widgetBuilder works with maps', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilders work with maps', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         b: (s1) => B(c: {d: s1.d}),
@@ -433,7 +461,7 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({b: (s1) => B({c: {d: s1.d}})});');
   });
 
-  testWidgets('parseLibraryFile: widgetBuilder works with setters', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilders work with setters', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a {foo: 0} = A(
         b: (s1) => B(onTap: set state.foo = s1.foo),

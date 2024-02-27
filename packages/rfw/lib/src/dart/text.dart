@@ -2418,11 +2418,14 @@ class _Parser {
     _expectSymbol(_SymbolToken.closeParen);
     _expectSymbol(_SymbolToken.equals);
     _expectSymbol(_SymbolToken.greatherThan);
+    final _Token valueToken = _source.current;
     final Object widget = _readValue(
       extended: true,
       widgetBuilderScope: <String>[...widgetBuilderScope, argumentName],
     );
-    assert(widget is ConstructorCall || widget is Switch);
+    if (widget is! ConstructorCall && widget is! Switch) {
+      throw ParserException._fromToken('Expecting a switch or constructor call got $widget', _source.current);
+    }
     return WidgetBuilderDeclaration(argumentName, widget as BlobNode);
   }
 
