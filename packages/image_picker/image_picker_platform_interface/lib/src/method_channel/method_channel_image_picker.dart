@@ -269,6 +269,11 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
   }) async {
     final ImageOptions imageOptions = options.imageOptions;
 
+    final int? limit = options.limit;
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
+    }
+
     final Map<String, dynamic> args = <String, dynamic>{
       'maxImageWidth': imageOptions.maxWidth,
       'maxImageHeight': imageOptions.maxHeight,
