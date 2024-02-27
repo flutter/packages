@@ -378,8 +378,17 @@ void main() {
   });
 
   testWidgets('parseLibraryFile: function check reserved words', (WidgetTester tester) async {
-   const String library = 'widget a = Builder(builder: (args) => Container(width: args.width));';
-   expect(() => parseLibraryFile(library), throwsA(isA<ParserException>()));
+   void test(String input, String expectedMessage) {
+      try {
+        parseDataFile(input);
+        fail('parsing `$input` did not result in an error (expected "$expectedMessage").');
+      } on ParserException catch (e) {
+        expect('$e', expectedMessage);
+      }
+    }
+
+   const expectedErrorMessage = 'Expected symbol "{" but found widget at line 1 column 7.';
+   test('widget a = Builder(builder: (args) => Container(width: args.width));', expectedErrorMessage);
   });
 
   testWidgets('parseLibraryFile: switch works with functions', (WidgetTester tester) async {
@@ -394,7 +403,7 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({b: switch args.down {true: (foo) => B({}), false: (bar) => C({})}});');
   });
 
-  testWidgets('parseLibraryFile: function works with switch', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilder works with switch', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         b: (foo) => switch foo.letter {
@@ -406,7 +415,7 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({b: (foo) => switch foo.letter {a: A({}), b: B({})}});');
   });
 
-  testWidgets('parseLibraryFile: function works with lists', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilder works with lists', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         b: (s1) => B(c: [s1.c]),
@@ -415,12 +424,21 @@ void main() {
     expect(libraryFile.toString(), 'widget a = A({b: (s1) => B({c: [s1.c]})});' );
   });
 
-  testWidgets('parseLibraryFile: function works with maps', (WidgetTester tester) async {
+  testWidgets('parseLibraryFile: widgetBuilder works with maps', (WidgetTester tester) async {
     final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
       widget a = A(
         b: (s1) => B(c: {d: s1.d}),
       );
     ''');
     expect(libraryFile.toString(), 'widget a = A({b: (s1) => B({c: {d: s1.d}})});');
+  });
+
+  testWidgets('parseLibraryFile: widgetBuilder works with setters', (WidgetTester tester) async {
+    final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
+      widget a {foo: 0} = A(
+        b: (s1) => B(onTap: set state.foo = s1.foo),
+      );
+    ''');
+    expect(libraryFile.toString(), 'widget a = A({b: (s1) => B({onTap: set state.foo = s1.foo})});');
   });
 }

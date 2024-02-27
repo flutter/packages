@@ -2394,7 +2394,7 @@ class _Parser {
         _expectIdentifier('state');
         final StateReference stateReference = _withSourceRange(StateReference(_readParts()), innerStart);
         _expectSymbol(_SymbolToken.equals);
-        final Object value = _readValue(extended: true);
+        final Object value = _readValue(widgetBuilderScope: widgetBuilderScope, extended: true);
         return _withSourceRange(SetStateHandler(stateReference, value), start);
       }
       final int index = _loopIdentifiers.lastIndexOf(identifier) + 1;

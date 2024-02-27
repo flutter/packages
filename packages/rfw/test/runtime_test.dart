@@ -1090,12 +1090,14 @@ void main() {
   });
 
   group('Widget Builders', () {
+    late DynamicContent data;
+
     Widget _setUp(String library) {
       const LibraryName coreLibraryName = LibraryName(<String>['core']);
       const LibraryName localLibraryName = LibraryName(<String>['local']);
       const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-      final DynamicContent data = DynamicContent();
       final Runtime runtime = Runtime();
+      data = DynamicContent();
 
       runtime.update(coreLibraryName, createCoreWidgets());
       runtime.update(remoteLibraryName, parseLibraryFile(library));
@@ -1108,14 +1110,17 @@ void main() {
             final Object? text = source.v<String>(key) ?? source.v<int>(key);
             buffer += text.toString();
           }
-          return Text(buffer, textDirection: TextDirection.ltr);
+          return GestureDetector(
+            onTap: source.voidHandler(['onPressed']),
+            child: Text(buffer, textDirection: TextDirection.ltr)
+          );
         },
         'Builder': (BuildContext context, DataSource source) {
           return source.builder(<String>['builder'], <String, Object?>{});
         },
         'Calculator': (BuildContext context, DataSource source) {
-          final int operand1 = source.v<int>(<String>['operand1'])!;
-          final int operand2 = source.v<int>(<String>['operand2'])!;
+          final int operand1 = source.v<int>(<String>['operand1']) ?? 0;
+          final int operand2 = source.v<int>(<String>['operand2']) ?? 0;
           final String operation = source.v<String>(<String>['operation'])!;
           final int result;
           switch (operation) {
@@ -1173,6 +1178,84 @@ void main() {
       expect(tester.widget<Text>(textFinder).data, '1 + 2 = 3');
     });
 
+    testWidgets('Widget builders - work with state', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test {counter: 0} = Calculator(
+          operand1: state.counter,
+          operand2: 1,
+          operation: 'sum',
+          builder: (result) => CoolText(
+            text: ['Counter: ', result.result],
+            onPressed: set state.counter = result.result,
+          ),
+        );
+      ''');
+      await tester.pumpWidget(widget);
+
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 1');
+
+      await tester.tap(textFinder);
+      await tester.pump();
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 2');
+
+      await tester.tap(textFinder);
+      await tester.pump();
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 3');
+    });
+
+    testWidgets('Widget builders - work with data', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test {counter: 0} = Calculator(
+          operand1: state.counter,
+          operand2: data.increment,
+          operation: 'sum',
+          builder: (result) => CoolText(
+            text: ['Counter: ', result.result],
+            onPressed: set state.counter = result.result,
+          ),
+        );
+      ''');
+      await tester.pumpWidget(widget);
+
+      final Finder textFinder = find.byType(Text);
+
+      data.update('increment', 1);
+      await tester.pump();
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 1');
+
+      await tester.tap(textFinder);
+      await tester.pump();
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 2');
+
+      data.update('increment', 10);
+      await tester.pump();
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 10');
+
+      await tester.tap(textFinder);
+      await tester.pump();
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 11');
+
+
+      data.update('increment', 100);
+      await tester.tap(textFinder);
+      await tester.pump();
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 100');
+
+      await tester.tap(textFinder);
+      await tester.pump();
+      expect(tester.widget<Text>(textFinder).data, 'Counter: 200');
+    });
+
     testWidgets('Widget builders - works nested', (WidgetTester tester) async {
       final Widget widget = _setUp('''
         import core;
@@ -1197,7 +1280,7 @@ void main() {
       expect(tester.widget<Text>(textFinder).data, '(1 + 2) * 3 = 9');
     });
 
-    testWidgets('Widget builders - swich works with builder', (WidgetTester tester) async {
+    testWidgets('Widget builders - switch works with builder', (WidgetTester tester) async {
       final Widget widget = _setUp('''
         import core;
         import local;
