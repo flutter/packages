@@ -17,7 +17,8 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Map;
-
+import java.util.HashMap;
+import java.util.List;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class Messages {
@@ -68,6 +69,22 @@ public class Messages {
         throw new IllegalStateException("Nonnull field \"textureId\" is null.");
       }
       this.textureId = setterArg;
+    }
+
+    Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("textureId", textureId);
+      return toMapResult;
+    }
+
+    static TextureMessage fromMap(Map<String, Object> map) {
+      TextureMessage fromMapResult = new TextureMessage();
+      Object textureId = map.get("textureId");
+      fromMapResult.textureId =
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId);
+      return fromMapResult;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -546,6 +563,91 @@ public class Messages {
       return pigeonResult;
     }
   }
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class TrackSelectionsMessage {
+    private @NonNull Long textureId;
+
+    public Long getTextureId() {
+      return textureId;
+    }
+
+    public void setTextureId(Long setterArg) {
+      this.textureId = setterArg;
+    }
+
+    private @NonNull String trackId;
+
+    public String getTrackId() {
+      return trackId;
+    }
+
+    public void setTrackId(String setterArg) {
+      this.trackId = setterArg;
+    }
+
+    private ArrayList<Object> trackSelections;
+
+    public ArrayList<Object> getTrackSelections() {
+      System.err.println("xxx : tracks 2 ...");
+      return trackSelections;
+    }
+
+    public void setTrackSelections(ArrayList<Object> setterArg) {
+      this.trackSelections = setterArg;
+    }
+
+    Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("textureId", textureId);
+      toMapResult.put("trackId", trackId);
+      toMapResult.put("trackSelections", trackSelections);
+      return toMapResult;
+    }
+
+    static TrackSelectionsMessage fromMap(Map<String, Object> map) {
+      TrackSelectionsMessage fromMapResult = new TrackSelectionsMessage();
+      Object textureId = map.get("textureId");
+      fromMapResult.textureId =
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId);
+      Object trackId = map.get("trackId");
+      fromMapResult.trackId = (String) trackId;
+      Object trackSelections = map.get("trackSelections");
+      fromMapResult.trackSelections = (ArrayList<Object>) trackSelections;
+      return fromMapResult;
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(textureId);
+      toListResult.add(trackId);
+      toListResult.add(trackSelections);
+      System.err.println(toListResult.toString());
+      return toListResult;
+    }
+
+    static @NonNull TrackSelectionsMessage fromList(@NonNull ArrayList<Object> list) {
+      TrackSelectionsMessage pigeonResult = new TrackSelectionsMessage();
+      Object textureId = list.get(0);
+      Object trackId = list.get(1);
+      Object trackSelections = list.get(2);
+      pigeonResult.setTextureId(
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setTrackId(
+          (trackId == null)
+              ? null
+              : (String) trackId );
+      pigeonResult.setTrackSelections(
+          (trackSelections == null)
+              ? new ArrayList<Object>()
+              : (ArrayList<Object>) trackSelections );
+      return pigeonResult;
+    }
+  }
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class MixWithOthersMessage {
@@ -618,6 +720,8 @@ public class Messages {
           return TextureMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
           return VolumeMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
+          return TrackSelectionsMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -646,7 +750,11 @@ public class Messages {
       } else if (value instanceof VolumeMessage) {
         stream.write(134);
         writeValue(stream, ((VolumeMessage) value).toList());
-      } else {
+      }else if (value instanceof TrackSelectionsMessage) {
+        stream.write(135);
+        writeValue(stream, ((TrackSelectionsMessage) value).toList());
+      } 
+      else {
         super.writeValue(stream, value);
       }
     }
@@ -676,6 +784,10 @@ public class Messages {
     void seekTo(@NonNull PositionMessage msg);
 
     void pause(@NonNull TextureMessage msg);
+
+    TrackSelectionsMessage trackSelections(TextureMessage arg);
+
+    void setTrackSelection(TrackSelectionsMessage arg);
 
     void setMixWithOthers(@NonNull MixWithOthersMessage msg);
 
@@ -889,6 +1001,66 @@ public class Messages {
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.AndroidVideoPlayerApi.trackSelections",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  System.err.println("xxx : tracks X1 ...");
+                  System.err.println(message.toString());
+
+                  @SuppressWarnings("ConstantConditions")
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  TextureMessage msgArg = (TextureMessage) args.get(0);
+                  TrackSelectionsMessage output = api.trackSelections(msgArg);
+                  System.err.println("xxx : tracks XX1 ...");
+                  System.err.println(output.toString());
+                  wrapped.add(0, output);
+                } catch (Error | RuntimeException exception) {
+                  System.err.println(exception.toString());
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                System.err.println("xxx : tracks XX2 ...");
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.AndroidVideoPlayerApi.setTrackSelection",
+                new StandardMessageCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  System.err.println("xxx : set tracks X1 ...");
+                  System.err.println(message.toString());
+                  @SuppressWarnings("ConstantConditions")
+                  TrackSelectionsMessage input =
+                      TrackSelectionsMessage.fromList((ArrayList<Object>) message);
+                  api.setTrackSelection(input);
+                  wrapped.add(0, null);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.add(0, wrapError(exception));
                 }
                 reply.reply(wrapped);
               });

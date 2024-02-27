@@ -110,6 +110,29 @@ class PlaybackSpeedMessage {
   }
 }
 
+class TrackSelectionsMessage {
+  TrackSelectionsMessage(
+      {required this.textureId,
+      required this.trackId,
+      required this.trackSelections});
+  int textureId;
+  String? trackId;
+  List<Object?>? trackSelections;
+
+  Object encode() {
+    return <Object?>[textureId, trackId, trackSelections];
+  }
+
+  static TrackSelectionsMessage decode(Object result) {
+    result as List<Object?>;
+    return TrackSelectionsMessage(
+      textureId: result[0]! as int,
+      trackId: result[1] as String?,
+      trackSelections: result[2]! as List<Object?>?,
+    );
+  }
+}
+
 class PositionMessage {
   PositionMessage({
     required this.textureId,
@@ -224,6 +247,9 @@ class _AndroidVideoPlayerApiCodec extends StandardMessageCodec {
     } else if (value is VolumeMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
+    } else if (value is TrackSelectionsMessage) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -246,6 +272,8 @@ class _AndroidVideoPlayerApiCodec extends StandardMessageCodec {
         return TextureMessage.decode(readValue(buffer)!);
       case 134:
         return VolumeMessage.decode(readValue(buffer)!);
+      case 135:
+        return TrackSelectionsMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -466,6 +494,53 @@ class AndroidVideoPlayerApi {
       );
     } else {
       return;
+    }
+  }
+
+  Future<TrackSelectionsMessage> trackSelections(TextureMessage arg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.AndroidVideoPlayerApi.trackSelections', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as TrackSelectionsMessage);
+    }
+  }
+
+  Future<void> setTrackSelection(TrackSelectionsMessage arg) async {
+    final Object encoded = arg.encode();
+    const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.AndroidVideoPlayerApi.setTrackSelection',
+        StandardMessageCodec());
+    final List<Object?>? replyList =
+        await channel.send(encoded) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      // noop
     }
   }
 

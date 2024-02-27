@@ -21,12 +21,17 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  video_player_platform_interface: ^6.2.0
+  video_player_platform_interface:
+    path: ../video_player_platform_interface
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
+dependency_overrides:
+  video_player_platform_interface:
+    path: ../video_player_platform_interface
 topics:
   - video
   - video-player
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  pedantic: ^1.10.0
+
