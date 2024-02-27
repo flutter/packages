@@ -9,6 +9,10 @@ part of '../google_maps_flutter_web.dart';
 typedef DebugCreateMapFunction = gmaps.GMap Function(
     HtmlElement div, gmaps.MapOptions options);
 
+/// Type used when passing an override to the _setOptions function.
+@visibleForTesting
+typedef DebugSetOptionsFunction = void Function(gmaps.MapOptions options);
+
 /// Encapsulates a [gmaps.GMap], its events, and where in the DOM it's rendered.
 class GoogleMapController {
   /// Initializes the GMap, and the sub-controllers related to it. Wires events.
@@ -125,6 +129,7 @@ class GoogleMapController {
   @visibleForTesting
   void debugSetOverrides({
     DebugCreateMapFunction? createMap,
+    DebugSetOptionsFunction? setOptions,
     MarkersController? markers,
     CirclesController? circles,
     PolygonsController? polygons,
@@ -132,6 +137,7 @@ class GoogleMapController {
     TileOverlaysController? tileOverlays,
   }) {
     _overrideCreateMap = createMap;
+    _overrideSetOptions = setOptions;
     _markersController = markers ?? _markersController;
     _circlesController = circles ?? _circlesController;
     _polygonsController = polygons ?? _polygonsController;
@@ -140,6 +146,7 @@ class GoogleMapController {
   }
 
   DebugCreateMapFunction? _overrideCreateMap;
+  DebugSetOptionsFunction? _overrideSetOptions;
 
   gmaps.GMap _createMap(HtmlElement div, gmaps.MapOptions options) {
     if (_overrideCreateMap != null) {
@@ -334,6 +341,9 @@ class GoogleMapController {
   // Sets new [gmaps.MapOptions] on the wrapped map.
   // ignore: use_setters_to_change_properties
   void _setOptions(gmaps.MapOptions options) {
+    if (_overrideSetOptions != null) {
+      return _overrideSetOptions!(options);
+    }
     _googleMap?.options = options;
   }
 

@@ -356,11 +356,8 @@ void main() {
       });
 
       group('Initialization options', () {
-        gmaps.MapOptions? capturedOptions;
-        setUp(() {
-          capturedOptions = null;
-        });
         testWidgets('translates initial options', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
           controller = createController(
               mapConfiguration: const MapConfiguration(
             mapType: MapType.satellite,
@@ -389,6 +386,7 @@ void main() {
 
         testWidgets('translates fortyFiveDegreeImageryEnabled option',
             (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
           controller = createController(
               mapConfiguration: const MapConfiguration(
             scrollGesturesEnabled: false,
@@ -409,6 +407,7 @@ void main() {
 
         testWidgets('translates webGestureHandling option',
             (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
           controller = createController(
               mapConfiguration: const MapConfiguration(
             zoomGesturesEnabled: false,
@@ -428,6 +427,7 @@ void main() {
 
         testWidgets('sets initial position when passed',
             (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
           controller = createController(
             initialCameraPosition: const CameraPosition(
               target: LatLng(43.308, -5.6910),
@@ -446,6 +446,7 @@ void main() {
         });
 
         testWidgets('translates style option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
           const String style = '''
 [{
   "featureType": "poi.park",
@@ -468,6 +469,7 @@ void main() {
 
         testWidgets('stores style errors for later querying',
             (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
           controller = createController(
               mapConfiguration: const MapConfiguration(
                   style: '[[invalid style', zoomControlsEnabled: true));
@@ -483,6 +485,39 @@ void main() {
           // Style failures should not prevent other options from being set.
           expect(capturedOptions, isNotNull);
           expect(capturedOptions!.zoomControl, true);
+        });
+
+        testWidgets('setting invalid style leaves previous style',
+            (WidgetTester tester) async {
+          gmaps.MapOptions? initialCapturedOptions;
+          gmaps.MapOptions? updatedCapturedOptions;
+          const String style = '''
+[{
+  "featureType": "poi.park",
+  "elementType": "labels.text.fill",
+  "stylers": [{"color": "#6b9a76"}]
+}]''';
+          controller = createController(
+              mapConfiguration: const MapConfiguration(style: style));
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              initialCapturedOptions = options;
+              return map;
+            },
+            setOptions: (gmaps.MapOptions options) {
+              updatedCapturedOptions = options;
+            },
+          );
+
+          controller.init();
+          controller.updateMapConfiguration(
+              const MapConfiguration(style: '[[invalid style'));
+
+          expect(initialCapturedOptions, isNotNull);
+          expect(initialCapturedOptions!.styles?.length, 1);
+          // The styles should not have changed.
+          expect(
+              updatedCapturedOptions!.styles, initialCapturedOptions!.styles);
         });
       });
 
