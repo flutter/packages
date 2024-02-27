@@ -712,47 +712,67 @@ class MarkdownBuilder implements md.NodeVisitor {
     List<Widget> children,
     TextAlign? textAlign,
   ) {
+    // List of merged text spans and widgets
     final List<Widget> mergedTexts = <Widget>[];
+
     for (final Widget child in children) {
-      if (mergedTexts.isNotEmpty && mergedTexts.last is Text && child is Text) {
-        final Text previous = mergedTexts.removeLast() as Text;
-        final TextSpan previousTextSpan = previous.textSpan! as TextSpan;
-        final List<TextSpan> children = previousTextSpan.children != null
-            ? previousTextSpan.children!
-                .map((InlineSpan span) => span is! TextSpan
-                    ? TextSpan(children: <InlineSpan>[span])
-                    : span)
-                .toList()
-            : <TextSpan>[previousTextSpan];
-        children.add(child.textSpan! as TextSpan);
-        final TextSpan? mergedSpan = _mergeSimilarTextSpans(children);
-        mergedTexts.add(_buildRichText(
-          mergedSpan,
-          textAlign: textAlign,
-        ));
-      } else if (mergedTexts.isNotEmpty &&
-          mergedTexts.last is SelectableText &&
-          child is SelectableText) {
-        final SelectableText previous =
-            mergedTexts.removeLast() as SelectableText;
-        final TextSpan previousTextSpan = previous.textSpan!;
-        final List<TextSpan> children = previousTextSpan.children != null
-            ? List<TextSpan>.from(previousTextSpan.children!)
-            : <TextSpan>[previousTextSpan];
-        if (child.textSpan != null) {
-          children.add(child.textSpan!);
+      if (mergedTexts.isEmpty) {
+        mergedTexts.add(child);
+        continue;
+      }
+
+      final bool lastIsSelectableText = mergedTexts.last is SelectableText;
+      final bool lastText = mergedTexts.last is Text;
+      final bool lastRichText = mergedTexts.last is RichText;
+
+      final List<InlineSpan> spans = <InlineSpan>[];
+
+      if (lastIsSelectableText) {
+        final SelectableText last = mergedTexts.removeLast() as SelectableText;
+        final TextSpan span = last.textSpan!;
+
+        if (span.children != null) {
+          spans.addAll(span.children!);
+        } else {
+          spans.add(span);
         }
-        final TextSpan? mergedSpan = _mergeSimilarTextSpans(children);
-        mergedTexts.add(
-          _buildRichText(
-            mergedSpan,
-            textAlign: textAlign,
-          ),
-        );
+      } else if (lastText) {
+        final Text last = mergedTexts.removeLast() as Text;
+        final InlineSpan span = last.textSpan!;
+        spans.add(span);
+      } else if (lastRichText) {
+        final RichText last = mergedTexts.removeLast() as RichText;
+        final InlineSpan span = last.text;
+        spans.add(span);
+      }
+
+      final bool childIsText = child is Text;
+      final bool childIsSelectableText = child is SelectableText;
+      final bool childIsRichText = child is RichText;
+
+      if (childIsText) {
+        spans.add(child.textSpan!);
+      } else if (childIsSelectableText) {
+        final TextSpan span = child.textSpan!;
+
+        if (span.children != null) {
+          spans.addAll(span.children!);
+        } else {
+          spans.add(span);
+        }
+      } else if (childIsRichText) {
+        spans.add(child.text);
+      }
+
+      if (spans.isNotEmpty) {
+        mergedTexts.add(RichText(
+          text: TextSpan(children: spans),
+        ));
       } else {
         mergedTexts.add(child);
       }
     }
+
     return mergedTexts;
   }
 
