@@ -197,12 +197,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Current focus mode set via [setFocusMode].
   ///
   /// CameraX defaults to auto-focus mode.
-  FocusMode currentFocusMode = FocusMode.auto;
+  FocusMode _currentFocusMode = FocusMode.auto;
 
   /// Current exposure mode set via [setExposureMode].
   ///
   /// CameraX defaults to auto-exposure mode.
-  ExposureMode currentExposureMode = ExposureMode.auto;
+  ExposureMode _currentExposureMode = ExposureMode.auto;
 
   /// Whether or not a default focus point of the entire sensor area was focused
   /// and locked.
@@ -477,7 +477,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // setting will not be impacted by this lock (setting an exposure mode
     // is implemented with Camera2 interop that will override any settings
     // to achieve the expected exposure mode as needed).
-    final bool disableAutoCancel = currentFocusMode == FocusMode.locked;
+    final bool disableAutoCancel = _currentFocusMode == FocusMode.locked;
     await _startFocusAndMeteringForPoint(
         point: point,
         meteringMode: FocusMeteringAction.flagAe,
@@ -514,7 +514,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> setFocusMode(int cameraId, FocusMode mode) async {
     switch (mode) {
       case FocusMode.auto:
-        if (currentFocusMode == FocusMode.auto) {
+        if (_currentFocusMode == FocusMode.auto) {
           // CameraX uses auto-focus mode by default, so no need to reconfigure
           // auto-focus if already set.
           return;
@@ -561,14 +561,14 @@ class AndroidCameraCameraX extends CameraPlatform {
             disableAutoCancel: true);
     }
     // Update current focus mode.
-    currentFocusMode = mode;
+    _currentFocusMode = mode;
 
     // If focus mode was just locked and exposure mode is not, unlock exposure
     // mode to ensure that disabling auto-cancel does not interfere with
     // automatic exposure metering.
-    if (currentExposureMode == ExposureMode.auto &&
-        currentFocusMode == FocusMode.locked) {
-      await setExposureMode(cameraId, currentExposureMode);
+    if (_currentExposureMode == ExposureMode.auto &&
+        _currentFocusMode == FocusMode.locked) {
+      await setExposureMode(cameraId, _currentExposureMode);
     }
   }
 
@@ -588,7 +588,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     )>[(CaptureRequestKeySupportedType.controlAeLock, lockExposureMode)]);
 
     await camera2Control.addCaptureRequestOptions(captureRequestOptions);
-    currentExposureMode = mode;
+    _currentExposureMode = mode;
   }
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
@@ -664,7 +664,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _startFocusAndMeteringForPoint(
         point: point,
         meteringMode: FocusMeteringAction.flagAf,
-        disableAutoCancel: currentFocusMode == FocusMode.locked);
+        disableAutoCancel: _currentFocusMode == FocusMode.locked);
   }
 
   /// Gets the maximum supported zoom level for the selected camera.
