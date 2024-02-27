@@ -469,6 +469,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Supplying `null` for the [point] argument will result in resetting to the
   /// original exposure point value.
   ///
+  /// Supplied non-null point must be mapped to the entire un-altered preview
+  /// surface for the exposure point to be applied accurately.
+  ///
   /// [cameraId] is not used.
   @override
   Future<void> setExposurePoint(int cameraId, Point<double>? point) async {
@@ -635,6 +638,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// Supplying `null` for the [point] argument will result in resetting to the
   /// original focus point value.
+  ///
+  /// Supplied non-null point must be mapped to the entire un-altered preview
+  /// surface for the focus point to be applied accurately.
   ///
   /// [cameraId] is not used.
   @override
