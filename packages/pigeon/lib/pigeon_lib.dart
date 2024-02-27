@@ -776,6 +776,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
         options.kotlinOptions ?? const KotlinOptions();
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
       errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
+      includeErrorClass: kotlinOptions.includeErrorClass,
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
