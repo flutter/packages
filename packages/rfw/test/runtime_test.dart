@@ -1092,12 +1092,12 @@ void main() {
   group('Widget Builders', () {
     late DynamicContent data;
 
-    Widget _setUp(String library) {
+    Widget _setUp(String library, {Map<String, Object?>? initialData}) {
       const LibraryName coreLibraryName = LibraryName(<String>['core']);
       const LibraryName localLibraryName = LibraryName(<String>['local']);
       const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
       final Runtime runtime = Runtime();
-      data = DynamicContent();
+      data = initialData == null ? DynamicContent() : DynamicContent(initialData);
 
       runtime.update(coreLibraryName, createCoreWidgets());
       runtime.update(remoteLibraryName, parseLibraryFile(library));
@@ -1218,42 +1218,43 @@ void main() {
           operand2: data.increment,
           operation: 'sum',
           builder: (result) => CoolText(
-            text: ['Counter: ', result.result],
+            text: [state.counter, ' + ', data.increment, ' = ', result.result],
             onPressed: set state.counter = result.result,
           ),
         );
-      ''');
+      ''', initialData: {'increment': 0});
       await tester.pumpWidget(widget);
 
       final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      expect(tester.widget<Text>(textFinder).data, '0 + 0 = 0');
 
       data.update('increment', 1);
       await tester.pump();
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 1');
+      expect(tester.widget<Text>(textFinder).data, '0 + 1 = 1');
 
       await tester.tap(textFinder);
       await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 2');
+      expect(tester.widget<Text>(textFinder).data, '1 + 1 = 2');
 
       data.update('increment', 10);
       await tester.pump();
       expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 10');
+      expect(tester.widget<Text>(textFinder).data, '1 + 10 = 11');
 
       await tester.tap(textFinder);
       await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 11');
+      expect(tester.widget<Text>(textFinder).data, '11 + 10 = 21');
 
 
       data.update('increment', 100);
       await tester.tap(textFinder);
       await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 100');
+      expect(tester.widget<Text>(textFinder).data, '21 + 100 = 121');
 
       await tester.tap(textFinder);
       await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 200');
+      expect(tester.widget<Text>(textFinder).data, '121 + 100 = 221');
     });
 
     testWidgets('Widget builders - works nested', (WidgetTester tester) async {

@@ -439,7 +439,7 @@ class ConstructorCall extends BlobNode {
   String toString() => '$name($arguments)';
 }
 
-/// Representation of functions that return widgets in Remote Flutter library blobs.
+/// Representation of functions that return widgets in Remote Flutter Widgets library blobs.
 class WidgetBuilderDeclaration extends BlobNode {
   /// Creates a [WidgetBuilderDeclaration].
   const WidgetBuilderDeclaration(this.argumentName, this.widget);
@@ -561,7 +561,7 @@ class DataReference extends Reference {
 ///
 /// See also:
 /// 
-///   * [WidgetBuilderDeclaration] which represents a widget builder definition.
+///   * [WidgetBuilderDeclaration], which represents a widget builder definition.
 class WidgetBuilderArgReference extends Reference {
   /// Wraps the given [parts] associated to the [argumentName] as an [WidgetBuilderArgReference].
   ///

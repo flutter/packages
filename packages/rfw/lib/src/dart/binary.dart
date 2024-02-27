@@ -477,7 +477,9 @@ class _BlobDecoder {
   WidgetBuilderDeclaration _readWidgetBuilder() {
     final String argumentName = _readString();
     final int type = _readByte();
-    assert(type == _msWidget || type == _msSwitch);
+    if (type != _msWidget && type != _msSwitch) {
+      throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget builder blob.');
+    }
     final BlobNode widget = type == _msWidget ? _readWidget() : _readSwitch();
     return WidgetBuilderDeclaration(argumentName, widget);
   }
