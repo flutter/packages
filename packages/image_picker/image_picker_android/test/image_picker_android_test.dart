@@ -156,6 +156,7 @@ void main() {
       expect(api.passedImageOptions?.maxWidth, null);
       expect(api.passedImageOptions?.maxHeight, null);
       expect(api.passedImageOptions?.quality, 100);
+      expect(api.limit, null);
     });
 
     test('passes image option arguments correctly', () async {
@@ -163,11 +164,13 @@ void main() {
         maxWidth: 10.0,
         maxHeight: 20.0,
         imageQuality: 70,
+        limit: 5,
       );
 
       expect(api.passedImageOptions?.maxWidth, 10.0);
       expect(api.passedImageOptions?.maxHeight, 20.0);
       expect(api.passedImageOptions?.quality, 70);
+      expect(api.limit, 5);
     });
 
     test('does not accept a negative width or height argument', () {
@@ -190,6 +193,18 @@ void main() {
 
       expect(
         () => picker.pickMultiImage(imageQuality: 101),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept an invalid limit argument', () {
+      expect(
+        () => picker.pickMultiImage(limit: -1),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.pickMultiImage(limit: 0),
         throwsArgumentError,
       );
     });
@@ -465,6 +480,7 @@ void main() {
       expect(api.passedImageOptions?.maxWidth, null);
       expect(api.passedImageOptions?.maxHeight, null);
       expect(api.passedImageOptions?.quality, 100);
+      expect(api.limit, null);
     });
 
     test('passes image option arguments correctly', () async {
@@ -472,11 +488,13 @@ void main() {
         maxWidth: 10.0,
         maxHeight: 20.0,
         imageQuality: 70,
+        limit: 5,
       );
 
       expect(api.passedImageOptions?.maxWidth, 10.0);
       expect(api.passedImageOptions?.maxHeight, 20.0);
       expect(api.passedImageOptions?.quality, 70);
+      expect(api.limit, 5);
     });
 
     test('does not accept a negative width or height argument', () {
@@ -499,6 +517,18 @@ void main() {
 
       expect(
         () => picker.getMultiImage(imageQuality: 101),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept an invalid limit argument', () {
+      expect(
+        () => picker.getMultiImage(limit: -1),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMultiImage(limit: 0),
         throwsArgumentError,
       );
     });
@@ -681,6 +711,7 @@ void main() {
       expect(api.passedImageOptions?.maxWidth, null);
       expect(api.passedImageOptions?.maxHeight, null);
       expect(api.passedImageOptions?.quality, 100);
+      expect(api.limit, null);
     });
 
     test('passes image option arguments correctly', () async {
@@ -692,11 +723,13 @@ void main() {
           maxHeight: 20.0,
           imageQuality: 70,
         ),
+        limit: 5,
       ));
 
       expect(api.passedImageOptions?.maxWidth, 10.0);
       expect(api.passedImageOptions?.maxHeight, 20.0);
       expect(api.passedImageOptions?.quality, 70);
+      expect(api.limit, 5);
     });
 
     test('does not accept a negative width or height argument', () {
@@ -737,6 +770,28 @@ void main() {
           options: const MediaOptions(
             allowMultiple: true,
             imageOptions: ImageOptions(imageQuality: 101),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept an invalid limit argument', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            limit: -1,
+          ),
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            limit: 0,
           ),
         ),
         throwsArgumentError,
@@ -926,6 +981,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
   VideoSelectionOptions? passedVideoOptions;
   bool? passedAllowMultiple;
   bool? passedPhotoPickerFlag;
+  int? limit;
   _LastPickType? lastCall;
 
   @override
@@ -939,6 +995,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedImageOptions = options;
     passedAllowMultiple = generalOptions.allowMultiple;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
+    limit = generalOptions.limit;
     return returnValue as List<String?>? ?? <String>[];
   }
 
@@ -951,6 +1008,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedImageOptions = options.imageSelectionOptions;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
     passedAllowMultiple = generalOptions.allowMultiple;
+    limit = generalOptions.limit;
     return returnValue as List<String?>? ?? <String>[];
   }
 

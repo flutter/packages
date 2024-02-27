@@ -279,6 +279,12 @@ void main() {
           maxHeight: 20.0,
           imageQuality: 70,
         );
+        await picker.pickMultiImage(
+          maxWidth: 10.0,
+          maxHeight: 20.0,
+          imageQuality: 70,
+          limit: 5,
+        );
 
         expect(
           log,
@@ -332,6 +338,13 @@ void main() {
               'requestFullMetadata': true,
               'limit': null,
             }),
+            isMethodCall('pickMultiImage', arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': 20.0,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': 5,
+            }),
           ],
         );
       });
@@ -358,6 +371,19 @@ void main() {
 
         expect(
           () => picker.pickMultiImage(imageQuality: 101),
+          throwsArgumentError,
+        );
+      });
+
+      test('does not accept an invalid limit argument', () {
+        returnValue = <dynamic>['0', '1'];
+        expect(
+          () => picker.pickMultiImage(limit: -1),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.pickMultiImage(limit: 0),
           throwsArgumentError,
         );
       });
@@ -785,6 +811,12 @@ void main() {
           maxHeight: 20.0,
           imageQuality: 70,
         );
+        await picker.getMultiImage(
+          maxWidth: 10.0,
+          maxHeight: 20.0,
+          imageQuality: 70,
+          limit: 5,
+        );
 
         expect(
           log,
@@ -837,6 +869,13 @@ void main() {
               'imageQuality': 70,
               'requestFullMetadata': true,
               'limit': null,
+            }),
+            isMethodCall('pickMultiImage', arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': 20.0,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': 5,
             }),
           ],
         );
@@ -868,6 +907,19 @@ void main() {
         );
       });
 
+      test('does not accept an invalid limit argument', () {
+        returnValue = <dynamic>['0', '1'];
+        expect(
+          () => picker.getMultiImage(limit: -1),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMultiImage(limit: 0),
+          throwsArgumentError,
+        );
+      });
+
       test('handles a null image path response gracefully', () async {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
@@ -891,6 +943,7 @@ void main() {
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
           ],
         );
@@ -926,6 +979,15 @@ void main() {
             ),
           ),
         );
+        await picker.getMedia(
+          options: MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions.createAndValidate(
+              imageQuality: 70,
+            ),
+            limit: 5,
+          ),
+        );
 
         expect(
           log,
@@ -935,24 +997,35 @@ void main() {
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': 10.0,
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': null,
               'maxImageHeight': 10.0,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': null,
               'maxImageHeight': null,
               'imageQuality': 70,
               'allowMultiple': true,
+              'limit': null,
+            }),
+            isMethodCall('pickMedia', arguments: <String, dynamic>{
+              'maxImageWidth': null,
+              'maxImageHeight': null,
+              'imageQuality': 70,
+              'allowMultiple': true,
+              'limit': 5,
             }),
           ],
         );
@@ -1006,6 +1079,26 @@ void main() {
               imageOptions: ImageOptions.createAndValidate(
                 imageQuality: 101,
               ),
+            ),
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('does not accept a invalid limit argument', () {
+        returnValue = <String>['0', '1'];
+        expect(
+          () => picker.getMedia(
+            options: const MediaOptions(allowMultiple: true, limit: -1),
+          ),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMedia(
+            options: const MediaOptions(
+              allowMultiple: true,
+              limit: 0,
             ),
           ),
           throwsArgumentError,

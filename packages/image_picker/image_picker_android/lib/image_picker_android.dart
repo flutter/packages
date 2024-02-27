@@ -84,7 +84,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    if (limit != null && limit < 0) {
+    if (limit != null && limit < 1) {
       throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
     }
 
@@ -255,6 +255,12 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     final ImageSelectionOptions imageSelectionOptions =
         _imageOptionsToImageSelectionOptionsWithValidator(
             mediaOptions.imageOptions);
+
+    final int? limit = mediaOptions.limit;
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
+    }
+
     return MediaSelectionOptions(
       imageSelectionOptions: imageSelectionOptions,
     );
