@@ -37,17 +37,14 @@ extension type GoogleMapsTrustedTypePolicyFactory._(JSObject _)
   ///
   /// If a policy already exists, it will be returned.
   /// Otherwise, a new policy is created.
-  GoogleMapsTrustedTypePolicy getTrustedTypesPolicy(
-    String policyName, [
-    GoogleMapsTrustedTypePolicyOptions? policyOptions,
-  ]) {
-    if (_policy == null) {
-      if (policyOptions != null) {
-        _policy = _createPolicy(policyName, policyOptions);
-      } else {
-        _policy = _createPolicy(policyName);
-      }
-    }
+  ///
+  /// Because of we only cache one _policy, this method
+  /// specifically hardcoded to the GoogleMaps use case.
+  GoogleMapsTrustedTypePolicy getGoogleMapsTrustedTypesPolicy(
+    GoogleMapsTrustedTypePolicyOptions policyOptions,
+  ) {
+    const String policyName = 'google_maps_flutter_sanitize';
+    _policy ??= _createPolicy(policyName, policyOptions);
 
     return _policy!;
   }

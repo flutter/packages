@@ -222,8 +222,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
     if (window.nullableTrustedTypes != null) {
       final GoogleMapsTrustedTypePolicy trustedTypePolicy =
-          window.nullableTrustedTypes!.getTrustedTypesPolicy(
-        'google_maps_flutter_sanitize',
+          window.nullableTrustedTypes!.getGoogleMapsTrustedTypesPolicy(
         GoogleMapsTrustedTypePolicyOptions(
           createHTML: (String html, JSAny? arguments) {
             return sanitizeHtml(html);
