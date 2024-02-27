@@ -2377,11 +2377,6 @@ class _Parser {
         _advance();
         return _withSourceRange(StateReference(_readParts()), start);
       }
-      if (widgetBuilderScope.contains(identifier)) {
-        final SourceLocation? start = _getSourceLocation();
-        _advance();
-        return _withSourceRange(WidgetBuilderArgReference(identifier, _readParts()), start);
-      }
       if (identifier == 'switch') {
         final SourceLocation? start = _getSourceLocation();
         _advance();
@@ -2396,6 +2391,11 @@ class _Parser {
         _expectSymbol(_SymbolToken.equals);
         final Object value = _readValue(widgetBuilderScope: widgetBuilderScope, extended: true);
         return _withSourceRange(SetStateHandler(stateReference, value), start);
+      }
+      if (widgetBuilderScope.contains(identifier)) {
+        final SourceLocation? start = _getSourceLocation();
+        _advance();
+        return _withSourceRange(WidgetBuilderArgReference(identifier, _readParts()), start);
       }
       final int index = _loopIdentifiers.lastIndexOf(identifier) + 1;
       if (index > 0) {
