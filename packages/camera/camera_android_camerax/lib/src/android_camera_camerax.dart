@@ -667,6 +667,27 @@ class AndroidCameraCameraX extends CameraPlatform {
         disableAutoCancel: _currentFocusMode == FocusMode.locked);
   }
 
+  /// Sets the exposure mode for taking pictures.
+  ///
+  /// Setting [ExposureMode.locked] will lock current exposure point until it
+  /// is unset by setting [ExposureMode.auto].
+  ///
+  /// [cameraId] is not used.
+  @override
+  Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
+    final Camera2CameraControl camera2Control =
+        proxy.getCamera2CameraControl(cameraControl);
+    final bool lockExposureMode = mode == ExposureMode.locked;
+
+    final CaptureRequestOptions captureRequestOptions = proxy
+        .createCaptureRequestOptions(<(
+      CaptureRequestKeySupportedType,
+      Object?
+    )>[(CaptureRequestKeySupportedType.controlAeLock, lockExposureMode)]);
+
+    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+  }
+
   /// Gets the maximum supported zoom level for the selected camera.
   ///
   /// [cameraId] not used.

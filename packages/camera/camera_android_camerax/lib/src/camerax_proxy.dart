@@ -55,10 +55,10 @@ class CameraXProxy {
         _startListeningForDeviceOrientationChange,
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
     this.getDefaultDisplayRotation = _getDefaultDisplayRotation,
-    this.createMeteringPoint = _createAttachedMeteringPoint,
-    this.createFocusMeteringAction = _createAttachedFocusMeteringAction,
     this.getCamera2CameraControl = _getCamera2CameraControl,
     this.createCaptureRequestOptions = _createAttachedCaptureRequestOptions,
+    this.createMeteringPoint = _createAttachedMeteringPoint,
+    this.createFocusMeteringAction = _createAttachedFocusMeteringAction,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -147,6 +147,15 @@ class CameraXProxy {
   /// rotation constants.
   Future<int> Function() getDefaultDisplayRotation;
 
+  /// Get [Camera2CameraControl] instance from [cameraControl].
+  Camera2CameraControl Function(CameraControl cameraControl)
+      getCamera2CameraControl;
+
+  /// Create [CapureRequestOptions] with specified options.
+  CaptureRequestOptions Function(
+          List<(CaptureRequestKeySupportedType, Object?)> options)
+      createCaptureRequestOptions;
+
   /// Returns a [MeteringPoint] with the specified coordinates based on
   /// [cameraInfo].
   MeteringPoint Function(
@@ -157,15 +166,6 @@ class CameraXProxy {
   /// and their modes.
   FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos,
       bool? disableAutoCancel) createFocusMeteringAction;
-
-  /// Retrieves [Camera2CameraControl] instance from [cameraControl].
-  Camera2CameraControl Function(CameraControl cameraControl)
-      getCamera2CameraControl;
-
-  /// Returns a [CapureRequestOptions] with specified options.
-  CaptureRequestOptions Function(
-          List<(CaptureRequestKeySupportedType, Object?)> options)
-      createCaptureRequestOptions;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -270,6 +270,16 @@ class CameraXProxy {
     return DeviceOrientationManager.getDefaultDisplayRotation();
   }
 
+  static Camera2CameraControl _getCamera2CameraControl(
+      CameraControl cameraControl) {
+    return Camera2CameraControl(cameraControl: cameraControl);
+  }
+
+  static CaptureRequestOptions _createAttachedCaptureRequestOptions(
+      List<(CaptureRequestKeySupportedType, Object?)> options) {
+    return CaptureRequestOptions(requestedOptions: options);
+  }
+
   static MeteringPoint _createAttachedMeteringPoint(
       double x, double y, double? size, CameraInfo cameraInfo) {
     return MeteringPoint(x: x, y: y, size: size, cameraInfo: cameraInfo);
@@ -280,15 +290,5 @@ class CameraXProxy {
     return FocusMeteringAction(
         meteringPointInfos: meteringPointInfos,
         disableAutoCancel: disableAutoCancel);
-  }
-
-  static Camera2CameraControl _getCamera2CameraControl(
-      CameraControl cameraControl) {
-    return Camera2CameraControl(cameraControl: cameraControl);
-  }
-
-  static CaptureRequestOptions _createAttachedCaptureRequestOptions(
-      List<(CaptureRequestKeySupportedType, Object?)> options) {
-    return CaptureRequestOptions(requestedOptions: options);
   }
 }

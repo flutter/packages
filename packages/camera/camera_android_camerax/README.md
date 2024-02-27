@@ -22,17 +22,13 @@ dependencies:
   camera_android_camerax: ^0.5.0
 ```
 
-## Missing features and limitations
+## Limitations
 
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX,
 and thus, the plugin will fall back to 480p if configured with a
 `ResolutionPreset`.
-
-### Exposure mode configuration \[[Issue #120468][120468]\]
-
-`setExposureMode`is unimplemented.
 
 ### Setting maximum duration and stream options for video capture
 

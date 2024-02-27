@@ -1,6 +1,10 @@
-## 1.0.0
+## 0.5.0+37
 
 * Implements `setFocusMode`, reaching feature parity with `camera/camera_android_camerax`.
+
+## 0.5.0+36
+
+* Implements `setExposureMode`.
 
 ## 0.5.0+35
 
