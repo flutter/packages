@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+// ignore: implementation_imports
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 

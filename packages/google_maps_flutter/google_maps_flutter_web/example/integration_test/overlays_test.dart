@@ -10,6 +10,7 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart'
     hide GoogleMapController;
+// ignore: implementation_imports
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';

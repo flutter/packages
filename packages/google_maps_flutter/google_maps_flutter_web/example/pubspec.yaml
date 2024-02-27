@@ -3,7 +3,7 @@ publish_to: none
 
 # Tests require flutter beta or greater to run.
 environment:
-  sdk: "^3.3.0"
+  sdk: ^3.3.0
   flutter: ">=3.19.0"
 
 dependencies:
