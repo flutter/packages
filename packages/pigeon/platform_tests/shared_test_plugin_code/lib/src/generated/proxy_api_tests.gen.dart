@@ -282,7 +282,7 @@ class PigeonInstanceManager {
 
 /// Generated API for managing the Dart and native `PigeonInstanceManager`s.
 class _PigeonInstanceManagerApi {
-  /// Constructor for [_PigeonInstanceManagerApi ].
+  /// Constructor for [_PigeonInstanceManagerApi].
   _PigeonInstanceManagerApi({BinaryMessenger? binaryMessenger})
       : _binaryMessenger = binaryMessenger;
 

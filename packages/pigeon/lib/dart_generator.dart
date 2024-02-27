@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:code_builder/code_builder.dart' as cb;
-import 'package:collection/collection.dart' as collection;
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 
@@ -1075,7 +1074,8 @@ if (${_varNamePrefix}replyList == null) {
                       ..toThis = true
                       ..required = method.isRequired,
                   ),
-                ...constructor.parameters.mapIndexed(
+                ...indexMap(
+                  constructor.parameters,
                   (int index, NamedType parameter) => cb.Parameter(
                     (cb.ParameterBuilder builder) => builder
                       ..name = _getParameterName(index, parameter)
@@ -1296,7 +1296,8 @@ if (${_varNamePrefix}replyList == null) {
               ..isNullable = !method.isRequired
               ..requiredParameters.addAll(<cb.Reference>[
                 cb.refer('$apiName ${classMemberNamePrefix}instance'),
-                ...method.parameters.mapIndexed(
+                ...indexMap(
+                  method.parameters,
                   (int index, NamedType parameter) {
                     return cb.refer(
                       '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
@@ -1342,7 +1343,8 @@ if (${_varNamePrefix}replyList == null) {
                   cb.refer(
                     '${proxyApi.name} ${classMemberNamePrefix}instance',
                   ),
-                  ...method.parameters.mapIndexed(
+                  ...indexMap(
+                    method.parameters,
                     (int index, NamedType parameter) {
                       return cb.refer(
                         '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
@@ -1437,7 +1439,8 @@ if (${_varNamePrefix}replyList == null) {
                     ..returnType = cb.refer(apiName)
                     ..isNullable = true
                     ..requiredParameters.addAll(
-                      unattachedFields.mapIndexed(
+                      indexMap(
+                        unattachedFields,
                         (int index, ApiField field) {
                           return cb.refer(
                             '${_addGenericTypesNullable(field.type)} ${_getParameterName(index, field)}',
@@ -1460,7 +1463,8 @@ if (${_varNamePrefix}replyList == null) {
                     ..isNullable = true
                     ..requiredParameters.addAll(<cb.Reference>[
                       cb.refer('$apiName ${classMemberNamePrefix}instance'),
-                      ...method.parameters.mapIndexed(
+                      ...indexMap(
+                        method.parameters,
                         (int index, NamedType parameter) {
                           return cb.refer(
                             '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
@@ -1702,7 +1706,8 @@ if (${_varNamePrefix}replyList == null) {
           ))
           ..returns = _refer(method.returnType, asFuture: true)
           ..requiredParameters.addAll(
-            method.parameters.mapIndexed(
+            indexMap(
+              method.parameters,
               (int index, NamedType parameter) => cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
                   ..name = _getParameterName(index, parameter)

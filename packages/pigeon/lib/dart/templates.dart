@@ -237,7 +237,7 @@ String instanceManagerApiTemplate({
   return '''
 /// Generated API for managing the Dart and native `$instanceManagerClassName`s.
 class _$apiName {
-  /// Constructor for [_$apiName ].
+  /// Constructor for [_$apiName].
   _$apiName({BinaryMessenger? binaryMessenger})
       : _binaryMessenger = binaryMessenger;
 
