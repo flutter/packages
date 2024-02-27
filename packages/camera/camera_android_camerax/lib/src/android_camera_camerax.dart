@@ -1220,12 +1220,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///     [currentFocusMeteringAction] that do not share a metering mode with
   ///     [meteringPoint] (if [currentFocusMeteringAction] is non-null) and
   ///   * [meteringPoint] with the specified [meteringMode].
-  /// If [meteringPoint] is null, this action includes only metering points and
-  /// their modes previously added to [currentFocusMeteringAction] that do not
-  /// share a metering mode with [meteringPoint] (if
-  /// [currentFocusMeteringAction] is non-null). If there are no such metering
-  /// points, then the previously enabled focus and metering actions will be
-  /// canceled.
+  /// If [meteringPoint] is null and [currentFocusMeteringAction] is non-null,
+  /// this action includes only metering points and their modes previously added
+  /// to [currentFocusMeteringAction] that do not share a metering mode with
+  /// [meteringPoint]. If [meteringPoint] and [currentFocusMeteringAction] are
+  /// null, then focus and metering will be canceled.
   Future<void> _startFocusAndMeteringFor(
       {required MeteringPoint? meteringPoint,
       required int meteringMode,
