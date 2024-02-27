@@ -21,9 +21,9 @@ import 'package:meta/meta.dart';
 // Please update these targets when you update this package.
 // Please ensure that test coverage continues to be 100%.
 // Don't forget to update the lastUpdate date too!
-const int targetLines = 3273;
+const int targetLines = 3333;
 const String targetPercent = '100';
-const String lastUpdate = '2024-01-30';
+const String lastUpdate = '2024-02-26';
 
 @immutable
 /* final */ class LcovLine {
