@@ -99,7 +99,8 @@ public class FocusMeteringActionTest {
   }
 
   @Test
-  public void hostApiCreate_createsExpectedFocusMeteringActionWithInitialPointThatDoesNotHaveMode() {
+  public void
+      hostApiCreate_createsExpectedFocusMeteringActionWithInitialPointThatDoesNotHaveMode() {
     FocusMeteringActionHostApiImpl.FocusMeteringActionProxy proxySpy =
         spy(new FocusMeteringActionHostApiImpl.FocusMeteringActionProxy());
     FocusMeteringActionHostApiImpl hostApi =
@@ -175,8 +176,7 @@ public class FocusMeteringActionTest {
         .thenReturn(mockFocusMeteringActionBuilder);
     when(mockFocusMeteringActionBuilder.build()).thenReturn(focusMeteringAction);
 
-    List<MeteringPointInfo> mockMeteringPointInfos =
-        Arrays.asList(fakeMeteringPointInfo);
+    List<MeteringPointInfo> mockMeteringPointInfos = Arrays.asList(fakeMeteringPointInfo);
 
     // Test not disabling auto cancel.
     hostApi.create(73L, mockMeteringPointInfos, /* disableAutoCancel */ null);

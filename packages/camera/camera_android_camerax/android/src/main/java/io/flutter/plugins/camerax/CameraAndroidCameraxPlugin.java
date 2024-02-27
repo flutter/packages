@@ -40,9 +40,6 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
   @VisibleForTesting public @Nullable LiveDataHostApiImpl liveDataHostApiImpl;
 
-  @VisibleForTesting @Nullable
-  public Camera2CameraControlHostApiImpl camera2CameraControlHostApiImpl;
-
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
    *
