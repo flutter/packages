@@ -1270,7 +1270,17 @@ void main() {
             operand1: result1.result,
             operand2: 3,
             operation: 'multiply',
-            builder: (result2) => CoolText(text: ['(1 + 2) * 3 = ', result2.result]),
+            builder: (result2) => CoolText(
+              text: [
+                '1 + 2 = ',
+                result1.result,
+                '; ',
+                result1.result,
+                ' * 3 = ',
+                result2.result,
+                ';',
+              ],
+            ),
           ),
         );
       ''');
@@ -1278,7 +1288,7 @@ void main() {
 
       final Finder textFinder = find.byType(Text);
       expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, '(1 + 2) * 3 = 9');
+      expect(tester.widget<Text>(textFinder).data, '1 + 2 = 3; 3 * 3 = 9;');
     });
 
     testWidgets('Widget builders - switch works with builder', (WidgetTester tester) async {
