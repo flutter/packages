@@ -299,7 +299,7 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String classNamePrefix = 'Pigeon_';
+const String classNamePrefix = 'Pigeon';
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///

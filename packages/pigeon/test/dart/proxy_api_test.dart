@@ -80,18 +80,18 @@ void main() {
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // Instance Manager
-      expect(code, contains(r'class Pigeon_InstanceManager'));
-      expect(code, contains(r'class _Pigeon_InstanceManagerApi'));
+      expect(code, contains(r'class PigeonInstanceManager'));
+      expect(code, contains(r'class _PigeonInstanceManagerApi'));
 
       // Base Api class
       expect(
         code,
-        contains(r'abstract class Pigeon_ProxyApiBaseClass'),
+        contains(r'abstract class PigeonProxyApiBaseClass'),
       );
 
       // Codec and class
-      expect(code, contains('class _Pigeon_ProxyApiBaseCodec'));
-      expect(code, contains(r'class Api extends Pigeon_ProxyApiBaseClass'));
+      expect(code, contains('class _PigeonProxyApiBaseCodec'));
+      expect(code, contains(r'class Api extends PigeonProxyApiBaseClass'));
 
       // Constructors
       expect(
@@ -202,7 +202,7 @@ void main() {
         expect(
           code,
           contains(
-            r'class Api extends Pigeon_ProxyApiBaseClass implements Api2',
+            r'class Api extends PigeonProxyApiBaseClass implements Api2',
           ),
         );
       });
@@ -254,7 +254,7 @@ void main() {
         expect(
           code,
           contains(
-            r'class Api extends Pigeon_ProxyApiBaseClass implements Api2, Api3',
+            r'class Api extends PigeonProxyApiBaseClass implements Api2, Api3',
           ),
         );
       });
@@ -309,7 +309,7 @@ void main() {
         expect(
           code,
           contains(
-            r'class Api extends Pigeon_ProxyApiBaseClass implements Api2',
+            r'class Api extends PigeonProxyApiBaseClass implements Api2',
           ),
         );
         expect(
@@ -839,7 +839,7 @@ void main() {
           collapsedCode,
           contains(
             r'static Future<void> doSomething({ BinaryMessenger? pigeon_binaryMessenger, '
-            r'Pigeon_InstanceManager? pigeon_instanceManager, })',
+            r'PigeonInstanceManager? pigeon_instanceManager, })',
           ),
         );
         expect(
