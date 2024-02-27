@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates the redirection documentation for clarity.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 2.5.3
@@ -270,7 +271,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 * Fix headline in the readme.
 
-## 1.0.0 - Out of developer preview  🎉.
+## 1.0.0 - Out of developer preview  🎉
 
 * Bump the minimal Flutter SDK to 1.22 where platform views are out of developer preview and performing better on iOS. Flutter 1.22 no longer requires adding the `io.flutter.embedded_views_preview` to `Info.plist` in iOS.
 
@@ -293,7 +294,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.5.29+1
 
-* (ios) Pin dependency on GoogleMaps pod to `< 3.10`, to address https://github.com/flutter/flutter/issues/63447
+* (ios) Pin dependency on GoogleMaps pod to `< 3.10`, to address <https://github.com/flutter/flutter/issues/63447>
 
 ## 0.5.29
 
@@ -549,7 +550,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 ## 0.5.14+1
 
 * Example app update(comment out usage of the ImageStreamListener API which has a breaking change
-  that's not yet on master). See: https://github.com/flutter/flutter/issues/33438
+  that's not yet on master). See: <https://github.com/flutter/flutter/issues/33438>
 
 ## 0.5.14
 
@@ -648,7 +649,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.2.0+5
 
-* Skip the Gradle Android permissions lint for MyLocation (https://github.com/flutter/flutter/issues/28339)
+* Skip the Gradle Android permissions lint for MyLocation (<https://github.com/flutter/flutter/issues/28339>)
 * Suppress unchecked cast warning for the PlatformViewFactory creation parameters.
 
 ## 0.2.0+4
@@ -666,7 +667,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.2.0+1
 
-* Fixed a bug which the camera is not positioned correctly at map initialization(temporary workaround)(https://github.com/flutter/flutter/issues/27550).
+* Fixed a bug which the camera is not positioned correctly at map initialization(temporary workaround)(<https://github.com/flutter/flutter/issues/27550>).
 
 ## 0.2.0
 
