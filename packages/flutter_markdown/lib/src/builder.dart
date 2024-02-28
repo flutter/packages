@@ -742,7 +742,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       // Remove last widget from the list to merge it with the current widget
       final Widget last = mergedTexts.removeLast();
 
-      // Extract the text spans from the last widget(s)
+      // Extracted spans from the last and the current widget
       List<InlineSpan> spans = <InlineSpan>[];
 
       // Extract the text spans from the last widget
@@ -756,7 +756,8 @@ class MarkdownBuilder implements md.NodeVisitor {
         final InlineSpan span = last.text;
         spans.addAll(_getInlineSpans(span));
       } else {
-        // If the last widget is not a text widget, add it back to the list
+        // If the last widget is not a text widget,
+        // add both the last and the current widget to the list
         mergedTexts.addAll(<Widget>[last, child]);
         continue;
       }
@@ -772,7 +773,8 @@ class MarkdownBuilder implements md.NodeVisitor {
         final InlineSpan span = child.text;
         spans.addAll(_getInlineSpans(span));
       } else {
-        // If the current widget is not a text widget, add it back to the list
+        // If the current widget is not a text widget,
+        // add both the last and the current widget to the list
         mergedTexts.addAll(<Widget>[last, child]);
         continue;
       }
