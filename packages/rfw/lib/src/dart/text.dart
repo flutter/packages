@@ -2360,7 +2360,13 @@ class _Parser {
       if (identifier == 'event') {
         final SourceLocation? start = _getSourceLocation();
         _advance();
-        return _withSourceRange(EventHandler(_readString(), _readMap(extended: true)), start);
+        return _withSourceRange(
+          EventHandler(
+            _readString(),
+            _readMap(widgetBuilderScope: widgetBuilderScope, extended: true),
+          ),
+          start,
+        );
       }
       if (identifier == 'args') {
         final SourceLocation? start = _getSourceLocation();

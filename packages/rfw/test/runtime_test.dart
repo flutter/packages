@@ -1091,6 +1091,7 @@ void main() {
 
   group('Widget Builders', () {
     late DynamicContent data;
+    late List<RfwEvent> dispatchedEvents;
 
     Widget _setUp(String library, {Map<String, Object?>? initialData}) {
       const LibraryName coreLibraryName = LibraryName(<String>['core']);
@@ -1098,6 +1099,7 @@ void main() {
       const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
       final Runtime runtime = Runtime();
       data = initialData == null ? DynamicContent() : DynamicContent(initialData);
+      dispatchedEvents = <RfwEvent>[];
 
       runtime.update(coreLibraryName, createCoreWidgets());
       runtime.update(remoteLibraryName, parseLibraryFile(library));
@@ -1140,6 +1142,8 @@ void main() {
         runtime: runtime,
         data: data,
         widget: FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+        onEvent: (String eventName, DynamicMap eventArguments) => 
+          dispatchedEvents.add(RfwEvent(eventName, eventArguments)),
       );
     }
 
@@ -1257,6 +1261,31 @@ void main() {
       expect(tester.widget<Text>(textFinder).data, '121 + 100 = 221');
     });
 
+    testWidgets('Widget builders - work with events', (WidgetTester tester) async {
+      final Widget widget = _setUp('''
+        import core;
+        import local;
+
+        widget test = Calculator(
+          operand1: 1,
+          operand2: 2,
+          operation: 'sum',
+          builder: (result) => CoolText(
+            text: ['Press this button'],
+            onPressed: event "works" {result: result.result},
+          ),
+        );
+      ''');
+      await tester.pumpWidget(widget);
+      final Finder textFinder = find.byType(Text);
+      await tester.tap(textFinder);
+      await tester.pump();
+
+      expect(dispatchedEvents, hasLength(1));
+      expect(dispatchedEvents.single.name, 'works');
+      expect(dispatchedEvents.single.arguments['result'], 3);
+    });
+
     testWidgets('Widget builders - works nested', (WidgetTester tester) async {
       final Widget widget = _setUp('''
         import core;
@@ -1334,4 +1363,11 @@ void main() {
       expect(tester.widget<Text>(textFinder).data, 'The result is not zero');
     });
   });
+}
+
+final class RfwEvent {
+  RfwEvent(this.name, this.arguments);
+
+  final String name;
+  final DynamicMap arguments;
 }

@@ -469,4 +469,13 @@ void main() {
     ''');
     expect(libraryFile.toString(), 'widget a = A({b: (s1) => B({onTap: set state.foo = s1.foo})});');
   });
+
+  testWidgets('parseLibraryFile: widgetBuilders work with events', (WidgetTester tester) async {
+    final RemoteWidgetLibrary libraryFile = parseLibraryFile('''
+      widget a {foo: 0} = A(
+        b: (s1) => B(onTap: event "foo" {result: s1.result})
+      );
+    ''');
+    expect(libraryFile.toString(), 'widget a = A({b: (s1) => B({onTap: event foo {result: s1.result}})});');
+  });
 }
