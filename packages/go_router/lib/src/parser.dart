@@ -126,8 +126,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         case final ImperativeRouteMatch route:
           location = route.matches.uri.toString();
         case final ShellRouteMatch route:
-          location =
-              '/${configuration.uri}${route.matches.map((e) => e.matchedLocation).where((element) => element.isNotEmpty && element != '/').join()}';
+          location = route.matches.last.matchedLocation;
         default:
           location = configuration.uri.toString();
       }
