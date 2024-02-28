@@ -117,7 +117,7 @@
                                                         FlutterError *_Nullable))completion {
   SKProductsRequest *request =
       [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
-  FIAPRequestHandler *handler = [self getHandler:request];
+  FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
 
@@ -396,9 +396,5 @@
 
 - (SKReceiptRefreshRequest *)getRefreshReceiptRequest:(NSDictionary *)properties {
   return [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:properties];
-}
-
-- (FIAPRequestHandler *)getHandler:(SKRequest *)request {
-  return [[FIAPRequestHandler alloc] initWithRequest:request];
 }
 @end

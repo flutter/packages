@@ -146,9 +146,6 @@
 @end
 
 @interface InAppPurchasePluginStub ()
-
-@property(strong, nonatomic) NSMutableSet *requestHandlers;
-
 @end
 
 @implementation InAppPurchasePluginStub
@@ -166,10 +163,6 @@
 
 - (SKReceiptRefreshRequestStub *)getRefreshReceiptRequest:(NSDictionary *)properties {
   return [[SKReceiptRefreshRequestStub alloc] initWithReceiptProperties:properties];
-}
-
-- (FIAPRequestHandler *)getHandler:(SKRequest *)request {
-  return [[FIAPRequestHandler alloc] initWithRequest:request];
 }
 
 @end

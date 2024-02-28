@@ -9,6 +9,13 @@
 
 @import in_app_purchase_storekit;
 
+@interface InAppPurchasePlugin ()
+
+@property(strong, nonatomic) FlutterMethodChannel *transactionObserverCallbackChannel;
+- (void)handleTransactionsUpdated:(NSArray<SKPaymentTransaction *> *)transactions;
+
+@end
+
 @interface InAppPurchasePluginTest : XCTestCase
 
 @property(strong, nonatomic) FIAPReceiptManagerStub *receiptManagerStub;
@@ -130,7 +137,6 @@
 
   FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
   OCMStub([mockHandler getUnfinishedTransactions]).andReturn(array);
-//  OCMStub([mockHandler finishTransaction:[OCMArg any]]).andReturn(array);
 
   self.plugin.paymentQueueHandler = mockHandler;
 
@@ -628,6 +634,31 @@
     // Verify the delegate is nill after removing it.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
   }
+}
+
+- (void)testObserverMethods {
+  NSDictionary *transactionMap = @{
+    @"transactionIdentifier" : @"567",
+    @"transactionState" : @(SKPaymentTransactionStatePurchasing),
+    @"payment" : [NSNull null],
+    @"error" : [FIAObjectTranslator getMapFromNSError:[NSError errorWithDomain:@"test_stub"
+                                                                          code:123
+                                                                      userInfo:@{}]],
+    @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
+  };
+
+  InAppPurchasePlugin *iapPlugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
+  FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
+  iapPlugin.transactionObserverCallbackChannel = mockChannel;
+  OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
+
+  SKPaymentTransactionStub *paymentTransaction =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  NSArray *array = [NSArray arrayWithObjects:paymentTransaction,nil];
+
+  [_plugin handleTransactionsUpdated:array];
+  OCMVerify(times(1), [mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
+
 }
 
 #if TARGET_OS_IOS
