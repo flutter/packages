@@ -1,3 +1,7 @@
+## 17.1.1
+
+* Removes heap allocation in generated C++ code.
+
 ## 17.1.0
 
 * [kotlin] Adds `includeErrorClass` to `KotlinOptions`.
