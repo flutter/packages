@@ -1093,7 +1093,7 @@ void main() {
     late DynamicContent data;
     late List<RfwEvent> dispatchedEvents;
 
-    Widget _setUp(String library, {Map<String, Object?>? initialData}) {
+    Widget rwfWidget(String library, {Map<String, Object?>? initialData}) {
       const LibraryName coreLibraryName = LibraryName(<String>['core']);
       const LibraryName localLibraryName = LibraryName(<String>['local']);
       const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
@@ -1105,7 +1105,7 @@ void main() {
       runtime.update(remoteLibraryName, parseLibraryFile(library));
       runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
         'CoolText': (BuildContext context, DataSource source) {
-          final int count = source.length(['text']);
+          final int count = source.length(<String>['text']);
           String buffer = '';
           for (int i = 0; i < count; i++) {
             final List<Object> key = <Object>['text', i];
@@ -1113,7 +1113,7 @@ void main() {
             buffer += text.toString();
           }
           return GestureDetector(
-            onTap: source.voidHandler(['onPressed']),
+            onTap: source.voidHandler(<String>['onPressed']),
             child: Text(buffer, textDirection: TextDirection.ltr)
           );
         },
@@ -1141,14 +1141,14 @@ void main() {
       return RemoteWidget(
         runtime: runtime,
         data: data,
-        widget: FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
         onEvent: (String eventName, DynamicMap eventArguments) =>
           dispatchedEvents.add(RfwEvent(eventName, eventArguments)),
       );
     }
 
     testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 
@@ -1164,7 +1164,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work when scope is used', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 
@@ -1183,7 +1183,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work with state', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 
@@ -1213,7 +1213,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work with data', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 
@@ -1226,7 +1226,7 @@ void main() {
             onPressed: set state.counter = result.result,
           ),
         );
-      ''', initialData: {'increment': 0});
+      ''', initialData: <String, Object?>{'increment': 0});
       await tester.pumpWidget(widget);
 
       final Finder textFinder = find.byType(Text);
@@ -1262,7 +1262,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work with events', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 
@@ -1287,7 +1287,7 @@ void main() {
     });
 
     testWidgets('Widget builders - works nested', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 
@@ -1321,7 +1321,7 @@ void main() {
     });
 
     testWidgets('Widget builders - switch works with builder', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 
@@ -1342,7 +1342,7 @@ void main() {
     });
 
     testWidgets('Widget builders - builder works with switch', (WidgetTester tester) async {
-      final Widget widget = _setUp('''
+      final Widget widget = rwfWidget('''
         import core;
         import local;
 

@@ -505,7 +505,7 @@ void main() {
   });
 
   testWidgets('Library encoder: widget builders',  (WidgetTester tester) async {
-    final String source = '''
+    const String source = '''
       widget Foo = Builder(
         builder: (scope) => Text(text: scope.text),
       );

@@ -387,7 +387,8 @@ void main() {
       }
     }
 
-    const expectedErrorMessage = 'Expecting a switch or constructor call got 1 at line 1 column 27.';
+    const String expectedErrorMessage =
+      'Expecting a switch or constructor call got 1 at line 1 column 27.';
     test('widget a = B(b: (foo) => 1);', expectedErrorMessage);
   });
 
@@ -401,7 +402,8 @@ void main() {
       }
     }
 
-    const expectedErrorMessage = 'args is a reserved word at line 1 column 34.';
+    const String expectedErrorMessage =
+      'args is a reserved word at line 1 column 34.';
     test('widget a = Builder(builder: (args) => Container(width: args.width));', expectedErrorMessage);
   });
 
@@ -415,7 +417,8 @@ void main() {
       }
     }
 
-   const expectedErrorMessage = 'Expected symbol "{" but found widget at line 1 column 7.';
+   const String expectedErrorMessage =
+     'Expected symbol "{" but found widget at line 1 column 7.';
    test('widget a = Builder(builder: (args) => Container(width: args.width));', expectedErrorMessage);
   });
 
