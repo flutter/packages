@@ -1,8 +1,11 @@
-## 0.5.5
+## 0.5.6
 
 * Adds support for `MapConfiguration.style`.
 * Adds support for `getStyleError`.
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 0.5.5
+* Migrates to `dart:js_interop` and `package:web` APIs.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.5.4+3
 

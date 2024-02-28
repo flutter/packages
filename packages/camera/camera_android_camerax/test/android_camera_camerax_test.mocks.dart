@@ -8,11 +8,14 @@ import 'dart:typed_data' as _i29;
 
 import 'package:camera_android_camerax/src/analyzer.dart' as _i15;
 import 'package:camera_android_camerax/src/camera.dart' as _i9;
+import 'package:camera_android_camerax/src/camera2_camera_control.dart' as _i38;
 import 'package:camera_android_camerax/src/camera_control.dart' as _i3;
 import 'package:camera_android_camerax/src/camera_info.dart' as _i2;
 import 'package:camera_android_camerax/src/camera_selector.dart' as _i22;
 import 'package:camera_android_camerax/src/camera_state.dart' as _i18;
 import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i7;
+import 'package:camera_android_camerax/src/capture_request_options.dart'
+    as _i39;
 import 'package:camera_android_camerax/src/exposure_state.dart' as _i5;
 import 'package:camera_android_camerax/src/fallback_strategy.dart' as _i23;
 import 'package:camera_android_camerax/src/focus_metering_action.dart' as _i21;
@@ -1315,6 +1318,38 @@ class MockZoomState extends _i1.Mock implements _i19.ZoomState {
         returnValue: 0.0,
         returnValueForMissingStub: 0.0,
       ) as double);
+}
+
+/// A class which mocks [Camera2CameraControl].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockCamera2CameraControl extends _i1.Mock
+    implements _i38.Camera2CameraControl {
+  @override
+  _i3.CameraControl get cameraControl => (super.noSuchMethod(
+        Invocation.getter(#cameraControl),
+        returnValue: _FakeCameraControl_1(
+          this,
+          Invocation.getter(#cameraControl),
+        ),
+        returnValueForMissingStub: _FakeCameraControl_1(
+          this,
+          Invocation.getter(#cameraControl),
+        ),
+      ) as _i3.CameraControl);
+
+  @override
+  _i16.Future<void> addCaptureRequestOptions(
+          _i39.CaptureRequestOptions? captureRequestOptions) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addCaptureRequestOptions,
+          [captureRequestOptions],
+        ),
+        returnValue: _i16.Future<void>.value(),
+        returnValueForMissingStub: _i16.Future<void>.value(),
+      ) as _i16.Future<void>);
 }
 
 /// A class which mocks [LiveData].

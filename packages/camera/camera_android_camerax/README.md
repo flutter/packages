@@ -30,10 +30,6 @@ dependencies:
 and thus, the plugin will fall back to 480p if configured with a
 `ResolutionPreset`.
 
-### Exposure mode configuration \[[Issue #120468][120468]\]
-
-`setExposureMode`is unimplemented.
-
 ### Focus mode configuration \[[Issue #120467][120467]\]
 
 `setFocusMode` is unimplemented.
