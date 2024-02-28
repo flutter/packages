@@ -138,7 +138,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass});
+  const ProxyApi({this.superClass, this.kotlinOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -148,6 +148,10 @@ class ProxyApi {
   /// Note that using this instead of `extends` can cause unexpected conflicts
   /// with inherited method names.
   final Type? superClass;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1535,6 +1539,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        KotlinProxyApiOptions? kotlinOptions;
+        final Map<String, Object?>? kotlinOptionsMap =
+        annotationMap['kotlinOptions'] as Map<String, Object?>?;
+        if (kotlinOptionsMap != null) {
+          kotlinOptions = KotlinProxyApiOptions(
+            fullClassName: kotlinOptionsMap['fullClassName']! as String,
+            minAndroidApi: kotlinOptionsMap['minAndroidApi'] as int?,
+          );
+        }
+
         _currentApi = AstProxyApi(
           name: node.name.lexeme,
           methods: <Method>[],
@@ -1542,6 +1556,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <ApiField>[],
           superClass: superClass,
           interfaces: interfaces,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
