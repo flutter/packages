@@ -3,13 +3,14 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+// ignore: implementation_imports
+import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -230,7 +231,7 @@ void main() {
         polygons = MockPolygonsController();
         polylines = MockPolylinesController();
         tileOverlays = MockTileOverlaysController();
-        map = gmaps.GMap(html.DivElement());
+        map = gmaps.GMap(createDivElement());
       });
 
       testWidgets('listens to map events', (WidgetTester tester) async {
@@ -471,7 +472,7 @@ void main() {
 
       setUp(() {
         map = gmaps.GMap(
-          html.DivElement(),
+          createDivElement(),
           gmaps.MapOptions()
             ..zoom = 10
             ..center = gmaps.LatLng(0, 0),

@@ -7,7 +7,7 @@ part of '../google_maps_flutter_web.dart';
 /// Type used when passing an override to the _createMap function.
 @visibleForTesting
 typedef DebugCreateMapFunction = gmaps.GMap Function(
-    HtmlElement div, gmaps.MapOptions options);
+    HTMLElement div, gmaps.MapOptions options);
 
 /// Encapsulates a [gmaps.GMap], its events, and where in the DOM it's rendered.
 class GoogleMapController {
@@ -36,7 +36,7 @@ class GoogleMapController {
     // Register the view factory that will hold the `_div` that holds the map in the DOM.
     // The `_div` needs to be created outside of the ViewFactory (and cached!) so we can
     // use it to create the [gmaps.GMap] in the `init()` method of this class.
-    _div = DivElement()
+    _div = createDivElement()
       ..id = _getViewType(mapId)
       ..style.width = '100%'
       ..style.height = '100%';
@@ -74,7 +74,7 @@ class GoogleMapController {
 
   // The Flutter widget that contains the rendered Map.
   HtmlElementView? _widget;
-  late HtmlElement _div;
+  late HTMLElement _div;
 
   /// The Flutter widget that will contain the rendered Map. Used for caching.
   Widget? get widget {
@@ -138,7 +138,7 @@ class GoogleMapController {
 
   DebugCreateMapFunction? _overrideCreateMap;
 
-  gmaps.GMap _createMap(HtmlElement div, gmaps.MapOptions options) {
+  gmaps.GMap _createMap(HTMLElement div, gmaps.MapOptions options) {
     if (_overrideCreateMap != null) {
       return _overrideCreateMap!(div, options);
     }
