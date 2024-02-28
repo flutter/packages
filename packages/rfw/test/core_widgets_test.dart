@@ -106,7 +106,10 @@ void main() {
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
-      widget root = Opacity(onEnd: event 'end' {});
+      widget root = Opacity(
+        onEnd: event 'end' {},
+        child: Placeholder(),
+      );
     '''));
     await tester.pump();
     expect(tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).onEnd, isNot(isNull));
@@ -226,7 +229,10 @@ void main() {
         child: FractionallySizedBox(
           widthFactor: 0.5,
           heightFactor: 0.8,
-          child: Text(text: "test"),
+          child: Text(
+            text: "test",
+            textScaleFactor: 3.0,
+          ),
         ),
       );
     '''));
@@ -235,6 +241,7 @@ void main() {
     final Size childSize = tester.getSize(find.text('test'));
     expect(childSize.width, fractionallySizedBoxSize.width * 0.5);
     expect(childSize.height, fractionallySizedBoxSize.height * 0.8);
+    expect(tester.widget<Text>(find.text('test')).textScaler, const TextScaler.linear(3));
     expect(tester.widget<FractionallySizedBox>(find.byType(FractionallySizedBox)).alignment, Alignment.center);
   });
 
