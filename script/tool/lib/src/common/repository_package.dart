@@ -72,22 +72,16 @@ class RepositoryPackage {
     switch (platform) {
       case FlutterPlatform.android:
         directoryName = 'android';
-        break;
       case FlutterPlatform.ios:
         directoryName = 'ios';
-        break;
       case FlutterPlatform.linux:
         directoryName = 'linux';
-        break;
       case FlutterPlatform.macos:
         directoryName = 'macos';
-        break;
       case FlutterPlatform.web:
         directoryName = 'web';
-        break;
       case FlutterPlatform.windows:
         directoryName = 'windows';
-        break;
     }
     return directory.childDirectory(directoryName);
   }
@@ -191,5 +185,10 @@ class RepositoryPackage {
       return RepositoryPackage(parent.parent);
     }
     return null;
+  }
+
+  /// Returns true if the package is not marked as "publish_to: none".
+  bool isPublishable() {
+    return parsePubspec().publishTo != 'none';
   }
 }

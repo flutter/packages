@@ -51,9 +51,9 @@ void defineTests() {
           ),
         );
 
-        final RichText textWidget = tester.widget(find.byType(RichText));
+        final Text textWidget = tester.widget(find.byType(Text));
         final TextSpan span =
-            (textWidget.text as TextSpan).children![1] as TextSpan;
+            (textWidget.textSpan! as TextSpan).children![1] as TextSpan;
 
         expect(span.children, null);
         expect(span.recognizer.runtimeType, equals(TapGestureRecognizer));
@@ -61,7 +61,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'WidgetSpan in RichText is handled correctly',
+      'WidgetSpan in Text.rich is handled correctly',
       (WidgetTester tester) async {
         await tester.pumpWidget(
           boilerplate(
@@ -76,9 +76,9 @@ void defineTests() {
           ),
         );
 
-        final RichText textWidget = tester.widget(find.byType(RichText));
+        final Text textWidget = tester.widget(find.byType(Text));
         final TextSpan span =
-            (textWidget.text as TextSpan).children![0] as TextSpan;
+            (textWidget.textSpan! as TextSpan).children![0] as TextSpan;
         final WidgetSpan widgetSpan = span.children![0] as WidgetSpan;
         expect(widgetSpan.child, isInstanceOf<Container>());
       },
@@ -100,8 +100,8 @@ void defineTests() {
           ),
         );
 
-        final RichText textWidget = tester.widget(find.byType(RichText));
-        final TextSpan rootSpan = textWidget.text as TextSpan;
+        final Text textWidget = tester.widget(find.byType(Text));
+        final TextSpan rootSpan = textWidget.textSpan! as TextSpan;
         final TextSpan firstSpan = rootSpan.children![0] as TextSpan;
         final TextSpan secondSpan = rootSpan.children![1] as TextSpan;
         final TextSpan thirdSpan = rootSpan.children![2] as TextSpan;
@@ -114,7 +114,7 @@ void defineTests() {
   });
 
   testWidgets(
-    'TextSpan and WidgetSpan as children in RichText are handled correctly',
+    'TextSpan and WidgetSpan as children in Text.rich are handled correctly',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         boilerplate(
@@ -129,8 +129,8 @@ void defineTests() {
         ),
       );
 
-      final RichText textWidget = tester.widget(find.byType(RichText));
-      final TextSpan textSpan = textWidget.text as TextSpan;
+      final Text textWidget = tester.widget(find.byType(Text));
+      final TextSpan textSpan = textWidget.textSpan! as TextSpan;
       final TextSpan start = textSpan.children![0] as TextSpan;
       expect(start.text, 'this test replaces a string with a ');
       final TextSpan end = textSpan.children![1] as TextSpan;
@@ -201,7 +201,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
     for (int i = 0; i < textContent.length; i++) {
       text += _subscripts[int.parse(textContent[i])];
     }
-    return RichText(text: TextSpan(text: text));
+    return Text.rich(TextSpan(text: text));
   }
 }
 
@@ -225,11 +225,9 @@ class WikilinkSyntax extends md.InlineSyntax {
 class WikilinkBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfter(md.Element element, _) {
-    return RichText(
-      text: TextSpan(
-          text: element.textContent,
-          recognizer: TapGestureRecognizer()..onTap = () {}),
-    );
+    return Text.rich(TextSpan(
+        text: element.textContent,
+        recognizer: TapGestureRecognizer()..onTap = () {}));
   }
 }
 
@@ -250,8 +248,8 @@ class ContainerSyntax extends md.InlineSyntax {
 class ContainerBuilder extends MarkdownElementBuilder {
   @override
   Widget? visitElementAfter(md.Element element, _) {
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      TextSpan(
         children: <InlineSpan>[
           WidgetSpan(
             child: Container(),
@@ -265,8 +263,8 @@ class ContainerBuilder extends MarkdownElementBuilder {
 class ContainerBuilder2 extends MarkdownElementBuilder {
   @override
   Widget? visitElementAfter(md.Element element, _) {
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      TextSpan(
         children: <InlineSpan>[
           const TextSpan(text: 'foo'),
           WidgetSpan(
@@ -320,8 +318,8 @@ class InlineTextColorElementBuilder extends MarkdownElementBuilder {
     };
     final Color? contentColor = contentColors[color];
 
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      TextSpan(
         text: innerText,
         style: parentStyle?.copyWith(color: contentColor),
       ),

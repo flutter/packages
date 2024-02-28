@@ -83,6 +83,15 @@ void main() {
         );
       },
     );
+
+    test(
+      'default implementation of `getStyleError` returns null',
+      () async {
+        final GoogleMapsFlutterPlatform platform =
+            BuildViewGoogleMapsFlutterPlatform();
+        expect(await platform.getStyleError(mapId: 0), null);
+      },
+    );
   });
 }
 
