@@ -556,7 +556,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           api.flutterMethods,
           apiName: api.name,
         ))
-        ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces))
+        ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces()))
         ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
         ..methods.add(
           _proxyApiSetUpMessageHandlerMethod(
@@ -565,10 +565,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
             dartPackageName: dartPackageName,
             codecName: codecName,
             unattachedFields: api.unattachedFields,
-            hasCallbackConstructor: api.flutterMethods
-                .followedBy(api.flutterMethodsFromSuperClasses())
-                .followedBy(api.flutterMethodsFromInterfaces())
-                .every((Method method) => !method.isRequired),
+            hasCallbackConstructor: api.hasCallbackConstructor(),
           ),
         )
         ..methods.addAll(
