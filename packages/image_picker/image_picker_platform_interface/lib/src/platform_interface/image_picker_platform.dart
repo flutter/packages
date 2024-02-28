@@ -99,7 +99,6 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
-    int? limit,
   }) {
     throw UnimplementedError('pickMultiImage() has not been implemented.');
   }
@@ -204,15 +203,12 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// image types such as JPEG. If compression is not supported for the image that is picked,
   /// a warning message will be logged.
   ///
-  /// The `limit` argument defines how many images can be select.
-  ///
   /// If no images were picked, the return value is null.
   @Deprecated('Use getMultiImageWithOptions instead.')
   Future<List<XFile>?> getMultiImage({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
-    int? limit,
   }) {
     throw UnimplementedError('getMultiImage() has not been implemented.');
   }
@@ -322,7 +318,6 @@ abstract class ImagePickerPlatform extends PlatformInterface {
       maxWidth: options.imageOptions.maxWidth,
       maxHeight: options.imageOptions.maxHeight,
       imageQuality: options.imageOptions.imageQuality,
-      limit: options.limit,
     );
     return pickedImages ?? <XFile>[];
   }
