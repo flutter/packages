@@ -1,6 +1,6 @@
 ## 2.10.0
 
-* Add limit parameter to `pickMultiImage` and `pickMultipleMedia` to ios and Android.
+* Adds limit parameter  `pickMultiImage` and `pickMultipleMedia` to iOS and Android.
 
 ## 2.9.4
 
