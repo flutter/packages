@@ -22,7 +22,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   io: ^1.0.4
-  leak_tracker_flutter_testing: ^2.0.1
+  leak_tracker_flutter_testing: any
   path: ^1.8.2
 
 topics:
