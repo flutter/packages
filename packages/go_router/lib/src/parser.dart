@@ -67,10 +67,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // This is a result of browser backward/forward button or state
       // restoration. In this case, the route match list is already stored in
       // the state.
-      final RouteMatchList matchList =
-          _routeMatchListCodec.decode(state as Map<Object?, Object?>);
-      return debugParserFuture = _redirect(context, matchList)
-          .then<RouteMatchList>((RouteMatchList value) {
+      final RouteMatchList matchList = _routeMatchListCodec.decode(state as Map<Object?, Object?>);
+      return debugParserFuture = _redirect(context, matchList).then<RouteMatchList>((RouteMatchList value) {
         if (value.isError && onParserException != null) {
           return onParserException!(context, value);
         }
@@ -80,9 +78,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
     late final RouteMatchList initialMatches;
     initialMatches = configuration.findMatch(
-        routeInformation.uri.path.isEmpty
-            ? '${routeInformation.uri}/'
-            : routeInformation.uri.toString(),
+        routeInformation.uri.path.isEmpty ? '${routeInformation.uri}/' : routeInformation.uri.toString(),
         extra: state.extra);
     if (initialMatches.isError) {
       log('No initial matches: ${routeInformation.uri.path}');
@@ -113,10 +109,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   }
 
   @override
-  Future<RouteMatchList> parseRouteInformation(
-      RouteInformation routeInformation) {
-    throw UnimplementedError(
-        'use parseRouteInformationWithDependencies instead');
+  Future<RouteMatchList> parseRouteInformation(RouteInformation routeInformation) {
+    throw UnimplementedError('use parseRouteInformationWithDependencies instead');
   }
 
   /// for use by the Router architecture as part of the RouteInformationParser
@@ -126,12 +120,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       return null;
     }
     final String location;
-    if (GoRouter.optionURLReflectsImperativeAPIs &&
-        configuration.matches.last is ImperativeRouteMatch) {
-      location = (configuration.matches.last as ImperativeRouteMatch)
-          .matches
-          .uri
-          .toString();
+    if (GoRouter.optionURLReflectsImperativeAPIs) {
+      location = configuration.matches.last.matchedLocation;
     } else {
       location = configuration.uri.toString();
     }
@@ -141,10 +131,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     );
   }
 
-  Future<RouteMatchList> _redirect(
-      BuildContext context, RouteMatchList routeMatch) {
-    final FutureOr<RouteMatchList> redirectedFuture = configuration
-        .redirect(context, routeMatch, redirectHistory: <RouteMatchList>[]);
+  Future<RouteMatchList> _redirect(BuildContext context, RouteMatchList routeMatch) {
+    final FutureOr<RouteMatchList> redirectedFuture =
+        configuration.redirect(context, routeMatch, redirectHistory: <RouteMatchList>[]);
     if (redirectedFuture is RouteMatchList) {
       return SynchronousFuture<RouteMatchList>(redirectedFuture);
     }
@@ -188,14 +177,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         return newMatchList;
       case NavigatingType.restore:
         // Still need to consider redirection.
-        return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()
-            ? newMatchList
-            : baseRouteMatchList;
+        return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString() ? newMatchList : baseRouteMatchList;
     }
   }
 
   ValueKey<String> _getUniqueValueKey() {
-    return ValueKey<String>(String.fromCharCodes(
-        List<int>.generate(32, (_) => _random.nextInt(33) + 89)));
+    return ValueKey<String>(String.fromCharCodes(List<int>.generate(32, (_) => _random.nextInt(33) + 89)));
   }
 }
