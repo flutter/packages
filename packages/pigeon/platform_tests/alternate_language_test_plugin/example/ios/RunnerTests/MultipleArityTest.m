@@ -17,16 +17,16 @@
 @implementation MultipleAritytest
 
 - (void)testSimple {
-  HandlerBinaryMessenger *binaryMessenger =
-      [[HandlerBinaryMessenger alloc] initWithCodec:MultipleArityHostApiGetCodec()
-                                            handler:^id _Nullable(NSArray *_Nonnull args) {
-                                              return @([args[0] intValue] - [args[1] intValue]);
-                                            }];
+  HandlerBinaryMessenger *binaryMessenger = [[HandlerBinaryMessenger alloc]
+      initWithCodec:MultipleArityHostApiGetCodec()
+            handler:^id _Nullable(NSArray *_Nonnull args) {
+              return @[ @([args[0] intValue] - [args[1] intValue]) ];
+            }];
   MultipleArityFlutterApi *api =
       [[MultipleArityFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"subtraction"];
-  [api subtractX:@(30)
-               y:@(10)
+  [api subtractX:30
+               y:10
       completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable error) {
         XCTAssertNil(error);
         XCTAssertEqual(20, result.intValue);

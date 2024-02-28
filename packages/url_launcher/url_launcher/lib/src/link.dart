@@ -126,7 +126,7 @@ class DefaultLinkDelegate extends StatelessWidget {
       success = await launchUrl(
         url,
         mode: _useWebView
-            ? LaunchMode.inAppWebView
+            ? LaunchMode.inAppBrowserView
             : LaunchMode.externalApplication,
       );
     } on PlatformException {

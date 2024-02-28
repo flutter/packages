@@ -248,11 +248,9 @@ Future<void> main() async {
       'test_header': 'flutter_test_header'
     };
     await controller.loadUrl(headersUrl, headers: headers);
-    final String? currentUrl = await controller.currentUrl();
-    expect(currentUrl, headersUrl);
 
-    await pageStarts.stream.firstWhere((String url) => url == currentUrl);
-    await pageLoads.stream.firstWhere((String url) => url == currentUrl);
+    await pageStarts.stream.firstWhere((String url) => url == headersUrl);
+    await pageLoads.stream.firstWhere((String url) => url == headersUrl);
 
     final String content = await controller
         .runJavascriptReturningResult('document.documentElement.innerText');

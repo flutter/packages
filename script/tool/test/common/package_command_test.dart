@@ -524,32 +524,6 @@ packages/plugin1/plugin1/plugin1.dart
             unorderedEquals(<String>[plugin1.path, plugin2.path]));
       });
 
-      test('all plugins should be tested if .cirrus.yml changes.', () async {
-        processRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: '''
-.cirrus.yml
-packages/plugin1/CHANGELOG
-''')),
-        ];
-        final RepositoryPackage plugin1 =
-            createFakePlugin('plugin1', packagesDir);
-        final RepositoryPackage plugin2 =
-            createFakePlugin('plugin2', packagesDir);
-
-        final List<String> output = await runCapturingPrint(runner,
-            <String>['sample', '--base-sha=main', '--run-on-changed-packages']);
-
-        expect(command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]));
-        expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('Running for all packages, since a file has changed '
-                  'that could affect the entire repository.')
-            ]));
-      });
-
       test('all plugins should be tested if .ci.yaml changes', () async {
         processRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
@@ -606,7 +580,7 @@ packages/plugin1/CHANGELOG
         processRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
-script/tool_runner.sh
+script/tool/bin/flutter_plugin_tools.dart
 packages/plugin1/CHANGELOG
 ''')),
         ];
@@ -825,6 +799,80 @@ packages/plugin3/plugin3.dart
 
         expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
       });
+
+      test(
+          'honors --filter-packages-to flag when a file is changed that makes '
+          'all packages potentially changed', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+.ci.yaml
+''')),
+        ];
+        final RepositoryPackage plugin1 =
+            createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
+        createFakePlugin('plugin2', packagesDir);
+        createFakePlugin('plugin3', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=plugin1',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
+
+      test('--filter-packages-to handles federated plugin groups', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/a_plugin/a_plugin/lib/foo.dart
+packages/a_plugin/a_plugin_impl/lib/foo.dart
+packages/a_plugin/a_plugin_platform_interface/lib/foo.dart
+''')),
+        ];
+        final Directory groupDir = packagesDir.childDirectory('a_plugin');
+        final RepositoryPackage plugin1 =
+            createFakePlugin('a_plugin', groupDir);
+        final RepositoryPackage plugin2 =
+            createFakePlugin('a_plugin_impl', groupDir);
+        final RepositoryPackage plugin3 =
+            createFakePlugin('a_plugin_platform_interface', groupDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=a_plugin',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(
+            command.plugins,
+            unorderedEquals(
+                <String>[plugin1.path, plugin2.path, plugin3.path]));
+      });
+
+      test('--filter-packages-to and --exclude work together', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+.ci.yaml
+''')),
+        ];
+        final RepositoryPackage plugin1 =
+            createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
+        createFakePlugin('plugin2', packagesDir);
+        createFakePlugin('plugin3', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=plugin1,plugin2',
+          '--exclude=plugin2',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
     });
 
     group('test run-on-dirty-packages', () {
@@ -855,12 +903,11 @@ packages/plugin3/plugin3.dart
         processRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
-.cirrus.yml
 .ci.yaml
 .ci/Dockerfile
 .clang-format
 analysis_options.yaml
-script/tool_runner.sh
+script/tool/bin/flutter_plugin_tools.dart
 ''')),
         ];
         createFakePackage('a_package', packagesDir);

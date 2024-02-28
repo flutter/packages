@@ -52,7 +52,7 @@
   MockBinaryMessenger *binaryMessenger =
       [[MockBinaryMessenger alloc] initWithCodec:NullableArgHostApiGetCodec()];
   NSString *channel = @"dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit";
-  NullableArgHostApiSetup(binaryMessenger, api);
+  SetUpNullableArgHostApi(binaryMessenger, api);
   XCTAssertNotNil(binaryMessenger.handlers[channel]);
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSData *arguments = [NullableArgHostApiGetCodec() encode:@[ [NSNull null] ]];

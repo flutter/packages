@@ -25,7 +25,9 @@ class AndroidWebViewProxy {
   });
 
   /// Constructs a [android_webview.WebView].
-  final android_webview.WebView Function() createAndroidWebView;
+  final android_webview.WebView Function({
+    void Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged,
+  }) createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
   final android_webview.WebChromeClient Function({
@@ -44,12 +46,19 @@ class AndroidWebViewProxy {
         onGeolocationPermissionsShowPrompt,
     void Function(android_webview.WebChromeClient instance)?
         onGeolocationPermissionsHidePrompt,
+    void Function(android_webview.WebChromeClient instance,
+            android_webview.ConsoleMessage message)?
+        onConsoleMessage,
     void Function(
             android_webview.WebChromeClient instance,
             android_webview.View view,
             android_webview.CustomViewCallback callback)?
         onShowCustomView,
     void Function(android_webview.WebChromeClient instance)? onHideCustomView,
+    Future<void> Function(String url, String message)? onJsAlert,
+    Future<bool> Function(String url, String message)? onJsConfirm,
+    Future<String> Function(String url, String message, String defaultValue)?
+        onJsPrompt,
   }) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
@@ -75,6 +84,12 @@ class AndroidWebViewProxy {
     void Function(android_webview.WebView webView, String url)? urlLoading,
     void Function(android_webview.WebView webView, String url, bool isReload)?
         doUpdateVisitedHistory,
+    void Function(
+      android_webview.WebView webView,
+      android_webview.HttpAuthHandler handler,
+      String host,
+      String realm,
+    )? onReceivedHttpAuthRequest,
   }) createAndroidWebViewClient;
 
   /// Constructs a [android_webview.FlutterAssetManager].

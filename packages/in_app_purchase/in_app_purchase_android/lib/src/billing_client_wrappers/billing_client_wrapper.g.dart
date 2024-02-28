@@ -19,6 +19,12 @@ const _$BillingResponseEnumMap = {
   BillingResponse.error: 6,
   BillingResponse.itemAlreadyOwned: 7,
   BillingResponse.itemNotOwned: 8,
+  BillingResponse.networkError: 12,
+};
+
+const _$BillingChoiceModeEnumMap = {
+  BillingChoiceMode.playBillingOnly: 0,
+  BillingChoiceMode.alternativeBillingOnly: 1,
 };
 
 const _$ProductTypeEnumMap = {

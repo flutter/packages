@@ -127,14 +127,14 @@ private class PigeonApiImplementation: ExampleHostApi {
   }
 
   func add(_ a: Int64, to b: Int64) throws -> Int64 {
-    if (a < 0 || b < 0) {
-      throw FlutterError(code: "code", message: "message", details: "details");
+    if a < 0 || b < 0 {
+      throw FlutterError(code: "code", message: "message", details: "details")
     }
     return a + b
   }
 
   func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
-    if (message.code == Code.one) {
+    if message.code == Code.one {
       completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
       return
     }
@@ -146,14 +146,14 @@ private class PigeonApiImplementation: ExampleHostApi {
 ### Kotlin
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
 ```kotlin
-private class PigeonApiImplementation: ExampleHostApi {
+private class PigeonApiImplementation : ExampleHostApi {
   override fun getHostLanguage(): String {
     return "Kotlin"
   }
 
   override fun add(a: Long, b: Long): Long {
     if (a < 0L || b < 0L) {
-      throw FlutterError("code", "message", "details");
+      throw FlutterError("code", "message", "details")
     }
     return a + b
   }
@@ -237,7 +237,9 @@ private class PigeonFlutterApi {
     flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
   }
 
-  func callFlutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void) {
+  func callFlutterMethod(
+    aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void
+  ) {
     flutterAPI.flutterMethod(aString: aStringArg) {
       completion(.success($0))
     }
@@ -258,9 +260,7 @@ private class PigeonFlutterApi {
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) {
-      echo -> callback(Result.success(echo))
-    }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
   }
 }
 ```

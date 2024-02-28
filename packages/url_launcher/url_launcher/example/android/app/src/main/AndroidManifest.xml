@@ -20,6 +20,10 @@
       <action android:name="android.intent.action.VIEW" />
       <data android:scheme="tel" />
     </intent>
+    <!-- If your application checks for inAppBrowserView launch mode support -->
+    <intent>
+      <action android:name="android.support.customtabs.action.CustomTabsService" />
+    </intent>
     <!--#enddocregion android-queries-->
     <!-- The "https" scheme is only required for integration tests of this package.
          It shouldn't be needed in most actual apps, or show up in the README! -->

@@ -65,7 +65,13 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-enum class AnEnum { one = 0, two = 1, three = 2 };
+enum class AnEnum {
+  one = 0,
+  two = 1,
+  three = 2,
+  fortyTwo = 3,
+  fourHundredTwentyTwo = 4
+};
 
 // A class containing all supported types.
 //
@@ -414,6 +420,13 @@ class HostIntegrationCoreApi {
       const AllClassesWrapper& wrapper) = 0;
   // Returns the passed enum to test serialization and deserialization.
   virtual ErrorOr<AnEnum> EchoEnum(const AnEnum& an_enum) = 0;
+  // Returns the default string.
+  virtual ErrorOr<std::string> EchoNamedDefaultString(
+      const std::string& a_string) = 0;
+  // Returns passed in double.
+  virtual ErrorOr<double> EchoOptionalDefaultDouble(double a_double) = 0;
+  // Returns passed in int.
+  virtual ErrorOr<int64_t> EchoRequiredInt(int64_t an_int) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
       const AllNullableTypes* everything) = 0;
@@ -455,6 +468,12 @@ class HostIntegrationCoreApi {
       const flutter::EncodableMap* a_nullable_map) = 0;
   virtual ErrorOr<std::optional<AnEnum>> EchoNullableEnum(
       const AnEnum* an_enum) = 0;
+  // Returns passed in int.
+  virtual ErrorOr<std::optional<int64_t>> EchoOptionalNullableInt(
+      const int64_t* a_nullable_int) = 0;
+  // Returns the passed in string.
+  virtual ErrorOr<std::optional<std::string>> EchoNamedNullableString(
+      const std::string* a_nullable_string) = 0;
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
   virtual void NoopAsync(
@@ -847,6 +866,9 @@ class FlutterSmallApi {
   void EchoWrappedList(const TestMessage& msg,
                        std::function<void(const TestMessage&)>&& on_success,
                        std::function<void(const FlutterError&)>&& on_error);
+  void EchoString(const std::string& a_string,
+                  std::function<void(const std::string&)>&& on_success,
+                  std::function<void(const FlutterError&)>&& on_error);
 
  private:
   flutter::BinaryMessenger* binary_messenger_;

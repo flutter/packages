@@ -1,3 +1,40 @@
+## NEXT
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 2.5.6
+
+* Adds privacy manifest.
+
+## 2.5.5
+
+* Fixes display of initial frame when paused.
+
+## 2.5.4
+
+* Fixes new lint warnings.
+
+## 2.5.3
+
+* Publishes an instance of the plugin to the registrar on macOS, as on iOS.
+
+## 2.5.2
+
+* Fixes flickering and seek-while-paused on macOS.
+
+## 2.5.1
+
+* Updates to  Pigeon 13.
+
+## 2.5.0
+
+* Adds support for macOS.
+
+## 2.4.11
+
+* Updates Pigeon.
+* Changes Objective-C class prefixes to avoid future collisions.
+
 ## 2.4.10
 
 * Adds pub topics to package metadata.

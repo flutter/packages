@@ -8,7 +8,7 @@
 @JS()
 library id_load_callback;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
 import 'shared.dart';
 
@@ -17,10 +17,14 @@ import 'shared.dart';
 // https://developers.google.com/identity/gsi/web/reference/js-reference#onGoogleLibraryLoad
 */
 
+@JS('onGoogleLibraryLoad')
+@staticInterop
+external set _onGoogleLibraryLoad(JSFunction callback);
+
 /// Method called after the Sign In With Google JavaScript library is loaded.
 ///
 /// The [callback] parameter must be manually wrapped in [allowInterop]
 /// before being set to the [onGoogleLibraryLoad] property.
-@JS()
-@staticInterop
-external set onGoogleLibraryLoad(VoidFn callback);
+set onGoogleLibraryLoad(VoidFn function) {
+  _onGoogleLibraryLoad = function.toJS;
+}

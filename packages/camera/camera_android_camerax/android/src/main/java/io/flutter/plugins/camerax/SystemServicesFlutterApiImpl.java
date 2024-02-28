@@ -13,11 +13,6 @@ public class SystemServicesFlutterApiImpl extends SystemServicesFlutterApi {
     super(binaryMessenger);
   }
 
-  public void sendDeviceOrientationChangedEvent(
-      @NonNull String orientation, @NonNull Reply<Void> reply) {
-    super.onDeviceOrientationChanged(orientation, reply);
-  }
-
   public void sendCameraError(@NonNull String errorDescription, @NonNull Reply<Void> reply) {
     super.onCameraError(errorDescription, reply);
   }

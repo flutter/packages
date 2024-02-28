@@ -13,6 +13,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'android_proxy.dart';
 import 'android_webview.dart' as android_webview;
+import 'android_webview_api_impls.dart';
 import 'instance_manager.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
@@ -76,7 +77,7 @@ class AndroidWebViewPermissionResourceType
 
 /// Implementation of the [PlatformWebViewController] with the Android WebView API.
 class AndroidWebViewController extends PlatformWebViewController {
-  /// Creates a new [AndroidWebViewCookieManager].
+  /// Creates a new [AndroidWebViewController].
   AndroidWebViewController(PlatformWebViewControllerCreationParams params)
       : super.implementation(params is AndroidWebViewControllerCreationParams
             ? params
@@ -98,7 +99,15 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// The native [android_webview.WebView] being controlled.
   late final android_webview.WebView _webView =
-      _androidWebViewParams.androidWebViewProxy.createAndroidWebView();
+      _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
+          onScrollChanged: withWeakReferenceTo(this,
+              (WeakReference<AndroidWebViewController> weakReference) {
+    return (int left, int top, int oldLeft, int oldTop) async {
+      final void Function(ScrollPositionChange)? callback =
+          weakReference.target?._onScrollPositionChangedCallback;
+      callback?.call(ScrollPositionChange(left.toDouble(), top.toDouble()));
+    };
+  }));
 
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(
@@ -188,6 +197,38 @@ class AndroidWebViewController extends PlatformWebViewController {
         };
       },
     ),
+    onConsoleMessage: withWeakReferenceTo(
+      this,
+      (WeakReference<AndroidWebViewController> weakReference) {
+        return (android_webview.WebChromeClient webChromeClient,
+            android_webview.ConsoleMessage consoleMessage) async {
+          final void Function(JavaScriptConsoleMessage)? callback =
+              weakReference.target?._onConsoleLogCallback;
+          if (callback != null) {
+            JavaScriptLogLevel logLevel;
+            switch (consoleMessage.level) {
+              // Android maps `console.debug` to `MessageLevel.TIP`, it seems
+              // `MessageLevel.DEBUG` if not being used.
+              case ConsoleMessageLevel.debug:
+              case ConsoleMessageLevel.tip:
+                logLevel = JavaScriptLogLevel.debug;
+              case ConsoleMessageLevel.error:
+                logLevel = JavaScriptLogLevel.error;
+              case ConsoleMessageLevel.warning:
+                logLevel = JavaScriptLogLevel.warning;
+              case ConsoleMessageLevel.unknown:
+              case ConsoleMessageLevel.log:
+                logLevel = JavaScriptLogLevel.log;
+            }
+
+            callback(JavaScriptConsoleMessage(
+              level: logLevel,
+              message: consoleMessage.message,
+            ));
+          }
+        };
+      },
+    ),
     onPermissionRequest: withWeakReferenceTo(
       this,
       (WeakReference<AndroidWebViewController> weakReference) {
@@ -231,6 +272,49 @@ class AndroidWebViewController extends PlatformWebViewController {
         };
       },
     ),
+    onJsAlert: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message) async {
+        final Future<void> Function(JavaScriptAlertDialogRequest)? callback =
+            weakReference.target?._onJavaScriptAlert;
+        if (callback != null) {
+          final JavaScriptAlertDialogRequest request =
+              JavaScriptAlertDialogRequest(message: message, url: url);
+
+          await callback.call(request);
+        }
+        return;
+      };
+    }),
+    onJsConfirm: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message) async {
+        final Future<bool> Function(JavaScriptConfirmDialogRequest)? callback =
+            weakReference.target?._onJavaScriptConfirm;
+        if (callback != null) {
+          final JavaScriptConfirmDialogRequest request =
+              JavaScriptConfirmDialogRequest(message: message, url: url);
+          final bool result = await callback.call(request);
+          return result;
+        }
+        return false;
+      };
+    }),
+    onJsPrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message, String defaultValue) async {
+        final Future<String> Function(JavaScriptTextInputDialogRequest)?
+            callback = weakReference.target?._onJavaScriptPrompt;
+        if (callback != null) {
+          final JavaScriptTextInputDialogRequest request =
+              JavaScriptTextInputDialogRequest(
+                  message: message, url: url, defaultText: defaultValue);
+          final String result = await callback.call(request);
+          return result;
+        }
+        return '';
+      };
+    }),
   );
 
   /// The native [android_webview.FlutterAssetManager] allows managing assets.
@@ -254,6 +338,18 @@ class AndroidWebViewController extends PlatformWebViewController {
   OnHideCustomWidgetCallback? _onHideCustomWidgetCallback;
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+
+  void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
+
+  Future<void> Function(JavaScriptAlertDialogRequest request)?
+      _onJavaScriptAlert;
+  Future<bool> Function(JavaScriptConfirmDialogRequest request)?
+      _onJavaScriptConfirm;
+  Future<String> Function(JavaScriptTextInputDialogRequest request)?
+      _onJavaScriptPrompt;
+
+  void Function(ScrollPositionChange scrollPositionChange)?
+      _onScrollPositionChangedCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -474,6 +570,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setUserAgent(String? userAgent) =>
       _webView.settings.setUserAgentString(userAgent);
 
+  @override
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) async {
+    _onScrollPositionChangedCallback = onScrollPositionChange;
+  }
+
   /// Sets the restrictions that apply on automatic media playback.
   Future<void> setMediaPlaybackRequiresUserGesture(bool require) {
     return _webView.settings.setMediaPlaybackRequiresUserGesture(require);
@@ -565,6 +668,45 @@ class AndroidWebViewController extends PlatformWebViewController {
   }) async {
     _onShowCustomWidgetCallback = onShowCustomWidget;
     _onHideCustomWidgetCallback = onHideCustomWidget;
+  }
+
+  /// Sets a callback that notifies the host application of any log messages
+  /// written to the JavaScript console.
+  @override
+  Future<void> setOnConsoleMessage(
+      void Function(JavaScriptConsoleMessage consoleMessage)
+          onConsoleMessage) async {
+    _onConsoleLogCallback = onConsoleMessage;
+
+    return _webChromeClient.setSynchronousReturnValueForOnConsoleMessage(
+        _onConsoleLogCallback != null);
+  }
+
+  @override
+  Future<String?> getUserAgent() => _webView.settings.getUserAgentString();
+
+  @override
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(JavaScriptAlertDialogRequest request)
+          onJavaScriptAlertDialog) async {
+    _onJavaScriptAlert = onJavaScriptAlertDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsAlert(true);
+  }
+
+  @override
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(JavaScriptConfirmDialogRequest request)
+          onJavaScriptConfirmDialog) async {
+    _onJavaScriptConfirm = onJavaScriptConfirmDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsConfirm(true);
+  }
+
+  @override
+  Future<void> setOnJavaScriptTextInputDialog(
+      Future<String> Function(JavaScriptTextInputDialogRequest request)
+          onJavaScriptTextInputDialog) async {
+    _onJavaScriptPrompt = onJavaScriptTextInputDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
   }
 }
 
@@ -682,13 +824,10 @@ class FileSelectorParams {
     switch (params.mode) {
       case android_webview.FileChooserMode.open:
         mode = FileSelectorMode.open;
-        break;
       case android_webview.FileChooserMode.openMultiple:
         mode = FileSelectorMode.openMultiple;
-        break;
       case android_webview.FileChooserMode.save:
         mode = FileSelectorMode.save;
-        break;
     }
 
     return FileSelectorParams(
@@ -1214,6 +1353,31 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidUrlChange(url: url, isReload: isReload));
         }
       },
+      onReceivedHttpAuthRequest: (
+        android_webview.WebView webView,
+        android_webview.HttpAuthHandler httpAuthHandler,
+        String host,
+        String realm,
+      ) {
+        final void Function(HttpAuthRequest)? callback =
+            weakThis.target?._onHttpAuthRequest;
+        if (callback != null) {
+          callback(
+            HttpAuthRequest(
+              onProceed: (WebViewCredential credential) {
+                httpAuthHandler.proceed(credential.user, credential.password);
+              },
+              onCancel: () {
+                httpAuthHandler.cancel();
+              },
+              host: host,
+              realm: realm,
+            ),
+          );
+        } else {
+          httpAuthHandler.cancel();
+        }
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -1270,6 +1434,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
+  HttpAuthRequestCallback? _onHttpAuthRequest;
 
   void _handleNavigation(
     String url, {
@@ -1355,5 +1520,12 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
     _onUrlChange = onUrlChange;
+  }
+
+  @override
+  Future<void> setOnHttpAuthRequest(
+    HttpAuthRequestCallback onHttpAuthRequest,
+  ) async {
+    _onHttpAuthRequest = onHttpAuthRequest;
   }
 }
