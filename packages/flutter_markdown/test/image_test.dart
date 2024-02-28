@@ -257,6 +257,8 @@ void defineTests() {
           ),
         );
 
+        print('######### ');
+
         final GestureDetector detector =
             tester.widget(find.byType(GestureDetector));
         detector.onTap!();

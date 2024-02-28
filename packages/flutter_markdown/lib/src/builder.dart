@@ -733,51 +733,55 @@ class MarkdownBuilder implements md.NodeVisitor {
     final List<Widget> mergedTexts = <Widget>[];
 
     for (final Widget child in children) {
+      // If the list is empty, add the current widget to the list
       if (mergedTexts.isEmpty) {
         mergedTexts.add(child);
         continue;
       }
 
-      final bool lastIsSelectableText = mergedTexts.last is SelectableText;
-      final bool lastText = mergedTexts.last is Text;
-      final bool lastRichText = mergedTexts.last is RichText;
+      // Remove last widget from the list to merge it with the current widget
+      final Widget last = mergedTexts.removeLast();
 
+      // Extract the text spans from the last widget(s)
       List<InlineSpan> spans = <InlineSpan>[];
 
-      if (lastIsSelectableText) {
-        final SelectableText last = mergedTexts.removeLast() as SelectableText;
+      // Extract the text spans from the last widget
+      if (last is SelectableText) {
         final TextSpan span = last.textSpan!;
         spans.addAll(_getInlineSpans(span));
-      } else if (lastText) {
-        final Text last = mergedTexts.removeLast() as Text;
+      } else if (last is Text) {
         final InlineSpan span = last.textSpan!;
         spans.addAll(_getInlineSpans(span));
-      } else if (lastRichText) {
-        final RichText last = mergedTexts.removeLast() as RichText;
+      } else if (last is RichText) {
         final InlineSpan span = last.text;
         spans.addAll(_getInlineSpans(span));
+      } else {
+        // If the last widget is not a text widget, add it back to the list
+        mergedTexts.addAll(<Widget>[last, child]);
+        continue;
       }
 
-      final bool childIsText = child is Text;
-      final bool childIsSelectableText = child is SelectableText;
-      final bool childIsRichText = child is RichText;
-
-      if (childIsText) {
+      // Extract the text spans from the current widget
+      if (child is Text) {
         final InlineSpan span = child.textSpan!;
         spans.addAll(_getInlineSpans(span));
-      } else if (childIsSelectableText) {
+      } else if (child is SelectableText) {
         final TextSpan span = child.textSpan!;
         spans.addAll(_getInlineSpans(span));
-      } else if (childIsRichText) {
+      } else if (child is RichText) {
         final InlineSpan span = child.text;
         spans.addAll(_getInlineSpans(span));
+      } else {
+        // If the current widget is not a text widget, add it back to the list
+        mergedTexts.addAll(<Widget>[last, child]);
+        continue;
       }
 
       if (spans.isNotEmpty) {
-        Widget merged;
-
+        // Merge similar text spans
         spans = _mergeSimilarTextSpans(spans);
 
+        // Create a new text widget with the merged text spans
         InlineSpan child;
         if (spans.length == 1) {
           child = spans.first;
@@ -785,23 +789,23 @@ class MarkdownBuilder implements md.NodeVisitor {
           child = TextSpan(children: spans);
         }
 
+        // Add the new text widget to the list
         if (selectable) {
-          merged = SelectableText.rich(
+          mergedTexts.add(SelectableText.rich(
             TextSpan(children: spans),
             textScaler: styleSheet.textScaler,
             textAlign: textAlign ?? TextAlign.start,
             onTap: onTapText,
-          );
+          ));
         } else {
-          merged = Text.rich(
+          mergedTexts.add(Text.rich(
             child,
             textScaler: styleSheet.textScaler,
             textAlign: textAlign ?? TextAlign.start,
-          );
+          ));
         }
-
-        mergedTexts.add(merged);
       } else {
+        // If no text spans were found, add the current widget to the list
         mergedTexts.add(child);
       }
     }
