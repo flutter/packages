@@ -515,7 +515,7 @@ class Runtime extends ChangeNotifier {
   }
 
   Object _bindArguments(
-    FullyQualifiedWidgetName context, 
+    FullyQualifiedWidgetName context,
     Object node, Object arguments,
     DynamicMap widgetBuilderScope,
     int stateDepth,
@@ -938,9 +938,9 @@ abstract class _CurriedWidget extends BlobNode {
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
   ) {
     if (root is DynamicMap) {
-      return root.map((String key, Object? value) => 
+      return root.map((String key, Object? value) =>
         MapEntry<String, Object?>(
-          key, 
+          key,
           _fix(root[key]!, stateResolver, dataResolver, widgetBuilderArgResolver),
         ),
       );
@@ -954,7 +954,7 @@ abstract class _CurriedWidget extends BlobNode {
           widgetBuilderArgResolver,
         ).length!;
         return DynamicList.generate(
-          length, 
+          length,
           (int index) => _fix(
             _listLookup(root, index, stateResolver, dataResolver, widgetBuilderArgResolver).result!, 
             stateResolver,
@@ -964,7 +964,7 @@ abstract class _CurriedWidget extends BlobNode {
         );
       } else {
         return DynamicList.generate(
-          root.length, 
+          root.length,
           (int index) => _fix(root[index]!, stateResolver, dataResolver, widgetBuilderArgResolver),
         );
       }
@@ -978,7 +978,7 @@ abstract class _CurriedWidget extends BlobNode {
   Object resolve(
     List<Object> parts,
     _StateResolverCallback stateResolver,
-    _DataResolverCallback dataResolver, 
+    _DataResolverCallback dataResolver,
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver, {
     required bool expandLists,
   }) {
@@ -1027,13 +1027,13 @@ class _CurriedLocalWidget extends _CurriedWidget {
     FullyQualifiedWidgetName fullName,
     this.child,
     DynamicMap arguments,
-    DynamicMap widgetBuilderScope, 
+    DynamicMap widgetBuilderScope,
  ) : super(fullName, arguments, widgetBuilderScope, null);
 
   factory _CurriedLocalWidget.error(FullyQualifiedWidgetName fullName, String message) {
     return _CurriedLocalWidget(
-      fullName, 
-      (BuildContext context, DataSource data) => _buildErrorWidget(message), 
+      fullName,
+      (BuildContext context, DataSource data) => _buildErrorWidget(message),
       const <String, Object?>{},
       const <String, Object?>{},
     );

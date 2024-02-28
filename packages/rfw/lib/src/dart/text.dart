@@ -298,10 +298,10 @@ DynamicMap parseDataFile(String file) {
 ///
 /// ### Widget Builders
 ///
-/// Widget builders take a single argument and return a widget. 
+/// Widget builders take a single argument and return a widget.
 /// The [DynamicMap] argument consists of key-value pairs where values
-/// can be of any types in the data model. Widget builders arguments are lexically 
-/// scoped so a given constructor call has access to any arguments where it is 
+/// can be of any types in the data model. Widget builders arguments are lexically
+/// scoped so a given constructor call has access to any arguments where it is
 /// defined plus arguments defined by its parents (if any).
 ///
 /// In this example several widget builders are nested together:
@@ -2197,7 +2197,7 @@ class _Parser {
       }
       _expectSymbol(_SymbolToken.colon);
       final Object value = _readValue(
-        extended: extended, 
+        extended: extended,
         nullOk: true,
         widgetBuilderScope: widgetBuilderScope,
       );
@@ -2237,7 +2237,7 @@ class _Parser {
         _expectSymbol(_SymbolToken.colon);
         _loopIdentifiers.add(loopIdentifier);
         final Object template = _readValue(
-          widgetBuilderScope: widgetBuilderScope, 
+          widgetBuilderScope: widgetBuilderScope,
           extended: extended,
         );
         assert(_loopIdentifiers.last == loopIdentifier);

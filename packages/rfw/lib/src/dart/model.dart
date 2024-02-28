@@ -562,7 +562,7 @@ class DataReference extends Reference {
 /// In `(scope) => Container(width: scope.width)` this represents "scope.width".
 ///
 /// See also:
-/// 
+///
 ///   * [WidgetBuilderDeclaration], which represents a widget builder definition.
 class WidgetBuilderArgReference extends Reference {
   /// Wraps the given [argumentName] and [parts] as a [WidgetBuilderArgReference].
@@ -572,7 +572,7 @@ class WidgetBuilderArgReference extends Reference {
 
   /// A reference to a [WidgetBuilderDeclaration.argumentName].
   ///
-  /// In `Builder(builder: (scope) => Text(text: scope.result.text));` 
+  /// In `Builder(builder: (scope) => Text(text: scope.result.text));`
   /// "scope.result.text" is the [WidgetBuilderArgReference].
   /// The [argumentName] is "scope" and its [parts] are `["result", "text"]`.
   final String argumentName;

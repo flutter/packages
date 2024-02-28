@@ -1103,7 +1103,7 @@ void main() {
 
       runtime.update(coreLibraryName, createCoreWidgets());
       runtime.update(remoteLibraryName, parseLibraryFile(library));
-      runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> { 
+      runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
         'CoolText': (BuildContext context, DataSource source) {
           final int count = source.length(['text']);
           String buffer = '';
@@ -1128,7 +1128,7 @@ void main() {
           switch (operation) {
             case 'sum':
               result = operand1 + operand2;
-            case 'multiply': 
+            case 'multiply':
               result = operand1 * operand2;
             default:
               throw Exception('operation not supported');
@@ -1142,7 +1142,7 @@ void main() {
         runtime: runtime,
         data: data,
         widget: FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-        onEvent: (String eventName, DynamicMap eventArguments) => 
+        onEvent: (String eventName, DynamicMap eventArguments) =>
           dispatchedEvents.add(RfwEvent(eventName, eventArguments)),
       );
     }
