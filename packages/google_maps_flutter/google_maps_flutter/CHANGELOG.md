@@ -5,7 +5,7 @@
   displayed briefly.
 * Deprecates `GoogleMapController.setMapStyle` in favor of setting the style via
   the new widget `style` parameter.
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates minimum supported SDK version to Flutter 3.19.
 
 ## 2.5.3
 
