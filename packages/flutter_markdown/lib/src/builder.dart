@@ -707,6 +707,23 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
   }
 
+  /// Extracts all spans from an inline element and merges them into a single list
+  List<InlineSpan> _getInlineSpans(InlineSpan span) {
+    final List<InlineSpan> spans = <InlineSpan>[];
+
+    if (span is TextSpan && span.children != null) {
+      if (span.children != null) {
+        spans.addAll(span.children!);
+      } else {
+        spans.add(span);
+      }
+    } else {
+      spans.add(span);
+    }
+
+    return spans;
+  }
+
   /// Merges adjacent [TextSpan] children
   List<Widget> _mergeInlineChildren(
     List<Widget> children,
@@ -730,20 +747,15 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (lastIsSelectableText) {
         final SelectableText last = mergedTexts.removeLast() as SelectableText;
         final TextSpan span = last.textSpan!;
-
-        if (span.children != null) {
-          spans.addAll(span.children!);
-        } else {
-          spans.add(span);
-        }
+        spans.addAll(_getInlineSpans(span));
       } else if (lastText) {
         final Text last = mergedTexts.removeLast() as Text;
         final InlineSpan span = last.textSpan!;
-        spans.add(span);
+        spans.addAll(_getInlineSpans(span));
       } else if (lastRichText) {
         final RichText last = mergedTexts.removeLast() as RichText;
         final InlineSpan span = last.text;
-        spans.add(span);
+        spans.addAll(_getInlineSpans(span));
       }
 
       final bool childIsText = child is Text;
@@ -751,17 +763,14 @@ class MarkdownBuilder implements md.NodeVisitor {
       final bool childIsRichText = child is RichText;
 
       if (childIsText) {
-        spans.add(child.textSpan!);
+        final InlineSpan span = child.textSpan!;
+        spans.addAll(_getInlineSpans(span));
       } else if (childIsSelectableText) {
         final TextSpan span = child.textSpan!;
-
-        if (span.children != null) {
-          spans.addAll(span.children!);
-        } else {
-          spans.add(span);
-        }
+        spans.addAll(_getInlineSpans(span));
       } else if (childIsRichText) {
-        spans.add(child.text);
+        final InlineSpan span = child.text;
+        spans.addAll(_getInlineSpans(span));
       }
 
       if (spans.isNotEmpty) {
