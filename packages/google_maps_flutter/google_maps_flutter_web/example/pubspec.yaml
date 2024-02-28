@@ -3,8 +3,8 @@ publish_to: none
 
 # Tests require flutter beta or greater to run.
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -12,12 +12,13 @@ dependencies:
   google_maps_flutter_platform_interface: ^2.4.0
   google_maps_flutter_web:
     path: ../
+  web: ^0.5.0
 
 dev_dependencies:
   build_runner: ^2.1.1
   flutter_test:
     sdk: flutter
-  google_maps: ^6.1.0
+  google_maps: ^7.1.0
   google_maps_flutter: ^2.2.0 # Needed for projection_test.dart
   http: ">=0.13.0 <2.0.0"
   integration_test:

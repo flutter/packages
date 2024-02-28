@@ -1,3 +1,7 @@
+## 0.5.0+36
+
+* Implements `setExposureMode`.
+
 ## 0.5.0+35
 
 * Modifies `CameraInitializedEvent` that is sent when the camera is initialized to indicate that the initial focus
