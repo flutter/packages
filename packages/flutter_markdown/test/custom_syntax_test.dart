@@ -77,9 +77,8 @@ void defineTests() {
         );
 
         final Text textWidget = tester.widget(find.byType(Text));
-        final TextSpan span =
-            (textWidget.textSpan! as TextSpan).children![0] as TextSpan;
-        final WidgetSpan widgetSpan = span.children![0] as WidgetSpan;
+        final TextSpan textSpan = textWidget.textSpan! as TextSpan;
+        final WidgetSpan widgetSpan = textSpan.children![0] as WidgetSpan;
         expect(widgetSpan.child, isInstanceOf<Container>());
       },
     );
