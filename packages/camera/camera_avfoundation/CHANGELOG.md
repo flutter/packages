@@ -1,3 +1,7 @@
+## 0.9.14+1
+
+* Adds ability to discover external cameras for ios 17 and up.
+
 ## 0.9.14
 
 * Adds support to HEIF format.
