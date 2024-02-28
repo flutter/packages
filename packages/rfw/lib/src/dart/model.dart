@@ -441,13 +441,15 @@ class ConstructorCall extends BlobNode {
 
 /// Representation of functions that return widgets in Remote Flutter Widgets library blobs.
 class WidgetBuilderDeclaration extends BlobNode {
-  /// Creates a [WidgetBuilderDeclaration].
+  /// Represents a callback that takes a single argument [argumentName] and returns the [widget].
   const WidgetBuilderDeclaration(this.argumentName, this.widget);
 
-  /// The name associated with the passed [DynamicMap].
+  /// The callback single argument name.
+  ///
+  /// In `Builder(builder: (scope) => Container());` [argumentName] is "scope".
   final String argumentName;
 
-  /// The widget that will be returned when the builder is called.
+  /// The widget that will be returned when the builder callback is called.
   ///
   /// This is usually a [ConstructorCall], but may be a [Switch] (so long as
   /// that [Switch] resolves to a [ConstructorCall]. Other values (or a [Switch]
@@ -554,21 +556,25 @@ class DataReference extends Reference {
   String toString() => 'data.${parts.join(".")}';
 }
 
-/// Reference to the [DynamicMap] passed into the widget builder.
+/// Reference to the single argument of type [DynamicMap] passed into the widget builder.
 ///
 /// This class is used to represent references to a function argument.
-/// In "(scope) => Container(width: scope.width)" this represents "scope.width".
+/// In `(scope) => Container(width: scope.width)` this represents "scope.width".
 ///
 /// See also:
 /// 
 ///   * [WidgetBuilderDeclaration], which represents a widget builder definition.
 class WidgetBuilderArgReference extends Reference {
-  /// Wraps the given [parts] associated to the [argumentName] as an [WidgetBuilderArgReference].
+  /// Wraps the given [argumentName] and [parts] as a [WidgetBuilderArgReference].
   ///
   /// The parts must not be mutated after the object is created.
   const WidgetBuilderArgReference(this.argumentName, super.parts);
 
-  /// References the function argument name.
+  /// A reference to a [WidgetBuilderDeclaration.argumentName].
+  ///
+  /// In `Builder(builder: (scope) => Text(text: scope.result.text));` 
+  /// "scope.result.text" is the [WidgetBuilderArgReference].
+  /// The [argumentName] is "scope" and its [parts] are `["result", "text"]`.
   final String argumentName;
 
   WidgetBuilderArgReference constructReference(List<Object> moreParts) {
