@@ -129,23 +129,23 @@ abstract class DataSource {
   /// non-widget nodes replaced by [ErrorWidget].
   List<Widget> childList(List<Object> argsKey);
 
-  /// Build the builder at the given key.
+  /// Builds the widget builder at the given key.
   ///
-  /// If the node specified is not a widget, returns an [ErrorWidget].
+  /// If the node is not a widget builder, returns an [ErrorWidget].
   ///
   /// See also:
   ///
-  ///  * [optionalBuilder], which returns null if the widget is missing.
+  ///  * [optionalBuilder], which returns null if the widget builder is missing.
   Widget builder(List<Object> argsKey, DynamicMap builderArg);
 
-  /// Build the builder at the given key.
+  /// Builds the widget builder at the given key.
   ///
-  /// If the node specified is not a widget, returns null.
+  /// If the node is not a widget builder, returns null.
   ///
   /// See also:
   ///
   ///  * [builder], which returns an [ErrorWidget] instead of null if the widget
-  ///    is missing.
+  ///    builder is missing.
   Widget? optionalBuilder(List<Object> argsKey, DynamicMap builderArg);
 
   /// Gets a [VoidCallback] event handler at the given key.
