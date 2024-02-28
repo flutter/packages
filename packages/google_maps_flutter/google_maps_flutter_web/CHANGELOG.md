@@ -1,3 +1,8 @@
+## 0.5.6+1
+
+* Fixes an issue where `dart:js_interop` object literal factories did not
+  compile with dart2js.
+
 ## 0.5.6
 
 * Adds support for `MapConfiguration.style`.
