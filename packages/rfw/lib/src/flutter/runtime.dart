@@ -545,7 +545,7 @@ class Runtime extends ChangeNotifier {
           context,
           node.widget,
           arguments,
-          {...widgetBuilderScope, node.argumentName: widgetBuilderArg},
+          <String, Object?>{...widgetBuilderScope, node.argumentName: widgetBuilderArg},
           stateDepth,
           usedWidgets,
         );
@@ -838,7 +838,7 @@ abstract class _CurriedWidget extends BlobNode {
           current = current.constructReference(parts.sublist(index));
           index = parts.length;
         }
-        current = widgetBuilderArgResolver([current.argumentName, ...current.parts]);
+        current = widgetBuilderArgResolver(<Object>[current.argumentName, ...current.parts]);
         continue;
       } else if (current is BoundArgsReference) {
         List<Object> nextParts = current.parts;
@@ -1337,7 +1337,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
   }) {
     final Object value = _fetch(argsKey, expandLists: false);
     if (value is _RemoteWidgetBuilder) {
-      final _CurriedWidget curriedWidget = value(builderArg) as _CurriedWidget;
+      final _CurriedWidget curriedWidget = value(builderArg);
       return curriedWidget.build(
         context,
         widget.data,

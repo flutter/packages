@@ -2430,7 +2430,7 @@ class _Parser {
       widgetBuilderScope: <String>[...widgetBuilderScope, argumentName],
     );
     if (widget is! ConstructorCall && widget is! Switch) {
-      throw ParserException._fromToken('Expecting a switch or constructor call got $widget', _source.current);
+      throw ParserException._fromToken('Expecting a switch or constructor call got $widget', valueToken);
     }
     return WidgetBuilderDeclaration(argumentName, widget as BlobNode);
   }

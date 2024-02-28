@@ -577,6 +577,14 @@ class WidgetBuilderArgReference extends Reference {
   /// The [argumentName] is "scope" and its [parts] are `["result", "text"]`.
   final String argumentName;
 
+  /// Creates a new [WidgetBuilderArgReference] that indexes even deeper than this one.
+  ///
+  /// For example, suppose a widget's arguments consisted of a map with one key,
+  /// "a", whose value was a [WidgetBuilderArgReference] referencing "scope.foo.bar".
+  /// Now suppose that the widget itself has an [ArgsReference] that references
+  /// "args.a.baz". The "args.a" part identifies the aforementioned
+  /// [WidgetBuilderArgReference], and so the resulting reference is actually to
+  /// "scope.foo.bar.baz".
   WidgetBuilderArgReference constructReference(List<Object> moreParts) {
     return WidgetBuilderArgReference(argumentName, parts + moreParts);
   }
