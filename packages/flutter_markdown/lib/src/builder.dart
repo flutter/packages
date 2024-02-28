@@ -742,7 +742,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       final bool lastText = mergedTexts.last is Text;
       final bool lastRichText = mergedTexts.last is RichText;
 
-      final List<InlineSpan> spans = <InlineSpan>[];
+      List<InlineSpan> spans = <InlineSpan>[];
 
       if (lastIsSelectableText) {
         final SelectableText last = mergedTexts.removeLast() as SelectableText;
@@ -776,6 +776,15 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (spans.isNotEmpty) {
         Widget merged;
 
+        spans = _mergeSimilarTextSpans(spans);
+
+        InlineSpan child;
+        if (spans.length == 1) {
+          child = spans.first;
+        } else {
+          child = TextSpan(children: spans);
+        }
+
         if (selectable) {
           merged = SelectableText.rich(
             TextSpan(children: spans),
@@ -785,7 +794,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           );
         } else {
           merged = Text.rich(
-            TextSpan(children: spans),
+            child,
             textScaler: styleSheet.textScaler,
             textAlign: textAlign ?? TextAlign.start,
           );
@@ -871,19 +880,30 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   /// Combine text spans with equivalent properties into a single span.
-  TextSpan? _mergeSimilarTextSpans(List<TextSpan>? textSpans) {
-    if (textSpans == null || textSpans.length < 2) {
-      return TextSpan(children: textSpans);
+  List<InlineSpan> _mergeSimilarTextSpans(List<InlineSpan> textSpans) {
+    if (textSpans.length < 2) {
+      return textSpans;
     }
 
-    final List<TextSpan> mergedSpans = <TextSpan>[textSpans.first];
+    final List<InlineSpan> mergedSpans = <InlineSpan>[];
 
     for (int index = 1; index < textSpans.length; index++) {
-      final TextSpan nextChild = textSpans[index];
-      if (nextChild.recognizer == mergedSpans.last.recognizer &&
-          nextChild.semanticsLabel == mergedSpans.last.semanticsLabel &&
-          nextChild.style == mergedSpans.last.style) {
-        final TextSpan previous = mergedSpans.removeLast();
+      final InlineSpan previous =
+          mergedSpans.isEmpty ? textSpans.first : mergedSpans.removeLast();
+      final InlineSpan nextChild = textSpans[index];
+
+      final bool previousIsTextSpan = previous is TextSpan;
+      final bool nextIsTextSpan = nextChild is TextSpan;
+      if (!previousIsTextSpan || !nextIsTextSpan) {
+        mergedSpans.addAll([previous, nextChild]);
+        continue;
+      }
+
+      final bool matchStyle = nextChild.recognizer == previous.recognizer &&
+          nextChild.semanticsLabel == previous.semanticsLabel &&
+          nextChild.style == previous.style;
+
+      if (matchStyle) {
         mergedSpans.add(TextSpan(
           text: previous.toPlainText() + nextChild.toPlainText(),
           recognizer: previous.recognizer,
@@ -891,15 +911,13 @@ class MarkdownBuilder implements md.NodeVisitor {
           style: previous.style,
         ));
       } else {
-        mergedSpans.add(nextChild);
+        mergedSpans.addAll([previous, nextChild]);
       }
     }
 
     // When the mergered spans compress into a single TextSpan return just that
     // TextSpan, otherwise bundle the set of TextSpans under a single parent.
-    return mergedSpans.length == 1
-        ? mergedSpans.first
-        : TextSpan(children: mergedSpans);
+    return mergedSpans;
   }
 
   Widget _buildRichText(TextSpan? text, {TextAlign? textAlign, String? key}) {
