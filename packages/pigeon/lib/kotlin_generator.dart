@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math';
+
 import 'package:graphs/graphs.dart';
 
 import 'ast.dart';
@@ -658,20 +660,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       'abstract class $kotlinApiName(val codec: $codecName) {',
       '}',
       () {
-        final Iterable<AstProxyApi> allProxyApis =
-            root.apis.whereType<AstProxyApi>();
-
         final TypeDeclaration apiAsTypeDeclaration = TypeDeclaration(
           baseName: api.name,
           isNullable: false,
           associatedProxyApi: api,
-        );
-
-        // Whether the api has a method that callbacks to Dart to add a new
-        // instance to the InstanceManager.
-        final bool hasCallbackConstructor = checkApiHasCallbackConstructor(
-          api,
-          allProxyApis,
         );
 
         for (final Constructor constructor in api.constructors) {
@@ -682,7 +674,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 : '${classMemberNamePrefix}defaultConstructor',
             returnType: apiAsTypeDeclaration,
             documentationComments: constructor.documentationComments,
-            requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+            minApiRequirement: _typeWithHighestApiRequirement(<TypeDeclaration>[
               apiAsTypeDeclaration,
               ...constructor.parameters
                   .map((Parameter parameter) => parameter.type),
@@ -708,7 +700,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             documentationComments: field.documentationComments,
             returnType: field.type,
             isAbstract: true,
-            requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+            minApiRequirement: _typeWithHighestApiRequirement(<TypeDeclaration>[
               apiAsTypeDeclaration,
               field.type,
             ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
@@ -727,7 +719,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           indent.newln();
         }
 
-        if (hasCallbackConstructor) {
+        if (api.hasCallbackConstructor()) {
           for (final ApiField field in api.unattachedFields) {
             _writeMethodDeclaration(
               indent,
@@ -735,7 +727,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               documentationComments: field.documentationComments,
               returnType: field.type,
               isAbstract: true,
-              requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+              minApiRequirement:
+                  _typeWithHighestApiRequirement(<TypeDeclaration>[
                 apiAsTypeDeclaration,
                 field.type,
               ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
@@ -758,7 +751,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             documentationComments: method.documentationComments,
             isAsynchronous: method.isAsynchronous,
             isAbstract: true,
-            requiresApi: _typeWithHighestApiRequirement(
+            minApiRequirement: _typeWithHighestApiRequirement(
               <TypeDeclaration>[
                 if (!method.isStatic) apiAsTypeDeclaration,
                 method.returnType,
@@ -850,7 +843,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                     ],
                     channelName: channelName,
                     onWrite: () {
-                      _writeHostMethod(
+                      _writeHostMethodMessageHandler(
                         indent,
                         api: api,
                         name: name,
@@ -895,7 +888,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                     <TypeDeclaration>[apiAsTypeDeclaration, field.type],
                     channelName: channelName,
                     onWrite: () {
-                      _writeHostMethod(
+                      _writeHostMethodMessageHandler(
                         indent,
                         api: api,
                         name: field.name,
@@ -942,7 +935,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                     ],
                     channelName: channelName,
                     onWrite: () {
-                      _writeHostMethod(
+                      _writeHostMethodMessageHandler(
                         indent,
                         api: api,
                         name: method.name,
@@ -973,13 +966,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           indent.newln();
         }
 
-        final String errorClassName = _getErrorClassName(generatorOptions);
         const String newInstanceMethodName =
             '${classMemberNamePrefix}newInstance';
 
         indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
         _writeFlutterMethod(
           indent,
+          generatorOptions: generatorOptions,
           name: newInstanceMethodName,
           returnType: const TypeDeclaration.voidDeclaration(),
           documentationComments: <String>[
@@ -990,11 +983,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             methodName: newInstanceMethodName,
             dartPackageName: dartPackageName,
           ),
-          requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+          minApiRequirement: _typeWithHighestApiRequirement(<TypeDeclaration>[
             apiAsTypeDeclaration,
             ...api.unattachedFields.map((ApiField f) => f.type),
           ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
-          errorClassName: errorClassName,
           dartPackageName: dartPackageName,
           parameters: <Parameter>[
             Parameter(
@@ -1021,11 +1013,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 indent.writeln('return');
               },
             );
-            if (hasCallbackConstructor) {
+            if (api.hasCallbackConstructor()) {
               indent.writeln(
                 'val ${classMemberNamePrefix}identifierArg = codec.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
               );
-              api.unattachedFields.forEachIndexed((int index, ApiField field) {
+              enumerate(api.unattachedFields, (int index, ApiField field) {
                 final String argName = _getSafeArgumentName(index, field);
                 indent.writeln(
                   'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
@@ -1065,13 +1057,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         for (final Method method in api.flutterMethods) {
           _writeFlutterMethod(
             indent,
+            generatorOptions: generatorOptions,
             name: method.name,
             returnType: method.returnType,
             channelName: makeChannelName(api, method, dartPackageName),
-            errorClassName: errorClassName,
             dartPackageName: dartPackageName,
             documentationComments: method.documentationComments,
-            requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
+            minApiRequirement: _typeWithHighestApiRequirement(<TypeDeclaration>[
               apiAsTypeDeclaration,
               method.returnType,
               ...method.parameters.map((Parameter p) => p.type),
@@ -1108,8 +1100,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         }
 
         final Set<String> inheritedApiNames = <String>{
-          if (api.superClassName != null) api.superClassName!,
-          ...api.interfacesNames,
+          if (api.superClass != null) api.superClass!.baseName,
+          ...api.interfaces.map((TypeDeclaration type) => type.baseName),
         };
         for (final String name in inheritedApiNames) {
           indent.writeln('@Suppress("FunctionName")');
@@ -1532,6 +1524,28 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       });
     });
   }
+}
+
+TypeDeclaration? _typeWithHighestApiRequirement(
+  Iterable<TypeDeclaration> types,
+) {
+  int highestMin = 1;
+  TypeDeclaration? highestNamedType;
+
+  for (final TypeDeclaration type in types) {
+    final int? typeMin = type.associatedProxyApi?.kotlinOptions?.minAndroidApi;
+    final int? typeArgumentMin = _typeWithHighestApiRequirement(
+      type.typeArguments,
+    )?.associatedProxyApi?.kotlinOptions?.minAndroidApi;
+    final int newMin = max(typeMin ?? 1, typeArgumentMin ?? 1);
+
+    if (newMin > highestMin) {
+      highestMin = newMin;
+      highestNamedType = type;
+    }
+  }
+
+  return highestMin == 1 ? null : highestNamedType;
 }
 
 HostDatatype _getHostDatatype(Root root, NamedType field) {
