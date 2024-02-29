@@ -10,11 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Host api implementation for WKHTTPCookieStore.
- *
- * Handles creating WKHTTPCookieStore that intercommunicate with a paired Dart object.
- */
+/// Host api implementation for WKHTTPCookieStore.
+///
+/// Handles creating WKHTTPCookieStore that intercommunicate with a paired Dart object.
 @interface FWFHTTPCookieStoreHostApiImpl : NSObject <FWFWKHttpCookieStoreHostApi>
 - (instancetype)initWithInstanceManager:(FWFInstanceManager *)instanceManager;
 @end
