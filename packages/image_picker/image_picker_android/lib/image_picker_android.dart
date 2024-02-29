@@ -95,9 +95,10 @@ class ImagePickerAndroid extends ImagePickerPlatform {
           maxHeight: maxHeight,
           quality: imageQuality ?? 100),
       GeneralOptions(
-          allowMultiple: true,
-          usePhotoPicker: useAndroidPhotoPicker,
-          limit: limit),
+        allowMultiple: true,
+        usePhotoPicker: useAndroidPhotoPicker,
+        limit: limit,
+      ),
     );
   }
 

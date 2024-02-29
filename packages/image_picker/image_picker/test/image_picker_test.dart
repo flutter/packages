@@ -577,7 +577,7 @@ void main() {
           );
         });
 
-        test('does not accept a negative or zero limit argument', () {
+        test('does not accept a limit argument lower than 2', () {
           final ImagePicker picker = ImagePicker();
           expect(
             () => picker.pickMultiImage(limit: -1),
@@ -586,6 +586,11 @@ void main() {
 
           expect(
             () => picker.pickMultiImage(limit: 0),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMultiImage(limit: 1),
             throwsArgumentError,
           );
         });
@@ -984,7 +989,7 @@ void main() {
           );
         });
 
-        test('does not accept a negative or zero limit argument', () {
+        test('does not accept a limit argument lower than 2', () {
           final ImagePicker picker = ImagePicker();
           expect(
             () => picker.pickMultipleMedia(limit: -1),
@@ -993,6 +998,11 @@ void main() {
 
           expect(
             () => picker.pickMultipleMedia(limit: 0),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMultipleMedia(limit: 1),
             throwsArgumentError,
           );
         });
