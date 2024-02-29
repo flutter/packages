@@ -13,19 +13,15 @@
 // A cross-platform display link abstraction.
 @interface FVPDisplayLink : NSObject
 
-/**
- * Whether the display link is currently running (i.e., firing events).
- *
- * Defaults to NO.
- */
+/// Whether the display link is currently running (i.e., firing events).
+///
+/// Defaults to NO.
 @property(nonatomic, assign) BOOL running;
 
-/**
- * Initializes a display link that calls the given callback when fired.
- *
- * The display link starts paused, so must be started, by setting 'running' to YES, before the
- * callback will fire.
- */
+/// Initializes a display link that calls the given callback when fired.
+///
+/// The display link starts paused, so must be started, by setting 'running' to YES, before the
+/// callback will fire.
 - (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
                          callback:(void (^)(void))callback NS_DESIGNATED_INITIALIZER;
 
