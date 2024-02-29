@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "InAppPurchasePlugin.h"
+#import "InAppPurchasePlugin+TestOnly.h"
 #import <StoreKit/StoreKit.h>
 #import "FIAObjectTranslator.h"
 #import "FIAPPaymentQueueDelegate.h"
@@ -12,16 +13,9 @@
 
 @interface InAppPurchasePlugin ()
 
-// Holding strong references to FIAPRequestHandlers. Remove the handlers from the set after
-// the request is finished.
-@property(strong, nonatomic, readonly) NSMutableSet *requestHandlers;
-
 // After querying the product, the available products will be saved in the map to be used
 // for purchase.
 @property(strong, nonatomic, readonly) NSMutableDictionary *productsCache;
-
-// Callback channel to dart used for when a function from the transaction observer is triggered.
-@property(strong, nonatomic, readonly) FlutterMethodChannel *transactionObserverCallbackChannel;
 
 // Callback channel to dart used for when a function from the payment queue delegate is triggered.
 @property(strong, nonatomic, readonly) FlutterMethodChannel *paymentQueueDelegateCallbackChannel;
@@ -117,7 +111,7 @@
                                                         FlutterError *_Nullable))completion {
   SKProductsRequest *request =
       [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
-  FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
+  FIAPRequestHandler *handler = [self getHandler:request];
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
 
@@ -392,6 +386,10 @@
 
 - (SKProduct *)getProduct:(NSString *)productID {
   return [self.productsCache objectForKey:productID];
+}
+
+- (FIAPRequestHandler *)getHandler:(SKRequest *)request{
+  return [[FIAPRequestHandler alloc] initWithRequest:request];
 }
 
 - (SKReceiptRefreshRequest *)getRefreshReceiptRequest:(NSDictionary *)properties {
