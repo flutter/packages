@@ -167,20 +167,27 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  MiniController.asset(this.dataSource, {this.package})
-      : dataSourceType = DataSourceType.asset,
+  MiniController.asset(
+    this.dataSource, {
+    this.package,
+    this.positionUpdateInterval = _defaultPositionUpdateInterval,
+  })  : dataSourceType = DataSourceType.asset,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
-      : dataSourceType = DataSourceType.network,
+  MiniController.network(
+    this.dataSource, {
+    this.positionUpdateInterval = _defaultPositionUpdateInterval,
+  })  : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
-  MiniController.file(File file)
-      : dataSource = Uri.file(file.absolute.path).toString(),
+  MiniController.file(
+    File file, {
+    this.positionUpdateInterval = _defaultPositionUpdateInterval,
+  })  : dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -196,6 +203,10 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
 
+  /// The interval at which the [position] of the video is updated.
+  /// Defaults to 500ms.
+  final Duration positionUpdateInterval;
+
   Timer? _timer;
   Completer<void>? _creatingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
@@ -209,6 +220,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// on the plugin.
   @visibleForTesting
   int get textureId => _textureId;
+
+  static const Duration _defaultPositionUpdateInterval =
+      Duration(milliseconds: 500);
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
@@ -315,7 +329,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       await _platform.play(_textureId);
 
       _timer = Timer.periodic(
-        const Duration(milliseconds: 500),
+        positionUpdateInterval,
         (Timer timer) async {
           final Duration? newPosition = await position;
           if (newPosition == null) {
