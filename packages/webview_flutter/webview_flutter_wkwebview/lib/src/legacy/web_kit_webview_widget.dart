@@ -668,7 +668,11 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 @visibleForTesting
 class WebViewWidgetProxy {
   /// Constructs a [WebViewWidgetProxy].
-  const WebViewWidgetProxy();
+  const WebViewWidgetProxy({@visibleForTesting this.overriddenIsMacOS});
+
+  /// If set, replaces [Platform] checks when picking implementation classes.
+  @visibleForTesting
+  final bool? overriddenIsMacOS;
 
   /// Constructs a [WKWebView].
   WKWebView createWebView(
@@ -679,10 +683,10 @@ class WebViewWidgetProxy {
       Map<NSKeyValueChangeKey, Object?> change,
     )? observeValue,
   }) {
-    if (Platform.isIOS) {
-      return WKWebViewIOS(configuration, observeValue: observeValue);
-    } else {
+    if (overriddenIsMacOS ?? Platform.isMacOS) {
       return WKWebViewMacOS(configuration, observeValue: observeValue);
+    } else {
+      return WKWebViewIOS(configuration, observeValue: observeValue);
     }
   }
 

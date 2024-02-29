@@ -122,19 +122,9 @@ class _FakeWKWebViewConfiguration_8 extends _i1.SmartFake
         );
 }
 
-class _FakeWKWebView_9 extends _i1.SmartFake implements _i5.WKWebView {
-  _FakeWKWebView_9(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWKScriptMessageHandler_10 extends _i1.SmartFake
+class _FakeWKScriptMessageHandler_9 extends _i1.SmartFake
     implements _i5.WKScriptMessageHandler {
-  _FakeWKScriptMessageHandler_10(
+  _FakeWKScriptMessageHandler_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -688,15 +678,6 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
       ) as _i5.WKWebViewConfiguration);
 
   @override
-  _i4.UIScrollView get scrollView => (super.noSuchMethod(
-        Invocation.getter(#scrollView),
-        returnValue: _FakeUIScrollView_2(
-          this,
-          Invocation.getter(#scrollView),
-        ),
-      ) as _i4.UIScrollView);
-
-  @override
   _i6.Future<void> setUIDelegate(_i5.WKUIDelegate? delegate) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -845,6 +826,15 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
       ) as _i6.Future<String?>);
 
   @override
+  _i6.Future<String?> getCustomUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getCustomUserAgent,
+          [],
+        ),
+        returnValue: _i6.Future<String?>.value(),
+      ) as _i6.Future<String?>);
+
+  @override
   _i6.Future<void> setAllowsBackForwardNavigationGestures(bool? allow) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -886,50 +876,6 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<String?> getCustomUserAgent() => (super.noSuchMethod(
-        Invocation.method(
-          #getCustomUserAgent,
-          [],
-        ),
-        returnValue: _i6.Future<String?>.value(),
-      ) as _i6.Future<String?>);
-
-  @override
-  _i5.WKWebView copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeWKWebView_9(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i5.WKWebView);
-
-  @override
-  _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
-        Invocation.method(
-          #setBackgroundColor,
-          [color],
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
-
-  @override
-  _i6.Future<void> setOpaque(bool? opaque) => (super.noSuchMethod(
-        Invocation.method(
-          #setOpaque,
-          [opaque],
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
-
-  @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
     required String? keyPath,
@@ -962,6 +908,21 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
+  @override
+  _i2.NSObject copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeNSObject_0(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.NSObject);
 }
 
 /// A class which mocks [WKWebViewConfiguration].
@@ -1116,7 +1077,7 @@ class MockWKScriptMessageHandler extends _i1.Mock
           #copy,
           [],
         ),
-        returnValue: _FakeWKScriptMessageHandler_10(
+        returnValue: _FakeWKScriptMessageHandler_9(
           this,
           Invocation.method(
             #copy,
