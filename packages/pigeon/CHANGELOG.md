@@ -1,3 +1,7 @@
+## 17.3.0
+
+* [kotlin] Adds implementation for `@ProxyApi`.
+
 ## 17.2.0
 
 * [dart] Adds implementation for `@ProxyApi`.
