@@ -1471,7 +1471,7 @@ class ResizableWebViewState extends State<ResizableWebView> {
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setPlatformNavigationDelegate(
       WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(),
+        WebKitNavigationDelegateCreationParams(),
       )..setOnPageFinished((_) => widget.onPageFinished()),
     )
     ..addJavaScriptChannel(

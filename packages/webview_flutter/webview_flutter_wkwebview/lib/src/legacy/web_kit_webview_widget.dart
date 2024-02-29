@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -229,9 +230,16 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     }
 
     if (params.backgroundColor != null) {
-      unawaited(webView.setOpaque(false));
-      unawaited(webView.setBackgroundColor(Colors.transparent));
-      unawaited(webView.scrollView.setBackgroundColor(params.backgroundColor));
+      final WKWebView webView = this.webView;
+      if (webView is WKWebViewIOS) {
+        unawaited(webView.setOpaque(false));
+        unawaited(webView.setBackgroundColor(Colors.transparent));
+        unawaited(
+            webView.scrollView.setBackgroundColor(params.backgroundColor));
+      } else {
+        // TODO(stuartmorgan): Investigate doing this via JS instead.
+        throw UnimplementedError('Background color is yet supported on macOS');
+      }
     }
 
     if (params.initialUrl != null) {
@@ -377,31 +385,51 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<String?> currentUrl() => webView.getUrl();
 
   @override
-  Future<void> scrollTo(int x, int y) {
-    return webView.scrollView.setContentOffset(Point<double>(
-      x.toDouble(),
-      y.toDouble(),
-    ));
+  Future<void> scrollTo(int x, int y) async {
+    final WKWebView webView = this.webView;
+    if (webView is WKWebViewIOS) {
+      return webView.scrollView.setContentOffset(Point<double>(
+        x.toDouble(),
+        y.toDouble(),
+      ));
+    } else {
+      throw UnimplementedError('scrollTo is not supported on macOS');
+    }
   }
 
   @override
   Future<void> scrollBy(int x, int y) async {
-    await webView.scrollView.scrollBy(Point<double>(
-      x.toDouble(),
-      y.toDouble(),
-    ));
+    final WKWebView webView = this.webView;
+    if (webView is WKWebViewIOS) {
+      await webView.scrollView.scrollBy(Point<double>(
+        x.toDouble(),
+        y.toDouble(),
+      ));
+    } else {
+      throw UnimplementedError('scrollBy is not supported on macOS');
+    }
   }
 
   @override
   Future<int> getScrollX() async {
-    final Point<double> offset = await webView.scrollView.getContentOffset();
-    return offset.x.toInt();
+    final WKWebView webView = this.webView;
+    if (webView is WKWebViewIOS) {
+      final Point<double> offset = await webView.scrollView.getContentOffset();
+      return offset.x.toInt();
+    } else {
+      throw UnimplementedError('getScrollX is not supported on macOS');
+    }
   }
 
   @override
   Future<int> getScrollY() async {
-    final Point<double> offset = await webView.scrollView.getContentOffset();
-    return offset.y.toInt();
+    final WKWebView webView = this.webView;
+    if (webView is WKWebViewIOS) {
+      final Point<double> offset = await webView.scrollView.getContentOffset();
+      return offset.y.toInt();
+    } else {
+      throw UnimplementedError('getScrollY is not supported on macOS');
+    }
   }
 
   @override
@@ -651,7 +679,11 @@ class WebViewWidgetProxy {
       Map<NSKeyValueChangeKey, Object?> change,
     )? observeValue,
   }) {
-    return WKWebView(configuration, observeValue: observeValue);
+    if (Platform.isIOS) {
+      return WKWebViewIOS(configuration, observeValue: observeValue);
+    } else {
+      return WKWebViewMacOS(configuration, observeValue: observeValue);
+    }
   }
 
   /// Constructs a [WKScriptMessageHandler].

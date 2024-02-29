@@ -418,7 +418,7 @@ void main() {
 
       test('createFromWebView', () async {
         TestWKWebViewHostApi.setup(MockTestWKWebViewHostApi());
-        final WKWebView webView = WKWebView(
+        final WKWebView webView = WKWebViewIOS(
           webViewConfiguration,
           instanceManager: instanceManager,
         );
@@ -485,7 +485,7 @@ void main() {
           MockTestWKWebViewConfigurationHostApi(),
         );
         TestWKWebViewHostApi.setup(MockTestWKWebViewHostApi());
-        webView = WKWebView(
+        webView = WKWebViewIOS(
           WKWebViewConfiguration(instanceManager: instanceManager),
           instanceManager: instanceManager,
         );
@@ -765,7 +765,7 @@ void main() {
           instanceManager: instanceManager,
         );
 
-        webView = WKWebView(
+        webView = WKWebViewIOS(
           webViewConfiguration,
           instanceManager: instanceManager,
         );
@@ -989,7 +989,7 @@ void main() {
           },
         );
 
-        final WKWebView webView = WKWebView.detached(
+        final WKWebView webView = WKWebViewIOS.detached(
           instanceManager: instanceManager,
         );
         instanceManager.addHostCreatedInstance(webView, 2);
@@ -1062,7 +1062,7 @@ void main() {
           instanceManager: instanceManager,
         );
 
-        final WKWebView webView = WKWebView.detached(
+        final WKWebView webView = WKWebViewIOS.detached(
           instanceManager: instanceManager,
         );
         const int webViewIdentifier = 42;

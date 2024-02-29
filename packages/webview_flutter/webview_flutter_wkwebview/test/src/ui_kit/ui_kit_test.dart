@@ -48,7 +48,7 @@ void main() {
           MockTestWKWebViewConfigurationHostApi(),
         );
         TestWKWebViewHostApi.setup(MockTestWKWebViewHostApi());
-        final WKWebView webView = WKWebView(
+        final WKWebView webView = WKWebViewIOS(
           WKWebViewConfiguration(instanceManager: instanceManager),
           instanceManager: instanceManager,
         );
@@ -152,7 +152,7 @@ void main() {
         mockPlatformHostApi = MockTestUIViewHostApi();
         TestUIViewHostApi.setup(mockPlatformHostApi);
 
-        view = UIView.detached(instanceManager: instanceManager);
+        view = UIViewBase.detached(instanceManager: instanceManager);
         viewInstanceId = instanceManager.addDartCreatedInstance(view);
       });
 

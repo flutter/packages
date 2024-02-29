@@ -30,7 +30,7 @@ void main() {
 
     test('setOnPageFinished', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -42,7 +42,7 @@ void main() {
       webKitDelegate.setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFinishNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         'https://www.google.com',
       );
 
@@ -51,7 +51,7 @@ void main() {
 
     test('setOnPageStarted', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -64,7 +64,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didStartProvisionalNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         'https://www.google.com',
       );
 
@@ -73,7 +73,7 @@ void main() {
 
     test('onWebResourceError from didFailNavigation', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -89,7 +89,7 @@ void main() {
       webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
@@ -111,7 +111,7 @@ void main() {
 
     test('onWebResourceError from didFailProvisionalNavigation', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -128,7 +128,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didFailProvisionalNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
@@ -150,7 +150,7 @@ void main() {
 
     test('onWebResourceError from webViewWebContentProcessDidTerminate', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -167,7 +167,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.webViewWebContentProcessDidTerminate!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
       );
 
       expect(callbackError.description, '');
@@ -182,7 +182,7 @@ void main() {
 
     test('onNavigationRequest from decidePolicyForNavigationAction', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -202,7 +202,7 @@ void main() {
       expect(
         CapturingNavigationDelegate
             .lastCreatedDelegate.decidePolicyForNavigationAction!(
-          WKWebView.detached(),
+          WKWebViewIOS.detached(),
           const WKNavigationAction(
             request: NSUrlRequest(url: 'https://www.google.com'),
             targetFrame: WKFrameInfo(
@@ -221,7 +221,7 @@ void main() {
     test('onHttpBasicAuthRequest emits host and realm', () {
       final WebKitNavigationDelegate iosNavigationDelegate =
           WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
           ),
@@ -241,7 +241,7 @@ void main() {
 
       CapturingNavigationDelegate
               .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
-          WKWebView.detached(),
+          WKWebViewIOS.detached(),
           NSUrlAuthenticationChallenge.detached(
             protectionSpace: NSUrlProtectionSpace.detached(
               host: expectedHost,
