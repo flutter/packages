@@ -10,10 +10,17 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   var flutterApi: FlutterIntegrationCoreApi? = null
+  private var instanceManager: PigeonInstanceManager? = null
 
   override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this)
     flutterApi = FlutterIntegrationCoreApi(binding.getBinaryMessenger())
+
+    val instanceManagerApi = PigeonInstanceManagerApi(binding.binaryMessenger)
+    instanceManager = PigeonInstanceManager.create(instanceManagerApi)
+
+    val codec = ProxyApiCodec(binding.binaryMessenger, instanceManager!!)
+    codec.setUpMessageHandlers()
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {}
