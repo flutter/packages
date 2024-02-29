@@ -18,7 +18,10 @@ final class ImagePickerUtils {
       PackageManager packageManager = context.getPackageManager();
       PackageInfo packageInfo;
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        packageInfo = packageManager.getPackageInfo(context.getPackageName(), PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS));
+        packageInfo =
+            packageManager.getPackageInfo(
+                context.getPackageName(),
+                PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS));
       } else {
         packageInfo = getPermissionsPackageInfoPreApi33(packageManager, context.getPackageName());
       }
@@ -32,7 +35,9 @@ final class ImagePickerUtils {
   }
 
   @SuppressWarnings("deprecation")
-  private static PackageInfo getPermissionsPackageInfoPreApi33(PackageManager packageManager, String packageName) throws PackageManager.NameNotFoundException {
+  private static PackageInfo getPermissionsPackageInfoPreApi33(
+      PackageManager packageManager, String packageName)
+      throws PackageManager.NameNotFoundException {
     return packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
   }
 

@@ -552,7 +552,9 @@ public class ImagePickerDelegate
     PackageManager packageManager = activity.getPackageManager();
     List<ResolveInfo> compatibleActivities;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      compatibleActivities = packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY));
+      compatibleActivities =
+          packageManager.queryIntentActivities(
+              intent, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY));
     } else {
       compatibleActivities = queryIntentActivitiesPreApi33(packageManager, intent);
     }
@@ -566,7 +568,8 @@ public class ImagePickerDelegate
   }
 
   @SuppressWarnings("deprecation")
-  private static List<ResolveInfo> queryIntentActivitiesPreApi33(PackageManager packageManager, Intent intent) {
+  private static List<ResolveInfo> queryIntentActivitiesPreApi33(
+      PackageManager packageManager, Intent intent) {
     return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
   }
 
