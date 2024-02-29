@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.maps.android.collections.MarkerManager;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -58,6 +59,7 @@ final class GoogleMapController
         MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
         GoogleMapListener,
+        ClusterItemListener,
         PlatformView {
 
   private static final String TAG = "GoogleMapController";
@@ -79,11 +81,15 @@ final class GoogleMapController
   private final Context context;
   private final LifecycleProvider lifecycleProvider;
   private final MarkersController markersController;
+  private final ClusterManagersController clusterManagersController;
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
   private final TileOverlaysController tileOverlaysController;
+  private MarkerManager markerManager;
+  private MarkerManager.Collection markerCollection;
   private List<Object> initialMarkers;
+  private List<Object> initialClusterManagers;
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
@@ -108,7 +114,8 @@ final class GoogleMapController
         new MethodChannel(binaryMessenger, "plugins.flutter.dev/google_maps_android_" + id);
     methodChannel.setMethodCallHandler(this);
     this.lifecycleProvider = lifecycleProvider;
-    this.markersController = new MarkersController(methodChannel);
+    this.clusterManagersController = new ClusterManagersController(methodChannel, context);
+    this.markersController = new MarkersController(methodChannel, clusterManagersController);
     this.polygonsController = new PolygonsController(methodChannel, density);
     this.polylinesController = new PolylinesController(methodChannel, density);
     this.circlesController = new CirclesController(methodChannel, density);
@@ -121,7 +128,7 @@ final class GoogleMapController
   }
 
   @VisibleForTesting
-  /*package*/ void setView(MapView view) {
+  /* package */ void setView(MapView view) {
     mapView = view;
   }
 
@@ -149,18 +156,23 @@ final class GoogleMapController
     this.googleMap.setTrafficEnabled(this.trafficEnabled);
     this.googleMap.setBuildingsEnabled(this.buildingsEnabled);
     installInvalidator();
-    googleMap.setOnInfoWindowClickListener(this);
     if (mapReadyResult != null) {
       mapReadyResult.success(null);
       mapReadyResult = null;
     }
-    setGoogleMapListener(this);
+    markerManager = new MarkerManager(googleMap);
+    markerCollection = markerManager.newCollection();
     updateMyLocationSettings();
-    markersController.setGoogleMap(googleMap);
+    markersController.setCollection(markerCollection);
+    clusterManagersController.init(googleMap, markerManager);
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
+    setGoogleMapListener(this);
+    setMarkerCollectionListener(this);
+    setClusterListener(this);
+    updateInitialClusterManagers();
     updateInitialMarkers();
     updateInitialPolygons();
     updateInitialPolylines();
@@ -264,7 +276,7 @@ final class GoogleMapController
         {
           if (googleMap != null) {
             LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
-            result.success(Convert.latlngBoundsToJson(latLngBounds));
+            result.success(Convert.latLngBoundsToJson(latLngBounds));
           } else {
             result.error(
                 "GoogleMap uninitialized",
@@ -362,6 +374,22 @@ final class GoogleMapController
         {
           Object markerId = call.argument("markerId");
           markersController.isInfoWindowShown((String) markerId, result);
+          break;
+        }
+      case "clusterManagers#update":
+        {
+          List<Object> clusterManagersToAdd = call.argument("clusterManagersToAdd");
+          clusterManagersController.addClusterManagers(clusterManagersToAdd);
+          List<Object> clusterManagerIdsToRemove = call.argument("clusterManagerIdsToRemove");
+          clusterManagersController.removeClusterManagers(clusterManagerIdsToRemove);
+          result.success(null);
+          break;
+        }
+      case "clusterManager#getClusters":
+        {
+          Object clusterManagerId = call.argument("clusterManagerId");
+          clusterManagersController.getClustersWithClusterManagerId(
+              (String) clusterManagerId, result);
           break;
         }
       case "polygons#update":
@@ -551,12 +579,13 @@ final class GoogleMapController
 
   @Override
   public void onCameraIdle() {
+    clusterManagersController.onCameraIdle();
     methodChannel.invokeMethod("camera#onIdle", Collections.singletonMap("map", id));
   }
 
   @Override
   public boolean onMarkerClick(Marker marker) {
-    return markersController.onMarkerTap(marker.getId());
+    return markersController.onMapsMarkerTap(marker.getId());
   }
 
   @Override
@@ -597,6 +626,7 @@ final class GoogleMapController
     disposed = true;
     methodChannel.setMethodCallHandler(null);
     setGoogleMapListener(null);
+    setMarkerCollectionListener(null);
     destroyMapViewIfNecessary();
     Lifecycle lifecycle = lifecycleProvider.getLifecycle();
     if (lifecycle != null) {
@@ -612,13 +642,31 @@ final class GoogleMapController
     googleMap.setOnCameraMoveStartedListener(listener);
     googleMap.setOnCameraMoveListener(listener);
     googleMap.setOnCameraIdleListener(listener);
-    googleMap.setOnMarkerClickListener(listener);
-    googleMap.setOnMarkerDragListener(listener);
     googleMap.setOnPolygonClickListener(listener);
     googleMap.setOnPolylineClickListener(listener);
     googleMap.setOnCircleClickListener(listener);
     googleMap.setOnMapClickListener(listener);
     googleMap.setOnMapLongClickListener(listener);
+  }
+
+  private void setMarkerCollectionListener(@Nullable GoogleMapListener listener) {
+    if (googleMap == null) {
+      Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
+      return;
+    }
+
+    markerCollection.setOnMarkerClickListener(listener);
+    markerCollection.setOnMarkerDragListener(listener);
+    markerCollection.setOnInfoWindowClickListener(listener);
+  }
+
+  private void setClusterListener(@Nullable ClusterItemListener listener) {
+    if (googleMap == null) {
+      Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
+      return;
+    }
+
+    clusterManagersController.setClusterItemListener(listener);
   }
 
   // DefaultLifecycleObserver
@@ -825,6 +873,19 @@ final class GoogleMapController
   }
 
   @Override
+  public void setInitialClusterManagers(Object initialClusterManagers) {
+    ArrayList<?> clusterManagers = (ArrayList<?>) initialClusterManagers;
+    this.initialClusterManagers = clusterManagers != null ? new ArrayList<>(clusterManagers) : null;
+    if (googleMap != null) {
+      updateInitialClusterManagers();
+    }
+  }
+
+  private void updateInitialClusterManagers() {
+    clusterManagersController.addClusterManagers(initialClusterManagers);
+  }
+
+  @Override
   public void setInitialPolygons(Object initialPolygons) {
     ArrayList<?> polygons = (ArrayList<?>) initialPolygons;
     this.initialPolygons = polygons != null ? new ArrayList<>(polygons) : null;
@@ -882,7 +943,7 @@ final class GoogleMapController
       // the feature won't require the permission.
       // Gradle is doing a static check for missing permission and in some configurations will
       // fail the build if the permission is missing. The following disables the Gradle lint.
-      //noinspection ResourceType
+      // noinspection ResourceType
       googleMap.setMyLocationEnabled(myLocationEnabled);
       googleMap.getUiSettings().setMyLocationButtonEnabled(myLocationButtonEnabled);
     } else {
@@ -929,6 +990,16 @@ final class GoogleMapController
 
   public void setBuildingsEnabled(boolean buildingsEnabled) {
     this.buildingsEnabled = buildingsEnabled;
+  }
+
+  @Override
+  public void onClusterItemMarker(MarkerBuilder markerBuilder, Marker marker) {
+    markersController.onClusterItemMarker(markerBuilder, marker);
+  }
+
+  @Override
+  public boolean onClusterItemClick(MarkerBuilder item) {
+    return markersController.onMarkerTap(item.markerId());
   }
 
   public void setMapStyle(@Nullable String style) {
