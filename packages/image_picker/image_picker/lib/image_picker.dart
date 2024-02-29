@@ -139,7 +139,7 @@ class ImagePicker {
     );
 
     return platform.getMultiImageWithOptions(
-      options: MultiImagePickerOptions(
+      options: MultiImagePickerOptions.createAndValidate(
         imageOptions: imageOptions,
         limit: limit,
       ),
@@ -245,7 +245,7 @@ class ImagePicker {
     bool requestFullMetadata = true,
   }) {
     return platform.getMedia(
-      options: MediaOptions(
+      options: MediaOptions.createAndValidate(
         allowMultiple: true,
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
