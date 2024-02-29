@@ -4,7 +4,7 @@
 
 import '../generator_tools.dart';
 
-/// Creates the Kotlin `InstanceManager`.
+/// The Kotlin `InstanceManager`.
 const String instanceManagerTemplate = '''
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
@@ -74,7 +74,7 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
      */
     fun create(api: ${instanceManagerClassName}Api): $instanceManagerClassName {
       val instanceManager = create(
-          object : Pigeon_FinalizationListener {
+          object : $_finalizationListenerClassName {
             override fun onFinalize(identifier: Long) {
               api.removeStrongReference(identifier) {
                 if (it.isFailure) {
@@ -83,7 +83,7 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
               }
             }
           })
-      Pigeon_InstanceManagerApi.setUpMessageHandlers(api.binaryMessenger, instanceManager)
+      $_instanceManagerApiName.setUpMessageHandlers(api.binaryMessenger, instanceManager)
       return instanceManager
     }
   }
@@ -268,14 +268,13 @@ String instanceManagerApiTemplate({
   required String dartPackageName,
   required String errorClassName,
 }) {
-  const String apiName = '${instanceManagerClassName}Api';
   final String removeStrongReferenceName = makeChannelNameWithStrings(
-    apiName: apiName,
+    apiName: _instanceManagerApiName,
     methodName: 'removeStrongReference',
     dartPackageName: dartPackageName,
   );
   final String clearName = makeChannelNameWithStrings(
-    apiName: apiName,
+    apiName: _instanceManagerApiName,
     methodName: 'clear',
     dartPackageName: dartPackageName,
   );
@@ -284,15 +283,15 @@ String instanceManagerApiTemplate({
 * Generated API for managing the Dart and native `$instanceManagerClassName`s.
 */
 @Suppress("ClassName")
-class $apiName(internal val binaryMessenger: BinaryMessenger) {
+class $_instanceManagerApiName(internal val binaryMessenger: BinaryMessenger) {
   companion object {
-    /** The codec used by $apiName. */
+    /** The codec used by $_instanceManagerApiName. */
     private val codec: MessageCodec<Any?> by lazy {
       StandardMessageCodec()
     }
 
     /**
-    * Sets up an instance of `$apiName` to handle messages from the
+    * Sets up an instance of `$_instanceManagerApiName` to handle messages from the
     * `binaryMessenger`.
     */
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: $instanceManagerClassName) {
@@ -342,6 +341,8 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
 }
 ''';
 }
+
+const String _instanceManagerApiName = '${instanceManagerClassName}Api';
 
 const String _finalizationListenerClassName =
     '${classNamePrefix}FinalizationListener';
