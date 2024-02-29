@@ -12,6 +12,7 @@ import 'package:mime/mime.dart' as mime;
 import 'package:web/web.dart' as web;
 
 import 'src/image_resizer.dart';
+import 'src/pkg_web_tweaks.dart';
 
 const String _kImagePickerInputsDomId = '__image_picker_web-file-input';
 const String _kAcceptImageMimeType = 'image/*';
@@ -233,12 +234,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     if (_hasOverrides) {
       return _overrides!.getMultipleFilesFromInput(input);
     }
-    final web.FileList? fileList = input.files;
-    final List<web.File> files = <web.File>[];
-    for (int i = 0; i < (fileList?.length ?? 0); i++) {
-      files.add(input.files!.item(i)!);
-    }
-    return files;
+    return input.files?.toList;
   }
 
   /// Handles the OnChange event from a FileUploadInputElement object
@@ -257,7 +253,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       if (!completer.isCompleted && files != null) {
         completer.complete(files.map((web.File file) {
           return XFile(
-            web.URL.createObjectURL(file.jsify()! as JSObject),
+            web.URL.createObjectURL(file),
             name: file.name,
             length: file.size,
             lastModified: DateTime.fromMillisecondsSinceEpoch(
@@ -289,8 +285,8 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     if (target == null) {
       final web.Element targetElement =
           web.document.createElement('flt-image-picker-inputs')..id = id;
-      final JSAny jsElement = targetElement.jsify()!;
-      web.document.querySelector('body')!.append(jsElement);
+      // TODO(ditman): Append inside the `view` of the running app.
+      web.document.body!.append(targetElement);
       target = targetElement;
     }
     return target;
@@ -327,8 +323,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   /// Injects the file input element, and clicks on it
   void _injectAndActivate(web.HTMLElement element) {
     _target.replaceChildren(<JSAny>[].toJS);
-    final JSAny jsElement = element.jsify()!;
-    _target.append(jsElement);
+    _target.append(element);
     // TODO(dit): Reimplement this with the showPicker() API, https://github.com/flutter/flutter/issues/130365
     element.click();
   }

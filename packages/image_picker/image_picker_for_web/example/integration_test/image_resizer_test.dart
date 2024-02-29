@@ -27,7 +27,7 @@ void main() {
   setUp(() {
     imageResizer = ImageResizer();
     final web.Blob pngHtmlFile = _base64ToBlob(pngFileBase64Contents);
-    pngFile = XFile(web.URL.createObjectURL(pngHtmlFile.toJSBox),
+    pngFile = XFile(web.URL.createObjectURL(pngHtmlFile),
         name: 'pngImage.png', mimeType: 'image/png');
   });
 

@@ -70,10 +70,10 @@ class ImageResizer {
     canvas.height = newImageSize.height.toInt();
     final web.CanvasRenderingContext2D context = canvas.context2D;
     if (maxHeight == null && maxWidth == null) {
-      context.drawImage(source.jsify()! as JSObject, 0, 0);
+      context.drawImage(source, 0, 0);
     } else {
-      context.drawImageScaled(source.jsify()! as JSObject, 0, 0,
-          canvas.width.toDouble(), canvas.height.toDouble());
+      context.drawImageScaled(
+          source, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
     }
     return canvas;
   }
@@ -86,8 +86,7 @@ class ImageResizer {
         (min(imageQuality ?? 100, 100)) / 100.0;
     final Completer<XFile> completer = Completer<XFile>();
     final web.BlobCallback blobCallback = (web.Blob blob) {
-      completer.complete(XFile(
-          web.URL.createObjectURL(blob.jsify()! as JSObject),
+      completer.complete(XFile(web.URL.createObjectURL(blob),
           mimeType: originalFile.mimeType,
           name: 'scaled_${originalFile.name}',
           lastModified: DateTime.now(),

@@ -54,12 +54,8 @@ void main() {
     );
 
     expect(
-        web.document
-                .querySelector('flt-image-picker-inputs')
-                ?.children
-                .length ==
-            0,
-        isFalse);
+        web.document.querySelector('flt-image-picker-inputs')?.children.length,
+        isNonZero);
 
     // Mock the browser behavior of selecting a file...
     mockInput.dispatchEvent(web.Event('change'));
@@ -80,12 +76,8 @@ void main() {
           DateTime.fromMillisecondsSinceEpoch(textFile.lastModified),
         ));
     expect(
-        web.document
-                .querySelector('flt-image-picker-inputs')
-                ?.children
-                .length ==
-            0,
-        isTrue);
+        web.document.querySelector('flt-image-picker-inputs')?.children.length,
+        isZero);
   });
 
   testWidgets('getMultiImageWithOptions can select multiple files', (
