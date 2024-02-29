@@ -4,6 +4,7 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -59,6 +60,7 @@ class MapUiBodyState extends State<MapUiBody> {
   bool _myLocationButtonEnabled = true;
   late GoogleMapController _controller;
   bool _nightMode = false;
+  String _mapStyle = '';
 
   @override
   void initState() {
@@ -243,27 +245,18 @@ class MapUiBodyState extends State<MapUiBody> {
     return rootBundle.loadString(path);
   }
 
-  void _setMapStyle(String mapStyle) {
-    setState(() {
-      _nightMode = true;
-      _controller.setMapStyle(mapStyle);
-    });
-  }
-
   // Should only be called if _isMapCreated is true.
   Widget _nightModeToggler() {
     assert(_isMapCreated);
     return TextButton(
       child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
-      onPressed: () {
-        if (_nightMode) {
-          setState(() {
-            _nightMode = false;
-            _controller.setMapStyle(null);
-          });
-        } else {
-          _getFileData('assets/night_mode.json').then(_setMapStyle);
-        }
+      onPressed: () async {
+        _nightMode = !_nightMode;
+        final String style =
+            _nightMode ? await _getFileData('assets/night_mode.json') : '';
+        setState(() {
+          _mapStyle = style;
+        });
       },
     );
   }
@@ -278,6 +271,7 @@ class MapUiBodyState extends State<MapUiBody> {
       cameraTargetBounds: _cameraTargetBounds,
       minMaxZoomPreference: _minMaxZoomPreference,
       mapType: _mapType,
+      style: _mapStyle,
       rotateGesturesEnabled: _rotateGesturesEnabled,
       scrollGesturesEnabled: _scrollGesturesEnabled,
       tiltGesturesEnabled: _tiltGesturesEnabled,
@@ -352,5 +346,13 @@ class MapUiBodyState extends State<MapUiBody> {
       _controller = controller;
       _isMapCreated = true;
     });
+    // Log any style errors to the console for debugging.
+    if (kDebugMode) {
+      _controller.getStyleError().then((String? error) {
+        if (error != null) {
+          debugPrint(error);
+        }
+      });
+    }
   }
 }

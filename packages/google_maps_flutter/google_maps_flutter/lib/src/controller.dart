@@ -190,9 +190,15 @@ class GoogleMapController {
   /// Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
   /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
   /// style reference for more information regarding the supported styles.
+  @Deprecated('Use GoogleMap.style instead.')
   Future<void> setMapStyle(String? mapStyle) {
     return GoogleMapsFlutterPlatform.instance
         .setMapStyle(mapStyle, mapId: mapId);
+  }
+
+  /// Returns the last style error, if any.
+  Future<String?> getStyleError() {
+    return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
   }
 
   /// Return [LatLngBounds] defining the region that is visible in a map.
