@@ -10,6 +10,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
 import '../channel.dart';
+import '../messages.g.dart';
 import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
@@ -60,12 +61,17 @@ typedef PurchasesUpdatedListener = void Function(
 /// transparently.
 class BillingClient {
   /// Creates a billing client.
-  BillingClient(PurchasesUpdatedListener onPurchasesUpdated) {
+  BillingClient(
+    PurchasesUpdatedListener onPurchasesUpdated, {
+    @visibleForTesting InAppPurchaseApi? api,
+  }) : _hostApi = api ?? InAppPurchaseApi() {
     channel.setMethodCallHandler(callHandler);
     _callbacks[kOnPurchasesUpdated] = <PurchasesUpdatedListener>[
       onPurchasesUpdated
     ];
   }
+
+  final InAppPurchaseApi _hostApi;
 
   // Occasionally methods in the native layer require a Dart callback to be
   // triggered in response to a Java callback. For example,
@@ -81,9 +87,7 @@ class BillingClient {
   /// [`BillingClient#isReady()`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#isReady())
   /// to get the ready status of the BillingClient instance.
   Future<bool> isReady() async {
-    final bool? ready =
-        await channel.invokeMethod<bool>('BillingClient#isReady()');
-    return ready ?? false;
+    return _hostApi.isReady();
   }
 
   /// Enable the [BillingClientWrapper] to handle pending purchases.

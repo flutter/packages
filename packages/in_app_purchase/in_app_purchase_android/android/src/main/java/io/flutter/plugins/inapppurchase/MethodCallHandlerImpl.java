@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Messages.FlutterError;
+import static io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
 import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
@@ -42,11 +44,12 @@ import java.util.Map;
 
 /** Handles method channel for the plugin. */
 class MethodCallHandlerImpl
-    implements MethodChannel.MethodCallHandler, Application.ActivityLifecycleCallbacks {
+    implements MethodChannel.MethodCallHandler,
+        Application.ActivityLifecycleCallbacks,
+        InAppPurchaseApi {
 
   @VisibleForTesting
   static final class MethodNames {
-    static final String IS_READY = "BillingClient#isReady()";
     static final String START_CONNECTION =
         "BillingClient#startConnection(BillingClientStateListener)";
     static final String END_CONNECTION = "BillingClient#endConnection()";
@@ -171,9 +174,6 @@ class MethodCallHandlerImpl
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case MethodNames.IS_READY:
-        isReady(result);
-        break;
       case MethodNames.START_CONNECTION:
         final int handle = (int) call.argument(MethodArgs.HANDLE);
         int billingChoiceMode = BillingChoiceMode.PLAY_BILLING_ONLY;
@@ -297,12 +297,11 @@ class MethodCallHandlerImpl
     }
   }
 
-  private void isReady(MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
-
-    result.success(billingClient.isReady());
+  @Override
+  @NonNull
+  public Boolean isReady() {
+    validateBillingClient();
+    return billingClient.isReady();
   }
 
   private void queryProductDetailsAsync(
@@ -564,6 +563,12 @@ class MethodCallHandlerImpl
 
     result.error("UNAVAILABLE", "BillingClient is unset. Try reconnecting.", null);
     return true;
+  }
+
+  private void validateBillingClient() {
+    if (billingClient == null) {
+      throw new FlutterError("UNAVAILABLE", "BillingClient is unset. Try reconnecting.", null);
+    }
   }
 
   private void isFeatureSupported(String feature, MethodChannel.Result result) {

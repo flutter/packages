@@ -12,7 +12,6 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_FEATURE_SUPPORTED;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_READY;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PRODUCT_DETAILS;
@@ -32,6 +31,9 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
@@ -131,31 +133,29 @@ public class MethodCallHandlerTest {
   @Test
   public void isReady_true() {
     mockStartConnection();
-    MethodCall call = new MethodCall(IS_READY, null);
     when(mockBillingClient.isReady()).thenReturn(true);
-    methodChannelHandler.onMethodCall(call, result);
-    verify(result).success(true);
+    boolean result = methodChannelHandler.isReady();
+    assertTrue(result);
   }
 
   @Test
   public void isReady_false() {
     mockStartConnection();
-    MethodCall call = new MethodCall(IS_READY, null);
     when(mockBillingClient.isReady()).thenReturn(false);
-    methodChannelHandler.onMethodCall(call, result);
-    verify(result).success(false);
+    boolean result = methodChannelHandler.isReady();
+    assertFalse(result);
   }
 
   @Test
   public void isReady_clientDisconnected() {
     MethodCall disconnectCall = new MethodCall(END_CONNECTION, null);
     methodChannelHandler.onMethodCall(disconnectCall, mock(Result.class));
-    MethodCall isReadyCall = new MethodCall(IS_READY, null);
 
-    methodChannelHandler.onMethodCall(isReadyCall, result);
-
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
-    verify(result, never()).success(any());
+    Messages.FlutterError exception =
+            assertThrows(
+                    Messages.FlutterError.class,
+                    () -> methodChannelHandler.isReady());
+    assertEquals("UNAVAILABLE", exception.code);
   }
 
   @Test

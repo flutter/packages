@@ -11,7 +11,9 @@ import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+import 'package:mockito/mockito.dart';
 
+import 'billing_client_wrappers/billing_client_wrapper_test.mocks.dart';
 import 'billing_client_wrappers/product_details_wrapper_test.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
 import 'stub_in_app_purchase_platform.dart';
@@ -20,6 +22,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
+  late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatform iapAndroidPlatform;
   const String startConnectionCall =
       'BillingClient#startConnection(BillingClientStateListener)';
@@ -46,13 +49,24 @@ void main() {
         value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
 
-    InAppPurchaseAndroidPlatform.registerPlatform();
-    iapAndroidPlatform =
-        InAppPurchasePlatform.instance as InAppPurchaseAndroidPlatform;
+    mockApi = MockInAppPurchaseApi();
+    iapAndroidPlatform = InAppPurchaseAndroidPlatform(
+        manager: BillingClientManager(
+            billingClientFactory: (PurchasesUpdatedListener listener) =>
+                BillingClient(listener, api: mockApi)));
+    InAppPurchasePlatform.instance = iapAndroidPlatform;
   });
 
   tearDown(() {
     stubPlatform.reset();
+  });
+
+  test('register sets an instance', () {
+    InAppPurchaseAndroidPlatform.registerPlatform();
+    expect(InAppPurchasePlatform.instance, isA<InAppPurchaseAndroidPlatform>());
+    // TODO(stuartmorgan): Refactor tests so that the instance isn't set by
+    // global test setup, so that this isn't necessary.
+    expect(InAppPurchasePlatform.instance, isNot(iapAndroidPlatform));
   });
 
   group('connection management', () {
@@ -104,12 +118,12 @@ void main() {
 
   group('isAvailable', () {
     test('true', () async {
-      stubPlatform.addResponse(name: 'BillingClient#isReady()', value: true);
+      when(mockApi.isReady()).thenAnswer((_) async => true);
       expect(await iapAndroidPlatform.isAvailable(), isTrue);
     });
 
     test('false', () async {
-      stubPlatform.addResponse(name: 'BillingClient#isReady()', value: false);
+      when(mockApi.isReady()).thenAnswer((_) async => false);
       expect(await iapAndroidPlatform.isAvailable(), isFalse);
     });
   });

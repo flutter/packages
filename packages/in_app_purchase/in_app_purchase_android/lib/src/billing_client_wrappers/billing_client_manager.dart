@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'billing_client_wrapper.dart';
@@ -15,6 +16,12 @@ abstract class HasBillingResponse {
   /// The status of the operation.
   abstract final BillingResponse responseCode;
 }
+
+/// Factory for creating BillingClient instances, to allow injection of
+/// custom billing clients in tests.
+@visibleForTesting
+typedef BillingClientFactory = BillingClient Function(
+    PurchasesUpdatedListener onPurchasesUpdated);
 
 /// Utility class that manages a [BillingClient] connection.
 ///
@@ -32,8 +39,10 @@ class BillingClientManager {
   /// Creates the [BillingClientManager].
   ///
   /// Immediately initializes connection to the underlying [BillingClient].
-  BillingClientManager()
-      : _billingChoiceMode = BillingChoiceMode.playBillingOnly {
+  BillingClientManager(
+      {@visibleForTesting BillingClientFactory? billingClientFactory})
+      : _billingChoiceMode = BillingChoiceMode.playBillingOnly,
+        _billingClientFactory = billingClientFactory ?? _createBillingClient {
     _connect();
   }
 
@@ -49,12 +58,19 @@ class BillingClientManager {
   /// In order to access the [BillingClient], use [runWithClient]
   /// and [runWithClientNonRetryable] methods.
   @visibleForTesting
-  late final BillingClient client = BillingClient(_onPurchasesUpdated);
+  late final BillingClient client = _billingClientFactory(_onPurchasesUpdated);
+
+  // Default (non-test) implementation of _billingClientFactory.
+  static BillingClient _createBillingClient(
+      PurchasesUpdatedListener onPurchasesUpdated) {
+    return BillingClient(onPurchasesUpdated);
+  }
 
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
       StreamController<PurchasesResultWrapper>.broadcast();
 
   BillingChoiceMode _billingChoiceMode;
+  BillingClientFactory _billingClientFactory;
   bool _isConnecting = false;
   bool _isDisposed = false;
 
