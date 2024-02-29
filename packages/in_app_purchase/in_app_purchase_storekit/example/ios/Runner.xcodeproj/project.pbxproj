@@ -78,7 +78,6 @@
 		A59001A621E69658004A3E5E /* InAppPurchasePluginTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InAppPurchasePluginTests.m; sourceTree = "<group>"; };
 		A59001A821E69658004A3E5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E4F9651425A612301059769C /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
-		F2BAFAE42B8FDA9D00FC27DF /* InAppPurchasePlugin+TestOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "InAppPurchasePlugin+TestOnly.h"; path = "../../shared/RunnerTests/InAppPurchasePlugin+TestOnly.h"; sourceTree = "<group>"; };
 		F67646F72681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIAPPaymentQueueDeleteTests.m; sourceTree = "<group>"; };
 		F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIATransactionCacheTests.m; sourceTree = "<group>"; };
 		F6E5D5F926131C4800C68BED /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
@@ -185,7 +184,6 @@
 		A59001A521E69658004A3E5E /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				F2BAFAE42B8FDA9D00FC27DF /* InAppPurchasePlugin+TestOnly.h */,
 				A59001A821E69658004A3E5E /* Info.plist */,
 				6896B34A21EEB4B800D37AEF /* Stubs.h */,
 				6896B34B21EEB4B800D37AEF /* Stubs.m */,

@@ -115,8 +115,7 @@
   if (self.returnError) {
     response = nil;
   } else {
-    response =
-        [[SKProductsResponseStub alloc] initWithMap:@{@"products" : productArray}];
+    response = [[SKProductsResponseStub alloc] initWithMap:@{@"products" : productArray}];
   }
 
   if (self.error) {

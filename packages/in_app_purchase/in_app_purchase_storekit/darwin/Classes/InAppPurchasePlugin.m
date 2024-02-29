@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 #import "InAppPurchasePlugin.h"
-#import "InAppPurchasePlugin+TestOnly.h"
 #import <StoreKit/StoreKit.h>
 #import "FIAObjectTranslator.h"
 #import "FIAPPaymentQueueDelegate.h"
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
+#import "InAppPurchasePlugin+TestOnly.h"
 
 @interface InAppPurchasePlugin ()
 
@@ -388,7 +388,7 @@
   return [self.productsCache objectForKey:productID];
 }
 
-- (FIAPRequestHandler *)getHandler:(SKRequest *)request{
+- (FIAPRequestHandler *)getHandler:(SKRequest *)request {
   return [[FIAPRequestHandler alloc] initWithRequest:request];
 }
 

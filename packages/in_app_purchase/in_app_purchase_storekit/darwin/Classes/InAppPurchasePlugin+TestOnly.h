@@ -2,15 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "InAppPurchasePlugin.h"
-#import "FIAPRequestHandler.h"
 #import <StoreKit/StoreKit.h>
+#import "FIAPRequestHandler.h"
+#import "InAppPurchasePlugin.h"
 
 @interface InAppPurchasePlugin ()
 
 // Holding strong references to FIAPRequestHandlers. Remove the handlers from the set after
 // the request is finished.
 @property(strong, nonatomic, readonly) NSMutableSet *requestHandlers;
+
+// Callback channel to dart used for when a function from the transaction observer is triggered.
 @property(strong, nonatomic) FlutterMethodChannel *transactionObserverCallbackChannel;
 
 // Transaction observer methods
