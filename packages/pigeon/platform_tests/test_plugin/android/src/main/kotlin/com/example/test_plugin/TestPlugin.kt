@@ -381,9 +381,3 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.echoNullableEnum(anEnum) { echo -> callback(echo) }
   }
 }
-
-public class ProxyApiTestClass {}
-
-class ProxyApiSuperClass {}
-
-interface ProxyApiInterface {}
