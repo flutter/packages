@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -47,8 +48,6 @@ void main() {
 
     late MockWebViewPlatformCallbacksHandler mockCallbacksHandler;
     late MockJavascriptChannelRegistry mockJavascriptChannelRegistry;
-
-    late WebKitWebViewPlatformController testController;
 
     setUp(() {
       mockWebView = MockWKWebView();
@@ -99,13 +98,16 @@ void main() {
       mockJavascriptChannelRegistry = MockJavascriptChannelRegistry();
     });
 
-    // Builds a WebViewCupertinoWidget with default parameters.
-    Future<void> buildWidget(
+    // Builds a WebViewCupertinoWidget with default parameters and returns its
+    // controller.
+    Future<WebKitWebViewPlatformController> buildWidget(
       WidgetTester tester, {
       CreationParams? creationParams,
       bool hasNavigationDelegate = false,
       bool hasProgressTracking = false,
     }) async {
+      final Completer<WebKitWebViewPlatformController> testController =
+          Completer<WebKitWebViewPlatformController>();
       await tester.pumpWidget(WebKitWebViewWidget(
         creationParams: creationParams ??
             CreationParams(
@@ -119,11 +121,12 @@ void main() {
         webViewProxy: mockWebViewWidgetProxy,
         configuration: mockWebViewConfiguration,
         onBuildWidget: (WebKitWebViewPlatformController controller) {
-          testController = controller;
+          testController.complete(controller);
           return Container();
         },
       ));
       await tester.pumpAndSettle();
+      return testController.future;
     }
 
     testWidgets('build $WebKitWebViewWidget', (WidgetTester tester) async {
@@ -320,7 +323,8 @@ void main() {
               MockWKScriptMessageHandler(),
             );
 
-            await buildWidget(
+            final WebKitWebViewPlatformController testController =
+                await buildWidget(
               tester,
               creationParams: CreationParams(
                 webSettings: WebSettings(
@@ -359,7 +363,8 @@ void main() {
         testWidgets(
           'enabling zoom removes script',
           (WidgetTester tester) async {
-            await buildWidget(
+            final WebKitWebViewPlatformController testController =
+                await buildWidget(
               tester,
               creationParams: CreationParams(
                 webSettings: WebSettings(
@@ -432,7 +437,8 @@ void main() {
 
     group('WebKitWebViewPlatformController', () {
       testWidgets('loadFile', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.loadFile('/path/to/file.html');
         verify(mockWebView.loadFileUrl(
@@ -442,14 +448,16 @@ void main() {
       });
 
       testWidgets('loadFlutterAsset', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.loadFlutterAsset('test_assets/index.html');
         verify(mockWebView.loadFlutterAsset('test_assets/index.html'));
       });
 
       testWidgets('loadHtmlString', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         const String htmlString = '<html><body>Test data.</body></html>';
         await testController.loadHtmlString(htmlString, baseUrl: 'baseUrl');
@@ -461,7 +469,8 @@ void main() {
       });
 
       testWidgets('loadUrl', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.loadUrl(
           'https://www.google.com',
@@ -478,7 +487,8 @@ void main() {
       group('loadRequest', () {
         testWidgets('Throws ArgumentError for empty scheme',
             (WidgetTester tester) async {
-          await buildWidget(tester);
+          final WebKitWebViewPlatformController testController =
+              await buildWidget(tester);
 
           expect(
               () async => testController.loadRequest(
@@ -491,7 +501,8 @@ void main() {
         });
 
         testWidgets('GET without headers', (WidgetTester tester) async {
-          await buildWidget(tester);
+          final WebKitWebViewPlatformController testController =
+              await buildWidget(tester);
 
           await testController.loadRequest(WebViewRequest(
             uri: Uri.parse('https://www.google.com'),
@@ -507,7 +518,8 @@ void main() {
         });
 
         testWidgets('GET with headers', (WidgetTester tester) async {
-          await buildWidget(tester);
+          final WebKitWebViewPlatformController testController =
+              await buildWidget(tester);
 
           await testController.loadRequest(WebViewRequest(
             uri: Uri.parse('https://www.google.com'),
@@ -524,7 +536,8 @@ void main() {
         });
 
         testWidgets('POST without body', (WidgetTester tester) async {
-          await buildWidget(tester);
+          final WebKitWebViewPlatformController testController =
+              await buildWidget(tester);
 
           await testController.loadRequest(WebViewRequest(
             uri: Uri.parse('https://www.google.com'),
@@ -539,7 +552,8 @@ void main() {
         });
 
         testWidgets('POST with body', (WidgetTester tester) async {
-          await buildWidget(tester);
+          final WebKitWebViewPlatformController testController =
+              await buildWidget(tester);
 
           await testController.loadRequest(WebViewRequest(
               uri: Uri.parse('https://www.google.com'),
@@ -559,7 +573,8 @@ void main() {
       });
 
       testWidgets('canGoBack', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.canGoBack()).thenAnswer(
           (_) => Future<bool>.value(false),
@@ -568,7 +583,8 @@ void main() {
       });
 
       testWidgets('canGoForward', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.canGoForward()).thenAnswer(
           (_) => Future<bool>.value(true),
@@ -577,28 +593,32 @@ void main() {
       });
 
       testWidgets('goBack', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.goBack();
         verify(mockWebView.goBack());
       });
 
       testWidgets('goForward', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.goForward();
         verify(mockWebView.goForward());
       });
 
       testWidgets('reload', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.reload();
         verify(mockWebView.reload());
       });
 
       testWidgets('evaluateJavascript', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<String>.value('returnString'),
@@ -611,7 +631,8 @@ void main() {
 
       testWidgets('evaluateJavascript with null return value',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<Object?>.value(),
@@ -627,7 +648,8 @@ void main() {
 
       testWidgets('evaluateJavascript with bool return value',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<Object?>.value(true),
@@ -644,7 +666,8 @@ void main() {
 
       testWidgets('evaluateJavascript with double return value',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<Object?>.value(1.0),
@@ -663,7 +686,8 @@ void main() {
 
       testWidgets('evaluateJavascript with list return value',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<Object?>.value(<Object?>[1, 'string', null]),
@@ -679,7 +703,8 @@ void main() {
 
       testWidgets('evaluateJavascript with map return value',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<Object?>.value(<Object?, Object?>{
@@ -698,7 +723,8 @@ void main() {
 
       testWidgets('evaluateJavascript throws exception',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript'))
             .thenThrow(Error());
@@ -709,7 +735,8 @@ void main() {
       });
 
       testWidgets('runJavascriptReturningResult', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<String>.value('returnString'),
@@ -723,7 +750,8 @@ void main() {
       testWidgets(
           'runJavascriptReturningResult throws error on null return value',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<String?>.value(),
@@ -736,7 +764,8 @@ void main() {
 
       testWidgets('runJavascriptReturningResult with bool return value',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<Object?>.value(false),
@@ -752,7 +781,8 @@ void main() {
       });
 
       testWidgets('runJavascript', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
           (_) => Future<String>.value('returnString'),
@@ -766,7 +796,8 @@ void main() {
       testWidgets(
           'runJavascript ignores exception with unsupported javascript type',
           (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.evaluateJavaScript('runJavaScript'))
             .thenThrow(PlatformException(
@@ -783,7 +814,8 @@ void main() {
       });
 
       testWidgets('getTitle', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.getTitle())
             .thenAnswer((_) => Future<String>.value('Web Title'));
@@ -791,7 +823,8 @@ void main() {
       });
 
       testWidgets('currentUrl', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockWebView.getUrl())
             .thenAnswer((_) => Future<String>.value('myUrl.com'));
@@ -799,21 +832,24 @@ void main() {
       });
 
       testWidgets('scrollTo', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.scrollTo(2, 4);
         verify(mockScrollView.setContentOffset(const Point<double>(2.0, 4.0)));
       });
 
       testWidgets('scrollBy', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.scrollBy(2, 4);
         verify(mockScrollView.scrollBy(const Point<double>(2.0, 4.0)));
       });
 
       testWidgets('getScrollX', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockScrollView.getContentOffset()).thenAnswer(
             (_) => Future<Point<double>>.value(const Point<double>(8.0, 16.0)));
@@ -821,9 +857,8 @@ void main() {
       });
 
       testWidgets('getScrollY', (WidgetTester tester) async {
-        await buildWidget(tester);
-
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         when(mockScrollView.getContentOffset()).thenAnswer(
             (_) => Future<Point<double>>.value(const Point<double>(8.0, 16.0)));
@@ -831,7 +866,8 @@ void main() {
       });
 
       testWidgets('clearCache', (WidgetTester tester) async {
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
         when(
           mockWebsiteDataStore.removeDataOfTypes(
             <WKWebsiteDataType>{
@@ -856,7 +892,8 @@ void main() {
           MockWKScriptMessageHandler(),
         );
 
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.addJavascriptChannels(<String>{'c', 'd'});
         final List<dynamic> javaScriptChannels = verify(
@@ -901,7 +938,8 @@ void main() {
           MockWKScriptMessageHandler(),
         );
 
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
 
         await testController.addJavascriptChannels(<String>{'c', 'd'});
         reset(mockUserContentController);
@@ -946,7 +984,8 @@ void main() {
           MockWKScriptMessageHandler(),
         );
 
-        await buildWidget(
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(
           tester,
           creationParams: CreationParams(
             webSettings: WebSettings(
@@ -1230,7 +1269,8 @@ void main() {
           MockWKScriptMessageHandler(),
         );
 
-        await buildWidget(tester);
+        final WebKitWebViewPlatformController testController =
+            await buildWidget(tester);
         await testController.addJavascriptChannels(<String>{'hello'});
 
         final void Function(WKUserContentController, WKScriptMessage)
