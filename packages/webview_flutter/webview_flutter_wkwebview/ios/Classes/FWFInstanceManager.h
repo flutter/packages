@@ -14,11 +14,11 @@ typedef void (^FWFOnDeallocCallback)(long identifier);
 ///
 /// Added instances are added as a weak reference and a strong reference. When the strong reference
 /// is removed with `removeStrongReferenceWithIdentifier:` and the weak reference is deallocated,
-/// the `deallocCallback` is made with the instance's identifier. However, if the strong reference is
-/// removed and then the identifier is retrieved with the intention to pass the identifier to Dart
-/// (e.g. calling  `identifierForInstance:identifierWillBePassedToFlutter:` with
-/// `identifierWillBePassedToFlutter` set to YES), the strong reference to the instance is recreated.
-/// The strong reference will then need to be removed manually again.
+/// the `deallocCallback` is made with the instance's identifier. However, if the strong reference
+/// is removed and then the identifier is retrieved with the intention to pass the identifier to
+/// Dart (e.g. calling  `identifierForInstance:identifierWillBePassedToFlutter:` with
+/// `identifierWillBePassedToFlutter` set to YES), the strong reference to the instance is
+/// recreated. The strong reference will then need to be removed manually again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
 @interface FWFInstanceManager : NSObject
@@ -30,8 +30,8 @@ typedef void (^FWFOnDeallocCallback)(long identifier);
 /// Adds a new instance that was instantiated from Dart.
 ///
 /// If an instance or identifier has already been added, it will be replaced by the new values. The
-/// Dart InstanceManager is considered the source of truth and has the capability to overwrite stored
-/// pairs in response to hot restarts.
+/// Dart InstanceManager is considered the source of truth and has the capability to overwrite
+/// stored pairs in response to hot restarts.
 ///
 /// @param instance The instance to be stored.
 /// @param instanceIdentifier The identifier to be paired with instance. This value must be >= 0.
@@ -66,8 +66,8 @@ typedef void (^FWFOnDeallocCallback)(long identifier);
 /// `instance` will be recreated and will need to be removed again with
 /// `removeInstanceWithIdentifier:`.
 ///
-/// This method also expects the Dart `InstanceManager` to have, or recreate, a weak reference to the
-/// instance the identifier is associated with once it receives it.
+/// This method also expects the Dart `InstanceManager` to have, or recreate, a weak reference to
+/// the instance the identifier is associated with once it receives it.
 ///
 /// @param instance An instance that may be stored in the manager.
 ///

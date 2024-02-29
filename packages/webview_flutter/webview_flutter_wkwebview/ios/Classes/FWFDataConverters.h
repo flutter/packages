@@ -157,7 +157,8 @@ extern FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromNativeWKMediaCapt
 
 /// Converts an FWFNSUrlSessionAuthChallengeDisposition to an NSURLSessionAuthChallengeDisposition.
 ///
-/// @param value The object containing information to create an NSURLSessionAuthChallengeDisposition.
+/// @param value The object containing information to create an
+/// NSURLSessionAuthChallengeDisposition.
 ///
 /// @return A NSURLSessionAuthChallengeDisposition or -1 if data could not be converted.
 extern NSURLSessionAuthChallengeDisposition
