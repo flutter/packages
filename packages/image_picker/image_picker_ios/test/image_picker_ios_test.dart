@@ -364,12 +364,6 @@ void main() {
         maxHeight: 20.0,
         imageQuality: 70,
       );
-      await picker.pickMultiImage(
-        maxWidth: 10.0,
-        maxHeight: 20.0,
-        imageQuality: 70,
-        limit: 5,
-      );
 
       expect(
         log.calls,
@@ -430,14 +424,6 @@ void main() {
                 'requestFullMetadata': true,
                 'limit': null,
               }),
-          const _LoggedMethodCall('pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': 10.0,
-                'maxHeight': 20.0,
-                'imageQuality': 70,
-                'requestFullMetadata': true,
-                'limit': 5,
-              }),
         ],
       );
     });
@@ -462,18 +448,6 @@ void main() {
 
       expect(
         () => picker.pickMultiImage(imageQuality: 101),
-        throwsArgumentError,
-      );
-    });
-
-    test('does not accept a invalid limit argument', () {
-      expect(
-        () => picker.pickMultiImage(limit: -1),
-        throwsArgumentError,
-      );
-
-      expect(
-        () => picker.pickMultiImage(limit: 0),
         throwsArgumentError,
       );
     });
