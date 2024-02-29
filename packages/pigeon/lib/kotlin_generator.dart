@@ -858,12 +858,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
+    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
 
-    if (hasHostApi) {
+    if (hasHostApi || hasProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
-    if (hasFlutterApi) {
+    if (hasFlutterApi || hasProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
     if (generatorOptions.includeErrorClass) {
