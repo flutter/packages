@@ -43,6 +43,7 @@ class MarkdownStyleSheet {
     this.tableCellsPadding,
     this.tableCellsDecoration,
     this.tableVerticalAlignment = TableCellVerticalAlignment.middle,
+    this.tableCellsHorizontalAlignment = WrapAlignment.center,
     this.blockquotePadding,
     this.blockquoteDecoration,
     this.codeblockPadding,
@@ -601,6 +602,9 @@ class MarkdownStyleSheet {
 
   /// The [TableCellVerticalAlignment] to use for `th` and `td` elements.
   final TableCellVerticalAlignment tableVerticalAlignment;
+
+  ///
+  final WrapAlignment tableCellsHorizontalAlignment;
 
   /// The padding to use for `blockquote` elements.
   final EdgeInsets? blockquotePadding;
