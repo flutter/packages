@@ -82,8 +82,8 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    if (limit != null && limit < 1) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
 
     return _hostApi.pickImages(
