@@ -128,7 +128,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       this.messenger = messenger;
 
       delegate = constructDelegate(activity);
-      ImagePickerApi.setup(messenger, handler);
+      ImagePickerApi.setUp(messenger, handler);
       observer = new LifeCycleObserver(activity);
       if (registrar != null) {
         // V1 embedding setup for activity listeners.
@@ -162,7 +162,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
         lifecycle = null;
       }
 
-      ImagePickerApi.setup(messenger, null);
+      ImagePickerApi.setUp(messenger, null);
 
       if (application != null) {
         application.unregisterActivityLifecycleCallbacks(observer);

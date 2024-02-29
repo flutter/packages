@@ -50,13 +50,11 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
-    int? limit,
   }) async {
     final List<dynamic> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
-      limit: limit,
     );
     if (paths.isEmpty) {
       return null;
@@ -216,6 +214,24 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     );
     if (paths.isEmpty) {
       return null;
+    }
+
+    return paths.map((dynamic path) => XFile(path as String)).toList();
+  }
+
+  @override
+  Future<List<XFile>> getMultiImageWithOptions({
+    MultiImagePickerOptions options = const MultiImagePickerOptions(),
+  }) async {
+    final List<dynamic> paths = await _getMultiImagePath(
+      maxWidth: options.imageOptions.maxWidth,
+      maxHeight: options.imageOptions.maxHeight,
+      imageQuality: options.imageOptions.imageQuality,
+      limit: options.limit,
+    );
+
+    if (paths.isEmpty) {
+      return <XFile>[];
     }
 
     return paths.map((dynamic path) => XFile(path as String)).toList();

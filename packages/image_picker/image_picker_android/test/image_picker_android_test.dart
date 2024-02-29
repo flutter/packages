@@ -164,13 +164,11 @@ void main() {
         maxWidth: 10.0,
         maxHeight: 20.0,
         imageQuality: 70,
-        limit: 5,
       );
 
       expect(api.passedImageOptions?.maxWidth, 10.0);
       expect(api.passedImageOptions?.maxHeight, 20.0);
       expect(api.passedImageOptions?.quality, 70);
-      expect(api.limit, 5);
     });
 
     test('does not accept a negative width or height argument', () {
@@ -193,18 +191,6 @@ void main() {
 
       expect(
         () => picker.pickMultiImage(imageQuality: 101),
-        throwsArgumentError,
-      );
-    });
-
-    test('does not accept an invalid limit argument', () {
-      expect(
-        () => picker.pickMultiImage(limit: -1),
-        throwsArgumentError,
-      );
-
-      expect(
-        () => picker.pickMultiImage(limit: 0),
         throwsArgumentError,
       );
     });
