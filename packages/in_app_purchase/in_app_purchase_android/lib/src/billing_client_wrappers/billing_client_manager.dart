@@ -32,7 +32,8 @@ class BillingClientManager {
   /// Creates the [BillingClientManager].
   ///
   /// Immediately initializes connection to the underlying [BillingClient].
-  BillingClientManager() {
+  BillingClientManager()
+      : _billingChoiceMode = BillingChoiceMode.playBillingOnly {
     _connect();
   }
 
@@ -53,6 +54,7 @@ class BillingClientManager {
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
       StreamController<PurchasesResultWrapper>.broadcast();
 
+  BillingChoiceMode _billingChoiceMode;
   bool _isConnecting = false;
   bool _isDisposed = false;
 
@@ -119,6 +121,19 @@ class BillingClientManager {
     _purchasesUpdatedController.close();
   }
 
+  /// Ends connection to [BillingClient] and reconnects with [billingChoiceMode].
+  ///
+  /// Callers need to check if [BillingChoiceMode.alternativeBillingOnly] is
+  /// available by calling [BillingClientWrapper.isAlternativeBillingOnlyAvailable]
+  /// first.
+  Future<void> reconnectWithBillingChoiceMode(
+      BillingChoiceMode billingChoiceMode) async {
+    _billingChoiceMode = billingChoiceMode;
+    // Ends connection and triggers OnBillingServiceDisconnected, which causes reconnect.
+    await client.endConnection();
+    await _connect();
+  }
+
   // If disposed, does nothing.
   // If currently connecting, waits for it to complete.
   // Otherwise, starts a new connection.
@@ -131,7 +146,9 @@ class BillingClientManager {
     }
     _isConnecting = true;
     _readyFuture = Future<void>.sync(() async {
-      await client.startConnection(onBillingServiceDisconnected: _connect);
+      await client.startConnection(
+          onBillingServiceDisconnected: _connect,
+          billingChoiceMode: _billingChoiceMode);
       _isConnecting = false;
     });
     return _readyFuture;

@@ -689,13 +689,12 @@ abstract class PackageCommand extends Command<void> {
   bool _changesRequireFullTest(List<String> changedFiles) {
     const List<String> specialFiles = <String>[
       '.ci.yaml', // LUCI config.
-      '.cirrus.yml', // Cirrus config.
       '.clang-format', // ObjC and C/C++ formatting options.
       'analysis_options.yaml', // Dart analysis settings.
     ];
     const List<String> specialDirectories = <String>[
       '.ci/', // Support files for CI.
-      'script/', // This tool, and its wrapper scripts.
+      'script/', // This tool.
     ];
     // Directory entries must end with / to avoid over-matching, since the
     // check below is done via string prefixing.
