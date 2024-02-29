@@ -141,15 +141,14 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     throw UnimplementedError('Unknown ImageSource: $source');
   }
 
-  // `maxWidth`, `maxHeight`, `imageQuality`, and `limit` arguments are not
-  // currently supported. If any of these arguments are supplied, they will
-  // be silently ignored.
+  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
+  // supported. If any of these arguments are supplied, they will be silently
+  // ignored.
   @override
   Future<List<XFile>> getMultiImage({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
-    int? limit,
   }) async {
     // TODO(stuartmorgan): Add a native implementation that can use
     // PHPickerViewController on macOS 13+, with this as a fallback for
