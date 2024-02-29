@@ -21,7 +21,7 @@ const String instanceManagerTemplate = '''
  * (e.g. calling [getIdentifierForStrongReference]), the strong reference to the
  * instance is recreated. The strong reference will then need to be removed manually again.
  */
-@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate", "unused", "ClassName")
+@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate", "unused")
 class $instanceManagerClassName(private val finalizationListener: $_finalizationListenerClassName) {
   /** Interface for listening when a weak reference of an instance is removed from the manager.  */
   interface $_finalizationListenerClassName {
@@ -282,7 +282,6 @@ String instanceManagerApiTemplate({
 /**
 * Generated API for managing the Dart and native `$instanceManagerClassName`s.
 */
-@Suppress("ClassName")
 class $_instanceManagerApiName(internal val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by $_instanceManagerApiName. */

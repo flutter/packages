@@ -557,14 +557,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         for (final AstProxyApi api in sortedApis) {
           _writeMethodDeclaration(
             indent,
-            name: 'get${api.name}_Api',
+            name: 'get$hostApiPrefix${api.name}',
             isAbstract: true,
             documentationComments: <String>[
-              'An implementation of [${api.name}_Api] used to add a new Dart instance of',
+              'An implementation of [$hostApiPrefix${api.name}] used to add a new Dart instance of',
               '`${api.name}` to the Dart `InstanceManager`.'
             ],
             returnType: TypeDeclaration(
-              baseName: '${api.name}_Api',
+              baseName: '$hostApiPrefix${api.name}',
               isNullable: false,
             ),
             parameters: <Parameter>[],
@@ -579,7 +579,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 api.hostMethods.isNotEmpty;
             if (hasHostMessageCalls) {
               indent.writeln(
-                '${api.name}_Api.setUpMessageHandlers(binaryMessenger, get${api.name}_Api())',
+                '$hostApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, get$hostApiPrefix${api.name}())',
               );
             }
           }
@@ -615,7 +615,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
                 indent.format(
                   '${index > 0 ? ' else ' : ''}if (${versionCheck}value is $className) {\n'
-                  '  get${api.name}_Api().${classMemberNamePrefix}newInstance(value) { }\n'
+                  '  get$hostApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) { }\n'
                   '}',
                 );
               },
@@ -648,14 +648,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
     final String fullKotlinClassName =
         api.kotlinOptions?.fullClassName ?? api.name;
-    final String kotlinApiName = '${api.name}_Api';
+    final String kotlinApiName = '$hostApiPrefix${api.name}';
 
     addDocumentationComments(
       indent,
       api.documentationComments,
       _docCommentSpec,
     );
-    indent.writeln('@Suppress("ClassName", "UNCHECKED_CAST")');
+    indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent.writeScoped(
       'abstract class $kotlinApiName(val codec: $codecName) {',
       '}',
@@ -1105,21 +1105,19 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         };
         for (final String name in inheritedApiNames) {
           indent.writeln('@Suppress("FunctionName")');
+          final String apiName = '$hostApiPrefix$name';
           _writeMethodDeclaration(
             indent,
-            name: '${classMemberNamePrefix}get${name}_Api',
+            name: '${classMemberNamePrefix}get$apiName',
             documentationComments: <String>[
-              'An implementation of [${name}_Api] used to access callback methods',
+              'An implementation of [$apiName] used to access callback methods',
             ],
-            returnType: TypeDeclaration(
-              baseName: '${name}_Api',
-              isNullable: false,
-            ),
+            returnType: TypeDeclaration(baseName: apiName, isNullable: false),
             parameters: <Parameter>[],
           );
 
           indent.writeScoped('{', '}', () {
-            indent.writeln('return codec.get${name}_Api()');
+            indent.writeln('return codec.get$apiName()');
           });
           indent.newln();
         }
@@ -1639,8 +1637,19 @@ String? _kotlinTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
+String? _kotlinTypeForProxyApiType(TypeDeclaration type) {
+  if (type.isProxyApi) {
+    return type.associatedProxyApi!.kotlinOptions?.fullClassName ??
+        type.associatedProxyApi!.name;
+  }
+
+  return null;
+}
+
 String _kotlinTypeForDartType(TypeDeclaration type) {
-  return _kotlinTypeForBuiltinDartType(type) ?? type.baseName;
+  return _kotlinTypeForBuiltinDartType(type) ??
+      _kotlinTypeForProxyApiType(type) ??
+      type.baseName;
 }
 
 String _nullSafeKotlinTypeForDartType(TypeDeclaration type) {
