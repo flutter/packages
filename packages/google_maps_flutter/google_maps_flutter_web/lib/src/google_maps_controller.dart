@@ -29,12 +29,17 @@ class GoogleMapController {
         _polygons = mapObjects.polygons,
         _polylines = mapObjects.polylines,
         _circles = mapObjects.circles,
+        _clusterManagers = mapObjects.clusterManagers,
         _tileOverlays = mapObjects.tileOverlays,
         _lastMapConfiguration = mapConfiguration {
     _circlesController = CirclesController(stream: _streamController);
     _polygonsController = PolygonsController(stream: _streamController);
     _polylinesController = PolylinesController(stream: _streamController);
-    _markersController = MarkersController(stream: _streamController);
+    _clusterManagersController =
+        ClusterManagersController(stream: _streamController);
+    _markersController = MarkersController(
+        stream: _streamController,
+        clusterManagersController: _clusterManagersController!);
     _tileOverlaysController = TileOverlaysController();
     _updateStylesFromConfiguration(mapConfiguration);
 
@@ -60,7 +65,9 @@ class GoogleMapController {
   final Set<Polygon> _polygons;
   final Set<Polyline> _polylines;
   final Set<Circle> _circles;
+  final Set<ClusterManager> _clusterManagers;
   Set<TileOverlay> _tileOverlays;
+
   // The configuration passed by the user, before converting to gmaps.
   // Caching this allows us to re-create the map faithfully when needed.
   MapConfiguration _lastMapConfiguration = const MapConfiguration();
@@ -118,12 +125,19 @@ class GoogleMapController {
   PolygonsController? _polygonsController;
   PolylinesController? _polylinesController;
   MarkersController? _markersController;
+  ClusterManagersController? _clusterManagersController;
   TileOverlaysController? _tileOverlaysController;
+
   // Keeps track if _attachGeometryControllers has been called or not.
   bool _controllersBoundToMap = false;
 
   // Keeps track if the map is moving or not.
   bool _mapIsMoving = false;
+
+  /// The ClusterManagersController of this Map. Only for integration testing.
+  @visibleForTesting
+  ClusterManagersController? get clusterManagersController =>
+      _clusterManagersController;
 
   /// Overrides certain properties to install mocks defined during testing.
   @visibleForTesting
@@ -134,6 +148,7 @@ class GoogleMapController {
     CirclesController? circles,
     PolygonsController? polygons,
     PolylinesController? polylines,
+    ClusterManagersController? clusterManagers,
     TileOverlaysController? tileOverlays,
   }) {
     _overrideCreateMap = createMap;
@@ -142,6 +157,7 @@ class GoogleMapController {
     _circlesController = circles ?? _circlesController;
     _polygonsController = polygons ?? _polygonsController;
     _polylinesController = polylines ?? _polylinesController;
+    _clusterManagersController = clusterManagers ?? _clusterManagersController;
     _tileOverlaysController = tileOverlays ?? _tileOverlaysController;
   }
 
@@ -197,6 +213,8 @@ class GoogleMapController {
     _attachMapEvents(map);
     _attachGeometryControllers(map);
 
+    _initClustering(_clusterManagers);
+
     // Now attach the geometry, traffic and any other layers...
     _renderInitialGeometry();
     _setTrafficLayer(map, _lastMapConfiguration.trafficEnabled ?? false);
@@ -211,13 +229,13 @@ class GoogleMapController {
     map.onClick.listen((gmaps.IconMouseEvent event) {
       assert(event.latLng != null);
       _streamController.add(
-        MapTapEvent(_mapId, _gmLatLngToLatLng(event.latLng!)),
+        MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
       );
     });
     map.onRightclick.listen((gmaps.MapMouseEvent event) {
       assert(event.latLng != null);
       _streamController.add(
-        MapLongPressEvent(_mapId, _gmLatLngToLatLng(event.latLng!)),
+        MapLongPressEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
       );
     });
     map.onBoundsChanged.listen((void _) {
@@ -251,6 +269,8 @@ class GoogleMapController {
         'Cannot attach a map to a null PolylinesController instance.');
     assert(_markersController != null,
         'Cannot attach a map to a null MarkersController instance.');
+    assert(_clusterManagersController != null,
+        'Cannot attach a map to a null ClusterManagersController instance.');
     assert(_tileOverlaysController != null,
         'Cannot attach a map to a null TileOverlaysController instance.');
 
@@ -258,9 +278,14 @@ class GoogleMapController {
     _polygonsController!.bindToMap(_mapId, map);
     _polylinesController!.bindToMap(_mapId, map);
     _markersController!.bindToMap(_mapId, map);
+    _clusterManagersController!.bindToMap(_mapId, map);
     _tileOverlaysController!.bindToMap(_mapId, map);
 
     _controllersBoundToMap = true;
+  }
+
+  void _initClustering(Set<ClusterManager> clusterManagers) {
+    _clusterManagersController!.addClusterManagers(clusterManagers);
   }
 
   // Renders the initial sets of geometry.
@@ -369,7 +394,7 @@ class GoogleMapController {
         await Future<gmaps.LatLngBounds?>.value(_googleMap!.bounds) ??
             _nullGmapsLatLngBounds;
 
-    return _gmLatLngBoundsTolatLngBounds(bounds);
+    return gmLatLngBoundsTolatLngBounds(bounds);
   }
 
   /// Returns the [ScreenCoordinate] for a given viewport [LatLng].
@@ -390,7 +415,7 @@ class GoogleMapController {
 
     final gmaps.LatLng latLng =
         _pixelToLatLng(_googleMap!, screenCoordinate.x, screenCoordinate.y);
-    return _gmLatLngToLatLng(latLng);
+    return gmLatLngToLatLng(latLng);
   }
 
   /// Applies a `cameraUpdate` to the current viewport.
@@ -447,6 +472,16 @@ class GoogleMapController {
     _markersController?.removeMarkers(updates.markerIdsToRemove);
   }
 
+  /// Applies [ClusterManagerUpdates] to the currently managed cluster managers.
+  void updateClusterManagers(ClusterManagerUpdates updates) {
+    assert(_clusterManagersController != null,
+        'Cannot update markers after dispose().');
+    _clusterManagersController
+        ?.addClusterManagers(updates.clusterManagersToAdd);
+    _clusterManagersController
+        ?.removeClusterManagers(updates.clusterManagerIdsToRemove);
+  }
+
   /// Updates the set of [TileOverlay]s.
   void updateTileOverlays(Set<TileOverlay> newOverlays) {
     final MapsObjectUpdates<TileOverlay> updates =
@@ -498,6 +533,7 @@ class GoogleMapController {
     _polygonsController = null;
     _polylinesController = null;
     _markersController = null;
+    _clusterManagersController = null;
     _tileOverlaysController = null;
     _streamController.close();
   }
