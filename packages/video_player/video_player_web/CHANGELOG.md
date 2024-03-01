@@ -1,7 +1,10 @@
-## 2.1.4
+## 2.3.0
 
 * Migrates package and tests to 'platform:web'.
-* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
+## 2.2.0
+
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
 
 ## 2.1.3
 

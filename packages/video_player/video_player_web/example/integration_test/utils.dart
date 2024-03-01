@@ -5,7 +5,8 @@
 @JS()
 library integration_test_utils;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'package:web/web.dart' as web;
 
 // Returns the URL to load an asset from this example app as a network source.
@@ -21,25 +22,29 @@ String getUrlForAssetAsNetworkSource(String assetKey) {
       '?raw=true';
 }
 
-@JS()
-@anonymous
-class _Descriptor {
+extension type Descriptor._(JSObject _) implements JSObject {
   // May also contain "configurable" and "enumerable" bools.
   // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#description
-  external factory _Descriptor({
+  external factory Descriptor({
     // bool configurable,
     // bool enumerable,
-    bool writable,
-    Object value,
+    JSBoolean writable,
+    JSAny value,
   });
 }
 
-@JS('Object.defineProperty')
-external void _defineProperty(
+void _defineProperty(
   Object object,
   String property,
-  _Descriptor description,
-);
+  Descriptor description,
+) {
+  (globalContext['Object'] as JSObject?)?.callMethod(
+    'defineProperty'.toJS,
+    object as JSObject,
+    property.toJS,
+    description,
+  );
+}
 
 /// Forces a VideoElement to report "Infinity" duration.
 ///
@@ -48,8 +53,8 @@ void setInfinityDuration(web.HTMLVideoElement element) {
   _defineProperty(
       element,
       'duration',
-      _Descriptor(
-        writable: true,
-        value: double.infinity,
+      Descriptor(
+        writable: true.toJS,
+        value: double.infinity.toJS,
       ));
 }

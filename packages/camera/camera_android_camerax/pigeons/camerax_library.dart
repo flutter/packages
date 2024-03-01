@@ -66,14 +66,14 @@ class CameraStateTypeData {
 /// If you need to add another type to support a type S to use a LiveData<S> in
 /// this plugin, ensure the following is done on the Dart side:
 ///
-///  * In `../lib/src/live_data.dart`, add new cases for S in
+///  * In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
 ///    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
 ///    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
 ///    to create the expected type of LiveData<S> when requested.
 ///
 /// On the native side, ensure the following is done:
 ///
-///  * Update `LiveDataHostApiImpl#getValue` is updated to properly return
+///  * Make sure `LiveDataHostApiImpl#getValue` is updated to properly return
 ///    identifiers for instances of type S.
 ///  * Update `ObserverFlutterApiWrapper#onChanged` to properly handle receiving
 ///    calls with instances of type S if a LiveData<S> instance is observed.
@@ -141,6 +141,28 @@ class MeteringPointInfo {
   ///
   /// Metering mode should be one of the [FocusMeteringAction] constants.
   int? meteringMode;
+}
+
+/// The types of capture request options this plugin currently supports.
+///
+/// If you need to add another option to support, ensure the following is done
+/// on the Dart side:
+///
+///  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
+///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
+///    to create the expected Map entry of option key index and value to send to
+///    the native side.
+///
+/// On the native side, ensure the following is done:
+///
+///  * Update `CaptureRequestOptionsHostApiImpl#create` to set the correct
+///   `CaptureRequest` key with a valid value type for this option.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
+/// for the sorts of capture request options that can be supported via CameraX's
+/// interoperability with Camera2.
+enum CaptureRequestKeySupportedType {
+  controlAeLock,
 }
 
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
@@ -463,13 +485,13 @@ abstract class CameraControlHostApi {
   void setZoomRatio(int identifier, double ratio);
 
   @async
-  int startFocusAndMetering(int identifier, int focusMeteringActionId);
+  int? startFocusAndMetering(int identifier, int focusMeteringActionId);
 
   @async
   void cancelFocusAndMetering(int identifier);
 
   @async
-  int setExposureCompensationIndex(int identifier, int index);
+  int? setExposureCompensationIndex(int identifier, int index);
 }
 
 @FlutterApi()
@@ -494,7 +516,22 @@ abstract class FocusMeteringResultFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
 abstract class MeteringPointHostApi {
-  void create(int identifier, double x, double y, double? size);
+  void create(
+      int identifier, double x, double y, double? size, int cameraInfoId);
 
   double getDefaultPointSize();
+}
+
+@HostApi(dartHostTestHandler: 'TestCaptureRequestOptionsHostApi')
+abstract class CaptureRequestOptionsHostApi {
+  void create(int identifier, Map<int, Object?> options);
+}
+
+@HostApi(dartHostTestHandler: 'TestCamera2CameraControlHostApi')
+abstract class Camera2CameraControlHostApi {
+  void create(int identifier, int cameraControlIdentifier);
+
+  @async
+  void addCaptureRequestOptions(
+      int identifier, int captureRequestOptionsIdentifier);
 }
