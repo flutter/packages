@@ -1,3 +1,44 @@
+## 6.2.0 - 2024-03-01
+### Added
+- `AR One Sans`
+- `Afacad`
+- `Agbalumo`
+- `Annapurna SIL`
+- `Anta`
+- `Gabarito`
+- `Hedvig Letters Sans`
+- `Hedvig Letters Serif`
+- `Honk`
+- `Jacquarda Bastarda 9`
+- `Kalnia`
+- `Kay Pho Du`
+- `Kode Mono`
+- `Linefont`
+- `Micro 5`
+- `Namdhinggo`
+- `Noto Sans Kawi`
+- `Noto Sans NKo Unjoined`
+- `Noto Serif Old Uyghur`
+- `Onest`
+- `Pixelify Sans`
+- `Playpen Sans`
+- `Protest Guerrilla`
+- `Protest Revolution`
+- `Protest Riot`
+- `Protest Strike`
+- `Rethink Sans`
+- `Rubik Broken Fax`
+- `Rubik Doodle Shadow`
+- `Rubik Doodle Triangles`
+- `Rubik Glitch Pop`
+- `Rubik Lines`
+- `Rubik Maps`
+- `Rubik Scribble`
+- `Sixtyfour`
+- `Sometype Mono`
+- `Workbench`
+- `Young Serif`
+
 ## 6.1.0 - 2023-09-20
 ### Added
 - Add an example where one can select any available font

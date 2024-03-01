@@ -207,6 +207,128 @@ class PartG {
     );
   }
 
+  /// Applies the Gabarito font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Gabarito
+  static TextStyle gabarito({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fc920398561664af1eea613ce878ccc2f29cbb2ecba21140da28efebf78f7b00',
+        100308,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e9c05ca6d2e8df8332ddfe7941cf9275ed42615b247e601816168880556aba73',
+        100664,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '394cce033f77797f2e7c0ad6cb0bc16e865b763f675d5deef401fd7d6dd28f87',
+        100656,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4b4d43d7d1764d1b02a8bf5929599c14e6d923dba20ceed70426a583cf55064f',
+        100532,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '10bee101f693adc133aa5d5970ccd84c1611bd367214963445d98b78d56b77f0',
+        100636,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9b328dff8058505969dc6a37811c7f16f540ce05b31ce9498d4e301f2607c6c6',
+        100272,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Gabarito',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Gabarito font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Gabarito
+  static TextTheme gabaritoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: gabarito(textStyle: textTheme.displayLarge),
+      displayMedium: gabarito(textStyle: textTheme.displayMedium),
+      displaySmall: gabarito(textStyle: textTheme.displaySmall),
+      headlineLarge: gabarito(textStyle: textTheme.headlineLarge),
+      headlineMedium: gabarito(textStyle: textTheme.headlineMedium),
+      headlineSmall: gabarito(textStyle: textTheme.headlineSmall),
+      titleLarge: gabarito(textStyle: textTheme.titleLarge),
+      titleMedium: gabarito(textStyle: textTheme.titleMedium),
+      titleSmall: gabarito(textStyle: textTheme.titleSmall),
+      bodyLarge: gabarito(textStyle: textTheme.bodyLarge),
+      bodyMedium: gabarito(textStyle: textTheme.bodyMedium),
+      bodySmall: gabarito(textStyle: textTheme.bodySmall),
+      labelLarge: gabarito(textStyle: textTheme.labelLarge),
+      labelMedium: gabarito(textStyle: textTheme.labelMedium),
+      labelSmall: gabarito(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Gabriela font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -4485,7 +4607,7 @@ class PartG {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '649515d1a527f45a8c70b1fa559b32fc768ed5563382009715dd9459bf38896b',
+        '98d4a3d184f0b26de233d2e9b6f51a705f62c76c4f2d5d2e52a83c9d94e05132',
         518800,
       ),
     };

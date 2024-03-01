@@ -3885,6 +3885,114 @@ class PartP {
     );
   }
 
+  /// Applies the Pixelify Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Pixelify+Sans
+  static TextStyle pixelifySans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '747d5a8e7b179b35cb13061f1a98e817ccb9b3aa16369d56b80c080eb8ff2ea6',
+        49816,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd26fbf2ad1905a6c6b9d6b3a3a6c7d9718a454c1e136bd08bb3b19b905637693',
+        49588,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7cfa51dd03f1b03aef89684ea590d3e43d1ca803301253faf393b327d9159a4d',
+        49620,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c42b535ab8b05e54a14134a436902a2ccd716f2a70d05092d71b60da735c6256',
+        49372,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PixelifySans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Pixelify Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Pixelify+Sans
+  static TextTheme pixelifySansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: pixelifySans(textStyle: textTheme.displayLarge),
+      displayMedium: pixelifySans(textStyle: textTheme.displayMedium),
+      displaySmall: pixelifySans(textStyle: textTheme.displaySmall),
+      headlineLarge: pixelifySans(textStyle: textTheme.headlineLarge),
+      headlineMedium: pixelifySans(textStyle: textTheme.headlineMedium),
+      headlineSmall: pixelifySans(textStyle: textTheme.headlineSmall),
+      titleLarge: pixelifySans(textStyle: textTheme.titleLarge),
+      titleMedium: pixelifySans(textStyle: textTheme.titleMedium),
+      titleSmall: pixelifySans(textStyle: textTheme.titleSmall),
+      bodyLarge: pixelifySans(textStyle: textTheme.bodyLarge),
+      bodyMedium: pixelifySans(textStyle: textTheme.bodyMedium),
+      bodySmall: pixelifySans(textStyle: textTheme.bodySmall),
+      labelLarge: pixelifySans(textStyle: textTheme.labelLarge),
+      labelMedium: pixelifySans(textStyle: textTheme.labelMedium),
+      labelSmall: pixelifySans(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Plaster font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -4362,84 +4470,84 @@ class PartP {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e13ea27e3935794f605b7777c9a594f4aeb97f16059b228c06b9f7eb5930bd44',
+        'b2a339c2754c92469aa3e100e4f2b97e9361f529f8be3659c7a5fca455a3d53e',
         123216,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c9ecf34717d0a0e4dd266a0fd68c5af0c2effcb3f35addbb12d609351b5d4841',
+        'ef9a76587548c3e892a26db469042ee50a9b991d0246d740ed0368976b4bc4a0',
         123584,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2017a2449f429eefdc6325b6d07528ad96611945d30db0a97d4232d2558d9c0c',
+        '79188e63da40940d1d36274c056ddbdc9698402b09d388162cfa45d6d0f33cd0',
         123648,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a5e9acb31191e0645a083f9b561d52addd8ce30e0d0a73b32fb5b8ce98c03060',
+        'cda46920368489ef04d199ddbe261071afb0b9f53f820aba21a6c205bf76835a',
         123512,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e48fd3ed5aea8da01d0afee84c61f64a570444b5a2be20a822c1f477d7527432',
+        '005e3a1fd5a7e75e861bcf823bb439b04cd1b2b33fd937dac94c8f92f91661aa',
         123584,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'be6a5052f278dbf54293e1672f36e26ca1f6f6a41c45a6f22448b2e48226abef',
+        '0c6bcfceeee30d5fa1b824322062a15cded3563f8ee20630a45635aab80da896',
         123508,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '280ab2f2dfca8974ab811a52004feeceae628179a6a55939d591043a14fe4754',
+        '17093e215f276347316b7d2e2990476df5090a5410388e0c6674a9ed7c699db3',
         110792,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '7a3a313658a4d1207816d74caf00b74922a6647d9072fb7c089e339579299204',
+        'de1e3ac30777e447cfacc687ac143f57590ca84a4e28fe89d2f4596bb466418a',
         111144,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'c4f6baabca4cde262fe381f55950c7860879bc14a6a9915a2d1027196df52e49',
+        '6b5e2af3c8d92ed61b3ef9d38e049a4ee9bc72d8ce3a42aba70c42df25997b9b',
         111184,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'f487ed24fe32db9bfc14088bd2a77e6b34cee046259719fa5d571fb47cb9315b',
+        'cd9ff32eec2ff6cec870fdfb387cb9fa89bc518692f2216ee287ee87c83f4499',
         111104,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '969aadfc8a37daa04588a6168c1e0acc0371796d1f8ee5a46ab0e574dceea87b',
+        '5e988612059fcd9aa91d6c200dd95b68e42d5fc2a0d4a93941a68a6c2e639d47',
         111092,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '4fdbeee00f8576e699b2789505e282835f9f6f0d9138333b4a31ce19696e67dd',
+        '2ee44827e93a1608990814cde942a8422821cb0d8e962531af885e0b2c871442',
         110732,
       ),
     };
@@ -4526,43 +4634,43 @@ class PartP {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2f13bfd324c8d216d47bae4ea721f22eef366014fa840d3f1bac3fd48a73869d',
-        94340,
+        'e2e5de64c36474180fc68005480114a825daa3439b96a45e246237a7f2e02de1',
+        94472,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '7e18e0b16594ec807b46963ad7b21589cd8283f72f087ae288a43c8e80a7df63',
-        91492,
+        '6f991f07f0780a5613b5588a0af6721cf42d1e30b5bfb37e0a8e0ad29c0a3aa4',
+        91592,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a6b28eb0402ac35154975914b6788e6ed1651f39cfcbb2cfe734dee369d9cbd2',
-        97320,
+        '660ed6e351c427201e5bf534911d9e6594c5957d94e684c409b9157eedb10451',
+        97440,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '30f58569af160a4acfb1ea34af5a26f20eff5d1d5fffc236c1365fd79bce7415',
-        94452,
+        'f7851b787cfc21e9281f1851d089fb08108e1040f6ad04b172f5372a0e0d2859',
+        94548,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd1a86f44058098e05949a322ebc45623e9c26f3031184d021604f59f1981d4f2',
-        96100,
+        '2eeaf9dae89af23beb5311628d7a1a55ea0eb99836a35cf17ec871cfd79a505b',
+        96208,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'd8220fb7fdc9826905f9674a3448aa9dc121dec3fd3d69f0fdedc048ae43bbac',
-        92760,
+        '41c7ce200a39f9a58695666c9c74713fa7f2abe0891c64c62ab86421c86ed383',
+        92856,
       ),
     };
 
@@ -4614,6 +4722,142 @@ class PartP {
       labelLarge: playfairDisplaySc(textStyle: textTheme.labelLarge),
       labelMedium: playfairDisplaySc(textStyle: textTheme.labelMedium),
       labelSmall: playfairDisplaySc(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playpen Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playpen+Sans
+  static TextStyle playpenSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '66d7d8e3d7f630ec45b2154c0f525fc5e2d62aaf0e82fef423c52bff8a9695f4',
+        227520,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'aff3f876dfdff81fdcd199545c14527ac8c7e17bd005d0d2dc4302bc80118fc9',
+        227900,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd4880b1f63cbe827c0572081a281b39161f0313db0bd324d32b35396e1be1710',
+        228000,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '41dddd26334ee717fe50549fcbaa4a16e708294b292e3f6a2505d85b4f6e229b',
+        227764,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '09803ea4e7ddcf8b3369a3bd8faf2e666b889c93970ac9c67519097bf268629c',
+        227876,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bc9f4ec210afcc505bbb85161f53224ecd1f49703da10231f4713aaf03c6a459',
+        228252,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1e1bafb009fd3e8389e78d626b67d57cf0f1266473bb7a6ffd5412d22b0560f2',
+        228244,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd13c1ea482ad51787d28b37e46d27c8a83c1f236be0898f46e54772a2af7656a',
+        228112,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaypenSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playpen Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playpen+Sans
+  static TextTheme playpenSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playpenSans(textStyle: textTheme.displayLarge),
+      displayMedium: playpenSans(textStyle: textTheme.displayMedium),
+      displaySmall: playpenSans(textStyle: textTheme.displaySmall),
+      headlineLarge: playpenSans(textStyle: textTheme.headlineLarge),
+      headlineMedium: playpenSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: playpenSans(textStyle: textTheme.headlineSmall),
+      titleLarge: playpenSans(textStyle: textTheme.titleLarge),
+      titleMedium: playpenSans(textStyle: textTheme.titleMedium),
+      titleSmall: playpenSans(textStyle: textTheme.titleSmall),
+      bodyLarge: playpenSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: playpenSans(textStyle: textTheme.bodyMedium),
+      bodySmall: playpenSans(textStyle: textTheme.bodySmall),
+      labelLarge: playpenSans(textStyle: textTheme.labelLarge),
+      labelMedium: playpenSans(textStyle: textTheme.labelMedium),
+      labelSmall: playpenSans(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -5432,36 +5676,36 @@ class PartP {
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8fdd7bd71e6e52da5bfb6d9a8b04ffe1528531c843c5daca4508f2b174871f9d',
-        41064,
+        '45d7fd05c2b0b96114e99c6fd5206a5bb88f339be029db65ebaa0663fd52b4e9',
+        41000,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ab9d09ef00f909a9151c7fd965cfee7f57ed31fcaed13596aaadeeac2b324b6c',
-        40856,
+        'cc6cf3055dc07fc9451b4d4eb86a7207a8ae0bc968f1c9050a4ff0e6d60bc4cb',
+        40840,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a5486e9d9450953453dd2a919b5f386a428e3a91d07ad48ca5bf7e3b9c481749',
-        41724,
+        'e8e114ad72d74fd15079d0cc6419af6f1fe85c265f022b53f1ef025986f48525',
+        41660,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4f5cd9eaa7092d57cf94be6082253d25aa924a5673fe0db988b10a36797156a0',
-        41640,
+        'ee7d9277869d6b8a114bbc9fd715e1a11b6461d14af552600fc4583db61b02e7',
+        41576,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '160447a7c46f78c2e5c2f77c92d1e3c2dd1bb55d6e5973c51a533342355a949d',
-        41716,
+        '248bfa9a8c0d1d63f785c01e3ba299d7321cce95750fd0790be592087bce490b',
+        41660,
       ),
     };
 
@@ -7101,6 +7345,354 @@ class PartP {
     );
   }
 
+  /// Applies the Protest Guerrilla font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Guerrilla
+  static TextStyle protestGuerrilla({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '252d087ef16fe4b43f17eddacfa63105741a98653f8ac91b9d510e6b2c3af5ec',
+        58680,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ProtestGuerrilla',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Protest Guerrilla font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Guerrilla
+  static TextTheme protestGuerrillaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: protestGuerrilla(textStyle: textTheme.displayLarge),
+      displayMedium: protestGuerrilla(textStyle: textTheme.displayMedium),
+      displaySmall: protestGuerrilla(textStyle: textTheme.displaySmall),
+      headlineLarge: protestGuerrilla(textStyle: textTheme.headlineLarge),
+      headlineMedium: protestGuerrilla(textStyle: textTheme.headlineMedium),
+      headlineSmall: protestGuerrilla(textStyle: textTheme.headlineSmall),
+      titleLarge: protestGuerrilla(textStyle: textTheme.titleLarge),
+      titleMedium: protestGuerrilla(textStyle: textTheme.titleMedium),
+      titleSmall: protestGuerrilla(textStyle: textTheme.titleSmall),
+      bodyLarge: protestGuerrilla(textStyle: textTheme.bodyLarge),
+      bodyMedium: protestGuerrilla(textStyle: textTheme.bodyMedium),
+      bodySmall: protestGuerrilla(textStyle: textTheme.bodySmall),
+      labelLarge: protestGuerrilla(textStyle: textTheme.labelLarge),
+      labelMedium: protestGuerrilla(textStyle: textTheme.labelMedium),
+      labelSmall: protestGuerrilla(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Protest Revolution font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Revolution
+  static TextStyle protestRevolution({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '11f5b933e668b2e1d23a70a32415a2841483176eb7d998a5f2fbe5b955206c4a',
+        600592,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ProtestRevolution',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Protest Revolution font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Revolution
+  static TextTheme protestRevolutionTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: protestRevolution(textStyle: textTheme.displayLarge),
+      displayMedium: protestRevolution(textStyle: textTheme.displayMedium),
+      displaySmall: protestRevolution(textStyle: textTheme.displaySmall),
+      headlineLarge: protestRevolution(textStyle: textTheme.headlineLarge),
+      headlineMedium: protestRevolution(textStyle: textTheme.headlineMedium),
+      headlineSmall: protestRevolution(textStyle: textTheme.headlineSmall),
+      titleLarge: protestRevolution(textStyle: textTheme.titleLarge),
+      titleMedium: protestRevolution(textStyle: textTheme.titleMedium),
+      titleSmall: protestRevolution(textStyle: textTheme.titleSmall),
+      bodyLarge: protestRevolution(textStyle: textTheme.bodyLarge),
+      bodyMedium: protestRevolution(textStyle: textTheme.bodyMedium),
+      bodySmall: protestRevolution(textStyle: textTheme.bodySmall),
+      labelLarge: protestRevolution(textStyle: textTheme.labelLarge),
+      labelMedium: protestRevolution(textStyle: textTheme.labelMedium),
+      labelSmall: protestRevolution(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Protest Riot font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Riot
+  static TextStyle protestRiot({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a0b17219049310dcdad28287f187c77961302f6c97787245e2d5cf6834c8b05d',
+        74092,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ProtestRiot',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Protest Riot font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Riot
+  static TextTheme protestRiotTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: protestRiot(textStyle: textTheme.displayLarge),
+      displayMedium: protestRiot(textStyle: textTheme.displayMedium),
+      displaySmall: protestRiot(textStyle: textTheme.displaySmall),
+      headlineLarge: protestRiot(textStyle: textTheme.headlineLarge),
+      headlineMedium: protestRiot(textStyle: textTheme.headlineMedium),
+      headlineSmall: protestRiot(textStyle: textTheme.headlineSmall),
+      titleLarge: protestRiot(textStyle: textTheme.titleLarge),
+      titleMedium: protestRiot(textStyle: textTheme.titleMedium),
+      titleSmall: protestRiot(textStyle: textTheme.titleSmall),
+      bodyLarge: protestRiot(textStyle: textTheme.bodyLarge),
+      bodyMedium: protestRiot(textStyle: textTheme.bodyMedium),
+      bodySmall: protestRiot(textStyle: textTheme.bodySmall),
+      labelLarge: protestRiot(textStyle: textTheme.labelLarge),
+      labelMedium: protestRiot(textStyle: textTheme.labelMedium),
+      labelSmall: protestRiot(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Protest Strike font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Strike
+  static TextStyle protestStrike({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a4e0c466aa53e3705612e3c8d6d8ddeeda2e15bd0f776e71b49eff78b79b92a9',
+        58504,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ProtestStrike',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Protest Strike font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Protest+Strike
+  static TextTheme protestStrikeTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: protestStrike(textStyle: textTheme.displayLarge),
+      displayMedium: protestStrike(textStyle: textTheme.displayMedium),
+      displaySmall: protestStrike(textStyle: textTheme.displaySmall),
+      headlineLarge: protestStrike(textStyle: textTheme.headlineLarge),
+      headlineMedium: protestStrike(textStyle: textTheme.headlineMedium),
+      headlineSmall: protestStrike(textStyle: textTheme.headlineSmall),
+      titleLarge: protestStrike(textStyle: textTheme.titleLarge),
+      titleMedium: protestStrike(textStyle: textTheme.titleMedium),
+      titleSmall: protestStrike(textStyle: textTheme.titleSmall),
+      bodyLarge: protestStrike(textStyle: textTheme.bodyLarge),
+      bodyMedium: protestStrike(textStyle: textTheme.bodyMedium),
+      bodySmall: protestStrike(textStyle: textTheme.bodySmall),
+      labelLarge: protestStrike(textStyle: textTheme.labelLarge),
+      labelMedium: protestStrike(textStyle: textTheme.labelMedium),
+      labelSmall: protestStrike(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Proza Libre font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -7282,127 +7874,127 @@ class PartP {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '95425d8c31c56289224ea845c070a7fdb09e951a6c6af125e180241e825a3418',
+        '6ea8418365c4bc2233ac58b8137def33c4b70aa04c43de6c5ef289232d1b13f6',
         56000,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '711dae8d1ea4ca1d9425cfe75e761ec52a590a9665023f835b3c551b97003309',
-        56164,
+        '60131434ced04c7f59aacbd79cf69adc226d92d14c6a5c738c7f8c9bf0455b91',
+        56176,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '54c6a3f69c8d66dd2a93c0515110bc18266f0aec80442fce8d0568cbed8bd47f',
-        56164,
+        '1308384d7fc7d181e62a8de34922b538eb69d17be290c3b2f0e80030bb63f537',
+        56176,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f4a41453a5a6d8f1d1ffbb50a4ec8faa2e6102c46d52d8bbd8e3c91099d1c4c2',
-        56128,
+        '8438b02b95d3c0a2c45f7baf1996c09784f12ebc53b612e0b1fb0b3b5184c716',
+        56148,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c3703872195fd1bffc0f518ad1e2b46d6454110de8a9910196b8a553fdc627a2',
-        56116,
+        '40333c48f487783516d11532acb6afbc3e9d4cd29a6d55024daa029721ef853d',
+        56140,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '835eed35c373048de033d5b62eaba4dd1281975011c93bedf63423b8ad4790d1',
-        56196,
+        '5c2f174151a5fcb7302b3ed9097e4f3f23bb7602bd17104dbe6b2a5483eb4301',
+        56220,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9f49bc2108813ec7bbff80901bd7e110ec7c632fb7bf9199164b517a29d6559e',
-        56304,
+        '8296db15313eae78eae07d4c602805a9e66cbc25f9141cd7c0f6ecf5e921f1d8',
+        56340,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6d320adbe78c159a32ad46693279e1701dd413b4d7d4b3b3966216f2d33a2a84',
-        56468,
+        '347cd9e352f9f4791ccd4d06f19fece2009f7d7234f120e2b59a9fdaafc1d4df',
+        56508,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e56896212ac49011ef1bb74c107724277e94eea950d211636ef935287708d381',
-        56408,
+        '26c46654adc8142976a064c4af6d2291a6b94ee91726892fd9dabb772525c14e',
+        56476,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '5a10cfd6c83bf8ed9c425364181dbc6116926a6bb5fc61eea3db8c581e8b6ded',
+        '4825bbdc0d36bb55506fc90b79a317c09bc8083f9e0c7f3f03c170d0c3716540',
         58248,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '0309a9a67a68c1471fceca43c8c787c89896ed9b5e8513e37111e92bef73275c',
-        58464,
+        '9288a3cf48605fb591e21ad2593268b31994c30d4a940202eac385db7aa71f71',
+        58476,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'd174f7374a0cbda5b027d51b0139507b2bbe3b0cfe391eaee912e1205f5eb584',
-        58408,
+        'eba930c02cec1ad0cf373c8d959632ecfee3f599d6bca766b53a6cbce74e4d02',
+        58424,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '5b851ce56994eb1300246087fbd29288751e3f57b63f2ecc98324ad148dae0e1',
-        58264,
+        '3f5a477e856517b39160173d9c990311269615026835e3c4a4a0d9af2fe8b417',
+        58280,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'e1b726e96efc6374fa67e24303547577b8459d751da051167eb6e2637b58bcac',
-        58376,
+        '711991586dd356e44a8035078478c79db4ea5099d4dc9b3f0af7ad7452b444b8',
+        58400,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '9f65c1b1c63028c1c2c08c2f954f92cd2971b209beb83b7f5fced5d34d5ee2d4',
-        58500,
+        '44dfc0a482e3b9c44d987365373df96b3f9f8445d88c3dd3ca930e5975e207b5',
+        58536,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'c037e259b9334354a38b0fb647ae093461a5a4368bb8e4b3a1ea25bb1d8dceb3',
-        58636,
+        '4eb85b4c1a25c1bbf9ed241995cb7a7814610cb93275954de3cd4cd151ce77db',
+        58684,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'fe6ba2144f9d290de0bfd9408549dc8c795d5639c4316ca4ea4bc4f531d02fd4',
-        58844,
+        '361346e32b52cfadb8cec1018a13a67da5ce8885a119dd0a0389ae447e6bb86b',
+        58892,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'fe693c18393e59401e8ff7947d545975d60650a9e3e85021a65e42a6bbb2e755',
-        58804,
+        'a9db4f5fd18aecd49af8c9d28aadfb6fe1817e377197851a4b80d1ff8e14ac3c',
+        58868,
       ),
     };
 

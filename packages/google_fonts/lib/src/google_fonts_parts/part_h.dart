@@ -1538,6 +1538,180 @@ class PartH {
     );
   }
 
+  /// Applies the Hedvig Letters Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Hedvig+Letters+Sans
+  static TextStyle hedvigLettersSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9efeea4c480a5b4891e664bbd21779888a6adf5565e2bf998f76d286b5b6c7eb',
+        59064,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'HedvigLettersSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Hedvig Letters Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Hedvig+Letters+Sans
+  static TextTheme hedvigLettersSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: hedvigLettersSans(textStyle: textTheme.displayLarge),
+      displayMedium: hedvigLettersSans(textStyle: textTheme.displayMedium),
+      displaySmall: hedvigLettersSans(textStyle: textTheme.displaySmall),
+      headlineLarge: hedvigLettersSans(textStyle: textTheme.headlineLarge),
+      headlineMedium: hedvigLettersSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: hedvigLettersSans(textStyle: textTheme.headlineSmall),
+      titleLarge: hedvigLettersSans(textStyle: textTheme.titleLarge),
+      titleMedium: hedvigLettersSans(textStyle: textTheme.titleMedium),
+      titleSmall: hedvigLettersSans(textStyle: textTheme.titleSmall),
+      bodyLarge: hedvigLettersSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: hedvigLettersSans(textStyle: textTheme.bodyMedium),
+      bodySmall: hedvigLettersSans(textStyle: textTheme.bodySmall),
+      labelLarge: hedvigLettersSans(textStyle: textTheme.labelLarge),
+      labelMedium: hedvigLettersSans(textStyle: textTheme.labelMedium),
+      labelSmall: hedvigLettersSans(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Hedvig Letters Serif font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Hedvig+Letters+Serif
+  static TextStyle hedvigLettersSerif({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '74f373117ccede21b5a3f943244cebddfa84a015e692c0bf16feed9d045c43db',
+        78680,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'HedvigLettersSerif',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Hedvig Letters Serif font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Hedvig+Letters+Serif
+  static TextTheme hedvigLettersSerifTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: hedvigLettersSerif(textStyle: textTheme.displayLarge),
+      displayMedium: hedvigLettersSerif(textStyle: textTheme.displayMedium),
+      displaySmall: hedvigLettersSerif(textStyle: textTheme.displaySmall),
+      headlineLarge: hedvigLettersSerif(textStyle: textTheme.headlineLarge),
+      headlineMedium: hedvigLettersSerif(textStyle: textTheme.headlineMedium),
+      headlineSmall: hedvigLettersSerif(textStyle: textTheme.headlineSmall),
+      titleLarge: hedvigLettersSerif(textStyle: textTheme.titleLarge),
+      titleMedium: hedvigLettersSerif(textStyle: textTheme.titleMedium),
+      titleSmall: hedvigLettersSerif(textStyle: textTheme.titleSmall),
+      bodyLarge: hedvigLettersSerif(textStyle: textTheme.bodyLarge),
+      bodyMedium: hedvigLettersSerif(textStyle: textTheme.bodyMedium),
+      bodySmall: hedvigLettersSerif(textStyle: textTheme.bodySmall),
+      labelLarge: hedvigLettersSerif(textStyle: textTheme.labelLarge),
+      labelMedium: hedvigLettersSerif(textStyle: textTheme.labelMedium),
+      labelSmall: hedvigLettersSerif(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Heebo font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -1569,64 +1743,64 @@ class PartH {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '14c16ef2a531fd606071618adc89b0783d67a3077fd626199e79b2d5686d3495',
-        32484,
+        '850b7aba93ec13be4dc4266bc76eda4061a72a9853e63fcebe5a49eec1a41448',
+        43612,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6ad0de1fc155c86a008eedef4021402fd664cdc8b9e892dd6e48d15384f3d77e',
-        32616,
+        '4e31e3fea8be1e4c94389c8ea67c91649cd94dc07b77e020464042d76871a567',
+        43952,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9ed100a1b69da7811552070916861a25ad50d02d7873ecf4b2aab888564e6f49',
-        32588,
+        'fcf359c1cb3ad06ae7e7ce691a0a19a5f88bf2c5f1e904e139de4b28e742dbb1',
+        43872,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '830d047f7153ff26b83735bb3071d0142a1080deb11be7775e01b2f827841710',
-        32540,
+        'ce5bcb350475234d676cdf403a236220232f4bdb091ff8b8108ce825fcb2a989',
+        43932,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '23353049e9c6fb86635004a1e2317e9aa261cb4db472c9baeb4b3bfb31332799',
-        32728,
+        'b4c93527108bb4bfe8592bf2646937c064e2f7900b0afd7c819541d28dd4c178',
+        44120,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c8fff5431bdb3adfb647f18915813901e649168f35318fc78f28242e65b419e2',
-        32772,
+        '68259927b6b90a65b49ff56987a6816548d8d22d4ac77c2034ae798907807d15',
+        44284,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '24859211dbfb53ecbad180ec02234da920d1d2e928035737f4589414112f72fa',
-        32820,
+        '2c40dd08dd78a0a124003e6bf7eb25051de5b5a498a48324f578874b827c4dff',
+        44280,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '89fc303160f47bbcea0e7c4f05ba319b88d7b5b022e107a3333dda583da0e07d',
-        32928,
+        'd9d8fefbd49983eb524b23b829f912ce64bc6590f12899a2f598eb3e1029b0a6',
+        44504,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'cc3fb38c05fc3639f499a15b17e787fdd1ccb381fd4b77314df35a3be38e5e58',
-        33032,
+        '7a814577fdd753451eef45f2554edd33b56c53b2a773f2079b4aba3aadfb5093',
+        44604,
       ),
     };
 
@@ -3005,6 +3179,93 @@ class PartH {
       labelLarge: homenaje(textStyle: textTheme.labelLarge),
       labelMedium: homenaje(textStyle: textTheme.labelMedium),
       labelSmall: homenaje(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Honk font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Honk
+  static TextStyle honk({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd7870386f44708c6870cd06494db0cae2c656b18348aaeddfc7737eac1bbc815',
+        341532,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Honk',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Honk font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Honk
+  static TextTheme honkTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: honk(textStyle: textTheme.displayLarge),
+      displayMedium: honk(textStyle: textTheme.displayMedium),
+      displaySmall: honk(textStyle: textTheme.displaySmall),
+      headlineLarge: honk(textStyle: textTheme.headlineLarge),
+      headlineMedium: honk(textStyle: textTheme.headlineMedium),
+      headlineSmall: honk(textStyle: textTheme.headlineSmall),
+      titleLarge: honk(textStyle: textTheme.titleLarge),
+      titleMedium: honk(textStyle: textTheme.titleMedium),
+      titleSmall: honk(textStyle: textTheme.titleSmall),
+      bodyLarge: honk(textStyle: textTheme.bodyLarge),
+      bodyMedium: honk(textStyle: textTheme.bodyMedium),
+      bodySmall: honk(textStyle: textTheme.bodySmall),
+      labelLarge: honk(textStyle: textTheme.labelLarge),
+      labelMedium: honk(textStyle: textTheme.labelMedium),
+      labelSmall: honk(textStyle: textTheme.labelSmall),
     );
   }
 
