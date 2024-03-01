@@ -12,6 +12,7 @@ import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 
 import 'duration_utils.dart';
+import 'pkg_web_tweaks.dart';
 
 // An error code value to error name Map.
 // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code
@@ -223,11 +224,11 @@ class VideoPlayer {
       _videoElement.controls = true;
       final String controlsList = options.controls.controlsList;
       if (controlsList.isNotEmpty) {
-        _videoElement.setAttribute('controlsList', controlsList);
+        _videoElement.controlsList = controlsList.toJS;
       }
 
       if (!options.controls.allowPictureInPicture) {
-        _videoElement.disablePictureInPicture = true;
+        _videoElement.disablePictureInPicture = true.toJS;
       }
     }
 
@@ -237,7 +238,7 @@ class VideoPlayer {
     }
 
     if (!options.allowRemotePlayback) {
-      _videoElement.disableRemotePlayback = true;
+      _videoElement.disableRemotePlayback = true.toJS;
     }
   }
 

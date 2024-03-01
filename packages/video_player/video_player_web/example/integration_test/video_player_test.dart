@@ -11,6 +11,7 @@ import 'package:video_player_web/src/duration_utils.dart';
 import 'package:video_player_web/src/video_player.dart';
 import 'package:web/web.dart' as web;
 
+import 'pkg_web_tweaks.dart';
 import 'utils.dart';
 
 void main() {
@@ -427,8 +428,4 @@ void main() {
       });
     });
   });
-}
-
-extension ControlsListInVideoElement on web.HTMLVideoElement {
-  external web.DOMTokenList? get controlsList;
 }
