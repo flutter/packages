@@ -402,7 +402,7 @@ NSString *const errorMethod = @"error";
           [self highestResolutionFormatForCaptureDevice:_captureDevice];
       if (bestFormat) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
-        if ([_captureDevice lockForConfiguration:NULL] == YES) {
+        if ([_captureDevice lockForConfiguration:NULL]) {
           // Set the best device format found and finish the device configuration.
           _captureDevice.activeFormat = bestFormat;
           [_captureDevice unlockForConfiguration];
@@ -415,11 +415,6 @@ NSString *const errorMethod = @"error";
         }
       }
     }
-      if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
-        _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
-        _previewSize = CGSizeMake(3840, 2160);
-        break;
-      }
     case FLTResolutionPresetUltraHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
@@ -480,7 +475,7 @@ NSString *const errorMethod = @"error";
     (AVCaptureDevice *)captureDevice {
   AVCaptureDeviceFormat *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
-  for (AVCaptureDeviceFormat *format in [_captureDevice formats]) {
+  for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
     CMVideoDimensions res = self.videoDimensionsForFormat(format);
     NSUInteger height = res.height;
     NSUInteger width = res.width;
