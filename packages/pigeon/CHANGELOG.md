@@ -1,4 +1,9 @@
-## 17.1.1
+## 17.1.2
+
+* Updates README.md with `dart run pigeon`.
+* Fix Example App to run normally and remove unnecessary code.
+
+## 17.1.2
 
 * Removes heap allocation in generated C++ code.
 
