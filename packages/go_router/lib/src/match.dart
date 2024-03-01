@@ -157,8 +157,8 @@ abstract class RouteMatchBase with Diagnosticable {
         remainingLocation: remainingLocation,
         matchedLocation: matchedLocation,
         pathParameters: pathParameters,
-        scopedNavigatorKey: navigatorKeyUsed,
         uri: uri,
+        scopedNavigatorKey: navigatorKeyUsed,
       );
       assert(!subRouteMatches
           .containsKey(route.navigatorKeyForSubRoute(subRoute)));
