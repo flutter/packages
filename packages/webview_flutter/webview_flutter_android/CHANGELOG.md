@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk to 34.
+
+## 3.15.0
+
+* Adds support for `setOnScrollPositionChange` method to the `AndroidWebViewController`.
+
 ## 3.14.0
 
 * Adds support to show JavaScript dialog. See `AndroidWebViewController.setOnJavaScriptAlertDialog`, `AndroidWebViewController.setOnJavaScriptConfirmDialog` and `AndroidWebViewController.setOnJavaScriptTextInputDialog`.

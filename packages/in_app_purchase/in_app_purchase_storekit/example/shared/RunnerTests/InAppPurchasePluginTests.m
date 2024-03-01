@@ -26,20 +26,6 @@
 - (void)tearDown {
 }
 
-- (void)testInvalidMethodCall {
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:@"expect result to be not implemented"];
-  FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"invalid" arguments:NULL];
-  __block id result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           [expectation fulfill];
-                           result = r;
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssertEqual(result, FlutterMethodNotImplemented);
-}
-
 - (void)testCanMakePayments {
   FlutterError *error;
   NSNumber *result = [self.plugin canMakePaymentsWithError:&error];
@@ -105,22 +91,21 @@
 }
 
 - (void)testGetProductResponse {
+  NSArray *argument = @[ @"123" ];
   XCTestExpectation *expectation =
-      [self expectationWithDescription:@"expect response contains 1 item"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin startProductRequest:result:]"
-                     arguments:@[ @"123" ]];
-  __block id result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           [expectation fulfill];
-                           result = r;
-                         }];
+      [self expectationWithDescription:@"completion handler successfully called"];
+  [self.plugin
+      startProductRequestProductIdentifiers:argument
+                                 completion:^(SKProductsResponseMessage *_Nullable response,
+                                              FlutterError *_Nullable startProductRequestError) {
+                                   XCTAssert(
+                                       [response isKindOfClass:[SKProductsResponseMessage class]]);
+                                   XCTAssertEqual(response.products.count, 1);
+                                   XCTAssertEqual(response.invalidProductIdentifiers.count, 0);
+                                   XCTAssertEqual(response.products[0].productIdentifier, @"123");
+                                   [expectation fulfill];
+                                 }];
   [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssert([result isKindOfClass:[NSDictionary class]]);
-  NSArray *resultArray = [result objectForKey:@"products"];
-  XCTAssertEqual(resultArray.count, 1);
-  XCTAssertTrue([resultArray.firstObject[@"productIdentifier"] isEqualToString:@"123"]);
 }
 
 - (void)testAddPaymentShouldReturnFlutterErrorWhenPaymentFails {
@@ -273,11 +258,10 @@
 - (void)testRestoreTransactions {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"result successfully restore transactions"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin restoreTransactions:result:]"
-                     arguments:nil];
+
   SKPaymentQueueStub *queue = [SKPaymentQueueStub new];
   queue.testState = SKPaymentTransactionStatePurchased;
+
   __block BOOL callbackInvoked = NO;
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
@@ -292,25 +276,17 @@
       updatedDownloads:nil
       transactionCache:OCMClassMock(FIATransactionCache.class)];
   [queue addTransactionObserver:self.plugin.paymentQueueHandler];
-  [self.plugin handleMethodCall:call
-                         result:^(id r){
-                         }];
+
+  FlutterError *error;
+  [self.plugin restoreTransactionsApplicationUserName:nil error:&error];
+
   [self waitForExpectations:@[ expectation ] timeout:5];
   XCTAssertTrue(callbackInvoked);
 }
 
 - (void)testRetrieveReceiptDataSuccess {
-  XCTestExpectation *expectation = [self expectationWithDescription:@"receipt data retrieved"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
-                     arguments:nil];
-  __block NSDictionary *result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = r;
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
+  FlutterError *error;
+  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
   XCTAssertNotNil(result);
   XCTAssert([result isKindOfClass:[NSString class]]);
 }
@@ -318,71 +294,47 @@
 - (void)testRetrieveReceiptDataNil {
   NSBundle *mockBundle = OCMPartialMock([NSBundle mainBundle]);
   OCMStub(mockBundle.appStoreReceiptURL).andReturn(nil);
-  XCTestExpectation *expectation = [self expectationWithDescription:@"nil receipt data retrieved"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
-                     arguments:nil];
-  __block NSDictionary *result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = r;
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
+  FlutterError *error;
+  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
   XCTAssertNil(result);
 }
 
 - (void)testRetrieveReceiptDataError {
-  XCTestExpectation *expectation = [self expectationWithDescription:@"receipt data retrieved"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin retrieveReceiptData:result:]"
-                     arguments:nil];
-  __block NSDictionary *result;
   self.receiptManagerStub.returnError = YES;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = r;
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssertNotNil(result);
-  XCTAssert([result isKindOfClass:[FlutterError class]]);
-  NSDictionary *details = ((FlutterError *)result).details;
+
+  FlutterError *error;
+  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
+
+  XCTAssertNil(result);
+  XCTAssertNotNil(error);
+  NSDictionary *details = error.details;
   XCTAssertNotNil(details[@"error"]);
   NSNumber *errorCode = (NSNumber *)details[@"error"][@"code"];
   XCTAssertEqual(errorCode, [NSNumber numberWithInteger:99]);
 }
 
 - (void)testRefreshReceiptRequest {
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect success"];
-  FlutterMethodCall *call =
-      [FlutterMethodCall methodCallWithMethodName:@"-[InAppPurchasePlugin refreshReceipt:result:]"
-                                        arguments:nil];
-  __block BOOL result = NO;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           result = YES;
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:@"completion handler successfully called"];
+  [self.plugin refreshReceiptReceiptProperties:nil
+                                    completion:^(FlutterError *_Nullable error) {
+                                      [expectation fulfill];
+                                    }];
   [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssertTrue(result);
 }
 
+/// presentCodeRedemptionSheetWithError:error is only available on iOS
+#if TARGET_OS_IOS
 - (void)testPresentCodeRedemptionSheet {
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:@"expect successfully present Code Redemption Sheet"];
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"-[InAppPurchasePlugin presentCodeRedemptionSheet:result:]"
-                     arguments:nil];
-  __block BOOL callbackInvoked = NO;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           callbackInvoked = YES;
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
-  XCTAssertTrue(callbackInvoked);
+  FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
+  self.plugin.paymentQueueHandler = mockHandler;
+
+  FlutterError *error;
+  [self.plugin presentCodeRedemptionSheetWithError:&error];
+
+  OCMVerify(times(1), [mockHandler presentCodeRedemptionSheet]);
 }
+#endif
 
 - (void)testGetPendingTransactions {
   SKPaymentQueue *mockQueue = OCMClassMock(SKPaymentQueue.class);
@@ -421,48 +373,28 @@
 }
 
 - (void)testStartObservingPaymentQueue {
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:@"Should return success result"];
-  FlutterMethodCall *startCall = [FlutterMethodCall
-      methodCallWithMethodName:@"-[SKPaymentQueue startObservingTransactionQueue]"
-                     arguments:nil];
   FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
   self.plugin.paymentQueueHandler = mockHandler;
-  [self.plugin handleMethodCall:startCall
-                         result:^(id _Nullable result) {
-                           XCTAssertNil(result);
-                           [expectation fulfill];
-                         }];
 
-  [self waitForExpectations:@[ expectation ] timeout:5];
+  FlutterError *error;
+  [self.plugin startObservingPaymentQueueWithError:&error];
+
   OCMVerify(times(1), [mockHandler startObservingPaymentQueue]);
 }
 
 - (void)testStopObservingPaymentQueue {
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:@"Should return success result"];
-  FlutterMethodCall *stopCall =
-      [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue stopObservingTransactionQueue]"
-                                        arguments:nil];
   FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
   self.plugin.paymentQueueHandler = mockHandler;
-  [self.plugin handleMethodCall:stopCall
-                         result:^(id _Nullable result) {
-                           XCTAssertNil(result);
-                           [expectation fulfill];
-                         }];
 
-  [self waitForExpectations:@[ expectation ] timeout:5];
+  FlutterError *error;
+  [self.plugin stopObservingPaymentQueueWithError:&error];
+
   OCMVerify(times(1), [mockHandler stopObservingPaymentQueue]);
 }
 
 #if TARGET_OS_IOS
 - (void)testRegisterPaymentQueueDelegate {
   if (@available(iOS 13, *)) {
-    FlutterMethodCall *call =
-        [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue registerDelegate]"
-                                          arguments:nil];
-
     self.plugin.paymentQueueHandler =
         [[FIAPaymentQueueHandler alloc] initWithQueue:[SKPaymentQueueStub new]
                                   transactionsUpdated:nil
@@ -476,9 +408,8 @@
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
 
-    [self.plugin handleMethodCall:call
-                           result:^(id r){
-                           }];
+    FlutterError *error;
+    [self.plugin registerPaymentQueueDelegateWithError:&error];
 
     // Verify the delegate is not nil after we registered one.
     XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
@@ -488,10 +419,6 @@
 
 - (void)testRemovePaymentQueueDelegate {
   if (@available(iOS 13, *)) {
-    FlutterMethodCall *call =
-        [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue removeDelegate]"
-                                          arguments:nil];
-
     self.plugin.paymentQueueHandler =
         [[FIAPaymentQueueHandler alloc] initWithQueue:[SKPaymentQueueStub new]
                                   transactionsUpdated:nil
@@ -506,9 +433,8 @@
     // Verify the delegate is not nil before removing it.
     XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
 
-    [self.plugin handleMethodCall:call
-                           result:^(id r){
-                           }];
+    FlutterError *error;
+    [self.plugin removePaymentQueueDelegateWithError:&error];
 
     // Verify the delegate is nill after removing it.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -517,16 +443,11 @@
 
 #if TARGET_OS_IOS
 - (void)testShowPriceConsentIfNeeded {
-  FlutterMethodCall *call =
-      [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue showPriceConsentIfNeeded]"
-                                        arguments:nil];
-
   FIAPaymentQueueHandler *mockQueueHandler = OCMClassMock(FIAPaymentQueueHandler.class);
   self.plugin.paymentQueueHandler = mockQueueHandler;
 
-  [self.plugin handleMethodCall:call
-                         result:^(id r){
-                         }];
+  FlutterError *error;
+  [self.plugin showPriceConsentIfNeededWithError:&error];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
