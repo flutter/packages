@@ -273,11 +273,6 @@ class ImagePickerAndroid extends ImagePickerPlatform {
         _imageOptionsToImageSelectionOptionsWithValidator(
             mediaOptions.imageOptions);
 
-    final int? limit = mediaOptions.limit;
-    if (limit != null && limit < 1) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
-    }
-
     return MediaSelectionOptions(
       imageSelectionOptions: imageSelectionOptions,
     );

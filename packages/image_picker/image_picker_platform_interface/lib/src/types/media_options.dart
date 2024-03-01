@@ -17,7 +17,7 @@ class MediaOptions {
   });
 
   /// Construct a new MediaOptions instance.
-  /// Throws if options are not valid.
+  /// Throws if limit is not valid.
   MediaOptions.createAndValidate({
     this.imageOptions = const ImageOptions(),
     required this.allowMultiple,

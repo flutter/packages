@@ -13,7 +13,7 @@ class MultiImagePickerOptions {
   });
 
   /// Creates an instance with the given [imageOptions] and [limit].
-  /// Throws if options are not valid.
+  /// Throws if limit is not valid.
   MultiImagePickerOptions.createAndValidate({
     this.imageOptions = const ImageOptions(),
     this.limit,
