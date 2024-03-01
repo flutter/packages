@@ -48,7 +48,7 @@ class VideoPlayer {
 
   final StreamController<VideoEvent> _eventController;
   final web.HTMLVideoElement _videoElement;
-  void Function(web.Event)? _onContextMenu;
+  web.EventHandler? _onContextMenu;
 
   bool _isInitialized = false;
   bool _isBuffering = false;
@@ -153,7 +153,7 @@ class VideoPlayer {
         code: exception.name,
         message: exception.message,
       ));
-      return exception.jsify();
+      return null;
     }, test: (Object e) => e is web.DOMException);
   }
 
@@ -233,8 +233,8 @@ class VideoPlayer {
     }
 
     if (!options.allowContextMenu) {
-      _onContextMenu = (web.Event event) => event.preventDefault();
-      _videoElement.addEventListener('contextmenu', _onContextMenu!.toJS);
+      _onContextMenu = ((web.Event event) => event.preventDefault()).toJS;
+      _videoElement.addEventListener('contextmenu', _onContextMenu);
     }
 
     if (!options.allowRemotePlayback) {
@@ -247,7 +247,7 @@ class VideoPlayer {
     _videoElement.removeAttribute('controlsList');
     _videoElement.removeAttribute('disablePictureInPicture');
     if (_onContextMenu != null) {
-      _videoElement.removeEventListener('contextmenu', _onContextMenu!.toJS);
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
       _onContextMenu = null;
     }
     _videoElement.removeAttribute('disableRemotePlayback');
@@ -257,7 +257,7 @@ class VideoPlayer {
   void dispose() {
     _videoElement.removeAttribute('src');
     if (_onContextMenu != null) {
-      _videoElement.removeEventListener('contextmenu', _onContextMenu!.toJS);
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
       _onContextMenu = null;
     }
     _videoElement.load();
