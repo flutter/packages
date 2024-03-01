@@ -85,6 +85,35 @@ void main() {
     );
 
     test(
+      'updateClusterManagers() throws UnimplementedError',
+      () {
+        expect(
+            () => BuildViewGoogleMapsFlutterPlatform().updateClusterManagers(
+                ClusterManagerUpdates.from(
+                  <ClusterManager>{
+                    const ClusterManager(
+                        clusterManagerId: ClusterManagerId('123'))
+                  },
+                  <ClusterManager>{
+                    const ClusterManager(
+                        clusterManagerId: ClusterManagerId('456'))
+                  },
+                ),
+                mapId: 0),
+            throwsUnimplementedError);
+      },
+    );
+
+    test(
+      'onClusterTap() throws UnimplementedError',
+      () {
+        expect(
+            () => BuildViewGoogleMapsFlutterPlatform().onClusterTap(mapId: 0),
+            throwsUnimplementedError);
+      },
+    );
+
+    test(
       'default implementation of `getStyleError` returns null',
       () async {
         final GoogleMapsFlutterPlatform platform =
@@ -115,6 +144,7 @@ class BuildViewGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
+    Set<ClusterManager> clusterManagers = const <ClusterManager>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers =
         const <Factory<OneSequenceGestureRecognizer>>{},
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
