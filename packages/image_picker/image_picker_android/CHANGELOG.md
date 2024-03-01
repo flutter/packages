@@ -1,6 +1,6 @@
 ## 0.8.10
 
-* Adds limit parameter to `pickMultiImage` and `pickMultipleMedia`.
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` and supports its use.
 
 ## 0.8.9+6
 
