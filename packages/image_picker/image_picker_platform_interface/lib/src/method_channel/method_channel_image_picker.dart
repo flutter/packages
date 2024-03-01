@@ -266,8 +266,8 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     final ImageOptions imageOptions = options.imageOptions;
 
     final int? limit = options.limit;
-    if (limit != null && limit < 1) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
 
     final Map<String, dynamic> args = <String, dynamic>{

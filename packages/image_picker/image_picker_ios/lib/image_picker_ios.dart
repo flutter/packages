@@ -134,8 +134,8 @@ class ImagePickerIOS extends ImagePickerPlatform {
     }
 
     final int? limit = options.limit;
-    if (limit != null && limit < 1) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
 
     // TODO(stuartmorgan): Remove the cast once Pigeon supports non-nullable
@@ -219,8 +219,8 @@ class ImagePickerIOS extends ImagePickerPlatform {
         _imageOptionsToMaxSizeWithValidation(mediaOptions.imageOptions);
 
     final int? limit = mediaOptions.limit;
-    if (limit != null && limit < 1) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be negative or zero');
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
 
     return MediaSelectionOptions(
