@@ -1,4 +1,4 @@
-## NEXT
+## 0.6.21
 
 * Fixes support for `WidgetSpan` in `Text.rich` elements inside `MarkdownElementBuilder`.
 
