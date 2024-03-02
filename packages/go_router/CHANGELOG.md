@@ -1,4 +1,4 @@
-## NEXT
+## 13.2.1
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * GoRouter.optionURLReflectsImperativeAPIs now works correctly with new imperative APIs
