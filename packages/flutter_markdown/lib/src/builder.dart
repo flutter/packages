@@ -901,7 +901,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       final bool previousIsTextSpan = previous is TextSpan;
       final bool nextIsTextSpan = nextChild is TextSpan;
       if (!previousIsTextSpan || !nextIsTextSpan) {
-        mergedSpans.addAll([previous, nextChild]);
+        mergedSpans.addAll(<InlineSpan>[previous, nextChild]);
         continue;
       }
 
@@ -917,7 +917,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           style: previous.style,
         ));
       } else {
-        mergedSpans.addAll([previous, nextChild]);
+        mergedSpans.addAll(<InlineSpan>[previous, nextChild]);
       }
     }
 
