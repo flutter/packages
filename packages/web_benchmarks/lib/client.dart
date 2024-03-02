@@ -318,7 +318,7 @@ class LocalBenchmarkServerClient {
   /// DevTools Protocol.
   Future<void> startPerformanceTracing(String? benchmarkName) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/start-performance-tracing?label=$benchmarkName',
       method: 'POST',
       mimeType: 'application/json',
@@ -328,7 +328,7 @@ class LocalBenchmarkServerClient {
   /// Stops the performance tracing session started by [startPerformanceTracing].
   Future<void> stopPerformanceTracing() async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/stop-performance-tracing',
       method: 'POST',
       mimeType: 'application/json',
@@ -356,7 +356,7 @@ class LocalBenchmarkServerClient {
   /// The server will halt the devicelab task and log the error.
   Future<void> reportError(dynamic error, StackTrace stackTrace) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/on-error',
       method: 'POST',
       mimeType: 'application/json',
@@ -370,7 +370,7 @@ class LocalBenchmarkServerClient {
   /// Reports a message about the demo to the benchmark server.
   Future<void> printToConsole(String report) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/print-to-console',
       method: 'POST',
       mimeType: 'text/plain',
@@ -384,7 +384,7 @@ class LocalBenchmarkServerClient {
     String url, {
     required String method,
     required String mimeType,
-    required String sendData,
+    String? sendData,
   }) {
     final Completer<XMLHttpRequest> completer = Completer<XMLHttpRequest>();
     final XMLHttpRequest xhr = XMLHttpRequest();
@@ -394,7 +394,11 @@ class LocalBenchmarkServerClient {
       completer.complete(xhr);
     });
     xhr.onError.listen(completer.completeError);
-    xhr.send(sendData.toJS);
+    if (sendData != null) {
+      xhr.send(sendData.toJS);
+    } else {
+      xhr.send();
+    }
     return completer.future;
   }
 }

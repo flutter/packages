@@ -1,3 +1,8 @@
+## 0.3.12
+
+* Converts `refreshReceipt()`, `startObservingPaymentQueue()`, `stopObservingPaymentQueue()`, 
+`registerPaymentQueueDelegate()`, `removePaymentQueueDelegate()`, `showPriceConsentIfNeeded()` to pigeon.
+
 ## 0.3.11
 
 * Fixes SKError.userInfo not being nullable.
