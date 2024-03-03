@@ -29,6 +29,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @VisibleForTesting @Nullable public SystemServicesHostApiImpl systemServicesHostApiImpl;
   @VisibleForTesting @Nullable public MeteringPointHostApiImpl meteringPointHostApiImpl;
 
+  @VisibleForTesting @Nullable
+  public Camera2CameraControlHostApiImpl camera2CameraControlHostApiImpl;
+
   @VisibleForTesting
   public @Nullable DeviceOrientationManagerHostApiImpl deviceOrientationManagerHostApiImpl;
 
@@ -120,6 +123,11 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     cameraControlHostApiImpl =
         new CameraControlHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.CameraControlHostApi.setup(binaryMessenger, cameraControlHostApiImpl);
+    camera2CameraControlHostApiImpl = new Camera2CameraControlHostApiImpl(instanceManager, context);
+    GeneratedCameraXLibrary.Camera2CameraControlHostApi.setup(
+        binaryMessenger, camera2CameraControlHostApiImpl);
+    GeneratedCameraXLibrary.CaptureRequestOptionsHostApi.setup(
+        binaryMessenger, new CaptureRequestOptionsHostApiImpl(instanceManager));
     GeneratedCameraXLibrary.FocusMeteringActionHostApi.setup(
         binaryMessenger, new FocusMeteringActionHostApiImpl(instanceManager));
     GeneratedCameraXLibrary.FocusMeteringResultHostApi.setup(
@@ -216,6 +224,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     }
     if (cameraControlHostApiImpl != null) {
       cameraControlHostApiImpl.setContext(context);
+    }
+    if (camera2CameraControlHostApiImpl != null) {
+      camera2CameraControlHostApiImpl.setContext(context);
     }
   }
 
