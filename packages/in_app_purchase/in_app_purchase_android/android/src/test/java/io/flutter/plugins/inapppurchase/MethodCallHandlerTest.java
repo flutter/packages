@@ -85,6 +85,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -95,6 +96,7 @@ import org.mockito.Spy;
 import org.mockito.stubbing.Answer;
 
 public class MethodCallHandlerTest {
+  private AutoCloseable openMocks;
   private MethodCallHandlerImpl methodChannelHandler;
   @Mock BillingClientFactory factory;
   @Mock BillingClient mockBillingClient;
@@ -108,7 +110,7 @@ public class MethodCallHandlerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.openMocks(this);
+    openMocks = MockitoAnnotations.openMocks(this);
     // Use the same client no matter if alternative billing is enabled or not.
     when(factory.createBillingClient(
             context, mockMethodChannel, PlatformBillingChoiceMode.PLAY_BILLING_ONLY))
@@ -118,6 +120,11 @@ public class MethodCallHandlerTest {
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockMethodChannel, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    openMocks.close();
   }
 
   @Test
@@ -324,7 +331,6 @@ public class MethodCallHandlerTest {
             .setResponseCode(BillingClient.BillingResponseCode.OK)
             .setDebugMessage("dummy debug message")
             .build();
-    final HashMap<String, Object> expectedResult = fromBillingResult(billingResult);
 
     doNothing()
         .when(mockBillingClient)
@@ -442,8 +448,7 @@ public class MethodCallHandlerTest {
         .queryProductDetailsAsync(paramCaptor.capture(), listenerCaptor.capture());
 
     // Assert that we handed result BillingClient's response
-    int responseCode = 200;
-    List<ProductDetails> productDetailsResponse = asList(buildProductDetails("foo"));
+    List<ProductDetails> productDetailsResponse = singletonList(buildProductDetails("foo"));
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -502,7 +507,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-    BillingFlowParams params = billingFlowParamsCaptor.getValue();
 
     // Verify we pass the response code to result
     verify(result, never()).error(any(), any(), any());
@@ -534,7 +538,7 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-    BillingFlowParams params = billingFlowParamsCaptor.getValue();
+
     // Verify we pass the response code to result
     verify(result, never()).error(any(), any(), any());
     verify(result, times(1)).success(fromBillingResult(billingResult));
@@ -585,7 +589,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-    BillingFlowParams params = billingFlowParamsCaptor.getValue();
 
     // Verify we pass the response code to result
     verify(result, never()).error(any(), any(), any());
@@ -616,7 +619,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-    BillingFlowParams params = billingFlowParamsCaptor.getValue();
 
     // Verify we pass the response code to result
     verify(result, never()).error(any(), any(), any());
@@ -657,7 +659,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-    BillingFlowParams params = billingFlowParamsCaptor.getValue();
 
     // Verify we pass the response code to result
     verify(result, never()).error(any(), any(), any());
@@ -674,13 +675,12 @@ public class MethodCallHandlerTest {
     String productId = "foo";
     String accountId = "account";
     String queryOldProductId = "oldFoo";
-    String oldProductId = null;
     int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("product", productId);
     arguments.put("accountId", accountId);
-    arguments.put("oldProduct", oldProductId);
+    arguments.put("oldProduct", null);
     arguments.put("prorationMode", prorationMode);
     MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
 
@@ -736,7 +736,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-    BillingFlowParams params = billingFlowParamsCaptor.getValue();
 
     // Verify we pass the response code to result
     verify(result, never()).error(any(), any(), any());
@@ -839,7 +838,7 @@ public class MethodCallHandlerTest {
                           .setDebugMessage("hello message");
                   purchasesResponseListenerArgumentCaptor
                       .getValue()
-                      .onQueryPurchasesResponse(resultBuilder.build(), new ArrayList<Purchase>());
+                      .onQueryPurchasesResponse(resultBuilder.build(), new ArrayList<>());
                   return null;
                 })
         .when(mockBillingClient)
@@ -874,7 +873,7 @@ public class MethodCallHandlerTest {
             .setResponseCode(100)
             .setDebugMessage("dummy debug message")
             .build();
-    List<PurchaseHistoryRecord> purchasesList = asList(buildPurchaseHistoryRecord("foo"));
+    List<PurchaseHistoryRecord> purchasesList = singletonList(buildPurchaseHistoryRecord("foo"));
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("productType", BillingClient.ProductType.INAPP);
     ArgumentCaptor<PurchaseHistoryResponseListener> listenerCaptor =
@@ -917,7 +916,7 @@ public class MethodCallHandlerTest {
             .setResponseCode(100)
             .setDebugMessage("dummy debug message")
             .build();
-    List<Purchase> purchasesList = asList(buildPurchase("foo"));
+    List<Purchase> purchasesList = singletonList(buildPurchase("foo"));
     doNothing()
         .when(mockMethodChannel)
         .invokeMethod(eq(ON_PURCHASES_UPDATED), resultCaptor.capture());
@@ -1036,7 +1035,7 @@ public class MethodCallHandlerTest {
 
   /**
    * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * Messages.Result<Map<String, Object>>)} with startup params.
+   * Messages.Result)} with startup params.
    *
    * <p>Defaults to play billing only which is the default.
    */
@@ -1046,7 +1045,7 @@ public class MethodCallHandlerTest {
 
   /**
    * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * Messages.Result<Map<String, Object>>)} with startup params.
+   * Messages.Result)} with startup params.
    */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection(
       PlatformBillingChoiceMode billingChoiceMode) {

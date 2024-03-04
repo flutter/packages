@@ -118,22 +118,22 @@ class MethodCallHandlerImpl
   }
 
   @Override
-  public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+  public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {}
 
   @Override
-  public void onActivityStarted(Activity activity) {}
+  public void onActivityStarted(@NonNull Activity activity) {}
 
   @Override
-  public void onActivityResumed(Activity activity) {}
+  public void onActivityResumed(@NonNull Activity activity) {}
 
   @Override
-  public void onActivityPaused(Activity activity) {}
+  public void onActivityPaused(@NonNull Activity activity) {}
 
   @Override
-  public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+  public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
 
   @Override
-  public void onActivityDestroyed(Activity activity) {
+  public void onActivityDestroyed(@NonNull Activity activity) {
     if (this.activity == activity && this.applicationContext != null) {
       ((Application) this.applicationContext).unregisterActivityLifecycleCallbacks(this);
       endBillingClientConnection();
@@ -141,7 +141,7 @@ class MethodCallHandlerImpl
   }
 
   @Override
-  public void onActivityStopped(Activity activity) {}
+  public void onActivityStopped(@NonNull Activity activity) {}
 
   void onDetachedFromActivity() {
     endBillingClientConnection();
@@ -208,10 +208,7 @@ class MethodCallHandlerImpl
       return;
     }
     billingClient.showAlternativeBillingOnlyInformationDialog(
-        activity,
-        billingResult -> {
-          result.success(fromBillingResult(billingResult));
-        });
+        activity, billingResult -> result.success(fromBillingResult(billingResult)));
   }
 
   private void createAlternativeBillingOnlyReportingDetails(final MethodChannel.Result result) {
@@ -219,11 +216,10 @@ class MethodCallHandlerImpl
       return;
     }
     billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
-        ((billingResult, alternativeBillingOnlyReportingDetails) -> {
-          result.success(
-              fromAlternativeBillingOnlyReportingDetails(
-                  billingResult, alternativeBillingOnlyReportingDetails));
-        }));
+        ((billingResult, alternativeBillingOnlyReportingDetails) ->
+            result.success(
+                fromAlternativeBillingOnlyReportingDetails(
+                    billingResult, alternativeBillingOnlyReportingDetails))));
   }
 
   @Override
@@ -231,9 +227,7 @@ class MethodCallHandlerImpl
       @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
     validateBillingClient();
     billingClient.isAlternativeBillingOnlyAvailableAsync(
-        billingResult -> {
-          result.success(pigeonBillingResultFromBillingResult(billingResult));
-        });
+        billingResult -> result.success(pigeonBillingResultFromBillingResult(billingResult)));
   }
 
   private void getBillingConfig(final MethodChannel.Result result) {
@@ -242,9 +236,8 @@ class MethodCallHandlerImpl
     }
     billingClient.getBillingConfigAsync(
         GetBillingConfigParams.newBuilder().build(),
-        (billingResult, billingConfig) -> {
-          result.success(fromBillingConfig(billingResult, billingConfig));
-        });
+        (billingResult, billingConfig) ->
+            result.success(fromBillingConfig(billingResult, billingConfig)));
   }
 
   @Override
