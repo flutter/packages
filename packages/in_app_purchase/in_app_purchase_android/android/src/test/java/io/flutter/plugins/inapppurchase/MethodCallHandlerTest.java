@@ -18,7 +18,6 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.START_CONNECTION;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
 import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
@@ -49,7 +48,6 @@ import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.Nullable;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener;
@@ -79,8 +77,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.BillingChoiceMode;
-import io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodArgs;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -104,6 +101,7 @@ public class MethodCallHandlerTest {
   @Mock BillingClient mockBillingClient;
   @Mock MethodChannel mockMethodChannel;
   @Spy Result result;
+  @Spy Messages.Result<Map<String, Object>> connectionResult;
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
@@ -114,10 +112,10 @@ public class MethodCallHandlerTest {
     MockitoAnnotations.openMocks(this);
     // Use the same client no matter if alternative billing is enabled or not.
     when(factory.createBillingClient(
-            context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY))
+            context, mockMethodChannel, PlatformBillingChoiceMode.PLAY_BILLING_ONLY))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
-            context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
+            context, mockMethodChannel, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockMethodChannel, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -152,19 +150,18 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(disconnectCall, mock(Result.class));
 
     Messages.FlutterError exception =
-            assertThrows(
-                    Messages.FlutterError.class,
-                    () -> methodChannelHandler.isReady());
+        assertThrows(Messages.FlutterError.class, () -> methodChannelHandler.isReady());
     assertEquals("UNAVAILABLE", exception.code);
   }
 
   @Test
   public void startConnection() {
     ArgumentCaptor<BillingClientStateListener> captor =
-        mockStartConnection(BillingChoiceMode.PLAY_BILLING_ONLY);
-    verify(result, never()).success(any());
+        mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+    verify(connectionResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(
+            context, mockMethodChannel, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -173,17 +170,17 @@ public class MethodCallHandlerTest {
             .build();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    verify(connectionResult, times(1)).success(fromBillingResult(billingResult));
   }
 
   @Test
   public void startConnectionAlternativeBillingOnly() {
     ArgumentCaptor<BillingClientStateListener> captor =
-        mockStartConnection(BillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
-    verify(result, never()).success(any());
+        mockStartConnection(PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+    verify(connectionResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
-            context, mockMethodChannel, BillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+            context, mockMethodChannel, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -192,46 +189,18 @@ public class MethodCallHandlerTest {
             .build();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    verify(result, times(1)).success(fromBillingResult(billingResult));
-  }
-
-  @Test
-  public void startConnectionAlternativeBillingUnset() {
-    // Logic is identical to mockStartConnection but does not set a value for
-    // ENABLE_ALTERNATIVE_BILLING to verify fallback behavior.
-    Map<String, Object> arguments = new HashMap<>();
-    arguments.put(MethodArgs.HANDLE, 1);
-    MethodCall call = new MethodCall(START_CONNECTION, arguments);
-    ArgumentCaptor<BillingClientStateListener> captor =
-        ArgumentCaptor.forClass(BillingClientStateListener.class);
-    doNothing().when(mockBillingClient).startConnection(captor.capture());
-
-    methodChannelHandler.onMethodCall(call, result);
-    verify(result, never()).success(any());
-    verify(factory, times(1))
-        .createBillingClient(context, mockMethodChannel, BillingChoiceMode.PLAY_BILLING_ONLY);
-
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
-    captor.getValue().onBillingSetupFinished(billingResult);
-
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    verify(connectionResult, times(1)).success(fromBillingResult(billingResult));
   }
 
   @Test
   public void startConnection_multipleCalls() {
-    Map<String, Object> arguments = new HashMap<>();
-    arguments.put("handle", 1);
-    MethodCall call = new MethodCall(START_CONNECTION, arguments);
     ArgumentCaptor<BillingClientStateListener> captor =
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
 
-    methodChannelHandler.onMethodCall(call, result);
-    verify(result, never()).success(any());
+    methodChannelHandler.startConnection(
+        1L, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, connectionResult);
+    verify(connectionResult, never()).success(any());
     BillingResult billingResult1 =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -252,8 +221,8 @@ public class MethodCallHandlerTest {
     captor.getValue().onBillingSetupFinished(billingResult2);
     captor.getValue().onBillingSetupFinished(billingResult3);
 
-    verify(result, times(1)).success(fromBillingResult(billingResult1));
-    verify(result, times(1)).success(any());
+    verify(connectionResult, times(1)).success(fromBillingResult(billingResult1));
+    verify(connectionResult, times(1)).success(any());
   }
 
   @Test
@@ -413,14 +382,14 @@ public class MethodCallHandlerTest {
   @Test
   public void endConnection() {
     // Set up a connected BillingClient instance
-    final int disconnectCallbackHandle = 22;
-    Map<String, Object> arguments = new HashMap<>();
-    arguments.put("handle", disconnectCallbackHandle);
-    MethodCall connectCall = new MethodCall(START_CONNECTION, arguments);
+    final long disconnectCallbackHandle = 22;
     ArgumentCaptor<BillingClientStateListener> captor =
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
-    methodChannelHandler.onMethodCall(connectCall, mock(Result.class));
+    @SuppressWarnings("unchecked")
+    final Messages.Result<Map<String, Object>> mockResult = mock(Messages.Result.class);
+    methodChannelHandler.startConnection(
+        disconnectCallbackHandle, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, mockResult);
     final BillingClientStateListener stateListener = captor.getValue();
 
     // Disconnect the connected client
@@ -432,7 +401,7 @@ public class MethodCallHandlerTest {
     verify(result, times(1)).success(any());
     verify(mockBillingClient, times(1)).endConnection();
     stateListener.onBillingServiceDisconnected();
-    Map<String, Integer> expectedInvocation = new HashMap<>();
+    Map<String, Long> expectedInvocation = new HashMap<>();
     expectedInvocation.put("handle", disconnectCallbackHandle);
     verify(mockMethodChannel, times(1)).invokeMethod(ON_DISCONNECT, expectedInvocation);
   }
@@ -440,7 +409,7 @@ public class MethodCallHandlerTest {
   @Test
   public void queryProductDetailsAsync() {
     // Connect a billing client and set up the product query listeners
-    establishConnectedBillingClient(/* arguments= */ null, /* result= */ null);
+    establishConnectedBillingClient();
     String productType = BillingClient.ProductType.INAPP;
     List<String> productsList = asList("id1", "id2");
     HashMap<String, Object> arguments = new HashMap<>();
@@ -783,7 +752,7 @@ public class MethodCallHandlerTest {
   @Test
   public void launchBillingFlow_productNotFound() {
     // Try to launch the billing flow for a random product ID
-    establishConnectedBillingClient(null, null);
+    establishConnectedBillingClient();
     String productId = "foo";
     String accountId = "account";
     HashMap<String, Object> arguments = new HashMap<>();
@@ -801,7 +770,7 @@ public class MethodCallHandlerTest {
   @Test
   public void launchBillingFlow_oldProductNotFound() {
     // Try to launch the billing flow for a random product ID
-    establishConnectedBillingClient(null, null);
+    establishConnectedBillingClient();
     String productId = "foo";
     String accountId = "account";
     String oldProductId = "oldProduct";
@@ -836,7 +805,7 @@ public class MethodCallHandlerTest {
 
   @Test
   public void queryPurchases_returns_success() throws Exception {
-    establishConnectedBillingClient(null, null);
+    establishConnectedBillingClient();
 
     CountDownLatch lock = new CountDownLatch(1);
     doAnswer(
@@ -888,7 +857,7 @@ public class MethodCallHandlerTest {
   @Test
   public void queryPurchaseHistoryAsync() {
     // Set up an established billing client and all our mocked responses
-    establishConnectedBillingClient(null, null);
+    establishConnectedBillingClient();
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -951,7 +920,7 @@ public class MethodCallHandlerTest {
 
   @Test
   public void consumeAsync() {
-    establishConnectedBillingClient(null, null);
+    establishConnectedBillingClient();
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -980,7 +949,7 @@ public class MethodCallHandlerTest {
 
   @Test
   public void acknowledgePurchase() {
-    establishConnectedBillingClient(null, null);
+    establishConnectedBillingClient();
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -1056,49 +1025,39 @@ public class MethodCallHandlerTest {
   }
 
   /**
-   * Call {@link MethodCallHandlerImpl.START_CONNECTION] with startup params.
+   * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
+   * Messages.Result<Map<String, Object>>)} with startup params.
    *
-   * Defaults to play billing only which is the default.
+   * <p>Defaults to play billing only which is the default.
    */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection() {
-    return mockStartConnection(BillingChoiceMode.PLAY_BILLING_ONLY);
+    return mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
   }
 
   /**
-   * Call {@link MethodCallHandlerImpl.START_CONNECTION] with startup params.
-   *
-   *{@link billingChoiceMode} is one of the int value used from {@link BillingChoiceMode}.
+   * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
+   * Messages.Result<Map<String, Object>>)} with startup params.
    */
-  private ArgumentCaptor<BillingClientStateListener> mockStartConnection(int billingChoiceMode) {
-    Map<String, Object> arguments = new HashMap<>();
-    arguments.put(MethodArgs.HANDLE, 1);
-    arguments.put(MethodArgs.BILLING_CHOICE_MODE, billingChoiceMode);
-    MethodCall call = new MethodCall(START_CONNECTION, arguments);
+  private ArgumentCaptor<BillingClientStateListener> mockStartConnection(
+      PlatformBillingChoiceMode billingChoiceMode) {
     ArgumentCaptor<BillingClientStateListener> captor =
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
 
-    methodChannelHandler.onMethodCall(call, result);
+    methodChannelHandler.startConnection(1L, billingChoiceMode, connectionResult);
     return captor;
   }
 
-  private void establishConnectedBillingClient(
-      @Nullable Map<String, Object> arguments, @Nullable Result result) {
-    if (arguments == null) {
-      arguments = new HashMap<>();
-      arguments.put(MethodArgs.HANDLE, 1);
-    }
-    if (result == null) {
-      result = mock(Result.class);
-    }
-
-    MethodCall connectCall = new MethodCall(START_CONNECTION, arguments);
-    methodChannelHandler.onMethodCall(connectCall, result);
+  private void establishConnectedBillingClient() {
+    @SuppressWarnings("unchecked")
+    final Messages.Result<Map<String, Object>> mockResult = mock(Messages.Result.class);
+    methodChannelHandler.startConnection(
+        1L, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, mockResult);
   }
 
   private void queryForProducts(List<String> productIdList) {
     // Set up the query method call
-    establishConnectedBillingClient(/* arguments= */ null, /* result= */ null);
+    establishConnectedBillingClient();
     HashMap<String, Object> arguments = new HashMap<>();
     String productType = BillingClient.ProductType.INAPP;
     List<Map<String, Object>> productList = buildProductMap(productIdList, productType);

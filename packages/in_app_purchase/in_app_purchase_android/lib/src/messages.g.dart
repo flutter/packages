@@ -18,6 +18,17 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+/// Pigeon version of BillingChoiceMode.
+enum PlatformBillingChoiceMode {
+  /// Billing through google play.
+  ///
+  /// Default state.
+  playBillingOnly,
+
+  /// Billing through app provided flow.
+  alternativeBillingOnly,
+}
+
 class InAppPurchaseApi {
   /// Constructor for [InAppPurchaseApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -56,6 +67,37 @@ class InAppPurchaseApi {
       );
     } else {
       return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  Future<Map<String?, Object?>> startConnection(
+      int callbackHandle, PlatformBillingChoiceMode billingMode) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[callbackHandle, billingMode.index]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, Object?>();
     }
   }
 }

@@ -50,8 +50,6 @@ class MethodCallHandlerImpl
 
   @VisibleForTesting
   static final class MethodNames {
-    static final String START_CONNECTION =
-        "BillingClient#startConnection(BillingClientStateListener)";
     static final String END_CONNECTION = "BillingClient#endConnection()";
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
     static final String QUERY_PRODUCT_DETAILS =
@@ -77,26 +75,6 @@ class MethodCallHandlerImpl
         "BillingClient#showAlternativeBillingOnlyInformationDialog()";
 
     private MethodNames() {}
-  }
-
-  @VisibleForTesting
-  static final class MethodArgs {
-
-    // Key for an int argument passed into startConnection
-    static final String HANDLE = "handle";
-    // Key for a boolean argument passed into startConnection.
-    static final String BILLING_CHOICE_MODE = "billingChoiceMode";
-
-    private MethodArgs() {}
-  }
-
-  /**
-   * Values here must match values used in
-   * in_app_purchase_android/lib/src/billing_client_wrappers/billing_client_wrapper.dart
-   */
-  static final class BillingChoiceMode {
-    static final int PLAY_BILLING_ONLY = 0;
-    static final int ALTERNATIVE_BILLING_ONLY = 1;
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -174,14 +152,6 @@ class MethodCallHandlerImpl
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case MethodNames.START_CONNECTION:
-        final int handle = (int) call.argument(MethodArgs.HANDLE);
-        int billingChoiceMode = BillingChoiceMode.PLAY_BILLING_ONLY;
-        if (call.hasArgument(MethodArgs.BILLING_CHOICE_MODE)) {
-          billingChoiceMode = call.argument(MethodArgs.BILLING_CHOICE_MODE);
-        }
-        startConnection(handle, result, billingChoiceMode);
-        break;
       case MethodNames.END_CONNECTION:
         endConnection(result);
         break;
@@ -503,12 +473,14 @@ class MethodCallHandlerImpl
     result.success(serialized);
   }
 
-  private void startConnection(
-      final int handle, final MethodChannel.Result result, int billingChoiceMode) {
+  @Override
+  public void startConnection(
+      @NonNull Long handle,
+      @NonNull Messages.PlatformBillingChoiceMode billingMode,
+      @NonNull Messages.Result<Map<String, Object>> result) {
     if (billingClient == null) {
       billingClient =
-          billingClientFactory.createBillingClient(
-              applicationContext, methodChannel, billingChoiceMode);
+          billingClientFactory.createBillingClient(applicationContext, methodChannel, billingMode);
     }
 
     billingClient.startConnection(

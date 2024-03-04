@@ -11,6 +11,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../../billing_client_wrappers.dart';
 import '../channel.dart';
 import '../messages.g.dart';
+import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
@@ -119,15 +120,10 @@ class BillingClient {
     final List<Function> disconnectCallbacks =
         _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
     disconnectCallbacks.add(onBillingServiceDisconnected);
-    return BillingResultWrapper.fromJson((await channel
-            .invokeMapMethod<String, dynamic>(
-                'BillingClient#startConnection(BillingClientStateListener)',
-                <String, dynamic>{
-              'handle': disconnectCallbacks.length - 1,
-              'billingChoiceMode':
-                  const BillingChoiceModeConverter().toJson(billingChoiceMode),
-            })) ??
-        <String, dynamic>{});
+    return BillingResultWrapper.fromJson((await _hostApi.startConnection(
+            disconnectCallbacks.length - 1,
+            platformBillingChoiceMode(billingChoiceMode)))
+        .cast<String, Object?>());
   }
 
   /// Calls

@@ -8,6 +8,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingClient;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 
 /** Responsible for creating a {@link BillingClient} object. */
 interface BillingClientFactory {
@@ -22,5 +23,7 @@ interface BillingClientFactory {
    * @return The {@link BillingClient} object that is created.
    */
   BillingClient createBillingClient(
-      @NonNull Context context, @NonNull MethodChannel channel, int billingChoiceMode);
+      @NonNull Context context,
+      @NonNull MethodChannel channel,
+      PlatformBillingChoiceMode billingChoiceMode);
 }

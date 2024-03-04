@@ -25,10 +25,6 @@ import 'package:mockito/mockito.dart' as _i1;
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
-  MockInAppPurchaseApi() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i3.Future<bool> isReady() => (super.noSuchMethod(
         Invocation.method(
@@ -36,5 +32,25 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           [],
         ),
         returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<Map<String?, Object?>> startConnection(
+    int? callbackHandle,
+    _i2.PlatformBillingChoiceMode? billingMode,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #startConnection,
+          [
+            callbackHandle,
+            billingMode,
+          ],
+        ),
+        returnValue:
+            _i3.Future<Map<String?, Object?>>.value(<String?, Object?>{}),
+        returnValueForMissingStub:
+            _i3.Future<Map<String?, Object?>>.value(<String?, Object?>{}),
+      ) as _i3.Future<Map<String?, Object?>>);
 }

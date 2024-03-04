@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
@@ -30,7 +32,7 @@ const PurchaseWrapper dummyOldPurchase = PurchaseWrapper(
   purchaseState: PurchaseStateWrapper.purchased,
 );
 
-@GenerateMocks(<Type>[InAppPurchaseApi])
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<InAppPurchaseApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -80,14 +82,11 @@ void main() {
   });
 
   group('startConnection', () {
-    const String methodName =
-        'BillingClient#startConnection(BillingClientStateListener)';
     test('returns BillingResultWrapper', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
-      stubPlatform.addResponse(
-        name: methodName,
-        value: <String, dynamic>{
+      when(mockApi.startConnection(any, any)).thenAnswer(
+        (_) async => <String, Object?>{
           'responseCode': const BillingResponseConverter().toJson(responseCode),
           'debugMessage': debugMessage,
         },
@@ -101,59 +100,22 @@ void main() {
           equals(billingResult));
     });
 
-    test('passes handle to onBillingServiceDisconnected', () async {
-      const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.developerError;
-      stubPlatform.addResponse(
-        name: methodName,
-        value: <String, dynamic>{
-          'responseCode': const BillingResponseConverter().toJson(responseCode),
-          'debugMessage': debugMessage,
-        },
-      );
+    test('passes default values to onBillingServiceDisconnected', () async {
       await billingClient.startConnection(onBillingServiceDisconnected: () {});
-      final MethodCall call = stubPlatform.previousCallMatching(methodName);
-      expect(
-          call.arguments,
-          equals(<dynamic, dynamic>{
-            'handle': 0,
-            'billingChoiceMode': 0,
-          }));
+
+      final VerificationResult result =
+          verify(mockApi.startConnection(captureAny, captureAny));
+      expect(result.captured[0], 0);
+      expect(result.captured[1], PlatformBillingChoiceMode.playBillingOnly);
     });
 
     test('passes billingChoiceMode when set', () async {
-      const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.developerError;
-      stubPlatform.addResponse(
-        name: methodName,
-        value: <String, dynamic>{
-          'responseCode': const BillingResponseConverter().toJson(responseCode),
-          'debugMessage': debugMessage,
-        },
-      );
       await billingClient.startConnection(
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
-      final MethodCall call = stubPlatform.previousCallMatching(methodName);
-      expect(
-          call.arguments,
-          equals(<dynamic, dynamic>{
-            'handle': 0,
-            'billingChoiceMode': 1,
-          }));
-    });
 
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: methodName,
-      );
-
-      expect(
-          await billingClient.startConnection(
-              onBillingServiceDisconnected: () {}),
-          equals(const BillingResultWrapper(
-              responseCode: BillingResponse.error,
-              debugMessage: kInvalidBillingResultErrorMessage)));
+      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+          PlatformBillingChoiceMode.alternativeBillingOnly);
     });
   });
 

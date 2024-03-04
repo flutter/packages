@@ -70,7 +70,7 @@ class BillingClientManager {
       StreamController<PurchasesResultWrapper>.broadcast();
 
   BillingChoiceMode _billingChoiceMode;
-  BillingClientFactory _billingClientFactory;
+  final BillingClientFactory _billingClientFactory;
   bool _isConnecting = false;
   bool _isDisposed = false;
 

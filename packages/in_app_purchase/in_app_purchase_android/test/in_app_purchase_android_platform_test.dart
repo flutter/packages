@@ -24,8 +24,6 @@ void main() {
   final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatform iapAndroidPlatform;
-  const String startConnectionCall =
-      'BillingClient#startConnection(BillingClientStateListener)';
   const String endConnectionCall = 'BillingClient#endConnection()';
   const String acknowledgePurchaseCall =
       'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
@@ -39,14 +37,6 @@ void main() {
 
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
-
-    const String debugMessage = 'dummy message';
-    const BillingResponse responseCode = BillingResponse.ok;
-    const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-        responseCode: responseCode, debugMessage: debugMessage);
-    stubPlatform.addResponse(
-        name: startConnectionCall,
-        value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
 
     mockApi = MockInAppPurchaseApi();
@@ -72,7 +62,7 @@ void main() {
   group('connection management', () {
     test('connects on initialization', () {
       //await iapAndroidPlatform.isAvailable();
-      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
+      verify(mockApi.startConnection(any, any)).called(1);
     });
 
     test('re-connects when client sends onBillingServiceDisconnected', () {
@@ -80,7 +70,7 @@ void main() {
         const MethodCall(onBillingServiceDisconnectedCallback,
             <String, dynamic>{'handle': 0}),
       );
-      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+      verify(mockApi.startConnection(any, any)).called(2);
     });
 
     test(
@@ -96,12 +86,10 @@ void main() {
           ),
         ),
       );
-      stubPlatform.addResponse(
-        name: startConnectionCall,
-        value: okValue,
-        additionalStepBeforeReturn: (dynamic _) => stubPlatform.addResponse(
-            name: acknowledgePurchaseCall, value: okValue),
-      );
+      when(mockApi.startConnection(any, any)).thenAnswer((_) async {
+        stubPlatform.addResponse(name: acknowledgePurchaseCall, value: okValue);
+        return okValue;
+      });
       final PurchaseDetails purchase =
           GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
               .first;
@@ -111,7 +99,7 @@ void main() {
         stubPlatform.countPreviousCalls(acknowledgePurchaseCall),
         equals(2),
       );
-      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
+      verify(mockApi.startConnection(any, any)).called(2);
       expect(result.responseCode, equals(BillingResponse.ok));
     });
   });

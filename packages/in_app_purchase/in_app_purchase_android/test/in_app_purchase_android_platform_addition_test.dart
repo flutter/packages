@@ -9,8 +9,11 @@ import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
+import 'package:in_app_purchase_android/src/messages.g.dart';
+import 'package:mockito/mockito.dart';
 
 import 'billing_client_wrappers/billing_client_wrapper_test.dart';
+import 'billing_client_wrappers/billing_client_wrapper_test.mocks.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
 import 'stub_in_app_purchase_platform.dart';
 
@@ -18,9 +21,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
+  late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatformAddition iapAndroidPlatformAddition;
-  const String startConnectionCall =
-      'BillingClient#startConnection(BillingClientStateListener)';
   const String endConnectionCall = 'BillingClient#endConnection()';
   const String onBillingServiceDisconnectedCallback =
       'BillingClientStateListener#onBillingServiceDisconnected()';
@@ -33,16 +35,11 @@ void main() {
 
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
-
-    const String debugMessage = 'dummy message';
-    const BillingResponse responseCode = BillingResponse.ok;
-    const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-        responseCode: responseCode, debugMessage: debugMessage);
-    stubPlatform.addResponse(
-        name: startConnectionCall,
-        value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
-    manager = BillingClientManager();
+    mockApi = MockInAppPurchaseApi();
+    manager = BillingClientManager(
+        billingClientFactory: (PurchasesUpdatedListener listener) =>
+            BillingClient(listener, api: mockApi));
     iapAndroidPlatformAddition = InAppPurchaseAndroidPlatformAddition(manager);
   });
 
@@ -86,14 +83,9 @@ void main() {
   });
 
   group('setBillingChoice', () {
-    late Map<Object?, Object?> arguments;
     test('setAlternativeBillingOnlyState', () async {
       stubPlatform.reset();
-      stubPlatform.addResponse(
-        name: startConnectionCall,
-        additionalStepBeforeReturn: (dynamic value) =>
-            arguments = value as Map<dynamic, dynamic>,
-      );
+      clearInteractions(mockApi);
       stubPlatform.addResponse(name: endConnectionCall);
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
@@ -104,20 +96,16 @@ void main() {
             <String, dynamic>{'handle': 0}),
       );
       // Verify that after connection ended reconnect was called.
-      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
-      expect(
-          arguments['billingChoiceMode'],
-          const BillingChoiceModeConverter()
-              .toJson(BillingChoiceMode.alternativeBillingOnly));
+      final VerificationResult result =
+          verify(mockApi.startConnection(any, captureAny));
+      expect(result.callCount, equals(2));
+      expect(result.captured.last,
+          PlatformBillingChoiceMode.alternativeBillingOnly);
     });
 
     test('setPlayBillingState', () async {
       stubPlatform.reset();
-      stubPlatform.addResponse(
-        name: startConnectionCall,
-        additionalStepBeforeReturn: (dynamic value) =>
-            arguments = value as Map<dynamic, dynamic>,
-      );
+      clearInteractions(mockApi);
       stubPlatform.addResponse(name: endConnectionCall);
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.playBillingOnly);
@@ -128,11 +116,10 @@ void main() {
             <String, dynamic>{'handle': 0}),
       );
       // Verify that after connection ended reconnect was called.
-      expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(2));
-      expect(
-          arguments['billingChoiceMode'],
-          const BillingChoiceModeConverter()
-              .toJson(BillingChoiceMode.playBillingOnly));
+      final VerificationResult result =
+          verify(mockApi.startConnection(any, captureAny));
+      expect(result.callCount, equals(2));
+      expect(result.captured.last, PlatformBillingChoiceMode.playBillingOnly);
     });
   });
 

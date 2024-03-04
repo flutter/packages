@@ -14,6 +14,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import io.flutter.plugin.common.StandardMessageCodec;
 import java.util.ArrayList;
+import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -51,11 +52,59 @@ public class Messages {
     }
     return errorList;
   }
+
+  /** Pigeon version of BillingChoiceMode. */
+  public enum PlatformBillingChoiceMode {
+    /**
+     * Billing through google play.
+     *
+     * <p>Default state.
+     */
+    PLAY_BILLING_ONLY(0),
+    /** Billing through app provided flow. */
+    ALTERNATIVE_BILLING_ONLY(1);
+
+    final int index;
+
+    private PlatformBillingChoiceMode(final int index) {
+      this.index = index;
+    }
+  }
+
+  /** Asynchronous error handling return type for non-nullable API method returns. */
+  public interface Result<T> {
+    /** Success case callback method for handling returns. */
+    void success(@NonNull T result);
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
+  /** Asynchronous error handling return type for nullable API method returns. */
+  public interface NullableResult<T> {
+    /** Success case callback method for handling returns. */
+    void success(@Nullable T result);
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
+  /** Asynchronous error handling return type for void API method returns. */
+  public interface VoidResult {
+    /** Success case callback method for handling returns. */
+    void success();
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface InAppPurchaseApi {
     /** Wraps BillingClient#isReady. */
     @NonNull
     Boolean isReady();
+
+    void startConnection(
+        @NonNull Long callbackHandle,
+        @NonNull PlatformBillingChoiceMode billingMode,
+        @NonNull Result<Map<String, Object>> result);
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -83,6 +132,42 @@ public class Messages {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number callbackHandleArg = (Number) args.get(0);
+                PlatformBillingChoiceMode billingModeArg =
+                    PlatformBillingChoiceMode.values()[(int) args.get(1)];
+                Result<Map<String, Object>> resultCallback =
+                    new Result<Map<String, Object>>() {
+                      public void success(Map<String, Object> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.startConnection(
+                    (callbackHandleArg == null) ? null : callbackHandleArg.longValue(),
+                    billingModeArg,
+                    resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
