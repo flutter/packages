@@ -18,7 +18,7 @@
 // Callback channel to dart used for when a function from the transaction observer is triggered.
 @property(strong, nonatomic) FIAPRequestHandler * (^handlerFactory)(SKRequest *);
 
-// Convenience nitializer with dependancy injection
+// Convenience initializer with dependancy injection
 - (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager
                         handlerFactory:(FIAPRequestHandler * (^)(SKRequest *))handlerFactory;
 
