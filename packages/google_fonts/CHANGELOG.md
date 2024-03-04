@@ -1,3 +1,7 @@
+## 6.2.1 - 2024-03-04
+### Changed
+- Update lowest supported Flutter version to current stable (`3.19.2`)
+
 ## 6.2.0 - 2024-03-01
 ### Added
 - `AR One Sans`
