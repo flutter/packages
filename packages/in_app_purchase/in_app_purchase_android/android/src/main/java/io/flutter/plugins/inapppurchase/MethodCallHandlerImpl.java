@@ -65,7 +65,6 @@ class MethodCallHandlerImpl
     static final String ACKNOWLEDGE_PURCHASE =
         "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
-    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
     static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
         "BillingClient#createAlternativeBillingOnlyReportingDetails()";
@@ -181,9 +180,6 @@ class MethodCallHandlerImpl
         break;
       case MethodNames.IS_FEATURE_SUPPORTED:
         isFeatureSupported((String) call.argument("feature"), result);
-        break;
-      case MethodNames.GET_CONNECTION_STATE:
-        getConnectionState(result);
         break;
       case MethodNames.GET_BILLING_CONFIG:
         getBillingConfig(result);
@@ -447,15 +443,6 @@ class MethodCallHandlerImpl
           serialized.put("purchaseHistoryRecordList", fromPurchaseHistoryRecordList(purchasesList));
           result.success(serialized);
         });
-  }
-
-  private void getConnectionState(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
-    final Map<String, Object> serialized = new HashMap<>();
-    serialized.put("connectionState", billingClient.getConnectionState());
-    result.success(serialized);
   }
 
   @Override
