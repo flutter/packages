@@ -51,7 +51,6 @@ class MethodCallHandlerImpl
 
   @VisibleForTesting
   static final class MethodNames {
-    static final String END_CONNECTION = "BillingClient#endConnection()";
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
     static final String QUERY_PRODUCT_DETAILS =
         "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
@@ -153,9 +152,6 @@ class MethodCallHandlerImpl
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case MethodNames.END_CONNECTION:
-        endConnection(result);
-        break;
       case MethodNames.QUERY_PRODUCT_DETAILS:
         List<Product> productList = toProductList(call.argument("productList"));
         queryProductDetailsAsync(productList, result);
@@ -256,9 +252,9 @@ class MethodCallHandlerImpl
         });
   }
 
-  private void endConnection(final MethodChannel.Result result) {
+  @Override
+  public void endConnection() {
     endBillingClientConnection();
-    result.success(null);
   }
 
   private void endBillingClientConnection() {

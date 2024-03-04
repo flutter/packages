@@ -23,7 +23,6 @@ void main() {
   final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatformAddition iapAndroidPlatformAddition;
-  const String endConnectionCall = 'BillingClient#endConnection()';
   const String onBillingServiceDisconnectedCallback =
       'BillingClientStateListener#onBillingServiceDisconnected()';
   late BillingClientManager manager;
@@ -35,7 +34,6 @@ void main() {
 
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
-    stubPlatform.addResponse(name: endConnectionCall);
     mockApi = MockInAppPurchaseApi();
     manager = BillingClientManager(
         billingClientFactory: (PurchasesUpdatedListener listener) =>
@@ -86,7 +84,6 @@ void main() {
     test('setAlternativeBillingOnlyState', () async {
       stubPlatform.reset();
       clearInteractions(mockApi);
-      stubPlatform.addResponse(name: endConnectionCall);
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
 
@@ -106,7 +103,6 @@ void main() {
     test('setPlayBillingState', () async {
       stubPlatform.reset();
       clearInteractions(mockApi);
-      stubPlatform.addResponse(name: endConnectionCall);
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.playBillingOnly);
 

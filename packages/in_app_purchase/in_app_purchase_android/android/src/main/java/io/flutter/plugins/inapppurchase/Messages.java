@@ -63,7 +63,7 @@ public class Messages {
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
 
-  /** Pigeon version of BillingChoiceMode. */
+  /** Pigeon version of billing_client_wrapper.dart's BillingChoiceMode. */
   public enum PlatformBillingChoiceMode {
     /**
      * Billing through google play.
@@ -82,7 +82,7 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of BillingResult.
+   * Pigeon version of Java BillingResult.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
@@ -224,6 +224,8 @@ public class Messages {
         @NonNull Long callbackHandle,
         @NonNull PlatformBillingChoiceMode billingMode,
         @NonNull Result<PlatformBillingResult> result);
+    /** Wraps BillingClient#endConnection(BillingClientStateListener). */
+    void endConnection();
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -287,6 +289,29 @@ public class Messages {
                     (callbackHandleArg == null) ? null : callbackHandleArg.longValue(),
                     billingModeArg,
                     resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  api.endConnection();
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

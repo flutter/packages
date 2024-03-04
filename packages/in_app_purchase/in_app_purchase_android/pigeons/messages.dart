@@ -40,4 +40,7 @@ abstract class InAppPurchaseApi {
   @async
   PlatformBillingResult startConnection(
       int callbackHandle, PlatformBillingChoiceMode billingMode);
+
+  /// Wraps BillingClient#endConnection(BillingClientStateListener).
+  void endConnection();
 }

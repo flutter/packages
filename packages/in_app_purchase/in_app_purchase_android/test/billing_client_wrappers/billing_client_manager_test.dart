@@ -8,38 +8,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
-import 'package:in_app_purchase_android/src/channel.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:mockito/mockito.dart';
 
-import '../stub_in_app_purchase_platform.dart';
 import 'billing_client_wrapper_test.mocks.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late BillingClientManager manager;
 
-  const String endConnectionCall = 'BillingClient#endConnection()';
   const String onBillingServiceDisconnectedCallback =
       'BillingClientStateListener#onBillingServiceDisconnected()';
 
-  setUpAll(() => TestDefaultBinaryMessengerBinding
-      .instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler));
-
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
-    stubPlatform.addResponse(name: endConnectionCall);
     mockApi = MockInAppPurchaseApi();
     manager = BillingClientManager(
         billingClientFactory: (PurchasesUpdatedListener listener) =>
             BillingClient(listener, api: mockApi));
   });
-
-  tearDown(() => stubPlatform.reset());
 
   group('BillingClientWrapper', () {
     test('connects on initialization', () {
@@ -89,9 +78,8 @@ void main() {
       await manager.reconnectWithBillingChoiceMode(
           BillingChoiceMode.alternativeBillingOnly);
       // Verify that connection was ended.
-      expect(stubPlatform.countPreviousCalls(endConnectionCall), equals(1));
+      verify(mockApi.endConnection()).called(1);
 
-      stubPlatform.reset();
       clearInteractions(mockApi);
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
@@ -132,7 +120,7 @@ void main() {
       clearInteractions(mockApi);
       manager.dispose();
       verifyNever(mockApi.startConnection(any, any));
-      expect(stubPlatform.countPreviousCalls(endConnectionCall), equals(1));
+      verify(mockApi.endConnection()).called(1);
     });
   });
 }

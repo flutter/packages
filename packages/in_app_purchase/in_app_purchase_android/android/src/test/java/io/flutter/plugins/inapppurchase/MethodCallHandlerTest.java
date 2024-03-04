@@ -8,7 +8,6 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UN
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ACKNOWLEDGE_PURCHASE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CONSUME_PURCHASE_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.END_CONNECTION;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_FEATURE_SUPPORTED;
@@ -147,8 +146,7 @@ public class MethodCallHandlerTest {
 
   @Test
   public void isReady_clientDisconnected() {
-    MethodCall disconnectCall = new MethodCall(END_CONNECTION, null);
-    methodChannelHandler.onMethodCall(disconnectCall, mock(Result.class));
+    methodChannelHandler.endConnection();
 
     Messages.FlutterError exception =
         assertThrows(Messages.FlutterError.class, () -> methodChannelHandler.isReady());
@@ -409,12 +407,10 @@ public class MethodCallHandlerTest {
     final BillingClientStateListener stateListener = captor.getValue();
 
     // Disconnect the connected client
-    MethodCall disconnectCall = new MethodCall(END_CONNECTION, null);
-    methodChannelHandler.onMethodCall(disconnectCall, result);
+    methodChannelHandler.endConnection();
 
     // Verify that the client is disconnected and that the OnDisconnect callback has
     // been triggered
-    verify(result, times(1)).success(any());
     verify(mockBillingClient, times(1)).endConnection();
     stateListener.onBillingServiceDisconnected();
     Map<String, Long> expectedInvocation = new HashMap<>();
@@ -462,8 +458,7 @@ public class MethodCallHandlerTest {
   @Test
   public void queryProductDetailsAsync_clientDisconnected() {
     // Disconnect the Billing client and prepare a queryProductDetails call
-    MethodCall disconnectCall = new MethodCall(END_CONNECTION, null);
-    methodChannelHandler.onMethodCall(disconnectCall, mock(Result.class));
+    methodChannelHandler.endConnection();
     String productType = BillingClient.ProductType.INAPP;
     List<String> productsList = asList("id1", "id2");
     HashMap<String, Object> arguments = new HashMap<>();
@@ -749,8 +744,7 @@ public class MethodCallHandlerTest {
   @Test
   public void launchBillingFlow_clientDisconnected() {
     // Prepare the launch call after disconnecting the client
-    MethodCall disconnectCall = new MethodCall(END_CONNECTION, null);
-    methodChannelHandler.onMethodCall(disconnectCall, mock(Result.class));
+    methodChannelHandler.endConnection();
     String productId = "foo";
     String accountId = "account";
     HashMap<String, Object> arguments = new HashMap<>();
@@ -807,8 +801,7 @@ public class MethodCallHandlerTest {
 
   @Test
   public void queryPurchases_clientDisconnected() {
-    // Prepare the launch call after disconnecting the client
-    methodChannelHandler.onMethodCall(new MethodCall(END_CONNECTION, null), mock(Result.class));
+    methodChannelHandler.endConnection();
 
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("type", BillingClient.ProductType.INAPP);
@@ -901,8 +894,7 @@ public class MethodCallHandlerTest {
 
   @Test
   public void queryPurchaseHistoryAsync_clientDisconnected() {
-    // Prepare the launch call after disconnecting the client
-    methodChannelHandler.onMethodCall(new MethodCall(END_CONNECTION, null), mock(Result.class));
+    methodChannelHandler.endConnection();
 
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("type", BillingClient.ProductType.INAPP);

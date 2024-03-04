@@ -117,11 +117,9 @@ void main() {
   });
 
   test('endConnection', () async {
-    const String endConnectionName = 'BillingClient#endConnection()';
-    expect(stubPlatform.countPreviousCalls(endConnectionName), equals(0));
-    stubPlatform.addResponse(name: endConnectionName);
+    verifyNever(mockApi.endConnection());
     await billingClient.endConnection();
-    expect(stubPlatform.countPreviousCalls(endConnectionName), equals(1));
+    verify(mockApi.endConnection()).called(1);
   });
 
   group('queryProductDetails', () {

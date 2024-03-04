@@ -24,7 +24,6 @@ void main() {
   final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatform iapAndroidPlatform;
-  const String endConnectionCall = 'BillingClient#endConnection()';
   const String acknowledgePurchaseCall =
       'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
   const String onBillingServiceDisconnectedCallback =
@@ -37,7 +36,6 @@ void main() {
 
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
-    stubPlatform.addResponse(name: endConnectionCall);
 
     mockApi = MockInAppPurchaseApi();
     iapAndroidPlatform = InAppPurchaseAndroidPlatform(

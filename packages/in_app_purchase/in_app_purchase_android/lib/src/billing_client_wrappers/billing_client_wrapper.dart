@@ -133,7 +133,7 @@ class BillingClient {
   ///
   /// This triggers the destruction of the `BillingClient` instance in Java.
   Future<void> endConnection() async {
-    return channel.invokeMethod<void>('BillingClient#endConnection()');
+    return _hostApi.endConnection();
   }
 
   /// Returns a list of [ProductDetailsResponseWrapper]s that have

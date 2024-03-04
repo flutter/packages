@@ -18,7 +18,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-/// Pigeon version of BillingChoiceMode.
+/// Pigeon version of billing_client_wrapper.dart's BillingChoiceMode.
 enum PlatformBillingChoiceMode {
   /// Billing through google play.
   ///
@@ -29,7 +29,7 @@ enum PlatformBillingChoiceMode {
   alternativeBillingOnly,
 }
 
-/// Pigeon version of BillingResult.
+/// Pigeon version of Java BillingResult.
 class PlatformBillingResult {
   PlatformBillingResult({
     required this.responseCode,
@@ -148,6 +148,31 @@ class InAppPurchaseApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformBillingResult?)!;
+    }
+  }
+
+  /// Wraps BillingClient#endConnection(BillingClientStateListener).
+  Future<void> endConnection() async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }
