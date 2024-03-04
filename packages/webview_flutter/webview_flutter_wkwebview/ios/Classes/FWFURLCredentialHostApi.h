@@ -10,12 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Host API implementation for `NSURLCredential`.
- *
- * This class may handle instantiating and adding native object instances that are attached to a
- * Dart instance or method calls on the associated native class or an instance of the class.
- */
+/// Host API implementation for `NSURLCredential`.
+///
+/// This class may handle instantiating and adding native object instances that are attached to a
+/// Dart instance or method calls on the associated native class or an instance of the class.
 @interface FWFURLCredentialHostApiImpl : NSObject <FWFNSUrlCredentialHostApi>
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;

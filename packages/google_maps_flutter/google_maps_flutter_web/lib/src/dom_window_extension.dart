@@ -2,6 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(srujzs): Needed for https://github.com/dart-lang/sdk/issues/54801. Once
+// we publish a version with a min SDK constraint that contains this fix,
+// remove.
+@JS()
+library;
+
 import 'dart:js_interop';
 
 import 'package:web/web.dart' as web;
