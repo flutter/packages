@@ -6,7 +6,6 @@
 #import <XCTest/XCTest.h>
 #import "FIAPaymentQueueHandler.h"
 #import "InAppPurchasePlugin+TestOnly.h"
-
 #import "Stubs.h"
 
 @import in_app_purchase_storekit;

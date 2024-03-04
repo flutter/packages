@@ -401,5 +401,4 @@
 - (SKReceiptRefreshRequest *)getRefreshReceiptRequest:(NSDictionary *)properties {
   return [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:properties];
 }
-
 @end
