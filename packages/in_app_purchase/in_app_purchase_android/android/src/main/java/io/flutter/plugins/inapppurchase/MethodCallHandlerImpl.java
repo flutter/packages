@@ -67,8 +67,6 @@ class MethodCallHandlerImpl
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
     static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
-    static final String IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE =
-        "BillingClient#isAlternativeBillingOnlyAvailable()";
     static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
         "BillingClient#createAlternativeBillingOnlyReportingDetails()";
     static final String SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG =
@@ -190,9 +188,6 @@ class MethodCallHandlerImpl
       case MethodNames.GET_BILLING_CONFIG:
         getBillingConfig(result);
         break;
-      case MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE:
-        isAlternativeBillingOnlyAvailable(result);
-        break;
       case MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS:
         createAlternativeBillingOnlyReportingDetails(result);
         break;
@@ -231,13 +226,13 @@ class MethodCallHandlerImpl
         }));
   }
 
-  private void isAlternativeBillingOnlyAvailable(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
+  @Override
+  public void isAlternativeBillingOnlyAvailable(
+      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+    validateBillingClient();
     billingClient.isAlternativeBillingOnlyAvailableAsync(
         billingResult -> {
-          result.success(fromBillingResult(billingResult));
+          result.success(pigeonBillingResultFromBillingResult(billingResult));
         });
   }
 

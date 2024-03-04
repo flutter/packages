@@ -342,20 +342,10 @@ class BillingClient {
         <String, dynamic>{});
   }
 
-  /// isAlternativeBillingOnlyAvailable method channel string identifier.
-  //
-  // Must match the value of IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String isAlternativeBillingOnlyAvailableMethodString =
-      'BillingClient#isAlternativeBillingOnlyAvailable()';
-
   /// Checks if "AlterntitiveBillingOnly" feature is available.
   Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
-    return BillingResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                isAlternativeBillingOnlyAvailableMethodString)) ??
-            <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.isAlternativeBillingOnlyAvailable());
   }
 
   /// showAlternativeBillingOnlyInformationDialog method channel string identifier.

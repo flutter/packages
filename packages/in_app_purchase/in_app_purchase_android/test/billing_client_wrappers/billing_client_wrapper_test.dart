@@ -667,23 +667,14 @@ void main() {
 
   group('isAlternativeBillingOnlyAvailable', () {
     test('returns object', () async {
-      const BillingResultWrapper expected =
-          BillingResultWrapper(responseCode: BillingResponse.ok);
-      stubPlatform.addResponse(
-          name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
-          value: buildBillingResultMap(expected));
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok, debugMessage: 'message');
+      when(mockApi.isAlternativeBillingOnlyAvailable()).thenAnswer((_) async =>
+          PlatformBillingResult(
+              responseCode: 0, debugMessage: expected.debugMessage!));
       final BillingResultWrapper result =
           await billingClient.isAlternativeBillingOnlyAvailable();
       expect(result, expected);
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
-      );
-      final BillingResultWrapper result =
-          await billingClient.isAlternativeBillingOnlyAvailable();
-      expect(result.responseCode, BillingResponse.error);
     });
   });
 

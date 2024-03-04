@@ -43,4 +43,8 @@ abstract class InAppPurchaseApi {
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();
+
+  /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
+  @async
+  PlatformBillingResult isAlternativeBillingOnlyAvailable();
 }

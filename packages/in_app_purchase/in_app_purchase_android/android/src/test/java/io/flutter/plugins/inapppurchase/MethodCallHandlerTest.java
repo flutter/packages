@@ -9,7 +9,6 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CONSUME_PURCHASE_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_FEATURE_SUPPORTED;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
@@ -101,7 +100,7 @@ public class MethodCallHandlerTest {
   @Mock BillingClient mockBillingClient;
   @Mock MethodChannel mockMethodChannel;
   @Spy Result result;
-  @Spy Messages.Result<PlatformBillingResult> connectionResult;
+  @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
@@ -157,7 +156,7 @@ public class MethodCallHandlerTest {
   public void startConnection() {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
-    verify(connectionResult, never()).success(any());
+    verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
             context, mockMethodChannel, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
@@ -171,7 +170,7 @@ public class MethodCallHandlerTest {
 
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
         ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(connectionResult, times(1)).success(resultCaptor.capture());
+    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertEquals(
         resultCaptor.getValue().getResponseCode().longValue(), billingResult.getResponseCode());
     assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult.getDebugMessage());
@@ -181,7 +180,7 @@ public class MethodCallHandlerTest {
   public void startConnectionAlternativeBillingOnly() {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
-    verify(connectionResult, never()).success(any());
+    verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
             context, mockMethodChannel, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
@@ -195,7 +194,7 @@ public class MethodCallHandlerTest {
 
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
         ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(connectionResult, times(1)).success(resultCaptor.capture());
+    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertEquals(
         resultCaptor.getValue().getResponseCode().longValue(), billingResult.getResponseCode());
     assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult.getDebugMessage());
@@ -208,8 +207,8 @@ public class MethodCallHandlerTest {
     doNothing().when(mockBillingClient).startConnection(captor.capture());
 
     methodChannelHandler.startConnection(
-        1L, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, connectionResult);
-    verify(connectionResult, never()).success(any());
+        1L, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, platformBillingResult);
+    verify(platformBillingResult, never()).success(any());
     BillingResult billingResult1 =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -232,11 +231,11 @@ public class MethodCallHandlerTest {
 
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
         ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(connectionResult, times(1)).success(resultCaptor.capture());
+    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertEquals(
         resultCaptor.getValue().getResponseCode().longValue(), billingResult1.getResponseCode());
     assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult1.getDebugMessage());
-    verify(connectionResult, times(1)).success(any());
+    verify(platformBillingResult, times(1)).success(any());
   }
 
   @Test
@@ -320,7 +319,6 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     ArgumentCaptor<AlternativeBillingOnlyAvailabilityListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyAvailabilityListener.class);
-    MethodCall billingCall = new MethodCall(IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE, null);
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingClient.BillingResponseCode.OK)
@@ -332,20 +330,24 @@ public class MethodCallHandlerTest {
         .when(mockBillingClient)
         .isAlternativeBillingOnlyAvailableAsync(listenerCaptor.capture());
 
-    methodChannelHandler.onMethodCall(billingCall, result);
+    methodChannelHandler.isAlternativeBillingOnlyAvailable(platformBillingResult);
     listenerCaptor.getValue().onAlternativeBillingOnlyAvailabilityResponse(billingResult);
 
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    ArgumentCaptor<PlatformBillingResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingResult.class);
+    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
+    assertEquals(
+        resultCaptor.getValue().getResponseCode().longValue(), billingResult.getResponseCode());
+    assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult.getDebugMessage());
   }
 
   @Test
   public void isAlternativeBillingOnlyAvailable_serviceDisconnected() {
-    MethodCall billingCall = new MethodCall(IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE, null);
-    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
-
-    methodChannelHandler.onMethodCall(billingCall, result);
-
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> methodChannelHandler.isAlternativeBillingOnlyAvailable(platformBillingResult));
+    assertEquals("UNAVAILABLE", exception.code);
   }
 
   @Test
@@ -1052,7 +1054,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
 
-    methodChannelHandler.startConnection(1L, billingChoiceMode, connectionResult);
+    methodChannelHandler.startConnection(1L, billingChoiceMode, platformBillingResult);
     return captor;
   }
 
