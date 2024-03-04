@@ -708,18 +708,31 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   /// Extracts all spans from an inline element and merges them into a single list
-  List<InlineSpan> _getInlineSpans(InlineSpan span) {
-    final List<InlineSpan> spans = <InlineSpan>[];
-
-    if (span is TextSpan && span.children != null) {
-      if (span.children != null) {
-        spans.addAll(span.children!);
-      } else {
-        spans.add(span);
-      }
-    } else {
-      spans.add(span);
+  Iterable<InlineSpan> _getInlineSpans(InlineSpan span) {
+    // If the span is not a TextSpan, return it as a single span
+    if (span is! TextSpan) {
+      return <InlineSpan>[span];
     }
+
+    // If the span has no children, return it as a single span
+    if (span.children == null) {
+      return <InlineSpan>[span];
+    }
+
+    // Merge the style of the parent with the style of the children
+    final Iterable<InlineSpan> spans =
+        span.children!.map((InlineSpan childSpan) {
+      if (childSpan is TextSpan) {
+        return TextSpan(
+          text: childSpan.text,
+          recognizer: childSpan.recognizer,
+          semanticsLabel: childSpan.semanticsLabel,
+          style: childSpan.style?.merge(span.style),
+        );
+      } else {
+        return childSpan;
+      }
+    });
 
     return spans;
   }
