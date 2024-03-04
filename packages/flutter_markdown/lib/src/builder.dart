@@ -709,13 +709,8 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Extracts all spans from an inline element and merges them into a single list
   Iterable<InlineSpan> _getInlineSpans(InlineSpan span) {
-    // If the span is not a TextSpan, return it as a single span
-    if (span is! TextSpan) {
-      return <InlineSpan>[span];
-    }
-
-    // If the span has no children, return it as a single span
-    if (span.children == null) {
+    // If the span is not a TextSpan or it has no children, return the span
+    if (span is! TextSpan || span.children == null) {
       return <InlineSpan>[span];
     }
 
