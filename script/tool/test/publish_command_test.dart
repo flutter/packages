@@ -350,7 +350,7 @@ void main() {
       );
     });
 
-    test('skips publish with --tag-for-autopublish', () async {
+    test('skips publish with --tag-for-auto-publish', () async {
       const String packageName = 'a_package';
       createFakePackage(packageName, packagesDir);
 
@@ -358,7 +358,7 @@ void main() {
           await runCapturingPrint(commandRunner, <String>[
         'publish',
         '--packages=$packageName',
-        '--tag-for-autopublish',
+        '--tag-for-auto-publish',
       ]);
 
       // There should be no variant of any command containing "publish".
@@ -418,12 +418,12 @@ void main() {
               const ProcessCall('git-tag', <String>['foo-v0.0.1'], null))));
     });
 
-    test('when passed --tag-for-autopublish', () async {
+    test('when passed --tag-for-auto-publish', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
       await runCapturingPrint(commandRunner, <String>[
         'publish',
         '--packages=foo',
-        '--tag-for-autopublish',
+        '--tag-for-auto-publish',
       ]);
 
       expect(processRunner.recordedCalls,
@@ -478,13 +478,13 @@ void main() {
           ]));
     });
 
-    test('when passed --tag-for-autopublish', () async {
+    test('when passed --tag-for-auto-publish', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
       await runCapturingPrint(commandRunner, <String>[
         'publish',
         '--packages=foo',
         '--skip-confirmation',
-        '--tag-for-autopublish',
+        '--tag-for-auto-publish',
       ]);
 
       expect(

@@ -60,7 +60,7 @@ class PublishCommand extends PackageLoopingCommand {
         _stdin = stdinput ?? io.stdin {
     argParser.addFlag(_alreadyTaggedFlag,
         help:
-            'Instead of tagging, validates that the current checkout is aleardy tagged with the expected version.\n'
+            'Instead of tagging, validates that the current checkout is already tagged with the expected version.\n'
             'This is primarily intended for use in CI publish steps triggered by tagging.',
         negatable: false);
     argParser.addMultiOption(_pubFlagsOption,
@@ -88,7 +88,7 @@ class PublishCommand extends PackageLoopingCommand {
     argParser.addFlag(_skipConfirmationFlag,
         help: 'Run the command without asking for Y/N inputs.\n'
             'This command will add a `--force` flag to the `pub publish` command if it is not added with $_pubFlagsOption\n');
-    argParser.addFlag(_tagForAutopublishFlag,
+    argParser.addFlag(_tagForAutoPublishFlag,
         help:
             'Runs the dry-run publish, and tags if it succeeds, but does not actually publish.\n'
             'This is intended for use with a separate publish step that is based on tag push events.',
@@ -101,7 +101,7 @@ class PublishCommand extends PackageLoopingCommand {
   static const String _allChangedFlag = 'all-changed';
   static const String _dryRunFlag = 'dry-run';
   static const String _skipConfirmationFlag = 'skip-confirmation';
-  static const String _tagForAutopublishFlag = 'tag-for-autopublish';
+  static const String _tagForAutoPublishFlag = 'tag-for-auto-publish';
 
   static const String _pubCredentialName = 'PUB_CREDENTIALS';
 
@@ -205,7 +205,7 @@ class PublishCommand extends PackageLoopingCommand {
       return PackageResult.fail(<String>['uncommitted changes']);
     }
 
-    final bool tagOnly = getBoolArg(_tagForAutopublishFlag);
+    final bool tagOnly = getBoolArg(_tagForAutoPublishFlag);
     if (!tagOnly) {
       if (!await _publish(package)) {
         return PackageResult.fail(<String>['publish failed']);
