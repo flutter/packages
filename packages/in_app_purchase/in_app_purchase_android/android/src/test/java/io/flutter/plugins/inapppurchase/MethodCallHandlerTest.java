@@ -15,7 +15,6 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PRODUCT_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
 import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
@@ -83,6 +82,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.junit.After;
@@ -157,6 +157,7 @@ public class MethodCallHandlerTest {
     Messages.FlutterError exception =
         assertThrows(Messages.FlutterError.class, () -> methodChannelHandler.isReady());
     assertEquals("UNAVAILABLE", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -354,6 +355,7 @@ public class MethodCallHandlerTest {
             Messages.FlutterError.class,
             () -> methodChannelHandler.isAlternativeBillingOnlyAvailable(platformBillingResult));
     assertEquals("UNAVAILABLE", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -361,8 +363,6 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     ArgumentCaptor<AlternativeBillingOnlyInformationDialogListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyInformationDialogListener.class);
-    MethodCall showDialogCall =
-        new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingResponseCode.OK)
@@ -373,32 +373,43 @@ public class MethodCallHandlerTest {
             eq(activity), listenerCaptor.capture()))
         .thenReturn(billingResult);
 
-    methodChannelHandler.onMethodCall(showDialogCall, result);
+    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(platformBillingResult);
     listenerCaptor.getValue().onAlternativeBillingOnlyInformationDialogResponse(billingResult);
 
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    ArgumentCaptor<PlatformBillingResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingResult.class);
+    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
+    assertEquals(
+        resultCaptor.getValue().getResponseCode().longValue(), billingResult.getResponseCode());
+    assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult.getDebugMessage());
   }
 
   @Test
   public void showAlternativeBillingOnlyInformationDialog_serviceDisconnected() {
-    MethodCall billingCall = new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
-
-    methodChannelHandler.onMethodCall(billingCall, result);
-
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () ->
+                methodChannelHandler.showAlternativeBillingOnlyInformationDialog(
+                    platformBillingResult));
+    assertEquals("UNAVAILABLE", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
 
   @Test
   public void showAlternativeBillingOnlyInformationDialog_NullActivity() {
     mockStartConnection();
-    MethodCall showDialogCall =
-        new MethodCall(SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG, null);
-
     methodChannelHandler.setActivity(null);
-    methodChannelHandler.onMethodCall(showDialogCall, result);
 
-    verify(result)
-        .error(contains(ACTIVITY_UNAVAILABLE), contains("Not attempting to show dialog"), any());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () ->
+                methodChannelHandler.showAlternativeBillingOnlyInformationDialog(
+                    platformBillingResult));
+    assertEquals(ACTIVITY_UNAVAILABLE, exception.code);
+    assertTrue(
+        Objects.requireNonNull(exception.getMessage()).contains("Not attempting to show dialog"));
   }
 
   @Test

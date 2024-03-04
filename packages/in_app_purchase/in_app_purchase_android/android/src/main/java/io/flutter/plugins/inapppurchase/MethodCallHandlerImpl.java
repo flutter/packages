@@ -68,8 +68,6 @@ class MethodCallHandlerImpl
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
     static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
         "BillingClient#createAlternativeBillingOnlyReportingDetails()";
-    static final String SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG =
-        "BillingClient#showAlternativeBillingOnlyInformationDialog()";
 
     private MethodNames() {}
   }
@@ -187,24 +185,21 @@ class MethodCallHandlerImpl
       case MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS:
         createAlternativeBillingOnlyReportingDetails(result);
         break;
-      case MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG:
-        showAlternativeBillingOnlyInformationDialog(result);
-        break;
       default:
         result.notImplemented();
     }
   }
 
-  private void showAlternativeBillingOnlyInformationDialog(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
+  @Override
+  public void showAlternativeBillingOnlyInformationDialog(
+      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+    validateBillingClient();
     if (activity == null) {
-      result.error(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null);
-      return;
+      throw new FlutterError(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null);
     }
     billingClient.showAlternativeBillingOnlyInformationDialog(
-        activity, billingResult -> result.success(fromBillingResult(billingResult)));
+        activity,
+        billingResult -> result.success(pigeonBillingResultFromBillingResult(billingResult)));
   }
 
   private void createAlternativeBillingOnlyReportingDetails(final MethodChannel.Result result) {

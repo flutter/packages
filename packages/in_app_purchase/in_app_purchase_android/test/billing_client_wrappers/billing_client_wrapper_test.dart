@@ -707,25 +707,14 @@ void main() {
 
   group('showAlternativeBillingOnlyInformationDialog', () {
     test('returns object', () async {
-      const BillingResultWrapper expected =
-          BillingResultWrapper(responseCode: BillingResponse.ok);
-      stubPlatform.addResponse(
-          name: BillingClient
-              .showAlternativeBillingOnlyInformationDialogMethodString,
-          value: buildBillingResultMap(expected));
+      const BillingResultWrapper expected = BillingResultWrapper(
+          responseCode: BillingResponse.ok, debugMessage: 'message');
+      when(mockApi.showAlternativeBillingOnlyInformationDialog()).thenAnswer(
+          (_) async => PlatformBillingResult(
+              responseCode: 0, debugMessage: expected.debugMessage!));
       final BillingResultWrapper result =
           await billingClient.showAlternativeBillingOnlyInformationDialog();
       expect(result, expected);
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: BillingClient
-            .showAlternativeBillingOnlyInformationDialogMethodString,
-      );
-      final BillingResultWrapper result =
-          await billingClient.showAlternativeBillingOnlyInformationDialog();
-      expect(result.responseCode, BillingResponse.error);
     });
   });
 }

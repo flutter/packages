@@ -139,11 +139,9 @@ void main() {
       const BillingResultWrapper expected = BillingResultWrapper(
           responseCode: BillingResponse.ok, debugMessage: 'dummy message');
 
-      stubPlatform.addResponse(
-        name: BillingClient
-            .showAlternativeBillingOnlyInformationDialogMethodString,
-        value: buildBillingResultMap(expected),
-      );
+      when(mockApi.showAlternativeBillingOnlyInformationDialog()).thenAnswer(
+          (_) async => PlatformBillingResult(
+              responseCode: 0, debugMessage: expected.debugMessage!));
       final BillingResultWrapper result =
           await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
 

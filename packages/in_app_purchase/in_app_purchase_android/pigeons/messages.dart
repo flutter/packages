@@ -47,4 +47,8 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   @async
   PlatformBillingResult isAlternativeBillingOnlyAvailable();
+
+  /// Wraps BillingClient#showAlternativeBillingOnlyInformationDialog().
+  @async
+  PlatformBillingResult showAlternativeBillingOnlyInformationDialog();
 }

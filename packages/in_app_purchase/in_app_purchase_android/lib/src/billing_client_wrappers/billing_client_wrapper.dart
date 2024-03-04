@@ -348,21 +348,11 @@ class BillingClient {
         await _hostApi.isAlternativeBillingOnlyAvailable());
   }
 
-  /// showAlternativeBillingOnlyInformationDialog method channel string identifier.
-  //
-  // Must match the value of SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String showAlternativeBillingOnlyInformationDialogMethodString =
-      'BillingClient#showAlternativeBillingOnlyInformationDialog()';
-
   /// Shows the alternative billing only information dialog on top of the calling app.
   Future<BillingResultWrapper>
       showAlternativeBillingOnlyInformationDialog() async {
-    return BillingResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                showAlternativeBillingOnlyInformationDialogMethodString)) ??
-            <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.showAlternativeBillingOnlyInformationDialog());
   }
 
   /// createAlternativeBillingOnlyReportingDetails method channel string identifier.

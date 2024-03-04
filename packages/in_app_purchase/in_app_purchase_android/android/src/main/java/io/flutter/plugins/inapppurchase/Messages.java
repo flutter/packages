@@ -228,6 +228,8 @@ public class Messages {
     void endConnection();
     /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
     void isAlternativeBillingOnlyAvailable(@NonNull Result<PlatformBillingResult> result);
+    /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
+    void showAlternativeBillingOnlyInformationDialog(@NonNull Result<PlatformBillingResult> result);
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -343,6 +345,35 @@ public class Messages {
                     };
 
                 api.isAlternativeBillingOnlyAvailable(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                Result<PlatformBillingResult> resultCallback =
+                    new Result<PlatformBillingResult>() {
+                      public void success(PlatformBillingResult result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.showAlternativeBillingOnlyInformationDialog(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
