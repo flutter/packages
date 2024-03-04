@@ -12,7 +12,15 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-/// Pigeon version of BillingChoiceMode.
+/// Pigeon version of Java BillingResult.
+class PlatformBillingResult {
+  PlatformBillingResult(
+      {required this.responseCode, required this.debugMessage});
+  final int responseCode;
+  final String debugMessage;
+}
+
+/// Pigeon version of billing_client_wrapper.dart's BillingChoiceMode.
 enum PlatformBillingChoiceMode {
   /// Billing through google play.
   ///
@@ -28,8 +36,8 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#isReady.
   bool isReady();
 
-  // XXX half converted; should return an object.
+  /// Wraps BillingClient#startConnection(BillingClientStateListener).
   @async
-  Map<String?, Object?> startConnection(
+  PlatformBillingResult startConnection(
       int callbackHandle, PlatformBillingChoiceMode billingMode);
 }

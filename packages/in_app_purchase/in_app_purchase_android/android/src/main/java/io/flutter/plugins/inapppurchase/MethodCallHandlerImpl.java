@@ -12,6 +12,7 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.pigeonBillingResultFromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 
 import android.app.Activity;
@@ -477,7 +478,7 @@ class MethodCallHandlerImpl
   public void startConnection(
       @NonNull Long handle,
       @NonNull Messages.PlatformBillingChoiceMode billingMode,
-      @NonNull Messages.Result<Map<String, Object>> result) {
+      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =
           billingClientFactory.createBillingClient(applicationContext, methodChannel, billingMode);
@@ -496,7 +497,7 @@ class MethodCallHandlerImpl
             alreadyFinished = true;
             // Consider the fact that we've finished a success, leave it to the Dart side to
             // validate the responseCode.
-            result.success(fromBillingResult(billingResult));
+            result.success(pigeonBillingResultFromBillingResult(billingResult));
           }
 
           @Override

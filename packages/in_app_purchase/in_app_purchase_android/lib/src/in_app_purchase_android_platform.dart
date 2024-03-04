@@ -11,7 +11,6 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
-import 'billing_client_wrappers/billing_client_manager.dart';
 
 /// [IAPError.code] code for failed purchases.
 const String kPurchaseErrorCode = 'purchase_error';

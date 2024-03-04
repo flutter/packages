@@ -78,6 +78,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class MethodCallHandlerTest {
   @Mock BillingClient mockBillingClient;
   @Mock MethodChannel mockMethodChannel;
   @Spy Result result;
-  @Spy Messages.Result<Map<String, Object>> connectionResult;
+  @Spy Messages.Result<PlatformBillingResult> connectionResult;
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
@@ -170,7 +171,12 @@ public class MethodCallHandlerTest {
             .build();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    verify(connectionResult, times(1)).success(fromBillingResult(billingResult));
+    ArgumentCaptor<PlatformBillingResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingResult.class);
+    verify(connectionResult, times(1)).success(resultCaptor.capture());
+    assertEquals(
+        resultCaptor.getValue().getResponseCode().longValue(), billingResult.getResponseCode());
+    assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult.getDebugMessage());
   }
 
   @Test
@@ -189,7 +195,12 @@ public class MethodCallHandlerTest {
             .build();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    verify(connectionResult, times(1)).success(fromBillingResult(billingResult));
+    ArgumentCaptor<PlatformBillingResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingResult.class);
+    verify(connectionResult, times(1)).success(resultCaptor.capture());
+    assertEquals(
+        resultCaptor.getValue().getResponseCode().longValue(), billingResult.getResponseCode());
+    assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult.getDebugMessage());
   }
 
   @Test
@@ -221,7 +232,12 @@ public class MethodCallHandlerTest {
     captor.getValue().onBillingSetupFinished(billingResult2);
     captor.getValue().onBillingSetupFinished(billingResult3);
 
-    verify(connectionResult, times(1)).success(fromBillingResult(billingResult1));
+    ArgumentCaptor<PlatformBillingResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingResult.class);
+    verify(connectionResult, times(1)).success(resultCaptor.capture());
+    assertEquals(
+        resultCaptor.getValue().getResponseCode().longValue(), billingResult1.getResponseCode());
+    assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult1.getDebugMessage());
     verify(connectionResult, times(1)).success(any());
   }
 
@@ -387,7 +403,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
     @SuppressWarnings("unchecked")
-    final Messages.Result<Map<String, Object>> mockResult = mock(Messages.Result.class);
+    final Messages.Result<PlatformBillingResult> mockResult = mock(Messages.Result.class);
     methodChannelHandler.startConnection(
         disconnectCallbackHandle, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, mockResult);
     final BillingClientStateListener stateListener = captor.getValue();
@@ -1050,7 +1066,7 @@ public class MethodCallHandlerTest {
 
   private void establishConnectedBillingClient() {
     @SuppressWarnings("unchecked")
-    final Messages.Result<Map<String, Object>> mockResult = mock(Messages.Result.class);
+    final Messages.Result<PlatformBillingResult> mockResult = mock(Messages.Result.class);
     methodChannelHandler.startConnection(
         1L, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, mockResult);
   }

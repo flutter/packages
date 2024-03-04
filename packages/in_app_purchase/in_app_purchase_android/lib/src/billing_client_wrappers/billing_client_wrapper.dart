@@ -120,10 +120,9 @@ class BillingClient {
     final List<Function> disconnectCallbacks =
         _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
     disconnectCallbacks.add(onBillingServiceDisconnected);
-    return BillingResultWrapper.fromJson((await _hostApi.startConnection(
-            disconnectCallbacks.length - 1,
-            platformBillingChoiceMode(billingChoiceMode)))
-        .cast<String, Object?>());
+    return resultWrapperFromPlatform(await _hostApi.startConnection(
+        disconnectCallbacks.length - 1,
+        platformBillingChoiceMode(billingChoiceMode)));
   }
 
   /// Calls

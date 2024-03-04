@@ -6,6 +6,9 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.CLASS;
+
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,8 +16,11 @@ import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import io.flutter.plugin.common.StandardMessageCodec;
+import java.io.ByteArrayOutputStream;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -53,6 +59,10 @@ public class Messages {
     return errorList;
   }
 
+  @Target(METHOD)
+  @Retention(CLASS)
+  @interface CanIgnoreReturnValue {}
+
   /** Pigeon version of BillingChoiceMode. */
   public enum PlatformBillingChoiceMode {
     /**
@@ -68,6 +78,88 @@ public class Messages {
 
     private PlatformBillingChoiceMode(final int index) {
       this.index = index;
+    }
+  }
+
+  /**
+   * Pigeon version of BillingResult.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformBillingResult {
+    private @NonNull Long responseCode;
+
+    public @NonNull Long getResponseCode() {
+      return responseCode;
+    }
+
+    public void setResponseCode(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"responseCode\" is null.");
+      }
+      this.responseCode = setterArg;
+    }
+
+    private @NonNull String debugMessage;
+
+    public @NonNull String getDebugMessage() {
+      return debugMessage;
+    }
+
+    public void setDebugMessage(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"debugMessage\" is null.");
+      }
+      this.debugMessage = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBillingResult() {}
+
+    public static final class Builder {
+
+      private @Nullable Long responseCode;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setResponseCode(@NonNull Long setterArg) {
+        this.responseCode = setterArg;
+        return this;
+      }
+
+      private @Nullable String debugMessage;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setDebugMessage(@NonNull String setterArg) {
+        this.debugMessage = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBillingResult build() {
+        PlatformBillingResult pigeonReturn = new PlatformBillingResult();
+        pigeonReturn.setResponseCode(responseCode);
+        pigeonReturn.setDebugMessage(debugMessage);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(responseCode);
+      toListResult.add(debugMessage);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBillingResult fromList(@NonNull ArrayList<Object> list) {
+      PlatformBillingResult pigeonResult = new PlatformBillingResult();
+      Object responseCode = list.get(0);
+      pigeonResult.setResponseCode(
+          (responseCode == null)
+              ? null
+              : ((responseCode instanceof Integer) ? (Integer) responseCode : (Long) responseCode));
+      Object debugMessage = list.get(1);
+      pigeonResult.setDebugMessage((String) debugMessage);
+      return pigeonResult;
     }
   }
 
@@ -95,20 +187,47 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
+  private static class InAppPurchaseApiCodec extends StandardMessageCodec {
+    public static final InAppPurchaseApiCodec INSTANCE = new InAppPurchaseApiCodec();
+
+    private InAppPurchaseApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof PlatformBillingResult) {
+        stream.write(128);
+        writeValue(stream, ((PlatformBillingResult) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface InAppPurchaseApi {
     /** Wraps BillingClient#isReady. */
     @NonNull
     Boolean isReady();
-
+    /** Wraps BillingClient#startConnection(BillingClientStateListener). */
     void startConnection(
         @NonNull Long callbackHandle,
         @NonNull PlatformBillingChoiceMode billingMode,
-        @NonNull Result<Map<String, Object>> result);
+        @NonNull Result<PlatformBillingResult> result);
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return InAppPurchaseApiCodec.INSTANCE;
     }
     /**
      * Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`.
@@ -151,9 +270,9 @@ public class Messages {
                 Number callbackHandleArg = (Number) args.get(0);
                 PlatformBillingChoiceMode billingModeArg =
                     PlatformBillingChoiceMode.values()[(int) args.get(1)];
-                Result<Map<String, Object>> resultCallback =
-                    new Result<Map<String, Object>>() {
-                      public void success(Map<String, Object> result) {
+                Result<PlatformBillingResult> resultCallback =
+                    new Result<PlatformBillingResult>() {
+                      public void success(PlatformBillingResult result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }

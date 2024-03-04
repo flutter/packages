@@ -233,6 +233,14 @@ import java.util.Map;
     return info;
   }
 
+  static Messages.PlatformBillingResult pigeonBillingResultFromBillingResult(
+      BillingResult billingResult) {
+    Messages.PlatformBillingResult.Builder builder = new Messages.PlatformBillingResult.Builder();
+    builder.setResponseCode((long) billingResult.getResponseCode());
+    builder.setDebugMessage(billingResult.getDebugMessage());
+    return builder.build();
+  }
+
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
   static HashMap<String, Object> fromBillingConfig(
       BillingResult result, BillingConfig billingConfig) {

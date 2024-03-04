@@ -29,6 +29,56 @@ enum PlatformBillingChoiceMode {
   alternativeBillingOnly,
 }
 
+/// Pigeon version of BillingResult.
+class PlatformBillingResult {
+  PlatformBillingResult({
+    required this.responseCode,
+    required this.debugMessage,
+  });
+
+  int responseCode;
+
+  String debugMessage;
+
+  Object encode() {
+    return <Object?>[
+      responseCode,
+      debugMessage,
+    ];
+  }
+
+  static PlatformBillingResult decode(Object result) {
+    result as List<Object?>;
+    return PlatformBillingResult(
+      responseCode: result[0]! as int,
+      debugMessage: result[1]! as String,
+    );
+  }
+}
+
+class _InAppPurchaseApiCodec extends StandardMessageCodec {
+  const _InAppPurchaseApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is PlatformBillingResult) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return PlatformBillingResult.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 class InAppPurchaseApi {
   /// Constructor for [InAppPurchaseApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -38,7 +88,7 @@ class InAppPurchaseApi {
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+      _InAppPurchaseApiCodec();
 
   /// Wraps BillingClient#isReady.
   Future<bool> isReady() async {
@@ -70,7 +120,8 @@ class InAppPurchaseApi {
     }
   }
 
-  Future<Map<String?, Object?>> startConnection(
+  /// Wraps BillingClient#startConnection(BillingClientStateListener).
+  Future<PlatformBillingResult> startConnection(
       int callbackHandle, PlatformBillingChoiceMode billingMode) async {
     const String __pigeon_channelName =
         'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection';
@@ -96,8 +147,7 @@ class InAppPurchaseApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
+      return (__pigeon_replyList[0] as PlatformBillingResult?)!;
     }
   }
 }
