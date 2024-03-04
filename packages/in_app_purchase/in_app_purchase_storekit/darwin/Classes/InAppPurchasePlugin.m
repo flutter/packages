@@ -46,6 +46,16 @@
   _receiptManager = receiptManager;
   _requestHandlers = [NSMutableSet new];
   _productsCache = [NSMutableDictionary new];
+  _handlerFactory = ^FIAPRequestHandler *(SKRequest *request) {
+    return [[FIAPRequestHandler alloc] initWithRequest:request];
+  };
+  return self;
+}
+
+- (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager
+                        handlerFactory:(FIAPRequestHandler * (^)(SKRequest *))handlerFactory {
+  self = [self initWithReceiptManager:receiptManager];
+  _handlerFactory = handlerFactory;
   return self;
 }
 
@@ -111,7 +121,7 @@
                                                         FlutterError *_Nullable))completion {
   SKProductsRequest *request =
       [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
-  FIAPRequestHandler *handler = [self getHandler:request];
+  FIAPRequestHandler *handler = self.handlerFactory(request);
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
 
@@ -388,11 +398,8 @@
   return [self.productsCache objectForKey:productID];
 }
 
-- (FIAPRequestHandler *)getHandler:(SKRequest *)request {
-  return [[FIAPRequestHandler alloc] initWithRequest:request];
-}
-
 - (SKReceiptRefreshRequest *)getRefreshReceiptRequest:(NSDictionary *)properties {
   return [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:properties];
 }
+
 @end

@@ -15,14 +15,18 @@
 // Callback channel to dart used for when a function from the transaction observer is triggered.
 @property(strong, nonatomic) FlutterMethodChannel *transactionObserverCallbackChannel;
 
+// Callback channel to dart used for when a function from the transaction observer is triggered.
+@property(strong, nonatomic) FIAPRequestHandler * (^handlerFactory)(SKRequest *);
+
+// Convenience nitializer with dependancy injection
+- (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager
+                        handlerFactory:(FIAPRequestHandler * (^)(SKRequest *))handlerFactory;
+
 // Transaction observer methods
 - (void)handleTransactionsUpdated:(NSArray<SKPaymentTransaction *> *)transactions;
 - (void)handleTransactionsRemoved:(NSArray<SKPaymentTransaction *> *)transactions;
 - (void)handleTransactionRestoreFailed:(NSError *)error;
 - (void)restoreCompletedTransactionsFinished;
 - (BOOL)shouldAddStorePayment:(SKPayment *)payment product:(SKProduct *)product;
-
-// Dependency Injection
-- (FIAPRequestHandler *)getHandler:(SKRequest *)request;
 
 @end

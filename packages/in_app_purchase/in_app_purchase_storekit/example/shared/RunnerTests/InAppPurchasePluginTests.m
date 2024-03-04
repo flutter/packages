@@ -181,21 +181,22 @@
 - (void)testGetProductResponseWithRequestError {
   NSArray *argument = @[ @"123" ];
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
-  id mockPlugin = OCMPartialMock(plugin);
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
+      initWithReceiptManager:nil
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return mockHandler;
+              }];
 
-  OCMStub([mockPlugin getHandler:[OCMArg any]]).andReturn(mockHandler);
-
-  FlutterError *error = [NSError errorWithDomain:@"errorDomain"
-                                            code:0
-                                        userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+  NSError *error = [NSError errorWithDomain:@"errorDomain"
+                                       code:0
+                                   userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
   OCMStub([mockHandler
       startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null], error,
                                                                             nil])]);
 
-  [mockPlugin
+  [plugin
       startProductRequestProductIdentifiers:argument
                                  completion:^(SKProductsResponseMessage *_Nullable response,
                                               FlutterError *_Nullable startProductRequestError) {
@@ -210,21 +211,23 @@
 - (void)testGetProductResponseWithNoResponse {
   NSArray *argument = @[ @"123" ];
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
-  id mockPlugin = OCMPartialMock(plugin);
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
 
-  OCMStub([mockPlugin getHandler:[OCMArg any]]).andReturn(mockHandler);
+  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
+      initWithReceiptManager:nil
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return mockHandler;
+              }];
 
-  FlutterError *error = [NSError errorWithDomain:@"errorDomain"
-                                            code:0
-                                        userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+  NSError *error = [NSError errorWithDomain:@"errorDomain"
+                                       code:0
+                                   userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
   OCMStub([mockHandler
       startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
                                                                             [NSNull null], nil])]);
 
-  [mockPlugin
+  [plugin
       startProductRequestProductIdentifiers:argument
                                  completion:^(SKProductsResponseMessage *_Nullable response,
                                               FlutterError *_Nullable startProductRequestError) {
@@ -494,26 +497,27 @@
     @"isVolumePurchase" : @NO,
   };
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
-  id mockPlugin = OCMPartialMock(plugin);
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
+      initWithReceiptManager:nil
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return mockHandler;
+              }];
 
-  FlutterError *recieptError =
-      [NSError errorWithDomain:@"errorDomain"
-                          code:0
-                      userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+  NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
+                                              code:0
+                                          userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
   OCMStub([mockHandler
       startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
                                                                             recieptError, nil])]);
 
-  [mockPlugin
-      refreshReceiptReceiptProperties:properties
-                           completion:^(FlutterError *_Nullable error) {
-                             XCTAssertNotNil(error);
-                             XCTAssertEqualObjects(
-                                 error.code, @"storekit_refreshreceiptrequest_platform_error");
-                           }];
+  [plugin refreshReceiptReceiptProperties:properties
+                               completion:^(FlutterError *_Nullable error) {
+                                 XCTAssertNotNil(error);
+                                 XCTAssertEqualObjects(
+                                     error.code, @"storekit_refreshreceiptrequest_platform_error");
+                               }];
 }
 
 /// presentCodeRedemptionSheetWithError:error is only available on iOS
@@ -692,7 +696,7 @@
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
 
-  FlutterError *error;
+  NSError *error;
   [plugin handleTransactionRestoreFailed:error];
   OCMVerify(times(1), [mockChannel invokeMethod:@"restoreCompletedTransactionsFailed"
                                       arguments:[FIAObjectTranslator getMapFromNSError:error]]);
