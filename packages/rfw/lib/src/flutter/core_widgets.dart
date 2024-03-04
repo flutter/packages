@@ -499,6 +499,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       opacity: source.v<double>(['opacity']) ?? 0.0,
       onEnd: source.voidHandler(['onEnd']),
       alwaysIncludeSemantics: source.v<bool>(['alwaysIncludeSemantics']) ?? true,
+      child: source.optionalChild(['child']),
     );
   },
 
