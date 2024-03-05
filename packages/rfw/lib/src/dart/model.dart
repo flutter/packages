@@ -446,7 +446,7 @@ class WidgetBuilderDeclaration extends BlobNode {
 
   /// The callback single argument name.
   ///
-  /// In `Builder(builder: (scope) => Container());` [argumentName] is "scope".
+  /// In `Builder(builder: (scope) => Container());`, [argumentName] is "scope".
   final String argumentName;
 
   /// The widget that will be returned when the builder callback is called.
@@ -559,7 +559,7 @@ class DataReference extends Reference {
 /// Reference to the single argument of type [DynamicMap] passed into the widget builder.
 ///
 /// This class is used to represent references to a function argument.
-/// In `(scope) => Container(width: scope.width)` this represents "scope.width".
+/// In `(scope) => Container(width: scope.width)`, this represents "scope.width".
 ///
 /// See also:
 ///
@@ -572,7 +572,7 @@ class WidgetBuilderArgReference extends Reference {
 
   /// A reference to a [WidgetBuilderDeclaration.argumentName].
   ///
-  /// In `Builder(builder: (scope) => Text(text: scope.result.text));`
+  /// In `Builder(builder: (scope) => Text(text: scope.result.text));`,
   /// "scope.result.text" is the [WidgetBuilderArgReference].
   /// The [argumentName] is "scope" and its [parts] are `["result", "text"]`.
   final String argumentName;
