@@ -36,15 +36,15 @@ enum AuthResult {
   errorPasscodeNotSet,
 }
 
-/// Pigeon equivalent of the subset of BiometricType used by iOS.
+/// Pigeon equivalent of the subset of BiometricType used by iOS & MacOS.
 enum AuthBiometric {
   face,
   fingerprint,
 }
 
-/// Pigeon version of IOSAuthMessages, plus the authorization reason.
+/// Pigeon version of DarwinAuthMessages, plus the authorization reason.
 ///
-/// See auth_messages_ios.dart for details.
+/// See auth_messages_darwin.dart for details.
 class AuthStrings {
   AuthStrings({
     required this.reason,

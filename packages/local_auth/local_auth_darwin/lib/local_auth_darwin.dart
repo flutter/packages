@@ -7,14 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
 import 'src/messages.g.dart';
-import 'types/auth_messages_ios.dart';
+import 'types/auth_messages_darwin.dart';
 
-export 'package:local_auth_darwin/types/auth_messages_ios.dart';
+export 'package:local_auth_darwin/types/auth_messages_darwin.dart';
 export 'package:local_auth_platform_interface/types/auth_messages.dart';
 export 'package:local_auth_platform_interface/types/auth_options.dart';
 export 'package:local_auth_platform_interface/types/biometric_type.dart';
 
-/// The implementation of [LocalAuthPlatform] for iOS.
+/// The implementation of [LocalAuthPlatform] for iOS & MacOS.
 class LocalAuthDarwin extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
   LocalAuthDarwin({
@@ -93,28 +93,28 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   @override
   Future<bool> isDeviceSupported() async => _api.isDeviceSupported();
 
-  /// Always returns false as this method is not supported on iOS.
+  /// Always returns false as this method is not supported on iOS & MacOS.
   @override
   Future<bool> stopAuthentication() async => false;
 
   AuthStrings _pigeonStringsFromAuthMessages(
       String localizedReason, Iterable<AuthMessages> messagesList) {
-    IOSAuthMessages? messages;
+    DarwinAuthMessages? messages;
     for (final AuthMessages entry in messagesList) {
-      if (entry is IOSAuthMessages) {
+      if (entry is DarwinAuthMessages) {
         messages = entry;
         break;
       }
     }
     return AuthStrings(
       reason: localizedReason,
-      lockOut: messages?.lockOut ?? iOSLockOut,
+      lockOut: messages?.lockOut ?? darwinLockOut,
       goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
       goToSettingsDescription:
-          messages?.goToSettingsDescription ?? iOSGoToSettingsDescription,
+          messages?.goToSettingsDescription ?? darwinGoToSettingsDescription,
       // TODO(stuartmorgan): The default's name is confusing here for legacy
       // reasons; this should be fixed as part of some future breaking change.
-      cancelButton: messages?.cancelButton ?? iOSOkButton,
+      cancelButton: messages?.cancelButton ?? darwinOkButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
   }

@@ -99,10 +99,10 @@ void main() {
         expect(strings.reason, reason);
         // These should all be the default values from
         // auth_messages_ios.dart
-        expect(strings.lockOut, iOSLockOut);
+        expect(strings.lockOut, darwinLockOut);
         expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
-        expect(strings.cancelButton, iOSOkButton);
+        expect(strings.goToSettingsDescription, darwinGoToSettingsDescription);
+        expect(strings.cancelButton, darwinOkButton);
         expect(strings.localizedFallbackTitle, null);
       });
 
@@ -122,10 +122,10 @@ void main() {
         expect(strings.reason, reason);
         // These should all be the default values from
         // auth_messages_ios.dart
-        expect(strings.lockOut, iOSLockOut);
+        expect(strings.lockOut, darwinLockOut);
         expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
-        expect(strings.cancelButton, iOSOkButton);
+        expect(strings.goToSettingsDescription, darwinGoToSettingsDescription);
+        expect(strings.cancelButton, darwinOkButton);
         expect(strings.localizedFallbackTitle, null);
       });
 
@@ -144,7 +144,7 @@ void main() {
         const String localizedFallbackTitle = 'F';
         await plugin
             .authenticate(localizedReason: reason, authMessages: <AuthMessages>[
-          const IOSAuthMessages(
+          const DarwinAuthMessages(
             lockOut: lockOut,
             goToSettingsButton: goToSettingsButton,
             goToSettingsDescription: gotToSettingsDescription,
@@ -178,7 +178,7 @@ void main() {
         const String cancel = 'D';
         await plugin
             .authenticate(localizedReason: reason, authMessages: <AuthMessages>[
-          const IOSAuthMessages(
+          const DarwinAuthMessages(
             lockOut: lockOut,
             localizedFallbackTitle: localizedFallbackTitle,
             cancelButton: cancel,
@@ -196,7 +196,7 @@ void main() {
         // These were not set, so should all be the default values from
         // auth_messages_ios.dart
         expect(strings.goToSettingsButton, goToSettings);
-        expect(strings.goToSettingsDescription, iOSGoToSettingsDescription);
+        expect(strings.goToSettingsDescription, darwinGoToSettingsDescription);
       });
     });
 

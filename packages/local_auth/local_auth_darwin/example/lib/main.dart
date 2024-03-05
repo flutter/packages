@@ -84,7 +84,7 @@ class _MyAppState extends State<MyApp> {
       });
       authenticated = await LocalAuthPlatform.instance.authenticate(
         localizedReason: 'Let OS determine authentication method',
-        authMessages: <AuthMessages>[const IOSAuthMessages()],
+        authMessages: <AuthMessages>[const DarwinAuthMessages()],
         options: const AuthenticationOptions(
           stickyAuth: true,
         ),
@@ -118,7 +118,7 @@ class _MyAppState extends State<MyApp> {
       authenticated = await LocalAuthPlatform.instance.authenticate(
         localizedReason:
             'Scan your fingerprint (or face or whatever) to authenticate',
-        authMessages: <AuthMessages>[const IOSAuthMessages()],
+        authMessages: <AuthMessages>[const DarwinAuthMessages()],
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: true,
