@@ -22,7 +22,7 @@ void main() {
 
     setUp(() {
       // Never set "src" on the video, so this test doesn't hit the network!
-      video = (web.document.createElement('video') as web.HTMLVideoElement)
+      video = web.HTMLVideoElement()
         ..controls = true
         ..playsInline = false;
     });
@@ -257,7 +257,7 @@ void main() {
       late VideoPlayer player;
 
       setUp(() {
-        video = web.document.createElement('video') as web.HTMLVideoElement;
+        video = web.HTMLVideoElement();
         player = VideoPlayer(videoElement: video)..initialize();
       });
 

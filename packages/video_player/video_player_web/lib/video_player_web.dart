@@ -71,8 +71,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
             'web implementation of video_player cannot play content uri'));
     }
 
-    final web.HTMLVideoElement videoElement =
-        (web.document.createElement('video') as web.HTMLVideoElement)
+    final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
           ..id = 'videoElement-$textureId'
           ..style.border = 'none'
           ..style.height = '100%'
