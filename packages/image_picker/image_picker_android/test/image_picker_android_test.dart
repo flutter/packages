@@ -765,7 +765,7 @@ void main() {
     test('does not accept an invalid limit argument', () {
       expect(
         () => picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             limit: -1,
           ),
@@ -775,7 +775,7 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             limit: 0,
           ),
