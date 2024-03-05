@@ -18,7 +18,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -152,11 +153,11 @@ class _ImagePickerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return MaxSize.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return MediaSelectionOptions.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return SourceSpecification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -172,17 +173,22 @@ class ImagePickerApi {
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _ImagePickerApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      _ImagePickerApiCodec();
 
-  Future<String?> pickImage(SourceSpecification source, MaxSize maxSize, int? imageQuality, bool requestFullMetadata) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<String?> pickImage(SourceSpecification source, MaxSize maxSize,
+      int? imageQuality, bool requestFullMetadata) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[source, maxSize, imageQuality, requestFullMetadata]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+            .send(<Object?>[source, maxSize, imageQuality, requestFullMetadata])
+        as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -196,15 +202,19 @@ class ImagePickerApi {
     }
   }
 
-  Future<List<String?>> pickMultiImage(MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<List<String?>> pickMultiImage(MaxSize maxSize, int? imageQuality,
+      bool requestFullMetadata, int? limit) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[maxSize, imageQuality, requestFullMetadata, limit]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+            .send(<Object?>[maxSize, imageQuality, requestFullMetadata, limit])
+        as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -223,15 +233,18 @@ class ImagePickerApi {
     }
   }
 
-  Future<String?> pickVideo(SourceSpecification source, int? maxDurationSeconds) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<String?> pickVideo(
+      SourceSpecification source, int? maxDurationSeconds) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[source, maxDurationSeconds]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[source, maxDurationSeconds]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -246,15 +259,18 @@ class ImagePickerApi {
   }
 
   /// Selects images and videos and returns their paths.
-  Future<List<String?>> pickMedia(MediaSelectionOptions mediaSelectionOptions) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<List<String?>> pickMedia(
+      MediaSelectionOptions mediaSelectionOptions) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[mediaSelectionOptions]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[mediaSelectionOptions]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
