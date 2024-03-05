@@ -49,6 +49,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 @interface FLALocalAuthPlugin ()
 @property(nonatomic, strong, nullable) FLAStickyAuthState *lastCallState;
 @property(nonatomic, strong) NSObject<FLADAuthContextFactory> *authContextFactory;
+@property(nonatomic, strong) NSObject<FlutterPluginRegistrar> *registrar;
 @end
 
 @implementation FLALocalAuthPlugin
@@ -56,6 +57,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FLALocalAuthPlugin *instance = [[FLALocalAuthPlugin alloc] init];
   [registrar addApplicationDelegate:instance];
+  instance.registrar = registrar;
   SetUpFLADLocalAuthApi([registrar messenger], instance);
 }
 
@@ -130,30 +132,31 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
                            error:&authError]) {
     if (authError == nil) {
-      #if TARGET_OS_OSX
-        // @available(macOS 10.15, *) is not a BOOL expression. 
-        // It does not return an indication of whether the code is being run on that version of iOS or not.
-        // So there needs to be a separate check for macOS 10.15 and on the biometry type
-        // https://stackoverflow.com/questions/52251973/ios-available-does-not-guard-availability-here-use-if-available-instead
-        if (@available(macOS 10.15, *)) {
-          if (context.biometryType == LABiometryTypeFaceID) {
-            [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFace]];
-            return biometrics;
-          }
-        }
-        if (context.biometryType == LABiometryTypeTouchID) {
-          [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFingerprint]];          
-        } 
-      #endif
-
-      #if TARGET_OS_IOS
+#if TARGET_OS_OSX
+      // @available(macOS 10.15, *) is not a BOOL expression.
+      // It does not return an indication of whether the code is being run on that version of iOS or
+      // not. So there needs to be a separate check for macOS 10.15 and on the biometry type
+      // https://stackoverflow.com/questions/52251973/ios-available-does-not-guard-availability-here-use-if-available-instead
+      if (@available(macOS 10.15, *)) {
         if (context.biometryType == LABiometryTypeFaceID) {
           [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFace]];
-        } else if (context.biometryType == LABiometryTypeTouchID) {
-          [biometrics
-              addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFingerprint]];
+          return biometrics;
         }
-      #endif
+      }
+      if (context.biometryType == LABiometryTypeTouchID) {
+        [biometrics
+            addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFingerprint]];
+      }
+#endif
+
+#if TARGET_OS_IOS
+      if (context.biometryType == LABiometryTypeFaceID) {
+        [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFace]];
+      } else if (context.biometryType == LABiometryTypeTouchID) {
+        [biometrics
+            addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFingerprint]];
+      }
+#endif
     }
   }
   return biometrics;
@@ -178,11 +181,12 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   if (openSettingsButtonTitle != nil) {
     [alert addButtonWithTitle:openSettingsButtonTitle];
   }
-  [alert beginSheetModalForWindow:NSApp.keyWindow
+  NSWindow *keyWindow = self.registrar.view.window;
+  [alert beginSheetModalForWindow:keyWindow
                 completionHandler:^(NSModalResponse returnCode) {
                   if (returnCode == NSAlertSecondButtonReturn) {
                     NSURL *url = [NSURL URLWithString:@"x-apple.systempreferences:com.apple."
-                                                      @"preference.security?Privacy_Biometry"];
+                                                      @"preferences.password"];
                     [[NSWorkspace sharedWorkspace] openURL:url];
                   }
                   [self handleSucceeded:NO withCompletion:completion];
