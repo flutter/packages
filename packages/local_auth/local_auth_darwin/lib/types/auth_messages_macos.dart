@@ -6,12 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:local_auth_platform_interface/types/auth_messages.dart';
 
-/// Class wrapping all authentication messages needed on iOS & macOS.
+/// Class wrapping all authentication messages needed on macOS.
 /// Provides default values for all messages.
 @immutable
-class DarwinAuthMessages extends AuthMessages {
+class MacOSAuthMessages extends AuthMessages {
   /// Constructs a new instance.
-  const DarwinAuthMessages({
+  const MacOSAuthMessages({
     this.lockOut,
     this.goToSettingsButton,
     this.goToSettingsDescription,
@@ -43,11 +43,11 @@ class DarwinAuthMessages extends AuthMessages {
   @override
   Map<String, String> get args {
     return <String, String>{
-      'lockOut': lockOut ?? darwinLockOut,
-      'goToSetting': goToSettingsButton ?? goToSettings,
-      'goToSettingDescriptionIOS':
-          goToSettingsDescription ?? darwinGoToSettingsDescription,
-      'okButton': cancelButton ?? darwinOkButton,
+      'lockOut': lockOut ?? macOSLockOut,
+      'goToSetting': goToSettingsButton ?? macOSGoToSettings,
+      'goToSettingDescriptionMacOS':
+          goToSettingsDescription ?? macOSGoToSettingsDescription,
+      'okButton': cancelButton ?? macOSOkButton,
       if (localizedFallbackTitle != null)
         'localizedFallbackTitle': localizedFallbackTitle!,
     };
@@ -56,7 +56,7 @@ class DarwinAuthMessages extends AuthMessages {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DarwinAuthMessages &&
+      other is MacOSAuthMessages &&
           runtimeType == other.runtimeType &&
           lockOut == other.lockOut &&
           goToSettingsButton == other.goToSettingsButton &&
@@ -75,33 +75,33 @@ class DarwinAuthMessages extends AuthMessages {
       );
 }
 
-// Default Strings for DarwinAuthMessages plugin. Currently supports English.
+// Default Strings for MacOSAuthMessages plugin. Currently supports English.
 // Intl.message must be string literals.
 
 /// Message shown on a button that the user can click to go to settings pages
 /// from the current dialog.
-String get goToSettings => Intl.message('Go to settings',
+String get macOSGoToSettings => Intl.message('Go to settings',
     desc: 'Message shown on a button that the user can click to go to '
         'settings pages from the current dialog. Maximum 30 characters.');
 
 /// Message advising the user to re-enable biometrics on their device.
-/// It shows in a dialog on iOS and macOS.
-String get darwinLockOut => Intl.message(
+/// It shows in a dialog on macOS.
+String get macOSLockOut => Intl.message(
     'Biometric authentication is disabled. Please lock and unlock your screen to '
     'enable it.',
     desc: 'Message advising the user to re-enable biometrics on their device.');
 
 /// Message advising the user to go to the settings and configure Biometrics
 /// for their device.
-String get darwinGoToSettingsDescription => Intl.message(
-    'Biometric authentication is not set up on your device. Please either enable '
-    'Touch ID or Face ID on your phone.',
+String get macOSGoToSettingsDescription => Intl.message(
+    'Biometric authentication is not set up on your device. Please enable '
+    'Touch ID on your computer.',
     desc:
         'Message advising the user to go to the settings and configure Biometrics '
         'for their device.');
 
 /// Message shown on a button that the user can click to leave the current
 /// dialog.
-String get darwinOkButton => Intl.message('OK',
+String get macOSOkButton => Intl.message('OK',
     desc: 'Message showed on a button that the user can click to leave the '
         'current dialog. Maximum 30 characters.');
