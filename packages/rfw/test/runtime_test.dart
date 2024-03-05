@@ -1093,7 +1093,7 @@ void main() {
     late DynamicContent data;
     late List<RfwEvent> dispatchedEvents;
 
-    Widget rwfWidget(String library, {Map<String, Object?>? initialData}) {
+    Widget rfwWidget(String library, {Map<String, Object?>? initialData}) {
       const LibraryName coreLibraryName = LibraryName(<String>['core']);
       const LibraryName localLibraryName = LibraryName(<String>['local']);
       const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
@@ -1148,7 +1148,7 @@ void main() {
     }
 
     testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
@@ -1164,7 +1164,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work when scope is used', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
@@ -1183,7 +1183,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work with state', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
@@ -1213,7 +1213,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work with data', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
@@ -1262,7 +1262,7 @@ void main() {
     });
 
     testWidgets('Widget builders - work with events', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
@@ -1287,7 +1287,7 @@ void main() {
     });
 
     testWidgets('Widget builders - works nested', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
@@ -1321,7 +1321,7 @@ void main() {
     });
 
     testWidgets('Widget builders - switch works with builder', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
@@ -1342,7 +1342,7 @@ void main() {
     });
 
     testWidgets('Widget builders - builder works with switch', (WidgetTester tester) async {
-      final Widget widget = rwfWidget('''
+      final Widget widget = rfwWidget('''
         import core;
         import local;
 
