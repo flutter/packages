@@ -36,7 +36,7 @@ enum AuthResult {
   errorPasscodeNotSet,
 }
 
-/// Pigeon equivalent of the subset of BiometricType used by iOS & MacOS.
+/// Pigeon equivalent of the subset of BiometricType used by iOS & macOS.
 enum AuthBiometric {
   face,
   fingerprint,

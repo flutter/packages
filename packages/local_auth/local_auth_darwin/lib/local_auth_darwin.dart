@@ -14,7 +14,7 @@ export 'package:local_auth_platform_interface/types/auth_messages.dart';
 export 'package:local_auth_platform_interface/types/auth_options.dart';
 export 'package:local_auth_platform_interface/types/biometric_type.dart';
 
-/// The implementation of [LocalAuthPlatform] for iOS & MacOS.
+/// The implementation of [LocalAuthPlatform] for iOS & macOS.
 class LocalAuthDarwin extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
   LocalAuthDarwin({
@@ -93,7 +93,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   @override
   Future<bool> isDeviceSupported() async => _api.isDeviceSupported();
 
-  /// Always returns false as this method is not supported on iOS & MacOS.
+  /// Always returns false as this method is not supported on iOS & macOS.
   @override
   Future<bool> stopAuthentication() async => false;
 

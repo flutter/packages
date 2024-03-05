@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:local_auth_platform_interface/types/auth_messages.dart';
 
-/// Class wrapping all authentication messages needed on iOS & MacOS.
+/// Class wrapping all authentication messages needed on iOS & macOS.
 /// Provides default values for all messages.
 @immutable
 class DarwinAuthMessages extends AuthMessages {
@@ -85,7 +85,7 @@ String get goToSettings => Intl.message('Go to settings',
         'settings pages from the current dialog. Maximum 30 characters.');
 
 /// Message advising the user to re-enable biometrics on their device.
-/// It shows in a dialog on iOS and MacOS.
+/// It shows in a dialog on iOS and macOS.
 String get darwinLockOut => Intl.message(
     'Biometric authentication is disabled. Please lock and unlock your screen to '
     'enable it.',
