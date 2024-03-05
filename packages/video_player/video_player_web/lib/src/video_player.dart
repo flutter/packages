@@ -206,12 +206,28 @@ class VideoPlayer {
   void seekTo(Duration position) {
     assert(!position.isNegative);
 
+    // Don't seek if video is already at target position.
+    //
+    // This is needed because the core plugin will pause and seek to the end of
+    // the video when it finishes, and that causes an infinite loop of `ended`
+    // events on the web.
+    //
+    // See: https://github.com/flutter/flutter/issues/77674
+    if (position == _videoElementCurrentTime) {
+      return;
+    }
+
     _videoElement.currentTime = position.inMilliseconds.toDouble() / 1000;
   }
 
   /// Returns the current playback head position as a [Duration].
   Duration getPosition() {
     _sendBufferingRangesUpdate();
+    return _videoElementCurrentTime;
+  }
+
+  /// Returns the currentTime of the underlying video element.
+  Duration get _videoElementCurrentTime {
     return Duration(milliseconds: (_videoElement.currentTime * 1000).round());
   }
 

@@ -69,12 +69,31 @@ void main() {
       }, throwsAssertionError, reason: 'Playback speed cannot be == 0');
     });
 
-    testWidgets('seekTo', (WidgetTester tester) async {
-      final VideoPlayer player = VideoPlayer(videoElement: video)..initialize();
+    group('seekTo', () {
+      testWidgets('negative time - throws assert', (WidgetTester tester) async {
+        final VideoPlayer player = VideoPlayer(videoElement: video)
+          ..initialize();
 
-      expect(() {
-        player.seekTo(const Duration(seconds: -1));
-      }, throwsAssertionError, reason: 'Cannot seek into negative numbers');
+        expect(() {
+          player.seekTo(const Duration(seconds: -1));
+        }, throwsAssertionError, reason: 'Cannot seek into negative numbers');
+      });
+
+      testWidgets('setting currentTime to its current value - noop',
+          (WidgetTester tester) async {
+        final ThrowyVideoElement throwy = ThrowyVideoElement(video);
+        final VideoPlayer player = VideoPlayer(videoElement: throwy)
+          ..initialize();
+
+        expect(() {
+          // Self-test...
+          throwy.currentTime = 123;
+        }, throwsException, reason: 'The throwy implementation must throw!');
+
+        expect(() {
+          player.seekTo(Duration(milliseconds: throwy.currentTime));
+        }, returnsNormally);
+      });
     });
 
     // The events tested in this group do *not* represent the actual sequence
