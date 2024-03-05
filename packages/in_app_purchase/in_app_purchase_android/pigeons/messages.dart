@@ -20,6 +20,30 @@ class PlatformBillingResult {
   final String debugMessage;
 }
 
+/// Pigeon version of Java BillingFlowParams.
+class PlatformBillingFlowParams {
+  PlatformBillingFlowParams({
+    required this.product,
+    required this.prorationMode,
+    required this.offerToken,
+    required this.accountId,
+    required this.obfuscatedProfileId,
+    required this.oldProduct,
+    required this.purchaseToken,
+  });
+
+  final String product;
+  // Ideally this would be replaced with an enum on the dart side that maps
+  // to constants on the Java side, but it's deprecated anyway so that will be
+  // resolved during the update to the new API.
+  final int prorationMode;
+  final String? offerToken;
+  final String? accountId;
+  final String? obfuscatedProfileId;
+  final String? oldProduct;
+  final String? purchaseToken;
+}
+
 /// Pigeon version of billing_client_wrapper.dart's BillingChoiceMode.
 enum PlatformBillingChoiceMode {
   /// Billing through google play.
@@ -43,6 +67,9 @@ abstract class InAppPurchaseApi {
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();
+
+  /// Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams).
+  PlatformBillingResult launchBillingFlow(PlatformBillingFlowParams params);
 
   /// Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener).
   @async

@@ -321,9 +321,6 @@ void main() {
   });
 
   group('make payment', () {
-    const String launchMethodName =
-        'BillingClient#launchBillingFlow(Activity, BillingFlowParams)';
-
     test('buy non consumable, serializes and deserializes data', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
@@ -332,33 +329,32 @@ void main() {
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
 
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult),
-          additionalStepBeforeReturn: (dynamic _) {
-            // Mock java update purchase callback.
-            final MethodCall call =
-                MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'responseCode': const BillingResponseConverter().toJson(sentCode),
-              'purchasesList': <dynamic>[
-                <dynamic, dynamic>{
-                  'orderId': 'orderID1',
-                  'products': <String>[productDetails.productId],
-                  'isAutoRenewing': false,
-                  'packageName': 'package',
-                  'purchaseTime': 1231231231,
-                  'purchaseToken': 'token',
-                  'signature': 'sign',
-                  'originalJson': 'json',
-                  'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
-                  'purchaseState': 1,
-                }
-              ]
-            });
-            iapAndroidPlatform.billingClientManager.client.callHandler(call);
-          });
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        final MethodCall call =
+            MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
+          'billingResult': buildBillingResultMap(expectedBillingResult),
+          'responseCode': const BillingResponseConverter().toJson(sentCode),
+          'purchasesList': <dynamic>[
+            <dynamic, dynamic>{
+              'orderId': 'orderID1',
+              'products': <String>[productDetails.productId],
+              'isAutoRenewing': false,
+              'packageName': 'package',
+              'purchaseTime': 1231231231,
+              'purchaseToken': 'token',
+              'signature': 'sign',
+              'originalJson': 'json',
+              'developerPayload': 'dummy payload',
+              'isAcknowledged': true,
+              'purchaseState': 1,
+            }
+          ]
+        });
+        await iapAndroidPlatform.billingClientManager.client.callHandler(call);
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
       final Stream<List<PurchaseDetails>> purchaseStream =
@@ -391,19 +387,18 @@ void main() {
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
 
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult),
-          additionalStepBeforeReturn: (dynamic _) {
-            // Mock java update purchase callback.
-            final MethodCall call =
-                MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'responseCode': const BillingResponseConverter().toJson(sentCode),
-              'purchasesList': const <dynamic>[]
-            });
-            iapAndroidPlatform.billingClientManager.client.callHandler(call);
-          });
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        final MethodCall call =
+            MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
+          'billingResult': buildBillingResultMap(expectedBillingResult),
+          'responseCode': const BillingResponseConverter().toJson(sentCode),
+          'purchasesList': const <dynamic>[]
+        });
+        await iapAndroidPlatform.billingClientManager.client.callHandler(call);
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
       final Stream<List<PurchaseDetails>> purchaseStream =
@@ -436,33 +431,32 @@ void main() {
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
 
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult),
-          additionalStepBeforeReturn: (dynamic _) {
-            // Mock java update purchase callback.
-            final MethodCall call =
-                MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'responseCode': const BillingResponseConverter().toJson(sentCode),
-              'purchasesList': <dynamic>[
-                <dynamic, dynamic>{
-                  'orderId': 'orderID1',
-                  'products': <String>[productDetails.productId],
-                  'isAutoRenewing': false,
-                  'packageName': 'package',
-                  'purchaseTime': 1231231231,
-                  'purchaseToken': 'token',
-                  'signature': 'sign',
-                  'originalJson': 'json',
-                  'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
-                  'purchaseState': 1,
-                }
-              ]
-            });
-            iapAndroidPlatform.billingClientManager.client.callHandler(call);
-          });
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        final MethodCall call =
+            MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
+          'billingResult': buildBillingResultMap(expectedBillingResult),
+          'responseCode': const BillingResponseConverter().toJson(sentCode),
+          'purchasesList': <dynamic>[
+            <dynamic, dynamic>{
+              'orderId': 'orderID1',
+              'products': <String>[productDetails.productId],
+              'isAutoRenewing': false,
+              'packageName': 'package',
+              'purchaseTime': 1231231231,
+              'purchaseToken': 'token',
+              'signature': 'sign',
+              'originalJson': 'json',
+              'developerPayload': 'dummy payload',
+              'isAcknowledged': true,
+              'purchaseState': 1,
+            }
+          ]
+        });
+        await iapAndroidPlatform.billingClientManager.client.callHandler(call);
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
       final Completer<String> consumeCompleter = Completer<String>();
       // adding call back for consume purchase
       const BillingResponse expectedCode = BillingResponse.ok;
@@ -510,9 +504,8 @@ void main() {
       const BillingResponse sentCode = BillingResponse.error;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult));
+      when(mockApi.launchBillingFlow(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
 
       final bool result = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: GooglePlayPurchaseParam(
@@ -530,10 +523,8 @@ void main() {
       const BillingResponse sentCode = BillingResponse.developerError;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: launchMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.launchBillingFlow(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
 
       final bool result = await iapAndroidPlatform.buyConsumable(
           purchaseParam: GooglePlayPurchaseParam(
@@ -552,33 +543,32 @@ void main() {
       const BillingResponse sentCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult),
-          additionalStepBeforeReturn: (dynamic _) {
-            // Mock java update purchase callback.
-            final MethodCall call =
-                MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'responseCode': const BillingResponseConverter().toJson(sentCode),
-              'purchasesList': <dynamic>[
-                <dynamic, dynamic>{
-                  'orderId': 'orderID1',
-                  'products': <String>[productDetails.productId],
-                  'isAutoRenewing': false,
-                  'packageName': 'package',
-                  'purchaseTime': 1231231231,
-                  'purchaseToken': 'token',
-                  'signature': 'sign',
-                  'originalJson': 'json',
-                  'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
-                  'purchaseState': 1,
-                }
-              ]
-            });
-            iapAndroidPlatform.billingClientManager.client.callHandler(call);
-          });
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        final MethodCall call =
+            MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
+          'billingResult': buildBillingResultMap(expectedBillingResult),
+          'responseCode': const BillingResponseConverter().toJson(sentCode),
+          'purchasesList': <dynamic>[
+            <dynamic, dynamic>{
+              'orderId': 'orderID1',
+              'products': <String>[productDetails.productId],
+              'isAutoRenewing': false,
+              'packageName': 'package',
+              'purchaseTime': 1231231231,
+              'purchaseToken': 'token',
+              'signature': 'sign',
+              'originalJson': 'json',
+              'developerPayload': 'dummy payload',
+              'isAcknowledged': true,
+              'purchaseState': 1,
+            }
+          ]
+        });
+        await iapAndroidPlatform.billingClientManager.client.callHandler(call);
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
       final Completer<String> consumeCompleter = Completer<String>();
       // adding call back for consume purchase
       const BillingResponse expectedCode = BillingResponse.error;
@@ -629,33 +619,32 @@ void main() {
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
 
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult),
-          additionalStepBeforeReturn: (dynamic _) {
-            // Mock java update purchase callback.
-            final MethodCall call =
-                MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'responseCode': const BillingResponseConverter().toJson(sentCode),
-              'purchasesList': <dynamic>[
-                <dynamic, dynamic>{
-                  'orderId': 'orderID1',
-                  'products': <String>[productDetails.productId],
-                  'isAutoRenewing': false,
-                  'packageName': 'package',
-                  'purchaseTime': 1231231231,
-                  'purchaseToken': 'token',
-                  'signature': 'sign',
-                  'originalJson': 'json',
-                  'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
-                  'purchaseState': 1,
-                }
-              ]
-            });
-            iapAndroidPlatform.billingClientManager.client.callHandler(call);
-          });
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        final MethodCall call =
+            MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
+          'billingResult': buildBillingResultMap(expectedBillingResult),
+          'responseCode': const BillingResponseConverter().toJson(sentCode),
+          'purchasesList': <dynamic>[
+            <dynamic, dynamic>{
+              'orderId': 'orderID1',
+              'products': <String>[productDetails.productId],
+              'isAutoRenewing': false,
+              'packageName': 'package',
+              'purchaseTime': 1231231231,
+              'purchaseToken': 'token',
+              'signature': 'sign',
+              'originalJson': 'json',
+              'developerPayload': 'dummy payload',
+              'isAcknowledged': true,
+              'purchaseState': 1,
+            }
+          ]
+        });
+        await iapAndroidPlatform.billingClientManager.client.callHandler(call);
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
       final Completer<String?> consumeCompleter = Completer<String?>();
       // adding call back for consume purchase
       const BillingResponse expectedCode = BillingResponse.ok;
@@ -694,33 +683,32 @@ void main() {
       const BillingResponse sentCode = BillingResponse.userCanceled;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult),
-          additionalStepBeforeReturn: (dynamic _) {
-            // Mock java update purchase callback.
-            final MethodCall call =
-                MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'responseCode': const BillingResponseConverter().toJson(sentCode),
-              'purchasesList': <dynamic>[
-                <dynamic, dynamic>{
-                  'orderId': 'orderID1',
-                  'products': <String>[productDetails.productId],
-                  'isAutoRenewing': false,
-                  'packageName': 'package',
-                  'purchaseTime': 1231231231,
-                  'purchaseToken': 'token',
-                  'signature': 'sign',
-                  'originalJson': 'json',
-                  'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
-                  'purchaseState': 1,
-                }
-              ]
-            });
-            iapAndroidPlatform.billingClientManager.client.callHandler(call);
-          });
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        final MethodCall call =
+            MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
+          'billingResult': buildBillingResultMap(expectedBillingResult),
+          'responseCode': const BillingResponseConverter().toJson(sentCode),
+          'purchasesList': <dynamic>[
+            <dynamic, dynamic>{
+              'orderId': 'orderID1',
+              'products': <String>[productDetails.productId],
+              'isAutoRenewing': false,
+              'packageName': 'package',
+              'purchaseTime': 1231231231,
+              'purchaseToken': 'token',
+              'signature': 'sign',
+              'originalJson': 'json',
+              'developerPayload': 'dummy payload',
+              'isAcknowledged': true,
+              'purchaseState': 1,
+            }
+          ]
+        });
+        await iapAndroidPlatform.billingClientManager.client.callHandler(call);
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
       final Completer<String> consumeCompleter = Completer<String>();
       // adding call back for consume purchase
       const BillingResponse expectedCode = BillingResponse.userCanceled;
@@ -765,19 +753,18 @@ void main() {
       const BillingResponse sentCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: launchMethodName,
-          value: buildBillingResultMap(expectedBillingResult),
-          additionalStepBeforeReturn: (dynamic _) {
-            // Mock java update purchase callback.
-            final MethodCall call =
-                MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'responseCode': const BillingResponseConverter().toJson(sentCode),
-              'purchasesList': const <dynamic>[]
-            });
-            iapAndroidPlatform.billingClientManager.client.callHandler(call);
-          });
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        final MethodCall call =
+            MethodCall(kOnPurchasesUpdated, <dynamic, dynamic>{
+          'billingResult': buildBillingResultMap(expectedBillingResult),
+          'responseCode': const BillingResponseConverter().toJson(sentCode),
+          'purchasesList': const <dynamic>[]
+        });
+        await iapAndroidPlatform.billingClientManager.client.callHandler(call);
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
 
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;

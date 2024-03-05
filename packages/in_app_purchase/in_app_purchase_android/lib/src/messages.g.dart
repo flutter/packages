@@ -56,12 +56,67 @@ class PlatformBillingResult {
   }
 }
 
+/// Pigeon version of Java BillingFlowParams.
+class PlatformBillingFlowParams {
+  PlatformBillingFlowParams({
+    required this.product,
+    required this.prorationMode,
+    this.offerToken,
+    this.accountId,
+    this.obfuscatedProfileId,
+    this.oldProduct,
+    this.purchaseToken,
+  });
+
+  String product;
+
+  int prorationMode;
+
+  String? offerToken;
+
+  String? accountId;
+
+  String? obfuscatedProfileId;
+
+  String? oldProduct;
+
+  String? purchaseToken;
+
+  Object encode() {
+    return <Object?>[
+      product,
+      prorationMode,
+      offerToken,
+      accountId,
+      obfuscatedProfileId,
+      oldProduct,
+      purchaseToken,
+    ];
+  }
+
+  static PlatformBillingFlowParams decode(Object result) {
+    result as List<Object?>;
+    return PlatformBillingFlowParams(
+      product: result[0]! as String,
+      prorationMode: result[1]! as int,
+      offerToken: result[2] as String?,
+      accountId: result[3] as String?,
+      obfuscatedProfileId: result[4] as String?,
+      oldProduct: result[5] as String?,
+      purchaseToken: result[6] as String?,
+    );
+  }
+}
+
 class _InAppPurchaseApiCodec extends StandardMessageCodec {
   const _InAppPurchaseApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformBillingResult) {
+    if (value is PlatformBillingFlowParams) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformBillingResult) {
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -72,6 +127,8 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
+        return PlatformBillingFlowParams.decode(readValue(buffer)!);
+      case 129:
         return PlatformBillingResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -173,6 +230,37 @@ class InAppPurchaseApi {
       );
     } else {
       return;
+    }
+  }
+
+  /// Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams).
+  Future<PlatformBillingResult> launchBillingFlow(
+      PlatformBillingFlowParams params) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[params]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as PlatformBillingResult?)!;
     }
   }
 

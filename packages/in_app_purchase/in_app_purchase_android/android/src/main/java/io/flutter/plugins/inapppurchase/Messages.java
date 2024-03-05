@@ -163,6 +163,200 @@ public class Messages {
     }
   }
 
+  /**
+   * Pigeon version of Java BillingFlowParams.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformBillingFlowParams {
+    private @NonNull String product;
+
+    public @NonNull String getProduct() {
+      return product;
+    }
+
+    public void setProduct(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"product\" is null.");
+      }
+      this.product = setterArg;
+    }
+
+    private @NonNull Long prorationMode;
+
+    public @NonNull Long getProrationMode() {
+      return prorationMode;
+    }
+
+    public void setProrationMode(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"prorationMode\" is null.");
+      }
+      this.prorationMode = setterArg;
+    }
+
+    private @Nullable String offerToken;
+
+    public @Nullable String getOfferToken() {
+      return offerToken;
+    }
+
+    public void setOfferToken(@Nullable String setterArg) {
+      this.offerToken = setterArg;
+    }
+
+    private @Nullable String accountId;
+
+    public @Nullable String getAccountId() {
+      return accountId;
+    }
+
+    public void setAccountId(@Nullable String setterArg) {
+      this.accountId = setterArg;
+    }
+
+    private @Nullable String obfuscatedProfileId;
+
+    public @Nullable String getObfuscatedProfileId() {
+      return obfuscatedProfileId;
+    }
+
+    public void setObfuscatedProfileId(@Nullable String setterArg) {
+      this.obfuscatedProfileId = setterArg;
+    }
+
+    private @Nullable String oldProduct;
+
+    public @Nullable String getOldProduct() {
+      return oldProduct;
+    }
+
+    public void setOldProduct(@Nullable String setterArg) {
+      this.oldProduct = setterArg;
+    }
+
+    private @Nullable String purchaseToken;
+
+    public @Nullable String getPurchaseToken() {
+      return purchaseToken;
+    }
+
+    public void setPurchaseToken(@Nullable String setterArg) {
+      this.purchaseToken = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBillingFlowParams() {}
+
+    public static final class Builder {
+
+      private @Nullable String product;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setProduct(@NonNull String setterArg) {
+        this.product = setterArg;
+        return this;
+      }
+
+      private @Nullable Long prorationMode;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setProrationMode(@NonNull Long setterArg) {
+        this.prorationMode = setterArg;
+        return this;
+      }
+
+      private @Nullable String offerToken;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setOfferToken(@Nullable String setterArg) {
+        this.offerToken = setterArg;
+        return this;
+      }
+
+      private @Nullable String accountId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAccountId(@Nullable String setterArg) {
+        this.accountId = setterArg;
+        return this;
+      }
+
+      private @Nullable String obfuscatedProfileId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setObfuscatedProfileId(@Nullable String setterArg) {
+        this.obfuscatedProfileId = setterArg;
+        return this;
+      }
+
+      private @Nullable String oldProduct;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setOldProduct(@Nullable String setterArg) {
+        this.oldProduct = setterArg;
+        return this;
+      }
+
+      private @Nullable String purchaseToken;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPurchaseToken(@Nullable String setterArg) {
+        this.purchaseToken = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBillingFlowParams build() {
+        PlatformBillingFlowParams pigeonReturn = new PlatformBillingFlowParams();
+        pigeonReturn.setProduct(product);
+        pigeonReturn.setProrationMode(prorationMode);
+        pigeonReturn.setOfferToken(offerToken);
+        pigeonReturn.setAccountId(accountId);
+        pigeonReturn.setObfuscatedProfileId(obfuscatedProfileId);
+        pigeonReturn.setOldProduct(oldProduct);
+        pigeonReturn.setPurchaseToken(purchaseToken);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(7);
+      toListResult.add(product);
+      toListResult.add(prorationMode);
+      toListResult.add(offerToken);
+      toListResult.add(accountId);
+      toListResult.add(obfuscatedProfileId);
+      toListResult.add(oldProduct);
+      toListResult.add(purchaseToken);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBillingFlowParams fromList(@NonNull ArrayList<Object> list) {
+      PlatformBillingFlowParams pigeonResult = new PlatformBillingFlowParams();
+      Object product = list.get(0);
+      pigeonResult.setProduct((String) product);
+      Object prorationMode = list.get(1);
+      pigeonResult.setProrationMode(
+          (prorationMode == null)
+              ? null
+              : ((prorationMode instanceof Integer)
+                  ? (Integer) prorationMode
+                  : (Long) prorationMode));
+      Object offerToken = list.get(2);
+      pigeonResult.setOfferToken((String) offerToken);
+      Object accountId = list.get(3);
+      pigeonResult.setAccountId((String) accountId);
+      Object obfuscatedProfileId = list.get(4);
+      pigeonResult.setObfuscatedProfileId((String) obfuscatedProfileId);
+      Object oldProduct = list.get(5);
+      pigeonResult.setOldProduct((String) oldProduct);
+      Object purchaseToken = list.get(6);
+      pigeonResult.setPurchaseToken((String) purchaseToken);
+      return pigeonResult;
+    }
+  }
+
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -197,6 +391,8 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
+          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
           return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -205,8 +401,11 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformBillingResult) {
+      if (value instanceof PlatformBillingFlowParams) {
         stream.write(128);
+        writeValue(stream, ((PlatformBillingFlowParams) value).toList());
+      } else if (value instanceof PlatformBillingResult) {
+        stream.write(129);
         writeValue(stream, ((PlatformBillingResult) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -226,6 +425,9 @@ public class Messages {
         @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#endConnection(BillingClientStateListener). */
     void endConnection();
+    /** Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams). */
+    @NonNull
+    PlatformBillingResult launchBillingFlow(@NonNull PlatformBillingFlowParams params);
     /**
      * Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams,
      * AcknowledgePurchaseResponseListener).
@@ -322,6 +524,31 @@ public class Messages {
                 try {
                   api.endConnection();
                   wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformBillingFlowParams paramsArg = (PlatformBillingFlowParams) args.get(0);
+                try {
+                  PlatformBillingResult output = api.launchBillingFlow(paramsArg);
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;

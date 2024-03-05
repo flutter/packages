@@ -54,8 +54,6 @@ class MethodCallHandlerImpl
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
     static final String QUERY_PRODUCT_DETAILS =
         "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
-    static final String LAUNCH_BILLING_FLOW =
-        "BillingClient#launchBillingFlow(Activity, BillingFlowParams)";
     static final String QUERY_PURCHASES_ASYNC =
         "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
@@ -71,7 +69,8 @@ class MethodCallHandlerImpl
   // ReplacementMode enum values.
   // https://github.com/flutter/flutter/issues/128957.
   @SuppressWarnings(value = "deprecation")
-  private static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
+  @VisibleForTesting
+  static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
       com.android.billingclient.api.BillingFlowParams.ProrationMode
           .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 
@@ -145,19 +144,6 @@ class MethodCallHandlerImpl
       case MethodNames.QUERY_PRODUCT_DETAILS:
         List<Product> productList = toProductList(call.argument("productList"));
         queryProductDetailsAsync(productList, result);
-        break;
-      case MethodNames.LAUNCH_BILLING_FLOW:
-        launchBillingFlow(
-            (String) call.argument("product"),
-            (String) call.argument("offerToken"),
-            (String) call.argument("accountId"),
-            (String) call.argument("obfuscatedProfileId"),
-            (String) call.argument("oldProduct"),
-            (String) call.argument("purchaseToken"),
-            call.hasArgument("prorationMode")
-                ? (int) call.argument("prorationMode")
-                : PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
-            result);
         break;
       case MethodNames.QUERY_PURCHASES_ASYNC:
         queryPurchasesAsync((String) call.argument("productType"), result);
@@ -262,30 +248,22 @@ class MethodCallHandlerImpl
         });
   }
 
-  private void launchBillingFlow(
-      String product,
-      @Nullable String offerToken,
-      @Nullable String accountId,
-      @Nullable String obfuscatedProfileId,
-      @Nullable String oldProduct,
-      @Nullable String purchaseToken,
-      int prorationMode,
-      MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
+  @Override
+  public @NonNull Messages.PlatformBillingResult launchBillingFlow(
+      @NonNull Messages.PlatformBillingFlowParams params) {
+    validateBillingClient();
     assert billingClient != null;
 
-    com.android.billingclient.api.ProductDetails productDetails = cachedProducts.get(product);
+    com.android.billingclient.api.ProductDetails productDetails =
+        cachedProducts.get(params.getProduct());
     if (productDetails == null) {
-      result.error(
+      throw new FlutterError(
           "NOT_FOUND",
           "Details for product "
-              + product
+              + params.getProduct()
               + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
-      return;
     }
 
     @Nullable
@@ -294,58 +272,57 @@ class MethodCallHandlerImpl
     if (subscriptionOfferDetails != null) {
       boolean isValidOfferToken = false;
       for (ProductDetails.SubscriptionOfferDetails offerDetails : subscriptionOfferDetails) {
-        if (offerToken != null && offerToken.equals(offerDetails.getOfferToken())) {
+        if (params.getOfferToken() != null
+            && params.getOfferToken().equals(offerDetails.getOfferToken())) {
           isValidOfferToken = true;
           break;
         }
       }
       if (!isValidOfferToken) {
-        result.error(
+        throw new FlutterError(
             "INVALID_OFFER_TOKEN",
             "Offer token "
-                + offerToken
+                + params.getOfferToken()
                 + " for product "
-                + product
+                + params.getProduct()
                 + " is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: "
                 + LOAD_PRODUCT_DOC_URL,
             null);
-        return;
       }
     }
 
-    if (oldProduct == null
-        && prorationMode != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
-      result.error(
+    if (params.getOldProduct() == null
+        && params.getProrationMode()
+            != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+      throw new FlutterError(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
           "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
           null);
-      return;
-    } else if (oldProduct != null && !cachedProducts.containsKey(oldProduct)) {
-      result.error(
+    } else if (params.getOldProduct() != null
+        && !cachedProducts.containsKey(params.getOldProduct())) {
+      throw new FlutterError(
           "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
           "Details for product "
-              + oldProduct
+              + params.getOldProduct()
               + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
-      return;
     }
 
     if (activity == null) {
-      result.error(
+      throw new FlutterError(
           ACTIVITY_UNAVAILABLE,
           "Details for product "
-              + product
+              + params.getProduct()
               + " are not available. This method must be run with the app in foreground.",
           null);
-      return;
     }
 
     BillingFlowParams.ProductDetailsParams.Builder productDetailsParamsBuilder =
         BillingFlowParams.ProductDetailsParams.newBuilder();
     productDetailsParamsBuilder.setProductDetails(productDetails);
-    if (offerToken != null) {
-      productDetailsParamsBuilder.setOfferToken(offerToken);
+    if (params.getOfferToken() != null) {
+      productDetailsParamsBuilder.setOfferToken(params.getOfferToken());
     }
 
     List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<>();
@@ -353,22 +330,25 @@ class MethodCallHandlerImpl
 
     BillingFlowParams.Builder paramsBuilder =
         BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList);
-    if (accountId != null && !accountId.isEmpty()) {
-      paramsBuilder.setObfuscatedAccountId(accountId);
+    if (params.getAccountId() != null && !params.getAccountId().isEmpty()) {
+      paramsBuilder.setObfuscatedAccountId(params.getAccountId());
     }
-    if (obfuscatedProfileId != null && !obfuscatedProfileId.isEmpty()) {
-      paramsBuilder.setObfuscatedProfileId(obfuscatedProfileId);
+    if (params.getObfuscatedProfileId() != null && !params.getObfuscatedProfileId().isEmpty()) {
+      paramsBuilder.setObfuscatedProfileId(params.getObfuscatedProfileId());
     }
     BillingFlowParams.SubscriptionUpdateParams.Builder subscriptionUpdateParamsBuilder =
         BillingFlowParams.SubscriptionUpdateParams.newBuilder();
-    if (oldProduct != null && !oldProduct.isEmpty() && purchaseToken != null) {
-      subscriptionUpdateParamsBuilder.setOldPurchaseToken(purchaseToken);
+    if (params.getOldProduct() != null
+        && !params.getOldProduct().isEmpty()
+        && params.getPurchaseToken() != null) {
+      subscriptionUpdateParamsBuilder.setOldPurchaseToken(params.getPurchaseToken());
       // Set the prorationMode using a helper to minimize impact of deprecation warning suppression.
-      setReplaceProrationMode(subscriptionUpdateParamsBuilder, prorationMode);
+      setReplaceProrationMode(
+          subscriptionUpdateParamsBuilder, params.getProrationMode().intValue());
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
-    result.success(
-        fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build())));
+    return pigeonBillingResultFromBillingResult(
+        billingClient.launchBillingFlow(activity, paramsBuilder.build()));
   }
 
   // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode.

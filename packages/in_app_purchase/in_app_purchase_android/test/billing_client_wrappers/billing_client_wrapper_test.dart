@@ -199,18 +199,13 @@ void main() {
   });
 
   group('launchBillingFlow', () {
-    const String launchMethodName =
-        'BillingClient#launchBillingFlow(Activity, BillingFlowParams)';
-
     test('serializes and deserializes data', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: launchMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.launchBillingFlow(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
@@ -221,25 +216,19 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId),
           equals(expectedBillingResult));
-      final Map<dynamic, dynamic> arguments = stubPlatform
-          .previousCallMatching(launchMethodName)
-          .arguments as Map<dynamic, dynamic>;
-      expect(arguments['product'], equals(productDetails.productId));
-      expect(arguments['accountId'], equals(accountId));
-      expect(arguments['obfuscatedProfileId'], equals(profileId));
+
+      final VerificationResult result =
+          verify(mockApi.launchBillingFlow(captureAny));
+      final PlatformBillingFlowParams params =
+          result.captured.single as PlatformBillingFlowParams;
+      expect(params.product, equals(productDetails.productId));
+      expect(params.accountId, equals(accountId));
+      expect(params.obfuscatedProfileId, equals(profileId));
     });
 
     test(
         'Change subscription throws assertion error `oldProduct` and `purchaseToken` has different nullability',
         () async {
-      const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.ok;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: launchMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
@@ -268,10 +257,8 @@ void main() {
       const BillingResponse responseCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: launchMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.launchBillingFlow(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
@@ -284,15 +271,15 @@ void main() {
               oldProduct: dummyOldPurchase.products.first,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
-      final Map<dynamic, dynamic> arguments = stubPlatform
-          .previousCallMatching(launchMethodName)
-          .arguments as Map<dynamic, dynamic>;
-      expect(arguments['product'], equals(productDetails.productId));
-      expect(arguments['accountId'], equals(accountId));
-      expect(arguments['oldProduct'], equals(dummyOldPurchase.products.first));
-      expect(
-          arguments['purchaseToken'], equals(dummyOldPurchase.purchaseToken));
-      expect(arguments['obfuscatedProfileId'], equals(profileId));
+      final VerificationResult result =
+          verify(mockApi.launchBillingFlow(captureAny));
+      final PlatformBillingFlowParams params =
+          result.captured.single as PlatformBillingFlowParams;
+      expect(params.product, equals(productDetails.productId));
+      expect(params.accountId, equals(accountId));
+      expect(params.oldProduct, equals(dummyOldPurchase.products.first));
+      expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
+      expect(params.obfuscatedProfileId, equals(profileId));
     });
 
     test(
@@ -302,10 +289,8 @@ void main() {
       const BillingResponse responseCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: launchMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.launchBillingFlow(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
@@ -321,16 +306,16 @@ void main() {
               prorationMode: prorationMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
-      final Map<dynamic, dynamic> arguments = stubPlatform
-          .previousCallMatching(launchMethodName)
-          .arguments as Map<dynamic, dynamic>;
-      expect(arguments['product'], equals(productDetails.productId));
-      expect(arguments['accountId'], equals(accountId));
-      expect(arguments['oldProduct'], equals(dummyOldPurchase.products.first));
-      expect(arguments['obfuscatedProfileId'], equals(profileId));
-      expect(
-          arguments['purchaseToken'], equals(dummyOldPurchase.purchaseToken));
-      expect(arguments['prorationMode'],
+      final VerificationResult result =
+          verify(mockApi.launchBillingFlow(captureAny));
+      final PlatformBillingFlowParams params =
+          result.captured.single as PlatformBillingFlowParams;
+      expect(params.product, equals(productDetails.productId));
+      expect(params.accountId, equals(accountId));
+      expect(params.oldProduct, equals(dummyOldPurchase.products.first));
+      expect(params.obfuscatedProfileId, equals(profileId));
+      expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
+      expect(params.prorationMode,
           const ProrationModeConverter().toJson(prorationMode));
     });
 
@@ -341,10 +326,8 @@ void main() {
       const BillingResponse responseCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: launchMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.launchBillingFlow(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
@@ -360,16 +343,16 @@ void main() {
               prorationMode: prorationMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
-      final Map<dynamic, dynamic> arguments = stubPlatform
-          .previousCallMatching(launchMethodName)
-          .arguments as Map<dynamic, dynamic>;
-      expect(arguments['product'], equals(productDetails.productId));
-      expect(arguments['accountId'], equals(accountId));
-      expect(arguments['oldProduct'], equals(dummyOldPurchase.products.first));
-      expect(arguments['obfuscatedProfileId'], equals(profileId));
-      expect(
-          arguments['purchaseToken'], equals(dummyOldPurchase.purchaseToken));
-      expect(arguments['prorationMode'],
+      final VerificationResult result =
+          verify(mockApi.launchBillingFlow(captureAny));
+      final PlatformBillingFlowParams params =
+          result.captured.single as PlatformBillingFlowParams;
+      expect(params.product, equals(productDetails.productId));
+      expect(params.accountId, equals(accountId));
+      expect(params.oldProduct, equals(dummyOldPurchase.products.first));
+      expect(params.obfuscatedProfileId, equals(profileId));
+      expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
+      expect(params.prorationMode,
           const ProrationModeConverter().toJson(prorationMode));
     });
 
@@ -378,34 +361,20 @@ void main() {
       const BillingResponse responseCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: launchMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.launchBillingFlow(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
 
       expect(
           await billingClient.launchBillingFlow(
               product: productDetails.productId),
           equals(expectedBillingResult));
-      final Map<dynamic, dynamic> arguments = stubPlatform
-          .previousCallMatching(launchMethodName)
-          .arguments as Map<dynamic, dynamic>;
-      expect(arguments['product'], equals(productDetails.productId));
-      expect(arguments['accountId'], isNull);
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: launchMethodName,
-      );
-      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-      expect(
-          await billingClient.launchBillingFlow(
-              product: productDetails.productId),
-          equals(const BillingResultWrapper(
-              responseCode: BillingResponse.error,
-              debugMessage: kInvalidBillingResultErrorMessage)));
+      final VerificationResult result =
+          verify(mockApi.launchBillingFlow(captureAny));
+      final PlatformBillingFlowParams params =
+          result.captured.single as PlatformBillingFlowParams;
+      expect(params.product, equals(productDetails.productId));
+      expect(params.accountId, isNull);
     });
   });
 

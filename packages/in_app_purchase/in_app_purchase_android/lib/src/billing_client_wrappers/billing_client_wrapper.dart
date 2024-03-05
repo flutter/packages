@@ -210,21 +210,17 @@ class BillingClient {
       ProrationMode? prorationMode}) async {
     assert((oldProduct == null) == (purchaseToken == null),
         'oldProduct and purchaseToken must both be set, or both be null.');
-    final Map<String, dynamic> arguments = <String, dynamic>{
-      'product': product,
-      'offerToken': offerToken,
-      'accountId': accountId,
-      'obfuscatedProfileId': obfuscatedProfileId,
-      'oldProduct': oldProduct,
-      'purchaseToken': purchaseToken,
-      'prorationMode': const ProrationModeConverter().toJson(prorationMode ??
-          ProrationMode.unknownSubscriptionUpgradeDowngradePolicy)
-    };
-    return BillingResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                'BillingClient#launchBillingFlow(Activity, BillingFlowParams)',
-                arguments)) ??
-            <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.launchBillingFlow(PlatformBillingFlowParams(
+      product: product,
+      prorationMode: const ProrationModeConverter().toJson(prorationMode ??
+          ProrationMode.unknownSubscriptionUpgradeDowngradePolicy),
+      offerToken: offerToken,
+      accountId: accountId,
+      obfuscatedProfileId: obfuscatedProfileId,
+      oldProduct: oldProduct,
+      purchaseToken: purchaseToken,
+    )));
   }
 
   /// Fetches recent purchases for the given [ProductType].

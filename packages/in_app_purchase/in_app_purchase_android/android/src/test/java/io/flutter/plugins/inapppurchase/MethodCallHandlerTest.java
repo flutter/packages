@@ -7,11 +7,11 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PRODUCT_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
 import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
@@ -72,6 +72,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -488,11 +489,10 @@ public class MethodCallHandlerTest {
     // Fetch the product details first and then prepare the launch billing flow call
     String productId = "foo";
     queryForProducts(singletonList(productId));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", null);
-    arguments.put("obfuscatedProfileId", null);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -501,16 +501,14 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingResult platformResult =
+        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
 
     // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-
-    // Verify we pass the response code to result
-    verify(result, never()).error(any(), any(), any());
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
@@ -519,11 +517,11 @@ public class MethodCallHandlerTest {
     String productId = "foo";
     String accountId = "account";
     queryForProducts(singletonList(productId));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    arguments.put("oldProduct", null);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -532,16 +530,16 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingResult platformResult =
+        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
 
     // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
 
-    // Verify we pass the response code to result
-    verify(result, never()).error(any(), any(), any());
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    // Verify the response.
+    assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
@@ -552,14 +550,19 @@ public class MethodCallHandlerTest {
     String productId = "foo";
     String accountId = "account";
     queryForProducts(singletonList(productId));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
-    // Verify we pass the response code to result
-    verify(result).error(contains("ACTIVITY_UNAVAILABLE"), contains("foreground"), any());
+    // Verify the error response.
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
+    assertEquals("ACTIVITY_UNAVAILABLE", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("foreground"));
     verify(result, never()).success(any());
   }
 
@@ -570,11 +573,12 @@ public class MethodCallHandlerTest {
     String accountId = "account";
     String oldProductId = "oldFoo";
     queryForProducts(unmodifiableList(asList(productId, oldProductId)));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    arguments.put("oldProduct", oldProductId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setOldProduct(oldProductId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -583,16 +587,16 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingResult platformResult =
+        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
 
     // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
 
-    // Verify we pass the response code to result
-    verify(result, never()).error(any(), any(), any());
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    // Verify the response.
+    assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
@@ -601,10 +605,11 @@ public class MethodCallHandlerTest {
     String productId = "foo";
     String accountId = "account";
     queryForProducts(singletonList(productId));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -613,16 +618,16 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingResult platformResult =
+        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
 
     // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
 
-    // Verify we pass the response code to result
-    verify(result, never()).error(any(), any(), any());
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    // Verify the response.
+    assertResultsMatch(platformResult, billingResult);
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -638,13 +643,12 @@ public class MethodCallHandlerTest {
     String accountId = "account";
     int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, oldProductId)));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    arguments.put("oldProduct", oldProductId);
-    arguments.put("purchaseToken", purchaseToken);
-    arguments.put("prorationMode", prorationMode);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setOldProduct(oldProductId);
+    paramsBuilder.setPurchaseToken(purchaseToken);
+    paramsBuilder.setProrationMode((long) prorationMode);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -653,16 +657,16 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingResult platformResult =
+        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
 
     // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
 
-    // Verify we pass the response code to result
-    verify(result, never()).error(any(), any(), any());
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    // Verify the response.
+    assertResultsMatch(platformResult, billingResult);
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -677,12 +681,11 @@ public class MethodCallHandlerTest {
     String queryOldProductId = "oldFoo";
     int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    arguments.put("oldProduct", null);
-    arguments.put("prorationMode", prorationMode);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setOldProduct(null);
+    paramsBuilder.setProrationMode((long) prorationMode);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -691,15 +694,16 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(launchCall, result);
 
     // Assert that we sent an error back.
-    verify(result)
-        .error(
-            contains("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT"),
-            contains("launchBillingFlow failed because oldProduct is null"),
-            any());
-    verify(result, never()).success(any());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
+    assertEquals("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT", exception.code);
+    assertTrue(
+        Objects.requireNonNull(exception.getMessage())
+            .contains("launchBillingFlow failed because oldProduct is null"));
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -715,13 +719,12 @@ public class MethodCallHandlerTest {
     String accountId = "account";
     int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_FULL_PRICE;
     queryForProducts(unmodifiableList(asList(productId, oldProductId)));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    arguments.put("oldProduct", oldProductId);
-    arguments.put("purchaseToken", purchaseToken);
-    arguments.put("prorationMode", prorationMode);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setOldProduct(oldProductId);
+    paramsBuilder.setPurchaseToken(purchaseToken);
+    paramsBuilder.setProrationMode((long) prorationMode);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -730,16 +733,16 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingResult platformResult =
+        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
 
     // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
 
-    // Verify we pass the response code to result
-    verify(result, never()).error(any(), any(), any());
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    // Verify the response.
+    assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
@@ -748,16 +751,19 @@ public class MethodCallHandlerTest {
     methodChannelHandler.endConnection();
     String productId = "foo";
     String accountId = "account";
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
-
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that we sent an error back.
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
-    verify(result, never()).success(any());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
+    assertEquals("UNAVAILABLE", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -766,16 +772,19 @@ public class MethodCallHandlerTest {
     establishConnectedBillingClient();
     String productId = "foo";
     String accountId = "account";
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
-
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that we sent an error back.
-    verify(result).error(contains("NOT_FOUND"), contains(productId), any());
-    verify(result, never()).success(any());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
+    assertEquals("NOT_FOUND", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains(productId));
   }
 
   @Test
@@ -786,18 +795,20 @@ public class MethodCallHandlerTest {
     String accountId = "account";
     String oldProductId = "oldProduct";
     queryForProducts(singletonList(productId));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("product", productId);
-    arguments.put("accountId", accountId);
-    arguments.put("oldProduct", oldProductId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
-
-    methodChannelHandler.onMethodCall(launchCall, result);
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setOldProduct(oldProductId);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that we sent an error back.
-    verify(result)
-        .error(contains("IN_APP_PURCHASE_INVALID_OLD_PRODUCT"), contains(oldProductId), any());
-    verify(result, never()).success(any());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
+    assertEquals("IN_APP_PURCHASE_INVALID_OLD_PRODUCT", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains(oldProductId));
   }
 
   @Test
