@@ -31,13 +31,3 @@ void setInfinityDuration(web.HTMLVideoElement element) {
     ),
   );
 }
-
-/// Modifies a HTMLVideoElement to throw an exception when setting `currentTime`.
-extension type ThrowyVideoElement(web.HTMLVideoElement _)
-    implements web.HTMLVideoElement {
-  set currentTime(num value) {
-    throw Exception('Unexpected call to currentTime with value: $value');
-  }
-
-  int get currentTime => 100;
-}

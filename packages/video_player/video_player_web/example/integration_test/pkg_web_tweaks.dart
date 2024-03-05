@@ -60,3 +60,15 @@ extension type Descriptor._(JSObject _) implements JSObject {
     JSAny value,
   });
 }
+
+/// Modifies a HTMLVideoElement to throw an exception when setting `currentTime`.
+///
+/// Test-only!
+extension type ThrowyVideoElement(web.HTMLVideoElement _)
+    implements web.HTMLVideoElement {
+  set currentTime(num value) {
+    throw Exception('Unexpected call to currentTime with value: $value');
+  }
+
+  int get currentTime => 100;
+}
