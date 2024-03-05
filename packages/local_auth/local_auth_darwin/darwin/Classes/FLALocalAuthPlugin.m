@@ -171,7 +171,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                       }];
         return;
       #endif
-      
+    
+    #if TARGET_OS_IOS
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:@""
                                           message:message
@@ -201,6 +202,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:alert
                                                                                      animated:YES
                                                                                    completion:nil];
+
+                                                                                   #endif
 }
 
 - (void)handleAuthReplyWithSuccess:(BOOL)success
@@ -276,6 +279,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark - AppDelegate
 
+#if TARGET_OS_IOS
 - (void)applicationDidBecomeActive:(UIApplication *)application {
   if (self.lastCallState != nil) {
     [self authenticateWithOptions:_lastCallState.options
@@ -283,5 +287,6 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                        completion:_lastCallState.resultHandler];
   }
 }
+#endif
 
 @end
