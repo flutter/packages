@@ -55,7 +55,7 @@
 - (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager
                         handlerFactory:(FIAPRequestHandler * (^)(SKRequest *))handlerFactory {
   self = [self initWithReceiptManager:receiptManager];
-  _handlerFactory = handlerFactory;
+  _handlerFactory = [handlerFactory copy];
   return self;
 }
 
@@ -275,7 +275,7 @@
     request = [self getRefreshReceiptRequest:nil];
   }
 
-  FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
+  FIAPRequestHandler *handler = self.handlerFactory(request);
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
   [handler startProductRequestWithCompletionHandler:^(SKProductsResponse *_Nullable response,

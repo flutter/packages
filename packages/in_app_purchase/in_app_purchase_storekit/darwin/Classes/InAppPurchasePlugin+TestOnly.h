@@ -16,7 +16,7 @@
 @property(strong, nonatomic) FlutterMethodChannel *transactionObserverCallbackChannel;
 
 // Callback channel to dart used for when a function from the transaction observer is triggered.
-@property(strong, nonatomic) FIAPRequestHandler * (^handlerFactory)(SKRequest *);
+@property(copy, nonatomic) FIAPRequestHandler * (^handlerFactory)(SKRequest *);
 
 // Convenience initializer with dependancy injection
 - (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager

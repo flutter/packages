@@ -127,7 +127,7 @@
 
   SKPaymentTransactionStub *paymentTransaction =
       [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
-  NSArray *array = [NSArray arrayWithObjects:paymentTransaction, nil];
+  NSArray *array = @[ paymentTransaction ];
 
   FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
   OCMStub([mockHandler getUnfinishedTransactions]).andReturn(array);
@@ -179,6 +179,8 @@
 
 - (void)testGetProductResponseWithRequestError {
   NSArray *argument = @[ @"123" ];
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:@"completion handler successfully called"];
 
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
@@ -199,16 +201,20 @@
       startProductRequestProductIdentifiers:argument
                                  completion:^(SKProductsResponseMessage *_Nullable response,
                                               FlutterError *_Nullable startProductRequestError) {
+                                   [expectation fulfill];
                                    XCTAssertNotNil(error);
                                    XCTAssertNotNil(startProductRequestError);
                                    XCTAssertEqualObjects(
                                        startProductRequestError.code,
                                        @"storekit_getproductrequest_platform_error");
                                  }];
+  [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
 - (void)testGetProductResponseWithNoResponse {
   NSArray *argument = @[ @"123" ];
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:@"completion handler successfully called"];
 
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
 
@@ -230,11 +236,13 @@
       startProductRequestProductIdentifiers:argument
                                  completion:^(SKProductsResponseMessage *_Nullable response,
                                               FlutterError *_Nullable startProductRequestError) {
+                                   [expectation fulfill];
                                    XCTAssertNotNil(error);
                                    XCTAssertNotNil(startProductRequestError);
                                    XCTAssertEqualObjects(startProductRequestError.code,
                                                          @"storekit_platform_no_response");
                                  }];
+  [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
 - (void)testAddPaymentShouldReturnFlutterErrorWhenPaymentFails {
@@ -495,6 +503,8 @@
     @"isRevoked" : @NO,
     @"isVolumePurchase" : @NO,
   };
+  XCTestExpectation *expectation =
+      [self expectationWithDescription:@"completion handler successfully called"];
 
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
@@ -516,7 +526,9 @@
                                  XCTAssertNotNil(error);
                                  XCTAssertEqualObjects(
                                      error.code, @"storekit_refreshreceiptrequest_platform_error");
+                                 [expectation fulfill];
                                }];
+  [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
 /// presentCodeRedemptionSheetWithError:error is only available on iOS
