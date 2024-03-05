@@ -9,6 +9,9 @@ final gmaps.LatLng _nullGmapsLatLng = gmaps.LatLng(0, 0);
 final gmaps.LatLngBounds _nullGmapsLatLngBounds =
     gmaps.LatLngBounds(_nullGmapsLatLng, _nullGmapsLatLng);
 
+// The TrustedType Policy used by this plugin. Used to sanitize InfoWindow contents.
+TrustedTypePolicy? _gmapsTrustedTypePolicy;
+
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
   return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
@@ -222,17 +225,17 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     // Firefox and Safari don't support Trusted Types yet.
     // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
     if (window.nullableTrustedTypes != null) {
-      final GoogleMapsTrustedTypePolicy trustedTypePolicy =
-          window.nullableTrustedTypes!.getGoogleMapsTrustedTypesPolicy(
-        GoogleMapsTrustedTypePolicyOptions(
-          createHTML: (String html, JSAny? arguments) {
-            return sanitizeHtml(html);
+      _gmapsTrustedTypePolicy ??= window.trustedTypes.createPolicy(
+        'google_maps_flutter_sanitize',
+        TrustedTypePolicyOptions(
+          createHTML: (String html) {
+            return sanitizeHtml(html).toJS;
           }.toJS,
         ),
       );
 
       snippet.trustedInnerHTML =
-          trustedTypePolicy.createHTML(markerSnippet, null);
+          _gmapsTrustedTypePolicy!.createHTMLNoArgs(markerSnippet);
     } else {
       // `sanitizeHtml` is used to clean the (potential) user input from (potential)
       // XSS attacks through the contents of the marker InfoWindow.
