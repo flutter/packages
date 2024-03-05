@@ -18,6 +18,8 @@ flutter:
         default_package: local_auth_darwin
       windows:
         default_package: local_auth_windows
+      macos:
+        default_package: local_auth_darwin
 
 dependencies:
   flutter:
