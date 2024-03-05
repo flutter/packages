@@ -325,9 +325,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
       if (limit != null) {
         effectiveLimit = Math.toIntExact(limit);
-      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-          || Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-              && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
+      } else if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
         effectiveLimit = MediaStore.getPickImagesMaxLimit();
       } else {
         effectiveLimit = Integer.MAX_VALUE;
