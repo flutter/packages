@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Mirror of NSKeyValueObservingOptions.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
+/// See
+/// https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
 typedef NS_ENUM(NSUInteger, FWFNSKeyValueObservingOptionsEnum) {
   FWFNSKeyValueObservingOptionsEnumNewValue = 0,
   FWFNSKeyValueObservingOptionsEnumOldValue = 1,
@@ -79,7 +80,8 @@ typedef NS_ENUM(NSUInteger, FWFWKUserScriptInjectionTimeEnum) {
 
 /// Mirror of WKAudiovisualMediaTypes.
 ///
-/// See [WKAudiovisualMediaTypes](https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc).
+/// See
+/// [WKAudiovisualMediaTypes](https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc).
 typedef NS_ENUM(NSUInteger, FWFWKAudiovisualMediaTypeEnum) {
   FWFWKAudiovisualMediaTypeEnumNone = 0,
   FWFWKAudiovisualMediaTypeEnumAudio = 1,
@@ -95,7 +97,8 @@ typedef NS_ENUM(NSUInteger, FWFWKAudiovisualMediaTypeEnum) {
 
 /// Mirror of WKWebsiteDataTypes.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
+/// See
+/// https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
 typedef NS_ENUM(NSUInteger, FWFWKWebsiteDataTypeEnum) {
   FWFWKWebsiteDataTypeEnumCookies = 0,
   FWFWKWebsiteDataTypeEnumMemoryCache = 1,
@@ -170,31 +173,38 @@ typedef NS_ENUM(NSUInteger, FWFNSHttpCookiePropertyKeyEnum) {
 /// An object that contains information about an action that causes navigation
 /// to occur.
 ///
-/// Wraps [WKNavigationType](https://developer.apple.com/documentation/webkit/wknavigationaction?language=objc).
+/// Wraps
+/// [WKNavigationType](https://developer.apple.com/documentation/webkit/wknavigationaction?language=objc).
 typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
   /// A link activation.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypelinkactivated?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypelinkactivated?language=objc.
   FWFWKNavigationTypeLinkActivated = 0,
   /// A request to submit a form.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformsubmitted?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformsubmitted?language=objc.
   FWFWKNavigationTypeSubmitted = 1,
   /// A request for the frame’s next or previous item.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypebackforward?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypebackforward?language=objc.
   FWFWKNavigationTypeBackForward = 2,
   /// A request to reload the webpage.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypereload?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypereload?language=objc.
   FWFWKNavigationTypeReload = 3,
   /// A request to resubmit a form.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformresubmitted?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformresubmitted?language=objc.
   FWFWKNavigationTypeFormResubmitted = 4,
   /// A navigation request that originates for some other reason.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   FWFWKNavigationTypeOther = 5,
   /// An unknown navigation type.
   ///
@@ -215,15 +225,18 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 typedef NS_ENUM(NSUInteger, FWFWKPermissionDecision) {
   /// Deny permission for the requested resource.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiondeny?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiondeny?language=objc.
   FWFWKPermissionDecisionDeny = 0,
   /// Deny permission for the requested resource.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiongrant?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiongrant?language=objc.
   FWFWKPermissionDecisionGrant = 1,
   /// Prompt the user for permission for the requested resource.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisionprompt?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisionprompt?language=objc.
   FWFWKPermissionDecisionPrompt = 2,
 };
 
@@ -239,15 +252,18 @@ typedef NS_ENUM(NSUInteger, FWFWKPermissionDecision) {
 typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
   /// A media device that can capture video.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecamera?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecamera?language=objc.
   FWFWKMediaCaptureTypeCamera = 0,
   /// A media device or devices that can capture audio and video.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecameraandmicrophone?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecameraandmicrophone?language=objc.
   FWFWKMediaCaptureTypeCameraAndMicrophone = 1,
   /// A media device that can capture audio.
   ///
-  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
   FWFWKMediaCaptureTypeMicrophone = 2,
   /// An unknown media device.
   ///
@@ -264,25 +280,30 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
 
 /// Responses to an authentication challenge.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+/// See
+/// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
 typedef NS_ENUM(NSUInteger, FWFNSUrlSessionAuthChallengeDisposition) {
   /// Use the specified credential, which may be nil.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeusecredential?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeusecredential?language=objc.
   FWFNSUrlSessionAuthChallengeDispositionUseCredential = 0,
   /// Use the default handling for the challenge as though this delegate method
   /// were not implemented.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeperformdefaulthandling?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeperformdefaulthandling?language=objc.
   FWFNSUrlSessionAuthChallengeDispositionPerformDefaultHandling = 1,
   /// Cancel the entire request.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengecancelauthenticationchallenge?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengecancelauthenticationchallenge?language=objc.
   FWFNSUrlSessionAuthChallengeDispositionCancelAuthenticationChallenge = 2,
   /// Reject this challenge, and call the authentication delegate method again
   /// with the next authentication protection space.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengerejectprotectionspace?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengerejectprotectionspace?language=objc.
   FWFNSUrlSessionAuthChallengeDispositionRejectProtectionSpace = 3,
 };
 
@@ -296,21 +317,25 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlSessionAuthChallengeDisposition) {
 typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
   /// The credential should not be stored.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencenone?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencenone?language=objc.
   FWFNSUrlCredentialPersistenceNone = 0,
   /// The credential should be stored only for this session.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistenceforsession?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistenceforsession?language=objc.
   FWFNSUrlCredentialPersistenceSession = 1,
   /// The credential should be stored in the keychain.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencepermanent?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencepermanent?language=objc.
   FWFNSUrlCredentialPersistencePermanent = 2,
   /// The credential should be stored permanently in the keychain, and in
   /// addition should be distributed to other devices based on the owning Apple
   /// ID.
   ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencesynchronizable?language=objc.
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencesynchronizable?language=objc.
   FWFNSUrlCredentialPersistenceSynchronizable = 3,
 };
 
@@ -412,13 +437,13 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUrl:(NSString *)url
-    httpMethod:(nullable NSString *)httpMethod
-    httpBody:(nullable FlutterStandardTypedData *)httpBody
-    allHttpHeaderFields:(NSDictionary<NSString *, NSString *> *)allHttpHeaderFields;
-@property(nonatomic, copy) NSString * url;
-@property(nonatomic, copy, nullable) NSString * httpMethod;
-@property(nonatomic, strong, nullable) FlutterStandardTypedData * httpBody;
-@property(nonatomic, copy) NSDictionary<NSString *, NSString *> * allHttpHeaderFields;
+                 httpMethod:(nullable NSString *)httpMethod
+                   httpBody:(nullable FlutterStandardTypedData *)httpBody
+        allHttpHeaderFields:(NSDictionary<NSString *, NSString *> *)allHttpHeaderFields;
+@property(nonatomic, copy) NSString *url;
+@property(nonatomic, copy, nullable) NSString *httpMethod;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *httpBody;
+@property(nonatomic, copy) NSDictionary<NSString *, NSString *> *allHttpHeaderFields;
 @end
 
 /// Mirror of NSURLResponse.
@@ -427,8 +452,8 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @interface FWFNSHttpUrlResponseData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithStatusCode:(NSInteger )statusCode;
-@property(nonatomic, assign) NSInteger  statusCode;
++ (instancetype)makeWithStatusCode:(NSInteger)statusCode;
+@property(nonatomic, assign) NSInteger statusCode;
 @end
 
 /// Mirror of WKUserScript.
@@ -438,11 +463,11 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithSource:(NSString *)source
-    injectionTime:(nullable FWFWKUserScriptInjectionTimeEnumData *)injectionTime
-    isMainFrameOnly:(BOOL )isMainFrameOnly;
-@property(nonatomic, copy) NSString * source;
-@property(nonatomic, strong, nullable) FWFWKUserScriptInjectionTimeEnumData * injectionTime;
-@property(nonatomic, assign) BOOL  isMainFrameOnly;
+                 injectionTime:(nullable FWFWKUserScriptInjectionTimeEnumData *)injectionTime
+               isMainFrameOnly:(BOOL)isMainFrameOnly;
+@property(nonatomic, copy) NSString *source;
+@property(nonatomic, strong, nullable) FWFWKUserScriptInjectionTimeEnumData *injectionTime;
+@property(nonatomic, assign) BOOL isMainFrameOnly;
 @end
 
 /// Mirror of WKNavigationAction.
@@ -452,10 +477,10 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithRequest:(FWFNSUrlRequestData *)request
-    targetFrame:(FWFWKFrameInfoData *)targetFrame
-    navigationType:(FWFWKNavigationType)navigationType;
-@property(nonatomic, strong) FWFNSUrlRequestData * request;
-@property(nonatomic, strong) FWFWKFrameInfoData * targetFrame;
+                    targetFrame:(FWFWKFrameInfoData *)targetFrame
+                 navigationType:(FWFWKNavigationType)navigationType;
+@property(nonatomic, strong) FWFNSUrlRequestData *request;
+@property(nonatomic, strong) FWFWKFrameInfoData *targetFrame;
 @property(nonatomic, assign) FWFWKNavigationType navigationType;
 @end
 
@@ -466,9 +491,9 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithResponse:(FWFNSHttpUrlResponseData *)response
-    forMainFrame:(BOOL )forMainFrame;
-@property(nonatomic, strong) FWFNSHttpUrlResponseData * response;
-@property(nonatomic, assign) BOOL  forMainFrame;
+                    forMainFrame:(BOOL)forMainFrame;
+@property(nonatomic, strong) FWFNSHttpUrlResponseData *response;
+@property(nonatomic, assign) BOOL forMainFrame;
 @end
 
 /// Mirror of WKFrameInfo.
@@ -477,10 +502,9 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @interface FWFWKFrameInfoData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithIsMainFrame:(BOOL )isMainFrame
-    request:(FWFNSUrlRequestData *)request;
-@property(nonatomic, assign) BOOL  isMainFrame;
-@property(nonatomic, strong) FWFNSUrlRequestData * request;
++ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame request:(FWFNSUrlRequestData *)request;
+@property(nonatomic, assign) BOOL isMainFrame;
+@property(nonatomic, strong) FWFNSUrlRequestData *request;
 @end
 
 /// Mirror of NSError.
@@ -489,12 +513,12 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @interface FWFNSErrorData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithCode:(NSInteger )code
-    domain:(NSString *)domain
-    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo;
-@property(nonatomic, assign) NSInteger  code;
-@property(nonatomic, copy) NSString * domain;
-@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> * userInfo;
++ (instancetype)makeWithCode:(NSInteger)code
+                      domain:(NSString *)domain
+                    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo;
+@property(nonatomic, assign) NSInteger code;
+@property(nonatomic, copy) NSString *domain;
+@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *userInfo;
 @end
 
 /// Mirror of WKScriptMessage.
@@ -503,10 +527,9 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @interface FWFWKScriptMessageData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithName:(NSString *)name
-    body:(nullable id )body;
-@property(nonatomic, copy) NSString * name;
-@property(nonatomic, strong, nullable) id  body;
++ (instancetype)makeWithName:(NSString *)name body:(nullable id)body;
+@property(nonatomic, copy) NSString *name;
+@property(nonatomic, strong, nullable) id body;
 @end
 
 /// Mirror of WKSecurityOrigin.
@@ -515,12 +538,10 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @interface FWFWKSecurityOriginData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithHost:(NSString *)host
-    port:(NSInteger )port
-    protocol:(NSString *)protocol;
-@property(nonatomic, copy) NSString * host;
-@property(nonatomic, assign) NSInteger  port;
-@property(nonatomic, copy) NSString * protocol;
++ (instancetype)makeWithHost:(NSString *)host port:(NSInteger)port protocol:(NSString *)protocol;
+@property(nonatomic, copy) NSString *host;
+@property(nonatomic, assign) NSInteger port;
+@property(nonatomic, copy) NSString *protocol;
 @end
 
 /// Mirror of NSHttpCookieData.
@@ -530,9 +551,9 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithPropertyKeys:(NSArray<FWFNSHttpCookiePropertyKeyEnumData *> *)propertyKeys
-    propertyValues:(NSArray<id> *)propertyValues;
-@property(nonatomic, copy) NSArray<FWFNSHttpCookiePropertyKeyEnumData *> * propertyKeys;
-@property(nonatomic, copy) NSArray<id> * propertyValues;
+                      propertyValues:(NSArray<id> *)propertyValues;
+@property(nonatomic, copy) NSArray<FWFNSHttpCookiePropertyKeyEnumData *> *propertyKeys;
+@property(nonatomic, copy) NSArray<id> *propertyValues;
 @end
 
 /// An object that can represent either a value supported by
@@ -541,21 +562,20 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @interface FWFObjectOrIdentifier : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithValue:(nullable id )value
-    isIdentifier:(BOOL )isIdentifier;
-@property(nonatomic, strong, nullable) id  value;
++ (instancetype)makeWithValue:(nullable id)value isIdentifier:(BOOL)isIdentifier;
+@property(nonatomic, strong, nullable) id value;
 /// Whether value is an int that is used to retrieve an instance stored in an
 /// `InstanceManager`.
-@property(nonatomic, assign) BOOL  isIdentifier;
+@property(nonatomic, assign) BOOL isIdentifier;
 @end
 
 @interface FWFAuthenticationChallengeResponse : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithDisposition:(FWFNSUrlSessionAuthChallengeDisposition)disposition
-    credentialIdentifier:(nullable NSNumber *)credentialIdentifier;
+               credentialIdentifier:(nullable NSNumber *)credentialIdentifier;
 @property(nonatomic, assign) FWFNSUrlSessionAuthChallengeDisposition disposition;
-@property(nonatomic, strong, nullable) NSNumber * credentialIdentifier;
+@property(nonatomic, strong, nullable) NSNumber *credentialIdentifier;
 @end
 
 /// The codec used by FWFWKWebsiteDataStoreHostApi.
@@ -565,12 +585,21 @@ NSObject<FlutterMessageCodec> *FWFWKWebsiteDataStoreHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore?language=objc.
 @protocol FWFWKWebsiteDataStoreHostApi
-- (void)createFromWebViewConfigurationWithIdentifier:(NSInteger)identifier configurationIdentifier:(NSInteger)configurationIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)createDefaultDataStoreWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)removeDataFromDataStoreWithIdentifier:(NSInteger)identifier ofTypes:(NSArray<FWFWKWebsiteDataTypeEnumData *> *)dataTypes modifiedSince:(double)modificationTimeInSecondsSinceEpoch completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)createFromWebViewConfigurationWithIdentifier:(NSInteger)identifier
+                             configurationIdentifier:(NSInteger)configurationIdentifier
+                                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)createDefaultDataStoreWithIdentifier:(NSInteger)identifier
+                                       error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)removeDataFromDataStoreWithIdentifier:(NSInteger)identifier
+                                      ofTypes:(NSArray<FWFWKWebsiteDataTypeEnumData *> *)dataTypes
+                                modifiedSince:(double)modificationTimeInSecondsSinceEpoch
+                                   completion:(void (^)(NSNumber *_Nullable,
+                                                        FlutterError *_Nullable))completion;
 @end
 
-extern void SetUpFWFWKWebsiteDataStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKWebsiteDataStoreHostApi> *_Nullable api);
+extern void SetUpFWFWKWebsiteDataStoreHostApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FWFWKWebsiteDataStoreHostApi> *_Nullable api);
 
 /// The codec used by FWFUIViewHostApi.
 NSObject<FlutterMessageCodec> *FWFUIViewHostApiGetCodec(void);
@@ -579,11 +608,16 @@ NSObject<FlutterMessageCodec> *FWFUIViewHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview?language=objc.
 @protocol FWFUIViewHostApi
-- (void)setBackgroundColorForViewWithIdentifier:(NSInteger)identifier toValue:(nullable NSNumber *)value error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setOpaqueForViewWithIdentifier:(NSInteger)identifier isOpaque:(BOOL)opaque error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setBackgroundColorForViewWithIdentifier:(NSInteger)identifier
+                                        toValue:(nullable NSNumber *)value
+                                          error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setOpaqueForViewWithIdentifier:(NSInteger)identifier
+                              isOpaque:(BOOL)opaque
+                                 error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFUIViewHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFUIViewHostApi> *_Nullable api);
+extern void SetUpFWFUIViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                  NSObject<FWFUIViewHostApi> *_Nullable api);
 
 /// The codec used by FWFUIScrollViewHostApi.
 NSObject<FlutterMessageCodec> *FWFUIScrollViewHostApiGetCodec(void);
@@ -592,15 +626,28 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/uikit/uiscrollview?language=objc.
 @protocol FWFUIScrollViewHostApi
-- (void)createFromWebViewWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)createFromWebViewWithIdentifier:(NSInteger)identifier
+                      webViewIdentifier:(NSInteger)webViewIdentifier
+                                  error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<NSNumber *> *)contentOffsetForScrollViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)scrollByForScrollViewWithIdentifier:(NSInteger)identifier x:(double)x y:(double)y error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setContentOffsetForScrollViewWithIdentifier:(NSInteger)identifier toX:(double)x y:(double)y error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setDelegateForScrollViewWithIdentifier:(NSInteger)identifier uiScrollViewDelegateIdentifier:(nullable NSNumber *)uiScrollViewDelegateIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<NSNumber *> *)
+    contentOffsetForScrollViewWithIdentifier:(NSInteger)identifier
+                                       error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)scrollByForScrollViewWithIdentifier:(NSInteger)identifier
+                                          x:(double)x
+                                          y:(double)y
+                                      error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setContentOffsetForScrollViewWithIdentifier:(NSInteger)identifier
+                                                toX:(double)x
+                                                  y:(double)y
+                                              error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setDelegateForScrollViewWithIdentifier:(NSInteger)identifier
+                uiScrollViewDelegateIdentifier:(nullable NSNumber *)uiScrollViewDelegateIdentifier
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFUIScrollViewHostApi> *_Nullable api);
+extern void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FWFUIScrollViewHostApi> *_Nullable api);
 
 /// The codec used by FWFWKWebViewConfigurationHostApi.
 NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationHostApiGetCodec(void);
@@ -610,13 +657,32 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationHostApiGetCodec(void);
 /// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
 @protocol FWFWKWebViewConfigurationHostApi
 - (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)createFromWebViewWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:(NSInteger)identifier isAllowed:(BOOL)allow error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:(NSInteger)identifier isLimited:(BOOL)limit error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setMediaTypesRequiresUserActionForConfigurationWithIdentifier:(NSInteger)identifier forTypes:(NSArray<FWFWKAudiovisualMediaTypeEnumData *> *)types error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)createFromWebViewWithIdentifier:(NSInteger)identifier
+                      webViewIdentifier:(NSInteger)webViewIdentifier
+                                  error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:(NSInteger)identifier
+                                                         isAllowed:(BOOL)allow
+                                                             error:
+                                                                 (FlutterError *_Nullable *_Nonnull)
+                                                                     error;
+- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:(NSInteger)identifier
+                                                                  isLimited:(BOOL)limit
+                                                                      error:(FlutterError *_Nullable
+                                                                                 *_Nonnull)error;
+- (void)
+    setMediaTypesRequiresUserActionForConfigurationWithIdentifier:(NSInteger)identifier
+                                                         forTypes:
+                                                             (NSArray<
+                                                                 FWFWKAudiovisualMediaTypeEnumData
+                                                                     *> *)types
+                                                            error:
+                                                                (FlutterError *_Nullable *_Nonnull)
+                                                                    error;
 @end
 
-extern void SetUpFWFWKWebViewConfigurationHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKWebViewConfigurationHostApi> *_Nullable api);
+extern void SetUpFWFWKWebViewConfigurationHostApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FWFWKWebViewConfigurationHostApi> *_Nullable api);
 
 /// The codec used by FWFWKWebViewConfigurationFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationFlutterApiGetCodec(void);
@@ -626,7 +692,8 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationFlutterApiGetCodec(void)
 /// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
 @interface FWFWKWebViewConfigurationFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)createWithIdentifier:(NSInteger)identifier completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)createWithIdentifier:(NSInteger)identifier
+                  completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFWKUserContentControllerHostApi.
@@ -636,15 +703,31 @@ NSObject<FlutterMessageCodec> *FWFWKUserContentControllerHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/webkit/wkusercontentcontroller?language=objc.
 @protocol FWFWKUserContentControllerHostApi
-- (void)createFromWebViewConfigurationWithIdentifier:(NSInteger)identifier configurationIdentifier:(NSInteger)configurationIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)addScriptMessageHandlerForControllerWithIdentifier:(NSInteger)identifier handlerIdentifier:(NSInteger)handlerIdentifier ofName:(NSString *)name error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)removeScriptMessageHandlerForControllerWithIdentifier:(NSInteger)identifier name:(NSString *)name error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)removeAllScriptMessageHandlersForControllerWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)addUserScriptForControllerWithIdentifier:(NSInteger)identifier userScript:(FWFWKUserScriptData *)userScript error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)removeAllUserScriptsForControllerWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)createFromWebViewConfigurationWithIdentifier:(NSInteger)identifier
+                             configurationIdentifier:(NSInteger)configurationIdentifier
+                                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)addScriptMessageHandlerForControllerWithIdentifier:(NSInteger)identifier
+                                         handlerIdentifier:(NSInteger)handlerIdentifier
+                                                    ofName:(NSString *)name
+                                                     error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)removeScriptMessageHandlerForControllerWithIdentifier:(NSInteger)identifier
+                                                         name:(NSString *)name
+                                                        error:(FlutterError *_Nullable *_Nonnull)
+                                                                  error;
+- (void)removeAllScriptMessageHandlersForControllerWithIdentifier:(NSInteger)identifier
+                                                            error:
+                                                                (FlutterError *_Nullable *_Nonnull)
+                                                                    error;
+- (void)addUserScriptForControllerWithIdentifier:(NSInteger)identifier
+                                      userScript:(FWFWKUserScriptData *)userScript
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)removeAllUserScriptsForControllerWithIdentifier:(NSInteger)identifier
+                                                  error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKUserContentControllerHostApi> *_Nullable api);
+extern void SetUpFWFWKUserContentControllerHostApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FWFWKUserContentControllerHostApi> *_Nullable api);
 
 /// The codec used by FWFWKPreferencesHostApi.
 NSObject<FlutterMessageCodec> *FWFWKPreferencesHostApiGetCodec(void);
@@ -653,11 +736,16 @@ NSObject<FlutterMessageCodec> *FWFWKPreferencesHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/webkit/wkpreferences?language=objc.
 @protocol FWFWKPreferencesHostApi
-- (void)createFromWebViewConfigurationWithIdentifier:(NSInteger)identifier configurationIdentifier:(NSInteger)configurationIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setJavaScriptEnabledForPreferencesWithIdentifier:(NSInteger)identifier isEnabled:(BOOL)enabled error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)createFromWebViewConfigurationWithIdentifier:(NSInteger)identifier
+                             configurationIdentifier:(NSInteger)configurationIdentifier
+                                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setJavaScriptEnabledForPreferencesWithIdentifier:(NSInteger)identifier
+                                               isEnabled:(BOOL)enabled
+                                                   error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFWKPreferencesHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKPreferencesHostApi> *_Nullable api);
+extern void SetUpFWFWKPreferencesHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                         NSObject<FWFWKPreferencesHostApi> *_Nullable api);
 
 /// The codec used by FWFWKScriptMessageHandlerHostApi.
 NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerHostApiGetCodec(void);
@@ -669,7 +757,9 @@ NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerHostApiGetCodec(void);
 - (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFWKScriptMessageHandlerHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKScriptMessageHandlerHostApi> *_Nullable api);
+extern void SetUpFWFWKScriptMessageHandlerHostApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FWFWKScriptMessageHandlerHostApi> *_Nullable api);
 
 /// The codec used by FWFWKScriptMessageHandlerFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerFlutterApiGetCodec(void);
@@ -679,7 +769,11 @@ NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerFlutterApiGetCodec(void)
 /// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
 @interface FWFWKScriptMessageHandlerFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)didReceiveScriptMessageForHandlerWithIdentifier:(NSInteger)identifier userContentControllerIdentifier:(NSInteger)userContentControllerIdentifier message:(FWFWKScriptMessageData *)message completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didReceiveScriptMessageForHandlerWithIdentifier:(NSInteger)identifier
+                        userContentControllerIdentifier:(NSInteger)userContentControllerIdentifier
+                                                message:(FWFWKScriptMessageData *)message
+                                             completion:
+                                                 (void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFWKNavigationDelegateHostApi.
@@ -692,7 +786,9 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateHostApiGetCodec(void);
 - (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFWKNavigationDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKNavigationDelegateHostApi> *_Nullable api);
+extern void SetUpFWFWKNavigationDelegateHostApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FWFWKNavigationDelegateHostApi> *_Nullable api);
 
 /// The codec used by FWFWKNavigationDelegateFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
@@ -702,14 +798,55 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
 /// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
 @interface FWFWKNavigationDelegateFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)didFinishNavigationForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier URL:(nullable NSString *)url completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)didStartProvisionalNavigationForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier URL:(nullable NSString *)url completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)decidePolicyForNavigationActionForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier navigationAction:(FWFWKNavigationActionData *)navigationAction completion:(void (^)(FWFWKNavigationActionPolicyEnumData *_Nullable, FlutterError *_Nullable))completion;
-- (void)decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier navigationResponse:(FWFWKNavigationResponseData *)navigationResponse completion:(void (^)(FWFWKNavigationResponsePolicyEnumBox *_Nullable, FlutterError *_Nullable))completion;
-- (void)didFailNavigationForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier error:(FWFNSErrorData *)error completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)didFailProvisionalNavigationForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier error:(FWFNSErrorData *)error completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)webViewWebContentProcessDidTerminateForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)didReceiveAuthenticationChallengeForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier challengeIdentifier:(NSInteger)challengeIdentifier completion:(void (^)(FWFAuthenticationChallengeResponse *_Nullable, FlutterError *_Nullable))completion;
+- (void)didFinishNavigationForDelegateWithIdentifier:(NSInteger)identifier
+                                   webViewIdentifier:(NSInteger)webViewIdentifier
+                                                 URL:(nullable NSString *)url
+                                          completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didStartProvisionalNavigationForDelegateWithIdentifier:(NSInteger)identifier
+                                             webViewIdentifier:(NSInteger)webViewIdentifier
+                                                           URL:(nullable NSString *)url
+                                                    completion:(void (^)(FlutterError *_Nullable))
+                                                                   completion;
+- (void)
+    decidePolicyForNavigationActionForDelegateWithIdentifier:(NSInteger)identifier
+                                           webViewIdentifier:(NSInteger)webViewIdentifier
+                                            navigationAction:
+                                                (FWFWKNavigationActionData *)navigationAction
+                                                  completion:
+                                                      (void (^)(FWFWKNavigationActionPolicyEnumData
+                                                                    *_Nullable,
+                                                                FlutterError *_Nullable))completion;
+- (void)decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSInteger)identifier
+                                                 webViewIdentifier:(NSInteger)webViewIdentifier
+                                                navigationResponse:(FWFWKNavigationResponseData *)
+                                                                       navigationResponse
+                                                        completion:
+                                                            (void (^)(
+                                                                FWFWKNavigationResponsePolicyEnumBox
+                                                                    *_Nullable,
+                                                                FlutterError *_Nullable))completion;
+- (void)didFailNavigationForDelegateWithIdentifier:(NSInteger)identifier
+                                 webViewIdentifier:(NSInteger)webViewIdentifier
+                                             error:(FWFNSErrorData *)error
+                                        completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didFailProvisionalNavigationForDelegateWithIdentifier:(NSInteger)identifier
+                                            webViewIdentifier:(NSInteger)webViewIdentifier
+                                                        error:(FWFNSErrorData *)error
+                                                   completion:(void (^)(FlutterError *_Nullable))
+                                                                  completion;
+- (void)webViewWebContentProcessDidTerminateForDelegateWithIdentifier:(NSInteger)identifier
+                                                    webViewIdentifier:(NSInteger)webViewIdentifier
+                                                           completion:
+                                                               (void (^)(FlutterError *_Nullable))
+                                                                   completion;
+- (void)didReceiveAuthenticationChallengeForDelegateWithIdentifier:(NSInteger)identifier
+                                                 webViewIdentifier:(NSInteger)webViewIdentifier
+                                               challengeIdentifier:(NSInteger)challengeIdentifier
+                                                        completion:
+                                                            (void (^)(
+                                                                FWFAuthenticationChallengeResponse
+                                                                    *_Nullable,
+                                                                FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFNSObjectHostApi.
@@ -719,12 +856,22 @@ NSObject<FlutterMessageCodec> *FWFNSObjectHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
 @protocol FWFNSObjectHostApi
-- (void)disposeObjectWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)addObserverForObjectWithIdentifier:(NSInteger)identifier observerIdentifier:(NSInteger)observerIdentifier keyPath:(NSString *)keyPath options:(NSArray<FWFNSKeyValueObservingOptionsEnumData *> *)options error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)removeObserverForObjectWithIdentifier:(NSInteger)identifier observerIdentifier:(NSInteger)observerIdentifier keyPath:(NSString *)keyPath error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)disposeObjectWithIdentifier:(NSInteger)identifier
+                              error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)addObserverForObjectWithIdentifier:(NSInteger)identifier
+                        observerIdentifier:(NSInteger)observerIdentifier
+                                   keyPath:(NSString *)keyPath
+                                   options:
+                                       (NSArray<FWFNSKeyValueObservingOptionsEnumData *> *)options
+                                     error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)removeObserverForObjectWithIdentifier:(NSInteger)identifier
+                           observerIdentifier:(NSInteger)observerIdentifier
+                                      keyPath:(NSString *)keyPath
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFNSObjectHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFNSObjectHostApi> *_Nullable api);
+extern void SetUpFWFNSObjectHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                    NSObject<FWFNSObjectHostApi> *_Nullable api);
 
 /// The codec used by FWFNSObjectFlutterApi.
 NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void);
@@ -734,8 +881,14 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void);
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
 @interface FWFNSObjectFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)observeValueForObjectWithIdentifier:(NSInteger)identifier keyPath:(NSString *)keyPath objectIdentifier:(NSInteger)objectIdentifier changeKeys:(NSArray<FWFNSKeyValueChangeKeyEnumData *> *)changeKeys changeValues:(NSArray<FWFObjectOrIdentifier *> *)changeValues completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)disposeObjectWithIdentifier:(NSInteger)identifier completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)observeValueForObjectWithIdentifier:(NSInteger)identifier
+                                    keyPath:(NSString *)keyPath
+                           objectIdentifier:(NSInteger)objectIdentifier
+                                 changeKeys:(NSArray<FWFNSKeyValueChangeKeyEnumData *> *)changeKeys
+                               changeValues:(NSArray<FWFObjectOrIdentifier *> *)changeValues
+                                 completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)disposeObjectWithIdentifier:(NSInteger)identifier
+                         completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFWKWebViewHostApi.
@@ -745,32 +898,71 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebview?language=objc.
 @protocol FWFWKWebViewHostApi
-- (void)createWithIdentifier:(NSInteger)identifier configurationIdentifier:(NSInteger)configurationIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setUIDelegateForWebViewWithIdentifier:(NSInteger)identifier delegateIdentifier:(nullable NSNumber *)uiDelegateIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setNavigationDelegateForWebViewWithIdentifier:(NSInteger)identifier delegateIdentifier:(nullable NSNumber *)navigationDelegateIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable NSString *)URLForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)createWithIdentifier:(NSInteger)identifier
+     configurationIdentifier:(NSInteger)configurationIdentifier
+                       error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setUIDelegateForWebViewWithIdentifier:(NSInteger)identifier
+                           delegateIdentifier:(nullable NSNumber *)uiDelegateIdentifier
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setNavigationDelegateForWebViewWithIdentifier:(NSInteger)identifier
+                                   delegateIdentifier:
+                                       (nullable NSNumber *)navigationDelegateIdentifier
+                                                error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)URLForWebViewWithIdentifier:(NSInteger)identifier
+                                             error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)estimatedProgressForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)loadRequestForWebViewWithIdentifier:(NSInteger)identifier request:(FWFNSUrlRequestData *)request error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)loadHTMLForWebViewWithIdentifier:(NSInteger)identifier HTMLString:(NSString *)string baseURL:(nullable NSString *)baseUrl error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)loadFileForWebViewWithIdentifier:(NSInteger)identifier fileURL:(NSString *)url readAccessURL:(NSString *)readAccessUrl error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)loadAssetForWebViewWithIdentifier:(NSInteger)identifier assetKey:(NSString *)key error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)estimatedProgressForWebViewWithIdentifier:(NSInteger)identifier
+                                                           error:(FlutterError *_Nullable *_Nonnull)
+                                                                     error;
+- (void)loadRequestForWebViewWithIdentifier:(NSInteger)identifier
+                                    request:(FWFNSUrlRequestData *)request
+                                      error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)loadHTMLForWebViewWithIdentifier:(NSInteger)identifier
+                              HTMLString:(NSString *)string
+                                 baseURL:(nullable NSString *)baseUrl
+                                   error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)loadFileForWebViewWithIdentifier:(NSInteger)identifier
+                                 fileURL:(NSString *)url
+                           readAccessURL:(NSString *)readAccessUrl
+                                   error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)loadAssetForWebViewWithIdentifier:(NSInteger)identifier
+                                 assetKey:(NSString *)key
+                                    error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)canGoBackForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)canGoBackForWebViewWithIdentifier:(NSInteger)identifier
+                                                   error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)canGoForwardForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)goBackForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)goForwardForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)reloadWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable NSString *)titleForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setAllowsBackForwardForWebViewWithIdentifier:(NSInteger)identifier isAllowed:(BOOL)allow error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setCustomUserAgentForWebViewWithIdentifier:(NSInteger)identifier userAgent:(nullable NSString *)userAgent error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)evaluateJavaScriptForWebViewWithIdentifier:(NSInteger)identifier javaScriptString:(NSString *)javaScriptString completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
-- (void)setInspectableForWebViewWithIdentifier:(NSInteger)identifier inspectable:(BOOL)inspectable error:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable NSString *)customUserAgentForWebViewWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)canGoForwardForWebViewWithIdentifier:(NSInteger)identifier
+                                                      error:
+                                                          (FlutterError *_Nullable *_Nonnull)error;
+- (void)goBackForWebViewWithIdentifier:(NSInteger)identifier
+                                 error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)goForwardForWebViewWithIdentifier:(NSInteger)identifier
+                                    error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)reloadWebViewWithIdentifier:(NSInteger)identifier
+                              error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)titleForWebViewWithIdentifier:(NSInteger)identifier
+                                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setAllowsBackForwardForWebViewWithIdentifier:(NSInteger)identifier
+                                           isAllowed:(BOOL)allow
+                                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setCustomUserAgentForWebViewWithIdentifier:(NSInteger)identifier
+                                         userAgent:(nullable NSString *)userAgent
+                                             error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)evaluateJavaScriptForWebViewWithIdentifier:(NSInteger)identifier
+                                  javaScriptString:(NSString *)javaScriptString
+                                        completion:(void (^)(id _Nullable,
+                                                             FlutterError *_Nullable))completion;
+- (void)setInspectableForWebViewWithIdentifier:(NSInteger)identifier
+                                   inspectable:(BOOL)inspectable
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)customUserAgentForWebViewWithIdentifier:(NSInteger)identifier
+                                                         error:(FlutterError *_Nullable *_Nonnull)
+                                                                   error;
 @end
 
-extern void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKWebViewHostApi> *_Nullable api);
+extern void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                     NSObject<FWFWKWebViewHostApi> *_Nullable api);
 
 /// The codec used by FWFWKUIDelegateHostApi.
 NSObject<FlutterMessageCodec> *FWFWKUIDelegateHostApiGetCodec(void);
@@ -782,7 +974,8 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateHostApiGetCodec(void);
 - (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFWKUIDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKUIDelegateHostApi> *_Nullable api);
+extern void SetUpFWFWKUIDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FWFWKUIDelegateHostApi> *_Nullable api);
 
 /// The codec used by FWFWKUIDelegateFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void);
@@ -792,15 +985,42 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void);
 /// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
 @interface FWFWKUIDelegateFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)onCreateWebViewForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier configurationIdentifier:(NSInteger)configurationIdentifier navigationAction:(FWFWKNavigationActionData *)navigationAction completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)onCreateWebViewForDelegateWithIdentifier:(NSInteger)identifier
+                               webViewIdentifier:(NSInteger)webViewIdentifier
+                         configurationIdentifier:(NSInteger)configurationIdentifier
+                                navigationAction:(FWFWKNavigationActionData *)navigationAction
+                                      completion:(void (^)(FlutterError *_Nullable))completion;
 /// Callback to Dart function `WKUIDelegate.requestMediaCapturePermission`.
-- (void)requestMediaCapturePermissionForDelegateWithIdentifier:(NSInteger)identifier webViewIdentifier:(NSInteger)webViewIdentifier origin:(FWFWKSecurityOriginData *)origin frame:(FWFWKFrameInfoData *)frame type:(FWFWKMediaCaptureTypeData *)type completion:(void (^)(FWFWKPermissionDecisionData *_Nullable, FlutterError *_Nullable))completion;
+- (void)requestMediaCapturePermissionForDelegateWithIdentifier:(NSInteger)identifier
+                                             webViewIdentifier:(NSInteger)webViewIdentifier
+                                                        origin:(FWFWKSecurityOriginData *)origin
+                                                         frame:(FWFWKFrameInfoData *)frame
+                                                          type:(FWFWKMediaCaptureTypeData *)type
+                                                    completion:
+                                                        (void (^)(
+                                                            FWFWKPermissionDecisionData *_Nullable,
+                                                            FlutterError *_Nullable))completion;
 /// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanel`.
-- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSInteger)identifier message:(NSString *)message frame:(FWFWKFrameInfoData *)frame completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSInteger)identifier
+                                                 message:(NSString *)message
+                                                   frame:(FWFWKFrameInfoData *)frame
+                                              completion:
+                                                  (void (^)(FlutterError *_Nullable))completion;
 /// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanel`.
-- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSInteger)identifier message:(NSString *)message frame:(FWFWKFrameInfoData *)frame completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSInteger)identifier
+                                                   message:(NSString *)message
+                                                     frame:(FWFWKFrameInfoData *)frame
+                                                completion:
+                                                    (void (^)(NSNumber *_Nullable,
+                                                              FlutterError *_Nullable))completion;
 /// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanel`.
-- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSInteger)identifier prompt:(NSString *)prompt defaultText:(NSString *)defaultText frame:(FWFWKFrameInfoData *)frame completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSInteger)identifier
+                                                      prompt:(NSString *)prompt
+                                                 defaultText:(NSString *)defaultText
+                                                       frame:(FWFWKFrameInfoData *)frame
+                                                  completion:
+                                                      (void (^)(NSString *_Nullable,
+                                                                FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFWKHttpCookieStoreHostApi.
@@ -810,11 +1030,16 @@ NSObject<FlutterMessageCodec> *FWFWKHttpCookieStoreHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/webkit/wkhttpcookiestore?language=objc.
 @protocol FWFWKHttpCookieStoreHostApi
-- (void)createFromWebsiteDataStoreWithIdentifier:(NSInteger)identifier dataStoreIdentifier:(NSInteger)websiteDataStoreIdentifier error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setCookieForStoreWithIdentifier:(NSInteger)identifier cookie:(FWFNSHttpCookieData *)cookie completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)createFromWebsiteDataStoreWithIdentifier:(NSInteger)identifier
+                             dataStoreIdentifier:(NSInteger)websiteDataStoreIdentifier
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setCookieForStoreWithIdentifier:(NSInteger)identifier
+                                 cookie:(FWFNSHttpCookieData *)cookie
+                             completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-extern void SetUpFWFWKHttpCookieStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKHttpCookieStoreHostApi> *_Nullable api);
+extern void SetUpFWFWKHttpCookieStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                             NSObject<FWFWKHttpCookieStoreHostApi> *_Nullable api);
 
 /// The codec used by FWFNSUrlHostApi.
 NSObject<FlutterMessageCodec> *FWFNSUrlHostApiGetCodec(void);
@@ -827,10 +1052,13 @@ NSObject<FlutterMessageCodec> *FWFNSUrlHostApiGetCodec(void);
 ///
 /// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
 @protocol FWFNSUrlHostApi
-- (nullable NSString *)absoluteStringForNSURLWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)absoluteStringForNSURLWithIdentifier:(NSInteger)identifier
+                                                      error:
+                                                          (FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFNSUrlHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFNSUrlHostApi> *_Nullable api);
+extern void SetUpFWFNSUrlHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                 NSObject<FWFNSUrlHostApi> *_Nullable api);
 
 /// The codec used by FWFNSUrlFlutterApi.
 NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void);
@@ -844,7 +1072,8 @@ NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void);
 /// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
 @interface FWFNSUrlFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)createWithIdentifier:(NSInteger)identifier completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)createWithIdentifier:(NSInteger)identifier
+                  completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFUIScrollViewDelegateHostApi.
@@ -861,7 +1090,9 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateHostApiGetCodec(void);
 - (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFUIScrollViewDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFUIScrollViewDelegateHostApi> *_Nullable api);
+extern void SetUpFWFUIScrollViewDelegateHostApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FWFUIScrollViewDelegateHostApi> *_Nullable api);
 
 /// The codec used by FWFUIScrollViewDelegateFlutterApi.
 NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateFlutterApiGetCodec(void);
@@ -871,7 +1102,11 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateFlutterApiGetCodec(void);
 /// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
 @interface FWFUIScrollViewDelegateFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)scrollViewDidScrollWithIdentifier:(NSInteger)identifier UIScrollViewIdentifier:(NSInteger)uiScrollViewIdentifier x:(double)x y:(double)y completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)scrollViewDidScrollWithIdentifier:(NSInteger)identifier
+                   UIScrollViewIdentifier:(NSInteger)uiScrollViewIdentifier
+                                        x:(double)x
+                                        y:(double)y
+                               completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFNSUrlCredentialHostApi.
@@ -886,10 +1121,15 @@ NSObject<FlutterMessageCodec> *FWFNSUrlCredentialHostApiGetCodec(void);
 /// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
 @protocol FWFNSUrlCredentialHostApi
 /// Create a new native instance and add it to the `InstanceManager`.
-- (void)createWithUserWithIdentifier:(NSInteger)identifier user:(NSString *)user password:(NSString *)password persistence:(FWFNSUrlCredentialPersistence)persistence error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)createWithUserWithIdentifier:(NSInteger)identifier
+                                user:(NSString *)user
+                            password:(NSString *)password
+                         persistence:(FWFNSUrlCredentialPersistence)persistence
+                               error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFWFNSUrlCredentialHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFNSUrlCredentialHostApi> *_Nullable api);
+extern void SetUpFWFNSUrlCredentialHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                           NSObject<FWFNSUrlCredentialHostApi> *_Nullable api);
 
 /// The codec used by FWFNSUrlProtectionSpaceFlutterApi.
 NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void);
@@ -904,7 +1144,11 @@ NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void);
 @interface FWFNSUrlProtectionSpaceFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 /// Create a new Dart instance and add it to the `InstanceManager`.
-- (void)createWithIdentifier:(NSInteger)identifier host:(nullable NSString *)host realm:(nullable NSString *)realm authenticationMethod:(nullable NSString *)authenticationMethod completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)createWithIdentifier:(NSInteger)identifier
+                        host:(nullable NSString *)host
+                       realm:(nullable NSString *)realm
+        authenticationMethod:(nullable NSString *)authenticationMethod
+                  completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFNSUrlAuthenticationChallengeFlutterApi.
@@ -916,11 +1160,14 @@ NSObject<FlutterMessageCodec> *FWFNSUrlAuthenticationChallengeFlutterApiGetCodec
 /// attached to a native instance or receiving callback methods from an
 /// overridden native class.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
+/// See
+/// https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
 @interface FWFNSUrlAuthenticationChallengeFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 /// Create a new Dart instance and add it to the `InstanceManager`.
-- (void)createWithIdentifier:(NSInteger)identifier protectionSpaceIdentifier:(NSInteger)protectionSpaceIdentifier completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)createWithIdentifier:(NSInteger)identifier
+    protectionSpaceIdentifier:(NSInteger)protectionSpaceIdentifier
+                   completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -294,8 +294,11 @@
                                               navigationResponse:OCMOCK_ANY
                                                       completion:
                                                           ([OCMArg
-                                                             invokeBlockWithArgs:
-                                                               [[FWFWKNavigationResponsePolicyEnumBox alloc] initWithValue:FWFWKNavigationResponsePolicyEnumAllow],
+                                                              invokeBlockWithArgs:
+                                                                  [[FWFWKNavigationResponsePolicyEnumBox
+                                                                      alloc]
+                                                                      initWithValue:
+                                                                          FWFWKNavigationResponsePolicyEnumAllow],
                                                                   [NSNull null], nil])]);
 
   WKNavigationResponsePolicy __block callbackPolicy = -1;

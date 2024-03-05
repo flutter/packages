@@ -194,9 +194,11 @@
 }
 
 - (void)testFWFNativeWKNavigationResponsePolicyFromEnum {
-  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnum(FWFWKNavigationResponsePolicyEnumAllow),
-                 WKNavigationResponsePolicyAllow);
-  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnum(FWFWKNavigationResponsePolicyEnumCancel),
-                 WKNavigationResponsePolicyCancel);
+  XCTAssertEqual(
+      FWFNativeWKNavigationResponsePolicyFromEnum(FWFWKNavigationResponsePolicyEnumAllow),
+      WKNavigationResponsePolicyAllow);
+  XCTAssertEqual(
+      FWFNativeWKNavigationResponsePolicyFromEnum(FWFWKNavigationResponsePolicyEnumCancel),
+      WKNavigationResponsePolicyCancel);
 }
 @end
