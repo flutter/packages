@@ -295,10 +295,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.13.9"
+      channel: "3.16.9"
       env_variables: >-
         {
-          "CHANNEL": "3.13.9"
+          "CHANNEL": "3.16.9"
         }
 
   - name: Linux analyze_legacy N-2
@@ -306,10 +306,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.10.6"
+      channel: "3.13.9"
       env_variables: >-
         {
-          "CHANNEL": "3.10.6"
+          "CHANNEL": "3.13.9"
         }
 
   - name: Linux_android custom_package_tests master
@@ -1472,6 +1472,7 @@ targets:
 
   - name: Windows_arm64 windows-build_all_packages master
     recipe: packages/packages
+    presubmit: false
     timeout: 30
     bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
@@ -1506,6 +1507,7 @@ targets:
 
   - name: Windows_arm64 windows-build_all_packages stable
     recipe: packages/packages
+    presubmit: false
     timeout: 30
     bringup: true
     properties:

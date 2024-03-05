@@ -871,11 +871,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           scope: api.name,
           returnType: _voidType,
           parameters: parameters, body: () {
-        const String channel = 'channel';
         indent.writeln(
             'const std::string channel_name = "${makeChannelName(api, func, dartPackageName)}";');
-        indent.writeln(
-            'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger_, '
+        indent.writeln('BasicMessageChannel<> channel(binary_messenger_, '
             'channel_name, &GetCodec());');
 
         // Convert arguments to EncodableValue versions.
@@ -894,7 +892,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           });
         }
 
-        indent.write('$channel->Send($argumentListVariableName, '
+        indent.write('channel.Send($argumentListVariableName, '
             // ignore: missing_whitespace_between_adjacent_strings
             '[channel_name, on_success = std::move(on_success), on_error = std::move(on_error)]'
             '(const uint8_t* reply, size_t reply_size) ');
@@ -972,12 +970,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         final String channelName =
             makeChannelName(api, method, dartPackageName);
         indent.writeScoped('{', '}', () {
-          indent.writeln(
-              'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, '
+          indent.writeln('BasicMessageChannel<> channel(binary_messenger, '
               '"$channelName", &GetCodec());');
           indent.writeScoped('if (api != nullptr) {', '} else {', () {
             indent.write(
-                'channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
+                'channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
             indent.addScoped('{', '});', () {
               indent.writeScoped('try {', '}', () {
                 final List<String> methodArgument = <String>[];
@@ -1054,7 +1051,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             });
           });
           indent.addScoped(null, '}', () {
-            indent.writeln('channel->SetMessageHandler(nullptr);');
+            indent.writeln('channel.SetMessageHandler(nullptr);');
           });
         });
       }

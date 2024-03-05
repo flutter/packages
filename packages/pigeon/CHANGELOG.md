@@ -1,3 +1,16 @@
+## 17.1.2
+
+* [swift] Separates message call code generation into separate methods.
+
+## 17.1.1
+
+* Removes heap allocation in generated C++ code.
+
+## 17.1.0
+
+* [kotlin] Adds `includeErrorClass` to `KotlinOptions`.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 17.0.0
 
 * **Breaking Change** [kotlin] Converts Kotlin enum case generation to SCREAMING_SNAKE_CASE.
