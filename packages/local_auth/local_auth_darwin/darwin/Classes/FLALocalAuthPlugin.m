@@ -279,6 +279,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark - AppDelegate
 
+// This method is called when the app is resumed from the background only on iOS
 #if TARGET_OS_IOS
 - (void)applicationDidBecomeActive:(UIApplication *)application {
   if (self.lastCallState != nil) {

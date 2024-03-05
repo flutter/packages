@@ -1,4 +1,4 @@
-## 2.0.0
+## 1.3.0
 
 * Adds macOS support. Requires macOS 10.15 or higher
 
