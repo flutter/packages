@@ -12,11 +12,18 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       home: _App(),
-    ),
-  );
+    );
+  }
 }
 
 class _App extends StatelessWidget {
@@ -396,17 +403,20 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   late VideoPlayerController _videoPlayerController;
   bool startedPlaying = false;
 
+  void _onVideoControllerValueUpdated() {
+    if (startedPlaying && !_videoPlayerController.value.isPlaying) {
+      _videoPlayerController.removeListener(_onVideoControllerValueUpdated);
+      Navigator.pop(context);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
     _videoPlayerController =
         VideoPlayerController.asset('assets/Butterfly-209.mp4');
-    _videoPlayerController.addListener(() {
-      if (startedPlaying && !_videoPlayerController.value.isPlaying) {
-        Navigator.pop(context);
-      }
-    });
+    _videoPlayerController.addListener(_onVideoControllerValueUpdated);
   }
 
   @override
