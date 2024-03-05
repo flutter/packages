@@ -16,6 +16,7 @@ import 'billing_client_wrappers/billing_client_wrapper_test.dart';
 import 'billing_client_wrappers/billing_client_wrapper_test.mocks.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
 import 'stub_in_app_purchase_platform.dart';
+import 'test_conversion_utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -230,34 +231,20 @@ void main() {
   });
 
   group('isFeatureSupported', () {
-    const String isFeatureSupportedMethodName =
-        'BillingClient#isFeatureSupported(String)';
     test('isFeatureSupported returns false', () async {
-      late Map<Object?, Object?> arguments;
-      stubPlatform.addResponse(
-        name: isFeatureSupportedMethodName,
-        value: false,
-        additionalStepBeforeReturn: (dynamic value) =>
-            arguments = value as Map<dynamic, dynamic>,
-      );
+      when(mockApi.isFeatureSupported('subscriptions'))
+          .thenAnswer((_) async => false);
       final bool isSupported = await iapAndroidPlatformAddition
           .isFeatureSupported(BillingClientFeature.subscriptions);
       expect(isSupported, isFalse);
-      expect(arguments['feature'], equals('subscriptions'));
     });
 
     test('isFeatureSupported returns true', () async {
-      late Map<Object?, Object?> arguments;
-      stubPlatform.addResponse(
-        name: isFeatureSupportedMethodName,
-        value: true,
-        additionalStepBeforeReturn: (dynamic value) =>
-            arguments = value as Map<dynamic, dynamic>,
-      );
+      when(mockApi.isFeatureSupported('subscriptions'))
+          .thenAnswer((_) async => true);
       final bool isSupported = await iapAndroidPlatformAddition
           .isFeatureSupported(BillingClientFeature.subscriptions);
       expect(isSupported, isTrue);
-      expect(arguments['feature'], equals('subscriptions'));
     });
   });
 }

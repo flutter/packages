@@ -315,11 +315,8 @@ class BillingClient {
   /// Checks if the specified feature or capability is supported by the Play Store.
   /// Call this to check if a [BillingClientFeature] is supported by the device.
   Future<bool> isFeatureSupported(BillingClientFeature feature) async {
-    final bool? result = await channel.invokeMethod<bool>(
-        'BillingClient#isFeatureSupported(String)', <String, dynamic>{
-      'feature': const BillingClientFeatureConverter().toJson(feature),
-    });
-    return result ?? false;
+    return _hostApi.isFeatureSupported(
+        const BillingClientFeatureConverter().toJson(feature));
   }
 
   /// BillingConfig method channel string identifier.

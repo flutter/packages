@@ -8,7 +8,6 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UN
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ACKNOWLEDGE_PURCHASE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_FEATURE_SUPPORTED;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PRODUCT_DETAILS;
@@ -1001,38 +1000,30 @@ public class MethodCallHandlerTest {
   public void isFutureSupported_true() {
     mockStartConnection();
     final String feature = "subscriptions";
-    Map<String, Object> arguments = new HashMap<>();
-    arguments.put("feature", feature);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingClient.BillingResponseCode.OK)
             .setDebugMessage("dummy debug message")
             .build();
-
-    MethodCall call = new MethodCall(IS_FEATURE_SUPPORTED, arguments);
     when(mockBillingClient.isFeatureSupported(feature)).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(call, result);
-    verify(result).success(true);
+
+    assertTrue(methodChannelHandler.isFeatureSupported(feature));
   }
 
   @Test
   public void isFutureSupported_false() {
     mockStartConnection();
     final String feature = "subscriptions";
-    Map<String, Object> arguments = new HashMap<>();
-    arguments.put("feature", feature);
 
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED)
             .setDebugMessage("dummy debug message")
             .build();
-
-    MethodCall call = new MethodCall(IS_FEATURE_SUPPORTED, arguments);
     when(mockBillingClient.isFeatureSupported(feature)).thenReturn(billingResult);
-    methodChannelHandler.onMethodCall(call, result);
-    verify(result).success(false);
+
+    assertFalse(methodChannelHandler.isFeatureSupported(feature));
   }
 
   /**

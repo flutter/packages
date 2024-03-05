@@ -62,7 +62,6 @@ class MethodCallHandlerImpl
         "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
     static final String ACKNOWLEDGE_PURCHASE =
         "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
-    static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
     static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
         "BillingClient#createAlternativeBillingOnlyReportingDetails()";
@@ -171,9 +170,6 @@ class MethodCallHandlerImpl
       case MethodNames.ACKNOWLEDGE_PURCHASE:
         acknowledgePurchase((String) call.argument("purchaseToken"), result);
         break;
-      case MethodNames.IS_FEATURE_SUPPORTED:
-        isFeatureSupported((String) call.argument("feature"), result);
-        break;
       case MethodNames.GET_BILLING_CONFIG:
         getBillingConfig(result);
         break;
@@ -189,6 +185,7 @@ class MethodCallHandlerImpl
   public void showAlternativeBillingOnlyInformationDialog(
       @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
     validateBillingClient();
+    assert billingClient != null;
     if (activity == null) {
       throw new FlutterError(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null);
     }
@@ -201,6 +198,7 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
+    assert billingClient != null;
     billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
         ((billingResult, alternativeBillingOnlyReportingDetails) ->
             result.success(
@@ -212,6 +210,7 @@ class MethodCallHandlerImpl
   public void isAlternativeBillingOnlyAvailable(
       @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
     validateBillingClient();
+    assert billingClient != null;
     billingClient.isAlternativeBillingOnlyAvailableAsync(
         billingResult -> result.success(pigeonBillingResultFromBillingResult(billingResult)));
   }
@@ -220,6 +219,7 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
+    assert billingClient != null;
     billingClient.getBillingConfigAsync(
         GetBillingConfigParams.newBuilder().build(),
         (billingResult, billingConfig) ->
@@ -242,6 +242,7 @@ class MethodCallHandlerImpl
   @NonNull
   public Boolean isReady() {
     validateBillingClient();
+    assert billingClient != null;
     return billingClient.isReady();
   }
 
@@ -250,6 +251,7 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
+    assert billingClient != null;
 
     QueryProductDetailsParams params =
         QueryProductDetailsParams.newBuilder().setProductList(productList).build();
@@ -277,6 +279,7 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
+    assert billingClient != null;
 
     com.android.billingclient.api.ProductDetails productDetails = cachedProducts.get(product);
     if (productDetails == null) {
@@ -388,6 +391,7 @@ class MethodCallHandlerImpl
       @NonNull String purchaseToken,
       @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
     validateBillingClient();
+    assert billingClient != null;
 
     ConsumeResponseListener listener =
         (billingResult, outToken) ->
@@ -403,6 +407,7 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
+    assert billingClient != null;
 
     // Like in our connect call, consider the billing client responding a "success" here regardless
     // of status code.
@@ -425,6 +430,7 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
+    assert billingClient != null;
 
     billingClient.queryPurchaseHistoryAsync(
         QueryPurchaseHistoryParams.newBuilder().setProductType(productType).build(),
@@ -475,6 +481,7 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
+    assert billingClient != null;
     AcknowledgePurchaseParams params =
         AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
     billingClient.acknowledgePurchase(
@@ -506,12 +513,11 @@ class MethodCallHandlerImpl
     }
   }
 
-  private void isFeatureSupported(String feature, MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
+  @Override
+  public @NonNull Boolean isFeatureSupported(@NonNull String feature) {
+    validateBillingClient();
     assert billingClient != null;
     BillingResult billingResult = billingClient.isFeatureSupported(feature);
-    result.success(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK);
+    return billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK;
   }
 }

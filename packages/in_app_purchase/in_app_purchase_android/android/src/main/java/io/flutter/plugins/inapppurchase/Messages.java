@@ -228,6 +228,9 @@ public class Messages {
     void endConnection();
     /** Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener). */
     void consumeAsync(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
+    /** Wraps BillingClient#isFeatureSupported(String). */
+    @NonNull
+    Boolean isFeatureSupported(@NonNull String feature);
     /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
     void isAlternativeBillingOnlyAvailable(@NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
@@ -349,6 +352,31 @@ public class Messages {
                     };
 
                 api.consumeAsync(purchaseTokenArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String featureArg = (String) args.get(0);
+                try {
+                  Boolean output = api.isFeatureSupported(featureArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

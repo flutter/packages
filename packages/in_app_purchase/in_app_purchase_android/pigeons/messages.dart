@@ -48,6 +48,12 @@ abstract class InAppPurchaseApi {
   @async
   PlatformBillingResult consumeAsync(String purchaseToken);
 
+  /// Wraps BillingClient#isFeatureSupported(String).
+  // TODO(stuartmorgan): Consider making this take a enum, and converting the
+  // enum value to string constants on the native side, so that magic strings
+  // from the Play Billing API aren't duplicated in Dart code.
+  bool isFeatureSupported(String feature);
+
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   @async
   PlatformBillingResult isAlternativeBillingOnlyAvailable();

@@ -4,7 +4,6 @@
 
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
-import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:test/test.dart';
 
 const PurchaseWrapper dummyPurchase = PurchaseWrapper(
@@ -252,17 +251,4 @@ Map<String, dynamic> buildBillingResultMap(BillingResultWrapper original) {
         const BillingResponseConverter().toJson(original.responseCode),
     'debugMessage': original.debugMessage,
   };
-}
-
-/// Creates the [PlatformBillingResult] to return from a mock to get
-/// [targetResult].
-///
-/// Since [PlatformBillingResult] returns a non-nullable debug string, the
-/// target must have a non-null string as well.
-PlatformBillingResult convertToPigeonResult(BillingResultWrapper targetResult) {
-  return PlatformBillingResult(
-    responseCode:
-        const BillingResponseConverter().toJson(targetResult.responseCode),
-    debugMessage: targetResult.debugMessage!,
-  );
 }

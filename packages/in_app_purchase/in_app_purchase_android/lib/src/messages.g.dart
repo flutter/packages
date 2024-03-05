@@ -206,6 +206,36 @@ class InAppPurchaseApi {
     }
   }
 
+  /// Wraps BillingClient#isFeatureSupported(String).
+  Future<bool> isFeatureSupported(String feature) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[feature]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   Future<PlatformBillingResult> isAlternativeBillingOnlyAvailable() async {
     const String __pigeon_channelName =
