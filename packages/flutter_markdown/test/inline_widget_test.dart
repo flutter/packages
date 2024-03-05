@@ -58,7 +58,6 @@ class SubscriptBuilder extends MarkdownElementBuilder {
     TextStyle? preferredStyle,
     TextStyle? parentStyle,
   ) {
-    // This pull request will add support for WidgetSpan in the FlutterMarkdown package
     return Text.rich(WidgetSpan(
       alignment: PlaceholderAlignment.middle,
       child: Text(element.textContent),
