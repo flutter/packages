@@ -1,3 +1,7 @@
+## 0.3.12+1
+
+* Fixes type of error code returned from native code in SKReceiptManager.retrieveReceiptData.
+
 ## 0.3.12
 
 * Converts `refreshReceipt()`, `startObservingPaymentQueue()`, `stopObservingPaymentQueue()`, 

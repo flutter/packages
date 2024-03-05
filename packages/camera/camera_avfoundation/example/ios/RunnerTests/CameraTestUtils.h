@@ -11,6 +11,24 @@ NS_ASSUME_NONNULL_BEGIN
 /// @return an FLTCam object.
 extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue);
 
+/// Creates an `FLTCam` with a given captureSession and resolutionPreset
+/// @param captureSession AVCaptureSession for video
+/// @param resolutionPreset preset for camera's captureSession resolution
+/// @return an FLTCam object.
+extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
+                                                   NSString *resolutionPreset);
+
+/// Creates an `FLTCam` with a given captureSession and resolutionPreset.
+/// Allows to inject a capture device and a block to compute the video dimensions.
+/// @param captureSession AVCaptureSession for video
+/// @param resolutionPreset preset for camera's captureSession resolution
+/// @param captureDevice AVCaptureDevice to be used
+/// @param videoDimensionsForFormat custom code to determine video dimensions
+/// @return an FLTCam object.
+extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
+    AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
+    VideoDimensionsForFormat videoDimensionsForFormat);
+
 /// Creates a test sample buffer.
 /// @return a test sample buffer.
 extern CMSampleBufferRef FLTCreateTestSampleBuffer(void);

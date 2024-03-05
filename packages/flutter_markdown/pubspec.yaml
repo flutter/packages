@@ -4,7 +4,7 @@ description: A Markdown renderer for Flutter. Create rich text output,
   formatted with simple Markdown tags.
 repository: https://github.com/flutter/packages/tree/main/packages/flutter_markdown
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+flutter_markdown%22
-version: 0.6.20+1
+version: 0.6.21
 
 environment:
   sdk: ^3.3.0

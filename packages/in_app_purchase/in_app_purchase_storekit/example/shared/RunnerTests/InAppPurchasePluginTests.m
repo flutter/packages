@@ -307,6 +307,7 @@
 
   XCTAssertNil(result);
   XCTAssertNotNil(error);
+  XCTAssert([error.code isKindOfClass:[NSString class]]);
   NSDictionary *details = error.details;
   XCTAssertNotNil(details[@"error"]);
   NSNumber *errorCode = (NSNumber *)details[@"error"][@"code"];

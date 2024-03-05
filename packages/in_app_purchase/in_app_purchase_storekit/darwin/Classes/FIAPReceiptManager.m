@@ -29,9 +29,10 @@
   if (!receipt || receiptError) {
     if (flutterError) {
       NSDictionary *errorMap = [FIAObjectTranslator getMapFromNSError:receiptError];
-      *flutterError = [FlutterError errorWithCode:errorMap[@"code"]
-                                          message:errorMap[@"domain"]
-                                          details:errorMap[@"userInfo"]];
+      *flutterError =
+          [FlutterError errorWithCode:[NSString stringWithFormat:@"%@", errorMap[@"code"]]
+                              message:errorMap[@"domain"]
+                              details:errorMap[@"userInfo"]];
     }
     return nil;
   }
