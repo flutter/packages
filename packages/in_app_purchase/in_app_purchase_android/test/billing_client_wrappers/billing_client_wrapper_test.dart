@@ -595,8 +595,8 @@ void main() {
     test('returns object', () async {
       const BillingResultWrapper expected = BillingResultWrapper(
           responseCode: BillingResponse.ok, debugMessage: 'message');
-      when(mockApi.isAlternativeBillingOnlyAvailable()).thenAnswer((_) async =>
-          PlatformBillingResult(
+      when(mockApi.isAlternativeBillingOnlyAvailableAsync()).thenAnswer(
+          (_) async => PlatformBillingResult(
               responseCode: 0, debugMessage: expected.debugMessage!));
       final BillingResultWrapper result =
           await billingClient.isAlternativeBillingOnlyAvailable();

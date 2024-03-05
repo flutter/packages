@@ -122,8 +122,8 @@ void main() {
     test('isAlternativeBillingOnlyAvailable success', () async {
       const BillingResultWrapper expected = BillingResultWrapper(
           responseCode: BillingResponse.ok, debugMessage: 'dummy message');
-      when(mockApi.isAlternativeBillingOnlyAvailable()).thenAnswer((_) async =>
-          PlatformBillingResult(
+      when(mockApi.isAlternativeBillingOnlyAvailableAsync()).thenAnswer(
+          (_) async => PlatformBillingResult(
               responseCode: 0, debugMessage: expected.debugMessage!));
 
       final BillingResultWrapper result =
@@ -138,7 +138,7 @@ void main() {
       const BillingResultWrapper expected = BillingResultWrapper(
           responseCode: BillingResponse.ok, debugMessage: 'dummy message');
 
-      when(mockApi.isAlternativeBillingOnlyAvailable())
+      when(mockApi.isAlternativeBillingOnlyAvailableAsync())
           .thenAnswer((_) async => convertToPigeonResult(expected));
       when(mockApi.showAlternativeBillingOnlyInformationDialog())
           .thenAnswer((_) async => convertToPigeonResult(expected));

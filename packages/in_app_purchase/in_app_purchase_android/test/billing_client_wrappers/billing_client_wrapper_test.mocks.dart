@@ -181,29 +181,30 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
       ) as _i3.Future<bool>);
 
   @override
-  _i3.Future<_i2.PlatformBillingResult> isAlternativeBillingOnlyAvailable() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #isAlternativeBillingOnlyAvailable,
-          [],
-        ),
-        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
-            _FakePlatformBillingResult_0(
-          this,
-          Invocation.method(
-            #isAlternativeBillingOnlyAvailable,
-            [],
-          ),
-        )),
-        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
-            _FakePlatformBillingResult_0(
-          this,
-          Invocation.method(
-            #isAlternativeBillingOnlyAvailable,
-            [],
-          ),
-        )),
-      ) as _i3.Future<_i2.PlatformBillingResult>);
+  _i3.Future<_i2.PlatformBillingResult>
+      isAlternativeBillingOnlyAvailableAsync() => (super.noSuchMethod(
+            Invocation.method(
+              #isAlternativeBillingOnlyAvailableAsync,
+              [],
+            ),
+            returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+                _FakePlatformBillingResult_0(
+              this,
+              Invocation.method(
+                #isAlternativeBillingOnlyAvailableAsync,
+                [],
+              ),
+            )),
+            returnValueForMissingStub:
+                _i3.Future<_i2.PlatformBillingResult>.value(
+                    _FakePlatformBillingResult_0(
+              this,
+              Invocation.method(
+                #isAlternativeBillingOnlyAvailableAsync,
+                [],
+              ),
+            )),
+          ) as _i3.Future<_i2.PlatformBillingResult>);
 
   @override
   _i3.Future<_i2.PlatformBillingResult>

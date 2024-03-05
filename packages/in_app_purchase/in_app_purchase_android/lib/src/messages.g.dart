@@ -356,9 +356,9 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
-  Future<PlatformBillingResult> isAlternativeBillingOnlyAvailable() async {
+  Future<PlatformBillingResult> isAlternativeBillingOnlyAvailableAsync() async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailable';
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

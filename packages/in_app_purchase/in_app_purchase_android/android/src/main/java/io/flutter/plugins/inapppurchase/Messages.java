@@ -440,7 +440,7 @@ public class Messages {
     @NonNull
     Boolean isFeatureSupported(@NonNull String feature);
     /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
-    void isAlternativeBillingOnlyAvailable(@NonNull Result<PlatformBillingResult> result);
+    void isAlternativeBillingOnlyAvailableAsync(@NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
     void showAlternativeBillingOnlyInformationDialog(@NonNull Result<PlatformBillingResult> result);
 
@@ -650,7 +650,7 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailable",
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -669,7 +669,7 @@ public class Messages {
                       }
                     };
 
-                api.isAlternativeBillingOnlyAvailable(resultCallback);
+                api.isAlternativeBillingOnlyAvailableAsync(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

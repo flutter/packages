@@ -188,7 +188,7 @@ class MethodCallHandlerImpl
   }
 
   @Override
-  public void isAlternativeBillingOnlyAvailable(
+  public void isAlternativeBillingOnlyAvailableAsync(
       @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
     validateBillingClient();
     assert billingClient != null;

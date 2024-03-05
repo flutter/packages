@@ -328,7 +328,7 @@ class BillingClient {
   /// Checks if "AlterntitiveBillingOnly" feature is available.
   Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
     return resultWrapperFromPlatform(
-        await _hostApi.isAlternativeBillingOnlyAvailable());
+        await _hostApi.isAlternativeBillingOnlyAvailableAsync());
   }
 
   /// Shows the alternative billing only information dialog on top of the calling app.

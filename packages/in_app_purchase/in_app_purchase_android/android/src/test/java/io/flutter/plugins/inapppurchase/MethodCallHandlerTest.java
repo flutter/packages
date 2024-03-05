@@ -331,7 +331,7 @@ public class MethodCallHandlerTest {
         .when(mockBillingClient)
         .isAlternativeBillingOnlyAvailableAsync(listenerCaptor.capture());
 
-    methodChannelHandler.isAlternativeBillingOnlyAvailable(platformBillingResult);
+    methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult);
     listenerCaptor.getValue().onAlternativeBillingOnlyAvailabilityResponse(billingResult);
 
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
@@ -345,7 +345,8 @@ public class MethodCallHandlerTest {
     Messages.FlutterError exception =
         assertThrows(
             Messages.FlutterError.class,
-            () -> methodChannelHandler.isAlternativeBillingOnlyAvailable(platformBillingResult));
+            () ->
+                methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult));
     assertEquals("UNAVAILABLE", exception.code);
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }

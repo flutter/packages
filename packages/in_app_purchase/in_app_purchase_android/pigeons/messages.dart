@@ -87,7 +87,7 @@ abstract class InAppPurchaseApi {
 
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   @async
-  PlatformBillingResult isAlternativeBillingOnlyAvailable();
+  PlatformBillingResult isAlternativeBillingOnlyAvailableAsync();
 
   /// Wraps BillingClient#showAlternativeBillingOnlyInformationDialog().
   @async
