@@ -1,3 +1,7 @@
+## 0.5.6+2
+
+* Uses `TrustedTypes` from `web: ^0.5.1`.
+
 ## 0.5.6+1
 
 * Fixes an issue where `dart:js_interop` object literal factories did not
