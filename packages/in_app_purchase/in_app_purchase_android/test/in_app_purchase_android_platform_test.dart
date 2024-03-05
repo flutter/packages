@@ -26,8 +26,6 @@ void main() {
   final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatform iapAndroidPlatform;
-  const String acknowledgePurchaseCall =
-      'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
   const String onBillingServiceDisconnectedCallback =
       'BillingClientStateListener#onBillingServiceDisconnected()';
 
@@ -70,18 +68,20 @@ void main() {
     test(
         're-connects when operation returns BillingResponse.clientDisconnected',
         () async {
-      final Map<String, dynamic> okValue = buildBillingResultMap(
-          const BillingResultWrapper(responseCode: BillingResponse.ok));
-      stubPlatform.addResponse(
-        name: acknowledgePurchaseCall,
-        value: buildBillingResultMap(
-          const BillingResultWrapper(
-            responseCode: BillingResponse.serviceDisconnected,
-          ),
-        ),
+      when(mockApi.acknowledgePurchase(any)).thenAnswer(
+        (_) async => PlatformBillingResult(
+            responseCode: const BillingResponseConverter()
+                .toJson(BillingResponse.serviceDisconnected),
+            debugMessage: 'disconnected'),
       );
       when(mockApi.startConnection(any, any)).thenAnswer((_) async {
-        stubPlatform.addResponse(name: acknowledgePurchaseCall, value: okValue);
+        // Change the acknowledgePurchase response to success for the next call.
+        when(mockApi.acknowledgePurchase(any)).thenAnswer(
+          (_) async => PlatformBillingResult(
+              responseCode:
+                  const BillingResponseConverter().toJson(BillingResponse.ok),
+              debugMessage: 'disconnected'),
+        );
         return PlatformBillingResult(responseCode: 0, debugMessage: '');
       });
       final PurchaseDetails purchase =
@@ -89,10 +89,7 @@ void main() {
               .first;
       final BillingResultWrapper result =
           await iapAndroidPlatform.completePurchase(purchase);
-      expect(
-        stubPlatform.countPreviousCalls(acknowledgePurchaseCall),
-        equals(2),
-      );
+      verify(mockApi.acknowledgePurchase(any)).called(2);
       verify(mockApi.startConnection(any, any)).called(2);
       expect(result.responseCode, equals(BillingResponse.ok));
     });
@@ -810,17 +807,13 @@ void main() {
   });
 
   group('complete purchase', () {
-    const String completeMethodName =
-        'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
     test('complete purchase success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: completeMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.acknowledgePurchase(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
       final PurchaseDetails purchaseDetails =
           GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
               .first;

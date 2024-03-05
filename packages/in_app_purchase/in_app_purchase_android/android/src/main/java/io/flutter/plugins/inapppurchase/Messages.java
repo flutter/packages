@@ -226,6 +226,12 @@ public class Messages {
         @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#endConnection(BillingClientStateListener). */
     void endConnection();
+    /**
+     * Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams,
+     * AcknowledgePurchaseResponseListener).
+     */
+    void acknowledgePurchase(
+        @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener). */
     void consumeAsync(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#isFeatureSupported(String). */
@@ -321,6 +327,37 @@ public class Messages {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String purchaseTokenArg = (String) args.get(0);
+                Result<PlatformBillingResult> resultCallback =
+                    new Result<PlatformBillingResult>() {
+                      public void success(PlatformBillingResult result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.acknowledgePurchase(purchaseTokenArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

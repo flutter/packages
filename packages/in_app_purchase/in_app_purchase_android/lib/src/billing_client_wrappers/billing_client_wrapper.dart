@@ -303,13 +303,8 @@ class BillingClient {
   /// This wraps
   /// [`BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#acknowledgePurchase(com.android.billingclient.api.AcknowledgePurchaseParams,%20com.android.billingclient.api.AcknowledgePurchaseResponseListener))
   Future<BillingResultWrapper> acknowledgePurchase(String purchaseToken) async {
-    return BillingResultWrapper.fromJson((await channel.invokeMapMethod<String,
-                dynamic>(
-            'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)',
-            <String, dynamic>{
-              'purchaseToken': purchaseToken,
-            })) ??
-        <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.acknowledgePurchase(purchaseToken));
   }
 
   /// Checks if the specified feature or capability is supported by the Play Store.

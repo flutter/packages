@@ -5,7 +5,6 @@
 package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ACKNOWLEDGE_PURCHASE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
@@ -965,26 +964,26 @@ public class MethodCallHandlerTest {
             .setResponseCode(100)
             .setDebugMessage("dummy debug message")
             .build();
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("purchaseToken", "mockToken");
-    arguments.put("developerPayload", "mockPayload");
+    final String purchaseToken = "mockToken";
     ArgumentCaptor<AcknowledgePurchaseResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(AcknowledgePurchaseResponseListener.class);
 
-    methodChannelHandler.onMethodCall(new MethodCall(ACKNOWLEDGE_PURCHASE, arguments), result);
+    methodChannelHandler.acknowledgePurchase(purchaseToken, platformBillingResult);
 
     AcknowledgePurchaseParams params =
-        AcknowledgePurchaseParams.newBuilder().setPurchaseToken("mockToken").build();
+        AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
 
     // Verify we pass the data to result
     verify(mockBillingClient).acknowledgePurchase(refEq(params), listenerCaptor.capture());
 
     listenerCaptor.getValue().onAcknowledgePurchaseResponse(billingResult);
-    verify(result).success(resultCaptor.capture());
 
     // Verify we pass the response code to result
-    verify(result, never()).error(any(), any(), any());
-    verify(result, times(1)).success(fromBillingResult(billingResult));
+    verify(platformBillingResult, never()).error(any());
+    ArgumentCaptor<PlatformBillingResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingResult.class);
+    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
+    assertResultsMatch(resultCaptor.getValue(), billingResult);
   }
 
   @Test

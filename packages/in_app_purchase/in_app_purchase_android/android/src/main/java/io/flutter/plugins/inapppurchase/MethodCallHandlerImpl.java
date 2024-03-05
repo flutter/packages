@@ -60,8 +60,6 @@ class MethodCallHandlerImpl
         "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
         "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
-    static final String ACKNOWLEDGE_PURCHASE =
-        "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
     static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
     static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
         "BillingClient#createAlternativeBillingOnlyReportingDetails()";
@@ -166,9 +164,6 @@ class MethodCallHandlerImpl
         break;
       case MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
         queryPurchaseHistoryAsync((String) call.argument("productType"), result);
-        break;
-      case MethodNames.ACKNOWLEDGE_PURCHASE:
-        acknowledgePurchase((String) call.argument("purchaseToken"), result);
         break;
       case MethodNames.GET_BILLING_CONFIG:
         getBillingConfig(result);
@@ -477,15 +472,17 @@ class MethodCallHandlerImpl
         });
   }
 
-  private void acknowledgePurchase(String purchaseToken, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
+  @Override
+  public void acknowledgePurchase(
+      @NonNull String purchaseToken,
+      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+    validateBillingClient();
     assert billingClient != null;
     AcknowledgePurchaseParams params =
         AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
     billingClient.acknowledgePurchase(
-        params, billingResult -> result.success(fromBillingResult(billingResult)));
+        params,
+        billingResult -> result.success(pigeonBillingResultFromBillingResult(billingResult)));
   }
 
   protected void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {

@@ -44,6 +44,10 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();
 
+  /// Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener).
+  @async
+  PlatformBillingResult acknowledgePurchase(String purchaseToken);
+
   /// Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener).
   @async
   PlatformBillingResult consumeAsync(String purchaseToken);

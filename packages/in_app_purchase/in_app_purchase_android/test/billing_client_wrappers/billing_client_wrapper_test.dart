@@ -557,35 +557,19 @@ void main() {
   });
 
   group('acknowledge purchases', () {
-    const String acknowledgeMethodName =
-        'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
     test('acknowledge purchase success', () async {
+      const String token = 'dummy token';
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: acknowledgeMethodName,
-          value: buildBillingResultMap(expectedBillingResult));
+      when(mockApi.acknowledgePurchase(token)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
 
       final BillingResultWrapper billingResult =
-          await billingClient.acknowledgePurchase('dummy token');
+          await billingClient.acknowledgePurchase(token);
 
       expect(billingResult, equals(expectedBillingResult));
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: acknowledgeMethodName,
-      );
-      final BillingResultWrapper billingResult =
-          await billingClient.acknowledgePurchase('dummy token');
-
-      expect(
-          billingResult,
-          equals(const BillingResultWrapper(
-              responseCode: BillingResponse.error,
-              debugMessage: kInvalidBillingResultErrorMessage)));
     });
   });
 

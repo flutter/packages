@@ -94,6 +94,32 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<_i2.PlatformBillingResult> acknowledgePurchase(
+          String? purchaseToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #acknowledgePurchase,
+          [purchaseToken],
+        ),
+        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #acknowledgePurchase,
+            [purchaseToken],
+          ),
+        )),
+        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #acknowledgePurchase,
+            [purchaseToken],
+          ),
+        )),
+      ) as _i3.Future<_i2.PlatformBillingResult>);
+
+  @override
   _i3.Future<_i2.PlatformBillingResult> consumeAsync(String? purchaseToken) =>
       (super.noSuchMethod(
         Invocation.method(
