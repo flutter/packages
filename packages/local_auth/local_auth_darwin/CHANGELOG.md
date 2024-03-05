@@ -1,6 +1,6 @@
 ## 2.0.0
 
-- Adds MacOS Support
+- Adds MacOS Support. Requires MacOS 10.15 or higher
 
 ## 1.2.2
 
