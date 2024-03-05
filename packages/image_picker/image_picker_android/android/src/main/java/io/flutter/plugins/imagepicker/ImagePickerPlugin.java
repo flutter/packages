@@ -324,14 +324,16 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       int effectiveLimit;
 
       if (limit != null) {
-          effectiveLimit = Math.toIntExact(limit);
-      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
-          effectiveLimit = MediaStore.getPickImagesMaxLimit();
+        effectiveLimit = Math.toIntExact(limit);
+      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+          && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
+        effectiveLimit = MediaStore.getPickImagesMaxLimit();
       } else {
-          effectiveLimit = Integer.MAX_VALUE;
+        effectiveLimit = Integer.MAX_VALUE;
       }
 
-      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), effectiveLimit, result);
+      delegate.chooseMultiImageFromGallery(
+          options, generalOptions.getUsePhotoPicker(), effectiveLimit, result);
     } else {
       switch (source.getType()) {
         case GALLERY:

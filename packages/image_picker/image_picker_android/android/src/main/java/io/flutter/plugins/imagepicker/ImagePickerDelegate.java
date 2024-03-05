@@ -6,8 +6,6 @@ package io.flutter.plugins.imagepicker;
 
 import android.Manifest;
 import android.app.Activity;
-import android.os.Bundle;
-import android.os.ext.SdkExtensions;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
@@ -17,6 +15,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.os.ext.SdkExtensions;
 import android.provider.MediaStore;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -303,11 +302,12 @@ public class ImagePickerDelegate
         int effectiveLimit;
 
         if (limit != null) {
-            effectiveLimit = Math.toIntExact(limit);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
-            effectiveLimit = MediaStore.getPickImagesMaxLimit();
+          effectiveLimit = Math.toIntExact(limit);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+            && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2) {
+          effectiveLimit = MediaStore.getPickImagesMaxLimit();
         } else {
-            effectiveLimit = Integer.MAX_VALUE;
+          effectiveLimit = Integer.MAX_VALUE;
         }
 
         pickMediaIntent =
