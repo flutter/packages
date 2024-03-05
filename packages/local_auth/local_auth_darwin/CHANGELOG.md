@@ -1,6 +1,6 @@
 ## 1.3.0
 
-* Adds macOS support. Requires macOS 10.15 or higher
+* Adds macOS support. Requires macOS 10.14 or higher
 
 ## 1.2.2
 
