@@ -35,6 +35,8 @@ void main() {
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
+    when(mockApi.startConnection(any, any)).thenAnswer(
+        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     manager = BillingClientManager(
         billingClientFactory: (PurchasesUpdatedListener listener) =>
             BillingClient(listener, api: mockApi));
@@ -42,17 +44,13 @@ void main() {
   });
 
   group('consume purchases', () {
-    const String consumeMethodName =
-        'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)';
     test('consume purchase async success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-        name: consumeMethodName,
-        value: buildBillingResultMap(expectedBillingResult),
-      );
+      when(mockApi.consumeAsync(any)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
       final BillingResultWrapper billingResultWrapper =
           await iapAndroidPlatformAddition.consumePurchase(
               GooglePlayPurchaseDetails.fromPurchase(dummyPurchase).first);
@@ -139,9 +137,10 @@ void main() {
       const BillingResultWrapper expected = BillingResultWrapper(
           responseCode: BillingResponse.ok, debugMessage: 'dummy message');
 
-      when(mockApi.showAlternativeBillingOnlyInformationDialog()).thenAnswer(
-          (_) async => PlatformBillingResult(
-              responseCode: 0, debugMessage: expected.debugMessage!));
+      when(mockApi.isAlternativeBillingOnlyAvailable())
+          .thenAnswer((_) async => convertToPigeonResult(expected));
+      when(mockApi.showAlternativeBillingOnlyInformationDialog())
+          .thenAnswer((_) async => convertToPigeonResult(expected));
       final BillingResultWrapper result =
           await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
 

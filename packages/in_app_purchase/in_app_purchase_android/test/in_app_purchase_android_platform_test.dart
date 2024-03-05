@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
+import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:mockito/mockito.dart';
 
@@ -38,6 +39,8 @@ void main() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
 
     mockApi = MockInAppPurchaseApi();
+    when(mockApi.startConnection(any, any)).thenAnswer(
+        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     iapAndroidPlatform = InAppPurchaseAndroidPlatform(
         manager: BillingClientManager(
             billingClientFactory: (PurchasesUpdatedListener listener) =>
@@ -47,14 +50,6 @@ void main() {
 
   tearDown(() {
     stubPlatform.reset();
-  });
-
-  test('register sets an instance', () {
-    InAppPurchaseAndroidPlatform.registerPlatform();
-    expect(InAppPurchasePlatform.instance, isA<InAppPurchaseAndroidPlatform>());
-    // TODO(stuartmorgan): Refactor tests so that the instance isn't set by
-    // global test setup, so that this isn't necessary.
-    expect(InAppPurchasePlatform.instance, isNot(iapAndroidPlatform));
   });
 
   group('connection management', () {
@@ -86,7 +81,7 @@ void main() {
       );
       when(mockApi.startConnection(any, any)).thenAnswer((_) async {
         stubPlatform.addResponse(name: acknowledgePurchaseCall, value: okValue);
-        return okValue;
+        return PlatformBillingResult(responseCode: 0, debugMessage: '');
       });
       final PurchaseDetails purchase =
           GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
@@ -330,8 +325,6 @@ void main() {
   group('make payment', () {
     const String launchMethodName =
         'BillingClient#launchBillingFlow(Activity, BillingFlowParams)';
-    const String consumeMethodName =
-        'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)';
 
     test('buy non consumable, serializes and deserializes data', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
@@ -478,14 +471,12 @@ void main() {
       const BillingResultWrapper expectedBillingResultForConsume =
           BillingResultWrapper(
               responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: consumeMethodName,
-          value: buildBillingResultMap(expectedBillingResultForConsume),
-          additionalStepBeforeReturn: (dynamic args) {
-            final String purchaseToken =
-                (args as Map<Object?, Object?>)['purchaseToken']! as String;
-            consumeCompleter.complete(purchaseToken);
-          });
+      when(mockApi.consumeAsync(any)).thenAnswer((Invocation invocation) async {
+        final String purchaseToken =
+            invocation.positionalArguments.first as String;
+        consumeCompleter.complete(purchaseToken);
+        return convertToPigeonResult(expectedBillingResultForConsume);
+      });
 
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
@@ -596,14 +587,12 @@ void main() {
       const BillingResultWrapper expectedBillingResultForConsume =
           BillingResultWrapper(
               responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: consumeMethodName,
-          value: buildBillingResultMap(expectedBillingResultForConsume),
-          additionalStepBeforeReturn: (dynamic args) {
-            final String purchaseToken =
-                (args as Map<Object?, Object?>)['purchaseToken']! as String;
-            consumeCompleter.complete(purchaseToken);
-          });
+      when(mockApi.consumeAsync(any)).thenAnswer((Invocation invocation) async {
+        final String purchaseToken =
+            invocation.positionalArguments.first as String;
+        consumeCompleter.complete(purchaseToken);
+        return convertToPigeonResult(expectedBillingResultForConsume);
+      });
 
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
@@ -675,14 +664,12 @@ void main() {
       const BillingResultWrapper expectedBillingResultForConsume =
           BillingResultWrapper(
               responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: consumeMethodName,
-          value: buildBillingResultMap(expectedBillingResultForConsume),
-          additionalStepBeforeReturn: (dynamic args) {
-            final String purchaseToken =
-                (args as Map<Object?, Object?>)['purchaseToken']! as String;
-            consumeCompleter.complete(purchaseToken);
-          });
+      when(mockApi.consumeAsync(any)).thenAnswer((Invocation invocation) async {
+        final String purchaseToken =
+            invocation.positionalArguments.first as String;
+        consumeCompleter.complete(purchaseToken);
+        return convertToPigeonResult(expectedBillingResultForConsume);
+      });
 
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
@@ -742,14 +729,12 @@ void main() {
       const BillingResultWrapper expectedBillingResultForConsume =
           BillingResultWrapper(
               responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: consumeMethodName,
-          value: buildBillingResultMap(expectedBillingResultForConsume),
-          additionalStepBeforeReturn: (dynamic args) {
-            final String purchaseToken =
-                (args as Map<Object?, Object?>)['purchaseToken']! as String;
-            consumeCompleter.complete(purchaseToken);
-          });
+      when(mockApi.consumeAsync(any)).thenAnswer((Invocation invocation) async {
+        final String purchaseToken =
+            invocation.positionalArguments.first as String;
+        consumeCompleter.complete(purchaseToken);
+        return convertToPigeonResult(expectedBillingResultForConsume);
+      });
 
       final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;

@@ -21,6 +21,17 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakePlatformBillingResult_0 extends _i1.SmartFake
+    implements _i2.PlatformBillingResult {
+  _FakePlatformBillingResult_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [InAppPurchaseApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -36,7 +47,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
       ) as _i3.Future<bool>);
 
   @override
-  _i3.Future<Map<String?, Object?>> startConnection(
+  _i3.Future<_i2.PlatformBillingResult> startConnection(
     int? callbackHandle,
     _i2.PlatformBillingChoiceMode? billingMode,
   ) =>
@@ -48,9 +59,113 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             billingMode,
           ],
         ),
-        returnValue:
-            _i3.Future<Map<String?, Object?>>.value(<String?, Object?>{}),
-        returnValueForMissingStub:
-            _i3.Future<Map<String?, Object?>>.value(<String?, Object?>{}),
-      ) as _i3.Future<Map<String?, Object?>>);
+        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #startConnection,
+            [
+              callbackHandle,
+              billingMode,
+            ],
+          ),
+        )),
+        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #startConnection,
+            [
+              callbackHandle,
+              billingMode,
+            ],
+          ),
+        )),
+      ) as _i3.Future<_i2.PlatformBillingResult>);
+
+  @override
+  _i3.Future<void> endConnection() => (super.noSuchMethod(
+        Invocation.method(
+          #endConnection,
+          [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<_i2.PlatformBillingResult> consumeAsync(String? purchaseToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #consumeAsync,
+          [purchaseToken],
+        ),
+        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #consumeAsync,
+            [purchaseToken],
+          ),
+        )),
+        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #consumeAsync,
+            [purchaseToken],
+          ),
+        )),
+      ) as _i3.Future<_i2.PlatformBillingResult>);
+
+  @override
+  _i3.Future<_i2.PlatformBillingResult> isAlternativeBillingOnlyAvailable() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isAlternativeBillingOnlyAvailable,
+          [],
+        ),
+        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #isAlternativeBillingOnlyAvailable,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+            _FakePlatformBillingResult_0(
+          this,
+          Invocation.method(
+            #isAlternativeBillingOnlyAvailable,
+            [],
+          ),
+        )),
+      ) as _i3.Future<_i2.PlatformBillingResult>);
+
+  @override
+  _i3.Future<_i2.PlatformBillingResult>
+      showAlternativeBillingOnlyInformationDialog() => (super.noSuchMethod(
+            Invocation.method(
+              #showAlternativeBillingOnlyInformationDialog,
+              [],
+            ),
+            returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+                _FakePlatformBillingResult_0(
+              this,
+              Invocation.method(
+                #showAlternativeBillingOnlyInformationDialog,
+                [],
+              ),
+            )),
+            returnValueForMissingStub:
+                _i3.Future<_i2.PlatformBillingResult>.value(
+                    _FakePlatformBillingResult_0(
+              this,
+              Invocation.method(
+                #showAlternativeBillingOnlyInformationDialog,
+                [],
+              ),
+            )),
+          ) as _i3.Future<_i2.PlatformBillingResult>);
 }

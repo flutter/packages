@@ -25,6 +25,8 @@ void main() {
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
+    when(mockApi.startConnection(any, any)).thenAnswer(
+        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     manager = BillingClientManager(
         billingClientFactory: (PurchasesUpdatedListener listener) =>
             BillingClient(listener, api: mockApi));
@@ -39,7 +41,7 @@ void main() {
       final Completer<void> connectedCompleter = Completer<void>();
       when(mockApi.startConnection(any, any)).thenAnswer((_) async {
         connectedCompleter.complete();
-        return <String, Object?>{};
+        return PlatformBillingResult(responseCode: 0, debugMessage: '');
       });
 
       final Completer<void> calledCompleter1 = Completer<void>();

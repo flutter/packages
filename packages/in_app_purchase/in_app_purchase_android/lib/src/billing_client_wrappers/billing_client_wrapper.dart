@@ -280,13 +280,8 @@ class BillingClient {
   /// This wraps
   /// [`BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#consumeAsync(java.lang.String,%20com.android.billingclient.api.ConsumeResponseListener))
   Future<BillingResultWrapper> consumeAsync(String purchaseToken) async {
-    return BillingResultWrapper.fromJson((await channel.invokeMapMethod<String,
-                dynamic>(
-            'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)',
-            <String, dynamic>{
-              'purchaseToken': purchaseToken,
-            })) ??
-        <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.consumeAsync(purchaseToken));
   }
 
   /// Acknowledge an in-app purchase.

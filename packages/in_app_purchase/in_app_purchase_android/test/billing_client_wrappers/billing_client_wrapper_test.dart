@@ -43,6 +43,8 @@ void main() {
 
   setUp(() {
     mockApi = MockInAppPurchaseApi();
+    when(mockApi.startConnection(any, any)).thenAnswer(
+        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     billingClient = BillingClient((PurchasesResultWrapper _) {}, api: mockApi);
     stubPlatform.reset();
   });
@@ -83,10 +85,10 @@ void main() {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
       when(mockApi.startConnection(any, any)).thenAnswer(
-        (_) async => <String, Object?>{
-          'responseCode': const BillingResponseConverter().toJson(responseCode),
-          'debugMessage': debugMessage,
-        },
+        (_) async => PlatformBillingResult(
+          responseCode: const BillingResponseConverter().toJson(responseCode),
+          debugMessage: debugMessage,
+        ),
       );
 
       const BillingResultWrapper billingResult = BillingResultWrapper(
@@ -537,35 +539,19 @@ void main() {
   });
 
   group('consume purchases', () {
-    const String consumeMethodName =
-        'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)';
     test('consume purchase async success', () async {
+      const String token = 'dummy token';
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: consumeMethodName,
-          value: buildBillingResultMap(expectedBillingResult));
+      when(mockApi.consumeAsync(token)).thenAnswer(
+          (_) async => convertToPigeonResult(expectedBillingResult));
 
       final BillingResultWrapper billingResult =
-          await billingClient.consumeAsync('dummy token');
+          await billingClient.consumeAsync(token);
 
       expect(billingResult, equals(expectedBillingResult));
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: consumeMethodName,
-      );
-      final BillingResultWrapper billingResult =
-          await billingClient.consumeAsync('dummy token');
-
-      expect(
-          billingResult,
-          equals(const BillingResultWrapper(
-              responseCode: BillingResponse.error,
-              debugMessage: kInvalidBillingResultErrorMessage)));
     });
   });
 

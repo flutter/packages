@@ -60,8 +60,6 @@ class MethodCallHandlerImpl
         "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
         "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
-    static final String CONSUME_PURCHASE_ASYNC =
-        "BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)";
     static final String ACKNOWLEDGE_PURCHASE =
         "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
@@ -169,9 +167,6 @@ class MethodCallHandlerImpl
         break;
       case MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
         queryPurchaseHistoryAsync((String) call.argument("productType"), result);
-        break;
-      case MethodNames.CONSUME_PURCHASE_ASYNC:
-        consumeAsync((String) call.argument("purchaseToken"), result);
         break;
       case MethodNames.ACKNOWLEDGE_PURCHASE:
         acknowledgePurchase((String) call.argument("purchaseToken"), result);
@@ -388,16 +383,17 @@ class MethodCallHandlerImpl
     builder.setReplaceProrationMode(prorationMode);
   }
 
-  private void consumeAsync(String purchaseToken, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
+  @Override
+  public void consumeAsync(
+      @NonNull String purchaseToken,
+      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+    validateBillingClient();
 
     ConsumeResponseListener listener =
-        (billingResult, outToken) -> result.success(fromBillingResult(billingResult));
+        (billingResult, outToken) ->
+            result.success(pigeonBillingResultFromBillingResult(billingResult));
     ConsumeParams.Builder paramsBuilder =
         ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
-
     ConsumeParams params = paramsBuilder.build();
 
     billingClient.consumeAsync(params, listener);
