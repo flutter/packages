@@ -31,9 +31,9 @@ extension TrustedInnerHTML on web.HTMLElement {
   external set trustedInnerHTML(web.TrustedHTML trustedHTML);
 }
 
-/// Allows creating a script URL only from a string, with no arguments.
+/// Allows creating a TrustedHTML object from a string, with no arguments.
 extension CreateHTMLNoArgs on web.TrustedTypePolicy {
-  /// Allows calling `createScriptURL` with only the `input` argument.
+  /// Allows calling `createHTML` with only the `input` argument.
   @JS('createHTML')
   external web.TrustedHTML createHTMLNoArgs(
     String input,
