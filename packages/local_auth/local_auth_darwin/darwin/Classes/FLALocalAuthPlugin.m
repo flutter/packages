@@ -153,6 +153,25 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
           dismissButtonTitle:(NSString *)dismissButtonTitle
      openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
                   completion:(FLADAuthCompletion)completion {
+
+      #if TARGET_OS_OSX
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:message];
+        [alert addButtonWithTitle:dismissButtonTitle];
+        if (openSettingsButtonTitle != nil) {
+          [alert addButtonWithTitle:openSettingsButtonTitle];
+        }
+        [alert beginSheetModalForWindow:NSApp.keyWindow
+                      completionHandler:^(NSModalResponse returnCode) {
+                        if (returnCode == NSAlertSecondButtonReturn) {
+                          NSURL *url = [NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Biometry"];
+                          [[NSWorkspace sharedWorkspace] openURL:url];
+                        }
+                        [self handleSucceeded:NO withCompletion:completion];
+                      }];
+        return;
+      #endif
+      
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:@""
                                           message:message
