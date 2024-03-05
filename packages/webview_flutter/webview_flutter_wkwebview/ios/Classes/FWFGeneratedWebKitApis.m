@@ -18,8 +18,7 @@
 
 /// Mirror of NSKeyValueObservingOptions.
 ///
-/// See
-/// https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
 @implementation FWFNSKeyValueObservingOptionsEnumBox
 - (instancetype)initWithValue:(FWFNSKeyValueObservingOptionsEnum)value {
   self = [super init];
@@ -71,8 +70,7 @@
 
 /// Mirror of WKAudiovisualMediaTypes.
 ///
-/// See
-/// [WKAudiovisualMediaTypes](https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc).
+/// See [WKAudiovisualMediaTypes](https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc).
 @implementation FWFWKAudiovisualMediaTypeEnumBox
 - (instancetype)initWithValue:(FWFWKAudiovisualMediaTypeEnum)value {
   self = [super init];
@@ -85,8 +83,7 @@
 
 /// Mirror of WKWebsiteDataTypes.
 ///
-/// See
-/// https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
 @implementation FWFWKWebsiteDataTypeEnumBox
 - (instancetype)initWithValue:(FWFWKWebsiteDataTypeEnum)value {
   self = [super init];
@@ -139,8 +136,7 @@
 /// An object that contains information about an action that causes navigation
 /// to occur.
 ///
-/// Wraps
-/// [WKNavigationType](https://developer.apple.com/documentation/webkit/wknavigationaction?language=objc).
+/// Wraps [WKNavigationType](https://developer.apple.com/documentation/webkit/wknavigationaction?language=objc).
 @implementation FWFWKNavigationTypeBox
 - (instancetype)initWithValue:(FWFWKNavigationType)value {
   self = [super init];
@@ -179,8 +175,7 @@
 
 /// Responses to an authentication challenge.
 ///
-/// See
-/// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
 @implementation FWFNSUrlSessionAuthChallengeDispositionBox
 - (instancetype)initWithValue:(FWFNSUrlSessionAuthChallengeDisposition)value {
   self = [super init];
@@ -248,12 +243,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @interface FWFWKNavigationActionPolicyEnumData ()
 + (FWFWKNavigationActionPolicyEnumData *)fromList:(NSArray *)list;
 + (nullable FWFWKNavigationActionPolicyEnumData *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@interface FWFWKNavigationResponsePolicyEnumData ()
-+ (FWFWKNavigationResponsePolicyEnumData *)fromList:(NSArray *)list;
-+ (nullable FWFWKNavigationResponsePolicyEnumData *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -349,14 +338,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFNSKeyValueObservingOptionsEnumData
 + (instancetype)makeWithValue:(FWFNSKeyValueObservingOptionsEnum)value {
-  FWFNSKeyValueObservingOptionsEnumData *pigeonResult =
-      [[FWFNSKeyValueObservingOptionsEnumData alloc] init];
+  FWFNSKeyValueObservingOptionsEnumData* pigeonResult = [[FWFNSKeyValueObservingOptionsEnumData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
 + (FWFNSKeyValueObservingOptionsEnumData *)fromList:(NSArray *)list {
-  FWFNSKeyValueObservingOptionsEnumData *pigeonResult =
-      [[FWFNSKeyValueObservingOptionsEnumData alloc] init];
+  FWFNSKeyValueObservingOptionsEnumData *pigeonResult = [[FWFNSKeyValueObservingOptionsEnumData alloc] init];
   pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
   return pigeonResult;
 }
@@ -372,7 +359,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFNSKeyValueChangeKeyEnumData
 + (instancetype)makeWithValue:(FWFNSKeyValueChangeKeyEnum)value {
-  FWFNSKeyValueChangeKeyEnumData *pigeonResult = [[FWFNSKeyValueChangeKeyEnumData alloc] init];
+  FWFNSKeyValueChangeKeyEnumData* pigeonResult = [[FWFNSKeyValueChangeKeyEnumData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
@@ -393,14 +380,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKUserScriptInjectionTimeEnumData
 + (instancetype)makeWithValue:(FWFWKUserScriptInjectionTimeEnum)value {
-  FWFWKUserScriptInjectionTimeEnumData *pigeonResult =
-      [[FWFWKUserScriptInjectionTimeEnumData alloc] init];
+  FWFWKUserScriptInjectionTimeEnumData* pigeonResult = [[FWFWKUserScriptInjectionTimeEnumData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
 + (FWFWKUserScriptInjectionTimeEnumData *)fromList:(NSArray *)list {
-  FWFWKUserScriptInjectionTimeEnumData *pigeonResult =
-      [[FWFWKUserScriptInjectionTimeEnumData alloc] init];
+  FWFWKUserScriptInjectionTimeEnumData *pigeonResult = [[FWFWKUserScriptInjectionTimeEnumData alloc] init];
   pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
   return pigeonResult;
 }
@@ -416,14 +401,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKAudiovisualMediaTypeEnumData
 + (instancetype)makeWithValue:(FWFWKAudiovisualMediaTypeEnum)value {
-  FWFWKAudiovisualMediaTypeEnumData *pigeonResult =
-      [[FWFWKAudiovisualMediaTypeEnumData alloc] init];
+  FWFWKAudiovisualMediaTypeEnumData* pigeonResult = [[FWFWKAudiovisualMediaTypeEnumData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
 + (FWFWKAudiovisualMediaTypeEnumData *)fromList:(NSArray *)list {
-  FWFWKAudiovisualMediaTypeEnumData *pigeonResult =
-      [[FWFWKAudiovisualMediaTypeEnumData alloc] init];
+  FWFWKAudiovisualMediaTypeEnumData *pigeonResult = [[FWFWKAudiovisualMediaTypeEnumData alloc] init];
   pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
   return pigeonResult;
 }
@@ -439,7 +422,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKWebsiteDataTypeEnumData
 + (instancetype)makeWithValue:(FWFWKWebsiteDataTypeEnum)value {
-  FWFWKWebsiteDataTypeEnumData *pigeonResult = [[FWFWKWebsiteDataTypeEnumData alloc] init];
+  FWFWKWebsiteDataTypeEnumData* pigeonResult = [[FWFWKWebsiteDataTypeEnumData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
@@ -460,14 +443,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKNavigationActionPolicyEnumData
 + (instancetype)makeWithValue:(FWFWKNavigationActionPolicyEnum)value {
-  FWFWKNavigationActionPolicyEnumData *pigeonResult =
-      [[FWFWKNavigationActionPolicyEnumData alloc] init];
+  FWFWKNavigationActionPolicyEnumData* pigeonResult = [[FWFWKNavigationActionPolicyEnumData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
 + (FWFWKNavigationActionPolicyEnumData *)fromList:(NSArray *)list {
-  FWFWKNavigationActionPolicyEnumData *pigeonResult =
-      [[FWFWKNavigationActionPolicyEnumData alloc] init];
+  FWFWKNavigationActionPolicyEnumData *pigeonResult = [[FWFWKNavigationActionPolicyEnumData alloc] init];
   pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
   return pigeonResult;
 }
@@ -481,39 +462,14 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation FWFWKNavigationResponsePolicyEnumData
-+ (instancetype)makeWithValue:(FWFWKNavigationResponsePolicyEnum)value {
-  FWFWKNavigationResponsePolicyEnumData *pigeonResult =
-      [[FWFWKNavigationResponsePolicyEnumData alloc] init];
-  pigeonResult.value = value;
-  return pigeonResult;
-}
-+ (FWFWKNavigationResponsePolicyEnumData *)fromList:(NSArray *)list {
-  FWFWKNavigationResponsePolicyEnumData *pigeonResult =
-      [[FWFWKNavigationResponsePolicyEnumData alloc] init];
-  pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
-  return pigeonResult;
-}
-+ (nullable FWFWKNavigationResponsePolicyEnumData *)nullableFromList:(NSArray *)list {
-  return (list) ? [FWFWKNavigationResponsePolicyEnumData fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    @(self.value),
-  ];
-}
-@end
-
 @implementation FWFNSHttpCookiePropertyKeyEnumData
 + (instancetype)makeWithValue:(FWFNSHttpCookiePropertyKeyEnum)value {
-  FWFNSHttpCookiePropertyKeyEnumData *pigeonResult =
-      [[FWFNSHttpCookiePropertyKeyEnumData alloc] init];
+  FWFNSHttpCookiePropertyKeyEnumData* pigeonResult = [[FWFNSHttpCookiePropertyKeyEnumData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
 + (FWFNSHttpCookiePropertyKeyEnumData *)fromList:(NSArray *)list {
-  FWFNSHttpCookiePropertyKeyEnumData *pigeonResult =
-      [[FWFNSHttpCookiePropertyKeyEnumData alloc] init];
+  FWFNSHttpCookiePropertyKeyEnumData *pigeonResult = [[FWFNSHttpCookiePropertyKeyEnumData alloc] init];
   pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
   return pigeonResult;
 }
@@ -529,7 +485,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKPermissionDecisionData
 + (instancetype)makeWithValue:(FWFWKPermissionDecision)value {
-  FWFWKPermissionDecisionData *pigeonResult = [[FWFWKPermissionDecisionData alloc] init];
+  FWFWKPermissionDecisionData* pigeonResult = [[FWFWKPermissionDecisionData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
@@ -550,7 +506,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKMediaCaptureTypeData
 + (instancetype)makeWithValue:(FWFWKMediaCaptureType)value {
-  FWFWKMediaCaptureTypeData *pigeonResult = [[FWFWKMediaCaptureTypeData alloc] init];
+  FWFWKMediaCaptureTypeData* pigeonResult = [[FWFWKMediaCaptureTypeData alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
@@ -571,10 +527,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFNSUrlRequestData
 + (instancetype)makeWithUrl:(NSString *)url
-                 httpMethod:(nullable NSString *)httpMethod
-                   httpBody:(nullable FlutterStandardTypedData *)httpBody
-        allHttpHeaderFields:(NSDictionary<NSString *, NSString *> *)allHttpHeaderFields {
-  FWFNSUrlRequestData *pigeonResult = [[FWFNSUrlRequestData alloc] init];
+    httpMethod:(nullable NSString *)httpMethod
+    httpBody:(nullable FlutterStandardTypedData *)httpBody
+    allHttpHeaderFields:(NSDictionary<NSString *, NSString *> *)allHttpHeaderFields {
+  FWFNSUrlRequestData* pigeonResult = [[FWFNSUrlRequestData alloc] init];
   pigeonResult.url = url;
   pigeonResult.httpMethod = httpMethod;
   pigeonResult.httpBody = httpBody;
@@ -603,8 +559,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFNSHttpUrlResponseData
-+ (instancetype)makeWithStatusCode:(NSInteger)statusCode {
-  FWFNSHttpUrlResponseData *pigeonResult = [[FWFNSHttpUrlResponseData alloc] init];
++ (instancetype)makeWithStatusCode:(NSInteger )statusCode {
+  FWFNSHttpUrlResponseData* pigeonResult = [[FWFNSHttpUrlResponseData alloc] init];
   pigeonResult.statusCode = statusCode;
   return pigeonResult;
 }
@@ -625,9 +581,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKUserScriptData
 + (instancetype)makeWithSource:(NSString *)source
-                 injectionTime:(nullable FWFWKUserScriptInjectionTimeEnumData *)injectionTime
-               isMainFrameOnly:(BOOL)isMainFrameOnly {
-  FWFWKUserScriptData *pigeonResult = [[FWFWKUserScriptData alloc] init];
+    injectionTime:(nullable FWFWKUserScriptInjectionTimeEnumData *)injectionTime
+    isMainFrameOnly:(BOOL )isMainFrameOnly {
+  FWFWKUserScriptData* pigeonResult = [[FWFWKUserScriptData alloc] init];
   pigeonResult.source = source;
   pigeonResult.injectionTime = injectionTime;
   pigeonResult.isMainFrameOnly = isMainFrameOnly;
@@ -636,8 +592,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 + (FWFWKUserScriptData *)fromList:(NSArray *)list {
   FWFWKUserScriptData *pigeonResult = [[FWFWKUserScriptData alloc] init];
   pigeonResult.source = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.injectionTime =
-      [FWFWKUserScriptInjectionTimeEnumData nullableFromList:(GetNullableObjectAtIndex(list, 1))];
+  pigeonResult.injectionTime = [FWFWKUserScriptInjectionTimeEnumData nullableFromList:(GetNullableObjectAtIndex(list, 1))];
   pigeonResult.isMainFrameOnly = [GetNullableObjectAtIndex(list, 2) boolValue];
   return pigeonResult;
 }
@@ -655,9 +610,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKNavigationActionData
 + (instancetype)makeWithRequest:(FWFNSUrlRequestData *)request
-                    targetFrame:(FWFWKFrameInfoData *)targetFrame
-                 navigationType:(FWFWKNavigationType)navigationType {
-  FWFWKNavigationActionData *pigeonResult = [[FWFWKNavigationActionData alloc] init];
+    targetFrame:(FWFWKFrameInfoData *)targetFrame
+    navigationType:(FWFWKNavigationType)navigationType {
+  FWFWKNavigationActionData* pigeonResult = [[FWFWKNavigationActionData alloc] init];
   pigeonResult.request = request;
   pigeonResult.targetFrame = targetFrame;
   pigeonResult.navigationType = navigationType;
@@ -666,8 +621,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 + (FWFWKNavigationActionData *)fromList:(NSArray *)list {
   FWFWKNavigationActionData *pigeonResult = [[FWFWKNavigationActionData alloc] init];
   pigeonResult.request = [FWFNSUrlRequestData nullableFromList:(GetNullableObjectAtIndex(list, 0))];
-  pigeonResult.targetFrame =
-      [FWFWKFrameInfoData nullableFromList:(GetNullableObjectAtIndex(list, 1))];
+  pigeonResult.targetFrame = [FWFWKFrameInfoData nullableFromList:(GetNullableObjectAtIndex(list, 1))];
   pigeonResult.navigationType = [GetNullableObjectAtIndex(list, 2) integerValue];
   return pigeonResult;
 }
@@ -685,16 +639,15 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFWKNavigationResponseData
 + (instancetype)makeWithResponse:(FWFNSHttpUrlResponseData *)response
-                    forMainFrame:(BOOL)forMainFrame {
-  FWFWKNavigationResponseData *pigeonResult = [[FWFWKNavigationResponseData alloc] init];
+    forMainFrame:(BOOL )forMainFrame {
+  FWFWKNavigationResponseData* pigeonResult = [[FWFWKNavigationResponseData alloc] init];
   pigeonResult.response = response;
   pigeonResult.forMainFrame = forMainFrame;
   return pigeonResult;
 }
 + (FWFWKNavigationResponseData *)fromList:(NSArray *)list {
   FWFWKNavigationResponseData *pigeonResult = [[FWFWKNavigationResponseData alloc] init];
-  pigeonResult.response =
-      [FWFNSHttpUrlResponseData nullableFromList:(GetNullableObjectAtIndex(list, 0))];
+  pigeonResult.response = [FWFNSHttpUrlResponseData nullableFromList:(GetNullableObjectAtIndex(list, 0))];
   pigeonResult.forMainFrame = [GetNullableObjectAtIndex(list, 1) boolValue];
   return pigeonResult;
 }
@@ -710,8 +663,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFWKFrameInfoData
-+ (instancetype)makeWithIsMainFrame:(BOOL)isMainFrame request:(FWFNSUrlRequestData *)request {
-  FWFWKFrameInfoData *pigeonResult = [[FWFWKFrameInfoData alloc] init];
++ (instancetype)makeWithIsMainFrame:(BOOL )isMainFrame
+    request:(FWFNSUrlRequestData *)request {
+  FWFWKFrameInfoData* pigeonResult = [[FWFWKFrameInfoData alloc] init];
   pigeonResult.isMainFrame = isMainFrame;
   pigeonResult.request = request;
   return pigeonResult;
@@ -734,10 +688,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFNSErrorData
-+ (instancetype)makeWithCode:(NSInteger)code
-                      domain:(NSString *)domain
-                    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo {
-  FWFNSErrorData *pigeonResult = [[FWFNSErrorData alloc] init];
++ (instancetype)makeWithCode:(NSInteger )code
+    domain:(NSString *)domain
+    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo {
+  FWFNSErrorData* pigeonResult = [[FWFNSErrorData alloc] init];
   pigeonResult.code = code;
   pigeonResult.domain = domain;
   pigeonResult.userInfo = userInfo;
@@ -763,8 +717,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFWKScriptMessageData
-+ (instancetype)makeWithName:(NSString *)name body:(nullable id)body {
-  FWFWKScriptMessageData *pigeonResult = [[FWFWKScriptMessageData alloc] init];
++ (instancetype)makeWithName:(NSString *)name
+    body:(nullable id )body {
+  FWFWKScriptMessageData* pigeonResult = [[FWFWKScriptMessageData alloc] init];
   pigeonResult.name = name;
   pigeonResult.body = body;
   return pigeonResult;
@@ -787,8 +742,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFWKSecurityOriginData
-+ (instancetype)makeWithHost:(NSString *)host port:(NSInteger)port protocol:(NSString *)protocol {
-  FWFWKSecurityOriginData *pigeonResult = [[FWFWKSecurityOriginData alloc] init];
++ (instancetype)makeWithHost:(NSString *)host
+    port:(NSInteger )port
+    protocol:(NSString *)protocol {
+  FWFWKSecurityOriginData* pigeonResult = [[FWFWKSecurityOriginData alloc] init];
   pigeonResult.host = host;
   pigeonResult.port = port;
   pigeonResult.protocol = protocol;
@@ -815,8 +772,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFNSHttpCookieData
 + (instancetype)makeWithPropertyKeys:(NSArray<FWFNSHttpCookiePropertyKeyEnumData *> *)propertyKeys
-                      propertyValues:(NSArray<id> *)propertyValues {
-  FWFNSHttpCookieData *pigeonResult = [[FWFNSHttpCookieData alloc] init];
+    propertyValues:(NSArray<id> *)propertyValues {
+  FWFNSHttpCookieData* pigeonResult = [[FWFNSHttpCookieData alloc] init];
   pigeonResult.propertyKeys = propertyKeys;
   pigeonResult.propertyValues = propertyValues;
   return pigeonResult;
@@ -839,8 +796,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FWFObjectOrIdentifier
-+ (instancetype)makeWithValue:(nullable id)value isIdentifier:(BOOL)isIdentifier {
-  FWFObjectOrIdentifier *pigeonResult = [[FWFObjectOrIdentifier alloc] init];
++ (instancetype)makeWithValue:(nullable id )value
+    isIdentifier:(BOOL )isIdentifier {
+  FWFObjectOrIdentifier* pigeonResult = [[FWFObjectOrIdentifier alloc] init];
   pigeonResult.value = value;
   pigeonResult.isIdentifier = isIdentifier;
   return pigeonResult;
@@ -864,16 +822,14 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FWFAuthenticationChallengeResponse
 + (instancetype)makeWithDisposition:(FWFNSUrlSessionAuthChallengeDisposition)disposition
-               credentialIdentifier:(nullable NSNumber *)credentialIdentifier {
-  FWFAuthenticationChallengeResponse *pigeonResult =
-      [[FWFAuthenticationChallengeResponse alloc] init];
+    credentialIdentifier:(nullable NSNumber *)credentialIdentifier {
+  FWFAuthenticationChallengeResponse* pigeonResult = [[FWFAuthenticationChallengeResponse alloc] init];
   pigeonResult.disposition = disposition;
   pigeonResult.credentialIdentifier = credentialIdentifier;
   return pigeonResult;
 }
 + (FWFAuthenticationChallengeResponse *)fromList:(NSArray *)list {
-  FWFAuthenticationChallengeResponse *pigeonResult =
-      [[FWFAuthenticationChallengeResponse alloc] init];
+  FWFAuthenticationChallengeResponse *pigeonResult = [[FWFAuthenticationChallengeResponse alloc] init];
   pigeonResult.disposition = [GetNullableObjectAtIndex(list, 0) integerValue];
   pigeonResult.credentialIdentifier = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
@@ -894,7 +850,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation FWFWKWebsiteDataStoreHostApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFWKWebsiteDataTypeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -930,36 +886,27 @@ NSObject<FlutterMessageCodec> *FWFWKWebsiteDataStoreHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKWebsiteDataStoreHostApiCodecReaderWriter *readerWriter =
-        [[FWFWKWebsiteDataStoreHostApiCodecReaderWriter alloc] init];
+    FWFWKWebsiteDataStoreHostApiCodecReaderWriter *readerWriter = [[FWFWKWebsiteDataStoreHostApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFWFWKWebsiteDataStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                       NSObject<FWFWKWebsiteDataStoreHostApi> *api) {
+void SetUpFWFWKWebsiteDataStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKWebsiteDataStoreHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi."
-                        @"createFromWebViewConfiguration"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.createFromWebViewConfiguration"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebsiteDataStoreHostApiGetCodec()];
+        codec:FWFWKWebsiteDataStoreHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(createFromWebViewConfigurationWithIdentifier:
-                                                                 configurationIdentifier:error:)],
-          @"FWFWKWebsiteDataStoreHostApi api (%@) doesn't respond to "
-          @"@selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)], @"FWFWKWebsiteDataStoreHostApi api (%@) doesn't respond to @selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_configurationIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api createFromWebViewConfigurationWithIdentifier:arg_identifier
-                                  configurationIdentifier:arg_configurationIdentifier
-                                                    error:&error];
+        [api createFromWebViewConfigurationWithIdentifier:arg_identifier configurationIdentifier:arg_configurationIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -967,16 +914,13 @@ void SetUpFWFWKWebsiteDataStoreHostApi(id<FlutterBinaryMessenger> binaryMessenge
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi."
-                        @"createDefaultDataStore"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.createDefaultDataStore"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebsiteDataStoreHostApiGetCodec()];
+        codec:FWFWKWebsiteDataStoreHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createDefaultDataStoreWithIdentifier:error:)],
-                @"FWFWKWebsiteDataStoreHostApi api (%@) doesn't respond to "
-                @"@selector(createDefaultDataStoreWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createDefaultDataStoreWithIdentifier:error:)], @"FWFWKWebsiteDataStoreHostApi api (%@) doesn't respond to @selector(createDefaultDataStoreWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -989,31 +933,21 @@ void SetUpFWFWKWebsiteDataStoreHostApi(id<FlutterBinaryMessenger> binaryMessenge
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi."
-                        @"removeDataOfTypes"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.removeDataOfTypes"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebsiteDataStoreHostApiGetCodec()];
+        codec:FWFWKWebsiteDataStoreHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector
-               (removeDataFromDataStoreWithIdentifier:ofTypes:modifiedSince:completion:)],
-          @"FWFWKWebsiteDataStoreHostApi api (%@) doesn't respond to "
-          @"@selector(removeDataFromDataStoreWithIdentifier:ofTypes:modifiedSince:completion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(removeDataFromDataStoreWithIdentifier:ofTypes:modifiedSince:completion:)], @"FWFWKWebsiteDataStoreHostApi api (%@) doesn't respond to @selector(removeDataFromDataStoreWithIdentifier:ofTypes:modifiedSince:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSArray<FWFWKWebsiteDataTypeEnumData *> *arg_dataTypes = GetNullableObjectAtIndex(args, 1);
-        double arg_modificationTimeInSecondsSinceEpoch =
-            [GetNullableObjectAtIndex(args, 2) doubleValue];
-        [api removeDataFromDataStoreWithIdentifier:arg_identifier
-                                           ofTypes:arg_dataTypes
-                                     modifiedSince:arg_modificationTimeInSecondsSinceEpoch
-                                        completion:^(NSNumber *_Nullable output,
-                                                     FlutterError *_Nullable error) {
-                                          callback(wrapResult(output, error));
-                                        }];
+        double arg_modificationTimeInSecondsSinceEpoch = [GetNullableObjectAtIndex(args, 2) doubleValue];
+        [api removeDataFromDataStoreWithIdentifier:arg_identifier ofTypes:arg_dataTypes modifiedSince:arg_modificationTimeInSecondsSinceEpoch completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1026,20 +960,15 @@ NSObject<FlutterMessageCodec> *FWFUIViewHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFUIViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                           NSObject<FWFUIViewHostApi> *api) {
+void SetUpFWFUIViewHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFUIViewHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setBackgroundColor"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setBackgroundColor"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIViewHostApiGetCodec()];
+        codec:FWFUIViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setBackgroundColorForViewWithIdentifier:
-                                                                                  toValue:error:)],
-                @"FWFUIViewHostApi api (%@) doesn't respond to "
-                @"@selector(setBackgroundColorForViewWithIdentifier:toValue:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setBackgroundColorForViewWithIdentifier:toValue:error:)], @"FWFUIViewHostApi api (%@) doesn't respond to @selector(setBackgroundColorForViewWithIdentifier:toValue:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1053,15 +982,13 @@ void SetUpFWFUIViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setOpaque"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setOpaque"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIViewHostApiGetCodec()];
+        codec:FWFUIViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setOpaqueForViewWithIdentifier:isOpaque:error:)],
-                @"FWFUIViewHostApi api (%@) doesn't respond to "
-                @"@selector(setOpaqueForViewWithIdentifier:isOpaque:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setOpaqueForViewWithIdentifier:isOpaque:error:)], @"FWFUIViewHostApi api (%@) doesn't respond to @selector(setOpaqueForViewWithIdentifier:isOpaque:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1081,28 +1008,21 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                 NSObject<FWFUIScrollViewHostApi> *api) {
+void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFUIScrollViewHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.createFromWebView"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.createFromWebView"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIScrollViewHostApiGetCodec()];
+        codec:FWFUIScrollViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createFromWebViewWithIdentifier:
-                                                                webViewIdentifier:error:)],
-                @"FWFUIScrollViewHostApi api (%@) doesn't respond to "
-                @"@selector(createFromWebViewWithIdentifier:webViewIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createFromWebViewWithIdentifier:webViewIdentifier:error:)], @"FWFUIScrollViewHostApi api (%@) doesn't respond to @selector(createFromWebViewWithIdentifier:webViewIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_webViewIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api createFromWebViewWithIdentifier:arg_identifier
-                           webViewIdentifier:arg_webViewIdentifier
-                                       error:&error];
+        [api createFromWebViewWithIdentifier:arg_identifier webViewIdentifier:arg_webViewIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1110,22 +1030,18 @@ void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.getContentOffset"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.getContentOffset"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIScrollViewHostApiGetCodec()];
+        codec:FWFUIScrollViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(contentOffsetForScrollViewWithIdentifier:error:)],
-                @"FWFUIScrollViewHostApi api (%@) doesn't respond to "
-                @"@selector(contentOffsetForScrollViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(contentOffsetForScrollViewWithIdentifier:error:)], @"FWFUIScrollViewHostApi api (%@) doesn't respond to @selector(contentOffsetForScrollViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        NSArray<NSNumber *> *output = [api contentOffsetForScrollViewWithIdentifier:arg_identifier
-                                                                              error:&error];
+        NSArray<NSNumber *> *output = [api contentOffsetForScrollViewWithIdentifier:arg_identifier error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1133,15 +1049,13 @@ void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.scrollBy"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.scrollBy"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIScrollViewHostApiGetCodec()];
+        codec:FWFUIScrollViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(scrollByForScrollViewWithIdentifier:x:y:error:)],
-                @"FWFUIScrollViewHostApi api (%@) doesn't respond to "
-                @"@selector(scrollByForScrollViewWithIdentifier:x:y:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(scrollByForScrollViewWithIdentifier:x:y:error:)], @"FWFUIScrollViewHostApi api (%@) doesn't respond to @selector(scrollByForScrollViewWithIdentifier:x:y:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1156,27 +1070,20 @@ void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setContentOffset"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setContentOffset"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIScrollViewHostApiGetCodec()];
+        codec:FWFUIScrollViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (setContentOffsetForScrollViewWithIdentifier:toX:y:error:)],
-                @"FWFUIScrollViewHostApi api (%@) doesn't respond to "
-                @"@selector(setContentOffsetForScrollViewWithIdentifier:toX:y:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setContentOffsetForScrollViewWithIdentifier:toX:y:error:)], @"FWFUIScrollViewHostApi api (%@) doesn't respond to @selector(setContentOffsetForScrollViewWithIdentifier:toX:y:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         double arg_x = [GetNullableObjectAtIndex(args, 1) doubleValue];
         double arg_y = [GetNullableObjectAtIndex(args, 2) doubleValue];
         FlutterError *error;
-        [api setContentOffsetForScrollViewWithIdentifier:arg_identifier
-                                                     toX:arg_x
-                                                       y:arg_y
-                                                   error:&error];
+        [api setContentOffsetForScrollViewWithIdentifier:arg_identifier toX:arg_x y:arg_y error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1184,26 +1091,19 @@ void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIScrollViewHostApiGetCodec()];
+        codec:FWFUIScrollViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setDelegateForScrollViewWithIdentifier:
-                                                          uiScrollViewDelegateIdentifier:error:)],
-                @"FWFUIScrollViewHostApi api (%@) doesn't respond to "
-                @"@selector(setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:"
-                @"error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:error:)], @"FWFUIScrollViewHostApi api (%@) doesn't respond to @selector(setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSNumber *arg_uiScrollViewDelegateIdentifier = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api setDelegateForScrollViewWithIdentifier:arg_identifier
-                     uiScrollViewDelegateIdentifier:arg_uiScrollViewDelegateIdentifier
-                                              error:&error];
+        [api setDelegateForScrollViewWithIdentifier:arg_identifier uiScrollViewDelegateIdentifier:arg_uiScrollViewDelegateIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1216,7 +1116,7 @@ void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
 @implementation FWFWKWebViewConfigurationHostApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1252,26 +1152,21 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKWebViewConfigurationHostApiCodecReaderWriter *readerWriter =
-        [[FWFWKWebViewConfigurationHostApiCodecReaderWriter alloc] init];
+    FWFWKWebViewConfigurationHostApiCodecReaderWriter *readerWriter = [[FWFWKWebViewConfigurationHostApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFWFWKWebViewConfigurationHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                           NSObject<FWFWKWebViewConfigurationHostApi> *api) {
+void SetUpFWFWKWebViewConfigurationHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKWebViewConfigurationHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.create"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.create"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewConfigurationHostApiGetCodec()];
+        codec:FWFWKWebViewConfigurationHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)],
-                @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to "
-                @"@selector(createWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)], @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to @selector(createWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1284,25 +1179,19 @@ void SetUpFWFWKWebViewConfigurationHostApi(id<FlutterBinaryMessenger> binaryMess
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKWebViewConfigurationHostApi.createFromWebView"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.createFromWebView"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewConfigurationHostApiGetCodec()];
+        codec:FWFWKWebViewConfigurationHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createFromWebViewWithIdentifier:
-                                                                webViewIdentifier:error:)],
-                @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to "
-                @"@selector(createFromWebViewWithIdentifier:webViewIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createFromWebViewWithIdentifier:webViewIdentifier:error:)], @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to @selector(createFromWebViewWithIdentifier:webViewIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_webViewIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api createFromWebViewWithIdentifier:arg_identifier
-                           webViewIdentifier:arg_webViewIdentifier
-                                       error:&error];
+        [api createFromWebViewWithIdentifier:arg_identifier webViewIdentifier:arg_webViewIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1310,26 +1199,19 @@ void SetUpFWFWKWebViewConfigurationHostApi(id<FlutterBinaryMessenger> binaryMess
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKWebViewConfigurationHostApi.setAllowsInlineMediaPlayback"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setAllowsInlineMediaPlayback"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewConfigurationHostApiGetCodec()];
+        codec:FWFWKWebViewConfigurationHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector
-               (setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:isAllowed:error:)],
-          @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to "
-          @"@selector(setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:isAllowed:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:isAllowed:error:)], @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to @selector(setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:isAllowed:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         BOOL arg_allow = [GetNullableObjectAtIndex(args, 1) boolValue];
         FlutterError *error;
-        [api setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:arg_identifier
-                                                              isAllowed:arg_allow
-                                                                  error:&error];
+        [api setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:arg_identifier isAllowed:arg_allow error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1337,27 +1219,19 @@ void SetUpFWFWKWebViewConfigurationHostApi(id<FlutterBinaryMessenger> binaryMess
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewConfigurationHostApiGetCodec()];
+        codec:FWFWKWebViewConfigurationHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:
-                                                                                isLimited:error:)],
-                @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to "
-                @"@selector(setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:"
-                @"isLimited:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:isLimited:error:)], @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to @selector(setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:isLimited:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         BOOL arg_limit = [GetNullableObjectAtIndex(args, 1) boolValue];
         FlutterError *error;
-        [api setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:arg_identifier
-                                                                       isLimited:arg_limit
-                                                                           error:&error];
+        [api setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:arg_identifier isLimited:arg_limit error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1365,27 +1239,19 @@ void SetUpFWFWKWebViewConfigurationHostApi(id<FlutterBinaryMessenger> binaryMess
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKWebViewConfigurationHostApi.setMediaTypesRequiringUserActionForPlayback"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setMediaTypesRequiringUserActionForPlayback"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewConfigurationHostApiGetCodec()];
+        codec:FWFWKWebViewConfigurationHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (setMediaTypesRequiresUserActionForConfigurationWithIdentifier:
-                                                                           forTypes:error:)],
-                @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to "
-                @"@selector(setMediaTypesRequiresUserActionForConfigurationWithIdentifier:forTypes:"
-                @"error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setMediaTypesRequiresUserActionForConfigurationWithIdentifier:forTypes:error:)], @"FWFWKWebViewConfigurationHostApi api (%@) doesn't respond to @selector(setMediaTypesRequiresUserActionForConfigurationWithIdentifier:forTypes:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSArray<FWFWKAudiovisualMediaTypeEnumData *> *arg_types = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api setMediaTypesRequiresUserActionForConfigurationWithIdentifier:arg_identifier
-                                                                  forTypes:arg_types
-                                                                     error:&error];
+        [api setMediaTypesRequiresUserActionForConfigurationWithIdentifier:arg_identifier forTypes:arg_types error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1412,30 +1278,23 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationFlutterApiGetCodec(void)
   }
   return self;
 }
-- (void)createWithIdentifier:(NSInteger)arg_identifier
-                  completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationFlutterApi.create"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKWebViewConfigurationFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier) ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)createWithIdentifier:(NSInteger)arg_identifier completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationFlutterApi.create"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKWebViewConfigurationFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier)] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -1444,9 +1303,9 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationFlutterApiGetCodec(void)
 @implementation FWFWKUserContentControllerHostApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFWKUserScriptData fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1485,36 +1344,27 @@ NSObject<FlutterMessageCodec> *FWFWKUserContentControllerHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKUserContentControllerHostApiCodecReaderWriter *readerWriter =
-        [[FWFWKUserContentControllerHostApiCodecReaderWriter alloc] init];
+    FWFWKUserContentControllerHostApiCodecReaderWriter *readerWriter = [[FWFWKUserContentControllerHostApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                            NSObject<FWFWKUserContentControllerHostApi> *api) {
+void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKUserContentControllerHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKUserContentControllerHostApi.createFromWebViewConfiguration"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.createFromWebViewConfiguration"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKUserContentControllerHostApiGetCodec()];
+        codec:FWFWKUserContentControllerHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(createFromWebViewConfigurationWithIdentifier:
-                                                                 configurationIdentifier:error:)],
-          @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to "
-          @"@selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)], @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to @selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_configurationIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api createFromWebViewConfigurationWithIdentifier:arg_identifier
-                                  configurationIdentifier:arg_configurationIdentifier
-                                                    error:&error];
+        [api createFromWebViewConfigurationWithIdentifier:arg_identifier configurationIdentifier:arg_configurationIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1522,29 +1372,20 @@ void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMes
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKUserContentControllerHostApi.addScriptMessageHandler"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.addScriptMessageHandler"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKUserContentControllerHostApiGetCodec()];
+        codec:FWFWKUserContentControllerHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (addScriptMessageHandlerForControllerWithIdentifier:
-                                                       handlerIdentifier:ofName:error:)],
-                @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to "
-                @"@selector(addScriptMessageHandlerForControllerWithIdentifier:handlerIdentifier:"
-                @"ofName:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(addScriptMessageHandlerForControllerWithIdentifier:handlerIdentifier:ofName:error:)], @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to @selector(addScriptMessageHandlerForControllerWithIdentifier:handlerIdentifier:ofName:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_handlerIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         NSString *arg_name = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api addScriptMessageHandlerForControllerWithIdentifier:arg_identifier
-                                              handlerIdentifier:arg_handlerIdentifier
-                                                         ofName:arg_name
-                                                          error:&error];
+        [api addScriptMessageHandlerForControllerWithIdentifier:arg_identifier handlerIdentifier:arg_handlerIdentifier ofName:arg_name error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1552,25 +1393,19 @@ void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMes
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKUserContentControllerHostApi.removeScriptMessageHandler"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeScriptMessageHandler"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKUserContentControllerHostApiGetCodec()];
+        codec:FWFWKUserContentControllerHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (removeScriptMessageHandlerForControllerWithIdentifier:name:error:)],
-                @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to "
-                @"@selector(removeScriptMessageHandlerForControllerWithIdentifier:name:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(removeScriptMessageHandlerForControllerWithIdentifier:name:error:)], @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to @selector(removeScriptMessageHandlerForControllerWithIdentifier:name:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSString *arg_name = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api removeScriptMessageHandlerForControllerWithIdentifier:arg_identifier
-                                                              name:arg_name
-                                                             error:&error];
+        [api removeScriptMessageHandlerForControllerWithIdentifier:arg_identifier name:arg_name error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1578,17 +1413,13 @@ void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMes
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKUserContentControllerHostApi.removeAllScriptMessageHandlers"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeAllScriptMessageHandlers"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKUserContentControllerHostApiGetCodec()];
+        codec:FWFWKUserContentControllerHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (removeAllScriptMessageHandlersForControllerWithIdentifier:error:)],
-                @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to "
-                @"@selector(removeAllScriptMessageHandlersForControllerWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(removeAllScriptMessageHandlersForControllerWithIdentifier:error:)], @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to @selector(removeAllScriptMessageHandlersForControllerWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1601,25 +1432,19 @@ void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMes
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKUserContentControllerHostApi.addUserScript"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.addUserScript"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKUserContentControllerHostApiGetCodec()];
+        codec:FWFWKUserContentControllerHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(addUserScriptForControllerWithIdentifier:
-                                                                                userScript:error:)],
-                @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to "
-                @"@selector(addUserScriptForControllerWithIdentifier:userScript:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(addUserScriptForControllerWithIdentifier:userScript:error:)], @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to @selector(addUserScriptForControllerWithIdentifier:userScript:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         FWFWKUserScriptData *arg_userScript = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api addUserScriptForControllerWithIdentifier:arg_identifier
-                                           userScript:arg_userScript
-                                                error:&error];
+        [api addUserScriptForControllerWithIdentifier:arg_identifier userScript:arg_userScript error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1627,17 +1452,13 @@ void SetUpFWFWKUserContentControllerHostApi(id<FlutterBinaryMessenger> binaryMes
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                        @"WKUserContentControllerHostApi.removeAllUserScripts"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeAllUserScripts"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKUserContentControllerHostApiGetCodec()];
+        codec:FWFWKUserContentControllerHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (removeAllUserScriptsForControllerWithIdentifier:error:)],
-                @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to "
-                @"@selector(removeAllUserScriptsForControllerWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(removeAllUserScriptsForControllerWithIdentifier:error:)], @"FWFWKUserContentControllerHostApi api (%@) doesn't respond to @selector(removeAllUserScriptsForControllerWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1656,29 +1477,21 @@ NSObject<FlutterMessageCodec> *FWFWKPreferencesHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFWKPreferencesHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                  NSObject<FWFWKPreferencesHostApi> *api) {
+void SetUpFWFWKPreferencesHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKPreferencesHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi."
-                        @"createFromWebViewConfiguration"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi.createFromWebViewConfiguration"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKPreferencesHostApiGetCodec()];
+        codec:FWFWKPreferencesHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(createFromWebViewConfigurationWithIdentifier:
-                                                                 configurationIdentifier:error:)],
-          @"FWFWKPreferencesHostApi api (%@) doesn't respond to "
-          @"@selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)], @"FWFWKPreferencesHostApi api (%@) doesn't respond to @selector(createFromWebViewConfigurationWithIdentifier:configurationIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_configurationIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api createFromWebViewConfigurationWithIdentifier:arg_identifier
-                                  configurationIdentifier:arg_configurationIdentifier
-                                                    error:&error];
+        [api createFromWebViewConfigurationWithIdentifier:arg_identifier configurationIdentifier:arg_configurationIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1686,25 +1499,19 @@ void SetUpFWFWKPreferencesHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi."
-                        @"setJavaScriptEnabled"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi.setJavaScriptEnabled"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKPreferencesHostApiGetCodec()];
+        codec:FWFWKPreferencesHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (setJavaScriptEnabledForPreferencesWithIdentifier:isEnabled:error:)],
-                @"FWFWKPreferencesHostApi api (%@) doesn't respond to "
-                @"@selector(setJavaScriptEnabledForPreferencesWithIdentifier:isEnabled:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setJavaScriptEnabledForPreferencesWithIdentifier:isEnabled:error:)], @"FWFWKPreferencesHostApi api (%@) doesn't respond to @selector(setJavaScriptEnabledForPreferencesWithIdentifier:isEnabled:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         BOOL arg_enabled = [GetNullableObjectAtIndex(args, 1) boolValue];
         FlutterError *error;
-        [api setJavaScriptEnabledForPreferencesWithIdentifier:arg_identifier
-                                                    isEnabled:arg_enabled
-                                                        error:&error];
+        [api setJavaScriptEnabledForPreferencesWithIdentifier:arg_identifier isEnabled:arg_enabled error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -1718,19 +1525,15 @@ NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFWKScriptMessageHandlerHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                           NSObject<FWFWKScriptMessageHandlerHostApi> *api) {
+void SetUpFWFWKScriptMessageHandlerHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKScriptMessageHandlerHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerHostApi.create"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerHostApi.create"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKScriptMessageHandlerHostApiGetCodec()];
+        codec:FWFWKScriptMessageHandlerHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)],
-                @"FWFWKScriptMessageHandlerHostApi api (%@) doesn't respond to "
-                @"@selector(createWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)], @"FWFWKScriptMessageHandlerHostApi api (%@) doesn't respond to @selector(createWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1748,7 +1551,7 @@ void SetUpFWFWKScriptMessageHandlerHostApi(id<FlutterBinaryMessenger> binaryMess
 @implementation FWFWKScriptMessageHandlerFlutterApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFWKScriptMessageData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1784,8 +1587,7 @@ NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerFlutterApiGetCodec(void)
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKScriptMessageHandlerFlutterApiCodecReaderWriter *readerWriter =
-        [[FWFWKScriptMessageHandlerFlutterApiCodecReaderWriter alloc] init];
+    FWFWKScriptMessageHandlerFlutterApiCodecReaderWriter *readerWriter = [[FWFWKScriptMessageHandlerFlutterApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
@@ -1804,35 +1606,23 @@ NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerFlutterApiGetCodec(void)
   }
   return self;
 }
-- (void)
-    didReceiveScriptMessageForHandlerWithIdentifier:(NSInteger)arg_identifier
-                    userContentControllerIdentifier:(NSInteger)arg_userContentControllerIdentifier
-                                            message:(FWFWKScriptMessageData *)arg_message
-                                         completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKScriptMessageHandlerFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[
-        @(arg_identifier), @(arg_userContentControllerIdentifier), arg_message ?: [NSNull null]
-      ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)didReceiveScriptMessageForHandlerWithIdentifier:(NSInteger)arg_identifier userContentControllerIdentifier:(NSInteger)arg_userContentControllerIdentifier message:(FWFWKScriptMessageData *)arg_message completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKScriptMessageHandlerFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_userContentControllerIdentifier), arg_message ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -1842,19 +1632,15 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFWKNavigationDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                         NSObject<FWFWKNavigationDelegateHostApi> *api) {
+void SetUpFWFWKNavigationDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKNavigationDelegateHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateHostApi.create"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateHostApi.create"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKNavigationDelegateHostApiGetCodec()];
+        codec:FWFWKNavigationDelegateHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)],
-                @"FWFWKNavigationDelegateHostApi api (%@) doesn't respond to "
-                @"@selector(createWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)], @"FWFWKNavigationDelegateHostApi api (%@) doesn't respond to @selector(createWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -1872,24 +1658,22 @@ void SetUpFWFWKNavigationDelegateHostApi(id<FlutterBinaryMessenger> binaryMessen
 @implementation FWFWKNavigationDelegateFlutterApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFAuthenticationChallengeResponse fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [FWFNSErrorData fromList:[self readValue]];
-    case 130:
+    case 130: 
       return [FWFNSHttpUrlResponseData fromList:[self readValue]];
-    case 131:
+    case 131: 
       return [FWFNSUrlRequestData fromList:[self readValue]];
-    case 132:
+    case 132: 
       return [FWFWKFrameInfoData fromList:[self readValue]];
-    case 133:
+    case 133: 
       return [FWFWKNavigationActionData fromList:[self readValue]];
-    case 134:
+    case 134: 
       return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
-    case 135:
+    case 135: 
       return [FWFWKNavigationResponseData fromList:[self readValue]];
-    case 136:
-      return [FWFWKNavigationResponsePolicyEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -1924,9 +1708,6 @@ void SetUpFWFWKNavigationDelegateHostApi(id<FlutterBinaryMessenger> binaryMessen
   } else if ([value isKindOfClass:[FWFWKNavigationResponseData class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationResponsePolicyEnumData class]]) {
-    [self writeByte:136];
-    [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
   }
@@ -1948,8 +1729,7 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKNavigationDelegateFlutterApiCodecReaderWriter *readerWriter =
-        [[FWFWKNavigationDelegateFlutterApiCodecReaderWriter alloc] init];
+    FWFWKNavigationDelegateFlutterApiCodecReaderWriter *readerWriter = [[FWFWKNavigationDelegateFlutterApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
@@ -1968,251 +1748,153 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void) {
   }
   return self;
 }
-- (void)didFinishNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                   webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                                 URL:(nullable NSString *)arg_url
-                                          completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.didFinishNavigation"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), @(arg_webViewIdentifier), arg_url ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)didFinishNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier URL:(nullable NSString *)arg_url completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFinishNavigation"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), arg_url ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)didStartProvisionalNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                             webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                                           URL:(nullable NSString *)arg_url
-                                                    completion:(void (^)(FlutterError *_Nullable))
-                                                                   completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.didStartProvisionalNavigation"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), @(arg_webViewIdentifier), arg_url ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)didStartProvisionalNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier URL:(nullable NSString *)arg_url completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didStartProvisionalNavigation"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), arg_url ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)decidePolicyForNavigationActionForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                               webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                                navigationAction:(FWFWKNavigationActionData *)
-                                                                     arg_navigationAction
-                                                      completion:
-                                                          (void (^)(
-                                                              FWFWKNavigationActionPolicyEnumData
-                                                                  *_Nullable,
-                                                              FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel sendMessage:@[
-    @(arg_identifier), @(arg_webViewIdentifier), arg_navigationAction ?: [NSNull null]
-  ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion(nil, [FlutterError errorWithCode:reply[0]
-                                                           message:reply[1]
-                                                           details:reply[2]]);
-                     } else {
-                       FWFWKNavigationActionPolicyEnumData *output =
-                           reply[0] == [NSNull null] ? nil : reply[0];
-                       completion(output, nil);
-                     }
-                   } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-                   }
-                 }];
+- (void)decidePolicyForNavigationActionForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier navigationAction:(FWFWKNavigationActionData *)arg_navigationAction completion:(void (^)(FWFWKNavigationActionPolicyEnumData *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), arg_navigationAction ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        FWFWKNavigationActionPolicyEnumData *output = reply[0] == [NSNull null] ? nil : reply[0];
+        completion(output, nil);
+      }
+    } else {
+      completion(nil, [FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)
-    decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                             webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                            navigationResponse:(FWFWKNavigationResponseData *)
-                                                                   arg_navigationResponse
-                                                    completion:
-                                                        (void (^)(
-                                                            FWFWKNavigationResponsePolicyEnumData
-                                                                *_Nullable,
-                                                            FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel sendMessage:@[
-    @(arg_identifier), @(arg_webViewIdentifier), arg_navigationResponse ?: [NSNull null]
-  ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion(nil, [FlutterError errorWithCode:reply[0]
-                                                           message:reply[1]
-                                                           details:reply[2]]);
-                     } else {
-                       FWFWKNavigationResponsePolicyEnumData *output =
-                           reply[0] == [NSNull null] ? nil : reply[0];
-                       completion(output, nil);
-                     }
-                   } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-                   }
-                 }];
+- (void)decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier navigationResponse:(FWFWKNavigationResponseData *)arg_navigationResponse completion:(void (^)(FWFWKNavigationResponsePolicyEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), arg_navigationResponse ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        NSNumber *outputAsNumber = reply[0] == [NSNull null] ? nil : reply[0];
+        FWFWKNavigationResponsePolicyEnumBox *output = outputAsNumber == nil ? nil : [[FWFWKNavigationResponsePolicyEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
+        completion(output, nil);
+      }
+    } else {
+      completion(nil, [FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)didFailNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                 webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                             error:(FWFNSErrorData *)arg_error
-                                        completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.didFailNavigation"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), @(arg_webViewIdentifier), arg_error ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)didFailNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier error:(FWFNSErrorData *)arg_error completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailNavigation"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), arg_error ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)didFailProvisionalNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                            webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                                        error:(FWFNSErrorData *)arg_error
-                                                   completion:(void (^)(FlutterError *_Nullable))
-                                                                  completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.didFailProvisionalNavigation"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), @(arg_webViewIdentifier), arg_error ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)didFailProvisionalNavigationForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier error:(FWFNSErrorData *)arg_error completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailProvisionalNavigation"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), arg_error ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)webViewWebContentProcessDidTerminateForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                                    webViewIdentifier:
-                                                        (NSInteger)arg_webViewIdentifier
-                                                           completion:
-                                                               (void (^)(FlutterError *_Nullable))
-                                                                   completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.webViewWebContentProcessDidTerminate"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), @(arg_webViewIdentifier) ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)webViewWebContentProcessDidTerminateForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.webViewWebContentProcessDidTerminate"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier)] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)
-    didReceiveAuthenticationChallengeForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                             webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                           challengeIdentifier:(NSInteger)arg_challengeIdentifier
-                                                    completion:
-                                                        (void (^)(FWFAuthenticationChallengeResponse
-                                                                      *_Nullable,
-                                                                  FlutterError *_Nullable))
-                                                            completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"WKNavigationDelegateFlutterApi.didReceiveAuthenticationChallenge"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
-  [channel sendMessage:@[ @(arg_identifier), @(arg_webViewIdentifier), @(arg_challengeIdentifier) ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion(nil, [FlutterError errorWithCode:reply[0]
-                                                           message:reply[1]
-                                                           details:reply[2]]);
-                     } else {
-                       FWFAuthenticationChallengeResponse *output =
-                           reply[0] == [NSNull null] ? nil : reply[0];
-                       completion(output, nil);
-                     }
-                   } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-                   }
-                 }];
+- (void)didReceiveAuthenticationChallengeForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier challengeIdentifier:(NSInteger)arg_challengeIdentifier completion:(void (^)(FWFAuthenticationChallengeResponse *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didReceiveAuthenticationChallenge"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), @(arg_challengeIdentifier)] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        FWFAuthenticationChallengeResponse *output = reply[0] == [NSNull null] ? nil : reply[0];
+        completion(output, nil);
+      }
+    } else {
+      completion(nil, [FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -2221,7 +1903,7 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void) {
 @implementation FWFNSObjectHostApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -2257,25 +1939,21 @@ NSObject<FlutterMessageCodec> *FWFNSObjectHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFNSObjectHostApiCodecReaderWriter *readerWriter =
-        [[FWFNSObjectHostApiCodecReaderWriter alloc] init];
+    FWFNSObjectHostApiCodecReaderWriter *readerWriter = [[FWFNSObjectHostApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFWFNSObjectHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                             NSObject<FWFNSObjectHostApi> *api) {
+void SetUpFWFNSObjectHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFNSObjectHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.dispose"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.dispose"
         binaryMessenger:binaryMessenger
-                  codec:FWFNSObjectHostApiGetCodec()];
+        codec:FWFNSObjectHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(disposeObjectWithIdentifier:error:)],
-                @"FWFNSObjectHostApi api (%@) doesn't respond to "
-                @"@selector(disposeObjectWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(disposeObjectWithIdentifier:error:)], @"FWFNSObjectHostApi api (%@) doesn't respond to @selector(disposeObjectWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2288,31 +1966,21 @@ void SetUpFWFNSObjectHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.addObserver"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.addObserver"
         binaryMessenger:binaryMessenger
-                  codec:FWFNSObjectHostApiGetCodec()];
+        codec:FWFNSObjectHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (addObserverForObjectWithIdentifier:
-                                      observerIdentifier:keyPath:options:error:)],
-                @"FWFNSObjectHostApi api (%@) doesn't respond to "
-                @"@selector(addObserverForObjectWithIdentifier:observerIdentifier:keyPath:options:"
-                @"error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(addObserverForObjectWithIdentifier:observerIdentifier:keyPath:options:error:)], @"FWFNSObjectHostApi api (%@) doesn't respond to @selector(addObserverForObjectWithIdentifier:observerIdentifier:keyPath:options:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_observerIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         NSString *arg_keyPath = GetNullableObjectAtIndex(args, 2);
-        NSArray<FWFNSKeyValueObservingOptionsEnumData *> *arg_options =
-            GetNullableObjectAtIndex(args, 3);
+        NSArray<FWFNSKeyValueObservingOptionsEnumData *> *arg_options = GetNullableObjectAtIndex(args, 3);
         FlutterError *error;
-        [api addObserverForObjectWithIdentifier:arg_identifier
-                             observerIdentifier:arg_observerIdentifier
-                                        keyPath:arg_keyPath
-                                        options:arg_options
-                                          error:&error];
+        [api addObserverForObjectWithIdentifier:arg_identifier observerIdentifier:arg_observerIdentifier keyPath:arg_keyPath options:arg_options error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2320,28 +1988,20 @@ void SetUpFWFNSObjectHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.removeObserver"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.removeObserver"
         binaryMessenger:binaryMessenger
-                  codec:FWFNSObjectHostApiGetCodec()];
+        codec:FWFNSObjectHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(removeObserverForObjectWithIdentifier:
-                                                               observerIdentifier:keyPath:error:)],
-          @"FWFNSObjectHostApi api (%@) doesn't respond to "
-          @"@selector(removeObserverForObjectWithIdentifier:observerIdentifier:keyPath:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(removeObserverForObjectWithIdentifier:observerIdentifier:keyPath:error:)], @"FWFNSObjectHostApi api (%@) doesn't respond to @selector(removeObserverForObjectWithIdentifier:observerIdentifier:keyPath:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_observerIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         NSString *arg_keyPath = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api removeObserverForObjectWithIdentifier:arg_identifier
-                                observerIdentifier:arg_observerIdentifier
-                                           keyPath:arg_keyPath
-                                             error:&error];
+        [api removeObserverForObjectWithIdentifier:arg_identifier observerIdentifier:arg_observerIdentifier keyPath:arg_keyPath error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2354,9 +2014,9 @@ void SetUpFWFNSObjectHostApi(id<FlutterBinaryMessenger> binaryMessenger,
 @implementation FWFNSObjectFlutterApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [FWFObjectOrIdentifier fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -2395,8 +2055,7 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFNSObjectFlutterApiCodecReaderWriter *readerWriter =
-        [[FWFNSObjectFlutterApiCodecReaderWriter alloc] init];
+    FWFNSObjectFlutterApiCodecReaderWriter *readerWriter = [[FWFNSObjectFlutterApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
@@ -2415,63 +2074,41 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
   }
   return self;
 }
-- (void)observeValueForObjectWithIdentifier:(NSInteger)arg_identifier
-                                    keyPath:(NSString *)arg_keyPath
-                           objectIdentifier:(NSInteger)arg_objectIdentifier
-                                 changeKeys:
-                                     (NSArray<FWFNSKeyValueChangeKeyEnumData *> *)arg_changeKeys
-                               changeValues:(NSArray<FWFObjectOrIdentifier *> *)arg_changeValues
-                                 completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFNSObjectFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[
-        @(arg_identifier), arg_keyPath ?: [NSNull null], @(arg_objectIdentifier),
-        arg_changeKeys ?: [NSNull null], arg_changeValues ?: [NSNull null]
-      ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)observeValueForObjectWithIdentifier:(NSInteger)arg_identifier keyPath:(NSString *)arg_keyPath objectIdentifier:(NSInteger)arg_objectIdentifier changeKeys:(NSArray<FWFNSKeyValueChangeKeyEnumData *> *)arg_changeKeys changeValues:(NSArray<FWFObjectOrIdentifier *> *)arg_changeValues completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFNSObjectFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), arg_keyPath ?: [NSNull null], @(arg_objectIdentifier), arg_changeKeys ?: [NSNull null], arg_changeValues ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)disposeObjectWithIdentifier:(NSInteger)arg_identifier
-                         completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.dispose"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFNSObjectFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier) ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)disposeObjectWithIdentifier:(NSInteger)arg_identifier completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.dispose"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFNSObjectFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier)] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -2480,49 +2117,47 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
 @implementation FWFWKWebViewHostApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFAuthenticationChallengeResponse fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [FWFNSErrorData fromList:[self readValue]];
-    case 130:
+    case 130: 
       return [FWFNSHttpCookieData fromList:[self readValue]];
-    case 131:
+    case 131: 
       return [FWFNSHttpCookiePropertyKeyEnumData fromList:[self readValue]];
-    case 132:
+    case 132: 
       return [FWFNSHttpUrlResponseData fromList:[self readValue]];
-    case 133:
+    case 133: 
       return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
-    case 134:
+    case 134: 
       return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
-    case 135:
+    case 135: 
       return [FWFNSUrlRequestData fromList:[self readValue]];
-    case 136:
+    case 136: 
       return [FWFObjectOrIdentifier fromList:[self readValue]];
-    case 137:
+    case 137: 
       return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
-    case 138:
+    case 138: 
       return [FWFWKFrameInfoData fromList:[self readValue]];
-    case 139:
+    case 139: 
       return [FWFWKMediaCaptureTypeData fromList:[self readValue]];
-    case 140:
+    case 140: 
       return [FWFWKNavigationActionData fromList:[self readValue]];
-    case 141:
+    case 141: 
       return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
-    case 142:
+    case 142: 
       return [FWFWKNavigationResponseData fromList:[self readValue]];
-    case 143:
-      return [FWFWKNavigationResponsePolicyEnumData fromList:[self readValue]];
-    case 144:
+    case 143: 
       return [FWFWKPermissionDecisionData fromList:[self readValue]];
-    case 145:
+    case 144: 
       return [FWFWKScriptMessageData fromList:[self readValue]];
-    case 146:
+    case 145: 
       return [FWFWKSecurityOriginData fromList:[self readValue]];
-    case 147:
+    case 146: 
       return [FWFWKUserScriptData fromList:[self readValue]];
-    case 148:
+    case 147: 
       return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
-    case 149:
+    case 148: 
       return [FWFWKWebsiteDataTypeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -2579,26 +2214,23 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
   } else if ([value isKindOfClass:[FWFWKNavigationResponseData class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationResponsePolicyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKPermissionDecisionData class]]) {
     [self writeByte:143];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKPermissionDecisionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
     [self writeByte:144];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
+  } else if ([value isKindOfClass:[FWFWKSecurityOriginData class]]) {
     [self writeByte:145];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKSecurityOriginData class]]) {
+  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
     [self writeByte:146];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
+  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
     [self writeByte:147];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
-    [self writeByte:148];
-    [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
-    [self writeByte:149];
+    [self writeByte:148];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -2621,34 +2253,27 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKWebViewHostApiCodecReaderWriter *readerWriter =
-        [[FWFWKWebViewHostApiCodecReaderWriter alloc] init];
+    FWFWKWebViewHostApiCodecReaderWriter *readerWriter = [[FWFWKWebViewHostApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                              NSObject<FWFWKWebViewHostApi> *api) {
+void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKWebViewHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.create"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.create"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:
-                                               configurationIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(createWithIdentifier:configurationIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:configurationIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(createWithIdentifier:configurationIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_configurationIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api createWithIdentifier:arg_identifier
-            configurationIdentifier:arg_configurationIdentifier
-                              error:&error];
+        [api createWithIdentifier:arg_identifier configurationIdentifier:arg_configurationIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2656,25 +2281,19 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setUIDelegate"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setUIDelegate"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setUIDelegateForWebViewWithIdentifier:
-                                                                     delegateIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(setUIDelegateForWebViewWithIdentifier:delegateIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setUIDelegateForWebViewWithIdentifier:delegateIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(setUIDelegateForWebViewWithIdentifier:delegateIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSNumber *arg_uiDelegateIdentifier = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api setUIDelegateForWebViewWithIdentifier:arg_identifier
-                                delegateIdentifier:arg_uiDelegateIdentifier
-                                             error:&error];
+        [api setUIDelegateForWebViewWithIdentifier:arg_identifier delegateIdentifier:arg_uiDelegateIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2682,26 +2301,19 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi."
-                        @"setNavigationDelegate"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setNavigationDelegate"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(setNavigationDelegateForWebViewWithIdentifier:
-                                                                       delegateIdentifier:error:)],
-          @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-          @"@selector(setNavigationDelegateForWebViewWithIdentifier:delegateIdentifier:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(setNavigationDelegateForWebViewWithIdentifier:delegateIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(setNavigationDelegateForWebViewWithIdentifier:delegateIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSNumber *arg_navigationDelegateIdentifier = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api setNavigationDelegateForWebViewWithIdentifier:arg_identifier
-                                        delegateIdentifier:arg_navigationDelegateIdentifier
-                                                     error:&error];
+        [api setNavigationDelegateForWebViewWithIdentifier:arg_identifier delegateIdentifier:arg_navigationDelegateIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2709,15 +2321,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getUrl"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getUrl"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(URLForWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(URLForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(URLForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(URLForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2730,23 +2340,18 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getEstimatedProgress"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getEstimatedProgress"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(estimatedProgressForWebViewWithIdentifier:
-                                                                                      error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(estimatedProgressForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(estimatedProgressForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(estimatedProgressForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        NSNumber *output = [api estimatedProgressForWebViewWithIdentifier:arg_identifier
-                                                                    error:&error];
+        NSNumber *output = [api estimatedProgressForWebViewWithIdentifier:arg_identifier error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -2754,16 +2359,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadRequest"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadRequest"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(loadRequestForWebViewWithIdentifier:
-                                                                              request:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(loadRequestForWebViewWithIdentifier:request:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(loadRequestForWebViewWithIdentifier:request:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(loadRequestForWebViewWithIdentifier:request:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2777,27 +2379,20 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadHtmlString"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadHtmlString"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(loadHTMLForWebViewWithIdentifier:
-                                                                        HTMLString:baseURL:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(loadHTMLForWebViewWithIdentifier:HTMLString:baseURL:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(loadHTMLForWebViewWithIdentifier:HTMLString:baseURL:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(loadHTMLForWebViewWithIdentifier:HTMLString:baseURL:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSString *arg_string = GetNullableObjectAtIndex(args, 1);
         NSString *arg_baseUrl = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api loadHTMLForWebViewWithIdentifier:arg_identifier
-                                   HTMLString:arg_string
-                                      baseURL:arg_baseUrl
-                                        error:&error];
+        [api loadHTMLForWebViewWithIdentifier:arg_identifier HTMLString:arg_string baseURL:arg_baseUrl error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2805,26 +2400,20 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFileUrl"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFileUrl"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (loadFileForWebViewWithIdentifier:fileURL:readAccessURL:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(loadFileForWebViewWithIdentifier:fileURL:readAccessURL:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(loadFileForWebViewWithIdentifier:fileURL:readAccessURL:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(loadFileForWebViewWithIdentifier:fileURL:readAccessURL:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSString *arg_url = GetNullableObjectAtIndex(args, 1);
         NSString *arg_readAccessUrl = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        [api loadFileForWebViewWithIdentifier:arg_identifier
-                                      fileURL:arg_url
-                                readAccessURL:arg_readAccessUrl
-                                        error:&error];
+        [api loadFileForWebViewWithIdentifier:arg_identifier fileURL:arg_url readAccessURL:arg_readAccessUrl error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2832,17 +2421,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFlutterAsset"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFlutterAsset"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(loadAssetForWebViewWithIdentifier:
-                                                                           assetKey:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(loadAssetForWebViewWithIdentifier:assetKey:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(loadAssetForWebViewWithIdentifier:assetKey:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(loadAssetForWebViewWithIdentifier:assetKey:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2856,15 +2441,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoBack"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoBack"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(canGoBackForWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(canGoBackForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(canGoBackForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(canGoBackForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2877,16 +2460,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoForward"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoForward"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(canGoForwardForWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(canGoForwardForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(canGoForwardForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(canGoForwardForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2899,15 +2479,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goBack"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goBack"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(goBackForWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(goBackForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(goBackForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(goBackForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2920,15 +2498,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goForward"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goForward"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(goForwardForWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(goForwardForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(goForwardForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(goForwardForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2941,15 +2517,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.reload"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.reload"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(reloadWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(reloadWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(reloadWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(reloadWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2962,15 +2536,13 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getTitle"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getTitle"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(titleForWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(titleForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(titleForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(titleForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -2983,25 +2555,19 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi."
-                        @"setAllowsBackForwardNavigationGestures"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsBackForwardNavigationGestures"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (setAllowsBackForwardForWebViewWithIdentifier:isAllowed:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(setAllowsBackForwardForWebViewWithIdentifier:isAllowed:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setAllowsBackForwardForWebViewWithIdentifier:isAllowed:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(setAllowsBackForwardForWebViewWithIdentifier:isAllowed:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         BOOL arg_allow = [GetNullableObjectAtIndex(args, 1) boolValue];
         FlutterError *error;
-        [api setAllowsBackForwardForWebViewWithIdentifier:arg_identifier
-                                                isAllowed:arg_allow
-                                                    error:&error];
+        [api setAllowsBackForwardForWebViewWithIdentifier:arg_identifier isAllowed:arg_allow error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -3009,25 +2575,19 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setCustomUserAgent"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setCustomUserAgent"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (setCustomUserAgentForWebViewWithIdentifier:userAgent:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(setCustomUserAgentForWebViewWithIdentifier:userAgent:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setCustomUserAgentForWebViewWithIdentifier:userAgent:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(setCustomUserAgentForWebViewWithIdentifier:userAgent:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSString *arg_userAgent = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api setCustomUserAgentForWebViewWithIdentifier:arg_identifier
-                                              userAgent:arg_userAgent
-                                                  error:&error];
+        [api setCustomUserAgentForWebViewWithIdentifier:arg_identifier userAgent:arg_userAgent error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -3035,53 +2595,39 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.evaluateJavaScript"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.evaluateJavaScript"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector
-               (evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:completion:)],
-          @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-          @"@selector(evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:completion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:completion:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSString *arg_javaScriptString = GetNullableObjectAtIndex(args, 1);
-        [api evaluateJavaScriptForWebViewWithIdentifier:arg_identifier
-                                       javaScriptString:arg_javaScriptString
-                                             completion:^(id _Nullable output,
-                                                          FlutterError *_Nullable error) {
-                                               callback(wrapResult(output, error));
-                                             }];
+        [api evaluateJavaScriptForWebViewWithIdentifier:arg_identifier javaScriptString:arg_javaScriptString completion:^(id _Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setInspectable"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setInspectable"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setInspectableForWebViewWithIdentifier:
-                                                                             inspectable:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(setInspectableForWebViewWithIdentifier:inspectable:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setInspectableForWebViewWithIdentifier:inspectable:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(setInspectableForWebViewWithIdentifier:inspectable:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         BOOL arg_inspectable = [GetNullableObjectAtIndex(args, 1) boolValue];
         FlutterError *error;
-        [api setInspectableForWebViewWithIdentifier:arg_identifier
-                                        inspectable:arg_inspectable
-                                              error:&error];
+        [api setInspectableForWebViewWithIdentifier:arg_identifier inspectable:arg_inspectable error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -3089,22 +2635,18 @@ void SetUpFWFWKWebViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKWebViewHostApiGetCodec()];
+        codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(customUserAgentForWebViewWithIdentifier:error:)],
-                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(customUserAgentForWebViewWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(customUserAgentForWebViewWithIdentifier:error:)], @"FWFWKWebViewHostApi api (%@) doesn't respond to @selector(customUserAgentForWebViewWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        NSString *output = [api customUserAgentForWebViewWithIdentifier:arg_identifier
-                                                                  error:&error];
+        NSString *output = [api customUserAgentForWebViewWithIdentifier:arg_identifier error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -3118,18 +2660,15 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFWKUIDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                 NSObject<FWFWKUIDelegateHostApi> *api) {
+void SetUpFWFWKUIDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKUIDelegateHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateHostApi.create"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateHostApi.create"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKUIDelegateHostApiGetCodec()];
+        codec:FWFWKUIDelegateHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)],
-                @"FWFWKUIDelegateHostApi api (%@) doesn't respond to "
-                @"@selector(createWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)], @"FWFWKUIDelegateHostApi api (%@) doesn't respond to @selector(createWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -3147,17 +2686,17 @@ void SetUpFWFWKUIDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger,
 @implementation FWFWKUIDelegateFlutterApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFNSUrlRequestData fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [FWFWKFrameInfoData fromList:[self readValue]];
-    case 130:
+    case 130: 
       return [FWFWKMediaCaptureTypeData fromList:[self readValue]];
-    case 131:
+    case 131: 
       return [FWFWKNavigationActionData fromList:[self readValue]];
-    case 132:
+    case 132: 
       return [FWFWKPermissionDecisionData fromList:[self readValue]];
-    case 133:
+    case 133: 
       return [FWFWKSecurityOriginData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -3208,8 +2747,7 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKUIDelegateFlutterApiCodecReaderWriter *readerWriter =
-        [[FWFWKUIDelegateFlutterApiCodecReaderWriter alloc] init];
+    FWFWKUIDelegateFlutterApiCodecReaderWriter *readerWriter = [[FWFWKUIDelegateFlutterApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
@@ -3228,166 +2766,98 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void) {
   }
   return self;
 }
-- (void)onCreateWebViewForDelegateWithIdentifier:(NSInteger)arg_identifier
-                               webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                         configurationIdentifier:(NSInteger)arg_configurationIdentifier
-                                navigationAction:(FWFWKNavigationActionData *)arg_navigationAction
-                                      completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[
-        @(arg_identifier), @(arg_webViewIdentifier), @(arg_configurationIdentifier),
-        arg_navigationAction ?: [NSNull null]
-      ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)onCreateWebViewForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier configurationIdentifier:(NSInteger)arg_configurationIdentifier navigationAction:(FWFWKNavigationActionData *)arg_navigationAction completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), @(arg_configurationIdentifier), arg_navigationAction ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)requestMediaCapturePermissionForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                             webViewIdentifier:(NSInteger)arg_webViewIdentifier
-                                                        origin:(FWFWKSecurityOriginData *)arg_origin
-                                                         frame:(FWFWKFrameInfoData *)arg_frame
-                                                          type:(FWFWKMediaCaptureTypeData *)arg_type
-                                                    completion:
-                                                        (void (^)(
-                                                            FWFWKPermissionDecisionData *_Nullable,
-                                                            FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
-                             @"requestMediaCapturePermission"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[
-        @(arg_identifier), @(arg_webViewIdentifier), arg_origin ?: [NSNull null],
-        arg_frame ?: [NSNull null], arg_type ?: [NSNull null]
-      ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else {
-                  FWFWKPermissionDecisionData *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)requestMediaCapturePermissionForDelegateWithIdentifier:(NSInteger)arg_identifier webViewIdentifier:(NSInteger)arg_webViewIdentifier origin:(FWFWKSecurityOriginData *)arg_origin frame:(FWFWKFrameInfoData *)arg_frame type:(FWFWKMediaCaptureTypeData *)arg_type completion:(void (^)(FWFWKPermissionDecisionData *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_webViewIdentifier), arg_origin ?: [NSNull null], arg_frame ?: [NSNull null], arg_type ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        FWFWKPermissionDecisionData *output = reply[0] == [NSNull null] ? nil : reply[0];
+        completion(output, nil);
+      }
+    } else {
+      completion(nil, [FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                                 message:(NSString *)arg_message
-                                                   frame:(FWFWKFrameInfoData *)arg_frame
-                                              completion:
-                                                  (void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
-                             @"runJavaScriptAlertPanel"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSInteger)arg_identifier message:(NSString *)arg_message frame:(FWFWKFrameInfoData *)arg_frame completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptAlertPanel"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                                   message:(NSString *)arg_message
-                                                     frame:(FWFWKFrameInfoData *)arg_frame
-                                                completion:
-                                                    (void (^)(NSNumber *_Nullable,
-                                                              FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
-                             @"runJavaScriptConfirmPanel"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else {
-                  NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSInteger)arg_identifier message:(NSString *)arg_message frame:(FWFWKFrameInfoData *)arg_frame completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptConfirmPanel"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), arg_message ?: [NSNull null], arg_frame ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
+        completion(output, nil);
+      }
+    } else {
+      completion(nil, [FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
-- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSInteger)arg_identifier
-                                                      prompt:(NSString *)arg_prompt
-                                                 defaultText:(NSString *)arg_defaultText
-                                                       frame:(FWFWKFrameInfoData *)arg_frame
-                                                  completion:(void (^)(NSString *_Nullable,
-                                                                       FlutterError *_Nullable))
-                                                                 completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi."
-                             @"runJavaScriptTextInputPanel"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFWKUIDelegateFlutterApiGetCodec()];
-  [channel sendMessage:@[
-    @(arg_identifier), arg_prompt ?: [NSNull null], arg_defaultText ?: [NSNull null],
-    arg_frame ?: [NSNull null]
-  ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion(nil, [FlutterError errorWithCode:reply[0]
-                                                           message:reply[1]
-                                                           details:reply[2]]);
-                     } else {
-                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
-                       completion(output, nil);
-                     }
-                   } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-                   }
-                 }];
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSInteger)arg_identifier prompt:(NSString *)arg_prompt defaultText:(NSString *)arg_defaultText frame:(FWFWKFrameInfoData *)arg_frame completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptTextInputPanel"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), arg_prompt ?: [NSNull null], arg_defaultText ?: [NSNull null], arg_frame ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+        completion(output, nil);
+      }
+    } else {
+      completion(nil, [FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -3396,9 +2866,9 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void) {
 @implementation FWFWKHttpCookieStoreHostApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FWFNSHttpCookieData fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [FWFNSHttpCookiePropertyKeyEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -3437,35 +2907,27 @@ NSObject<FlutterMessageCodec> *FWFWKHttpCookieStoreHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FWFWKHttpCookieStoreHostApiCodecReaderWriter *readerWriter =
-        [[FWFWKHttpCookieStoreHostApiCodecReaderWriter alloc] init];
+    FWFWKHttpCookieStoreHostApiCodecReaderWriter *readerWriter = [[FWFWKHttpCookieStoreHostApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFWFWKHttpCookieStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                      NSObject<FWFWKHttpCookieStoreHostApi> *api) {
+void SetUpFWFWKHttpCookieStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFWKHttpCookieStoreHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi."
-                        @"createFromWebsiteDataStore"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi.createFromWebsiteDataStore"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKHttpCookieStoreHostApiGetCodec()];
+        codec:FWFWKHttpCookieStoreHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createFromWebsiteDataStoreWithIdentifier:
-                                                                       dataStoreIdentifier:error:)],
-                @"FWFWKHttpCookieStoreHostApi api (%@) doesn't respond to "
-                @"@selector(createFromWebsiteDataStoreWithIdentifier:dataStoreIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createFromWebsiteDataStoreWithIdentifier:dataStoreIdentifier:error:)], @"FWFWKHttpCookieStoreHostApi api (%@) doesn't respond to @selector(createFromWebsiteDataStoreWithIdentifier:dataStoreIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSInteger arg_websiteDataStoreIdentifier = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api createFromWebsiteDataStoreWithIdentifier:arg_identifier
-                                  dataStoreIdentifier:arg_websiteDataStoreIdentifier
-                                                error:&error];
+        [api createFromWebsiteDataStoreWithIdentifier:arg_identifier dataStoreIdentifier:arg_websiteDataStoreIdentifier error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -3473,26 +2935,20 @@ void SetUpFWFWKHttpCookieStoreHostApi(id<FlutterBinaryMessenger> binaryMessenger
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi.setCookie"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi.setCookie"
         binaryMessenger:binaryMessenger
-                  codec:FWFWKHttpCookieStoreHostApiGetCodec()];
+        codec:FWFWKHttpCookieStoreHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setCookieForStoreWithIdentifier:
-                                                                           cookie:completion:)],
-                @"FWFWKHttpCookieStoreHostApi api (%@) doesn't respond to "
-                @"@selector(setCookieForStoreWithIdentifier:cookie:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setCookieForStoreWithIdentifier:cookie:completion:)], @"FWFWKHttpCookieStoreHostApi api (%@) doesn't respond to @selector(setCookieForStoreWithIdentifier:cookie:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         FWFNSHttpCookieData *arg_cookie = GetNullableObjectAtIndex(args, 1);
-        [api setCookieForStoreWithIdentifier:arg_identifier
-                                      cookie:arg_cookie
-                                  completion:^(FlutterError *_Nullable error) {
-                                    callback(wrapResult(nil, error));
-                                  }];
+        [api setCookieForStoreWithIdentifier:arg_identifier cookie:arg_cookie completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -3505,19 +2961,15 @@ NSObject<FlutterMessageCodec> *FWFNSUrlHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFNSUrlHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                          NSObject<FWFNSUrlHostApi> *api) {
+void SetUpFWFNSUrlHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFNSUrlHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlHostApi.getAbsoluteString"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlHostApi.getAbsoluteString"
         binaryMessenger:binaryMessenger
-                  codec:FWFNSUrlHostApiGetCodec()];
+        codec:FWFNSUrlHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(absoluteStringForNSURLWithIdentifier:error:)],
-                @"FWFNSUrlHostApi api (%@) doesn't respond to "
-                @"@selector(absoluteStringForNSURLWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(absoluteStringForNSURLWithIdentifier:error:)], @"FWFNSUrlHostApi api (%@) doesn't respond to @selector(absoluteStringForNSURLWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -3549,29 +3001,23 @@ NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void) {
   }
   return self;
 }
-- (void)createWithIdentifier:(NSInteger)arg_identifier
-                  completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+- (void)createWithIdentifier:(NSInteger)arg_identifier completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
       messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlFlutterApi.create"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFNSUrlFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier) ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+      binaryMessenger:self.binaryMessenger
+      codec:FWFNSUrlFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier)] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -3581,19 +3027,15 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFUIScrollViewDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                         NSObject<FWFUIScrollViewDelegateHostApi> *api) {
+void SetUpFWFUIScrollViewDelegateHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFUIScrollViewDelegateHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create"
         binaryMessenger:binaryMessenger
-                  codec:FWFUIScrollViewDelegateHostApiGetCodec()];
+        codec:FWFUIScrollViewDelegateHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)],
-                @"FWFUIScrollViewDelegateHostApi api (%@) doesn't respond to "
-                @"@selector(createWithIdentifier:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)], @"FWFUIScrollViewDelegateHostApi api (%@) doesn't respond to @selector(createWithIdentifier:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -3625,33 +3067,23 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateFlutterApiGetCodec(void) {
   }
   return self;
 }
-- (void)scrollViewDidScrollWithIdentifier:(NSInteger)arg_identifier
-                   UIScrollViewIdentifier:(NSInteger)arg_uiScrollViewIdentifier
-                                        x:(double)arg_x
-                                        y:(double)arg_y
-                               completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"UIScrollViewDelegateFlutterApi.scrollViewDidScroll"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFUIScrollViewDelegateFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), @(arg_uiScrollViewIdentifier), @(arg_x), @(arg_y) ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)scrollViewDidScrollWithIdentifier:(NSInteger)arg_identifier UIScrollViewIdentifier:(NSInteger)arg_uiScrollViewIdentifier x:(double)arg_x y:(double)arg_y completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFUIScrollViewDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_uiScrollViewIdentifier), @(arg_x), @(arg_y)] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -3661,34 +3093,24 @@ NSObject<FlutterMessageCodec> *FWFNSUrlCredentialHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void SetUpFWFNSUrlCredentialHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                    NSObject<FWFNSUrlCredentialHostApi> *api) {
+void SetUpFWFNSUrlCredentialHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FWFNSUrlCredentialHostApi> *api) {
   /// Create a new native instance and add it to the `InstanceManager`.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlCredentialHostApi.createWithUser"
         binaryMessenger:binaryMessenger
-                  codec:FWFNSUrlCredentialHostApiGetCodec()];
+        codec:FWFNSUrlCredentialHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (createWithUserWithIdentifier:user:password:persistence:error:)],
-                @"FWFNSUrlCredentialHostApi api (%@) doesn't respond to "
-                @"@selector(createWithUserWithIdentifier:user:password:persistence:error:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createWithUserWithIdentifier:user:password:persistence:error:)], @"FWFNSUrlCredentialHostApi api (%@) doesn't respond to @selector(createWithUserWithIdentifier:user:password:persistence:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
         NSString *arg_user = GetNullableObjectAtIndex(args, 1);
         NSString *arg_password = GetNullableObjectAtIndex(args, 2);
-        FWFNSUrlCredentialPersistence arg_persistence =
-            [GetNullableObjectAtIndex(args, 3) integerValue];
+        FWFNSUrlCredentialPersistence arg_persistence = [GetNullableObjectAtIndex(args, 3) integerValue];
         FlutterError *error;
-        [api createWithUserWithIdentifier:arg_identifier
-                                     user:arg_user
-                                 password:arg_password
-                              persistence:arg_persistence
-                                    error:&error];
+        [api createWithUserWithIdentifier:arg_identifier user:arg_user password:arg_password persistence:arg_persistence error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -3715,36 +3137,23 @@ NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void) {
   }
   return self;
 }
-- (void)createWithIdentifier:(NSInteger)arg_identifier
-                        host:(nullable NSString *)arg_host
-                       realm:(nullable NSString *)arg_realm
-        authenticationMethod:(nullable NSString *)arg_authenticationMethod
-                  completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.create"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFNSUrlProtectionSpaceFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[
-        @(arg_identifier), arg_host ?: [NSNull null], arg_realm ?: [NSNull null],
-        arg_authenticationMethod ?: [NSNull null]
-      ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)createWithIdentifier:(NSInteger)arg_identifier host:(nullable NSString *)arg_host realm:(nullable NSString *)arg_realm authenticationMethod:(nullable NSString *)arg_authenticationMethod completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlProtectionSpaceFlutterApi.create"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFNSUrlProtectionSpaceFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), arg_host ?: [NSNull null], arg_realm ?: [NSNull null], arg_authenticationMethod ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
 
@@ -3767,30 +3176,23 @@ NSObject<FlutterMessageCodec> *FWFNSUrlAuthenticationChallengeFlutterApiGetCodec
   }
   return self;
 }
-- (void)createWithIdentifier:(NSInteger)arg_identifier
-    protectionSpaceIdentifier:(NSInteger)arg_protectionSpaceIdentifier
-                   completion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
-                             @"NSUrlAuthenticationChallengeFlutterApi.create"
-             binaryMessenger:self.binaryMessenger
-                       codec:FWFNSUrlAuthenticationChallengeFlutterApiGetCodec()];
-  [channel
-      sendMessage:@[ @(arg_identifier), @(arg_protectionSpaceIdentifier) ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+- (void)createWithIdentifier:(NSInteger)arg_identifier protectionSpaceIdentifier:(NSInteger)arg_protectionSpaceIdentifier completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlAuthenticationChallengeFlutterApi.create"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFNSUrlAuthenticationChallengeFlutterApiGetCodec()];
+  [channel sendMessage:@[@(arg_identifier), @(arg_protectionSpaceIdentifier)] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion([FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);
+    } 
+  }];
 }
 @end
+

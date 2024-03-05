@@ -613,9 +613,9 @@ void main() {
           },
         );
 
-        final WKNavigationResponsePolicyEnumData policyData =
-            await WebKitFlutterApis.instance.navigationDelegate
-                .decidePolicyForNavigationResponse(
+        final WKNavigationResponsePolicyEnum policy = await WebKitFlutterApis
+            .instance.navigationDelegate
+            .decidePolicyForNavigationResponse(
           instanceManager.getIdentifier(navigationDelegate)!,
           instanceManager.getIdentifier(webView)!,
           WKNavigationResponseData(
@@ -623,7 +623,7 @@ void main() {
               forMainFrame: true),
         );
 
-        expect(policyData.value, WKNavigationResponsePolicyEnum.cancel);
+        expect(policy, WKNavigationResponsePolicyEnum.cancel);
       });
 
       test('didFailNavigation', () async {

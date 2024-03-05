@@ -193,14 +193,10 @@
   XCTAssertEqual(data.statusCode, 1);
 }
 
-- (void)testFWFNativeWKNavigationResponsePolicyFromEnumData {
-  FWFWKNavigationResponsePolicyEnumData *allowData =
-      [FWFWKNavigationResponsePolicyEnumData makeWithValue:FWFWKNavigationResponsePolicyEnumAllow];
-  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnumData(allowData),
+- (void)testFWFNativeWKNavigationResponsePolicyFromEnum {
+  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnum(FWFWKNavigationResponsePolicyEnumAllow),
                  WKNavigationResponsePolicyAllow);
-  FWFWKNavigationResponsePolicyEnumData *cancelData =
-      [FWFWKNavigationResponsePolicyEnumData makeWithValue:FWFWKNavigationResponsePolicyEnumCancel];
-  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnumData(cancelData),
+  XCTAssertEqual(FWFNativeWKNavigationResponsePolicyFromEnum(FWFWKNavigationResponsePolicyEnumCancel),
                  WKNavigationResponsePolicyCancel);
 }
 @end

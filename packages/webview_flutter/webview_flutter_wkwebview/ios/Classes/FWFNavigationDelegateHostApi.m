@@ -77,7 +77,7 @@
                                   navigationResponse:(WKNavigationResponse *)navigationResponse
                                           completion:
                                               (void (^)(
-                                                  FWFWKNavigationResponsePolicyEnumData *_Nullable,
+                                                  FWFWKNavigationResponsePolicyEnumBox *,
                                                   FlutterError *_Nullable))completion {
   NSInteger webViewIdentifier =
       [self.instanceManager identifierWithStrongReferenceForInstance:webView];
@@ -216,12 +216,17 @@
       decidePolicyForNavigationResponseForDelegate:self
                                            webView:webView
                                 navigationResponse:navigationResponse
-                                        completion:^(FWFWKNavigationResponsePolicyEnumData *policy,
+                                        completion:^(FWFWKNavigationResponsePolicyEnumBox *policy,
                                                      FlutterError *error) {
                                           NSAssert(!error, @"%@", error);
-                                          decisionHandler(
-                                              FWFNativeWKNavigationResponsePolicyFromEnumData(
-                                                  policy));
+    if (!error) {
+      decisionHandler(
+          FWFNativeWKNavigationResponsePolicyFromEnum(
+              policy.value));
+    } else {
+      decisionHandler(WKNavigationResponsePolicyCancel);
+    }
+                                      
                                         }];
 }
 

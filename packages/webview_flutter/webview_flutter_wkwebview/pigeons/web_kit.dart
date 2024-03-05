@@ -28,7 +28,7 @@ enum NSKeyValueObservingOptionsEnum {
   priorNotification,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSKeyValueObservingOptionsEnumData {
   late NSKeyValueObservingOptionsEnum value;
@@ -44,7 +44,7 @@ enum NSKeyValueChangeEnum {
   replacement,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSKeyValueChangeEnumData {
   late NSKeyValueChangeEnum value;
@@ -62,7 +62,7 @@ enum NSKeyValueChangeKeyEnum {
   unknown,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSKeyValueChangeKeyEnumData {
   late NSKeyValueChangeKeyEnum value;
@@ -76,7 +76,7 @@ enum WKUserScriptInjectionTimeEnum {
   atDocumentEnd,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKUserScriptInjectionTimeEnumData {
   late WKUserScriptInjectionTimeEnum value;
@@ -92,7 +92,7 @@ enum WKAudiovisualMediaTypeEnum {
   all,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKAudiovisualMediaTypeEnumData {
   late WKAudiovisualMediaTypeEnum value;
@@ -112,7 +112,7 @@ enum WKWebsiteDataTypeEnum {
   indexedDBDatabases,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKWebsiteDataTypeEnumData {
   late WKWebsiteDataTypeEnum value;
@@ -126,7 +126,7 @@ enum WKNavigationActionPolicyEnum {
   cancel,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKNavigationActionPolicyEnumData {
   late WKNavigationActionPolicyEnum value;
@@ -138,12 +138,6 @@ class WKNavigationActionPolicyEnumData {
 enum WKNavigationResponsePolicyEnum {
   allow,
   cancel,
-}
-
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class WKNavigationResponsePolicyEnumData {
-  late WKNavigationResponsePolicyEnum value;
 }
 
 /// Mirror of NSHTTPCookiePropertyKey.
@@ -166,7 +160,7 @@ enum NSHttpCookiePropertyKeyEnum {
   version,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSHttpCookiePropertyKeyEnumData {
   late NSHttpCookiePropertyKeyEnum value;
@@ -234,7 +228,7 @@ enum WKPermissionDecision {
   prompt,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKPermissionDecisionData {
   late WKPermissionDecision value;
@@ -266,7 +260,7 @@ enum WKMediaCaptureType {
   unknown,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKMediaCaptureTypeData {
   late WKMediaCaptureType value;
@@ -652,7 +646,7 @@ abstract class WKNavigationDelegateFlutterApi {
     'decidePolicyForNavigationResponseForDelegateWithIdentifier:webViewIdentifier:navigationResponse:',
   )
   @async
-  WKNavigationResponsePolicyEnumData decidePolicyForNavigationResponse(
+  WKNavigationResponsePolicyEnum decidePolicyForNavigationResponse(
     int identifier,
     int webViewIdentifier,
     WKNavigationResponseData navigationResponse,

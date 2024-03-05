@@ -221,7 +221,8 @@ class NSErrorUserInfoKey {
       'NSErrorFailingURLStringKey';
 }
 
-/// A URL load request that is independent of protocol or URL scheme.
+/// The metadata associated with the response to an HTTP protocol URL load
+/// request.
 ///
 /// Wraps [NSHttpUrlResponse](https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc).
 @immutable

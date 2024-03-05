@@ -175,7 +175,7 @@ class _WebViewExampleState extends State<WebViewExample> {
           })
           ..setOnHttpError((HttpResponseError error) {
             debugPrint(
-              'Http error occured on page: ${error.response?.statusCode}',
+              'HTTP error occured on page: ${error.response?.statusCode}',
             );
           })
           ..setOnWebResourceError((WebResourceError error) {

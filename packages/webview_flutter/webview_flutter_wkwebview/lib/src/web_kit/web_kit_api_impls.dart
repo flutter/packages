@@ -71,11 +71,9 @@ extension _WKNavigationActionPolicyConverter on WKNavigationActionPolicy {
 }
 
 extension _WKNavigationResponsePolicyConverter on WKNavigationResponsePolicy {
-  WKNavigationResponsePolicyEnumData toWKNavigationResponsePolicyEnumData() {
-    return WKNavigationResponsePolicyEnumData(
-      value: WKNavigationResponsePolicyEnum.values.firstWhere(
-        (WKNavigationResponsePolicyEnum element) => element.name == name,
-      ),
+  WKNavigationResponsePolicyEnum toWKNavigationResponsePolicyEnumData() {
+    return WKNavigationResponsePolicyEnum.values.firstWhere(
+      (WKNavigationResponsePolicyEnum element) => element.name == name,
     );
   }
 }
@@ -931,7 +929,7 @@ class WKNavigationDelegateFlutterApiImpl
   }
 
   @override
-  Future<WKNavigationResponsePolicyEnumData> decidePolicyForNavigationResponse(
+  Future<WKNavigationResponsePolicyEnum> decidePolicyForNavigationResponse(
     int identifier,
     int webViewIdentifier,
     WKNavigationResponseData navigationResponse,
@@ -942,9 +940,7 @@ class WKNavigationDelegateFlutterApiImpl
     )? function = _getDelegate(identifier).decidePolicyForNavigationResponse;
 
     if (function == null) {
-      return WKNavigationResponsePolicyEnumData(
-        value: WKNavigationResponsePolicyEnum.allow,
-      );
+      return WKNavigationResponsePolicyEnum.allow;
     }
 
     final WKNavigationResponsePolicy policy = await function(

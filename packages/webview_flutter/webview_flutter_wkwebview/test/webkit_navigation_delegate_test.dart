@@ -72,7 +72,7 @@ void main() {
     });
 
     test('setOnHttpError from decidePolicyForNavigationResponse', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -86,7 +86,7 @@ void main() {
         callbackError = error;
       }
 
-      webKitDelgate.setOnHttpError(onHttpError);
+      webKitDelegate.setOnHttpError(onHttpError);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
@@ -96,6 +96,33 @@ void main() {
       );
 
       expect(callbackError.response?.statusCode, 401);
+    });
+
+    test('setOnHttpError is not called for error codes < 400', () {
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: CapturingUIDelegate.new,
+          ),
+        ),
+      );
+
+      HttpResponseError? callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      webKitDelegate.setOnHttpError(onHttpError);
+
+      CapturingNavigationDelegate
+          .lastCreatedDelegate.decidePolicyForNavigationResponse!(
+        WKWebView.detached(),
+        const WKNavigationResponse(
+            response: NSHttpUrlResponse(statusCode: 399), forMainFrame: true),
+      );
+
+      expect(callbackError, isNull);
     });
 
     test('onWebResourceError from didFailNavigation', () {

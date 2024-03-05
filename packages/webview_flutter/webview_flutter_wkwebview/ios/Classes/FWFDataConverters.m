@@ -227,9 +227,9 @@ FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
   return [FWFNSErrorData makeWithCode:error.code domain:error.domain userInfo:userInfo];
 }
 
-WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnumData(
-    FWFWKNavigationResponsePolicyEnumData *data) {
-  switch (data.value) {
+WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnum(
+    FWFWKNavigationResponsePolicyEnum policy) {
+  switch (policy) {
     case FWFWKNavigationResponsePolicyEnumAllow:
       return WKNavigationResponsePolicyAllow;
     case FWFWKNavigationResponsePolicyEnumCancel:

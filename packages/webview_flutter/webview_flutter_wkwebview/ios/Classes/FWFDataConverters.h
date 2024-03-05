@@ -127,8 +127,8 @@ extern WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
  *
  * @return A WKNavigationResponsePolicy or -1 if data could not be converted.
  */
-extern WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnumData(
-    FWFWKNavigationResponsePolicyEnumData *data);
+extern WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnum(
+    FWFWKNavigationResponsePolicyEnum policy);
 
 /**
  * Converts a NSError to an FWFNSErrorData.
