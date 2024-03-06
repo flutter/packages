@@ -41,19 +41,18 @@ class ImageResizer {
   Future<web.HTMLImageElement> loadImage(String blobUrl) {
     final Completer<web.HTMLImageElement> imageLoadCompleter =
         Completer<web.HTMLImageElement>();
-    final web.HTMLImageElement imageElement =
-        web.document.createElement('img') as web.HTMLImageElement;
-    // ignore: unsafe_html
-    imageElement.src = blobUrl;
-
-    imageElement.onload = (web.Event event) {
-      imageLoadCompleter.complete(imageElement);
-    }.toJS;
-    imageElement.onerror = (web.Event event) {
-      const String exception = 'Error while loading image.';
-      imageElement.remove();
-      imageLoadCompleter.completeError(exception);
-    }.toJS;
+    final web.HTMLImageElement imageElement = web.HTMLImageElement();
+    imageElement
+      // ignore: unsafe_html
+      ..src = blobUrl
+      ..onload = (web.Event event) {
+        imageLoadCompleter.complete(imageElement);
+      }.toJS
+      ..onerror = (web.Event event) {
+        const String exception = 'Error while loading image.';
+        imageElement.remove();
+        imageLoadCompleter.completeError(exception);
+      }.toJS;
     return imageLoadCompleter.future;
   }
 
@@ -64,10 +63,9 @@ class ImageResizer {
         Size(source.width.toDouble(), source.height.toDouble()),
         maxWidth,
         maxHeight);
-    final web.HTMLCanvasElement canvas =
-        web.document.createElement('canvas') as web.HTMLCanvasElement;
-    canvas.width = newImageSize.width.toInt();
-    canvas.height = newImageSize.height.toInt();
+    final web.HTMLCanvasElement canvas = web.HTMLCanvasElement()
+      ..width = newImageSize.width.toInt()
+      ..height = newImageSize.height.toInt();
     final web.CanvasRenderingContext2D context = canvas.context2D;
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);

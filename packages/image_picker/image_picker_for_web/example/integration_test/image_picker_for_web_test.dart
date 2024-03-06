@@ -38,8 +38,7 @@ void main() {
   testWidgets('getImageFromSource can select a file', (
     WidgetTester _,
   ) async {
-    final web.HTMLInputElement mockInput = (web.document.createElement('input')
-        as web.HTMLInputElement)
+    final web.HTMLInputElement mockInput = web.HTMLInputElement()
       ..type = 'file';
     final ImagePickerPluginTestOverrides overrides =
         ImagePickerPluginTestOverrides()
@@ -83,8 +82,7 @@ void main() {
   testWidgets('getMultiImageWithOptions can select multiple files', (
     WidgetTester _,
   ) async {
-    final web.HTMLInputElement mockInput = (web.document.createElement('input')
-        as web.HTMLInputElement)
+    final web.HTMLInputElement mockInput = web.HTMLInputElement()
       ..type = 'file';
 
     final ImagePickerPluginTestOverrides overrides =
@@ -115,8 +113,7 @@ void main() {
   });
 
   testWidgets('getMedia can select multiple files', (WidgetTester _) async {
-    final web.HTMLInputElement mockInput = (web.document.createElement('input')
-        as web.HTMLInputElement)
+    final web.HTMLInputElement mockInput = web.HTMLInputElement()
       ..type = 'file';
 
     final ImagePickerPluginTestOverrides overrides =
@@ -153,8 +150,7 @@ void main() {
     late ImagePickerPlugin plugin;
 
     setUp(() {
-      mockInput = (web.document.createElement('input') as web.HTMLInputElement)
-        ..type = 'file';
+      mockInput = web.HTMLInputElement()..type = 'file';
       overrides = ImagePickerPluginTestOverrides()
         ..createInputElement = ((_, __) => mockInput)
         ..getMultipleFilesFromInput = ((_) => <web.File>[textFile]);
@@ -278,8 +274,7 @@ void main() {
     late ImagePickerPlugin plugin;
 
     setUp(() {
-      mockInput = (web.document.createElement('input') as web.HTMLInputElement)
-        ..type = 'file';
+      mockInput = web.HTMLInputElement()..type = 'file';
       overrides = ImagePickerPluginTestOverrides()
         ..createInputElement = ((_, __) => mockInput)
         ..getMultipleFilesFromInput = ((_) => <web.File>[textFile]);

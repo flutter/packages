@@ -113,15 +113,15 @@ void main() {
 
 Future<Size> _getImageSize(XFile file) async {
   final Completer<Size> completer = Completer<Size>();
-  final web.HTMLImageElement image =
-      web.document.createElement('img') as web.HTMLImageElement;
-  image.src = file.path;
-  image.onLoad.listen((web.Event event) {
-    completer.complete(Size(image.width.toDouble(), image.height.toDouble()));
-  });
-  image.onError.listen((web.Event event) {
-    completer.complete(Size.zero);
-  });
+  final web.HTMLImageElement image = web.HTMLImageElement();
+  image
+    ..onLoad.listen((web.Event event) {
+      completer.complete(Size(image.width.toDouble(), image.height.toDouble()));
+    })
+    ..onError.listen((web.Event event) {
+      completer.complete(Size.zero);
+    })
+    ..src = file.path;
   return completer.future;
 }
 

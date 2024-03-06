@@ -304,10 +304,9 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       return _overrides!.createInputElement(accept, capture);
     }
 
-    final web.HTMLInputElement element =
-        (web.document.createElement('input') as web.HTMLInputElement)
-          ..type = 'file'
-          ..multiple = multiple;
+    final web.HTMLInputElement element = web.HTMLInputElement()
+      ..type = 'file'
+      ..multiple = multiple;
 
     if (accept != null) {
       element.accept = accept;
