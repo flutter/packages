@@ -1089,12 +1089,80 @@ void main() {
     expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}', 'root: {a: [2, 3], b: [q, r], c: test}']);
   });
 
+  testWidgets('Data source - optional builder works', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Builder': (BuildContext context, DataSource source) {
+        final Widget? builder = source.optionalBuilder(<String>['builder'], <String, Object?>{});
+        return builder ?? Text('Hello World!', textDirection: TextDirection.ltr);
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test = Builder(
+        builder: Text(text: 'Not a builder :/'),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
+
+
+    final Finder textFinder = find.byType(Text);
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, 'Hello World!');
+  });
+
+  testWidgets('Data source - builder returns an error widget', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    const expectedErrorMessage = 'Not a builder at [builder] (got core:Text {} {text: Not a builder :/}) for local:Builder.';
+
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Builder': (BuildContext context, DataSource source) {
+        return source.builder(<String>['builder'], <String, Object?>{});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test = Builder(
+        builder: Text(text: 'Not a builder :/'),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
+
+    expect(tester.takeException().toString(), contains(expectedErrorMessage));
+    expect(find.byType(ErrorWidget), findsOneWidget);
+    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, expectedErrorMessage);
+  });
+
   testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {
     const LibraryName coreLibraryName = LibraryName(<String>['core']);
     const LibraryName localLibraryName = LibraryName(<String>['local']);
     const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
     final Runtime runtime = Runtime();
     final DynamicContent data = DynamicContent();
+    final Finder textFinder = find.byType(Text);
+
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
       'Builder': (BuildContext context, DataSource source) {
@@ -1115,8 +1183,6 @@ void main() {
       widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
     ));
 
-
-    final Finder textFinder = find.byType(Text);
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'Hello World!');
   });

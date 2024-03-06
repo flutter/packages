@@ -845,10 +845,6 @@ abstract class _CurriedWidget extends BlobNode {
         current = dataResolver(current.parts);
         continue;
       } else if (current is WidgetBuilderArgReference) {
-        if (index < parts.length) {
-          current = current.constructReference(parts.sublist(index));
-          index = parts.length;
-        }
         current = widgetBuilderArgResolver(<Object>[current.argumentName, ...current.parts]);
         continue;
       } else if (current is BoundArgsReference) {
