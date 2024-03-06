@@ -81,17 +81,18 @@ void main() {
 
       testWidgets('setting currentTime to its current value - noop',
           (WidgetTester tester) async {
-        final ThrowyVideoElement throwy = ThrowyVideoElement(video);
-        final VideoPlayer player = VideoPlayer(videoElement: throwy)
+        makeSetCurrentTimeThrow(video);
+        final VideoPlayer player = VideoPlayer(videoElement: video)
           ..initialize();
 
         expect(() {
           // Self-test...
-          throwy.currentTime = 123;
-        }, throwsException, reason: 'The throwy implementation must throw!');
+          video.currentTime = 123;
+        }, throwsException, reason: 'Setting currentTime must throw!');
 
         expect(() {
-          player.seekTo(Duration(milliseconds: throwy.currentTime));
+          // Should not set currentTime (and throw) when seekTo current time.
+          player.seekTo(Duration(seconds: video.currentTime.toInt()));
         }, returnsNormally);
       });
     });

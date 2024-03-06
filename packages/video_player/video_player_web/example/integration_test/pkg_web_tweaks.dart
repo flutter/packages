@@ -23,52 +23,57 @@ extension DisableRemotePlaybackInMediaElement on web.HTMLMediaElement {
   external JSBoolean get disableRemotePlayback;
 }
 
-/// Retrieves the `Object` constructor from the DOM.
+/// Defines JS interop to access static methods from `Object`.
 @JS('Object')
-external DomObjectConstructor get jsObjectConstructor;
-
-/// Defines the JS interop we need from the `Object` constructor.
-extension type DomObjectConstructor._(JSAny _) {
+extension type DomObject._(JSAny _) {
   @JS('defineProperty')
-  external void _defineProperty(JSAny? object, JSString property, JSAny? value);
+  external static void _defineProperty(
+      JSAny? object, JSString property, Descriptor value);
 
   /// `Object.defineProperty`.
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-  void defineProperty(JSObject object, String property, Object? value) {
-    return _defineProperty(object, property.toJS, value.jsify());
+  static void defineProperty(
+      JSObject object, String property, Descriptor descriptor) {
+    return _defineProperty(object, property.toJS, descriptor);
   }
 }
 
-/// The bag of properties that can be set by `defineProperty`.
-extension type Descriptor._(JSObject _) implements JSObject {
-  /// Constructs a bag of properties to be defined on a target object with `defineProperty`.
-  factory Descriptor({
-    bool? writable,
-    Object? value,
-  }) =>
-      Descriptor._js(
-        writable: writable!.toJS,
-        value: value.jsify()!,
-      );
-  // May also contain "configurable" and "enumerable" bools.
-  // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#description
-  external factory Descriptor._js({
-    // bool configurable,
-    // bool enumerable,
-    JSBoolean? writable,
-    JSAny value,
-  });
-}
-
-/// Modifies a HTMLVideoElement to throw an exception when setting `currentTime`.
+/// The descriptor for the property being defined or modified with `defineProperty`.
 ///
-/// Test-only!
-extension type ThrowyVideoElement(web.HTMLVideoElement _)
-    implements web.HTMLVideoElement {
-  set currentTime(num value) {
-    throw Exception('Unexpected call to currentTime with value: $value');
-  }
+/// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#description
+extension type Descriptor._(JSObject _) implements JSObject {
+  /// Builds a "data descriptor".
+  factory Descriptor.data({
+    bool? writable,
+    JSAny? value,
+  }) =>
+      Descriptor._data(
+        writable: writable?.toJS,
+        value: value.jsify(),
+      );
 
-  int get currentTime => 100;
+  /// Builds an "accessor descriptor".
+  factory Descriptor.accessor({
+    void Function(JSAny? value)? set,
+    JSAny? Function()? get,
+  }) =>
+      Descriptor._accessor(
+        set: set?.toJS,
+        get: get?.toJS,
+      );
+
+  external factory Descriptor._accessor({
+    // JSBoolean configurable,
+    // JSBoolean enumerable,
+    JSFunction? set,
+    JSFunction? get,
+  });
+
+  external factory Descriptor._data({
+    // JSBoolean configurable,
+    // JSBoolean enumerable,
+    JSBoolean? writable,
+    JSAny? value,
+  });
 }

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
+
 import 'package:web/web.dart' as web;
 import 'pkg_web_tweaks.dart';
 
@@ -22,12 +24,25 @@ String getUrlForAssetAsNetworkSource(String assetKey) {
 ///
 /// Uses JS Object.defineProperty to set the value of a readonly property.
 void setInfinityDuration(web.HTMLVideoElement element) {
-  jsObjectConstructor.defineProperty(
+  DomObject.defineProperty(
     element,
     'duration',
-    Descriptor(
+    Descriptor.data(
       writable: true,
-      value: double.infinity,
+      value: double.infinity.toJS,
     ),
   );
+}
+
+/// Makes the `currentTime` setter throw an exception if used.
+void makeSetCurrentTimeThrow(web.HTMLVideoElement element) {
+  DomObject.defineProperty(
+      element,
+      'currentTime',
+      Descriptor.accessor(
+        set: (JSAny? value) {
+          throw Exception('Unexpected call to currentTime with value: $value');
+        },
+        get: () => 100.toJS,
+      ));
 }
