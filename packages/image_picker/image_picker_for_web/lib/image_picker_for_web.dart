@@ -247,6 +247,8 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   /// Monitors an <input type="file"> and returns the selected file(s).
   Future<List<XFile>> _getSelectedXFiles(web.HTMLInputElement input) {
     final Completer<List<XFile>> completer = Completer<List<XFile>>();
+    // TODO(dit): Migrate all this to Streams (onChange, onError, onCancel) when onCancel is available.
+    // See: https://github.com/dart-lang/web/issues/199
     // Observe the input until we can return something
     input.onchange = (web.Event event) {
       final List<web.File>? files = _handleOnChangeEvent(event);
@@ -264,6 +266,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
         }).toList());
       }
     }.toJS;
+
     input.oncancel = (web.Event _) {
       completer.complete(<XFile>[]);
     }.toJS;
