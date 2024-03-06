@@ -19,8 +19,8 @@ final Uint8List otherBytes = const Utf8Encoder().convert(otherStringContents);
 // TODO(dit): When web:0.6.0 lands, move `type` to the [web.FilePropertyBag] constructor.
 // See: https://github.com/dart-lang/web/pull/197
 final web.FilePropertyBag options = web.FilePropertyBag(
-    lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch,)
-  ..type = 'text/plain';
+  lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch,
+)..type = 'text/plain';
 
 final web.File textFile =
     web.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt', options);
