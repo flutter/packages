@@ -183,6 +183,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(PlatformBillingResult.class);
     verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertResultsMatch(resultCaptor.getValue(), billingResult);
+    verify(platformBillingResult, never()).error(any());
   }
 
   @Test
@@ -201,6 +202,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(PlatformBillingResult.class);
     verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertResultsMatch(resultCaptor.getValue(), billingResult);
+    verify(platformBillingResult, never()).error(any());
   }
 
   @Test
@@ -234,7 +236,7 @@ public class MethodCallHandlerTest {
     assertEquals(
         resultCaptor.getValue().getResponseCode().longValue(), billingResult1.getResponseCode());
     assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult1.getDebugMessage());
-    verify(platformBillingResult, times(1)).success(any());
+    verify(platformBillingResult, never()).error(any());
   }
 
   @Test
@@ -261,6 +263,7 @@ public class MethodCallHandlerTest {
     verify(platformBillingConfigResult, times(1)).success(resultCaptor.capture());
     assertResultsMatch(resultCaptor.getValue().getBillingResult(), billingResult);
     assertEquals(resultCaptor.getValue().getCountryCode(), expectedCountryCode);
+    verify(platformBillingConfigResult, never()).error(any());
   }
 
   @Test
@@ -339,6 +342,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(PlatformBillingResult.class);
     verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertResultsMatch(resultCaptor.getValue(), billingResult);
+    verify(platformBillingResult, never()).error(any());
   }
 
   @Test
@@ -372,6 +376,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(PlatformBillingResult.class);
     verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertResultsMatch(resultCaptor.getValue(), billingResult);
+    verify(platformBillingResult, never()).error(any());
   }
 
   @Test
