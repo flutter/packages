@@ -249,12 +249,12 @@ class Runtime extends ChangeNotifier {
   ///
   /// The returned map is an immutable view of the map updated by calls to
   /// [update] and [clearLibraries].
-  /// 
+  ///
   /// The keys are instances [LibraryName] which encode fully qualified library
   /// names, and the values are the corresponding [WidgetLibrary]s.
-  /// 
+  ///
   /// The returned map is an immutable copy of the registered libraries
-  /// at the time of this call. 
+  /// at the time of this call.
   ///
   /// See also:
   ///
