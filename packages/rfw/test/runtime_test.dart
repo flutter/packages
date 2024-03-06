@@ -1099,7 +1099,7 @@ void main() {
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
       'Builder': (BuildContext context, DataSource source) {
         final Widget? builder = source.optionalBuilder(<String>['builder'], <String, Object?>{});
-        return builder ?? Text('Hello World!', textDirection: TextDirection.ltr);
+        return builder ?? const Text('Hello World!', textDirection: TextDirection.ltr);
       },
     }));
     runtime.update(remoteLibraryName, parseLibraryFile('''
@@ -1128,7 +1128,7 @@ void main() {
     const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
     final Runtime runtime = Runtime();
     final DynamicContent data = DynamicContent();
-    const expectedErrorMessage = 'Not a builder at [builder] (got core:Text {} {text: Not a builder :/}) for local:Builder.';
+    const String expectedErrorMessage = 'Not a builder at [builder] (got core:Text {} {text: Not a builder :/}) for local:Builder.';
 
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
