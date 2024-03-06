@@ -16,8 +16,10 @@ const String expectedStringContents = 'Hello, world!';
 const String otherStringContents = 'Hello again, world!';
 final Uint8List bytes = const Utf8Encoder().convert(expectedStringContents);
 final Uint8List otherBytes = const Utf8Encoder().convert(otherStringContents);
+// TODO(dit): When web:0.6.0 lands, move `type` to the [web.FilePropertyBag] constructor.
+// See: https://github.com/dart-lang/web/pull/197
 final web.FilePropertyBag options = web.FilePropertyBag(
-    lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch)
+    lastModified: DateTime.utc(2017, 12, 13).millisecondsSinceEpoch,)
   ..type = 'text/plain';
 
 final web.File textFile =
