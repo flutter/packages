@@ -132,12 +132,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
                            error:&authError]) {
     if (authError == nil) {
-#if TARGET_OS_OSX
-      // @available(macOS 10.15, *) is not a BOOL expression.
-      // It does not return an indication of whether the code is being run on that version of iOS or
-      // not. So there needs to be a separate check for the macOS version and on the biometry type
-      // https://stackoverflow.com/questions/52251973/ios-available-does-not-guard-availability-here-use-if-available-instead
-      if (@available(macOS 10.15, *)) {
+       if (@available(macOS 10.15, *) || @available(iOS 11.0, *)) {
         if (context.biometryType == LABiometryTypeFaceID) {
           [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFace]];
           return biometrics;
@@ -147,16 +142,6 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
         [biometrics
             addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFingerprint]];
       }
-#endif
-
-#if TARGET_OS_IOS
-      if (context.biometryType == LABiometryTypeFaceID) {
-        [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFace]];
-      } else if (context.biometryType == LABiometryTypeTouchID) {
-        [biometrics
-            addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFingerprint]];
-      }
-#endif
     }
   }
   return biometrics;
@@ -181,8 +166,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   if (openSettingsButtonTitle != nil) {
     [alert addButtonWithTitle:openSettingsButtonTitle];
   }
-  NSWindow *keyWindow = self.registrar.view.window;
-  [alert beginSheetModalForWindow:keyWindow
+  NSWindow *window = self.registrar.view.window;
+  [alert beginSheetModalForWindow:window
                 completionHandler:^(NSModalResponse returnCode) {
                   if (returnCode == NSAlertSecondButtonReturn) {
                     NSURL *url = [NSURL URLWithString:@"x-apple.systempreferences:com.apple."
