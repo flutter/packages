@@ -478,8 +478,13 @@ class Runtime extends ChangeNotifier {
           usedWidgets,
         );
         if (result is Switch) {
-          result = _CurriedSwitch(widget.fullName, result, arguments, constructor.initialState)
-            ..propagateSource(result);
+          result = _CurriedSwitch(
+            widget.fullName,
+            result,
+            arguments,
+            widgetBuilderScope,
+            constructor.initialState,
+          )..propagateSource(result);
         } else {
           result as _CurriedWidget;
           if (constructor.initialState != null) {
@@ -541,11 +546,15 @@ class Runtime extends ChangeNotifier {
     }
     if (node is WidgetBuilderDeclaration) {
       return (DynamicMap widgetBuilderArg) {
+        final DynamicMap newWidgetBuilderScope = <String, Object?> {
+          ...widgetBuilderScope,
+          node.argumentName: widgetBuilderArg,
+        };
         final Object result = _bindArguments(
           context,
           node.widget,
           arguments,
-          <String, Object?>{...widgetBuilderScope, node.argumentName: widgetBuilderArg},
+          newWidgetBuilderScope,
           stateDepth,
           usedWidgets,
         );
@@ -554,6 +563,7 @@ class Runtime extends ChangeNotifier {
             FullyQualifiedWidgetName(context.library, ''),
             result,
             arguments as DynamicMap,
+            newWidgetBuilderScope,
             const <String, Object?>{},
           )..propagateSource(result);
         }
@@ -714,6 +724,7 @@ abstract class _CurriedWidget extends BlobNode {
         node.fullName,
         _bindLoopVariable(node.root, argument, depth) as Switch,
         _bindLoopVariable(node.arguments, argument, depth) as DynamicMap,
+        _bindLoopVariable(node.widgetBuilderScope, argument, depth) as DynamicMap,
         node.initialState,
       )..propagateSource(node);
     }
@@ -1090,8 +1101,9 @@ class _CurriedSwitch extends _CurriedWidget {
     FullyQualifiedWidgetName fullName,
     this.root,
     DynamicMap arguments,
+    DynamicMap widgetBuilderScope,
     DynamicMap? initialState,
-  ) : super(fullName, arguments, const <String, Object?> {}, initialState);
+  ) : super(fullName, arguments, widgetBuilderScope, initialState);
 
   final Switch root;
 
