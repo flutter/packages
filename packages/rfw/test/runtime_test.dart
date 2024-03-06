@@ -1089,279 +1089,397 @@ void main() {
     expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}', 'root: {a: [2, 3], b: [q, r], c: test}']);
   });
 
-  group('Widget Builders', () {
-    late DynamicContent data;
-    late List<RfwEvent> dispatchedEvents;
+  testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Builder': (BuildContext context, DataSource source) {
+        return source.builder(<String>['builder'], <String, Object?>{});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
 
-    Widget rfwWidget(String library, {Map<String, Object?>? initialData}) {
-      const LibraryName coreLibraryName = LibraryName(<String>['core']);
-      const LibraryName localLibraryName = LibraryName(<String>['local']);
-      const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-      final Runtime runtime = Runtime();
-      data = initialData == null ? DynamicContent() : DynamicContent(initialData);
-      dispatchedEvents = <RfwEvent>[];
-
-      runtime.update(coreLibraryName, createCoreWidgets());
-      runtime.update(remoteLibraryName, parseLibraryFile(library));
-      runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-        'CoolText': (BuildContext context, DataSource source) {
-          final int count = source.length(<String>['text']);
-          String buffer = '';
-          for (int i = 0; i < count; i++) {
-            final List<Object> key = <Object>['text', i];
-            final Object? text = source.v<String>(key) ?? source.v<int>(key);
-            buffer += text.toString();
-          }
-          return GestureDetector(
-            onTap: source.voidHandler(<String>['onPressed']),
-            child: Text(buffer, textDirection: TextDirection.ltr)
-          );
-        },
-        'Builder': (BuildContext context, DataSource source) {
-          return source.builder(<String>['builder'], <String, Object?>{});
-        },
-        'Calculator': (BuildContext context, DataSource source) {
-          final int operand1 = source.v<int>(<String>['operand1'])!;
-          final int operand2 = source.v<int>(<String>['operand2'])!;
-          final String operation = source.v<String>(<String>['operation'])!;
-          final int result;
-          switch (operation) {
-            case 'sum':
-              result = operand1 + operand2;
-            case 'multiply':
-              result = operand1 * operand2;
-            default:
-              throw Exception('operation not supported');
-          }
-          return source.builder(<String>['builder'], <String, Object?>{
-            'result': result,
-          });
-        },
-      }));
-      return RemoteWidget(
-        runtime: runtime,
-        data: data,
-        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-        onEvent: (String eventName, DynamicMap eventArguments) =>
-          dispatchedEvents.add(RfwEvent(eventName, eventArguments)),
+      widget test = Builder(
+        builder: (scope) =>  Text(text: 'Hello World!', textDirection: 'ltr'),
       );
-    }
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
 
-    testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
 
-        widget test = Builder(
-          builder: (scope) =>  CoolText(text: ['Hello Widget Builders!']),
-        );
-      ''');
-      await tester.pumpWidget(widget);
+    final Finder textFinder = find.byType(Text);
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, 'Hello World!');
+  });
 
-      final Finder textFinder = find.byType(Text);
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, 'Hello Widget Builders!');
+  testWidgets('Widget builders - work when scope is used', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    final Finder textFinder = find.byType(Text);
+
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'HelloWorld': (BuildContext context, DataSource source) {
+        const String result = 'Hello World!';
+        return source.builder(<String>['builder'], <String, Object?>{'result': result});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test = HelloWorld(
+        builder: (result) => Text(text: result.result, textDirection: 'ltr'),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
+
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, 'Hello World!');
+  });
+
+  testWidgets('Widget builders - work with state', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    final Finder textFinder = find.byType(Text);
+
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'IntToString': (BuildContext context, DataSource source) {
+        final int value = source.v<int>(<String>['value'])!;
+        final String result = value.toString();
+        return source.builder(<String>['builder'], <String, Object?>{'result': result});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test {value: 0} = IntToString(
+        value: state.value,
+        builder: (result) => Text(text: result.result, textDirection: 'ltr'),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
+
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, '0');
+  });
+
+
+  testWidgets('Widget builders - work with data', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent(<String, Object>{'value': 0});
+    final Finder textFinder = find.byType(Text);
+
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'IntToString': (BuildContext context, DataSource source) {
+        final int value = source.v<int>(<String>['value'])!;
+        final String result = value.toString();
+        return source.builder(<String>['builder'], <String, Object?>{'result': result});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test = IntToString(
+        value: data.value,
+        builder: (result) => Text(text: result.result, textDirection: 'ltr'),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
+
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, '0');
+
+    data.update('value', 1);
+    await tester.pump();
+    expect(tester.widget<Text>(textFinder).data, '1');
+  });
+
+  testWidgets('Widget builders - work with events', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    final List<RfwEvent> dispatchedEvents = <RfwEvent>[];
+    final Finder textFinder = find.byType(Text);
+
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Zero': (BuildContext context, DataSource source) {
+        return source.builder(<String>['builder'], <String, Object?>{'result': 0});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test = Zero(
+        builder: (result) => GestureDetector(
+          onTap: event 'works' {number: result.result},
+          child: Text(text: 'Tap to trigger an event.', textDirection: 'ltr'),
+        ),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      onEvent: (String eventName, DynamicMap eventArguments) =>
+        dispatchedEvents.add(RfwEvent(eventName, eventArguments)),
+    ));
+
+    await tester.tap(textFinder);
+    await tester.pump();
+    expect(dispatchedEvents, hasLength(1));
+    expect(dispatchedEvents.single.name, 'works');
+    expect(dispatchedEvents.single.arguments['number'], 0);
+  });
+
+  testWidgets('Widget builders - works nested', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    final Finder textFinder = find.byType(Text);
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Sum': (BuildContext context, DataSource source) {
+        final int operand1 = source.v<int>(<String>['operand1'])!;
+        final int operand2 = source.v<int>(<String>['operand2'])!;
+        final int result = operand1 + operand2;
+        return source.builder(<String>['builder'], <String, Object?>{'result': result});
+      },
+      'IntToString': (BuildContext context, DataSource source) {
+        final int value = source.v<int>(<String>['value'])!;
+        final String result = value.toString();
+        return source.builder(<String>['builder'], <String, Object?>{'result': result});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test = Sum(
+        operand1: 1,
+        operand2: 2,
+        builder: (result1) => IntToString(
+          value: result1.result,
+          builder: (result2) => Text(text: ['1 + 2 = ', result2.result], textDirection: 'ltr'),
+        ),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
+
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, '1 + 2 = 3');
+  });
+
+  testWidgets('Widget builders - works nested dynamically', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Map<String, VoidCallback> handlers = <String, VoidCallback>{};
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent(<String, Object?>{
+      'a1': 'apricot',
+      'b1': 'blueberry',
     });
+    final Finder textFinder = find.byType(Text);
 
-    testWidgets('Widget builders - work when scope is used', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Builder': (BuildContext context, DataSource source) {
+        final String? id = source.v<String>(<String>['id']);
+        if (id != null) {
+          handlers[id] = source.voidHandler(<String>['handler'])!;
+        }
+        return source.builder(<String>['builder'], <String, Object?>{
+          'param1': source.v<String>(<String>['arg1']),
+          'param2': source.v<String>(<String>['arg2']),
+        });
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
 
-        widget test = Calculator(
-          operand1: 1,
-          operand2: 2,
-          operation: 'sum',
-          builder: (result) => CoolText(text: ['1 + 2 = ', result.result]),
-        );
-      ''');
-      await tester.pumpWidget(widget);
-
-      final Finder textFinder = find.byType(Text);
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, '1 + 2 = 3');
-    });
-
-    testWidgets('Widget builders - work with state', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
-
-        widget test {counter: 0} = Calculator(
-          operand1: state.counter,
-          operand2: 1,
-          operation: 'sum',
-          builder: (result) => CoolText(
-            text: ['Counter: ', result.result],
-            onPressed: set state.counter = result.result,
+      widget test { state1: 'strawberry' } = Builder(
+        arg1: data.a1,
+        arg2: 'apple',
+        id: 'A',
+        handler: set state.state1 = 'STRAWBERRY',
+        builder: (builder1) => Builder(
+          arg1: data.b1,
+          arg2: 'banana',
+          builder: (builder2) => Text(
+            textDirection: 'ltr',
+            text: [
+              state.state1, ' ', builder1.param1, ' ', builder1.param2, ' ', builder2.param1, ' ', builder2.param2,
+            ],
           ),
-        );
-      ''');
-      await tester.pumpWidget(widget);
+        ),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
 
-      final Finder textFinder = find.byType(Text);
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 1');
+    expect(tester.widget<Text>(textFinder).data, 'strawberry apricot apple blueberry banana');
 
-      await tester.tap(textFinder);
-      await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 2');
+    data.update('a1', 'APRICOT');
+    await tester.pump();
+    expect(tester.widget<Text>(textFinder).data, 'strawberry APRICOT apple blueberry banana');
 
-      await tester.tap(textFinder);
-      await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, 'Counter: 3');
-    });
+    data.update('b1', 'BLUEBERRY');
+    await tester.pump();
+    expect(tester.widget<Text>(textFinder).data, 'strawberry APRICOT apple BLUEBERRY banana');
 
-    testWidgets('Widget builders - work with data', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
+    handlers['A']!();
+    await tester.pump();
+    expect(tester.widget<Text>(textFinder).data, 'STRAWBERRY APRICOT apple BLUEBERRY banana');
+  });
 
-        widget test {counter: 0} = Calculator(
-          operand1: state.counter,
-          operand2: data.increment,
-          operation: 'sum',
-          builder: (result) => CoolText(
-            text: [state.counter, ' + ', data.increment, ' = ', result.result],
-            onPressed: set state.counter = result.result,
+  testWidgets('Widget builders - switch works with builder', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    final Finder textFinder = find.byType(Text);
+
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Builder': (BuildContext context, DataSource source) {
+        return source.builder(<String>['builder'], <String, Object?>{});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test {enabled: false} = Builder(
+        value: state.value,
+        builder: switch state.enabled {
+          true: (scope) => GestureDetector(
+            onTap: set state.enabled = false,
+            child: Text(text: 'The builder is enabled.', textDirection: 'ltr'),
           ),
-        );
-      ''', initialData: <String, Object?>{'increment': 0});
-      await tester.pumpWidget(widget);
-
-      final Finder textFinder = find.byType(Text);
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, '0 + 0 = 0');
-
-      data.update('increment', 1);
-      await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, '0 + 1 = 1');
-
-      await tester.tap(textFinder);
-      await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, '1 + 1 = 2');
-
-      data.update('increment', 10);
-      await tester.pump();
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, '1 + 10 = 11');
-
-      await tester.tap(textFinder);
-      await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, '11 + 10 = 21');
-
-
-      data.update('increment', 100);
-      await tester.tap(textFinder);
-      await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, '21 + 100 = 121');
-
-      await tester.tap(textFinder);
-      await tester.pump();
-      expect(tester.widget<Text>(textFinder).data, '121 + 100 = 221');
-    });
-
-    testWidgets('Widget builders - work with events', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
-
-        widget test = Calculator(
-          operand1: 1,
-          operand2: 2,
-          operation: 'sum',
-          builder: (result) => CoolText(
-            text: ['Press this button'],
-            onPressed: event "works" {result: result.result},
+          false: (scope) => GestureDetector(
+            onTap: set state.enabled = true,
+            child: Text(text: 'The builder is disabled.', textDirection: 'ltr'),
           ),
-        );
-      ''');
-      await tester.pumpWidget(widget);
-      final Finder textFinder = find.byType(Text);
-      await tester.tap(textFinder);
-      await tester.pump();
+        },
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
 
-      expect(dispatchedEvents, hasLength(1));
-      expect(dispatchedEvents.single.name, 'works');
-      expect(dispatchedEvents.single.arguments['result'], 3);
-    });
 
-    testWidgets('Widget builders - works nested', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, 'The builder is disabled.');
 
-        widget test = Calculator(
-          operand1: 1,
-          operand2: 2,
-          operation: 'sum',
-          builder: (result1) => Calculator(
-            operand1: result1.result,
-            operand2: 3,
-            operation: 'multiply',
-            builder: (result2) => CoolText(
-              text: [
-                '1 + 2 = ',
-                result1.result,
-                '; ',
-                result1.result,
-                ' * 3 = ',
-                result2.result,
-                ';',
-              ],
-            ),
+    await tester.tap(textFinder); 
+    await tester.pump();          
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, 'The builder is enabled.');
+  });
+
+  testWidgets('Widget builders - builder works with switch', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    final DynamicContent data = DynamicContent();
+    final Finder textFinder = find.byType(Text);
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
+      'Inverter': (BuildContext context, DataSource source) {
+        final bool value = source.v<bool>(<String>['value'])!;
+        return source.builder(<String>['builder'], <String, Object?>{'result': !value});
+      },
+    }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test {value: false} = Inverter(
+        value: state.value,
+        builder: (result) => switch result.result {
+          true: GestureDetector(
+            onTap: set state.value = switch state.value {
+              true: false,
+              false: true,
+            },
+            child: Text(text: 'The input is false, the output is true', textDirection: 'ltr'),
           ),
-        );
-      ''');
-      await tester.pumpWidget(widget);
+          false: GestureDetector(
+            onTap: set state.value = switch state.value {
+              true: false,
+              false: true,
+            },
+            child: Text(text: 'The input is true, the output is false', textDirection: 'ltr'),
+          ),
+        },
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
 
-      final Finder textFinder = find.byType(Text);
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, '1 + 2 = 3; 3 * 3 = 9;');
-    });
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, 'The input is false, the output is true');
 
-    testWidgets('Widget builders - switch works with builder', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
-
-        widget test {justResult: true} = Calculator(
-          operand1: 1,
-          operand2: 2,
-          operation: 'sum',
-          builder: switch state.justResult {
-            true: (result) => CoolText(text: [result.result]),
-          },
-        );
-      ''');
-      await tester.pumpWidget(widget);
-
-      final Finder textFinder = find.byType(Text);
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, '3');
-    });
-
-    testWidgets('Widget builders - builder works with switch', (WidgetTester tester) async {
-      final Widget widget = rfwWidget('''
-        import core;
-        import local;
-
-        widget test = Calculator(
-          operand1: 1,
-          operand2: 2,
-          operation: 'sum',
-          builder: (result) => switch result.result {
-            0: CoolText(text: ['The result is zero']),
-            default: CoolText(text: ['The result is not zero']),
-          },
-        );
-      ''');
-      await tester.pumpWidget(widget);
-
-      final Finder textFinder = find.byType(Text);
-      expect(textFinder, findsOneWidget);
-      expect(tester.widget<Text>(textFinder).data, 'The result is not zero');
-    });
+    await tester.tap(textFinder); 
+    await tester.pump();          
+    expect(textFinder, findsOneWidget);
+    expect(tester.widget<Text>(textFinder).data, 'The input is true, the output is false');
   });
 }
 
