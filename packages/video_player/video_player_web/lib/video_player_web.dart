@@ -72,10 +72,10 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
     }
 
     final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
-          ..id = 'videoElement-$textureId'
-          ..style.border = 'none'
-          ..style.height = '100%'
-          ..style.width = '100%';
+      ..id = 'videoElement-$textureId'
+      ..style.border = 'none'
+      ..style.height = '100%'
+      ..style.width = '100%';
 
     // TODO(hterkelsen): Use initialization parameters once they are available
     ui_web.platformViewRegistry.registerViewFactory(
