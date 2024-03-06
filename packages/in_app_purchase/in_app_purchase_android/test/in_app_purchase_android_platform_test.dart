@@ -108,18 +108,17 @@ void main() {
   });
 
   group('queryProductDetails', () {
-    const String queryMethodName =
-        'BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)';
-
     test('handles empty productDetails', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.ok;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
-        'billingResult': buildBillingResultMap(expectedBillingResult),
-        'productDetailsList': <Map<String, dynamic>>[],
-      });
+      when(mockApi.queryProductDetailsAsync(any))
+          .thenAnswer((_) async => PlatformProductDetailsResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(responseCode),
+                    debugMessage: debugMessage),
+                productDetailsJsonList: <Map<String, dynamic>>[],
+              ));
 
       final ProductDetailsResponse response =
           await iapAndroidPlatform.queryProductDetails(<String>{''});
@@ -129,14 +128,16 @@ void main() {
     test('should get correct product details', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.ok;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
-        'billingResult': buildBillingResultMap(expectedBillingResult),
-        'productDetailsList': <Map<String, dynamic>>[
-          buildProductMap(dummyOneTimeProductDetails)
-        ]
-      });
+      when(mockApi.queryProductDetailsAsync(any))
+          .thenAnswer((_) async => PlatformProductDetailsResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(responseCode),
+                    debugMessage: debugMessage),
+                productDetailsJsonList: <Map<String, dynamic>>[
+                  buildProductMap(dummyOneTimeProductDetails)
+                ],
+              ));
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
       // of 1.
       final ProductDetailsResponse response =
@@ -155,14 +156,16 @@ void main() {
     test('should get the correct notFoundIDs', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.ok;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
-        'billingResult': buildBillingResultMap(expectedBillingResult),
-        'productDetailsList': <Map<String, dynamic>>[
-          buildProductMap(dummyOneTimeProductDetails)
-        ]
-      });
+      when(mockApi.queryProductDetailsAsync(any))
+          .thenAnswer((_) async => PlatformProductDetailsResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(responseCode),
+                    debugMessage: debugMessage),
+                productDetailsJsonList: <Map<String, dynamic>>[
+                  buildProductMap(dummyOneTimeProductDetails)
+                ],
+              ));
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
       // of 1.
       final ProductDetailsResponse response =
@@ -173,23 +176,13 @@ void main() {
     test(
         'should have error stored in the response when platform exception is thrown',
         () async {
-      const BillingResponse responseCode = BillingResponse.ok;
-      stubPlatform.addResponse(
-          name: queryMethodName,
-          value: <String, dynamic>{
-            'responseCode':
-                const BillingResponseConverter().toJson(responseCode),
-            'productDetailsList': <Map<String, dynamic>>[
-              buildProductMap(dummyOneTimeProductDetails)
-            ]
-          },
-          additionalStepBeforeReturn: (dynamic _) {
-            throw PlatformException(
-              code: 'error_code',
-              message: 'error_message',
-              details: <dynamic, dynamic>{'info': 'error_info'},
-            );
-          });
+      when(mockApi.queryProductDetailsAsync(any)).thenAnswer((_) async {
+        throw PlatformException(
+          code: 'error_code',
+          message: 'error_message',
+          details: <dynamic, dynamic>{'info': 'error_info'},
+        );
+      });
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
       // of 1.
       final ProductDetailsResponse response =

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +79,7 @@ public class TranslatorTest {
             productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON),
             productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON));
 
-    final List<HashMap<String, Object>> serialized = Translator.fromProductDetailsList(expected);
+    final List<Object> serialized = Translator.fromProductDetailsList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -191,8 +192,9 @@ public class TranslatorTest {
     }
   }
 
-  private void assertSerialized(ProductDetails expected, Map<String, Object> serialized) {
-    assertEquals(expected.getDescription(), serialized.get("description"));
+  private void assertSerialized(ProductDetails expected, Object serializedGeneric) {
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
     assertEquals(expected.getTitle(), serialized.get("title"));
     assertEquals(expected.getName(), serialized.get("name"));
     assertEquals(expected.getProductId(), serialized.get("productId"));
@@ -286,7 +288,8 @@ public class TranslatorTest {
     assertEquals(expected.getDeveloperPayload(), serialized.get("developerPayload"));
     assertEquals(expected.isAcknowledged(), serialized.get("isAcknowledged"));
     assertEquals(expected.getPurchaseState(), serialized.get("purchaseState"));
-    assertNotNull(expected.getAccountIdentifiers().getObfuscatedAccountId());
+    assertNotNull(
+        Objects.requireNonNull(expected.getAccountIdentifiers()).getObfuscatedAccountId());
     assertEquals(
         expected.getAccountIdentifiers().getObfuscatedAccountId(),
         serialized.get("obfuscatedAccountId"));

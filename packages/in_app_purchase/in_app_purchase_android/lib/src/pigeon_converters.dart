@@ -15,10 +15,38 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
   };
 }
 
-/// Converts a [BillingResultWrapper] to the Pigeon equivalent.
+/// Creates a [BillingResultWrapper] from the Pigeon equivalent.
 BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
   return BillingResultWrapper(
       responseCode:
           const BillingResponseConverter().fromJson(result.responseCode),
       debugMessage: result.debugMessage);
+}
+
+/// Creates a [ProductDetailsResponseWrapper] from the Pigeon equivalent.
+ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
+    PlatformProductDetailsResponse response) {
+  return ProductDetailsResponseWrapper(
+    billingResult: resultWrapperFromPlatform(response.billingResult),
+    // See TODOs in messages.dart for why this is JSON.
+    productDetailsList: response.productDetailsJsonList
+        .map((Object? json) => ProductDetailsWrapper.fromJson(
+            (json! as Map<Object?, Object?>).cast<String, Object?>()))
+        .toList(),
+  );
+}
+
+/// Creates a Pigeon [PlatformProduct] from a [ProductWrapper].
+PlatformProduct platformProductFromWrapper(ProductWrapper product) {
+  return PlatformProduct(
+    productId: product.productId,
+    productType: _platformProductTypeFromWrapper(product.productType),
+  );
+}
+
+PlatformProductType _platformProductTypeFromWrapper(ProductType type) {
+  return switch (type) {
+    ProductType.inapp => PlatformProductType.inapp,
+    ProductType.subs => PlatformProductType.subs,
+  };
 }

@@ -32,6 +32,17 @@ class _FakePlatformBillingResult_0 extends _i1.SmartFake
         );
 }
 
+class _FakePlatformProductDetailsResponse_1 extends _i1.SmartFake
+    implements _i2.PlatformProductDetailsResponse {
+  _FakePlatformProductDetailsResponse_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [InAppPurchaseApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -169,6 +180,33 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           ),
         )),
       ) as _i3.Future<_i2.PlatformBillingResult>);
+
+  @override
+  _i3.Future<_i2.PlatformProductDetailsResponse> queryProductDetailsAsync(
+          List<_i2.PlatformProduct?>? products) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #queryProductDetailsAsync,
+          [products],
+        ),
+        returnValue: _i3.Future<_i2.PlatformProductDetailsResponse>.value(
+            _FakePlatformProductDetailsResponse_1(
+          this,
+          Invocation.method(
+            #queryProductDetailsAsync,
+            [products],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i3.Future<_i2.PlatformProductDetailsResponse>.value(
+                _FakePlatformProductDetailsResponse_1(
+          this,
+          Invocation.method(
+            #queryProductDetailsAsync,
+            [products],
+          ),
+        )),
+      ) as _i3.Future<_i2.PlatformProductDetailsResponse>);
 
   @override
   _i3.Future<bool> isFeatureSupported(String? feature) => (super.noSuchMethod(

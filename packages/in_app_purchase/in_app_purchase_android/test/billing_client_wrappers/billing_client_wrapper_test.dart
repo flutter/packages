@@ -126,19 +126,17 @@ void main() {
   });
 
   group('queryProductDetails', () {
-    const String queryMethodName =
-        'BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)';
-
     test('handles empty productDetails', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
-      stubPlatform.addResponse(name: queryMethodName, value: <dynamic, dynamic>{
-        'billingResult': <String, dynamic>{
-          'responseCode': const BillingResponseConverter().toJson(responseCode),
-          'debugMessage': debugMessage,
-        },
-        'productDetailsList': <Map<String, dynamic>>[]
-      });
+      when(mockApi.queryProductDetailsAsync(any))
+          .thenAnswer((_) async => PlatformProductDetailsResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(responseCode),
+                    debugMessage: debugMessage),
+                productDetailsJsonList: <Map<String, dynamic>>[],
+              ));
 
       final ProductDetailsResponseWrapper response = await billingClient
           .queryProductDetails(productList: <ProductWrapper>[
@@ -155,15 +153,16 @@ void main() {
     test('returns ProductDetailsResponseWrapper', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.ok;
-      stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
-        'billingResult': <String, dynamic>{
-          'responseCode': const BillingResponseConverter().toJson(responseCode),
-          'debugMessage': debugMessage,
-        },
-        'productDetailsList': <Map<String, dynamic>>[
-          buildProductMap(dummyOneTimeProductDetails)
-        ],
-      });
+      when(mockApi.queryProductDetailsAsync(any))
+          .thenAnswer((_) async => PlatformProductDetailsResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(responseCode),
+                    debugMessage: debugMessage),
+                productDetailsJsonList: <Map<String, dynamic>>[
+                  buildProductMap(dummyOneTimeProductDetails)
+                ],
+              ));
 
       final ProductDetailsResponseWrapper response =
           await billingClient.queryProductDetails(
@@ -177,24 +176,6 @@ void main() {
           responseCode: responseCode, debugMessage: debugMessage);
       expect(response.billingResult, equals(billingResult));
       expect(response.productDetailsList, contains(dummyOneTimeProductDetails));
-    });
-
-    test('handles null method channel response', () async {
-      stubPlatform.addResponse(name: queryMethodName);
-
-      final ProductDetailsResponseWrapper response =
-          await billingClient.queryProductDetails(
-        productList: <ProductWrapper>[
-          const ProductWrapper(
-              productId: 'invalid', productType: ProductType.inapp),
-        ],
-      );
-
-      const BillingResultWrapper billingResult = BillingResultWrapper(
-          responseCode: BillingResponse.error,
-          debugMessage: kInvalidBillingResultErrorMessage);
-      expect(response.billingResult, equals(billingResult));
-      expect(response.productDetailsList, isEmpty);
     });
   });
 

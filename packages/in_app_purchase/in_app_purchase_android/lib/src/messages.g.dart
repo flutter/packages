@@ -18,6 +18,12 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+/// Pigeon version of Java BillingClient.ProductType.
+enum PlatformProductType {
+  inapp,
+  subs,
+}
+
 /// Pigeon version of billing_client_wrapper.dart's BillingChoiceMode.
 enum PlatformBillingChoiceMode {
   /// Billing through google play.
@@ -27,6 +33,33 @@ enum PlatformBillingChoiceMode {
 
   /// Billing through app provided flow.
   alternativeBillingOnly,
+}
+
+/// Pigeon version of Java Product.
+class PlatformProduct {
+  PlatformProduct({
+    required this.productId,
+    required this.productType,
+  });
+
+  String productId;
+
+  PlatformProductType productType;
+
+  Object encode() {
+    return <Object?>[
+      productId,
+      productType.index,
+    ];
+  }
+
+  static PlatformProduct decode(Object result) {
+    result as List<Object?>;
+    return PlatformProduct(
+      productId: result[0]! as String,
+      productType: PlatformProductType.values[result[1]! as int],
+    );
+  }
 }
 
 /// Pigeon version of Java BillingResult.
@@ -52,6 +85,36 @@ class PlatformBillingResult {
     return PlatformBillingResult(
       responseCode: result[0]! as int,
       debugMessage: result[1]! as String,
+    );
+  }
+}
+
+/// Pigeon version of ProductDetailsResponseWrapper, which contains the
+/// components of the java ProductDetailsResponseListener callback.
+class PlatformProductDetailsResponse {
+  PlatformProductDetailsResponse({
+    required this.billingResult,
+    required this.productDetailsJsonList,
+  });
+
+  PlatformBillingResult billingResult;
+
+  /// A JSON-compatible list of details, where each entry in the list is a
+  /// Map<String, Object?> JSON encoding of the product details.
+  List<Object?> productDetailsJsonList;
+
+  Object encode() {
+    return <Object?>[
+      billingResult.encode(),
+      productDetailsJsonList,
+    ];
+  }
+
+  static PlatformProductDetailsResponse decode(Object result) {
+    result as List<Object?>;
+    return PlatformProductDetailsResponse(
+      billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
+      productDetailsJsonList: (result[1] as List<Object?>?)!.cast<Object?>(),
     );
   }
 }
@@ -118,6 +181,12 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
     } else if (value is PlatformBillingResult) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformProduct) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformProductDetailsResponse) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -130,6 +199,10 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
         return PlatformBillingFlowParams.decode(readValue(buffer)!);
       case 129:
         return PlatformBillingResult.decode(readValue(buffer)!);
+      case 130:
+        return PlatformProduct.decode(readValue(buffer)!);
+      case 131:
+        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -322,6 +395,37 @@ class InAppPurchaseApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformBillingResult?)!;
+    }
+  }
+
+  /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
+  Future<PlatformProductDetailsResponse> queryProductDetailsAsync(
+      List<PlatformProduct?> products) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[products]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as PlatformProductDetailsResponse?)!;
     }
   }
 

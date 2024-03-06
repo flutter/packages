@@ -149,16 +149,11 @@ class BillingClient {
   Future<ProductDetailsResponseWrapper> queryProductDetails({
     required List<ProductWrapper> productList,
   }) async {
-    final Map<String, dynamic> arguments = <String, dynamic>{
-      'productList':
-          productList.map((ProductWrapper product) => product.toJson()).toList()
-    };
-    return ProductDetailsResponseWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-              'BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)',
-              arguments,
-            )) ??
-            <String, dynamic>{});
+    return productDetailsResponseWrapperFromPlatform(
+        await _hostApi.queryProductDetailsAsync(productList
+            .map(
+                (ProductWrapper product) => platformProductFromWrapper(product))
+            .toList()));
   }
 
   /// Attempt to launch the Play Billing Flow for a given [productDetails].

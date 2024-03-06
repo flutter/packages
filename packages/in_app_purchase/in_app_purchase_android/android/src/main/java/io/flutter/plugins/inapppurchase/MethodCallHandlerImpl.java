@@ -4,8 +4,6 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.Messages.FlutterError;
-import static io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
 import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
@@ -33,11 +31,17 @@ import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.inapppurchase.Messages.FlutterError;
+import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,8 +56,6 @@ class MethodCallHandlerImpl
   @VisibleForTesting
   static final class MethodNames {
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-    static final String QUERY_PRODUCT_DETAILS =
-        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
     static final String QUERY_PURCHASES_ASYNC =
         "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
@@ -141,10 +143,6 @@ class MethodCallHandlerImpl
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case MethodNames.QUERY_PRODUCT_DETAILS:
-        List<Product> productList = toProductList(call.argument("productList"));
-        queryProductDetailsAsync(productList, result);
-        break;
       case MethodNames.QUERY_PURCHASES_ASYNC:
         queryPurchasesAsync((String) call.argument("productType"), result);
         break;
@@ -164,7 +162,7 @@ class MethodCallHandlerImpl
 
   @Override
   public void showAlternativeBillingOnlyInformationDialog(
-      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+      @NonNull Messages.Result<PlatformBillingResult> result) {
     validateBillingClient();
     assert billingClient != null;
     if (activity == null) {
@@ -189,7 +187,7 @@ class MethodCallHandlerImpl
 
   @Override
   public void isAlternativeBillingOnlyAvailableAsync(
-      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+      @NonNull Messages.Result<PlatformBillingResult> result) {
     validateBillingClient();
     assert billingClient != null;
     billingClient.isAlternativeBillingOnlyAvailableAsync(
@@ -227,30 +225,30 @@ class MethodCallHandlerImpl
     return billingClient.isReady();
   }
 
-  private void queryProductDetailsAsync(
-      final List<Product> productList, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
-    }
+  @Override
+  public void queryProductDetailsAsync(
+      @NonNull List<PlatformProduct> products,
+      @NonNull Messages.Result<PlatformProductDetailsResponse> result) {
+    validateBillingClient();
     assert billingClient != null;
 
     QueryProductDetailsParams params =
-        QueryProductDetailsParams.newBuilder().setProductList(productList).build();
+        QueryProductDetailsParams.newBuilder().setProductList(toProductList(products)).build();
     billingClient.queryProductDetailsAsync(
         params,
         (billingResult, productDetailsList) -> {
           updateCachedProducts(productDetailsList);
-          final Map<String, Object> productDetailsResponse = new HashMap<>();
-          productDetailsResponse.put("billingResult", fromBillingResult(billingResult));
-          productDetailsResponse.put(
-              "productDetailsList", fromProductDetailsList(productDetailsList));
-          result.success(productDetailsResponse);
+          final PlatformProductDetailsResponse.Builder responseBuilder =
+              new PlatformProductDetailsResponse.Builder()
+                  .setBillingResult(pigeonBillingResultFromBillingResult(billingResult))
+                  .setProductDetailsJsonList(fromProductDetailsList(productDetailsList));
+          result.success(responseBuilder.build());
         });
   }
 
   @Override
-  public @NonNull Messages.PlatformBillingResult launchBillingFlow(
-      @NonNull Messages.PlatformBillingFlowParams params) {
+  public @NonNull PlatformBillingResult launchBillingFlow(
+      @NonNull PlatformBillingFlowParams params) {
     validateBillingClient();
     assert billingClient != null;
 
@@ -363,8 +361,7 @@ class MethodCallHandlerImpl
 
   @Override
   public void consumeAsync(
-      @NonNull String purchaseToken,
-      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+      @NonNull String purchaseToken, @NonNull Messages.Result<PlatformBillingResult> result) {
     validateBillingClient();
     assert billingClient != null;
 
@@ -420,8 +417,8 @@ class MethodCallHandlerImpl
   @Override
   public void startConnection(
       @NonNull Long handle,
-      @NonNull Messages.PlatformBillingChoiceMode billingMode,
-      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+      @NonNull PlatformBillingChoiceMode billingMode,
+      @NonNull Messages.Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =
           billingClientFactory.createBillingClient(applicationContext, methodChannel, billingMode);
@@ -454,8 +451,7 @@ class MethodCallHandlerImpl
 
   @Override
   public void acknowledgePurchase(
-      @NonNull String purchaseToken,
-      @NonNull Messages.Result<Messages.PlatformBillingResult> result) {
+      @NonNull String purchaseToken, @NonNull Messages.Result<PlatformBillingResult> result) {
     validateBillingClient();
     assert billingClient != null;
     AcknowledgePurchaseParams params =

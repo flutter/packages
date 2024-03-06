@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
+import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
@@ -20,7 +21,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Handles serialization and deserialization of {@link com.android.billingclient.api.BillingClient}
@@ -56,32 +56,41 @@ import java.util.Map;
     return info;
   }
 
-  static List<QueryProductDetailsParams.Product> toProductList(List<Object> serialized) {
+  static List<QueryProductDetailsParams.Product> toProductList(
+      List<Messages.PlatformProduct> platformProducts) {
     List<QueryProductDetailsParams.Product> products = new ArrayList<>();
-    for (Object productSerialized : serialized) {
-      @SuppressWarnings(value = "unchecked")
-      Map<String, Object> productMap = (Map<String, Object>) productSerialized;
-      products.add(toProduct(productMap));
+    for (Messages.PlatformProduct platformProduct : platformProducts) {
+      products.add(toProduct(platformProduct));
     }
     return products;
   }
 
-  static QueryProductDetailsParams.Product toProduct(Map<String, Object> serialized) {
-    String productId = (String) serialized.get("productId");
-    String productType = (String) serialized.get("productType");
+  static QueryProductDetailsParams.Product toProduct(Messages.PlatformProduct platformProduct) {
+
     return QueryProductDetailsParams.Product.newBuilder()
-        .setProductId(productId)
-        .setProductType(productType)
+        .setProductId(platformProduct.getProductId())
+        .setProductType(toProductTypeString(platformProduct.getProductType()))
         .build();
   }
 
-  static List<HashMap<String, Object>> fromProductDetailsList(
-      @Nullable List<ProductDetails> productDetailsList) {
+  static String toProductTypeString(Messages.PlatformProductType type) {
+    switch (type) {
+      case INAPP:
+        return BillingClient.ProductType.INAPP;
+      case SUBS:
+        return BillingClient.ProductType.SUBS;
+    }
+    throw new Messages.FlutterError("UNKNOWN_TYPE", "Unknown product type: " + type, null);
+  }
+
+  static List<Object> fromProductDetailsList(@Nullable List<ProductDetails> productDetailsList) {
     if (productDetailsList == null) {
       return Collections.emptyList();
     }
 
-    ArrayList<HashMap<String, Object>> output = new ArrayList<>();
+    // This and the method are generically typed due to Pigeon limitations; see
+    // https://github.com/flutter/flutter/issues/116117.
+    ArrayList<Object> output = new ArrayList<>();
     for (ProductDetails detail : productDetailsList) {
       output.add(fromProductDetail(detail));
     }

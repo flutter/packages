@@ -8,7 +8,6 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UN
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PRODUCT_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
@@ -74,6 +73,9 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -101,6 +103,7 @@ public class MethodCallHandlerTest {
   @Mock MethodChannel mockMethodChannel;
   @Spy Result result;
   @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
+  @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
@@ -432,14 +435,12 @@ public class MethodCallHandlerTest {
   public void queryProductDetailsAsync() {
     // Connect a billing client and set up the product query listeners
     establishConnectedBillingClient();
-    String productType = BillingClient.ProductType.INAPP;
-    List<String> productsList = asList("id1", "id2");
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("productList", buildProductMap(productsList, productType));
-    MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
+    List<String> productsIds = asList("id1", "id2");
+    final List<PlatformProduct> productList =
+        buildProductList(productsIds, PlatformProductType.INAPP);
 
     // Query for product details
-    methodChannelHandler.onMethodCall(queryCall, result);
+    methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
 
     // Assert the arguments were forwarded correctly to BillingClient
     ArgumentCaptor<QueryProductDetailsParams> paramCaptor =
@@ -457,29 +458,32 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
-    verify(result).success(resultCaptor.capture());
-    HashMap<String, Object> resultData = resultCaptor.getValue();
-    assertEquals(resultData.get("billingResult"), fromBillingResult(billingResult));
+    ArgumentCaptor<PlatformProductDetailsResponse> resultCaptor =
+        ArgumentCaptor.forClass(PlatformProductDetailsResponse.class);
+    verify(platformProductDetailsResult).success(resultCaptor.capture());
+    PlatformProductDetailsResponse resultData = resultCaptor.getValue();
+    assertResultsMatch(resultData.getBillingResult(), billingResult);
     assertEquals(
-        resultData.get("productDetailsList"), fromProductDetailsList(productDetailsResponse));
+        resultData.getProductDetailsJsonList(), fromProductDetailsList(productDetailsResponse));
   }
 
   @Test
   public void queryProductDetailsAsync_clientDisconnected() {
     // Disconnect the Billing client and prepare a queryProductDetails call
     methodChannelHandler.endConnection();
-    String productType = BillingClient.ProductType.INAPP;
-    List<String> productsList = asList("id1", "id2");
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("productList", buildProductMap(productsList, productType));
-    MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
+    List<String> productsIds = asList("id1", "id2");
+    final List<PlatformProduct> productList =
+        buildProductList(productsIds, PlatformProductType.INAPP);
 
-    // Query for product details
-    methodChannelHandler.onMethodCall(queryCall, result);
-
-    // Assert that we sent an error back.
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
-    verify(result, never()).success(any());
+    // Assert that we throw an error.
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () ->
+                methodChannelHandler.queryProductDetailsAsync(
+                    productList, platformProductDetailsResult));
+    assertEquals("UNAVAILABLE", exception.code);
+    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
 
   // Test launchBillingFlow not crash if `accountId` is `null`
@@ -1071,14 +1075,12 @@ public class MethodCallHandlerTest {
   private void queryForProducts(List<String> productIdList) {
     // Set up the query method call
     establishConnectedBillingClient();
-    HashMap<String, Object> arguments = new HashMap<>();
-    String productType = BillingClient.ProductType.INAPP;
-    List<Map<String, Object>> productList = buildProductMap(productIdList, productType);
-    arguments.put("productList", productList);
-    MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
+    List<String> productsIds = asList("id1", "id2");
+    final List<PlatformProduct> productList =
+        buildProductList(productsIds, PlatformProductType.INAPP);
 
     // Call the method.
-    methodChannelHandler.onMethodCall(queryCall, mock(Result.class));
+    methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
 
     // Respond to the call with a matching set of product details.
     ArgumentCaptor<ProductDetailsResponseListener> listenerCaptor =
@@ -1095,13 +1097,13 @@ public class MethodCallHandlerTest {
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
   }
 
-  private List<Map<String, Object>> buildProductMap(List<String> productIds, String productType) {
-    List<Map<String, Object>> productList = new ArrayList<>();
+  private List<PlatformProduct> buildProductList(
+      List<String> productIds, PlatformProductType productType) {
+    List<PlatformProduct> productList = new ArrayList<>();
     for (String productId : productIds) {
-      Map<String, Object> productMap = new HashMap<>();
-      productMap.put("productId", productId);
-      productMap.put("productType", productType);
-      productList.add(productMap);
+      PlatformProduct.Builder builder =
+          new PlatformProduct.Builder().setProductId(productId).setProductType(productType);
+      productList.add(builder.build());
     }
     return productList;
   }

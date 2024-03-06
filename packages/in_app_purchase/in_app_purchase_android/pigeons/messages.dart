@@ -12,12 +12,44 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+/// Pigeon version of Java Product.
+class PlatformProduct {
+  PlatformProduct({required this.productId, required this.productType});
+
+  final String productId;
+  final PlatformProductType productType;
+}
+
 /// Pigeon version of Java BillingResult.
 class PlatformBillingResult {
   PlatformBillingResult(
       {required this.responseCode, required this.debugMessage});
   final int responseCode;
   final String debugMessage;
+}
+
+/// Pigeon version of ProductDetailsResponseWrapper, which contains the
+/// components of the java ProductDetailsResponseListener callback.
+class PlatformProductDetailsResponse {
+  PlatformProductDetailsResponse({
+    required this.billingResult,
+    required this.productDetailsJsonList,
+  });
+
+  final PlatformBillingResult billingResult;
+
+  /// A JSON-compatible list of details, where each entry in the list is a
+  /// Map<String, Object?> JSON encoding of the product details.
+  // TODO(stuartmorgan): Finish converting to Pigeon. This is still using the
+  // old serialization system to allow conversion of all the method calls to
+  // Pigeon without converting the entire object graph all at once. See
+  // https://github.com/flutter/flutter/issues/117910. The list items are
+  // currently untyped due to https://github.com/flutter/flutter/issues/116117.
+  //
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats all of it as non-nullable.
+  final List<Object?> productDetailsJsonList;
 }
 
 /// Pigeon version of Java BillingFlowParams.
@@ -42,6 +74,12 @@ class PlatformBillingFlowParams {
   final String? obfuscatedProfileId;
   final String? oldProduct;
   final String? purchaseToken;
+}
+
+/// Pigeon version of Java BillingClient.ProductType.
+enum PlatformProductType {
+  inapp,
+  subs,
 }
 
 /// Pigeon version of billing_client_wrapper.dart's BillingChoiceMode.
@@ -78,6 +116,11 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener).
   @async
   PlatformBillingResult consumeAsync(String purchaseToken);
+
+  /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
+  @async
+  PlatformProductDetailsResponse queryProductDetailsAsync(
+      List<PlatformProduct> products);
 
   /// Wraps BillingClient#isFeatureSupported(String).
   // TODO(stuartmorgan): Consider making this take a enum, and converting the
