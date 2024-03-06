@@ -283,7 +283,6 @@ class ImagePickerIOS extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
-    int? limit,
   }) async {
     final List<String> paths = await _pickMultiImageAsPath(
       options: MultiImagePickerOptions(
@@ -292,7 +291,6 @@ class ImagePickerIOS extends ImagePickerPlatform {
           maxHeight: maxHeight,
           imageQuality: imageQuality,
         ),
-        limit: limit,
       ),
     );
     // Convert an empty list to a null return since that was the legacy behavior
