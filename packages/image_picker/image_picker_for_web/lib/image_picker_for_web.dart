@@ -157,7 +157,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       accept,
       capture,
       multiple: multiple,
-    ) as web.HTMLInputElement;
+    );
     _injectAndActivate(input);
 
     return _getSelectedXFiles(input).whenComplete(() {
@@ -295,7 +295,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   /// Creates an input element that accepts certain file types, and
   /// allows to `capture` from the device's cameras (where supported)
   @visibleForTesting
-  web.Element createInputElement(
+  web.HTMLInputElement createInputElement(
     String? accept,
     String? capture, {
     bool multiple = false,
@@ -331,7 +331,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
 // Some tools to override behavior for unit-testing
 /// A function that creates a file input with the passed in `accept` and `capture` attributes.
 @visibleForTesting
-typedef OverrideCreateInputFunction = web.Element Function(
+typedef OverrideCreateInputFunction = web.HTMLInputElement Function(
   String? accept,
   String? capture,
 );
@@ -339,7 +339,7 @@ typedef OverrideCreateInputFunction = web.Element Function(
 /// A function that extracts list of files from the file `input` passed in.
 @visibleForTesting
 typedef OverrideExtractMultipleFilesFromInputFunction = List<web.File> Function(
-    web.Element? input);
+    web.HTMLInputElement? input);
 
 /// Overrides for some of the functionality above.
 @visibleForTesting

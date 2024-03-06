@@ -16,9 +16,14 @@ import 'image_resizer_utils.dart';
 /// Helper class that resizes images.
 class ImageResizer {
   /// Resizes the image if needed.
+  ///
   /// (Does not support gif images)
-  Future<XFile> resizeImageIfNeeded(XFile file, double? maxWidth,
-      double? maxHeight, int? imageQuality) async {
+  Future<XFile> resizeImageIfNeeded(
+    XFile file,
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+  ) async {
     if (!imageResizeNeeded(maxWidth, maxHeight, imageQuality) ||
         file.mimeType == 'image/gif') {
       // Implement maxWidth and maxHeight for image/gif
@@ -37,7 +42,7 @@ class ImageResizer {
     }
   }
 
-  /// function that loads the blobUrl into an imageElement
+  /// Loads the `blobUrl` into a [web.HTMLImageElement].
   Future<web.HTMLImageElement> loadImage(String blobUrl) {
     final Completer<web.HTMLImageElement> imageLoadCompleter =
         Completer<web.HTMLImageElement>();
@@ -45,20 +50,23 @@ class ImageResizer {
     imageElement
       // ignore: unsafe_html
       ..src = blobUrl
-      ..onload = (web.Event event) {
+      ..onLoad.listen((web.Event event) {
         imageLoadCompleter.complete(imageElement);
-      }.toJS
-      ..onerror = (web.Event event) {
+      })
+      ..onError.listen((web.Event event) {
         const String exception = 'Error while loading image.';
         imageElement.remove();
         imageLoadCompleter.completeError(exception);
-      }.toJS;
+      });
     return imageLoadCompleter.future;
   }
 
-  /// Draws image to a canvas while resizing the image to fit the [maxWidth],[maxHeight] constraints
+  /// Resizing the image in a canvas to fit the [maxWidth], [maxHeight] constraints.
   web.HTMLCanvasElement resizeImageElement(
-      web.HTMLImageElement source, double? maxWidth, double? maxHeight) {
+    web.HTMLImageElement source,
+    double? maxWidth,
+    double? maxHeight,
+  ) {
     final Size newImageSize = calculateSizeOfDownScaledImage(
         Size(source.width.toDouble(), source.height.toDouble()),
         maxWidth,
@@ -76,10 +84,14 @@ class ImageResizer {
     return canvas;
   }
 
-  /// function that converts a canvas element to Xfile
+  /// Converts a canvas element to [XFile].
+  ///
   /// [imageQuality] is only supported for jpeg and webp images.
-  Future<XFile> writeCanvasToFile(XFile originalFile,
-      web.HTMLCanvasElement canvas, int? imageQuality) async {
+  Future<XFile> writeCanvasToFile(
+    XFile originalFile,
+    web.HTMLCanvasElement canvas,
+    int? imageQuality,
+  ) async {
     final double calculatedImageQuality =
         (min(imageQuality ?? 100, 100)) / 100.0;
     final Completer<XFile> completer = Completer<XFile>();
