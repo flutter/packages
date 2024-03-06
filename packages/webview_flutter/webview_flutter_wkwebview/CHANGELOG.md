@@ -1,3 +1,7 @@
+## 3.12.1
+
+* Fixes `JSON.stringify()` cannot serialize cyclic structures.
+
 ## 3.12.0
 
 * Adds support for `setOnScrollPositionChange` method to the `WebKitWebViewController`.
