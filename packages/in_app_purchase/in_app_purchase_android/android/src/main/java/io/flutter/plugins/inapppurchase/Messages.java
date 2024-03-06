@@ -429,6 +429,89 @@ public class Messages {
   }
 
   /**
+   * Pigeon version of BillingConfigWrapper, which contains the components of the Java
+   * BillingConfigResponseListener callback.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformBillingConfigResponse {
+    private @NonNull PlatformBillingResult billingResult;
+
+    public @NonNull PlatformBillingResult getBillingResult() {
+      return billingResult;
+    }
+
+    public void setBillingResult(@NonNull PlatformBillingResult setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"billingResult\" is null.");
+      }
+      this.billingResult = setterArg;
+    }
+
+    private @NonNull String countryCode;
+
+    public @NonNull String getCountryCode() {
+      return countryCode;
+    }
+
+    public void setCountryCode(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"countryCode\" is null.");
+      }
+      this.countryCode = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformBillingConfigResponse() {}
+
+    public static final class Builder {
+
+      private @Nullable PlatformBillingResult billingResult;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBillingResult(@NonNull PlatformBillingResult setterArg) {
+        this.billingResult = setterArg;
+        return this;
+      }
+
+      private @Nullable String countryCode;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setCountryCode(@NonNull String setterArg) {
+        this.countryCode = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformBillingConfigResponse build() {
+        PlatformBillingConfigResponse pigeonReturn = new PlatformBillingConfigResponse();
+        pigeonReturn.setBillingResult(billingResult);
+        pigeonReturn.setCountryCode(countryCode);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add((billingResult == null) ? null : billingResult.toList());
+      toListResult.add(countryCode);
+      return toListResult;
+    }
+
+    static @NonNull PlatformBillingConfigResponse fromList(@NonNull ArrayList<Object> list) {
+      PlatformBillingConfigResponse pigeonResult = new PlatformBillingConfigResponse();
+      Object billingResult = list.get(0);
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      Object countryCode = list.get(1);
+      pigeonResult.setCountryCode((String) countryCode);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon version of Java BillingFlowParams.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -659,12 +742,14 @@ public class Messages {
           return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList(
               (ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
+          return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
           return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -677,17 +762,20 @@ public class Messages {
         stream.write(128);
         writeValue(
             stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
-      } else if (value instanceof PlatformBillingFlowParams) {
+      } else if (value instanceof PlatformBillingConfigResponse) {
         stream.write(129);
+        writeValue(stream, ((PlatformBillingConfigResponse) value).toList());
+      } else if (value instanceof PlatformBillingFlowParams) {
+        stream.write(130);
         writeValue(stream, ((PlatformBillingFlowParams) value).toList());
       } else if (value instanceof PlatformBillingResult) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((PlatformBillingResult) value).toList());
       } else if (value instanceof PlatformProduct) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((PlatformProduct) value).toList());
       } else if (value instanceof PlatformProductDetailsResponse) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -707,6 +795,11 @@ public class Messages {
         @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#endConnection(BillingClientStateListener). */
     void endConnection();
+    /**
+     * Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams,
+     * BillingConfigResponseListener).
+     */
+    void getBillingConfigAsync(@NonNull Result<PlatformBillingConfigResponse> result);
     /** Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams). */
     @NonNull
     PlatformBillingResult launchBillingFlow(@NonNull PlatformBillingFlowParams params);
@@ -824,6 +917,35 @@ public class Messages {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                Result<PlatformBillingConfigResponse> resultCallback =
+                    new Result<PlatformBillingConfigResponse>() {
+                      public void success(PlatformBillingConfigResponse result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getBillingConfigAsync(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

@@ -63,6 +63,16 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
   final String externalTransactionToken;
 }
 
+/// Pigeon version of BillingConfigWrapper, which contains the components of the
+/// Java BillingConfigResponseListener callback.
+class PlatformBillingConfigResponse {
+  PlatformBillingConfigResponse(
+      {required this.billingResult, required this.countryCode});
+
+  final PlatformBillingResult billingResult;
+  final String countryCode;
+}
+
 /// Pigeon version of Java BillingFlowParams.
 class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
@@ -116,6 +126,10 @@ abstract class InAppPurchaseApi {
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();
+
+  /// Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams, BillingConfigResponseListener).
+  @async
+  PlatformBillingConfigResponse getBillingConfigAsync();
 
   /// Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams).
   PlatformBillingResult launchBillingFlow(PlatformBillingFlowParams params);

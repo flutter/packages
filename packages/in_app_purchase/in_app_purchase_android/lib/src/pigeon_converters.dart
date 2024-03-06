@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import '../billing_client_wrappers.dart';
+import 'billing_client_wrappers/billing_config_wrapper.dart';
 import 'messages.g.dart';
 
 /// Converts a [BillingChoiceMode] to the Pigeon equivalent.
@@ -36,6 +37,8 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
   );
 }
 
+/// Creates an [AlternativeBillingOnlyReportingDetailsWrapper] from the Pigeon
+/// equivalent.
 AlternativeBillingOnlyReportingDetailsWrapper
     alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
         PlatformAlternativeBillingOnlyReportingDetailsResponse response) {
@@ -44,6 +47,16 @@ AlternativeBillingOnlyReportingDetailsWrapper
         .fromJson(response.billingResult.responseCode),
     debugMessage: response.billingResult.debugMessage,
     externalTransactionToken: response.externalTransactionToken,
+  );
+}
+
+BillingConfigWrapper billingConfigWrapperFromPlatform(
+    PlatformBillingConfigResponse response) {
+  return BillingConfigWrapper(
+    responseCode: const BillingResponseConverter()
+        .fromJson(response.billingResult.responseCode),
+    debugMessage: response.billingResult.debugMessage,
+    countryCode: response.countryCode,
   );
 }
 

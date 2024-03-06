@@ -4,12 +4,12 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromAlternativeBillingOnlyReportingDetails;
+import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 
@@ -60,7 +60,6 @@ class MethodCallHandlerImpl
         "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
         "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
-    static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
 
     private MethodNames() {}
   }
@@ -147,9 +146,6 @@ class MethodCallHandlerImpl
       case MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
         queryPurchaseHistoryAsync((String) call.argument("productType"), result);
         break;
-      case MethodNames.GET_BILLING_CONFIG:
-        getBillingConfig(result);
-        break;
       default:
         result.notImplemented();
     }
@@ -196,15 +192,17 @@ class MethodCallHandlerImpl
         billingResult -> result.success(pigeonResultFromBillingResult(billingResult)));
   }
 
-  private void getBillingConfig(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void getBillingConfigAsync(
+      @NonNull Messages.Result<Messages.PlatformBillingConfigResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
-    assert billingClient != null;
     billingClient.getBillingConfigAsync(
         GetBillingConfigParams.newBuilder().build(),
         (billingResult, billingConfig) ->
-            result.success(fromBillingConfig(billingResult, billingConfig)));
+            result.success(pigeonResultFromBillingConfig(billingResult, billingConfig)));
   }
 
   @Override

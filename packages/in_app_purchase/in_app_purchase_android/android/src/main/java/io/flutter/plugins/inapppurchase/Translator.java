@@ -250,11 +250,12 @@ import java.util.Locale;
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
-  static HashMap<String, Object> fromBillingConfig(
+  static Messages.PlatformBillingConfigResponse pigeonResultFromBillingConfig(
       BillingResult result, BillingConfig billingConfig) {
-    HashMap<String, Object> info = fromBillingResult(result);
-    info.put("countryCode", billingConfig.getCountryCode());
-    return info;
+    return new Messages.PlatformBillingConfigResponse.Builder()
+        .setBillingResult(pigeonResultFromBillingResult(result))
+        .setCountryCode(billingConfig.getCountryCode())
+        .build();
   }
 
   /**

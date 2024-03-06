@@ -68,10 +68,8 @@ void main() {
           responseCode: BillingResponse.ok,
           debugMessage: 'dummy message');
 
-      stubPlatform.addResponse(
-        name: BillingClient.getBillingConfigMethodString,
-        value: buildBillingConfigMap(expected),
-      );
+      when(mockApi.getBillingConfigAsync())
+          .thenAnswer((_) async => platformBillingConfigFromWrapper(expected));
       final String countryCode =
           await iapAndroidPlatformAddition.getCountryCode();
 

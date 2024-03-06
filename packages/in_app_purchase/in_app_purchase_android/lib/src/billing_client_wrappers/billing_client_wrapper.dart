@@ -305,19 +305,10 @@ class BillingClient {
         const BillingClientFeatureConverter().toJson(feature));
   }
 
-  /// BillingConfig method channel string identifier.
-  //
-  // Must match the value of GET_BILLING_CONFIG in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String getBillingConfigMethodString =
-      'BillingClient#getBillingConfig()';
-
   /// Fetches billing config info into a [BillingConfigWrapper] object.
   Future<BillingConfigWrapper> getBillingConfig() async {
-    return BillingConfigWrapper.fromJson((await channel
-            .invokeMapMethod<String, dynamic>(getBillingConfigMethodString)) ??
-        <String, dynamic>{});
+    return billingConfigWrapperFromPlatform(
+        await _hostApi.getBillingConfigAsync());
   }
 
   /// Checks if "AlterntitiveBillingOnly" feature is available.

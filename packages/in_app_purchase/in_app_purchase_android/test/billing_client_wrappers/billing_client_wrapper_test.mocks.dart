@@ -32,9 +32,9 @@ class _FakePlatformBillingResult_0 extends _i1.SmartFake
         );
 }
 
-class _FakePlatformProductDetailsResponse_1 extends _i1.SmartFake
-    implements _i2.PlatformProductDetailsResponse {
-  _FakePlatformProductDetailsResponse_1(
+class _FakePlatformBillingConfigResponse_1 extends _i1.SmartFake
+    implements _i2.PlatformBillingConfigResponse {
+  _FakePlatformBillingConfigResponse_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -43,10 +43,21 @@ class _FakePlatformProductDetailsResponse_1 extends _i1.SmartFake
         );
 }
 
-class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2
+class _FakePlatformProductDetailsResponse_2 extends _i1.SmartFake
+    implements _i2.PlatformProductDetailsResponse {
+  _FakePlatformProductDetailsResponse_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3
     extends _i1.SmartFake
     implements _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse {
-  _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2(
+  _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -115,6 +126,32 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<_i2.PlatformBillingConfigResponse> getBillingConfigAsync() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getBillingConfigAsync,
+          [],
+        ),
+        returnValue: _i3.Future<_i2.PlatformBillingConfigResponse>.value(
+            _FakePlatformBillingConfigResponse_1(
+          this,
+          Invocation.method(
+            #getBillingConfigAsync,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i3.Future<_i2.PlatformBillingConfigResponse>.value(
+                _FakePlatformBillingConfigResponse_1(
+          this,
+          Invocation.method(
+            #getBillingConfigAsync,
+            [],
+          ),
+        )),
+      ) as _i3.Future<_i2.PlatformBillingConfigResponse>);
 
   @override
   _i3.Future<_i2.PlatformBillingResult> launchBillingFlow(
@@ -202,7 +239,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           [products],
         ),
         returnValue: _i3.Future<_i2.PlatformProductDetailsResponse>.value(
-            _FakePlatformProductDetailsResponse_1(
+            _FakePlatformProductDetailsResponse_2(
           this,
           Invocation.method(
             #queryProductDetailsAsync,
@@ -211,7 +248,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
         )),
         returnValueForMissingStub:
             _i3.Future<_i2.PlatformProductDetailsResponse>.value(
-                _FakePlatformProductDetailsResponse_1(
+                _FakePlatformProductDetailsResponse_2(
           this,
           Invocation.method(
             #queryProductDetailsAsync,
@@ -293,7 +330,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             returnValue: _i3.Future<
                     _i2
                     .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
-                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2(
+                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3(
               this,
               Invocation.method(
                 #createAlternativeBillingOnlyReportingDetailsAsync,
@@ -303,7 +340,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             returnValueForMissingStub: _i3.Future<
                     _i2
                     .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
-                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2(
+                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3(
               this,
               Invocation.method(
                 #createAlternativeBillingOnlyReportingDetailsAsync,

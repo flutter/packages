@@ -149,6 +149,34 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
   }
 }
 
+/// Pigeon version of BillingConfigWrapper, which contains the components of the
+/// Java BillingConfigResponseListener callback.
+class PlatformBillingConfigResponse {
+  PlatformBillingConfigResponse({
+    required this.billingResult,
+    required this.countryCode,
+  });
+
+  PlatformBillingResult billingResult;
+
+  String countryCode;
+
+  Object encode() {
+    return <Object?>[
+      billingResult.encode(),
+      countryCode,
+    ];
+  }
+
+  static PlatformBillingConfigResponse decode(Object result) {
+    result as List<Object?>;
+    return PlatformBillingConfigResponse(
+      billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
+      countryCode: result[1]! as String,
+    );
+  }
+}
+
 /// Pigeon version of Java BillingFlowParams.
 class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
@@ -208,17 +236,20 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
     if (value is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingFlowParams) {
+    } else if (value is PlatformBillingConfigResponse) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingResult) {
+    } else if (value is PlatformBillingFlowParams) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProduct) {
+    } else if (value is PlatformBillingResult) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProductDetailsResponse) {
+    } else if (value is PlatformProduct) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformProductDetailsResponse) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -232,12 +263,14 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
         return PlatformAlternativeBillingOnlyReportingDetailsResponse.decode(
             readValue(buffer)!);
       case 129:
-        return PlatformBillingFlowParams.decode(readValue(buffer)!);
+        return PlatformBillingConfigResponse.decode(readValue(buffer)!);
       case 130:
-        return PlatformBillingResult.decode(readValue(buffer)!);
+        return PlatformBillingFlowParams.decode(readValue(buffer)!);
       case 131:
-        return PlatformProduct.decode(readValue(buffer)!);
+        return PlatformBillingResult.decode(readValue(buffer)!);
       case 132:
+        return PlatformProduct.decode(readValue(buffer)!);
+      case 133:
         return PlatformProductDetailsResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -339,6 +372,36 @@ class InAppPurchaseApi {
       );
     } else {
       return;
+    }
+  }
+
+  /// Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams, BillingConfigResponseListener).
+  Future<PlatformBillingConfigResponse> getBillingConfigAsync() async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as PlatformBillingConfigResponse?)!;
     }
   }
 

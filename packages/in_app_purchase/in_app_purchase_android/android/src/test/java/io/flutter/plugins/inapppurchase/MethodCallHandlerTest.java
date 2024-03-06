@@ -5,13 +5,11 @@
 package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
@@ -71,6 +69,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
@@ -102,12 +101,14 @@ public class MethodCallHandlerTest {
   @Mock BillingClient mockBillingClient;
   @Mock MethodChannel mockMethodChannel;
   @Spy Result result;
-  @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
-  @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
 
   @Spy
   Messages.Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse>
       platformAlternativeBillingOnlyReportingDetailsResult;
+
+  @Spy Messages.Result<Messages.PlatformBillingConfigResponse> platformBillingConfigResult;
+  @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
+  @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
 
   @Mock Activity activity;
   @Mock Context context;
@@ -175,11 +176,7 @@ public class MethodCallHandlerTest {
         .createBillingClient(
             context, mockMethodChannel, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
 
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
 
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
@@ -197,11 +194,7 @@ public class MethodCallHandlerTest {
         .createBillingClient(
             context, mockMethodChannel, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
 
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
 
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
@@ -219,11 +212,7 @@ public class MethodCallHandlerTest {
     methodChannelHandler.startConnection(
         1L, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, platformBillingResult);
     verify(platformBillingResult, never()).success(any());
-    BillingResult billingResult1 =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult1 = buildBillingResult();
     BillingResult billingResult2 =
         BillingResult.newBuilder()
             .setResponseCode(200)
@@ -255,12 +244,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(GetBillingConfigParams.class);
     ArgumentCaptor<BillingConfigResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(BillingConfigResponseListener.class);
-    MethodCall billingCall = new MethodCall(GET_BILLING_CONFIG, null);
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     final String expectedCountryCode = "US";
     final BillingConfig expectedConfig = mock(BillingConfig.class);
     when(expectedConfig.getCountryCode()).thenReturn(expectedCountryCode);
@@ -269,20 +253,27 @@ public class MethodCallHandlerTest {
         .when(mockBillingClient)
         .getBillingConfigAsync(paramsCaptor.capture(), listenerCaptor.capture());
 
-    methodChannelHandler.onMethodCall(billingCall, result);
+    methodChannelHandler.getBillingConfigAsync(platformBillingConfigResult);
     listenerCaptor.getValue().onBillingConfigResponse(billingResult, expectedConfig);
 
-    verify(result, times(1)).success(fromBillingConfig(billingResult, expectedConfig));
+    ArgumentCaptor<PlatformBillingConfigResponse> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingConfigResponse.class);
+    verify(platformBillingConfigResult, times(1)).success(resultCaptor.capture());
+    assertResultsMatch(resultCaptor.getValue().getBillingResult(), billingResult);
+    assertEquals(resultCaptor.getValue().getCountryCode(), expectedCountryCode);
   }
 
   @Test
   public void getBillingConfig_serviceDisconnected() {
-    MethodCall billingCall = new MethodCall(GET_BILLING_CONFIG, null);
-    methodChannelHandler.onMethodCall(billingCall, mock(Result.class));
+    methodChannelHandler.getBillingConfigAsync(platformBillingConfigResult);
 
-    methodChannelHandler.onMethodCall(billingCall, result);
-
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
+    // Assert that the async call returns an error result.
+    verify(platformBillingConfigResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformBillingConfigResult, times(1)).error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -290,11 +281,7 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     ArgumentCaptor<AlternativeBillingOnlyReportingDetailsListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyReportingDetailsListener.class);
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(BillingResponseCode.OK)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult(BillingResponseCode.OK);
     final AlternativeBillingOnlyReportingDetails expectedDetails =
         mock(AlternativeBillingOnlyReportingDetails.class);
     final String expectedExternalTransactionToken = "abc123youandme";
@@ -339,11 +326,7 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     ArgumentCaptor<AlternativeBillingOnlyAvailabilityListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyAvailabilityListener.class);
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(BillingClient.BillingResponseCode.OK)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult(BillingClient.BillingResponseCode.OK);
 
     doNothing()
         .when(mockBillingClient)
@@ -376,11 +359,7 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     ArgumentCaptor<AlternativeBillingOnlyInformationDialogListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyInformationDialogListener.class);
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(BillingResponseCode.OK)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult(BillingClient.BillingResponseCode.OK);
 
     when(mockBillingClient.showAlternativeBillingOnlyInformationDialog(
             eq(activity), listenerCaptor.capture()))
@@ -471,11 +450,7 @@ public class MethodCallHandlerTest {
 
     // Assert that we handed result BillingClient's response
     List<ProductDetails> productDetailsResponse = singletonList(buildProductDetails("foo"));
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
     ArgumentCaptor<PlatformProductDetailsResponse> resultCaptor =
         ArgumentCaptor.forClass(PlatformProductDetailsResponse.class);
@@ -519,11 +494,7 @@ public class MethodCallHandlerTest {
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
     PlatformBillingResult platformResult =
         methodChannelHandler.launchBillingFlow(paramsBuilder.build());
@@ -548,11 +519,7 @@ public class MethodCallHandlerTest {
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
     PlatformBillingResult platformResult =
         methodChannelHandler.launchBillingFlow(paramsBuilder.build());
@@ -604,11 +571,7 @@ public class MethodCallHandlerTest {
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
     PlatformBillingResult platformResult =
         methodChannelHandler.launchBillingFlow(paramsBuilder.build());
@@ -635,11 +598,7 @@ public class MethodCallHandlerTest {
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
     PlatformBillingResult platformResult =
         methodChannelHandler.launchBillingFlow(paramsBuilder.build());
@@ -674,11 +633,7 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProrationMode((long) prorationMode);
 
     // Launch the billing flow
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
     PlatformBillingResult platformResult =
         methodChannelHandler.launchBillingFlow(paramsBuilder.build());
@@ -711,11 +666,7 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProrationMode((long) prorationMode);
 
     // Launch the billing flow
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
 
     // Assert that the synchronous call throws an exception.
@@ -750,11 +701,7 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProrationMode((long) prorationMode);
 
     // Launch the billing flow
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
     PlatformBillingResult platformResult =
         methodChannelHandler.launchBillingFlow(paramsBuilder.build());
@@ -902,11 +849,7 @@ public class MethodCallHandlerTest {
   public void queryPurchaseHistoryAsync() {
     // Set up an established billing client and all our mocked responses
     establishConnectedBillingClient();
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     List<PurchaseHistoryRecord> purchasesList = singletonList(buildPurchaseHistoryRecord("foo"));
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("productType", BillingClient.ProductType.INAPP);
@@ -945,11 +888,7 @@ public class MethodCallHandlerTest {
   public void onPurchasesUpdatedListener() {
     PluginPurchaseListener listener = new PluginPurchaseListener(mockMethodChannel);
 
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     List<Purchase> purchasesList = singletonList(buildPurchase("foo"));
     doNothing()
         .when(mockMethodChannel)
@@ -964,11 +903,7 @@ public class MethodCallHandlerTest {
   @Test
   public void consumeAsync() {
     establishConnectedBillingClient();
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     final String token = "mockToken";
     ArgumentCaptor<ConsumeResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(ConsumeResponseListener.class);
@@ -993,11 +928,7 @@ public class MethodCallHandlerTest {
   @Test
   public void acknowledgePurchase() {
     establishConnectedBillingClient();
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     final String purchaseToken = "mockToken";
     ArgumentCaptor<AcknowledgePurchaseResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(AcknowledgePurchaseResponseListener.class);
@@ -1034,11 +965,7 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     final String feature = "subscriptions";
 
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(BillingClient.BillingResponseCode.OK)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult(BillingClient.BillingResponseCode.OK);
     when(mockBillingClient.isFeatureSupported(feature)).thenReturn(billingResult);
 
     assertTrue(methodChannelHandler.isFeatureSupported(feature));
@@ -1049,11 +976,7 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     final String feature = "subscriptions";
 
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult(BillingResponseCode.FEATURE_NOT_SUPPORTED);
     when(mockBillingClient.isFeatureSupported(feature)).thenReturn(billingResult);
 
     assertFalse(methodChannelHandler.isFeatureSupported(feature));
@@ -1107,11 +1030,7 @@ public class MethodCallHandlerTest {
     List<ProductDetails> productDetailsResponse =
         productIdList.stream().map(this::buildProductDetails).collect(toList());
 
-    BillingResult billingResult =
-        BillingResult.newBuilder()
-            .setResponseCode(100)
-            .setDebugMessage("dummy debug message")
-            .build();
+    BillingResult billingResult = buildBillingResult();
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
   }
 
@@ -1159,6 +1078,17 @@ public class MethodCallHandlerTest {
     PurchaseHistoryRecord purchase = mock(PurchaseHistoryRecord.class);
     when(purchase.getPurchaseToken()).thenReturn(purchaseToken);
     return purchase;
+  }
+
+  private BillingResult buildBillingResult() {
+    return buildBillingResult(100);
+  }
+
+  private BillingResult buildBillingResult(int responseCode) {
+    return BillingResult.newBuilder()
+        .setResponseCode(responseCode)
+        .setDebugMessage("dummy debug message")
+        .build();
   }
 
   private void assertResultsMatch(PlatformBillingResult pigeonResult, BillingResult nativeResult) {

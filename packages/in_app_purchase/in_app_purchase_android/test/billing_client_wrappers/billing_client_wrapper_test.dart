@@ -547,28 +547,12 @@ void main() {
           countryCode: 'US',
           responseCode: BillingResponse.ok,
           debugMessage: '');
-      stubPlatform.addResponse(
-        name: BillingClient.getBillingConfigMethodString,
-        value: buildBillingConfigMap(expected),
-      );
+      when(mockApi.getBillingConfigAsync())
+          .thenAnswer((_) async => platformBillingConfigFromWrapper(expected));
       final BillingConfigWrapper result =
           await billingClient.getBillingConfig();
       expect(result.countryCode, 'US');
       expect(result, expected);
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: BillingClient.getBillingConfigMethodString,
-      );
-      final BillingConfigWrapper result =
-          await billingClient.getBillingConfig();
-      expect(
-          result,
-          equals(const BillingConfigWrapper(
-            responseCode: BillingResponse.error,
-            debugMessage: kInvalidBillingConfigErrorMessage,
-          )));
     });
   });
 
@@ -594,7 +578,7 @@ void main() {
               externalTransactionToken: 'abc123youandme');
       when(mockApi.createAlternativeBillingOnlyReportingDetailsAsync())
           .thenAnswer((_) async =>
-              platfromAlternativeBillingOnlyReportingDetailsFromWrapper(
+              platformAlternativeBillingOnlyReportingDetailsFromWrapper(
                   expected));
       final AlternativeBillingOnlyReportingDetailsWrapper result =
           await billingClient.createAlternativeBillingOnlyReportingDetails();
@@ -616,17 +600,19 @@ void main() {
   });
 }
 
-Map<String, dynamic> buildBillingConfigMap(BillingConfigWrapper original) {
-  return <String, dynamic>{
-    'responseCode':
-        const BillingResponseConverter().toJson(original.responseCode),
-    'debugMessage': original.debugMessage,
-    'countryCode': original.countryCode,
-  };
+PlatformBillingConfigResponse platformBillingConfigFromWrapper(
+    BillingConfigWrapper original) {
+  return PlatformBillingConfigResponse(
+      billingResult: PlatformBillingResult(
+        responseCode:
+            const BillingResponseConverter().toJson(original.responseCode),
+        debugMessage: original.debugMessage!,
+      ),
+      countryCode: original.countryCode);
 }
 
 PlatformAlternativeBillingOnlyReportingDetailsResponse
-    platfromAlternativeBillingOnlyReportingDetailsFromWrapper(
+    platformAlternativeBillingOnlyReportingDetailsFromWrapper(
         AlternativeBillingOnlyReportingDetailsWrapper original) {
   return PlatformAlternativeBillingOnlyReportingDetailsResponse(
       billingResult: PlatformBillingResult(
