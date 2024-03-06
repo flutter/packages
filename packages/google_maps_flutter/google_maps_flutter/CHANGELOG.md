@@ -1,6 +1,11 @@
-## NEXT
+## 2.6.0
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Adds `style` to the GoogleMap widget constructor. This allows setting the map
+  style during creation, avoiding the possibility of the default style being
+  displayed briefly.
+* Deprecates `GoogleMapController.setMapStyle` in favor of setting the style via
+  the new widget `style` parameter.
+* Updates minimum supported SDK version to Flutter 3.19.
 
 ## 2.5.3
 

@@ -72,7 +72,7 @@
 }
 @end
 
-/** Non-test implementation of the diplay link factory. */
+/// Non-test implementation of the diplay link factory.
 @interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
 @end
 

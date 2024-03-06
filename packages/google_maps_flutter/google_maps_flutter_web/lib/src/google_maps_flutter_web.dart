@@ -279,6 +279,11 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     return _events(mapId).whereType<MapLongPressEvent>();
   }
 
+  @override
+  Future<String?> getStyleError({required int mapId}) async {
+    return _map(mapId).lastStyleError;
+  }
+
   /// Disposes of the current map. It can't be used afterwards!
   @override
   void dispose({required int mapId}) {

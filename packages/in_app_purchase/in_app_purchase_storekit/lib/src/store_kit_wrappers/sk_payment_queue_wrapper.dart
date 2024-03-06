@@ -86,16 +86,16 @@ class SKPaymentQueueWrapper {
   ///
   /// Call this method when the first listener is subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> startObservingTransactionQueue() => channel
-      .invokeMethod<void>('-[SKPaymentQueue startObservingTransactionQueue]');
+  Future<void> startObservingTransactionQueue() =>
+      _hostApi.startObservingPaymentQueue();
 
   /// Instructs the iOS implementation to remove the transaction observer and
   /// stop listening to it.
   ///
   /// Call this when there are no longer any listeners subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> stopObservingTransactionQueue() => channel
-      .invokeMethod<void>('-[SKPaymentQueue stopObservingTransactionQueue]');
+  Future<void> stopObservingTransactionQueue() =>
+      _hostApi.stopObservingPaymentQueue();
 
   /// Sets an implementation of the [SKPaymentQueueDelegateWrapper].
   ///
@@ -109,10 +109,10 @@ class SKPaymentQueueWrapper {
   /// default behaviour will apply (see [documentation](https://developer.apple.com/documentation/storekit/skpaymentqueue/3182429-delegate?language=objc)).
   Future<void> setDelegate(SKPaymentQueueDelegateWrapper? delegate) async {
     if (delegate == null) {
-      await channel.invokeMethod<void>('-[SKPaymentQueue removeDelegate]');
+      await _hostApi.removePaymentQueueDelegate();
       paymentQueueDelegateChannel.setMethodCallHandler(null);
     } else {
-      await channel.invokeMethod<void>('-[SKPaymentQueue registerDelegate]');
+      await _hostApi.registerPaymentQueueDelegate();
       paymentQueueDelegateChannel
           .setMethodCallHandler(handlePaymentQueueDelegateCallbacks);
     }
@@ -207,8 +207,7 @@ class SKPaymentQueueWrapper {
   ///
   /// See documentation of StoreKit's [`-[SKPaymentQueue showPriceConsentIfNeeded]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3521327-showpriceconsentifneeded?language=objc).
   Future<void> showPriceConsentIfNeeded() async {
-    await channel
-        .invokeMethod<void>('-[SKPaymentQueue showPriceConsentIfNeeded]');
+    await _hostApi.showPriceConsentIfNeeded();
   }
 
   /// Triage a method channel call from the platform and triggers the correct observer method.
@@ -354,7 +353,7 @@ class SKError {
   ///
   /// Any key of the map must be a valid [NSErrorUserInfoKey](https://developer.apple.com/documentation/foundation/nserroruserinfokey?language=objc).
   @JsonKey(defaultValue: <String, dynamic>{})
-  final Map<String?, Object?> userInfo;
+  final Map<String?, Object?>? userInfo;
 
   @override
   bool operator ==(Object other) {
