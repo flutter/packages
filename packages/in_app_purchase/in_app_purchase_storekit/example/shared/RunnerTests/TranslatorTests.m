@@ -191,7 +191,7 @@
   XCTAssertEqualObjects(expectedMap, map);
 }
 
-- (void)testErrorNestedWithUnderlyingError {
+- (void)testErrorWithNestedUnderlyingError {
   NSError *underlyingError = [NSError errorWithDomain:SKErrorDomain code:2 userInfo:nil];
   NSError *mainError =
       [NSError errorWithDomain:SKErrorDomain
