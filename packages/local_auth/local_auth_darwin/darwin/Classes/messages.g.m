@@ -41,7 +41,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-/// Pigeon equivalent of the subset of BiometricType used by iOS & macOS.
+/// Pigeon equivalent of the subset of BiometricType used by iOS.
 @implementation FLADAuthBiometricBox
 - (instancetype)initWithValue:(FLADAuthBiometric)value {
   self = [super init];
