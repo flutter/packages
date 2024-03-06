@@ -509,8 +509,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Sets the focus mode for taking pictures.
   ///
-  /// Setting [FocusMode.locked] will lock current focus point if one exists or
-  /// center of entire sensor area if not and will stay locked until either:
+  /// Setting [FocusMode.locked] will lock the current focus point if one exists
+  /// or the center of entire sensor area if not, and will stay locked until
+  /// either:
   ///   * Another focus point is set via [setFocusPoint] (which will then become
   ///     the locked focus point), or
   ///   * Locked focus mode is unset by setting [FocusMode.auto].
@@ -526,7 +527,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
         // Determine auto-focus point to restore, if any. We do not restore
         // default auto-focus point if set previously to lock focus.
-        final MeteringPoint? autoAfPoint = _defaultFocusPointLocked
+        final MeteringPoint? autoFocusPoint = _defaultFocusPointLocked
             ? null
             : currentFocusMeteringAction!.meteringPointInfos
                 .where(((MeteringPoint, int?) meteringPointInfo) =>
@@ -537,10 +538,10 @@ class AndroidCameraCameraX extends CameraPlatform {
         _defaultFocusPointLocked = false;
 
         await _startFocusAndMeteringFor(
-            meteringPoint: autoAfPoint,
+            meteringPoint: autoFocusPoint,
             meteringMode: FocusMeteringAction.flagAf);
       case FocusMode.locked:
-        MeteringPoint? lockedAfPoint;
+        MeteringPoint? lockedFocusPoint;
 
         // Determine if there is an auto-focus point set currently to lock.
         if (currentFocusMeteringAction != null) {
@@ -549,19 +550,20 @@ class AndroidCameraCameraX extends CameraPlatform {
                   .where(((MeteringPoint, int?) meteringPointInfo) =>
                       meteringPointInfo.$2 == FocusMeteringAction.flagAf)
                   .toList();
-          lockedAfPoint = possibleCurrentAfPoints.isEmpty
+          lockedFocusPoint = possibleCurrentAfPoints.isEmpty
               ? null
               : possibleCurrentAfPoints.first.$1;
         }
 
         // If there isn't, lock center of entire sensor area by default.
-        if (lockedAfPoint == null) {
-          lockedAfPoint = proxy.createMeteringPoint(0.5, 0.5, 1, cameraInfo!);
+        if (lockedFocusPoint == null) {
+          lockedFocusPoint =
+              proxy.createMeteringPoint(0.5, 0.5, 1, cameraInfo!);
           _defaultFocusPointLocked = true;
         }
 
         await _startFocusAndMeteringFor(
-            meteringPoint: lockedAfPoint,
+            meteringPoint: lockedFocusPoint,
             meteringMode: FocusMeteringAction.flagAf,
             disableAutoCancel: true);
     }

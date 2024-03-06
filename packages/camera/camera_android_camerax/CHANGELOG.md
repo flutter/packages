@@ -1,6 +1,6 @@
-## 0.5.0+37
+## 0.6.0
 
-* Implements `setFocusMode`.
+* Implements `setFocusMode`, which makes plugin reach feature parity with camera_android.
 
 ## 0.5.0+36
 

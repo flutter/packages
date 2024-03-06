@@ -62,7 +62,6 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
         }
       }
 
-      // Disable auto-cancel if specified.
       if (disableAutoCancel != null && disableAutoCancel == true) {
         focusMeteringActionBuilder.disableAutoCancel();
       }
