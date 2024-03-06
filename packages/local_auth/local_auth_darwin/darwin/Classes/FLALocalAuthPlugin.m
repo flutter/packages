@@ -72,11 +72,10 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   return self;
 }
 
-
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [self initWithContextFactory:[[FLADefaultAuthContextFactory alloc] init]];
   if (self) {
-   _registrar = registrar;
+    _registrar = registrar;
   }
   return self;
 }
@@ -140,7 +139,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
                            error:&authError]) {
     if (authError == nil) {
-       if (@available(macOS 10.15, *) || @available(iOS 11.0, *)) {
+      if (@available(macOS 10.15, *) || @available(iOS 11.0, *)) {
         if (context.biometryType == LABiometryTypeFaceID) {
           [biometrics addObject:[FLADAuthBiometricWrapper makeWithValue:FLADAuthBiometricFace]];
           return biometrics;
