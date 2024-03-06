@@ -1,3 +1,7 @@
+## 0.3.13
+
+* Added new native tests for more complete test coverage.
+
 ## 0.3.12+1
 
 * Fixes type of error code returned from native code in SKReceiptManager.retrieveReceiptData.
