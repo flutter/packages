@@ -592,23 +592,13 @@ void main() {
               responseCode: BillingResponse.ok,
               debugMessage: 'debug',
               externalTransactionToken: 'abc123youandme');
-      stubPlatform.addResponse(
-          name: BillingClient
-              .createAlternativeBillingOnlyReportingDetailsMethodString,
-          value: buildAlternativeBillingOnlyReportingDetailsMap(expected));
+      when(mockApi.createAlternativeBillingOnlyReportingDetailsAsync())
+          .thenAnswer((_) async =>
+              platfromAlternativeBillingOnlyReportingDetailsFromWrapper(
+                  expected));
       final AlternativeBillingOnlyReportingDetailsWrapper result =
           await billingClient.createAlternativeBillingOnlyReportingDetails();
       expect(result, equals(expected));
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: BillingClient
-            .createAlternativeBillingOnlyReportingDetailsMethodString,
-      );
-      final AlternativeBillingOnlyReportingDetailsWrapper result =
-          await billingClient.createAlternativeBillingOnlyReportingDetails();
-      expect(result.responseCode, BillingResponse.error);
     });
   });
 
@@ -635,13 +625,14 @@ Map<String, dynamic> buildBillingConfigMap(BillingConfigWrapper original) {
   };
 }
 
-Map<String, dynamic> buildAlternativeBillingOnlyReportingDetailsMap(
-    AlternativeBillingOnlyReportingDetailsWrapper original) {
-  return <String, dynamic>{
-    'responseCode':
-        const BillingResponseConverter().toJson(original.responseCode),
-    'debugMessage': original.debugMessage,
-    // from: io/flutter/plugins/inapppurchase/Translator.java
-    'externalTransactionToken': original.externalTransactionToken,
-  };
+PlatformAlternativeBillingOnlyReportingDetailsResponse
+    platfromAlternativeBillingOnlyReportingDetailsFromWrapper(
+        AlternativeBillingOnlyReportingDetailsWrapper original) {
+  return PlatformAlternativeBillingOnlyReportingDetailsResponse(
+      billingResult: PlatformBillingResult(
+        responseCode:
+            const BillingResponseConverter().toJson(original.responseCode),
+        debugMessage: original.debugMessage!,
+      ),
+      externalTransactionToken: original.externalTransactionToken);
 }

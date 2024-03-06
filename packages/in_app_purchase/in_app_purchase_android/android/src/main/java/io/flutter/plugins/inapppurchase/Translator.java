@@ -242,12 +242,11 @@ import java.util.Locale;
     return info;
   }
 
-  static Messages.PlatformBillingResult pigeonBillingResultFromBillingResult(
-      BillingResult billingResult) {
-    Messages.PlatformBillingResult.Builder builder = new Messages.PlatformBillingResult.Builder();
-    builder.setResponseCode((long) billingResult.getResponseCode());
-    builder.setDebugMessage(billingResult.getDebugMessage());
-    return builder.build();
+  static Messages.PlatformBillingResult pigeonResultFromBillingResult(BillingResult billingResult) {
+    return new Messages.PlatformBillingResult.Builder()
+        .setResponseCode((long) billingResult.getResponseCode())
+        .setDebugMessage(billingResult.getDebugMessage())
+        .build();
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
@@ -261,13 +260,13 @@ import java.util.Locale;
   /**
    * Converter from {@link BillingResult} and {@link AlternativeBillingOnlyReportingDetails} to map.
    */
-  static HashMap<String, Object> fromAlternativeBillingOnlyReportingDetails(
-      BillingResult result, AlternativeBillingOnlyReportingDetails details) {
-    HashMap<String, Object> info = fromBillingResult(result);
-    if (details != null) {
-      info.put("externalTransactionToken", details.getExternalTransactionToken());
-    }
-    return info;
+  static Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse
+      pigeonResultFromAlternativeBillingOnlyReportingDetails(
+          BillingResult result, AlternativeBillingOnlyReportingDetails details) {
+    return new Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse.Builder()
+        .setBillingResult(pigeonResultFromBillingResult(result))
+        .setExternalTransactionToken(details.getExternalTransactionToken())
+        .build();
   }
 
   /**

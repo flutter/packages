@@ -29,7 +29,7 @@ class PlatformBillingResult {
 }
 
 /// Pigeon version of ProductDetailsResponseWrapper, which contains the
-/// components of the java ProductDetailsResponseListener callback.
+/// components of the Java ProductDetailsResponseListener callback.
 class PlatformProductDetailsResponse {
   PlatformProductDetailsResponse({
     required this.billingResult,
@@ -50,6 +50,17 @@ class PlatformProductDetailsResponse {
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats all of it as non-nullable.
   final List<Object?> productDetailsJsonList;
+}
+
+/// Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
+/// contains the components of the Java
+/// AlternativeBillingOnlyReportingDetailsListener callback.
+class PlatformAlternativeBillingOnlyReportingDetailsResponse {
+  PlatformAlternativeBillingOnlyReportingDetailsResponse(
+      {required this.billingResult, required this.externalTransactionToken});
+
+  final PlatformBillingResult billingResult;
+  final String externalTransactionToken;
 }
 
 /// Pigeon version of Java BillingFlowParams.
@@ -135,4 +146,9 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#showAlternativeBillingOnlyInformationDialog().
   @async
   PlatformBillingResult showAlternativeBillingOnlyInformationDialog();
+
+  /// Wraps BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
+  @async
+  PlatformAlternativeBillingOnlyReportingDetailsResponse
+      createAlternativeBillingOnlyReportingDetailsAsync();
 }

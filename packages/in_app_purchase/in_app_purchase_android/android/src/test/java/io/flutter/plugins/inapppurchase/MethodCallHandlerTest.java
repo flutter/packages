@@ -5,14 +5,12 @@
 package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.GET_BILLING_CONFIG;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
-import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
@@ -70,6 +68,8 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugins.inapppurchase.Messages.FlutterError;
+import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
@@ -104,6 +104,11 @@ public class MethodCallHandlerTest {
   @Spy Result result;
   @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
   @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
+
+  @Spy
+  Messages.Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse>
+      platformAlternativeBillingOnlyReportingDetailsResult;
+
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
@@ -155,8 +160,8 @@ public class MethodCallHandlerTest {
   public void isReady_clientDisconnected() {
     methodChannelHandler.endConnection();
 
-    Messages.FlutterError exception =
-        assertThrows(Messages.FlutterError.class, () -> methodChannelHandler.isReady());
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception = assertThrows(FlutterError.class, () -> methodChannelHandler.isReady());
     assertEquals("UNAVAILABLE", exception.code);
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
@@ -285,8 +290,6 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     ArgumentCaptor<AlternativeBillingOnlyReportingDetailsListener> listenerCaptor =
         ArgumentCaptor.forClass(AlternativeBillingOnlyReportingDetailsListener.class);
-    MethodCall createABOReportingDetailsCall =
-        new MethodCall(CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS, null);
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(BillingResponseCode.OK)
@@ -302,21 +305,33 @@ public class MethodCallHandlerTest {
         .when(mockBillingClient)
         .createAlternativeBillingOnlyReportingDetailsAsync(listenerCaptor.capture());
 
-    methodChannelHandler.onMethodCall(createABOReportingDetailsCall, result);
+    methodChannelHandler.createAlternativeBillingOnlyReportingDetailsAsync(
+        platformAlternativeBillingOnlyReportingDetailsResult);
     listenerCaptor.getValue().onAlternativeBillingOnlyTokenResponse(billingResult, expectedDetails);
 
-    verify(result, times(1))
-        .success(fromAlternativeBillingOnlyReportingDetails(billingResult, expectedDetails));
+    verify(platformAlternativeBillingOnlyReportingDetailsResult, never()).error(any());
+    ArgumentCaptor<PlatformAlternativeBillingOnlyReportingDetailsResponse> resultCaptor =
+        ArgumentCaptor.forClass(PlatformAlternativeBillingOnlyReportingDetailsResponse.class);
+    verify(platformAlternativeBillingOnlyReportingDetailsResult, times(1))
+        .success(resultCaptor.capture());
+    assertResultsMatch(resultCaptor.getValue().getBillingResult(), billingResult);
+    assertEquals(
+        resultCaptor.getValue().getExternalTransactionToken(), expectedExternalTransactionToken);
   }
 
   @Test
   public void createAlternativeBillingOnlyReportingDetails_serviceDisconnected() {
-    MethodCall createCall = new MethodCall(CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS, null);
-    methodChannelHandler.onMethodCall(createCall, mock(Result.class));
+    methodChannelHandler.createAlternativeBillingOnlyReportingDetailsAsync(
+        platformAlternativeBillingOnlyReportingDetailsResult);
 
-    methodChannelHandler.onMethodCall(createCall, result);
-
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
+    // Assert that the async call returns an error result.
+    verify(platformAlternativeBillingOnlyReportingDetailsResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformAlternativeBillingOnlyReportingDetailsResult, times(1))
+        .error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -345,13 +360,15 @@ public class MethodCallHandlerTest {
 
   @Test
   public void isAlternativeBillingOnlyAvailable_serviceDisconnected() {
-    Messages.FlutterError exception =
-        assertThrows(
-            Messages.FlutterError.class,
-            () ->
-                methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult));
-    assertEquals("UNAVAILABLE", exception.code);
-    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
+    methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult);
+
+    // Assert that the async call returns an error result.
+    verify(platformBillingResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformBillingResult, times(1)).error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -380,14 +397,15 @@ public class MethodCallHandlerTest {
 
   @Test
   public void showAlternativeBillingOnlyInformationDialog_serviceDisconnected() {
-    Messages.FlutterError exception =
-        assertThrows(
-            Messages.FlutterError.class,
-            () ->
-                methodChannelHandler.showAlternativeBillingOnlyInformationDialog(
-                    platformBillingResult));
-    assertEquals("UNAVAILABLE", exception.code);
-    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
+    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(platformBillingResult);
+
+    // Assert that the async call returns an error result.
+    verify(platformBillingResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformBillingResult, times(1)).error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -395,15 +413,16 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     methodChannelHandler.setActivity(null);
 
-    Messages.FlutterError exception =
-        assertThrows(
-            Messages.FlutterError.class,
-            () ->
-                methodChannelHandler.showAlternativeBillingOnlyInformationDialog(
-                    platformBillingResult));
-    assertEquals(ACTIVITY_UNAVAILABLE, exception.code);
+    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(platformBillingResult);
+
+    // Assert that the async call returns an error result.
+    verify(platformBillingResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformBillingResult, times(1)).error(errorCaptor.capture());
+    assertEquals(ACTIVITY_UNAVAILABLE, errorCaptor.getValue().code);
     assertTrue(
-        Objects.requireNonNull(exception.getMessage()).contains("Not attempting to show dialog"));
+        Objects.requireNonNull(errorCaptor.getValue().getMessage())
+            .contains("Not attempting to show dialog"));
   }
 
   @Test
@@ -475,15 +494,15 @@ public class MethodCallHandlerTest {
     final List<PlatformProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
-    // Assert that we throw an error.
-    Messages.FlutterError exception =
-        assertThrows(
-            Messages.FlutterError.class,
-            () ->
-                methodChannelHandler.queryProductDetailsAsync(
-                    productList, platformProductDetailsResult));
-    assertEquals("UNAVAILABLE", exception.code);
-    assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
+    methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
+
+    // Assert that the async call returns an error result.
+    verify(platformProductDetailsResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformProductDetailsResult, times(1)).error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
   }
 
   // Test launchBillingFlow not crash if `accountId` is `null`
@@ -561,14 +580,13 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
-    // Verify the error response.
-    Messages.FlutterError exception =
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception =
         assertThrows(
-            Messages.FlutterError.class,
+            FlutterError.class,
             () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
     assertEquals("ACTIVITY_UNAVAILABLE", exception.code);
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains("foreground"));
-    verify(result, never()).success(any());
   }
 
   @Test
@@ -700,10 +718,10 @@ public class MethodCallHandlerTest {
             .build();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
 
-    // Assert that we sent an error back.
-    Messages.FlutterError exception =
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception =
         assertThrows(
-            Messages.FlutterError.class,
+            FlutterError.class,
             () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
     assertEquals("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT", exception.code);
     assertTrue(
@@ -762,10 +780,10 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
-    // Assert that we sent an error back.
-    Messages.FlutterError exception =
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception =
         assertThrows(
-            Messages.FlutterError.class,
+            FlutterError.class,
             () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
     assertEquals("UNAVAILABLE", exception.code);
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
@@ -783,10 +801,10 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
-    // Assert that we sent an error back.
-    Messages.FlutterError exception =
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception =
         assertThrows(
-            Messages.FlutterError.class,
+            FlutterError.class,
             () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
     assertEquals("NOT_FOUND", exception.code);
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains(productId));
@@ -807,10 +825,10 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
-    // Assert that we sent an error back.
-    Messages.FlutterError exception =
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception =
         assertThrows(
-            Messages.FlutterError.class,
+            FlutterError.class,
             () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
     assertEquals("IN_APP_PURCHASE_INVALID_OLD_PRODUCT", exception.code);
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains(oldProductId));

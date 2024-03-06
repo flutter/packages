@@ -333,22 +333,12 @@ class BillingClient {
         await _hostApi.showAlternativeBillingOnlyInformationDialog());
   }
 
-  /// createAlternativeBillingOnlyReportingDetails method channel string identifier.
-  //
-  // Must match the value of CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String createAlternativeBillingOnlyReportingDetailsMethodString =
-      'BillingClient#createAlternativeBillingOnlyReportingDetails()';
-
   /// The details used to report transactions made via alternative billing
   /// without user choice to use Google Play billing.
   Future<AlternativeBillingOnlyReportingDetailsWrapper>
       createAlternativeBillingOnlyReportingDetails() async {
-    return AlternativeBillingOnlyReportingDetailsWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                createAlternativeBillingOnlyReportingDetailsMethodString)) ??
-            <String, dynamic>{});
+    return alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
+        await _hostApi.createAlternativeBillingOnlyReportingDetailsAsync());
   }
 
   /// The method call handler for [channel].

@@ -43,6 +43,18 @@ class _FakePlatformProductDetailsResponse_1 extends _i1.SmartFake
         );
 }
 
+class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2
+    extends _i1.SmartFake
+    implements _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse {
+  _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [InAppPurchaseApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -269,4 +281,35 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
               ),
             )),
           ) as _i3.Future<_i2.PlatformBillingResult>);
+
+  @override
+  _i3.Future<_i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>
+      createAlternativeBillingOnlyReportingDetailsAsync() =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #createAlternativeBillingOnlyReportingDetailsAsync,
+              [],
+            ),
+            returnValue: _i3.Future<
+                    _i2
+                    .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
+                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2(
+              this,
+              Invocation.method(
+                #createAlternativeBillingOnlyReportingDetailsAsync,
+                [],
+              ),
+            )),
+            returnValueForMissingStub: _i3.Future<
+                    _i2
+                    .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
+                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_2(
+              this,
+              Invocation.method(
+                #createAlternativeBillingOnlyReportingDetailsAsync,
+                [],
+              ),
+            )),
+          ) as _i3.Future<
+              _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>);
 }

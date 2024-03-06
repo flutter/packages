@@ -36,6 +36,17 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
   );
 }
 
+AlternativeBillingOnlyReportingDetailsWrapper
+    alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
+        PlatformAlternativeBillingOnlyReportingDetailsResponse response) {
+  return AlternativeBillingOnlyReportingDetailsWrapper(
+    responseCode: const BillingResponseConverter()
+        .fromJson(response.billingResult.responseCode),
+    debugMessage: response.billingResult.debugMessage,
+    externalTransactionToken: response.externalTransactionToken,
+  );
+}
+
 /// Creates a Pigeon [PlatformProduct] from a [ProductWrapper].
 PlatformProduct platformProductFromWrapper(ProductWrapper product) {
   return PlatformProduct(

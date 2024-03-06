@@ -256,7 +256,7 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of ProductDetailsResponseWrapper, which contains the components of the java
+   * Pigeon version of ProductDetailsResponseWrapper, which contains the components of the Java
    * ProductDetailsResponseListener callback.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -338,6 +338,92 @@ public class Messages {
               : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
       Object productDetailsJsonList = list.get(1);
       pigeonResult.setProductDetailsJsonList((List<Object>) productDetailsJsonList);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which contains the components
+   * of the Java AlternativeBillingOnlyReportingDetailsListener callback.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformAlternativeBillingOnlyReportingDetailsResponse {
+    private @NonNull PlatformBillingResult billingResult;
+
+    public @NonNull PlatformBillingResult getBillingResult() {
+      return billingResult;
+    }
+
+    public void setBillingResult(@NonNull PlatformBillingResult setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"billingResult\" is null.");
+      }
+      this.billingResult = setterArg;
+    }
+
+    private @NonNull String externalTransactionToken;
+
+    public @NonNull String getExternalTransactionToken() {
+      return externalTransactionToken;
+    }
+
+    public void setExternalTransactionToken(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"externalTransactionToken\" is null.");
+      }
+      this.externalTransactionToken = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformAlternativeBillingOnlyReportingDetailsResponse() {}
+
+    public static final class Builder {
+
+      private @Nullable PlatformBillingResult billingResult;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBillingResult(@NonNull PlatformBillingResult setterArg) {
+        this.billingResult = setterArg;
+        return this;
+      }
+
+      private @Nullable String externalTransactionToken;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setExternalTransactionToken(@NonNull String setterArg) {
+        this.externalTransactionToken = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse build() {
+        PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonReturn =
+            new PlatformAlternativeBillingOnlyReportingDetailsResponse();
+        pigeonReturn.setBillingResult(billingResult);
+        pigeonReturn.setExternalTransactionToken(externalTransactionToken);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add((billingResult == null) ? null : billingResult.toList());
+      toListResult.add(externalTransactionToken);
+      return toListResult;
+    }
+
+    static @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse fromList(
+        @NonNull ArrayList<Object> list) {
+      PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonResult =
+          new PlatformAlternativeBillingOnlyReportingDetailsResponse();
+      Object billingResult = list.get(0);
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      Object externalTransactionToken = list.get(1);
+      pigeonResult.setExternalTransactionToken((String) externalTransactionToken);
       return pigeonResult;
     }
   }
@@ -570,12 +656,15 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList(
+              (ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
+          return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -584,17 +673,21 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformBillingFlowParams) {
+      if (value instanceof PlatformAlternativeBillingOnlyReportingDetailsResponse) {
         stream.write(128);
+        writeValue(
+            stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
+      } else if (value instanceof PlatformBillingFlowParams) {
+        stream.write(129);
         writeValue(stream, ((PlatformBillingFlowParams) value).toList());
       } else if (value instanceof PlatformBillingResult) {
-        stream.write(129);
+        stream.write(130);
         writeValue(stream, ((PlatformBillingResult) value).toList());
       } else if (value instanceof PlatformProduct) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((PlatformProduct) value).toList());
       } else if (value instanceof PlatformProductDetailsResponse) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -639,6 +732,12 @@ public class Messages {
     void isAlternativeBillingOnlyAvailableAsync(@NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
     void showAlternativeBillingOnlyInformationDialog(@NonNull Result<PlatformBillingResult> result);
+    /**
+     * Wraps
+     * BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
+     */
+    void createAlternativeBillingOnlyReportingDetailsAsync(
+        @NonNull Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> result);
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -926,6 +1025,36 @@ public class Messages {
                     };
 
                 api.showAlternativeBillingOnlyInformationDialog(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> resultCallback =
+                    new Result<PlatformAlternativeBillingOnlyReportingDetailsResponse>() {
+                      public void success(
+                          PlatformAlternativeBillingOnlyReportingDetailsResponse result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.createAlternativeBillingOnlyReportingDetailsAsync(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
