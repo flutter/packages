@@ -630,11 +630,34 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   Future<void> _injectConsoleOverride() {
+    // Using the replacer parameter of JSON.stringify() to solve the error
+    // TypeError: JSON.stringify cannot serialize cyclic structures.
+    // See https://github.com/flutter/flutter/issues/144535.
+    //
+    // The getCircularReplacer() taken from
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value.
     const WKUserScript overrideScript = WKUserScript(
       '''
+function getCircularReplacer() {
+  const ancestors = [];
+  return function (key, value) {
+    if (typeof value !== "object" || value === null) {
+      return value;
+    }
+    while (ancestors.length > 0 && ancestors.at(-1) !== this) {
+      ancestors.pop();
+    }
+    if (ancestors.includes(value)) {
+      return "[Circular]";
+    }
+    ancestors.push(value);
+    return value;
+  };
+}
+
 function log(type, args) {
   var message =  Object.values(args)
-      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, getCircularReplacer()) : v.toString())
       .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
       .join(", ");
 

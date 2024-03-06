@@ -1447,6 +1447,51 @@ Future<void> main() async {
       await expectLater(
           debugMessageReceived.future, completion('debug:Debug message'));
     });
+
+    testWidgets('can receive console log messages with cyclic object value',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+            <script type="text/javascript">
+            function onLoad() {
+              const circularReference = { otherData: 123 };
+              circularReference.myself = circularReference;
+              console.log(circularReference);
+            }
+          </script>
+          </head>
+          <body onload="onLoad();">
+          </html>
+         ''';
+
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(debugMessageReceived.future,
+          completion('log:{"otherData":123,"myself":"[Circular]"}'));
+    });
   });
 }
 
