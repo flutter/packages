@@ -504,7 +504,7 @@ void main() {
     expect((value.widgets.first.root as ConstructorCall).arguments, isEmpty);
   });
 
-  testWidgets('Library encoder: widget builders',  (WidgetTester tester) async {
+  testWidgets('Library encoder: widget builders work',  (WidgetTester tester) async {
     const String source = '''
       widget Foo = Builder(
         builder: (scope) => Text(text: scope.text),
@@ -515,5 +515,29 @@ void main() {
     final RemoteWidgetLibrary decoded = decodeLibraryBlob(encoded);
 
     expect(library.toString(), decoded.toString());
+  });
+
+  testWidgets('Library encoder: widget builders throws',  (WidgetTester tester) async {
+    const RemoteWidgetLibrary remoteWidgetLibrary = RemoteWidgetLibrary(
+      <Import>[], 
+      <WidgetDeclaration>[
+        WidgetDeclaration(
+          'a', 
+          <String, Object?>{},
+          ConstructorCall(
+            'c', 
+            <String, Object?>{
+              'builder': WidgetBuilderDeclaration('scope', ArgsReference(<Object>[])),
+            },
+          ),
+        ),
+      ],
+    );
+    try {
+      decodeLibraryBlob(encodeLibraryBlob(remoteWidgetLibrary));
+      fail('did not throw exception');
+    } on FormatException catch (e) {
+      expect('$e', contains('Unrecognized data type 0x0A while decoding widget builder blob.'));
+    }
   });
 }
