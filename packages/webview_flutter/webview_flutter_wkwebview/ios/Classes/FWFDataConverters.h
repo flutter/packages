@@ -123,7 +123,7 @@ extern WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
 /**
  * Converts an FWFWKNavigationResponsePolicyEnumData to a WKNavigationResponsePolicy.
  *
- * @param data The data object containing information to create a WKNavigationResponsePolicy.
+ * @param policy The data object containing information to create a WKNavigationResponsePolicy.
  *
  * @return A WKNavigationResponsePolicy or -1 if data could not be converted.
  */
