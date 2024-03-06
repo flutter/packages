@@ -1,3 +1,6 @@
+## 1.0.25
+* Adds support for wildget builders.
+
 ## 1.0.24
 
 * Adds `InkResponse` material widget.
