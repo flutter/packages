@@ -6,16 +6,12 @@ import 'dart:js_interop';
 import 'package:web/web.dart' as web;
 
 /// Adds a "disablePictureInPicture" setter to [web.HTMLVideoElement]s.
-extension DisablePictureSetterInPictureInVideoElement on web.HTMLVideoElement {
+extension NonStandardSettersOnVideoElement on web.HTMLVideoElement {
   external set disablePictureInPicture(JSBoolean disabled);
 }
 
-/// Adds a "disableRemotePlayback" setter to [web.HTMLMediaElement]s.
-extension DisableRemotePlaybackSetterInMediaElement on web.HTMLMediaElement {
+/// Adds a "disableRemotePlayback" and "controlsList" setters to [web.HTMLMediaElement]s.
+extension NonStandardSettersOnMediaElement on web.HTMLMediaElement {
   external set disableRemotePlayback(JSBoolean disabled);
-}
-
-/// Adds a "controlsList" setter to [web.HTMLMediaElement]s.
-extension ControlsListSetterInMediaElement on web.HTMLMediaElement {
   external set controlsList(JSString? controlsList);
 }

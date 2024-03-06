@@ -8,18 +8,14 @@ library video_player_web_integration_test_pkg_web_tweaks;
 import 'dart:js_interop';
 import 'package:web/web.dart' as web;
 
-/// Adds a `controlsList` getter to `HTMLVideoElement`s.
-extension ControlsListInVideoElement on web.HTMLVideoElement {
+/// Adds a `controlsList` and `disablePictureInPicture` getters.
+extension NonStandardGettersOnVideoElement on web.HTMLVideoElement {
   external web.DOMTokenList? get controlsList;
-}
-
-/// Adds a `disablePictureInPicture` getter to `HTMLVideoElement`s.
-extension DisablePictureInPictureInVideoElement on web.HTMLVideoElement {
   external JSBoolean get disablePictureInPicture;
 }
 
-/// Adds a `disableRemotePlayback` getter to `HTMLMediaElement`s.
-extension DisableRemotePlaybackInMediaElement on web.HTMLMediaElement {
+/// Adds a `disableRemotePlayback` getter.
+extension NonStandardGettersOnMediaElement on web.HTMLMediaElement {
   external JSBoolean get disableRemotePlayback;
 }
 
