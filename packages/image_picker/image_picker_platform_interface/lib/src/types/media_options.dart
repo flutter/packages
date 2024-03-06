@@ -17,13 +17,14 @@ class MediaOptions {
   });
 
   /// Construct a new MediaOptions instance.
-  /// Throws if limit is not valid.
+  ///
+  /// Throws if limit is lower than 2.
   MediaOptions.createAndValidate({
     this.imageOptions = const ImageOptions(),
     required this.allowMultiple,
     this.limit,
   }) {
-    _validateOptions(limit: limit);
+    _validate(limit: limit);
   }
 
   /// Options that will apply to images upon selection.
@@ -32,11 +33,15 @@ class MediaOptions {
   /// Whether to allow for selecting multiple media.
   final bool allowMultiple;
 
-  /// The maximum number of images to select. Default null value means no limit.
+  /// The maximum number of images to select.
+  ///
+  /// Default null value means no limit.
   final int? limit;
 
-  /// Validates that all values are within required ranges. Throws if not.
-  static void _validateOptions({int? limit}) {
+  /// Validates that all values are within required ranges.
+  ///
+  /// Throws if limit is lower than 2.
+  static void _validate({int? limit}) {
     if (limit != null && limit < 2) {
       throw ArgumentError.value(limit, 'limit', 'cannot be lower then 2');
     }

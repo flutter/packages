@@ -13,22 +13,27 @@ class MultiImagePickerOptions {
   });
 
   /// Creates an instance with the given [imageOptions] and [limit].
-  /// Throws if limit is not valid.
+  ///
+  /// Throws if limit is lower than 2.
   MultiImagePickerOptions.createAndValidate({
     this.imageOptions = const ImageOptions(),
     this.limit,
   }) {
-    _validateOptions(limit: limit);
+    _validate(limit: limit);
   }
 
   /// The image-specific options for picking.
   final ImageOptions imageOptions;
 
-  /// The maximum number of images to select. Default null value means no limit.
+  /// The maximum number of images to select.
+  ///
+  /// Default null value means no limit.
   final int? limit;
 
-  /// Validates that all values are within required ranges. Throws if not.
-  static void _validateOptions({int? limit}) {
+  /// Validates that all values are within required ranges.
+  ///
+  /// Throws if limit is lower than 2.
+  static void _validate({int? limit}) {
     if (limit != null && limit < 2) {
       throw ArgumentError.value(limit, 'limit', 'cannot be lower then 2');
     }
