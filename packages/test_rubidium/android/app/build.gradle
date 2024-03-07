@@ -56,3 +56,10 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation "androidx.privacysandbox.ui:ui-core:1.0.0-alpha07"
+    implementation "androidx.privacysandbox.ui:ui-provider:1.0.0-alpha07"
+    implementation 'androidx.privacysandbox.sdkruntime:sdkruntime-client:+'
+    implementation 'androidx.privacysandbox.ui:ui-client:1.0.0-alpha07'
+}
