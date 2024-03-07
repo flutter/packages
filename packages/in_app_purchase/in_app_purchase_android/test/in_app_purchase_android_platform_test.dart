@@ -9,7 +9,6 @@ import 'package:flutter/widgets.dart' as widgets;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
-import 'package:in_app_purchase_android/src/channel.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:mockito/mockito.dart';
@@ -17,22 +16,15 @@ import 'package:mockito/mockito.dart';
 import 'billing_client_wrappers/billing_client_wrapper_test.mocks.dart';
 import 'billing_client_wrappers/product_details_wrapper_test.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
-import 'stub_in_app_purchase_platform.dart';
 import 'test_conversion_utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatform iapAndroidPlatform;
   const String onBillingServiceDisconnectedCallback =
       'BillingClientStateListener#onBillingServiceDisconnected()';
-
-  setUpAll(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler);
-  });
 
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
@@ -45,10 +37,6 @@ void main() {
             billingClientFactory: (PurchasesUpdatedListener listener) =>
                 BillingClient(listener, api: mockApi)));
     InAppPurchasePlatform.instance = iapAndroidPlatform;
-  });
-
-  tearDown(() {
-    stubPlatform.reset();
   });
 
   group('connection management', () {

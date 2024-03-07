@@ -8,30 +8,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
-import 'package:in_app_purchase_android/src/channel.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:mockito/mockito.dart';
 
 import 'billing_client_wrappers/billing_client_wrapper_test.dart';
 import 'billing_client_wrappers/billing_client_wrapper_test.mocks.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
-import 'stub_in_app_purchase_platform.dart';
 import 'test_conversion_utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatformAddition iapAndroidPlatformAddition;
   const String onBillingServiceDisconnectedCallback =
       'BillingClientStateListener#onBillingServiceDisconnected()';
   late BillingClientManager manager;
-
-  setUpAll(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler);
-  });
 
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
@@ -79,7 +71,6 @@ void main() {
 
   group('setBillingChoice', () {
     test('setAlternativeBillingOnlyState', () async {
-      stubPlatform.reset();
       clearInteractions(mockApi);
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
@@ -98,7 +89,6 @@ void main() {
     });
 
     test('setPlayBillingState', () async {
-      stubPlatform.reset();
       clearInteractions(mockApi);
       await iapAndroidPlatformAddition
           .setBillingChoice(BillingChoiceMode.playBillingOnly);

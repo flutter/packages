@@ -5,12 +5,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
-import 'package:in_app_purchase_android/src/channel.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import '../stub_in_app_purchase_platform.dart';
 import '../test_conversion_utils.dart';
 import 'billing_client_wrapper_test.mocks.dart';
 import 'product_details_wrapper_test.dart';
@@ -34,20 +32,14 @@ const PurchaseWrapper dummyOldPurchase = PurchaseWrapper(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final StubInAppPurchasePlatform stubPlatform = StubInAppPurchasePlatform();
   late MockInAppPurchaseApi mockApi;
   late BillingClient billingClient;
-
-  setUpAll(() => TestDefaultBinaryMessengerBinding
-      .instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler));
 
   setUp(() {
     mockApi = MockInAppPurchaseApi();
     when(mockApi.startConnection(any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     billingClient = BillingClient((PurchasesResultWrapper _) {}, api: mockApi);
-    stubPlatform.reset();
   });
 
   group('isReady', () {
