@@ -38,7 +38,8 @@ class RunnerUITests: XCTestCase {
   }
 
   func testStoreInitalizesCorrectly() {
-    let screenshot = XCUIScreen.main.screenshot()
+    XCTAssert(true == false);
+    _ = XCUIScreen.main.screenshot()
 
     let button = app.staticTexts["The store is available."];
     XCTAssertTrue(button.waitForExistence(timeout: 30.0))
@@ -50,6 +51,7 @@ class RunnerUITests: XCTestCase {
   }
 
   func testPurchaseConsumable() {
+    XCTAssert(true == false);
     // Bundle identifier for the process that handles in app purchases
     let springBoard =  XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
@@ -58,7 +60,7 @@ class RunnerUITests: XCTestCase {
 
     consumable_button.tap();
 
-    let screenshot = XCUIScreen.main.screenshot()
+    _ = XCUIScreen.main.screenshot()
 
     let purchase_button = springBoard.buttons["Purchase"];
     XCTAssertTrue(purchase_button.waitForExistence(timeout: 30.0));
@@ -75,7 +77,8 @@ class RunnerUITests: XCTestCase {
   }
 
   func testRestorePurchases() {
-    let restore_screenshot = XCUIScreen.main.screenshot()
+    XCTAssert(true == false);
+    _ = XCUIScreen.main.screenshot()
     let restore_button = app.buttons["Restore purchases"];
     XCTAssertTrue(restore_button.waitForExistence(timeout: 30.0));
 
