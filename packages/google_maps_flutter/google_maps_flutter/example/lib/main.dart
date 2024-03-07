@@ -9,6 +9,7 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import 'animate_camera.dart';
+import 'clustering.dart';
 import 'heatmap.dart';
 import 'lite_mode.dart';
 import 'map_click.dart';
@@ -43,6 +44,7 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const SnapshotPage(),
   const LiteModePage(),
   const TileOverlayPage(),
+  const ClusteringPage(),
   const MapIdPage(),
   const HeatmapPage(),
 ];
