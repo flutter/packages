@@ -43,6 +43,7 @@ class RunnerUITests: XCTestCase {
     let button = app.staticTexts["The store is available."];
     XCTAssertTrue(button.waitForExistence(timeout: 30.0))
 
+    print(app.debugDescription);
     for price in prices {
       let button = app.buttons[price];
       XCTAssertTrue(button.waitForExistence(timeout: 30.0))
