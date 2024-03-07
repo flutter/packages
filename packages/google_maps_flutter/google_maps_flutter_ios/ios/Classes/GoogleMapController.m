@@ -294,7 +294,7 @@
     if ([markerIdsToRemove isKindOfClass:[NSArray class]]) {
       [self.markersController removeMarkersWithIdentifiers:markerIdsToRemove];
     }
-    [self.clusterManagersController clusterAll];
+    [self.clusterManagersController invokeClusteringForEachClusterManager];
     result(nil);
   } else if ([call.method isEqualToString:@"markers#showInfoWindow"]) {
     id markerId = call.arguments[@"markerId"];
@@ -336,7 +336,7 @@
     result(nil);
   } else if ([call.method isEqualToString:@"clusterManager#getClusters"]) {
     id clusterManagerId = call.arguments[@"clusterManagerId"];
-    [self.clusterManagersController clustersWithIdentifier:clusterManagerId result:result];
+    [self.clusterManagersController serializeClustersWithIdentifier:clusterManagerId result:result];
   } else if ([call.method isEqualToString:@"polygons#update"]) {
     id polygonsToAdd = call.arguments[@"polygonsToAdd"];
     if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
@@ -575,7 +575,7 @@
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker {
-  if ([marker.userData conformsToProtocol:@protocol(GMUCluster)]) {
+  if ([marker.userData isKindOfClass:[GMUStaticCluster class]]) {
     GMUStaticCluster *cluster = marker.userData;
     [self.clusterManagersController didTapOnCluster:cluster];
     // When NO is returned, the map will focus on the cluster.
