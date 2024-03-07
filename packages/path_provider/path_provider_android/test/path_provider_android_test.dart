@@ -10,12 +10,10 @@ import 'messages_test.g.dart';
 
 const String kTemporaryPath = 'temporaryPath';
 const String kApplicationSupportPath = 'applicationSupportPath';
-const String kLibraryPath = 'libraryPath';
 const String kApplicationDocumentsPath = 'applicationDocumentsPath';
 const String kApplicationCachePath = 'applicationCachePath';
 const String kExternalCachePaths = 'externalCachePaths';
 const String kExternalStoragePaths = 'externalStoragePaths';
-const String kDownloadsPath = 'downloadsPath';
 
 class _Api implements TestPathProviderApi {
   _Api({this.returnsExternalStoragePaths = true});

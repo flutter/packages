@@ -1,7 +1,12 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Adds support for picture-in-picture.
+
+## 6.2.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 6.2.1
 

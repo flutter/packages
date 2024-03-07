@@ -7,8 +7,6 @@ import 'package:quick_actions_ios/messages.g.dart';
 import 'package:quick_actions_ios/quick_actions_ios.dart';
 import 'package:quick_actions_platform_interface/quick_actions_platform_interface.dart';
 
-const String LAUNCH_ACTION_STRING = 'aString';
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

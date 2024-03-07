@@ -410,6 +410,18 @@ class WebViewFlutterApiImpl implements WebViewFlutterApi {
   void create(int identifier) {
     instanceManager.addHostCreatedInstance(WebView.detached(), identifier);
   }
+
+  @override
+  void onScrollChanged(
+      int webViewInstanceId, int left, int top, int oldLeft, int oldTop) {
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+    );
+    webViewInstance!.onScrollChanged?.call(left, top, oldLeft, oldTop);
+  }
 }
 
 /// Host api implementation for [WebSettings].
@@ -708,7 +720,6 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    // ignore: deprecated_member_use_from_same_package
     if (instance!.onReceivedError != null) {
       instance.onReceivedError!(
         webViewInstance!,
@@ -948,6 +959,33 @@ class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
       value,
     );
   }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsAlertFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsAlert(
+        instanceManager.getIdentifier(instance)!, value);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsConfirmFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsConfirm(
+        instanceManager.getIdentifier(instance)!, value);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsPromptFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsPrompt(
+        instanceManager.getIdentifier(instance)!, value);
+  }
 }
 
 /// Flutter api implementation for [DownloadListener].
@@ -1079,6 +1117,31 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     final WebChromeClient instance =
         instanceManager.getInstanceWithWeakReference(instanceId)!;
     instance.onConsoleMessage?.call(instance, message);
+  }
+
+  @override
+  Future<void> onJsAlert(int instanceId, String url, String message) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+
+    return instance.onJsAlert!(url, message);
+  }
+
+  @override
+  Future<bool> onJsConfirm(int instanceId, String url, String message) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+
+    return instance.onJsConfirm!(url, message);
+  }
+
+  @override
+  Future<String> onJsPrompt(
+      int instanceId, String url, String message, String defaultValue) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+
+    return instance.onJsPrompt!(url, message, defaultValue);
   }
 }
 

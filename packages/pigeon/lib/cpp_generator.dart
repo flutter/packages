@@ -191,14 +191,21 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     _writeFlutterError(indent);
     if (hasHostApi) {
-      _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+      _writeErrorOr(
+        indent,
+        friends: root.apis
+            .where((Api api) => api is AstFlutterApi || api is AstHostApi)
+            .map((Api api) => api.name),
+      );
     }
     if (hasFlutterApi) {
       // Nothing yet.
@@ -291,7 +298,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             indent.writeln('friend class ${friend.name};');
           }
         }
-        for (final Api api in root.apis) {
+        for (final Api api in root.apis
+            .where((Api api) => api is AstFlutterApi || api is AstHostApi)) {
           // TODO(gaaclarke): Find a way to be more precise with our
           // friendships.
           indent.writeln('friend class ${api.name};');
@@ -317,10 +325,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -370,10 +377,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -823,10 +829,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -866,11 +871,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           scope: api.name,
           returnType: _voidType,
           parameters: parameters, body: () {
-        const String channel = 'channel';
         indent.writeln(
             'const std::string channel_name = "${makeChannelName(api, func, dartPackageName)}";');
-        indent.writeln(
-            'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger_, '
+        indent.writeln('BasicMessageChannel<> channel(binary_messenger_, '
             'channel_name, &GetCodec());');
 
         // Convert arguments to EncodableValue versions.
@@ -889,7 +892,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           });
         }
 
-        indent.write('$channel->Send($argumentListVariableName, '
+        indent.write('channel.Send($argumentListVariableName, '
             // ignore: missing_whitespace_between_adjacent_strings
             '[channel_name, on_success = std::move(on_success), on_error = std::move(on_error)]'
             '(const uint8_t* reply, size_t reply_size) ');
@@ -937,10 +940,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -968,12 +970,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         final String channelName =
             makeChannelName(api, method, dartPackageName);
         indent.writeScoped('{', '}', () {
-          indent.writeln(
-              'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, '
+          indent.writeln('BasicMessageChannel<> channel(binary_messenger, '
               '"$channelName", &GetCodec());');
           indent.writeScoped('if (api != nullptr) {', '} else {', () {
             indent.write(
-                'channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
+                'channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
             indent.addScoped('{', '});', () {
               indent.writeScoped('try {', '}', () {
                 final List<String> methodArgument = <String>[];
@@ -1050,7 +1051,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             });
           });
           indent.addScoped(null, '}', () {
-            indent.writeln('channel->SetMessageHandler(nullptr);');
+            indent.writeln('channel.SetMessageHandler(nullptr);');
           });
         });
       }
@@ -1791,13 +1792,10 @@ void _writeAccessBlock(
   switch (access) {
     case _ClassAccess.public:
       accessLabel = 'public';
-      break;
     case _ClassAccess.protected:
       accessLabel = 'protected';
-      break;
     case _ClassAccess.private:
       accessLabel = 'private';
-      break;
   }
   indent.addScoped(' $accessLabel:', '', body);
 }

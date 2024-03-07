@@ -42,15 +42,11 @@ class VideoPlayerValue {
   });
 
   /// Returns an instance for a video that hasn't been loaded.
-  const VideoPlayerValue.uninitialized()
-      : this(duration: Duration.zero, isInitialized: false);
+  const VideoPlayerValue.uninitialized() : this(duration: Duration.zero, isInitialized: false);
 
   /// Returns an instance with the given [errorDescription].
   const VideoPlayerValue.erroneous(String errorDescription)
-      : this(
-            duration: Duration.zero,
-            isInitialized: false,
-            errorDescription: errorDescription);
+      : this(duration: Duration.zero, isInitialized: false, errorDescription: errorDescription);
 
   /// The total duration of the video.
   ///
@@ -222,29 +218,24 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           asset: dataSource,
           package: package,
         );
-        break;
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
           uri: dataSource,
         );
-        break;
       case DataSourceType.file:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
         );
-        break;
       case DataSourceType.contentUri:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.contentUri,
           uri: dataSource,
         );
-        break;
     }
 
-    _textureId = (await _platform.create(dataSourceDescription)) ??
-        kUninitializedTextureId;
+    _textureId = (await _platform.create(dataSourceDescription)) ?? kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
@@ -260,22 +251,16 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           _platform.setVolume(_textureId, 1.0);
           _platform.setLooping(_textureId, true);
           _applyPlayPause();
-          break;
         case VideoEventType.completed:
           pause().then((void pauseResult) => seekTo(value.duration));
-          break;
         case VideoEventType.bufferingUpdate:
           value = value.copyWith(buffered: event.buffered);
-          break;
         case VideoEventType.bufferingStart:
           value = value.copyWith(isBuffering: true);
-          break;
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
-          break;
         case VideoEventType.isPlayingStateUpdate:
           value = value.copyWith(isPlaying: event.isPlaying);
-          break;
         case VideoEventType.startedPictureInPicture:
         case VideoEventType.stoppedPictureInPicture:
         case VideoEventType.unknown:
@@ -292,9 +277,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       }
     }
 
-    _eventSubscription = _platform
-        .videoEventsFor(_textureId)
-        .listen(eventListener, onError: errorListener);
+    _eventSubscription = _platform.videoEventsFor(_textureId).listen(eventListener, onError: errorListener);
     return initializingCompleter.future;
   }
 
@@ -432,9 +415,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return _textureId == MiniController.kUninitializedTextureId
-        ? Container()
-        : _platform.buildView(_textureId);
+    return _textureId == MiniController.kUninitializedTextureId ? Container() : _platform.buildView(_textureId);
   }
 }
 

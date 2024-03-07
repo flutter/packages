@@ -78,9 +78,7 @@ void main() {
       for (final String result in directories!) {
         _verifySampleFile(result, '$type');
       }
-    },
-        // TODO(camsim99): Fix https://github.com/flutter/flutter/issues/139808.
-        skip: true);
+    });
   }
 }
 

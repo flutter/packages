@@ -72,7 +72,7 @@
 }
 @end
 
-/** Non-test implementation of the diplay link factory. */
+/// Non-test implementation of the diplay link factory.
 @interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
 @end
 
@@ -116,6 +116,10 @@
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+
+// Tells the player to run its frame updater until it receives a frame, regardless of the
+// play/pause state.
+- (void)expectFrame;
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -496,7 +500,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [_player pause];
   }
-  _displayLink.running = _isPlaying;
+  // If the texture is still waiting for an expected frame, the display link needs to keep
+  // running until it arrives regardless of the play/pause state.
+  _displayLink.running = _isPlaying || self.waitingForFrame;
 }
 
 - (void)setupEventSinkIfReadyToPlay {
@@ -589,14 +595,18 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
           // must use the display link rather than just informing the engine that a new frame is
           // available because the seek completing doesn't guarantee that the pixel buffer is
           // already available.
-          self.waitingForFrame = YES;
-          self.displayLink.running = YES;
+          [self expectFrame];
         }
 
         if (completionHandler) {
           completionHandler(completed);
         }
       }];
+}
+
+- (void)expectFrame {
+  self.waitingForFrame = YES;
+  self.displayLink.running = YES;
 }
 
 - (void)setIsLooping:(BOOL)isLooping {
@@ -790,6 +800,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [eventChannel setStreamHandler:player];
   player.eventChannel = eventChannel;
   self.playersByTextureId[@(textureId)] = player;
+
+  // Ensure that the first frame is drawn once available, even if the video isn't played, since
+  // the engine is now expecting the texture to be populated.
+  [player expectFrame];
+
   FVPTextureMessage *result = [FVPTextureMessage makeWithTextureId:textureId];
   return result;
 }

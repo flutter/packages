@@ -27,7 +27,7 @@ class PickedFile extends PickedFileBase {
 
   Future<Uint8List> get _bytes async {
     if (_initBytes != null) {
-      return Future<Uint8List>.value(UnmodifiableUint8ListView(_initBytes!));
+      return _initBytes.asUnmodifiableView();
     }
     return http.readBytes(Uri.parse(path));
   }
