@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds clustering support.
+
 ## 2.6.1
 
 * Updates the minimum version of the iOS implementation package to a version
