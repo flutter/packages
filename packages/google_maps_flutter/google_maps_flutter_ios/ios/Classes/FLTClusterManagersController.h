@@ -36,12 +36,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// @return GMUClusterManager if found otherwise nil.
 - (GMUClusterManager *)clusterManagerWithIdentifier:(NSString *)identifier;
 
-/// Converts all clusters from the specific ClusterManager to result object response
-/// and updates that to the provided result object.
+/// Converts clusters managed by the specified ClusterManager to
+/// serializable array of clusters.
 ///
-/// @param identifier identifier of the ClusterManager.
-/// @param result FlutterResult object to be updated with cluster data.
-- (void)clustersWithIdentifier:(NSString *)identifier result:(FlutterResult)result;
+/// This method fetches and serializes clusters at the current zoom
+/// level from the ClusterManager identified by the given identifier.
+/// If the specified ClusterManager identifier does not exist, an error
+/// is returned through the FlutterResult object.
+///
+/// @param identifier The identifier of the ClusterManager to serialize.
+/// @param result The FlutterResult object to be updated with cluster data.
+- (void)serializeClustersWithIdentifier:(NSString *)identifier result:(FlutterResult)result;
 
 /// Called when cluster marker is tapped on the map.
 ///
@@ -49,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didTapOnCluster:(GMUStaticCluster *)cluster;
 
 /// Calls cluster method of all ClusterManagers.
-- (void)clusterAll;
+- (void)invokeClusteringForEachClusterManager;
 @end
 
 NS_ASSUME_NONNULL_END

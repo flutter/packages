@@ -301,9 +301,9 @@
                                                    mapView:self.mapView];
   [controller interpretMarkerOptions:markerToAdd registrar:self.registrar];
   if (clusterManagerIdentifier && [clusterManagerIdentifier isKindOfClass:[NSString class]]) {
-    id clusterManager =
+    GMUClusterManager *clusterManager =
         [_clusterManagersController clusterManagerWithIdentifier:clusterManagerIdentifier];
-    if (marker && [clusterManager isKindOfClass:[GMUClusterManager class]]) {
+    if (marker && clusterManager) {
       [clusterManager addItem:(id<GMUClusterItem>)marker];
     }
   }
@@ -349,9 +349,9 @@
   }
   id clusterManagerIdentifier = [controller clusterManagerIdentifier];
   if ([clusterManagerIdentifier isKindOfClass:[NSString class]]) {
-    id clusterManager =
+    GMUClusterManager *clusterManager =
         [_clusterManagersController clusterManagerWithIdentifier:clusterManagerIdentifier];
-    if (controller.marker && [clusterManager isKindOfClass:[GMUClusterManager class]]) {
+    if (controller.marker && clusterManager) {
       [clusterManager removeItem:(id<GMUClusterItem>)controller.marker];
     }
   } else {
