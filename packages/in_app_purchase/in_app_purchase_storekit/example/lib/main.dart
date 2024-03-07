@@ -253,11 +253,11 @@ class _MyAppState extends State<_MyApp> {
             ),
             trailing: previousPurchase != null
                 ? TextButton(
-              onPressed: () {
-                _iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
-              },
-              child: const Text('Restored'),
-            )
+                    onPressed: () {
+                      _iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
+                    },
+                    child: const Text('Restored'),
+                  )
                 : TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.green[800],

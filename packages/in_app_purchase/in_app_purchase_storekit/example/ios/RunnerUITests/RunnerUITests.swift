@@ -38,7 +38,7 @@ class RunnerUITests: XCTestCase {
   }
 
   func testStoreInitalizesCorrectly() {
-    let app = self.app!
+    let screenshot = XCUIScreen.main.screenshot()
 
     let button = app.staticTexts["The store is available."];
     XCTAssertTrue(button.waitForExistence(timeout: 30.0))
@@ -58,9 +58,12 @@ class RunnerUITests: XCTestCase {
 
     consumable_button.tap();
 
+    let screenshot = XCUIScreen.main.screenshot()
+
     let purchase_button = springBoard.buttons["Purchase"];
     XCTAssertTrue(purchase_button.waitForExistence(timeout: 30.0));
 
+    let purchase_screenshot = XCUIScreen.main.screenshot()
     purchase_button.tap();
 
     let ok_button = springBoard.buttons["OK"];
@@ -72,6 +75,7 @@ class RunnerUITests: XCTestCase {
   }
 
   func testRestorePurchases() {
+    let restore_screenshot = XCUIScreen.main.screenshot()
     let restore_button = app.buttons["Restore purchases"];
     XCTAssertTrue(restore_button.waitForExistence(timeout: 30.0));
 
