@@ -6,7 +6,6 @@ package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
@@ -23,7 +22,6 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.doAnswer;
@@ -74,6 +72,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -108,6 +107,7 @@ public class MethodCallHandlerTest {
   @Spy Messages.Result<Messages.PlatformBillingConfigResponse> platformBillingConfigResult;
   @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
   @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
+  @Spy Messages.Result<PlatformPurchaseHistoryResponse> platformPurchaseHistoryResult;
   @Spy Messages.Result<PlatformPurchasesResponse> platformPurchasesResult;
 
   @Mock Activity activity;
@@ -854,37 +854,39 @@ public class MethodCallHandlerTest {
     establishConnectedBillingClient();
     BillingResult billingResult = buildBillingResult();
     List<PurchaseHistoryRecord> purchasesList = singletonList(buildPurchaseHistoryRecord("foo"));
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("productType", BillingClient.ProductType.INAPP);
     ArgumentCaptor<PurchaseHistoryResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(PurchaseHistoryResponseListener.class);
 
-    methodChannelHandler.onMethodCall(
-        new MethodCall(QUERY_PURCHASE_HISTORY_ASYNC, arguments), result);
+    methodChannelHandler.queryPurchaseHistoryAsync(
+        PlatformProductType.INAPP, platformPurchaseHistoryResult);
 
     // Verify we pass the data to result
     verify(mockBillingClient)
         .queryPurchaseHistoryAsync(any(QueryPurchaseHistoryParams.class), listenerCaptor.capture());
     listenerCaptor.getValue().onPurchaseHistoryResponse(billingResult, purchasesList);
-    verify(result).success(resultCaptor.capture());
-    HashMap<String, Object> resultData = resultCaptor.getValue();
-    assertEquals(fromBillingResult(billingResult), resultData.get("billingResult"));
+    ArgumentCaptor<PlatformPurchaseHistoryResponse> resultCaptor =
+        ArgumentCaptor.forClass(PlatformPurchaseHistoryResponse.class);
+    verify(platformPurchaseHistoryResult).success(resultCaptor.capture());
+    PlatformPurchaseHistoryResponse result = resultCaptor.getValue();
+    assertResultsMatch(result.getBillingResult(), billingResult);
     assertEquals(
-        fromPurchaseHistoryRecordList(purchasesList), resultData.get("purchaseHistoryRecordList"));
+        fromPurchaseHistoryRecordList(purchasesList), result.getPurchaseHistoryRecordJsonList());
   }
 
   @Test
   public void queryPurchaseHistoryAsync_clientDisconnected() {
     methodChannelHandler.endConnection();
 
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("type", BillingClient.ProductType.INAPP);
-    methodChannelHandler.onMethodCall(
-        new MethodCall(QUERY_PURCHASE_HISTORY_ASYNC, arguments), result);
+    methodChannelHandler.queryPurchaseHistoryAsync(
+        PlatformProductType.INAPP, platformPurchaseHistoryResult);
 
-    // Assert that we sent an error back.
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
-    verify(result, never()).success(any());
+    // Assert that the async call returns an error result.
+    verify(platformPurchaseHistoryResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformPurchaseHistoryResult, times(1)).error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
   }
 
   @Test

@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
@@ -43,6 +42,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +58,6 @@ class MethodCallHandlerImpl
   @VisibleForTesting
   static final class MethodNames {
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-    static final String QUERY_PURCHASE_HISTORY_ASYNC =
-        "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
 
     private MethodNames() {}
   }
@@ -139,13 +137,7 @@ class MethodCallHandlerImpl
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-    switch (call.method) {
-      case MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
-        queryPurchaseHistoryAsync((String) call.argument("productType"), result);
-        break;
-      default:
-        result.notImplemented();
-    }
+    result.notImplemented();
   }
 
   @Override
@@ -401,19 +393,25 @@ class MethodCallHandlerImpl
         });
   }
 
-  private void queryPurchaseHistoryAsync(String productType, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void queryPurchaseHistoryAsync(
+      @NonNull Messages.PlatformProductType productType,
+      @NonNull Messages.Result<Messages.PlatformPurchaseHistoryResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
-    assert billingClient != null;
 
     billingClient.queryPurchaseHistoryAsync(
-        QueryPurchaseHistoryParams.newBuilder().setProductType(productType).build(),
+        QueryPurchaseHistoryParams.newBuilder()
+            .setProductType(toProductTypeString(productType))
+            .build(),
         (billingResult, purchasesList) -> {
-          final Map<String, Object> serialized = new HashMap<>();
-          serialized.put("billingResult", fromBillingResult(billingResult));
-          serialized.put("purchaseHistoryRecordList", fromPurchaseHistoryRecordList(purchasesList));
-          result.success(serialized);
+          PlatformPurchaseHistoryResponse.Builder builder =
+              new PlatformPurchaseHistoryResponse.Builder()
+                  .setBillingResult(pigeonResultFromBillingResult(billingResult))
+                  .setPurchaseHistoryRecordJsonList(fromPurchaseHistoryRecordList(purchasesList));
+          result.success(builder.build());
         });
   }
 

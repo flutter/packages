@@ -706,6 +706,93 @@ public class Messages {
   }
 
   /**
+   * Pigeon version of PurchasesHistoryResult, which contains the components of the Java
+   * PurchaseHistoryResponseListener callback.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformPurchaseHistoryResponse {
+    private @NonNull PlatformBillingResult billingResult;
+
+    public @NonNull PlatformBillingResult getBillingResult() {
+      return billingResult;
+    }
+
+    public void setBillingResult(@NonNull PlatformBillingResult setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"billingResult\" is null.");
+      }
+      this.billingResult = setterArg;
+    }
+
+    /**
+     * A JSON-compatible list of purchase history records, where each entry in the list is a
+     * Map<String, Object?> JSON encoding of the record.
+     */
+    private @NonNull List<Object> purchaseHistoryRecordJsonList;
+
+    public @NonNull List<Object> getPurchaseHistoryRecordJsonList() {
+      return purchaseHistoryRecordJsonList;
+    }
+
+    public void setPurchaseHistoryRecordJsonList(@NonNull List<Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"purchaseHistoryRecordJsonList\" is null.");
+      }
+      this.purchaseHistoryRecordJsonList = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformPurchaseHistoryResponse() {}
+
+    public static final class Builder {
+
+      private @Nullable PlatformBillingResult billingResult;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBillingResult(@NonNull PlatformBillingResult setterArg) {
+        this.billingResult = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Object> purchaseHistoryRecordJsonList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPurchaseHistoryRecordJsonList(@NonNull List<Object> setterArg) {
+        this.purchaseHistoryRecordJsonList = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformPurchaseHistoryResponse build() {
+        PlatformPurchaseHistoryResponse pigeonReturn = new PlatformPurchaseHistoryResponse();
+        pigeonReturn.setBillingResult(billingResult);
+        pigeonReturn.setPurchaseHistoryRecordJsonList(purchaseHistoryRecordJsonList);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add((billingResult == null) ? null : billingResult.toList());
+      toListResult.add(purchaseHistoryRecordJsonList);
+      return toListResult;
+    }
+
+    static @NonNull PlatformPurchaseHistoryResponse fromList(@NonNull ArrayList<Object> list) {
+      PlatformPurchaseHistoryResponse pigeonResult = new PlatformPurchaseHistoryResponse();
+      Object billingResult = list.get(0);
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      Object purchaseHistoryRecordJsonList = list.get(1);
+      pigeonResult.setPurchaseHistoryRecordJsonList((List<Object>) purchaseHistoryRecordJsonList);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon version of PurchasesResultWrapper, which contains the components of the Java
    * PurchasesResponseListener callback.
    *
@@ -839,6 +926,8 @@ public class Messages {
         case (byte) 133:
           return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
+          return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
           return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -866,8 +955,11 @@ public class Messages {
       } else if (value instanceof PlatformProductDetailsResponse) {
         stream.write(133);
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
-      } else if (value instanceof PlatformPurchasesResponse) {
+      } else if (value instanceof PlatformPurchaseHistoryResponse) {
         stream.write(134);
+        writeValue(stream, ((PlatformPurchaseHistoryResponse) value).toList());
+      } else if (value instanceof PlatformPurchasesResponse) {
+        stream.write(135);
         writeValue(stream, ((PlatformPurchasesResponse) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -907,6 +999,13 @@ public class Messages {
     void queryPurchasesAsync(
         @NonNull PlatformProductType productType,
         @NonNull Result<PlatformPurchasesResponse> result);
+    /**
+     * Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams,
+     * PurchaseHistoryResponseListener).
+     */
+    void queryPurchaseHistoryAsync(
+        @NonNull PlatformProductType productType,
+        @NonNull Result<PlatformPurchaseHistoryResponse> result);
     /**
      * Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams,
      * ProductDetailsResponseListener).
@@ -1161,6 +1260,38 @@ public class Messages {
                     };
 
                 api.queryPurchasesAsync(productTypeArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformProductType productTypeArg =
+                    PlatformProductType.values()[(int) args.get(0)];
+                Result<PlatformPurchaseHistoryResponse> resultCallback =
+                    new Result<PlatformPurchaseHistoryResponse>() {
+                      public void success(PlatformPurchaseHistoryResponse result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.queryPurchaseHistoryAsync(productTypeArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

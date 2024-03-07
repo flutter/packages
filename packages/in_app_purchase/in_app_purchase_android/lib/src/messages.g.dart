@@ -229,6 +229,37 @@ class PlatformBillingFlowParams {
   }
 }
 
+/// Pigeon version of PurchasesHistoryResult, which contains the components of
+/// the Java PurchaseHistoryResponseListener callback.
+class PlatformPurchaseHistoryResponse {
+  PlatformPurchaseHistoryResponse({
+    required this.billingResult,
+    required this.purchaseHistoryRecordJsonList,
+  });
+
+  PlatformBillingResult billingResult;
+
+  /// A JSON-compatible list of purchase history records, where each entry in
+  /// the list is a Map<String, Object?> JSON encoding of the record.
+  List<Object?> purchaseHistoryRecordJsonList;
+
+  Object encode() {
+    return <Object?>[
+      billingResult.encode(),
+      purchaseHistoryRecordJsonList,
+    ];
+  }
+
+  static PlatformPurchaseHistoryResponse decode(Object result) {
+    result as List<Object?>;
+    return PlatformPurchaseHistoryResponse(
+      billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
+      purchaseHistoryRecordJsonList:
+          (result[1] as List<Object?>?)!.cast<Object?>(),
+    );
+  }
+}
+
 /// Pigeon version of PurchasesResultWrapper, which contains the components of
 /// the Java PurchasesResponseListener callback.
 class PlatformPurchasesResponse {
@@ -281,8 +312,11 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
     } else if (value is PlatformProductDetailsResponse) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformPurchaseHistoryResponse) {
       buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -306,6 +340,8 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
       case 133:
         return PlatformProductDetailsResponse.decode(readValue(buffer)!);
       case 134:
+        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+      case 135:
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -560,6 +596,37 @@ class InAppPurchaseApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformPurchasesResponse?)!;
+    }
+  }
+
+  /// Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener).
+  Future<PlatformPurchaseHistoryResponse> queryPurchaseHistoryAsync(
+      PlatformProductType productType) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[productType.index]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as PlatformPurchaseHistoryResponse?)!;
     }
   }
 

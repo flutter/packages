@@ -21,7 +21,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -124,8 +123,7 @@ public class TranslatorTest {
             new PurchaseHistoryRecord(PURCHASE_EXAMPLE_JSON, signature),
             new PurchaseHistoryRecord(purchase2Json, signature));
 
-    final List<HashMap<String, Object>> serialized =
-        Translator.fromPurchaseHistoryRecordList(expected);
+    final List<Object> serialized = Translator.fromPurchaseHistoryRecordList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -301,7 +299,9 @@ public class TranslatorTest {
         serialized.get("obfuscatedProfileId"));
   }
 
-  private void assertSerialized(PurchaseHistoryRecord expected, Map<String, Object> serialized) {
+  private void assertSerialized(PurchaseHistoryRecord expected, Object serializedGeneric) {
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
     assertEquals(expected.getPurchaseTime(), serialized.get("purchaseTime"));
     assertEquals(expected.getPurchaseToken(), serialized.get("purchaseToken"));
     assertEquals(expected.getSignature(), serialized.get("signature"));
