@@ -31,6 +31,9 @@ VideoPlayerPlatform get _videoPlayerPlatform {
   return currentInstance;
 }
 
+/// Signature of a callback that returns the current duration after scrubbing through the [VideoProgressIndicator].
+typedef OnScrubbingCallback = void Function(Duration)?;
+
 /// The duration, current position, buffering state, error state and settings
 /// of a [VideoPlayerController].
 @immutable
@@ -916,6 +919,7 @@ class VideoScrubber extends StatefulWidget {
     super.key,
     required this.child,
     required this.controller,
+    this.onScrubbing,
   });
 
   /// The widget that will be displayed inside the gesture detector.
@@ -923,6 +927,9 @@ class VideoScrubber extends StatefulWidget {
 
   /// The [VideoPlayerController] that will be controlled by this scrubber.
   final VideoPlayerController controller;
+
+  /// The callback to return the current duration after scrubbing.
+  final OnScrubbingCallback? onScrubbing;
 
   @override
   State<VideoScrubber> createState() => _VideoScrubberState();
@@ -941,6 +948,9 @@ class _VideoScrubberState extends State<VideoScrubber> {
       final double relative = tapPos.dx / box.size.width;
       final Duration position = controller.value.duration * relative;
       controller.seekTo(position);
+      if (widget.onScrubbing != null) {
+        widget.onScrubbing!(position);
+      }
     }
 
     return GestureDetector(
@@ -996,6 +1006,7 @@ class VideoProgressIndicator extends StatefulWidget {
     super.key,
     this.colors = const VideoProgressColors(),
     required this.allowScrubbing,
+    this.onScrubbing,
     this.padding = const EdgeInsets.only(top: 5.0),
   });
 
@@ -1013,6 +1024,9 @@ class VideoProgressIndicator extends StatefulWidget {
   ///
   /// Defaults to false.
   final bool allowScrubbing;
+
+  /// The callback to return the current duration after scrubbing.
+  final OnScrubbingCallback? onScrubbing;
 
   /// This allows for visual padding around the progress indicator that can
   /// still detect gestures via [allowScrubbing].
@@ -1095,6 +1109,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
     if (widget.allowScrubbing) {
       return VideoScrubber(
         controller: controller,
+        onScrubbing: widget.onScrubbing,
         child: paddedProgressIndicator,
       );
     } else {

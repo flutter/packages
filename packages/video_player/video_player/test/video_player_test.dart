@@ -700,6 +700,38 @@ void main() {
         await controller.pause();
       });
 
+      testWidgets('onScrubbing is called when the controller seeks',
+          (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+
+        Duration? scrubbingDuration;
+        await controller.initialize();
+        final VideoProgressIndicator progressWidget = VideoProgressIndicator(
+          controller,
+          allowScrubbing: true,
+          onScrubbing: (Duration duration) => scrubbingDuration = duration,
+        );
+
+        await tester.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: progressWidget,
+        ));
+
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+
+        final Rect progressRect = tester.getRect(find.byWidget(progressWidget));
+        await tester.dragFrom(progressRect.center, const Offset(1.0, 0.0));
+        await tester.pumpAndSettle();
+
+        expect(controller.value.isPlaying, isTrue);
+        expect(scrubbingDuration, isNotNull);
+        expect(scrubbingDuration, controller.value.position);
+
+        await controller.pause();
+      });
+
       testWidgets('does not restart when dragging to end',
           (WidgetTester tester) async {
         final VideoPlayerController controller =
