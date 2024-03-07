@@ -9,6 +9,7 @@ import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/analyzer.dart';
 import 'package:camera_android_camerax/src/camera.dart';
+import 'package:camera_android_camerax/src/camera2_camera_control.dart';
 import 'package:camera_android_camerax/src/camera_control.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_selector.dart';
@@ -16,6 +17,7 @@ import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/camera_state_error.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/camerax_proxy.dart';
+import 'package:camera_android_camerax/src/capture_request_options.dart';
 import 'package:camera_android_camerax/src/device_orientation_manager.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/fallback_strategy.dart';
@@ -78,6 +80,7 @@ import 'test_camerax_library.g.dart';
   MockSpec<TestInstanceManagerHostApi>(),
   MockSpec<TestSystemServicesHostApi>(),
   MockSpec<ZoomState>(),
+  MockSpec<Camera2CameraControl>(),
 ])
 @GenerateMocks(<Type>[], customMocks: <MockSpec<Object>>[
   MockSpec<LiveData<CameraState>>(as: #MockLiveCameraState),
@@ -2008,6 +2011,59 @@ void main() {
     camera.captureOrientationLocked = true;
     await camera.unlockCaptureOrientation(cameraId);
     expect(camera.captureOrientationLocked, isFalse);
+  });
+
+  test('setExposureMode sets expected controlAeLock value via Camera2 interop',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 78;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.camera = MockCamera();
+    camera.cameraControl = mockCameraControl;
+
+    // Tell plugin to create detached Camera2CameraControl and
+    // CaptureRequestOptions instances for testing.
+    camera.proxy = CameraXProxy(
+      getCamera2CameraControl: (CameraControl cameraControl) =>
+          cameraControl == mockCameraControl
+              ? mockCamera2CameraControl
+              : Camera2CameraControl.detached(cameraControl: cameraControl),
+      createCaptureRequestOptions:
+          (List<(CaptureRequestKeySupportedType, Object?)> options) =>
+              CaptureRequestOptions.detached(requestedOptions: options),
+    );
+
+    // Test auto mode.
+    await camera.setExposureMode(cameraId, ExposureMode.auto);
+
+    VerificationResult verificationResult =
+        verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
+    CaptureRequestOptions capturedCaptureRequestOptions =
+        verificationResult.captured.single as CaptureRequestOptions;
+    List<(CaptureRequestKeySupportedType, Object?)> requestedOptions =
+        capturedCaptureRequestOptions.requestedOptions;
+    expect(requestedOptions.length, equals(1));
+    expect(requestedOptions.first.$1,
+        equals(CaptureRequestKeySupportedType.controlAeLock));
+    expect(requestedOptions.first.$2, equals(false));
+
+    // Test locked mode.
+    clearInteractions(mockCamera2CameraControl);
+    await camera.setExposureMode(cameraId, ExposureMode.locked);
+
+    verificationResult =
+        verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
+    capturedCaptureRequestOptions =
+        verificationResult.captured.single as CaptureRequestOptions;
+    requestedOptions = capturedCaptureRequestOptions.requestedOptions;
+    expect(requestedOptions.length, equals(1));
+    expect(requestedOptions.first.$1,
+        equals(CaptureRequestKeySupportedType.controlAeLock));
+    expect(requestedOptions.first.$2, equals(true));
   });
 
   test(

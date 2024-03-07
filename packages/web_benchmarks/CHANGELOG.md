@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Removes a few deprecated API usages.
+
 ## 1.2.0
 
 * Updates to web code to package `web: ^0.5.0`.
