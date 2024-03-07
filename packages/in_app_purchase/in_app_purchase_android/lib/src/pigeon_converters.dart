@@ -29,11 +29,28 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
     PlatformProductDetailsResponse response) {
   return ProductDetailsResponseWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    // See TODOs in messages.dart for why this is JSON.
+    // See TODOs in messages.dart for why this is currently JSON.
     productDetailsList: response.productDetailsJsonList
         .map((Object? json) => ProductDetailsWrapper.fromJson(
             (json! as Map<Object?, Object?>).cast<String, Object?>()))
         .toList(),
+  );
+}
+
+/// Creates a [PurchasesResultWrapper] from the Pigeon equivalent.
+PurchasesResultWrapper purchasesResultWrapperFromPlatform(
+    PlatformPurchasesResponse response) {
+  return PurchasesResultWrapper(
+    billingResult: resultWrapperFromPlatform(response.billingResult),
+    // See TODOs in messages.dart for why this is currently JSON.
+    purchasesList: response.purchasesJsonList
+        .map((Object? json) => PurchaseWrapper.fromJson(
+            (json! as Map<Object?, Object?>).cast<String, Object?>()))
+        .toList(),
+    // This is no longer part of the response in current versions of the billing
+    // library, so use a success placeholder for compatibility with existing
+    // client code.
+    responseCode: BillingResponse.ok,
   );
 }
 
@@ -50,6 +67,7 @@ AlternativeBillingOnlyReportingDetailsWrapper
   );
 }
 
+/// Creates a [BillingConfigWrapper] from the Pigeon equivalent.
 BillingConfigWrapper billingConfigWrapperFromPlatform(
     PlatformBillingConfigResponse response) {
   return BillingConfigWrapper(
@@ -64,11 +82,12 @@ BillingConfigWrapper billingConfigWrapperFromPlatform(
 PlatformProduct platformProductFromWrapper(ProductWrapper product) {
   return PlatformProduct(
     productId: product.productId,
-    productType: _platformProductTypeFromWrapper(product.productType),
+    productType: platformProductTypeFromWrapper(product.productType),
   );
 }
 
-PlatformProductType _platformProductTypeFromWrapper(ProductType type) {
+/// Converts a [ProductType] to its Pigeon equivalent.
+PlatformProductType platformProductTypeFromWrapper(ProductType type) {
   return switch (type) {
     ProductType.inapp => PlatformProductType.inapp,
     ProductType.subs => PlatformProductType.subs,

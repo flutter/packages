@@ -146,7 +146,7 @@ public class TranslatorTest {
         Arrays.asList(
             new Purchase(PURCHASE_EXAMPLE_JSON, signature), new Purchase(purchase2Json, signature));
 
-    final List<HashMap<String, Object>> serialized = Translator.fromPurchasesList(expected);
+    final List<Object> serialized = Translator.fromPurchasesList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -277,7 +277,9 @@ public class TranslatorTest {
     assertEquals(expected.getRecurrenceMode(), serialized.get("recurrenceMode"));
   }
 
-  private void assertSerialized(Purchase expected, Map<String, Object> serialized) {
+  private void assertSerialized(Purchase expected, Object serializedGeneric) {
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
     assertEquals(expected.getOrderId(), serialized.get("orderId"));
     assertEquals(expected.getPackageName(), serialized.get("packageName"));
     assertEquals(expected.getPurchaseTime(), serialized.get("purchaseTime"));

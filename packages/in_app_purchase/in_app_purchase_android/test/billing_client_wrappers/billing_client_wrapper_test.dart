@@ -360,9 +360,6 @@ void main() {
   });
 
   group('queryPurchases', () {
-    const String queryPurchasesMethodName =
-        'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)';
-
     test('serializes and deserializes data', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       final List<PurchaseWrapper> expectedList = <PurchaseWrapper>[
@@ -371,14 +368,16 @@ void main() {
       const String debugMessage = 'dummy message';
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform
-          .addResponse(name: queryPurchasesMethodName, value: <String, dynamic>{
-        'billingResult': buildBillingResultMap(expectedBillingResult),
-        'responseCode': const BillingResponseConverter().toJson(expectedCode),
-        'purchasesList': expectedList
-            .map((PurchaseWrapper purchase) => buildPurchaseMap(purchase))
-            .toList(),
-      });
+      when(mockApi.queryPurchasesAsync(any)).thenAnswer((_) async =>
+          PlatformPurchasesResponse(
+            billingResult: PlatformBillingResult(
+                responseCode:
+                    const BillingResponseConverter().toJson(expectedCode),
+                debugMessage: debugMessage),
+            purchasesJsonList: expectedList
+                .map((PurchaseWrapper purchase) => buildPurchaseMap(purchase))
+                .toList(),
+          ));
 
       final PurchasesResultWrapper response =
           await billingClient.queryPurchases(ProductType.inapp);
@@ -393,34 +392,22 @@ void main() {
       const String debugMessage = 'dummy message';
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: expectedCode, debugMessage: debugMessage);
-      stubPlatform
-          .addResponse(name: queryPurchasesMethodName, value: <String, dynamic>{
-        'billingResult': buildBillingResultMap(expectedBillingResult),
-        'responseCode': const BillingResponseConverter().toJson(expectedCode),
-        'purchasesList': <dynamic>[],
-      });
+      when(mockApi.queryPurchasesAsync(any))
+          .thenAnswer((_) async => PlatformPurchasesResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(expectedCode),
+                    debugMessage: debugMessage),
+                purchasesJsonList: <Map<String, dynamic>>[],
+              ));
 
       final PurchasesResultWrapper response =
           await billingClient.queryPurchases(ProductType.inapp);
 
       expect(response.billingResult, equals(expectedBillingResult));
-      expect(response.responseCode, equals(expectedCode));
-      expect(response.purchasesList, isEmpty);
-    });
-
-    test('handles method channel returning null', () async {
-      stubPlatform.addResponse(
-        name: queryPurchasesMethodName,
-      );
-      final PurchasesResultWrapper response =
-          await billingClient.queryPurchases(ProductType.inapp);
-
-      expect(
-          response.billingResult,
-          equals(const BillingResultWrapper(
-              responseCode: BillingResponse.error,
-              debugMessage: kInvalidBillingResultErrorMessage)));
-      expect(response.responseCode, BillingResponse.error);
+      // The top-level response code is hard-coded to "ok", as the underlying
+      // API no longer returns it.
+      expect(response.responseCode, BillingResponse.ok);
       expect(response.purchasesList, isEmpty);
     });
   });

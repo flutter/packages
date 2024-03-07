@@ -230,14 +230,8 @@ class BillingClient {
   /// This wraps
   /// [`BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchasesAsync(com.android.billingclient.api.QueryPurchasesParams,%20com.android.billingclient.api.PurchasesResponseListener)).
   Future<PurchasesResultWrapper> queryPurchases(ProductType productType) async {
-    return PurchasesResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-              'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)',
-              <String, dynamic>{
-                'productType': const ProductTypeConverter().toJson(productType)
-              },
-            )) ??
-            <String, dynamic>{});
+    return purchasesResultWrapperFromPlatform(await _hostApi
+        .queryPurchasesAsync(platformProductTypeFromWrapper(productType)));
   }
 
   /// Fetches purchase history for the given [ProductType].

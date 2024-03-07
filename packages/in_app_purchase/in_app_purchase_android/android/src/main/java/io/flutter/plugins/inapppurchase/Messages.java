@@ -705,6 +705,93 @@ public class Messages {
     }
   }
 
+  /**
+   * Pigeon version of PurchasesResultWrapper, which contains the components of the Java
+   * PurchasesResponseListener callback.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformPurchasesResponse {
+    private @NonNull PlatformBillingResult billingResult;
+
+    public @NonNull PlatformBillingResult getBillingResult() {
+      return billingResult;
+    }
+
+    public void setBillingResult(@NonNull PlatformBillingResult setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"billingResult\" is null.");
+      }
+      this.billingResult = setterArg;
+    }
+
+    /**
+     * A JSON-compatible list of purchases, where each entry in the list is a Map<String, Object?>
+     * JSON encoding of the product details.
+     */
+    private @NonNull List<Object> purchasesJsonList;
+
+    public @NonNull List<Object> getPurchasesJsonList() {
+      return purchasesJsonList;
+    }
+
+    public void setPurchasesJsonList(@NonNull List<Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"purchasesJsonList\" is null.");
+      }
+      this.purchasesJsonList = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformPurchasesResponse() {}
+
+    public static final class Builder {
+
+      private @Nullable PlatformBillingResult billingResult;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBillingResult(@NonNull PlatformBillingResult setterArg) {
+        this.billingResult = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Object> purchasesJsonList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPurchasesJsonList(@NonNull List<Object> setterArg) {
+        this.purchasesJsonList = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformPurchasesResponse build() {
+        PlatformPurchasesResponse pigeonReturn = new PlatformPurchasesResponse();
+        pigeonReturn.setBillingResult(billingResult);
+        pigeonReturn.setPurchasesJsonList(purchasesJsonList);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add((billingResult == null) ? null : billingResult.toList());
+      toListResult.add(purchasesJsonList);
+      return toListResult;
+    }
+
+    static @NonNull PlatformPurchasesResponse fromList(@NonNull ArrayList<Object> list) {
+      PlatformPurchasesResponse pigeonResult = new PlatformPurchasesResponse();
+      Object billingResult = list.get(0);
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      Object purchasesJsonList = list.get(1);
+      pigeonResult.setPurchasesJsonList((List<Object>) purchasesJsonList);
+      return pigeonResult;
+    }
+  }
+
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -751,6 +838,8 @@ public class Messages {
           return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
           return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 134:
+          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -777,6 +866,9 @@ public class Messages {
       } else if (value instanceof PlatformProductDetailsResponse) {
         stream.write(133);
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
+      } else if (value instanceof PlatformPurchasesResponse) {
+        stream.write(134);
+        writeValue(stream, ((PlatformPurchasesResponse) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -811,6 +903,10 @@ public class Messages {
         @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener). */
     void consumeAsync(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
+    /** Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener). */
+    void queryPurchasesAsync(
+        @NonNull PlatformProductType productType,
+        @NonNull Result<PlatformPurchasesResponse> result);
     /**
      * Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams,
      * ProductDetailsResponseListener).
@@ -1033,6 +1129,38 @@ public class Messages {
                     };
 
                 api.consumeAsync(purchaseTokenArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformProductType productTypeArg =
+                    PlatformProductType.values()[(int) args.get(0)];
+                Result<PlatformPurchasesResponse> resultCallback =
+                    new Result<PlatformPurchasesResponse>() {
+                      public void success(PlatformPurchasesResponse result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.queryPurchasesAsync(productTypeArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

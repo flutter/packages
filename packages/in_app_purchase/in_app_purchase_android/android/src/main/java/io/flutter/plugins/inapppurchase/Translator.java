@@ -210,12 +210,14 @@ import java.util.Locale;
     return info;
   }
 
-  static List<HashMap<String, Object>> fromPurchasesList(@Nullable List<Purchase> purchases) {
+  static List<Object> fromPurchasesList(@Nullable List<Purchase> purchases) {
     if (purchases == null) {
       return Collections.emptyList();
     }
 
-    List<HashMap<String, Object>> serialized = new ArrayList<>();
+    // This and the method are generically typed due to Pigeon limitations; see
+    // https://github.com/flutter/flutter/issues/116117.
+    List<Object> serialized = new ArrayList<>();
     for (Purchase purchase : purchases) {
       serialized.add(fromPurchase(purchase));
     }

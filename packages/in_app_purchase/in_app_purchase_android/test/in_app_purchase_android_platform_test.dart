@@ -198,55 +198,14 @@ void main() {
   });
 
   group('restorePurchases', () {
-    const String queryMethodName =
-        'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)';
-    test('handles error', () async {
-      const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.developerError;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: responseCode, debugMessage: debugMessage);
-
-      stubPlatform.addResponse(name: queryMethodName, value: <dynamic, dynamic>{
-        'billingResult': buildBillingResultMap(expectedBillingResult),
-        'responseCode': const BillingResponseConverter().toJson(responseCode),
-        'purchasesList': <Map<String, dynamic>>[]
-      });
-
-      expect(
-        iapAndroidPlatform.restorePurchases(),
-        throwsA(
-          isA<InAppPurchaseException>()
-              .having(
-                  (InAppPurchaseException e) => e.source, 'source', kIAPSource)
-              .having((InAppPurchaseException e) => e.code, 'code',
-                  kRestoredPurchaseErrorCode)
-              .having((InAppPurchaseException e) => e.message, 'message',
-                  responseCode.toString()),
-        ),
-      );
-    });
-
     test('should store platform exception in the response', () async {
-      const String debugMessage = 'dummy message';
-
-      const BillingResponse responseCode = BillingResponse.developerError;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: responseCode, debugMessage: debugMessage);
-      stubPlatform.addResponse(
-          name: queryMethodName,
-          value: <dynamic, dynamic>{
-            'responseCode':
-                const BillingResponseConverter().toJson(responseCode),
-            'billingResult': buildBillingResultMap(expectedBillingResult),
-            'purchasesList': <Map<String, dynamic>>[]
-          },
-          additionalStepBeforeReturn: (dynamic _) {
-            throw PlatformException(
-              code: 'error_code',
-              message: 'error_message',
-              details: <dynamic, dynamic>{'info': 'error_info'},
-            );
-          });
+      when(mockApi.queryPurchasesAsync(any)).thenAnswer((_) async {
+        throw PlatformException(
+          code: 'error_code',
+          message: 'error_message',
+          details: <dynamic, dynamic>{'info': 'error_info'},
+        );
+      });
 
       expect(
         iapAndroidPlatform.restorePurchases(),
@@ -277,16 +236,17 @@ void main() {
 
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.ok;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: responseCode, debugMessage: debugMessage);
 
-      stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
-        'billingResult': buildBillingResultMap(expectedBillingResult),
-        'responseCode': const BillingResponseConverter().toJson(responseCode),
-        'purchasesList': <Map<String, dynamic>>[
-          buildPurchaseMap(dummyPurchase),
-        ]
-      });
+      when(mockApi.queryPurchasesAsync(any))
+          .thenAnswer((_) async => PlatformPurchasesResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(responseCode),
+                    debugMessage: debugMessage),
+                purchasesJsonList: <Map<String, dynamic>>[
+                  buildPurchaseMap(dummyPurchase),
+                ],
+              ));
 
       // Since queryPastPurchases makes 2 platform method calls (one for each
       // ProductType), the result will contain 2 dummyPurchase instances instead

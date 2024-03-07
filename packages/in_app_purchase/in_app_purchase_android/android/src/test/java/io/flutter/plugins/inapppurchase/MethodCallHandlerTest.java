@@ -6,7 +6,6 @@ package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
@@ -75,6 +74,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -83,7 +83,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,6 +108,7 @@ public class MethodCallHandlerTest {
   @Spy Messages.Result<Messages.PlatformBillingConfigResponse> platformBillingConfigResult;
   @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
   @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
+  @Spy Messages.Result<PlatformPurchasesResponse> platformPurchasesResult;
 
   @Mock Activity activity;
   @Mock Context context;
@@ -790,13 +790,15 @@ public class MethodCallHandlerTest {
   public void queryPurchases_clientDisconnected() {
     methodChannelHandler.endConnection();
 
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("type", BillingClient.ProductType.INAPP);
-    methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC, arguments), result);
+    methodChannelHandler.queryPurchasesAsync(PlatformProductType.INAPP, platformPurchasesResult);
 
-    // Assert that we sent an error back.
-    verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
-    verify(result, never()).success(any());
+    // Assert that the async call returns an error result.
+    verify(platformPurchasesResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformPurchasesResult, times(1)).error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -831,23 +833,19 @@ public class MethodCallHandlerTest {
         .queryPurchasesAsync(
             any(QueryPurchasesParams.class), purchasesResponseListenerArgumentCaptor.capture());
 
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("productType", BillingClient.ProductType.INAPP);
-    methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC, arguments), result);
+    methodChannelHandler.queryPurchasesAsync(PlatformProductType.INAPP, platformPurchasesResult);
 
-    lock.await(5000, TimeUnit.MILLISECONDS);
+    verify(platformPurchasesResult, never()).error(any());
 
-    verify(result, never()).error(any(), any(), any());
+    ArgumentCaptor<PlatformPurchasesResponse> resultCaptor =
+        ArgumentCaptor.forClass(PlatformPurchasesResponse.class);
+    verify(platformPurchasesResult, times(1)).success(resultCaptor.capture());
 
-    @SuppressWarnings("unchecked")
-    ArgumentCaptor<HashMap<String, Object>> hashMapCaptor = ArgumentCaptor.forClass(HashMap.class);
-    verify(result, times(1)).success(hashMapCaptor.capture());
-
-    HashMap<String, Object> map = hashMapCaptor.getValue();
-    assert (map.containsKey("responseCode"));
-    assert (map.containsKey("billingResult"));
-    assert (map.containsKey("purchasesList"));
-    assert ((int) map.get("responseCode") == 0);
+    PlatformPurchasesResponse purchasesResponse = resultCaptor.getValue();
+    assertEquals(
+        purchasesResponse.getBillingResult().getResponseCode().longValue(),
+        BillingClient.BillingResponseCode.OK);
+    assertTrue(purchasesResponse.getPurchasesJsonList().isEmpty());
   }
 
   @Test

@@ -97,6 +97,30 @@ class PlatformBillingFlowParams {
   final String? purchaseToken;
 }
 
+/// Pigeon version of PurchasesResultWrapper, which contains the components of
+/// the Java PurchasesResponseListener callback.
+class PlatformPurchasesResponse {
+  PlatformPurchasesResponse({
+    required this.billingResult,
+    required this.purchasesJsonList,
+  });
+
+  final PlatformBillingResult billingResult;
+
+  /// A JSON-compatible list of purchases, where each entry in the list is a
+  /// Map<String, Object?> JSON encoding of the product details.
+  // TODO(stuartmorgan): Finish converting to Pigeon. This is still using the
+  // old serialization system to allow conversion of all the method calls to
+  // Pigeon without converting the entire object graph all at once. See
+  // https://github.com/flutter/flutter/issues/117910. The list items are
+  // currently untyped due to https://github.com/flutter/flutter/issues/116117.
+  //
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats all of it as non-nullable.
+  final List<Object?> purchasesJsonList;
+}
+
 /// Pigeon version of Java BillingClient.ProductType.
 enum PlatformProductType {
   inapp,
@@ -141,6 +165,11 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener).
   @async
   PlatformBillingResult consumeAsync(String purchaseToken);
+
+  /// Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener).
+  @async
+  PlatformPurchasesResponse queryPurchasesAsync(
+      PlatformProductType productType);
 
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
   @async

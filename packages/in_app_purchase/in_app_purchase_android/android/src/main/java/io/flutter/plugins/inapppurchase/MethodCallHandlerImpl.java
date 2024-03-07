@@ -12,6 +12,7 @@ import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromAltern
 import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
+import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
 
 import android.app.Activity;
 import android.app.Application;
@@ -42,6 +43,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +58,6 @@ class MethodCallHandlerImpl
   @VisibleForTesting
   static final class MethodNames {
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-    static final String QUERY_PURCHASES_ASYNC =
-        "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
         "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
 
@@ -140,9 +140,6 @@ class MethodCallHandlerImpl
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case MethodNames.QUERY_PURCHASES_ASYNC:
-        queryPurchasesAsync((String) call.argument("productType"), result);
-        break;
       case MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
         queryPurchaseHistoryAsync((String) call.argument("productType"), result);
         break;
@@ -380,26 +377,27 @@ class MethodCallHandlerImpl
     billingClient.consumeAsync(params, listener);
   }
 
-  private void queryPurchasesAsync(String productType, MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void queryPurchasesAsync(
+      @NonNull Messages.PlatformProductType productType,
+      @NonNull Messages.Result<Messages.PlatformPurchasesResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
-    assert billingClient != null;
 
     // Like in our connect call, consider the billing client responding a "success" here regardless
     // of status code.
     QueryPurchasesParams.Builder paramsBuilder = QueryPurchasesParams.newBuilder();
-    paramsBuilder.setProductType(productType);
+    paramsBuilder.setProductType(toProductTypeString(productType));
     billingClient.queryPurchasesAsync(
         paramsBuilder.build(),
         (billingResult, purchasesList) -> {
-          final Map<String, Object> serialized = new HashMap<>();
-          // The response code is no longer passed, as part of billing 4.0, so we pass OK here
-          // as success is implied by calling this callback.
-          serialized.put("responseCode", BillingClient.BillingResponseCode.OK);
-          serialized.put("billingResult", fromBillingResult(billingResult));
-          serialized.put("purchasesList", fromPurchasesList(purchasesList));
-          result.success(serialized);
+          PlatformPurchasesResponse.Builder builder =
+              new PlatformPurchasesResponse.Builder()
+                  .setBillingResult(pigeonResultFromBillingResult(billingResult))
+                  .setPurchasesJsonList(fromPurchasesList(purchasesList));
+          result.success(builder.build());
         });
   }
 

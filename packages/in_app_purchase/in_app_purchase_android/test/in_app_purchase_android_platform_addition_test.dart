@@ -149,43 +149,20 @@ void main() {
 
   group('queryPastPurchase', () {
     group('queryPurchaseDetails', () {
-      const String queryMethodName =
-          'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)';
-      test('handles error', () async {
-        const String debugMessage = 'dummy message';
-        const BillingResponse responseCode = BillingResponse.developerError;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-            responseCode: responseCode, debugMessage: debugMessage);
-
-        stubPlatform
-            .addResponse(name: queryMethodName, value: <dynamic, dynamic>{
-          'billingResult': buildBillingResultMap(expectedBillingResult),
-          'responseCode': const BillingResponseConverter().toJson(responseCode),
-          'purchasesList': <Map<String, dynamic>>[]
-        });
-        final QueryPurchaseDetailsResponse response =
-            await iapAndroidPlatformAddition.queryPastPurchases();
-        expect(response.pastPurchases, isEmpty);
-        expect(response.error, isNotNull);
-        expect(
-            response.error!.message, BillingResponse.developerError.toString());
-        expect(response.error!.source, kIAPSource);
-      });
-
       test('returns ProductDetailsResponseWrapper', () async {
         const String debugMessage = 'dummy message';
         const BillingResponse responseCode = BillingResponse.ok;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-            responseCode: responseCode, debugMessage: debugMessage);
 
-        stubPlatform
-            .addResponse(name: queryMethodName, value: <String, dynamic>{
-          'billingResult': buildBillingResultMap(expectedBillingResult),
-          'responseCode': const BillingResponseConverter().toJson(responseCode),
-          'purchasesList': <Map<String, dynamic>>[
-            buildPurchaseMap(dummyPurchase),
-          ]
-        });
+        when(mockApi.queryPurchasesAsync(any))
+            .thenAnswer((_) async => PlatformPurchasesResponse(
+                  billingResult: PlatformBillingResult(
+                      responseCode:
+                          const BillingResponseConverter().toJson(responseCode),
+                      debugMessage: debugMessage),
+                  purchasesJsonList: <Map<String, dynamic>>[
+                    buildPurchaseMap(dummyPurchase),
+                  ],
+                ));
 
         // Since queryPastPurchases makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
         // of 1.
@@ -196,26 +173,13 @@ void main() {
       });
 
       test('should store platform exception in the response', () async {
-        const String debugMessage = 'dummy message';
-
-        const BillingResponse responseCode = BillingResponse.developerError;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-            responseCode: responseCode, debugMessage: debugMessage);
-        stubPlatform.addResponse(
-            name: queryMethodName,
-            value: <dynamic, dynamic>{
-              'responseCode':
-                  const BillingResponseConverter().toJson(responseCode),
-              'billingResult': buildBillingResultMap(expectedBillingResult),
-              'purchasesList': <Map<String, dynamic>>[]
-            },
-            additionalStepBeforeReturn: (dynamic _) {
-              throw PlatformException(
-                code: 'error_code',
-                message: 'error_message',
-                details: <dynamic, dynamic>{'info': 'error_info'},
-              );
-            });
+        when(mockApi.queryPurchasesAsync(any)).thenAnswer((_) async {
+          throw PlatformException(
+            code: 'error_code',
+            message: 'error_message',
+            details: <dynamic, dynamic>{'info': 'error_info'},
+          );
+        });
         final QueryPurchaseDetailsResponse response =
             await iapAndroidPlatformAddition.queryPastPurchases();
         expect(response.pastPurchases, isEmpty);

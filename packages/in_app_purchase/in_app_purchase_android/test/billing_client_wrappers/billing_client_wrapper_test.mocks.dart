@@ -43,9 +43,9 @@ class _FakePlatformBillingConfigResponse_1 extends _i1.SmartFake
         );
 }
 
-class _FakePlatformProductDetailsResponse_2 extends _i1.SmartFake
-    implements _i2.PlatformProductDetailsResponse {
-  _FakePlatformProductDetailsResponse_2(
+class _FakePlatformPurchasesResponse_2 extends _i1.SmartFake
+    implements _i2.PlatformPurchasesResponse {
+  _FakePlatformPurchasesResponse_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -54,10 +54,21 @@ class _FakePlatformProductDetailsResponse_2 extends _i1.SmartFake
         );
 }
 
-class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3
+class _FakePlatformProductDetailsResponse_3 extends _i1.SmartFake
+    implements _i2.PlatformProductDetailsResponse {
+  _FakePlatformProductDetailsResponse_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_4
     extends _i1.SmartFake
     implements _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse {
-  _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3(
+  _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -231,6 +242,33 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
       ) as _i3.Future<_i2.PlatformBillingResult>);
 
   @override
+  _i3.Future<_i2.PlatformPurchasesResponse> queryPurchasesAsync(
+          _i2.PlatformProductType? productType) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #queryPurchasesAsync,
+          [productType],
+        ),
+        returnValue: _i3.Future<_i2.PlatformPurchasesResponse>.value(
+            _FakePlatformPurchasesResponse_2(
+          this,
+          Invocation.method(
+            #queryPurchasesAsync,
+            [productType],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i3.Future<_i2.PlatformPurchasesResponse>.value(
+                _FakePlatformPurchasesResponse_2(
+          this,
+          Invocation.method(
+            #queryPurchasesAsync,
+            [productType],
+          ),
+        )),
+      ) as _i3.Future<_i2.PlatformPurchasesResponse>);
+
+  @override
   _i3.Future<_i2.PlatformProductDetailsResponse> queryProductDetailsAsync(
           List<_i2.PlatformProduct?>? products) =>
       (super.noSuchMethod(
@@ -239,7 +277,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           [products],
         ),
         returnValue: _i3.Future<_i2.PlatformProductDetailsResponse>.value(
-            _FakePlatformProductDetailsResponse_2(
+            _FakePlatformProductDetailsResponse_3(
           this,
           Invocation.method(
             #queryProductDetailsAsync,
@@ -248,7 +286,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
         )),
         returnValueForMissingStub:
             _i3.Future<_i2.PlatformProductDetailsResponse>.value(
-                _FakePlatformProductDetailsResponse_2(
+                _FakePlatformProductDetailsResponse_3(
           this,
           Invocation.method(
             #queryProductDetailsAsync,
@@ -330,7 +368,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             returnValue: _i3.Future<
                     _i2
                     .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
-                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3(
+                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_4(
               this,
               Invocation.method(
                 #createAlternativeBillingOnlyReportingDetailsAsync,
@@ -340,7 +378,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             returnValueForMissingStub: _i3.Future<
                     _i2
                     .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
-                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_3(
+                _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_4(
               this,
               Invocation.method(
                 #createAlternativeBillingOnlyReportingDetailsAsync,
