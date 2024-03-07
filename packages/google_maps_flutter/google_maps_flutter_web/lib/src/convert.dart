@@ -262,20 +262,57 @@ gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
     final List<Object?>? rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
     if (rawIconSize != null) {
       size = gmaps.Size(
-        rawIconSize[0] as num?,
-        rawIconSize[1] as num?,
+        rawIconSize[0]! as double,
+        rawIconSize[1]! as double,
       );
     }
   }
   return size;
 }
 
+void _setIconSize(Size? size, gmaps.Icon icon) {
+  if (size != null) {
+    final gmaps.Size gmapsSize = gmaps.Size(
+      size.width,
+      size.height,
+    );
+    icon.size = gmapsSize;
+    icon.scaledSize = gmapsSize;
+  }
+}
+
 // Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
 gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
-  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
-
   gmaps.Icon? icon;
+  if (bitmapDescriptor is BytesMapBitmap) {
+    final Uint8List bytes = bitmapDescriptor.byteData;
+    final Blob blob = Blob(<dynamic>[bytes]);
+    icon = gmaps.Icon()..url = Url.createObjectUrlFromBlob(blob);
 
+    switch (bitmapDescriptor.bitmapScaling) {
+      case BitmapScaling.auto:
+        _setIconSize(bitmapDescriptor.size, icon);
+      case BitmapScaling.noScaling:
+        break;
+    }
+    return icon;
+  } else if (bitmapDescriptor is AssetMapBitmap) {
+    final String assetUrl =
+        ui_web.assetManager.getAssetUrl(bitmapDescriptor.assetName);
+    icon = gmaps.Icon()..url = assetUrl;
+
+    switch (bitmapDescriptor.bitmapScaling) {
+      case BitmapScaling.auto:
+        _setIconSize(bitmapDescriptor.size, icon);
+      case BitmapScaling.noScaling:
+        break;
+    }
+    return icon;
+  }
+
+  // The following code is for the deprecated BitmapDescriptor.fromBytes
+  // and BitmapDescriptor.fromAssetImage.
+  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
   if (iconConfig[0] == 'fromAssetImage') {
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
@@ -313,12 +350,12 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
         ..scaledSize = size;
     }
   }
-
   return icon;
 }
 
 // Computes the options for a new [gmaps.Marker] from an incoming set of options
 // [marker], and the existing marker registered with the map: [currentMarker].
+// Preserves the position from the [currentMarker], if set.
 gmaps.MarkerOptions _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,

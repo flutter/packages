@@ -192,6 +192,11 @@ class Marker implements MapsObject<Marker> {
   final bool flat;
 
   /// A description of the bitmap used to draw the marker icon.
+  ///
+  /// To create marker icon from assets, use [AssetMapBitmap] or
+  /// [AssetMapBitmap.fromMipmaps].
+  ///
+  /// To create marker icon from raw PNG data use [BytesMapBitmap].
   final BitmapDescriptor icon;
 
   /// A Google Maps InfoWindow.

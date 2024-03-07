@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
 ## 2.5.0
 
 * Adds support for `MapConfiguration.style`.

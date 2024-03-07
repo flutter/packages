@@ -213,7 +213,7 @@ void main() {
       final Set<Marker> markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
-          icon: BitmapDescriptor.fromBytes(bytes),
+          icon: BytesMapBitmap(bytes),
         ),
       };
 
@@ -240,7 +240,7 @@ void main() {
       final Set<Marker> markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
-          icon: BitmapDescriptor.fromBytes(bytes, size: const Size(20, 30)),
+          icon: BytesMapBitmap(bytes, size: const Size(20, 30)),
         ),
       };
 

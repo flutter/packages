@@ -94,42 +94,37 @@ class MockGoogleMapController extends _i1.Mock
           Invocation.getter(#configuration),
         ),
       ) as _i2.MapConfiguration);
-
   @override
-  _i3.StreamController<_i2.MapEvent<Object?>> get stream => (super.noSuchMethod(
+  _i3.StreamController<_i2.MapEvent<dynamic>> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _FakeStreamController_1<_i2.MapEvent<Object?>>(
+        returnValue: _FakeStreamController_1<_i2.MapEvent<dynamic>>(
           this,
           Invocation.getter(#stream),
         ),
         returnValueForMissingStub:
-            _FakeStreamController_1<_i2.MapEvent<Object?>>(
+            _FakeStreamController_1<_i2.MapEvent<dynamic>>(
           this,
           Invocation.getter(#stream),
         ),
-      ) as _i3.StreamController<_i2.MapEvent<Object?>>);
-
+      ) as _i3.StreamController<_i2.MapEvent<dynamic>>);
   @override
-  _i3.Stream<_i2.MapEvent<Object?>> get events => (super.noSuchMethod(
+  _i3.Stream<_i2.MapEvent<dynamic>> get events => (super.noSuchMethod(
         Invocation.getter(#events),
-        returnValue: _i3.Stream<_i2.MapEvent<Object?>>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.MapEvent<Object?>>.empty(),
-      ) as _i3.Stream<_i2.MapEvent<Object?>>);
-
+        returnValue: _i3.Stream<_i2.MapEvent<dynamic>>.empty(),
+        returnValueForMissingStub: _i3.Stream<_i2.MapEvent<dynamic>>.empty(),
+      ) as _i3.Stream<_i2.MapEvent<dynamic>>);
   @override
   bool get isInitialized => (super.noSuchMethod(
         Invocation.getter(#isInitialized),
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
-
   @override
   List<_i5.MapTypeStyle> get styles => (super.noSuchMethod(
         Invocation.getter(#styles),
         returnValue: <_i5.MapTypeStyle>[],
         returnValueForMissingStub: <_i5.MapTypeStyle>[],
       ) as List<_i5.MapTypeStyle>);
-
   @override
   void debugSetOverrides({
     _i4.DebugCreateMapFunction? createMap,
@@ -156,7 +151,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void init() => super.noSuchMethod(
         Invocation.method(
@@ -165,7 +159,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void updateMapConfiguration(_i2.MapConfiguration? update) =>
       super.noSuchMethod(
@@ -175,7 +168,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void updateStyles(List<_i5.MapTypeStyle>? styles) => super.noSuchMethod(
         Invocation.method(
@@ -184,7 +176,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   _i3.Future<_i2.LatLngBounds> getVisibleRegion() => (super.noSuchMethod(
         Invocation.method(
@@ -207,7 +198,6 @@ class MockGoogleMapController extends _i1.Mock
           ),
         )),
       ) as _i3.Future<_i2.LatLngBounds>);
-
   @override
   _i3.Future<_i2.ScreenCoordinate> getScreenCoordinate(_i2.LatLng? latLng) =>
       (super.noSuchMethod(
@@ -232,7 +222,6 @@ class MockGoogleMapController extends _i1.Mock
           ),
         )),
       ) as _i3.Future<_i2.ScreenCoordinate>);
-
   @override
   _i3.Future<_i2.LatLng> getLatLng(_i2.ScreenCoordinate? screenCoordinate) =>
       (super.noSuchMethod(
@@ -255,7 +244,6 @@ class MockGoogleMapController extends _i1.Mock
           ),
         )),
       ) as _i3.Future<_i2.LatLng>);
-
   @override
   _i3.Future<void> moveCamera(_i2.CameraUpdate? cameraUpdate) =>
       (super.noSuchMethod(
@@ -266,7 +254,6 @@ class MockGoogleMapController extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-
   @override
   _i3.Future<double> getZoomLevel() => (super.noSuchMethod(
         Invocation.method(
@@ -276,7 +263,6 @@ class MockGoogleMapController extends _i1.Mock
         returnValue: _i3.Future<double>.value(0.0),
         returnValueForMissingStub: _i3.Future<double>.value(0.0),
       ) as _i3.Future<double>);
-
   @override
   void updateCircles(_i2.CircleUpdates? updates) => super.noSuchMethod(
         Invocation.method(
@@ -285,7 +271,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void updatePolygons(_i2.PolygonUpdates? updates) => super.noSuchMethod(
         Invocation.method(
@@ -294,7 +279,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void updatePolylines(_i2.PolylineUpdates? updates) => super.noSuchMethod(
         Invocation.method(
@@ -303,7 +287,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void updateMarkers(_i2.MarkerUpdates? updates) => super.noSuchMethod(
         Invocation.method(
@@ -312,7 +295,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void updateTileOverlays(Set<_i2.TileOverlay>? newOverlays) =>
       super.noSuchMethod(
@@ -322,7 +304,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void clearTileCache(_i2.TileOverlayId? id) => super.noSuchMethod(
         Invocation.method(
@@ -331,7 +312,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void showInfoWindow(_i2.MarkerId? markerId) => super.noSuchMethod(
         Invocation.method(
@@ -340,7 +320,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void hideInfoWindow(_i2.MarkerId? markerId) => super.noSuchMethod(
         Invocation.method(
@@ -349,7 +328,6 @@ class MockGoogleMapController extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   bool isInfoWindowShown(_i2.MarkerId? markerId) => (super.noSuchMethod(
         Invocation.method(
@@ -359,7 +337,6 @@ class MockGoogleMapController extends _i1.Mock
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
-
   @override
   void dispose() => super.noSuchMethod(
         Invocation.method(

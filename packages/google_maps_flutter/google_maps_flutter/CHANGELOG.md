@@ -1,3 +1,9 @@
+## 2.7.0
+
+* Adds better support for marker size and scaling behaviour with `AssetMapBitmap` and `BytesMapBitmap`.
+* Deprecates `BitmapDescriptor.fromAssetImage` in favor of `AssetMapBitmap` and `AssetMapBitmap.fromMipmaps`.
+* Deprecates `BitmapDescriptor.fromBytes` in favor of `BytesMapBitmap`
+
 ## 2.6.0
 
 * Adds `style` to the GoogleMap widget constructor. This allows setting the map
