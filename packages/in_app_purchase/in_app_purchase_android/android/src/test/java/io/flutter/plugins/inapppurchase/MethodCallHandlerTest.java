@@ -8,10 +8,10 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UN
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.mapFromBillingResult;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -60,7 +60,6 @@ import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
@@ -86,7 +85,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -98,7 +96,6 @@ public class MethodCallHandlerTest {
   @Mock BillingClientFactory factory;
   @Mock BillingClient mockBillingClient;
   @Mock MethodChannel mockMethodChannel;
-  @Spy Result result;
 
   @Spy
   Messages.Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse>
@@ -113,7 +110,6 @@ public class MethodCallHandlerTest {
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
-  @Captor ArgumentCaptor<HashMap<String, Object>> resultCaptor;
 
   @Before
   public void setUp() {
@@ -132,13 +128,6 @@ public class MethodCallHandlerTest {
   @After
   public void tearDown() throws Exception {
     openMocks.close();
-  }
-
-  @Test
-  public void invalidMethod() {
-    MethodCall call = new MethodCall("invalid", null);
-    methodChannelHandler.onMethodCall(call, result);
-    verify(result, times(1)).notImplemented();
   }
 
   @Test
@@ -802,9 +791,10 @@ public class MethodCallHandlerTest {
   }
 
   @Test
-  public void queryPurchases_returns_success() throws Exception {
+  public void queryPurchases_returns_success() {
     establishConnectedBillingClient();
 
+    final Result mockResult = mock(Result.class);
     CountDownLatch lock = new CountDownLatch(1);
     doAnswer(
             (Answer<Object>)
@@ -812,7 +802,7 @@ public class MethodCallHandlerTest {
                   lock.countDown();
                   return null;
                 })
-        .when(result)
+        .when(mockResult)
         .success(any(HashMap.class));
 
     ArgumentCaptor<PurchasesResponseListener> purchasesResponseListenerArgumentCaptor =
@@ -895,13 +885,15 @@ public class MethodCallHandlerTest {
 
     BillingResult billingResult = buildBillingResult();
     List<Purchase> purchasesList = singletonList(buildPurchase("foo"));
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     doNothing()
         .when(mockMethodChannel)
         .invokeMethod(eq(ON_PURCHASES_UPDATED), resultCaptor.capture());
     listener.onPurchasesUpdated(billingResult, purchasesList);
 
     HashMap<String, Object> resultData = resultCaptor.getValue();
-    assertEquals(fromBillingResult(billingResult), resultData.get("billingResult"));
+    assertEquals(mapFromBillingResult(billingResult), resultData.get("billingResult"));
     assertEquals(fromPurchasesList(purchasesList), resultData.get("purchasesList"));
   }
 

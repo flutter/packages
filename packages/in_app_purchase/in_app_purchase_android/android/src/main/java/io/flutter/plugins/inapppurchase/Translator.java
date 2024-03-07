@@ -239,14 +239,14 @@ import java.util.Locale;
     return serialized;
   }
 
-  static HashMap<String, Object> fromBillingResult(BillingResult billingResult) {
+  static HashMap<String, Object> mapFromBillingResult(BillingResult billingResult) {
     HashMap<String, Object> info = new HashMap<>();
     info.put("responseCode", billingResult.getResponseCode());
     info.put("debugMessage", billingResult.getDebugMessage());
     return info;
   }
 
-  static Messages.PlatformBillingResult pigeonResultFromBillingResult(BillingResult billingResult) {
+  static Messages.PlatformBillingResult fromBillingResult(BillingResult billingResult) {
     return new Messages.PlatformBillingResult.Builder()
         .setResponseCode((long) billingResult.getResponseCode())
         .setDebugMessage(billingResult.getDebugMessage())
@@ -254,10 +254,10 @@ import java.util.Locale;
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
-  static Messages.PlatformBillingConfigResponse pigeonResultFromBillingConfig(
+  static Messages.PlatformBillingConfigResponse fromBillingConfig(
       BillingResult result, BillingConfig billingConfig) {
     return new Messages.PlatformBillingConfigResponse.Builder()
-        .setBillingResult(pigeonResultFromBillingResult(result))
+        .setBillingResult(fromBillingResult(result))
         .setCountryCode(billingConfig.getCountryCode())
         .build();
   }
@@ -266,10 +266,10 @@ import java.util.Locale;
    * Converter from {@link BillingResult} and {@link AlternativeBillingOnlyReportingDetails} to map.
    */
   static Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse
-      pigeonResultFromAlternativeBillingOnlyReportingDetails(
+      fromAlternativeBillingOnlyReportingDetails(
           BillingResult result, AlternativeBillingOnlyReportingDetails details) {
     return new Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse.Builder()
-        .setBillingResult(pigeonResultFromBillingResult(result))
+        .setBillingResult(fromBillingResult(result))
         .setExternalTransactionToken(details.getExternalTransactionToken())
         .build();
   }

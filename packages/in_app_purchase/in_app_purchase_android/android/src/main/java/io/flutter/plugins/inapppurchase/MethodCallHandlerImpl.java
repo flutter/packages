@@ -4,12 +4,12 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
-import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromAlternativeBillingOnlyReportingDetails;
-import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromBillingConfig;
-import static io.flutter.plugins.inapppurchase.Translator.pigeonResultFromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
 
@@ -33,7 +33,6 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
@@ -42,18 +41,17 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
+import io.flutter.plugins.inapppurchase.Messages.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /** Handles method channel for the plugin. */
-class MethodCallHandlerImpl
-    implements MethodChannel.MethodCallHandler,
-        Application.ActivityLifecycleCallbacks,
-        InAppPurchaseApi {
+class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, InAppPurchaseApi {
 
   @VisibleForTesting
   static final class MethodNames {
@@ -136,13 +134,8 @@ class MethodCallHandlerImpl
   }
 
   @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-    result.notImplemented();
-  }
-
-  @Override
   public void showAlternativeBillingOnlyInformationDialog(
-      @NonNull Messages.Result<PlatformBillingResult> result) {
+      @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
@@ -152,13 +145,12 @@ class MethodCallHandlerImpl
       return;
     }
     billingClient.showAlternativeBillingOnlyInformationDialog(
-        activity, billingResult -> result.success(pigeonResultFromBillingResult(billingResult)));
+        activity, billingResult -> result.success(fromBillingResult(billingResult)));
   }
 
   @Override
   public void createAlternativeBillingOnlyReportingDetailsAsync(
-      @NonNull
-          Messages.Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse> result) {
+      @NonNull Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
@@ -166,24 +158,24 @@ class MethodCallHandlerImpl
     billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
         ((billingResult, alternativeBillingOnlyReportingDetails) ->
             result.success(
-                pigeonResultFromAlternativeBillingOnlyReportingDetails(
+                fromAlternativeBillingOnlyReportingDetails(
                     billingResult, alternativeBillingOnlyReportingDetails))));
   }
 
   @Override
   public void isAlternativeBillingOnlyAvailableAsync(
-      @NonNull Messages.Result<PlatformBillingResult> result) {
+      @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
     }
     billingClient.isAlternativeBillingOnlyAvailableAsync(
-        billingResult -> result.success(pigeonResultFromBillingResult(billingResult)));
+        billingResult -> result.success(fromBillingResult(billingResult)));
   }
 
   @Override
   public void getBillingConfigAsync(
-      @NonNull Messages.Result<Messages.PlatformBillingConfigResponse> result) {
+      @NonNull Result<Messages.PlatformBillingConfigResponse> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
@@ -191,7 +183,7 @@ class MethodCallHandlerImpl
     billingClient.getBillingConfigAsync(
         GetBillingConfigParams.newBuilder().build(),
         (billingResult, billingConfig) ->
-            result.success(pigeonResultFromBillingConfig(billingResult, billingConfig)));
+            result.success(fromBillingConfig(billingResult, billingConfig)));
   }
 
   @Override
@@ -218,7 +210,7 @@ class MethodCallHandlerImpl
   @Override
   public void queryProductDetailsAsync(
       @NonNull List<PlatformProduct> products,
-      @NonNull Messages.Result<PlatformProductDetailsResponse> result) {
+      @NonNull Result<PlatformProductDetailsResponse> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
@@ -232,7 +224,7 @@ class MethodCallHandlerImpl
           updateCachedProducts(productDetailsList);
           final PlatformProductDetailsResponse.Builder responseBuilder =
               new PlatformProductDetailsResponse.Builder()
-                  .setBillingResult(pigeonResultFromBillingResult(billingResult))
+                  .setBillingResult(fromBillingResult(billingResult))
                   .setProductDetailsJsonList(fromProductDetailsList(productDetailsList));
           result.success(responseBuilder.build());
         });
@@ -338,8 +330,7 @@ class MethodCallHandlerImpl
           subscriptionUpdateParamsBuilder, params.getProrationMode().intValue());
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
-    return pigeonResultFromBillingResult(
-        billingClient.launchBillingFlow(activity, paramsBuilder.build()));
+    return fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build()));
   }
 
   // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode.
@@ -354,14 +345,14 @@ class MethodCallHandlerImpl
 
   @Override
   public void consumeAsync(
-      @NonNull String purchaseToken, @NonNull Messages.Result<PlatformBillingResult> result) {
+      @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
     }
 
     ConsumeResponseListener listener =
-        (billingResult, outToken) -> result.success(pigeonResultFromBillingResult(billingResult));
+        (billingResult, outToken) -> result.success(fromBillingResult(billingResult));
     ConsumeParams.Builder paramsBuilder =
         ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
     ConsumeParams params = paramsBuilder.build();
@@ -371,8 +362,8 @@ class MethodCallHandlerImpl
 
   @Override
   public void queryPurchasesAsync(
-      @NonNull Messages.PlatformProductType productType,
-      @NonNull Messages.Result<Messages.PlatformPurchasesResponse> result) {
+      @NonNull PlatformProductType productType,
+      @NonNull Result<Messages.PlatformPurchasesResponse> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
@@ -387,7 +378,7 @@ class MethodCallHandlerImpl
         (billingResult, purchasesList) -> {
           PlatformPurchasesResponse.Builder builder =
               new PlatformPurchasesResponse.Builder()
-                  .setBillingResult(pigeonResultFromBillingResult(billingResult))
+                  .setBillingResult(fromBillingResult(billingResult))
                   .setPurchasesJsonList(fromPurchasesList(purchasesList));
           result.success(builder.build());
         });
@@ -395,8 +386,8 @@ class MethodCallHandlerImpl
 
   @Override
   public void queryPurchaseHistoryAsync(
-      @NonNull Messages.PlatformProductType productType,
-      @NonNull Messages.Result<Messages.PlatformPurchaseHistoryResponse> result) {
+      @NonNull PlatformProductType productType,
+      @NonNull Result<Messages.PlatformPurchaseHistoryResponse> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
@@ -409,7 +400,7 @@ class MethodCallHandlerImpl
         (billingResult, purchasesList) -> {
           PlatformPurchaseHistoryResponse.Builder builder =
               new PlatformPurchaseHistoryResponse.Builder()
-                  .setBillingResult(pigeonResultFromBillingResult(billingResult))
+                  .setBillingResult(fromBillingResult(billingResult))
                   .setPurchaseHistoryRecordJsonList(fromPurchaseHistoryRecordList(purchasesList));
           result.success(builder.build());
         });
@@ -419,7 +410,7 @@ class MethodCallHandlerImpl
   public void startConnection(
       @NonNull Long handle,
       @NonNull PlatformBillingChoiceMode billingMode,
-      @NonNull Messages.Result<PlatformBillingResult> result) {
+      @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =
           billingClientFactory.createBillingClient(applicationContext, methodChannel, billingMode);
@@ -438,7 +429,7 @@ class MethodCallHandlerImpl
             alreadyFinished = true;
             // Consider the fact that we've finished a success, leave it to the Dart side to
             // validate the responseCode.
-            result.success(pigeonResultFromBillingResult(billingResult));
+            result.success(fromBillingResult(billingResult));
           }
 
           @Override
@@ -452,7 +443,7 @@ class MethodCallHandlerImpl
 
   @Override
   public void acknowledgePurchase(
-      @NonNull String purchaseToken, @NonNull Messages.Result<PlatformBillingResult> result) {
+      @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
       return;
@@ -460,7 +451,7 @@ class MethodCallHandlerImpl
     AcknowledgePurchaseParams params =
         AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
     billingClient.acknowledgePurchase(
-        params, billingResult -> result.success(pigeonResultFromBillingResult(billingResult)));
+        params, billingResult -> result.success(fromBillingResult(billingResult)));
   }
 
   protected void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {

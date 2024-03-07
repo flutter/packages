@@ -4,8 +4,8 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.mapFromBillingResult;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,7 +33,7 @@ class PluginPurchaseListener implements PurchasesUpdatedListener {
   public void onPurchasesUpdated(
       @NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
     final Map<String, Object> callbackArgs = new HashMap<>();
-    callbackArgs.put("billingResult", fromBillingResult(billingResult));
+    callbackArgs.put("billingResult", mapFromBillingResult(billingResult));
     callbackArgs.put("responseCode", billingResult.getResponseCode());
     callbackArgs.put("purchasesList", fromPurchasesList(purchases));
     channel.invokeMethod(ON_PURCHASES_UPDATED, callbackArgs);

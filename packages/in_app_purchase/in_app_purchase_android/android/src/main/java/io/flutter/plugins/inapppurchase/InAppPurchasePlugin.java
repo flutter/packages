@@ -75,13 +75,11 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
     methodCallHandler =
         new MethodCallHandlerImpl(
             /*activity=*/ null, context, methodChannel, new BillingClientFactoryImpl());
-    methodChannel.setMethodCallHandler(methodCallHandler);
     Messages.InAppPurchaseApi.setUp(messenger, methodCallHandler);
   }
 
   private void teardownMethodChannel(BinaryMessenger messenger) {
     Messages.InAppPurchaseApi.setUp(messenger, null);
-    methodChannel.setMethodCallHandler(null);
     methodChannel = null;
     methodCallHandler = null;
   }

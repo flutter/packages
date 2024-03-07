@@ -163,20 +163,20 @@ public class TranslatorTest {
             .setDebugMessage("dummy debug message")
             .setResponseCode(BillingClient.BillingResponseCode.OK)
             .build();
-    Map<String, Object> billingResultMap = Translator.fromBillingResult(newBillingResult);
+    Messages.PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
 
-    assertEquals(billingResultMap.get("responseCode"), newBillingResult.getResponseCode());
-    assertEquals(billingResultMap.get("debugMessage"), newBillingResult.getDebugMessage());
+    assertEquals(platformResult.getResponseCode().longValue(), newBillingResult.getResponseCode());
+    assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
   }
 
   @Test
   public void fromBillingResult_debugMessageNull() {
     BillingResult newBillingResult =
         BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build();
-    Map<String, Object> billingResultMap = Translator.fromBillingResult(newBillingResult);
+    Messages.PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
 
-    assertEquals(billingResultMap.get("responseCode"), newBillingResult.getResponseCode());
-    assertEquals(billingResultMap.get("debugMessage"), newBillingResult.getDebugMessage());
+    assertEquals(platformResult.getResponseCode().longValue(), newBillingResult.getResponseCode());
+    assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
   }
 
   @Test
