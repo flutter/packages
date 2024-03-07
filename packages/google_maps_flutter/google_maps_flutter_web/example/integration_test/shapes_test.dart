@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +10,8 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps/google_maps_geometry.dart' as geometry;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+// ignore: implementation_imports
+import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 
 // This value is used when comparing the results of
@@ -25,7 +26,7 @@ void main() {
   late gmaps.GMap map;
 
   setUp(() {
-    map = gmaps.GMap(html.DivElement());
+    map = gmaps.GMap(createDivElement());
   });
 
   group('CirclesController', () {
