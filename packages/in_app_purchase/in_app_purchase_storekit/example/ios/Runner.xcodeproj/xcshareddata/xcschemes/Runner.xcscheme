@@ -57,11 +57,11 @@
                BlueprintName = "RunnerUITests"
                ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
+            <StoreKitConfigurationFileReference
+               identifier = "../Runner/Configuration.storekit">
+            </StoreKitConfigurationFileReference>
          </TestableReference>
       </Testables>
-      <StoreKitConfigurationFileReference
-         identifier = "../Runner/Configuration.storekit">
-      </StoreKitConfigurationFileReference>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
