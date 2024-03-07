@@ -1,3 +1,7 @@
+## 2.8.4
+
+* Added `onScrubbingCallback` to `VideoProgressIndicator`
+
 ## 2.8.3
 
 * Fixes typo in `README.md`.
