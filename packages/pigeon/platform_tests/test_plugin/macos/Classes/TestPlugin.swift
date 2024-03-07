@@ -11,14 +11,18 @@ extension FlutterError: Error {}
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
+  var smallFlutterAPI: FlutterSmallApi
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger)
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
+    TestPluginWithSuffix.register(with: registrar, suffix: ".suffix")
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
+    smallFlutterAPI = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: ".suffix")
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -87,18 +91,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anEnum
   }
 
-  func echoNamedDefault(_ aString: String) throws -> String {
-    return aString
-  }
-
-  func echoOptionalDefault(_ aDouble: Double) throws -> Double {
-    return aDouble
-  }
-
-  func echoRequired(_ anInt: Int64) throws -> Int64 {
-    return anInt
-  }
-
   func extractNestedNullableString(from wrapper: AllClassesWrapper) -> String? {
     return wrapper.allNullableTypes.aNullableString
   }
@@ -137,6 +129,18 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echo(_ aNullableObject: Any?) -> Any? {
     return aNullableObject
+  }
+
+  func echoNamedDefault(_ aString: String) throws -> String {
+    return aString
+  }
+
+  func echoOptionalDefault(_ aDouble: Double) throws -> Double {
+    return aDouble
+  }
+
+  func echoRequired(_ anInt: Int64) throws -> Int64 {
+    return anInt
   }
 
   func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]? {
@@ -547,4 +551,34 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       }
     }
   }
+
+  func callFlutterSmallApiEcho(
+    _ aString: String, completion: @escaping (Result<String, Error>) -> Void
+  ) {
+    smallFlutterAPI.echo(aString) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+}
+
+public class TestPluginWithSuffix: HostSmallApi {
+  public static func register(with registrar: FlutterPluginRegistrar, suffix: String) {
+    let plugin = TestPluginWithSuffix()
+    HostSmallApiSetup.setUp(
+      binaryMessenger: registrar.messenger, api: plugin, messageChannelSuffix: suffix)
+  }
+
+  func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    completion(.success(aString))
+  }
+
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.success(Void()))
+  }
+
 }

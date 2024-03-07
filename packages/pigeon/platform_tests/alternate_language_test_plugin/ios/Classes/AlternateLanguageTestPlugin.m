@@ -8,6 +8,7 @@
 
 @interface AlternateLanguageTestPlugin ()
 @property(nonatomic) FlutterIntegrationCoreApi *flutterAPI;
+@property(nonatomic) FlutterSmallApi *flutterSmallAPI;
 @end
 
 /// This plugin handles the native side of the integration tests in example/integration_test/.
@@ -15,8 +16,11 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
   SetUpHostIntegrationCoreApi([registrar messenger], plugin);
+  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@".suffix"];
   plugin.flutterAPI =
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
+  plugin.flutterSmallAPI = [[FlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
+                                                       messageChannelSuffix:@".suffix"];
 }
 
 #pragma mark HostIntegrationCoreApi implementation
@@ -498,6 +502,38 @@
                          completion:^(AnEnumBox *value, FlutterError *error) {
                            completion(value, error);
                          }];
+}
+
+- (void)callFlutterSmallApiEchoString:(nonnull NSString *)aString
+                           completion:(nonnull void (^)(NSString *_Nullable,
+                                                        FlutterError *_Nullable))completion {
+  [self.flutterSmallAPI echoString:aString
+                        completion:^(NSString *value, FlutterError *error) {
+                          completion(value, error);
+                        }];
+}
+
+@end
+
+@interface AlternateLanguageTestAPIWithSuffix ()
+@end
+
+@implementation AlternateLanguageTestAPIWithSuffix
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                       suffix:(NSString *)suffix {
+  AlternateLanguageTestAPIWithSuffix *api = [[AlternateLanguageTestAPIWithSuffix alloc] init];
+  SetUpHostSmallApiWithSuffix([registrar messenger], api, suffix);
+}
+
+#pragma mark HostSmallAPI implementation
+
+- (void)echoString:(nonnull NSString *)aString
+        completion:(nonnull void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)voidVoidWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  completion(nil);
 }
 
 @end

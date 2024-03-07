@@ -293,9 +293,12 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.write('class ${api.name}: ${api.name}Protocol ');
     indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
-      indent.write('init(binaryMessenger: FlutterBinaryMessenger) ');
+      indent.writeln('private let messageChannelSuffix: String');
+      indent.write(
+          'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") ');
       indent.addScoped('{', '}', () {
         indent.writeln('self.binaryMessenger = binaryMessenger');
+        indent.writeln('self.messageChannelSuffix = messageChannelSuffix');
       });
       final String codecName = _getCodecName(api);
       String codecArgumentString = '';
@@ -380,7 +383,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       indent.writeln(
           '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
       indent.write(
-          'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
+          'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
           _writeHostMethodMessageHandler(
@@ -702,7 +705,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           ? 'nil'
           : '[${enumSafeArgNames.join(', ')}] as [Any?]';
       const String channel = 'channel';
-      indent.writeln('let channelName: String = "$channelName"');
+      indent.writeln(
+          'let channelName: String = "$channelName\\(messageChannelSuffix)"');
       indent.writeln(
           'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger$codecArgumentString)');
       indent.write('$channel.sendMessage($sendArgument) ');
@@ -732,7 +736,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             indent.writeln('completion(.success(Void()))');
           } else {
             final String fieldType = _swiftTypeForDartType(returnType);
-
             _writeGenericCasting(
               indent: indent,
               value: 'listResponse[0]',
@@ -740,7 +743,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
               fieldType: fieldType,
               type: returnType,
             );
-
             indent.writeln('completion(.success(result))');
           }
         });
@@ -770,7 +772,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
 
     indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
+        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName\\(messageChannelSuffix)", binaryMessenger: binaryMessenger$codecArgumentString)');
     indent.write('if let api = api ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');

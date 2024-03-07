@@ -11,6 +11,7 @@ import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AnEnum;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
+import com.example.alternate_language_test_plugin.CoreTests.FlutterSmallApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.NullableResult;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
@@ -22,11 +23,15 @@ import java.util.Map;
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrationCoreApi {
   @Nullable FlutterIntegrationCoreApi flutterApi = null;
+  @Nullable FlutterSmallApi flutterSmallApi = null;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this);
     flutterApi = new FlutterIntegrationCoreApi(binding.getBinaryMessenger());
+    flutterSmallApi = new FlutterSmallApi(binding.getBinaryMessenger(), ".suffix");
+    TestPluginWithSuffix testSuffixApi = new TestPluginWithSuffix();
+    testSuffixApi.setUp(binding, ".suffix");
   }
 
   @Override
@@ -462,5 +467,28 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void callFlutterEchoNullableEnum(
       @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result) {
     flutterApi.echoNullableEnum(anEnum, result);
+  }
+
+  @Override
+  public void callFlutterSmallApiEchoString(
+      @NonNull String aString, @NonNull Result<String> result) {
+    flutterSmallApi.echoString(aString, result);
+  }
+}
+
+class TestPluginWithSuffix implements CoreTests.HostSmallApi {
+
+  public void setUp(FlutterPlugin.FlutterPluginBinding binding, String suffix) {
+    CoreTests.HostSmallApi.setUp(binding.getBinaryMessenger(), this, suffix);
+  }
+
+  @Override
+  public void echo(@NonNull String aString, @NonNull Result<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void voidVoid(@NonNull VoidResult result) {
+    result.success();
   }
 }

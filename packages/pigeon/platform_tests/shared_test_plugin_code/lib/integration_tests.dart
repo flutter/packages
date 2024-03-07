@@ -1116,6 +1116,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
+  group('Host API with suffix', () {
+    testWidgets('echo string succeeds with suffix', (_) async {
+      final HostSmallApi apiWithSuffix =
+          HostSmallApi(messageChannelSuffix: '.suffix');
+      const String sentString = "I'm a computer";
+      final String echoString = await apiWithSuffix.echo(sentString);
+      expect(sentString, echoString);
+    });
+  });
+
   // These tests rely on the async Dart->host calls to work correctly, since
   // the host->Dart call is wrapped in a driving Dart->host call, so any test
   // added to this group should have coverage of the relevant arguments and
@@ -1470,6 +1480,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoEnum, sentEnum);
     });
   });
+
+  group('Flutter API with suffix', () {
+    setUp(() {
+      FlutterSmallApi.setup(
+        _SmallFlutterApi(),
+        messageChannelSuffix: '.suffix',
+      );
+    });
+
+    testWidgets('echo string succeeds with suffix', (_) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentObject = "I'm a computer";
+      final String echoObject =
+          await api.callFlutterSmallApiEchoString(sentObject);
+      expect(echoObject, sentObject);
+    });
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
@@ -1559,5 +1586,17 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   Future<String> echoAsyncString(String aString) async {
     return aString;
+  }
+}
+
+class _SmallFlutterApi implements FlutterSmallApi {
+  @override
+  String echoString(String aString) {
+    return aString;
+  }
+
+  @override
+  TestMessage echoWrappedList(TestMessage msg) {
+    return msg;
   }
 }

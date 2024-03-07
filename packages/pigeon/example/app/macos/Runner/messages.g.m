@@ -138,9 +138,18 @@ NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void) {
 
 void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
                             NSObject<PGNExampleHostApi> *api) {
+  SetUpPGNExampleHostApiWithSuffix(binaryMessenger, api, @"");
+}
+
+void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                      NSObject<PGNExampleHostApi> *api,
+                                      NSString *messageChannelSuffix) {
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage"
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_example_package."
+                                                   @"ExampleHostApi.getHostLanguage",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
                   codec:PGNExampleHostApiGetCodec()];
     if (api) {
@@ -159,7 +168,11 @@ void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add"
+           initWithName:
+               [NSString
+                   stringWithFormat:@"%@%@",
+                                    @"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
                   codec:PGNExampleHostApiGetCodec()];
     if (api) {
@@ -181,7 +194,10 @@ void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage"
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_example_package."
+                                                   @"ExampleHostApi.sendMessage",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
                   codec:PGNExampleHostApiGetCodec()];
     if (api) {
@@ -210,6 +226,7 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
 
 @interface PGNMessageFlutterApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@property(nonatomic, strong) NSString *messageChannelSuffix;
 @end
 
 @implementation PGNMessageFlutterApi
@@ -218,13 +235,24 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
   self = [super init];
   if (self) {
     _binaryMessenger = binaryMessenger;
+    _messageChannelSuffix = @"";
+  }
+  return self;
+}
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                   messageChannelSuffix:(NSString *)messageChannelSuffix {
+  self = [self initWithBinaryMessenger:binaryMessenger];
+  if (self) {
+    _messageChannelSuffix = messageChannelSuffix;
   }
   return self;
 }
 - (void)flutterMethodAString:(nullable NSString *)arg_aString
                   completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  NSString *channelName =
-      @"dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod";
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod",
+                       _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger

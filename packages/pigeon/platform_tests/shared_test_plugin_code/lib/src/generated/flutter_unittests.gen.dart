@@ -150,15 +150,18 @@ class Api {
   /// Constructor for [Api].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  Api({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  Api({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix = messageChannelSuffix;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _ApiCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<FlutterSearchReply> search(FlutterSearchRequest request) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.Api.search';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.search$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -186,8 +189,8 @@ class Api {
   }
 
   Future<FlutterSearchReplies> doSearches(FlutterSearchRequests request) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.Api.doSearches';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.doSearches$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -215,8 +218,8 @@ class Api {
   }
 
   Future<FlutterSearchRequests> echo(FlutterSearchRequests requests) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.Api.echo';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.echo$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -244,8 +247,8 @@ class Api {
   }
 
   Future<int> anInt(int value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

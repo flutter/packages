@@ -18,6 +18,9 @@ const String _docCommentPrefix = '///';
 /// user defined parameters.
 const String _varNamePrefix = '__pigeon_';
 
+/// Name of the variable that contains the message channel suffix for APIs.
+const String _suffixVarName = '${_varNamePrefix}messageChannelSuffix';
+
 /// Name of field used for host API codec.
 const String _pigeonChannelCodec = 'pigeonChannelCodec';
 
@@ -349,7 +352,7 @@ $resultAt != null
         indent.newln();
       }
       indent.write(
-          'static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger}) ');
+          "static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) ");
       indent.addScoped('{', '}', () {
         for (final Method func in api.methods) {
           _writeFlutterMethodMessageHandler(
@@ -408,13 +411,16 @@ $resultAt != null
 /// Constructor for [${api.name}].  The [binaryMessenger] named argument is
 /// available for dependency injection.  If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
-${api.name}({BinaryMessenger? binaryMessenger})
-\t\t: ${_varNamePrefix}binaryMessenger = binaryMessenger;
+${api.name}({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : ${_varNamePrefix}binaryMessenger = binaryMessenger,
+      ${_varNamePrefix}messageChannelSuffix = messageChannelSuffix;
 final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 ''');
 
       indent.writeln(
           'static const MessageCodec<Object?> $_pigeonChannelCodec = $codecName();');
+      indent.newln();
+      indent.writeln('final String $_suffixVarName;');
       indent.newln();
       for (final Method func in api.methods) {
         if (!first) {
@@ -571,10 +577,7 @@ PlatformException _createConnectionError(String channelName) {
     required String channelName,
   }) {
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-    String argSignature = '';
-    if (parameters.isNotEmpty) {
-      argSignature = _getMethodParameterSignature(parameters);
-    }
+    final String argSignature = _getMethodParameterSignature(parameters);
     indent.write(
       'Future<${_addGenericTypesNullable(returnType)}> $name($argSignature) async ',
     );
@@ -607,9 +610,8 @@ PlatformException _createConnectionError(String channelName) {
       });
       sendArgument = '<Object?>[${argExpressions.join(', ')}]';
     }
-
-    indent
-        .writeln("const String ${_varNamePrefix}channelName = '$channelName';");
+    indent.writeln(
+        "final String ${_varNamePrefix}channelName = '$channelName\$$_suffixVarName';");
     indent.writeScoped(
         'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
         ');', () {
@@ -687,7 +689,8 @@ if (${_varNamePrefix}replyList == null) {
         'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
-        indent.writeln("'$channelName', $_pigeonChannelCodec,");
+        indent.writeln(
+            "'$channelName\$messageChannelSuffix', $_pigeonChannelCodec,");
         indent.writeln(
           'binaryMessenger: binaryMessenger);',
         );

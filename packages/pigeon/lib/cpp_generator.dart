@@ -339,8 +339,13 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     indent.write('class ${api.name} ');
     indent.addScoped('{', '};', () {
       _writeAccessBlock(indent, _ClassAccess.public, () {
-        _writeFunctionDeclaration(indent, api.name,
-            parameters: <String>['flutter::BinaryMessenger* binary_messenger']);
+        _writeFunctionDeclaration(indent, api.name, parameters: <String>[
+          'flutter::BinaryMessenger* binary_messenger',
+        ]);
+        _writeFunctionDeclaration(indent, api.name, parameters: <String>[
+          'flutter::BinaryMessenger* binary_messenger',
+          'std::string message_channel_suffix',
+        ]);
         _writeFunctionDeclaration(indent, 'GetCodec',
             returnType: 'const flutter::StandardMessageCodec&', isStatic: true);
         for (final Method func in api.methods) {
@@ -367,6 +372,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       });
       indent.addScoped(' private:', null, () {
         indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
+      });
+      indent.addScoped(' private:', null, () {
+        indent.writeln('std::string message_channel_suffix_;');
       });
     }, nestCount: 0);
     indent.newln();
@@ -449,6 +457,14 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             parameters: <String>[
               'flutter::BinaryMessenger* binary_messenger',
               '${api.name}* api',
+            ]);
+        _writeFunctionDeclaration(indent, 'SetUp',
+            returnType: _voidType,
+            isStatic: true,
+            parameters: <String>[
+              'flutter::BinaryMessenger* binary_messenger',
+              '${api.name}* api',
+              'std::string message_channel_suffix',
             ]);
         _writeFunctionDeclaration(indent, 'WrapError',
             returnType: 'flutter::EncodableValue',
@@ -837,19 +853,43 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     }
     indent.writeln(
         '$_commentPrefix Generated class from Pigeon that represents Flutter messages that can be called from C++.');
-    _writeFunctionDefinition(indent, api.name,
-        scope: api.name,
-        parameters: <String>['flutter::BinaryMessenger* binary_messenger'],
-        initializers: <String>['binary_messenger_(binary_messenger)']);
+    _writeFunctionDefinition(
+      indent,
+      api.name,
+      scope: api.name,
+      parameters: <String>[
+        'flutter::BinaryMessenger* binary_messenger',
+      ],
+      initializers: <String>[
+        'binary_messenger_(binary_messenger)',
+      ],
+    );
+    _writeFunctionDefinition(
+      indent,
+      api.name,
+      scope: api.name,
+      parameters: <String>[
+        'flutter::BinaryMessenger* binary_messenger',
+        'std::string message_channel_suffix'
+      ],
+      initializers: <String>[
+        'binary_messenger_(binary_messenger)',
+        'message_channel_suffix_(message_channel_suffix)'
+      ],
+    );
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
         ? _getCodecSerializerName(api)
         : _defaultCodecSerializer;
-    _writeFunctionDefinition(indent, 'GetCodec',
-        scope: api.name,
-        returnType: 'const flutter::StandardMessageCodec&', body: () {
-      indent.writeln(
-          'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
-    });
+    _writeFunctionDefinition(
+      indent,
+      'GetCodec',
+      scope: api.name,
+      returnType: 'const flutter::StandardMessageCodec&',
+      body: () {
+        indent.writeln(
+            'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
+      },
+    );
     for (final Method func in api.methods) {
       final HostDatatype returnType =
           getHostDatatype(func.returnType, _shortBaseCppTypeForBuiltinDartType);
@@ -872,7 +912,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           returnType: _voidType,
           parameters: parameters, body: () {
         indent.writeln(
-            'const std::string channel_name = "${makeChannelName(api, func, dartPackageName)}";');
+            'const std::string channel_name = "${makeChannelName(api, func, dartPackageName)}" + message_channel_suffix_;');
         indent.writeln('BasicMessageChannel<> channel(binary_messenger_, '
             'channel_name, &GetCodec());');
 
@@ -959,19 +999,33 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     });
     indent.writeln(
         '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
+    _writeFunctionDefinition(
+      indent,
+      'SetUp',
+      scope: api.name,
+      returnType: _voidType,
+      parameters: <String>[
+        'flutter::BinaryMessenger* binary_messenger',
+        '${api.name}* api',
+      ],
+      body: () {
+        indent.writeln('${api.name}::SetUp(binary_messenger, api, "");');
+      },
+    );
     _writeFunctionDefinition(indent, 'SetUp',
         scope: api.name,
         returnType: _voidType,
         parameters: <String>[
           'flutter::BinaryMessenger* binary_messenger',
-          '${api.name}* api'
+          '${api.name}* api',
+          'std::string message_channel_suffix',
         ], body: () {
       for (final Method method in api.methods) {
         final String channelName =
             makeChannelName(api, method, dartPackageName);
         indent.writeScoped('{', '}', () {
           indent.writeln('BasicMessageChannel<> channel(binary_messenger, '
-              '"$channelName", &GetCodec());');
+              '"$channelName" + message_channel_suffix, &GetCodec());');
           indent.writeScoped('if (api != nullptr) {', '} else {', () {
             indent.write(
                 'channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');

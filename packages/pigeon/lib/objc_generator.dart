@@ -305,6 +305,8 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln('@interface $apiName : NSObject');
     indent.writeln(
         '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
+    indent.writeln(
+        '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger messageChannelSuffix:(NSString *)messageChannelSuffix;');
     for (final Method func in api.methods) {
       final _ObjcType returnType = _objcTypeForDartType(
         generatorOptions.prefix, func.returnType,
@@ -410,6 +412,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.newln();
     indent.writeln(
         'extern void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
+    indent.newln();
+    indent.writeln(
+        'extern void SetUp${apiName}WithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api, NSString *messageChannelSuffix);');
     indent.newln();
   }
 }
@@ -628,7 +633,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.newln();
     indent.writeln('@implementation $apiName');
     indent.newln();
-    _writeInitializer(indent);
+    _writeInitializers(indent);
     for (final Method func in api.methods) {
       _writeMethod(
         generatorOptions,
@@ -658,6 +663,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     const String channelName = 'channel';
     indent.write(
         'void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('SetUp${apiName}WithSuffix(binaryMessenger, api, @"");');
+    });
+    indent.newln();
+    indent.write(
+        'void SetUp${apiName}WithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api, NSString *messageChannelSuffix) ');
     indent.addScoped('{', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -892,7 +903,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       indent.writeln('[[FlutterBasicMessageChannel alloc]');
       indent.nest(1, () {
         indent.writeln(
-            'initWithName:@"${makeChannelName(api, func, dartPackageName)}"');
+            'initWithName:[NSString stringWithFormat:@"%@%@", @"${makeChannelName(api, func, dartPackageName)}", messageChannelSuffix]');
         indent.writeln('binaryMessenger:binaryMessenger');
         indent.write('codec:');
         indent
@@ -1104,7 +1115,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
     ));
     indent.addScoped(' {', '}', () {
       indent.writeln(
-          'NSString *channelName = @"${makeChannelName(api, func, dartPackageName)}";');
+          'NSString *channelName = [NSString stringWithFormat:@"%@%@", @"${makeChannelName(api, func, dartPackageName)}", _messageChannelSuffix];');
       indent.writeln('FlutterBasicMessageChannel *channel =');
       indent.nest(1, () {
         indent.writeln('[FlutterBasicMessageChannel');
@@ -1523,10 +1534,12 @@ void _writeExtension(Indent indent, String apiName) {
   indent.writeln('@interface $apiName ()');
   indent.writeln(
       '@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;');
+  indent
+      .writeln('@property(nonatomic, strong) NSString *messageChannelSuffix;');
   indent.writeln('@end');
 }
 
-void _writeInitializer(Indent indent) {
+void _writeInitializers(Indent indent) {
   indent.write(
       '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger ');
   indent.addScoped('{', '}', () {
@@ -1534,6 +1547,17 @@ void _writeInitializer(Indent indent) {
     indent.write('if (self) ');
     indent.addScoped('{', '}', () {
       indent.writeln('_binaryMessenger = binaryMessenger;');
+      indent.writeln('_messageChannelSuffix = @"";');
+    });
+    indent.writeln('return self;');
+  });
+  indent.write(
+      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger messageChannelSuffix:(NSString*)messageChannelSuffix');
+  indent.addScoped('{', '}', () {
+    indent.writeln('self = [self initWithBinaryMessenger:binaryMessenger];');
+    indent.write('if (self) ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('_messageChannelSuffix = messageChannelSuffix;');
     });
     indent.writeln('return self;');
   });

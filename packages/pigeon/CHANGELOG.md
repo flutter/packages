@@ -1,3 +1,7 @@
+## 17.2.0
+
+* Adds message channel suffix option to all APIs.
+
 ## 17.1.2
 
 * [swift] Separates message call code generation into separate methods.

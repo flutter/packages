@@ -23,24 +23,52 @@ using core_tests_pigeontest::AnEnum;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
+using core_tests_pigeontest::FlutterSmallApi;
 using core_tests_pigeontest::HostIntegrationCoreApi;
+using core_tests_pigeontest::HostSmallApi;
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
+
+// static
+void TestSmallApi::RegisterWithRegistrar(
+    flutter::PluginRegistrarWindows* registrar,
+    std::string messageChannelSuffix) {
+  auto api = std::make_unique<TestSmallApi>(registrar->messenger());
+
+  HostSmallApi::SetUp(registrar->messenger(), api.get(), messageChannelSuffix);
+}
+
+TestSmallApi::~TestSmallApi() {}
+
+void Echo(const std::string& a_string,
+          std::function<void(ErrorOr<std::string> reply)> result) {
+  result(a_string);
+}
+
+void VoidVoid(std::function<void(std::optional<FlutterError> reply)> result) {
+  result(std::nullopt);
+}
 
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
   auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
 
-  HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
+  HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get(), nullptr);
 
   registrar->AddPlugin(std::move(plugin));
+
+  auto apiWithSuffix = TestSmallApi(registrar->messenger());
+
+  apiWithSuffix.RegisterWithRegistrar(registrar, ".suffix");
 }
 
 TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger)
-    : flutter_api_(
-          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {}
+    : flutter_small_api_(
+          std::make_unique<FlutterSmallApi>(binary_messenger, ".suffix")),
+      flutter_api_(
+          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)){};
 
 TestPlugin::~TestPlugin() {}
 
@@ -583,6 +611,17 @@ void TestPlugin::CallFlutterEchoNullableEnum(
       an_enum,
       [result](const AnEnum* echo) {
         result(echo ? std::optional<AnEnum>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void CallFlutterSmallApiEchoString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  flutter_small_api_->EchoString(
+      a_string,
+      [result](std::string echo) {
+        result(echo ? std::optional<std::string>(*echo) : std::nullopt);
       },
       [result](const FlutterError& error) { result(error); });
 }

@@ -4,19 +4,23 @@
 
 package com.example.test_plugin
 
-import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
-  var flutterApi: FlutterIntegrationCoreApi? = null
+  private var flutterApi: FlutterIntegrationCoreApi? = null
+  private var flutterSmallApi: FlutterSmallApi? = null
 
-  override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this)
-    flutterApi = FlutterIntegrationCoreApi(binding.getBinaryMessenger())
+  override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
+    val testSuffixApi: TestPluginWithSuffix = TestPluginWithSuffix()
+    testSuffixApi.setUp(binding, ".suffix")
+    flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
+    flutterSmallApi = FlutterSmallApi(binding.binaryMessenger, ".suffix")
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {}
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
 
   // HostIntegrationCoreApi
 
@@ -379,5 +383,24 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
     flutterApi!!.echoNullableEnum(anEnum) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit) {
+    flutterSmallApi!!.echoString(aString) { echo -> callback(echo) }
+  }
+}
+
+class TestPluginWithSuffix : HostSmallApi {
+
+  fun setUp(binding: FlutterPluginBinding, suffix: String) {
+    HostSmallApi.setUp(binding.binaryMessenger, this, suffix)
+  }
+
+  override fun echo(aString: String, callback: (Result<String>) -> Unit) {
+    callback(Result.success(aString))
+  }
+
+  override fun voidVoid(callback: (Result<Unit>) -> Unit) {
+    callback(Result.success(Unit))
   }
 }

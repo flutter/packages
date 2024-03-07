@@ -140,10 +140,17 @@ const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
 // `binary_messenger`.
 void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api) {
+  ExampleHostApi::SetUp(binary_messenger, api, "");
+}
+
+void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                           ExampleHostApi* api,
+                           std::string message_channel_suffix) {
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_example_package."
-                                  "ExampleHostApi.getHostLanguage",
+                                  "ExampleHostApi.getHostLanguage" +
+                                      message_channel_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -169,7 +176,8 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add" +
+            message_channel_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -208,7 +216,8 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage" +
+            message_channel_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -260,6 +269,11 @@ EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
     : binary_messenger_(binary_messenger) {}
 
+MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
+                                     std::string message_channel_suffix)
+    : binary_messenger_(binary_messenger),
+      message_channel_suffix_(message_channel_suffix) {}
+
 const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
       &flutter::StandardCodecSerializer::GetInstance());
@@ -271,7 +285,8 @@ void MessageFlutterApi::FlutterMethod(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi."
-      "flutterMethod";
+      "flutterMethod" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),

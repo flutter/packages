@@ -645,6 +645,9 @@ class HostIntegrationCoreApi {
   virtual void CallFlutterEchoNullableEnum(
       const AnEnum* an_enum,
       std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+  virtual void CallFlutterSmallApiEchoString(
+      const std::string& a_string,
+      std::function<void(ErrorOr<std::string> reply)> result) = 0;
 
   // The codec used by HostIntegrationCoreApi.
   static const flutter::StandardMessageCodec& GetCodec();
@@ -652,6 +655,9 @@ class HostIntegrationCoreApi {
   // the `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostIntegrationCoreApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostIntegrationCoreApi* api,
+                    std::string message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
@@ -683,6 +689,8 @@ class FlutterIntegrationCoreApiCodecSerializer
 class FlutterIntegrationCoreApi {
  public:
   FlutterIntegrationCoreApi(flutter::BinaryMessenger* binary_messenger);
+  FlutterIntegrationCoreApi(flutter::BinaryMessenger* binary_messenger,
+                            std::string message_channel_suffix);
   static const flutter::StandardMessageCodec& GetCodec();
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic calling.
@@ -788,6 +796,9 @@ class FlutterIntegrationCoreApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
+
+ private:
+  std::string message_channel_suffix_;
 };
 
 // An API that can be implemented for minimal, compile-only tests.
@@ -807,6 +818,8 @@ class HostTrivialApi {
   // `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostTrivialApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostTrivialApi* api, std::string message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
@@ -833,6 +846,8 @@ class HostSmallApi {
   // `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostSmallApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostSmallApi* api, std::string message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
@@ -862,6 +877,8 @@ class FlutterSmallApiCodecSerializer : public flutter::StandardCodecSerializer {
 class FlutterSmallApi {
  public:
   FlutterSmallApi(flutter::BinaryMessenger* binary_messenger);
+  FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
+                  std::string message_channel_suffix);
   static const flutter::StandardMessageCodec& GetCodec();
   void EchoWrappedList(const TestMessage& msg,
                        std::function<void(const TestMessage&)>&& on_success,
@@ -872,6 +889,9 @@ class FlutterSmallApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
+
+ private:
+  std::string message_channel_suffix_;
 };
 
 }  // namespace core_tests_pigeontest
