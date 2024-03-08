@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:js_util';
+import 'dart:ui' as ui;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
@@ -35,6 +38,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int textureId) async {
     _player(textureId).dispose();
+
     _videoPlayers.remove(textureId);
     return;
   }
@@ -77,9 +81,16 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
       ..style.height = '100%'
       ..style.width = '100%';
 
-    // TODO(hterkelsen): Use initialization parameters once they are available
-    ui_web.platformViewRegistry.registerViewFactory(
-        'videoPlayer-$textureId', (int viewId) => videoElement);
+    // if we are rendering as textures, we need the video element appear to be visible or chrome won't allow us to create an image bitmap
+    if (renderVideoAsTexture) {
+      videoElement.crossOrigin = 'anonymous';
+      videoElement.style.opacity = '0';
+      videoElement.style.pointerEvents = 'none';
+    } else {
+      // TODO(hterkelsen): Use initialization parameters once they are available
+      ui_web.platformViewRegistry.registerViewFactory(
+          'videoPlayer-$textureId', (int viewId) => videoElement);
+    }
 
     final VideoPlayer player = VideoPlayer(videoElement: videoElement)
       ..initialize(
@@ -144,10 +155,112 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
 
   @override
   Widget buildView(int textureId) {
-    return HtmlElementView(viewType: 'videoPlayer-$textureId');
+    if (renderVideoAsTexture) {
+      return _WebVideoPlayerRenderer(
+          element: _videoPlayers[textureId]!.videoElement);
+    } else {
+      return HtmlElementView(viewType: 'videoPlayer-$textureId');
+    }
   }
+
+  /// Whether to render the video directly into the canvas. If true (default),
+  /// the video will be drawn into the canvas. If false, the video will be
+  /// rendered using a <video> element inside a platform view.
+  static bool renderVideoAsTexture = true;
 
   /// Sets the audio mode to mix with other sources (ignored)
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
+}
+
+class _WebVideoPlayerRenderer extends StatefulWidget {
+  const _WebVideoPlayerRenderer({required this.element});
+
+  final web.HTMLVideoElement element;
+
+  @override
+  State createState() => _WebVideoPlayerRendererState();
+}
+
+class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
+  @override
+  void initState() {
+    super.initState();
+
+    getFrame(widget.element);
+    web.document.body!.appendChild(widget.element);
+  }
+
+  int? callbackID;
+
+  void getFrame(web.HTMLVideoElement element) {
+    callbackID = element.requestVideoFrameCallback(frameCallback.toJS);
+  }
+
+  void cancelFrame(web.HTMLVideoElement element) {
+    if (callbackID != null) {
+      element.cancelVideoFrameCallback(callbackID!);
+    }
+  }
+
+  void frameCallback(JSAny now, JSAny metadata) {
+    capture();
+  }
+
+  Future<void> capture() async {
+    final tmp =
+        await promiseToFuture(web.window.createImageBitmap(widget.element));
+    final ui.Image img = await ui_web.createImageFromImageBitmap(tmp);
+
+    if (mounted) {
+      setState(() {
+        image = img;
+      });
+      getFrame(widget.element);
+    }
+  }
+
+  @override
+  void dispose() {
+    cancelFrame(widget.element);
+    super.dispose();
+    if (web.document.body!.contains(widget.element)) {
+      web.document.body!.removeChild(widget.element);
+    }
+  }
+
+  @override
+  void didUpdateWidget(_WebVideoPlayerRenderer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.element != widget.element) {
+      if (web.document.body!.contains(oldWidget.element)) {
+        web.document.body!.removeChild(oldWidget.element);
+      }
+      web.document.body!.appendChild(widget.element);
+      cancelFrame(oldWidget.element);
+      getFrame(widget.element);
+    }
+  }
+
+  ui.Image? image;
+
+  @override
+  Widget build(BuildContext context) {
+    if (image != null) {
+      return RawImage(image: image);
+    } else {
+      return const ColoredBox(color: Colors.black);
+    }
+  }
+}
+
+typedef _VideoFrameRequestCallback = JSFunction;
+
+extension _createImageBitmap on web.Window {
+  external JSPromise createImageBitmap(JSAny source);
+}
+
+extension _HTMLVideoElementRequestAnimationFrame on web.HTMLVideoElement {
+  external int requestVideoFrameCallback(_VideoFrameRequestCallback callback);
+  external void cancelVideoFrameCallback(int callbackID);
 }
