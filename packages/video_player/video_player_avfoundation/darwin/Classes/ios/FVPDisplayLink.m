@@ -7,17 +7,15 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-/**
- * A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPDisplayLink
- * owns its CADisplayLink, but CADisplayLink retains its target.
- */
+/// A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPDisplayLink
+/// owns its CADisplayLink, but CADisplayLink retains its target.
 @interface FVPDisplayLinkTarget : NSObject
 @property(nonatomic) void (^callback)(void);
 
-/** Initializes a target object that runs the given callback when onDisplayLink: is called. */
+/// Initializes a target object that runs the given callback when onDisplayLink: is called.
 - (instancetype)initWithCallback:(void (^)(void))callback;
 
-/** Method to be called when a CADisplayLink fires. */
+/// Method to be called when a CADisplayLink fires.
 - (void)onDisplayLink:(CADisplayLink *)link;
 @end
 

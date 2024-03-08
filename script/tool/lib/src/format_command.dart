@@ -346,6 +346,8 @@ class FormatCommand extends PackageCommand {
                 pathFragmentForDirectories(<String>['example', 'build'])) &&
             // Ignore files in Pods, which are not part of the repository.
             !path.contains(pathFragmentForDirectories(<String>['Pods'])) &&
+            // See https://github.com/flutter/flutter/issues/144039
+            !path.endsWith('GeneratedPluginRegistrant.swift') &&
             // Ignore .dart_tool/, which can have various intermediate files.
             !path.contains(pathFragmentForDirectories(<String>['.dart_tool'])))
         .toList();

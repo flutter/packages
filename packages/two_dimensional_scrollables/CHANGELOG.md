@@ -1,3 +1,12 @@
+## 0.1.2
+
+* Fixes a layout issue for unpinned merged cells that follow pinned table spans.
+* Updates outdated sample code.
+
+## 0.1.1
+
+* Fixes a layout issue when pinned cells are merged.
+
 ## 0.1.0
 
 * [Breaking change] Adds support for merged cells in the TableView.

@@ -77,9 +77,8 @@ void defineTests() {
         );
 
         final Text textWidget = tester.widget(find.byType(Text));
-        final TextSpan span =
-            (textWidget.textSpan! as TextSpan).children![0] as TextSpan;
-        final WidgetSpan widgetSpan = span.children![0] as WidgetSpan;
+        final TextSpan textSpan = textWidget.textSpan! as TextSpan;
+        final WidgetSpan widgetSpan = textSpan.children![0] as WidgetSpan;
         expect(widgetSpan.child, isInstanceOf<Container>());
       },
     );
@@ -133,10 +132,9 @@ void defineTests() {
       final TextSpan textSpan = textWidget.textSpan! as TextSpan;
       final TextSpan start = textSpan.children![0] as TextSpan;
       expect(start.text, 'this test replaces a string with a ');
-      final TextSpan end = textSpan.children![1] as TextSpan;
-      final TextSpan foo = end.children![0] as TextSpan;
+      final TextSpan foo = textSpan.children![1] as TextSpan;
       expect(foo.text, 'foo');
-      final WidgetSpan widgetSpan = end.children![1] as WidgetSpan;
+      final WidgetSpan widgetSpan = textSpan.children![2] as WidgetSpan;
       expect(widgetSpan.child, isInstanceOf<Container>());
     },
   );

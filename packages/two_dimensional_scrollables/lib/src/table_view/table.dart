@@ -49,8 +49,10 @@ import 'table_span.dart';
 /// ```dart
 /// TableView.builder(
 ///   cellBuilder: (BuildContext context, TableVicinity vicinity) {
-///     return Center(
-///       child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
+///     return TableViewCell(
+///       child: Center(
+///         child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
+///       ),
 ///     );
 ///   },
 ///   columnCount: 10,
@@ -801,7 +803,20 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             //       | <--------- extent of merged cell ---------> |
 
             // Compute height and layout offset for merged rows.
-            mergedRowOffset = -verticalOffset.pixels +
+            final bool rowIsInPinnedColumn = _lastPinnedColumn != null &&
+                vicinity.column <= _lastPinnedColumn!;
+            final bool rowIsPinned =
+                _lastPinnedRow != null && firstRow <= _lastPinnedRow!;
+            final double baseRowOffset =
+                switch ((rowIsInPinnedColumn, rowIsPinned)) {
+              // Both row and column are pinned at this cell, or just pinned row.
+              (true, true) || (false, true) => 0.0,
+              // Cell is within a pinned column, or no pinned area at all.
+              (true, false) ||
+              (false, false) =>
+                _pinnedRowsExtent - verticalOffset.pixels,
+            };
+            mergedRowOffset = baseRowOffset +
                 _rowMetrics[firstRow]!.leadingOffset +
                 _rowMetrics[firstRow]!.configuration.padding.leading;
             mergedRowHeight = _rowMetrics[lastRow]!.trailingOffset -
@@ -809,7 +824,20 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 _rowMetrics[lastRow]!.configuration.padding.trailing -
                 _rowMetrics[firstRow]!.configuration.padding.leading;
             // Compute width and layout offset for merged columns.
-            mergedColumnOffset = -horizontalOffset.pixels +
+            final bool columnIsInPinnedRow =
+                _lastPinnedRow != null && vicinity.row <= _lastPinnedRow!;
+            final bool columnIsPinned =
+                _lastPinnedColumn != null && firstColumn <= _lastPinnedColumn!;
+            final double baseColumnOffset =
+                switch ((columnIsInPinnedRow, columnIsPinned)) {
+              // Both row and column are pinned at this cell, or just pinned column.
+              (true, true) || (false, true) => 0.0,
+              // Cell is within a pinned row, or no pinned area at all.
+              (true, false) ||
+              (false, false) =>
+                _pinnedColumnsExtent - horizontalOffset.pixels,
+            };
+            mergedColumnOffset = baseColumnOffset +
                 _columnMetrics[firstColumn]!.leadingOffset +
                 _columnMetrics[firstColumn]!.configuration.padding.leading;
             mergedColumnWidth = _columnMetrics[lastColumn]!.trailingOffset -
