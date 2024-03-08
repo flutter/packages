@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Adds VideoPlugin.renderVideoAsTexture
+
 ## 2.3.0
 
 * Migrates package and tests to `package:web``.
