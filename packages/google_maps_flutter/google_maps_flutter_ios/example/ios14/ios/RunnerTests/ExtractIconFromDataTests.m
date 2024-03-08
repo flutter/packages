@@ -31,7 +31,6 @@
   XCTAssertEqual(resultImage.scale, 1.0);
   XCTAssertEqual(resultImage.size.width, 1.0);
   XCTAssertEqual(resultImage.size.height, 1.0);
-  [mockImageClass stopMocking];
 }
 
 - (void)testExtractIconFromDataAssetAutoWithScale {
@@ -51,7 +50,6 @@
   XCTAssertEqual(resultImage.scale, 10);  // image pixel ration (as scale) should be set to 10.
   XCTAssertEqual(resultImage.size.width, 0.1);   // width in logical pixels should be 0.1.
   XCTAssertEqual(resultImage.size.height, 0.1);  // height in logical pixels should be 0.1.
-  [mockImageClass stopMocking];
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithSameAspectRatio {
@@ -77,7 +75,6 @@
   XCTAssertEqual(resultImage.scale, targetScale);
   XCTAssertEqual(resultImage.size.width, 15.0);
   XCTAssertEqual(resultImage.size.height, 15.0);
-  [mockImageClass stopMocking];
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithDifferentAspectRatio {
@@ -100,7 +97,6 @@
   XCTAssertEqual(resultImage.scale, screenScale);
   XCTAssertEqual(resultImage.size.width, 15.0);
   XCTAssertEqual(resultImage.size.height, 45.0);
-  [mockImageClass stopMocking];
 }
 
 - (void)testExtractIconFromDataAssetNoScaling {
@@ -120,7 +116,6 @@
   XCTAssertEqual(resultImage.scale, 1.0);
   XCTAssertEqual(resultImage.size.width, 1.0);
   XCTAssertEqual(resultImage.size.height, 1.0);
-  [mockImageClass stopMocking];
 }
 
 - (void)testExtractIconFromDataBytesAuto {
