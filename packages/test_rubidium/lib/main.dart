@@ -61,27 +61,28 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return PlatformViewLink(
-      viewType: 'myPlatformView',
-      surfaceFactory: (
-          BuildContext context,
-          PlatformViewController controller,
-          ) {
-        return AndroidViewSurface(
-          controller: controller as AndroidViewController,
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-        );
-      },
-      onCreatePlatformView: (PlatformViewCreationParams params) {
-        return PlatformViewsService.initSurfaceAndroidView(
-          id: params.id,
-          viewType: 'plugins.flutter.io/webview',
-          layoutDirection: TextDirection.ltr,
-          creationParams: null,
-          creationParamsCodec: const StandardMessageCodec(),
-        );
-      },
-    );
+    return Container();
+    // return PlatformViewLink(
+    //   viewType: 'myPlatformView',
+    //   surfaceFactory: (
+    //       BuildContext context,
+    //       PlatformViewController controller,
+    //       ) {
+    //     return AndroidViewSurface(
+    //       controller: controller as AndroidViewController,
+    //       hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+    //       gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+    //     );
+    //   },
+    //   onCreatePlatformView: (PlatformViewCreationParams params) {
+    //     return PlatformViewsService.initSurfaceAndroidView(
+    //       id: params.id,
+    //       viewType: 'plugins.flutter.io/webview',
+    //       layoutDirection: TextDirection.ltr,
+    //       creationParams: null,
+    //       creationParamsCodec: const StandardMessageCodec(),
+    //     );
+    //   },
+    // );
   }
 }

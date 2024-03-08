@@ -39,27 +39,27 @@ class MainActivity : FlutterActivity() {
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
 
-    mSdkSandboxManager = SdkSandboxManagerCompat.from(applicationContext)
-
-    Log.i(TAG, "Loading SDK")
-    CoroutineScope(Dispatchers.Default).launch {
-      try {
-        mSdkSandboxManager.loadSdk(MEDIATEE_SDK_NAME, Bundle())
-        val loadedSdk = mSdkSandboxManager.loadSdk(SDK_NAME, Bundle())
-        mSdkSandboxManager.registerAppOwnedSdkSandboxInterface(
-            AppOwnedSdkSandboxInterfaceCompat(
-                MEDIATEE_SDK_NAME, /*version=*/ 0, TestProvider(applicationContext)))
-        onLoadedSdk(loadedSdk)
-      } catch (e: LoadSdkCompatException) {
-        Log.i(
-            TAG,
-            "loadSdk failed with errorCode: " + e.loadSdkErrorCode + " and errorMsg: " + e.message)
-      }
-    }
-
-
-
-    flutterEngine.platformViewsController.registry.registerViewFactory("myPlatformView", MyViewFactory())
+//    mSdkSandboxManager = SdkSandboxManagerCompat.from(applicationContext)
+//
+    Log.d(TAG, "Loading SDK")
+//    CoroutineScope(Dispatchers.Default).launch {
+//      try {
+//        mSdkSandboxManager.loadSdk(MEDIATEE_SDK_NAME, Bundle())
+//        val loadedSdk = mSdkSandboxManager.loadSdk(SDK_NAME, Bundle())
+//        mSdkSandboxManager.registerAppOwnedSdkSandboxInterface(
+//            AppOwnedSdkSandboxInterfaceCompat(
+//                MEDIATEE_SDK_NAME, /*version=*/ 0, TestProvider(applicationContext)))
+//        onLoadedSdk(loadedSdk)
+//      } catch (e: LoadSdkCompatException) {
+//        Log.i(
+//            TAG,
+//            "loadSdk failed with errorCode: " + e.loadSdkErrorCode + " and errorMsg: " + e.message)
+//      }
+//    }
+//
+//
+//
+//    flutterEngine.platformViewsController.registry.registerViewFactory("myPlatformView", MyViewFactory())
   }
 
   private fun onLoadedSdk(sandboxedSdk: SandboxedSdkCompat) {

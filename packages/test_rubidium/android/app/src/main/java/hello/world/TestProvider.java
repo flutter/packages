@@ -34,7 +34,7 @@ public class TestProvider extends Binder implements hello.world.ITestProvider {
 
   @Override
   public IBinder asBinder() {
-    return null;
+    return this;
   }
 
   @Override
