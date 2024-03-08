@@ -214,6 +214,7 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
 
     if (mounted) {
       setState(() {
+        image?.dispose();
         image = img;
       });
       getFrame(widget.element);
@@ -224,6 +225,7 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
   void dispose() {
     cancelFrame(widget.element);
     super.dispose();
+    image?.dispose();
     if (web.document.body!.contains(widget.element)) {
       web.document.body!.removeChild(widget.element);
     }
