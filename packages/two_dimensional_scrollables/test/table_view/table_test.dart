@@ -2207,6 +2207,74 @@ void main() {
       });
     });
   });
+
+  testWidgets(
+      'Merged unpinned cells following pinned cells are laid out correctly',
+      (WidgetTester tester) async {
+    final ScrollController verticalController = ScrollController();
+    final ScrollController horizontalController = ScrollController();
+    final Set<TableVicinity> mergedCell = <TableVicinity>{
+      const TableVicinity(row: 2, column: 2),
+      const TableVicinity(row: 3, column: 2),
+      const TableVicinity(row: 2, column: 3),
+      const TableVicinity(row: 3, column: 3),
+    };
+    final TableView tableView = TableView.builder(
+      columnCount: 10,
+      rowCount: 10,
+      columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+      rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+      cellBuilder: (BuildContext context, TableVicinity vicinity) {
+        if (mergedCell.contains(vicinity)) {
+          return const TableViewCell(
+            rowMergeStart: 2,
+            rowMergeSpan: 2,
+            columnMergeStart: 2,
+            columnMergeSpan: 2,
+            child: Text('Tile c: 2, r: 2'),
+          );
+        }
+        return TableViewCell(
+          child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+        );
+      },
+      pinnedRowCount: 1,
+      pinnedColumnCount: 1,
+      verticalDetails: ScrollableDetails.vertical(
+        controller: verticalController,
+      ),
+      horizontalDetails: ScrollableDetails.horizontal(
+        controller: horizontalController,
+      ),
+    );
+    await tester.pumpWidget(MaterialApp(home: tableView));
+    await tester.pumpAndSettle();
+
+    expect(verticalController.position.pixels, 0.0);
+    expect(horizontalController.position.pixels, 0.0);
+    expect(
+      tester.getRect(find.text('Tile c: 2, r: 2')),
+      const Rect.fromLTWH(200.0, 200.0, 200.0, 200.0),
+    );
+
+    verticalController.jumpTo(10.0);
+    await tester.pumpAndSettle();
+    expect(verticalController.position.pixels, 10.0);
+    expect(horizontalController.position.pixels, 0.0);
+    expect(
+      tester.getRect(find.text('Tile c: 2, r: 2')),
+      const Rect.fromLTWH(200.0, 190.0, 200.0, 200.0),
+    );
+
+    horizontalController.jumpTo(10.0);
+    await tester.pumpAndSettle();
+    expect(verticalController.position.pixels, 10.0);
+    expect(horizontalController.position.pixels, 10.0);
+    expect(
+      tester.getRect(find.text('Tile c: 2, r: 2')),
+      const Rect.fromLTWH(190.0, 190.0, 200.0, 200.0),
+    );
+  });
 }
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {

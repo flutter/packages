@@ -49,8 +49,10 @@ import 'table_span.dart';
 /// ```dart
 /// TableView.builder(
 ///   cellBuilder: (BuildContext context, TableVicinity vicinity) {
-///     return Center(
-///       child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
+///     return TableViewCell(
+///       child: Center(
+///         child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
+///       ),
 ///     );
 ///   },
 ///   columnCount: 10,
@@ -809,10 +811,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 switch ((rowIsInPinnedColumn, rowIsPinned)) {
               // Both row and column are pinned at this cell, or just pinned row.
               (true, true) || (false, true) => 0.0,
-              // Cell is within a pinned column
-              (true, false) => _pinnedRowsExtent - verticalOffset.pixels,
-              // Cell is within a pinned row, or no pinned portion.
-              (false, false) => -verticalOffset.pixels,
+              // Cell is within a pinned column, or no pinned area at all.
+              (true, false) ||
+              (false, false) =>
+                _pinnedRowsExtent - verticalOffset.pixels,
             };
             mergedRowOffset = baseRowOffset +
                 _rowMetrics[firstRow]!.leadingOffset +
@@ -830,10 +832,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 switch ((columnIsInPinnedRow, columnIsPinned)) {
               // Both row and column are pinned at this cell, or just pinned column.
               (true, true) || (false, true) => 0.0,
-              // Cell is within a pinned row.
-              (true, false) => _pinnedColumnsExtent - horizontalOffset.pixels,
-              // No pinned portion.
-              (false, false) => -horizontalOffset.pixels,
+              // Cell is within a pinned row, or no pinned area at all.
+              (true, false) ||
+              (false, false) =>
+                _pinnedColumnsExtent - horizontalOffset.pixels,
             };
             mergedColumnOffset = baseColumnOffset +
                 _columnMetrics[firstColumn]!.leadingOffset +
