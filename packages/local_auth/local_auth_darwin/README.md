@@ -20,7 +20,7 @@ In order to open the Password Settings directly from the macOS app,
 
 You have to add the following key in the `macos/Runner/Info.plist` file:
 
-```
+```xml
 <key>NSPrefPaneAllowsXAppleSystemPreferencesURLScheme</key>
 <true/>
 ```
