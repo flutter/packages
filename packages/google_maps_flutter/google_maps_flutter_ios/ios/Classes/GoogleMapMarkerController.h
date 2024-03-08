@@ -23,7 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTGoogleMapMarkerController (Test)
 - (UIImage *)extractIconFromData:(NSArray *)iconData
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (CGSize)scaleSizeToInt:(CGSize)size withFactor:(CGFloat)scale;
+- (CGSize)scaleSizeAndFloorToInt:(CGSize)size withFactor:(CGFloat)scale;
+- (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize;
 @end
 
 @interface FLTMarkersController : NSObject
