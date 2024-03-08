@@ -26,6 +26,7 @@ import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
 import 'focus_metering_action.dart';
+import 'focus_metering_result.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
@@ -517,6 +518,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///   * Locked focus mode is unset by setting [FocusMode.auto].
   @override
   Future<void> setFocusMode(int cameraId, FocusMode mode) async {
+    MeteringPoint? autoFocusPoint;
+    bool? disableAutoCancel;
     switch (mode) {
       case FocusMode.auto:
         if (_currentFocusMode == FocusMode.auto) {
@@ -527,7 +530,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
         // Determine auto-focus point to restore, if any. We do not restore
         // default auto-focus point if set previously to lock focus.
-        final MeteringPoint? autoFocusPoint = _defaultFocusPointLocked
+        final MeteringPoint? unLockedFocusPoint = _defaultFocusPointLocked
             ? null
             : currentFocusMeteringAction!.meteringPointInfos
                 .where(((MeteringPoint, int?) meteringPointInfo) =>
@@ -536,10 +539,8 @@ class AndroidCameraCameraX extends CameraPlatform {
                 .first
                 .$1;
         _defaultFocusPointLocked = false;
-
-        await _startFocusAndMeteringFor(
-            meteringPoint: autoFocusPoint,
-            meteringMode: FocusMeteringAction.flagAf);
+        autoFocusPoint = unLockedFocusPoint;
+        disableAutoCancel = false;
       case FocusMode.locked:
         MeteringPoint? lockedFocusPoint;
 
@@ -562,11 +563,20 @@ class AndroidCameraCameraX extends CameraPlatform {
           _defaultFocusPointLocked = true;
         }
 
-        await _startFocusAndMeteringFor(
-            meteringPoint: lockedFocusPoint,
-            meteringMode: FocusMeteringAction.flagAf,
-            disableAutoCancel: true);
+        autoFocusPoint = lockedFocusPoint;
+        disableAutoCancel = true;
     }
+    // Start appropriate focus and metering action.
+    final bool focusAndMeteringWasSuccessful = await _startFocusAndMeteringFor(
+        meteringPoint: autoFocusPoint,
+        meteringMode: FocusMeteringAction.flagAf,
+        disableAutoCancel: disableAutoCancel);
+
+    if (!focusAndMeteringWasSuccessful) {
+      // Do not update current focus mode.
+      return;
+    }
+
     // Update current focus mode.
     _currentFocusMode = mode;
 
@@ -1200,11 +1210,11 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods for configuring auto-focus and auto-exposure:
 
-  Future<void> _startFocusAndMeteringForPoint(
+  Future<bool> _startFocusAndMeteringForPoint(
       {required Point<double>? point,
       required int meteringMode,
       bool disableAutoCancel = false}) async {
-    await _startFocusAndMeteringFor(
+    return _startFocusAndMeteringFor(
         meteringPoint: point == null
             ? null
             : proxy.createMeteringPoint(
@@ -1213,7 +1223,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         disableAutoCancel: disableAutoCancel);
   }
 
-  /// Starts a focus and metering action.
+  /// Starts a focus and metering action and returns whether or not it was
+  /// successful.
   ///
   /// This method will modify and start the current action's [MeteringPoint]s
   /// overriden with the [meteringPoint] provided for the specified
@@ -1233,7 +1244,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// to [currentFocusMeteringAction] that do not share a metering mode with
   /// [meteringPoint]. If [meteringPoint] and [currentFocusMeteringAction] are
   /// null, then focus and metering will be canceled.
-  Future<void> _startFocusAndMeteringFor(
+  Future<bool> _startFocusAndMeteringFor(
       {required MeteringPoint? meteringPoint,
       required int meteringMode,
       bool disableAutoCancel = false}) async {
@@ -1243,7 +1254,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       if (currentFocusMeteringAction == null) {
         // Attempting to clear a metering point from a previous action, but no
         // such action exists.
-        return;
+        return false;
       }
 
       // Remove metering point with specified meteringMode from current focus
@@ -1264,7 +1275,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         // started focus and metering actions.
         await cameraControl.cancelFocusAndMetering();
         currentFocusMeteringAction = null;
-        return;
+        return true;
       }
       currentFocusMeteringAction = proxy.createFocusMeteringAction(
           newMeteringPointInfos, disableAutoCancel);
@@ -1296,6 +1307,8 @@ class AndroidCameraCameraX extends CameraPlatform {
           newMeteringPointInfos, disableAutoCancel);
     }
 
-    await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
+    final FocusMeteringResult? result =
+        await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
+    return await result?.isFocusSuccessful() ?? false;
   }
 }
