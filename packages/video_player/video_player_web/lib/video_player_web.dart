@@ -18,12 +18,7 @@ import 'src/video_player.dart';
 /// The web implementation of [VideoPlayerPlatform].
 ///
 /// This class implements the `package:video_player` functionality for the web.
-class VideoPlayerPlugin extends VideoPlayerPlatform {
-  /// Registers this class as the default instance of [VideoPlayerPlatform].
-  static void registerWith(Registrar registrar) {
-    VideoPlayerPlatform.instance = VideoPlayerPlugin();
-  }
-
+abstract class VideoElementPlayerPlugin extends VideoPlayerPlatform {
   // Map of textureId -> VideoPlayer instances
   final Map<int, VideoPlayer> _videoPlayers = <int, VideoPlayer>{};
 
@@ -75,22 +70,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
             'web implementation of video_player cannot play content uri'));
     }
 
-    final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
-      ..id = 'videoElement-$textureId'
-      ..style.border = 'none'
-      ..style.height = '100%'
-      ..style.width = '100%';
-
-    // if we are rendering as textures, we need the video element appear to be visible or chrome won't allow us to create an image bitmap
-    if (renderVideoAsTexture) {
-      videoElement.crossOrigin = 'anonymous';
-      videoElement.style.opacity = '0';
-      videoElement.style.pointerEvents = 'none';
-    } else {
-      // TODO(hterkelsen): Use initialization parameters once they are available
-      ui_web.platformViewRegistry.registerViewFactory(
-          'videoPlayer-$textureId', (int viewId) => videoElement);
-    }
+    final web.HTMLVideoElement videoElement = createElement(textureId);
 
     final VideoPlayer player = VideoPlayer(videoElement: videoElement)
       ..initialize(
@@ -101,6 +81,8 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
 
     return textureId;
   }
+
+  web.VideoElement createElement(int textureId);
 
   @override
   Future<void> setLooping(int textureId, bool looping) async {
@@ -154,23 +136,67 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId) {
-    if (renderVideoAsTexture) {
-      return _WebVideoPlayerRenderer(
-          element: _videoPlayers[textureId]!.videoElement);
-    } else {
-      return HtmlElementView(viewType: 'videoPlayer-$textureId');
-    }
-  }
-
-  /// Whether to render the video directly into the canvas. If true (default),
-  /// the video will be drawn into the canvas. If false, the video will be
-  /// rendered using a <video> element inside a platform view.
-  static bool renderVideoAsTexture = true;
+  Widget buildView(int textureId);
 
   /// Sets the audio mode to mix with other sources (ignored)
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
+}
+
+/// The legacy video player plugin, renders video using a <video> element in
+/// a HtmlElementView.
+class HtmlElementViewVideoPlayerPlugin extends VideoElementPlayerPlugin {
+  /// Registers this class as the default instance of [VideoPlayerPlatform].
+  static void registerWith(Registrar registrar) {
+    VideoPlayerPlatform.instance = HtmlElementViewVideoPlayerPlugin();
+  }
+
+  web.VideoElement createElement(int textureId) {
+    final videoElement = web.HTMLVideoElement()
+      ..id = 'videoElement-$textureId'
+      ..style.border = 'none'
+      ..style.height = '100%'
+      ..style.width = '100%';
+
+    // TODO(hterkelsen): Use initialization parameters once they are available
+    ui_web.platformViewRegistry.registerViewFactory(
+        'videoPlayer-$textureId', (int viewId) => videoElement);
+
+    return videoElement;
+  }
+
+  @override
+  Widget buildView(int textureId) {
+    return HtmlElementView(viewType: 'videoPlayer-$textureId');
+  }
+}
+
+/// The default video player plugin, renders videos directly into the canvas.
+class VideoPlayerPlugin extends VideoElementPlayerPlugin {
+  /// Registers this class as the default instance of [VideoPlayerPlatform].
+  static void registerWith(Registrar registrar) {
+    VideoPlayerPlatform.instance = VideoPlayerPlugin();
+  }
+
+  web.VideoElement createElement(int textureId) {
+    final videoElement = web.HTMLVideoElement()
+      ..id = 'videoElement-$textureId'
+      ..style.border = 'none'
+      ..style.height = '100%'
+      ..style.width = '100%';
+
+    videoElement.crossOrigin = 'anonymous';
+    videoElement.style.opacity = '0';
+    videoElement.style.pointerEvents = 'none';
+
+    return videoElement;
+  }
+
+  @override
+  Widget buildView(int textureId) {
+    return _WebVideoPlayerRenderer(
+        element: _videoPlayers[textureId]!.videoElement);
+  }
 }
 
 class _WebVideoPlayerRenderer extends StatefulWidget {
