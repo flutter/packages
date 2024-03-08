@@ -39,7 +39,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         }
         break;
       case BillingChoiceMode.PLAY_BILLING_ONLY:
-        // Do nothing
+        // Do nothing.
         break;
       default:
         Log.e(
