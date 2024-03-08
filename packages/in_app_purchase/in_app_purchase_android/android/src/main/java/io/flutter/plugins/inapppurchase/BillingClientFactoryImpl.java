@@ -42,7 +42,9 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         // Do nothing
         break;
       default:
-        Log.e("BillingClientFactoryImpl", "Unknown BillingChoiceMode " + billingChoiceMode + ", Defaulting to PLAY_BILLING_ONLY");
+        Log.e(
+            "BillingClientFactoryImpl",
+            "Unknown BillingChoiceMode " + billingChoiceMode + ", Defaulting to PLAY_BILLING_ONLY");
         break;
     }
     return builder.setListener(new PluginPurchaseListener(channel)).build();
