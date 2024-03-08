@@ -13,14 +13,3 @@ should add it to your `pubspec.yaml` as usual.
 
 [1]: https://pub.dev/packages/local_auth
 [2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
-
-## macOS Set up
-
-In order to open the Password Settings directly from the macOS app,
-
-You have to add the following key in the `macos/Runner/Info.plist` file:
-
-```xml
-<key>NSPrefPaneAllowsXAppleSystemPreferencesURLScheme</key>
-<true/>
-```
