@@ -6,7 +6,6 @@
 // ignore_for_file: unawaited_futures
 
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -14,7 +13,6 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'custom_marker_icon.dart';
 import 'example_google_map.dart';
-
 import 'page.dart';
 
 class MarkerIconsPage extends GoogleMapExampleAppPage {
@@ -36,23 +34,25 @@ class MarkerIconsBody extends StatefulWidget {
 
 const LatLng _kMapCenter = LatLng(52.4478, -3.5402);
 
+enum _MarkerSizeOption { original, size30x30, size60x30, size120x60 }
+
 class MarkerIconsBodyState extends State<MarkerIconsBody> {
-  final double _markerAssetImageSize = 48;
-  final Size _customSize = const Size(55, 30);
+  final Size _markerAssetImageSize = const Size(48, 48);
+  _MarkerSizeOption _currentSizeOption = _MarkerSizeOption.original;
   Set<Marker> _markers = <Marker>{};
-  double _markerScale = 1.0;
   bool _scalingEnabled = true;
-  bool _customSizeEnabled = false;
   bool _mipMapsEnabled = true;
   ExampleGoogleMapController? controller;
-  BitmapDescriptor? _markerIconAsset;
-  BitmapDescriptor? _markerIconBytes;
-  final int _markersAmountPerType = 10;
+  AssetMapBitmap? _markerIconAsset;
+  BytesMapBitmap? _markerIconBytes;
+  final int _markersAmountPerType = 15;
+  bool get _customSizeEnabled =>
+      _currentSizeOption != _MarkerSizeOption.original;
 
   @override
   Widget build(BuildContext context) {
     _createCustomMarkerIconImages(context);
-    final Size size = getCurrentMarkerSize();
+    final Size size = _getCurrentMarkerSize();
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,31 +87,31 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
             Text(
                 'Reference box with size of ${size.width} x ${size.height} in logical pixels.'),
             const SizedBox(height: 10),
-            TextButton(
-              onPressed: () => _toggleCustomSize(context),
-              child: Text(_customSizeEnabled
-                  ? 'Disable custom size'
-                  : 'Enable custom size'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('Marker size:'),
+                const SizedBox(width: 10),
+                DropdownButton<_MarkerSizeOption>(
+                  value: _currentSizeOption,
+                  onChanged: (_MarkerSizeOption? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        _currentSizeOption = newValue;
+                        _updateMarkerImages(context);
+                      });
+                    }
+                  },
+                  items:
+                      _MarkerSizeOption.values.map((_MarkerSizeOption option) {
+                    return DropdownMenuItem<_MarkerSizeOption>(
+                      value: option,
+                      child: Text(_getMarkerSizeOptionName(option)),
+                    );
+                  }).toList(),
+                )
+              ],
             ),
-            if (_customSizeEnabled)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: _markerScale <= 0.5
-                        ? null
-                        : () => _decreaseScale(context),
-                    child: const Text('-'),
-                  ),
-                  Text('scale ${_markerScale}x'),
-                  TextButton(
-                    onPressed: _markerScale >= 2.5
-                        ? null
-                        : () => _increaseScale(context),
-                    child: const Text('+'),
-                  ),
-                ],
-              ),
           ],
           TextButton(
             onPressed: () => _toggleMipMaps(context),
@@ -122,10 +122,34 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     );
   }
 
-  Size getCurrentMarkerSize() {
-    return _scalingEnabled && _customSizeEnabled
-        ? _customSize * _markerScale
-        : Size(_markerAssetImageSize, _markerAssetImageSize);
+  String _getMarkerSizeOptionName(_MarkerSizeOption option) {
+    switch (option) {
+      case _MarkerSizeOption.original:
+        return 'Original';
+      case _MarkerSizeOption.size30x30:
+        return '30x30';
+      case _MarkerSizeOption.size60x30:
+        return '60x30';
+      case _MarkerSizeOption.size120x60:
+        return '120x60';
+    }
+  }
+
+  Size _getCurrentMarkerSize() {
+    if (_scalingEnabled) {
+      switch (_currentSizeOption) {
+        case _MarkerSizeOption.size60x30:
+          return const Size(60, 30);
+        case _MarkerSizeOption.size30x30:
+          return const Size(30, 30);
+        case _MarkerSizeOption.size120x60:
+          return const Size(120, 60);
+        case _MarkerSizeOption.original:
+          return _markerAssetImageSize;
+      }
+    } else {
+      return _markerAssetImageSize;
+    }
   }
 
   void _toggleMipMaps(BuildContext context) {
@@ -135,21 +159,6 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
 
   void _toggleScaling(BuildContext context) {
     _scalingEnabled = !_scalingEnabled;
-    _updateMarkerImages(context);
-  }
-
-  void _toggleCustomSize(BuildContext context) {
-    _customSizeEnabled = !_customSizeEnabled;
-    _updateMarkerImages(context);
-  }
-
-  void _decreaseScale(BuildContext context) {
-    _markerScale = max(_markerScale - 0.5, 0.5);
-    _updateMarkerImages(context);
-  }
-
-  void _increaseScale(BuildContext context) {
-    _markerScale = min(_markerScale + 0.5, 2.5);
     _updateMarkerImages(context);
   }
 
@@ -197,12 +206,15 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Future<void> _updateMarkerAssetImage(BuildContext context) async {
+    // Size is used only for custom size.
     final Size? size =
-        _scalingEnabled && _customSizeEnabled ? getCurrentMarkerSize() : null;
+        _scalingEnabled && _customSizeEnabled ? _getCurrentMarkerSize() : null;
+
     final ImageConfiguration imageConfiguration = createLocalImageConfiguration(
       context,
       size: size,
     );
+
     AssetMapBitmap assetMapBitmap;
     if (_mipMapsEnabled) {
       assetMapBitmap = await AssetMapBitmap.fromMipmaps(
@@ -220,13 +232,14 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
             _scalingEnabled ? BitmapScaling.auto : BitmapScaling.noScaling,
       );
     }
+
     _updateAssetBitmap(assetMapBitmap);
   }
 
   Future<void> _updateMarkerBytesImage(BuildContext context) async {
     final double devicePixelRatio = View.of(context).devicePixelRatio;
 
-    final Size markerSize = getCurrentMarkerSize();
+    final Size markerSize = _getCurrentMarkerSize();
 
     final double? imagePixelRatio = _scalingEnabled ? devicePixelRatio : null;
 
@@ -236,12 +249,12 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
 
     final ByteData bytes = await createCustomMarkerIconImage(size: canvasSize);
 
-    // Size is used only for custom size
+    // Size is used only for custom size.
     final Size? size =
-        _scalingEnabled && _customSizeEnabled ? getCurrentMarkerSize() : null;
+        _scalingEnabled && _customSizeEnabled ? _getCurrentMarkerSize() : null;
 
-    final BitmapDescriptor bitmap = BytesMapBitmap(bytes.buffer.asUint8List(),
-        imagePixelRatio: _customSizeEnabled ? null : imagePixelRatio,
+    final BytesMapBitmap bitmap = BytesMapBitmap(bytes.buffer.asUint8List(),
+        imagePixelRatio: imagePixelRatio,
         size: size,
         bitmapScaling:
             _scalingEnabled ? BitmapScaling.auto : BitmapScaling.noScaling);
@@ -249,12 +262,12 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     _updateBytesBitmap(bitmap);
   }
 
-  void _updateAssetBitmap(BitmapDescriptor bitmap) {
+  void _updateAssetBitmap(AssetMapBitmap bitmap) {
     _markerIconAsset = bitmap;
     _updateMarkers();
   }
 
-  void _updateBytesBitmap(BitmapDescriptor bitmap) {
+  void _updateBytesBitmap(BytesMapBitmap bitmap) {
     _markerIconBytes = bitmap;
     _updateMarkers();
   }
