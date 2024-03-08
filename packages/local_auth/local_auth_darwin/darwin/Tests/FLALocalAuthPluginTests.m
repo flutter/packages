@@ -437,7 +437,9 @@ static const NSTimeInterval kTimeout = 30.0;
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-  OCMStub([mockAuthContext biometryType]).andReturn(LABiometryTypeFaceID);
+  if (@available(macOS 10.15, iOS 11.0, *)) {
+    OCMStub([mockAuthContext biometryType]).andReturn(LABiometryTypeFaceID);
+  }
 
   FlutterError *error;
   NSArray<FLADAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
