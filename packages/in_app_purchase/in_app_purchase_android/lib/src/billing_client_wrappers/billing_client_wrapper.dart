@@ -19,7 +19,7 @@ part 'billing_client_wrapper.g.dart';
 const String kOnPurchasesUpdated =
     'PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)';
 
-/// Method idendifier for the userSelectedAlternativeBilling method channel method.
+/// Method identifier for the userSelectedAlternativeBilling method channel method.
 @visibleForTesting
 const String kUserSelectedAlternativeBilling =
     'UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)';
