@@ -901,7 +901,7 @@ class _RouteMatchListEncoder
         jsonEncodedExtra = json.encoder.convert(null);
         log(
             'An extra with complex data type ${extra.runtimeType} is provided '
-            'without a codec. Consider provide a codec to GoRouter to '
+            'without a codec. Consider providing a codec to GoRouter to '
             'prevent extra being dropped during serialization.',
             level: Level.WARNING);
       }
