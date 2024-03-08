@@ -286,8 +286,12 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
   gmaps.Icon? icon;
   if (bitmapDescriptor is BytesMapBitmap) {
     final Uint8List bytes = bitmapDescriptor.byteData;
-    final Blob blob = Blob(<dynamic>[bytes]);
-    icon = gmaps.Icon()..url = Url.createObjectUrlFromBlob(blob);
+
+    // TODO(ditman): Improve this conversion
+    // See https://github.com/dart-lang/web/issues/180
+    final Blob blob = Blob(<JSUint8Array>[bytes.toJS].toJS);
+
+    icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
 
     switch (bitmapDescriptor.bitmapScaling) {
       case BitmapScaling.auto:
