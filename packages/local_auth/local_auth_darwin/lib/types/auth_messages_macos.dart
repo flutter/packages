@@ -95,7 +95,7 @@ String get macOSLockOut => Intl.message(
 /// for their device.
 String get macOSGoToSettingsDescription => Intl.message(
     'Biometric authentication is not set up on your device. Please enable '
-    'Touch ID on your computer.',
+    'Touch ID on your computer in the Settings app.',
     desc:
         'Message advising the user to go to the settings and configure Biometrics '
         'for their device.');

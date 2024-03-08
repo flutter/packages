@@ -170,17 +170,9 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   NSAlert *alert = [[NSAlert alloc] init];
   [alert setMessageText:message];
   [alert addButtonWithTitle:dismissButtonTitle];
-  if (openSettingsButtonTitle != nil) {
-    [alert addButtonWithTitle:openSettingsButtonTitle];
-  }
   NSWindow *window = self.registrar.view.window;
   [alert beginSheetModalForWindow:window
                 completionHandler:^(NSModalResponse returnCode) {
-                  if (returnCode == NSAlertSecondButtonReturn) {
-                    NSURL *url = [NSURL URLWithString:@"x-apple.systempreferences:com.apple."
-                                                      @"preferences.password"];
-                    [[NSWorkspace sharedWorkspace] openURL:url];
-                  }
                   [self handleSucceeded:NO withCompletion:completion];
                 }];
   return;
