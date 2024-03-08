@@ -1,0 +1,34 @@
+name: rfw_devtools_extension
+description: "A DevTools extension for package:rfw"
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0-57.0.dev <4.0.0'
+
+dependencies:
+  code_text_field: ^1.1.0
+  devtools_app_shared: ^0.0.9
+  devtools_extensions: ^0.0.13
+  flutter:
+    sdk: flutter
+  flutter_riverpod: 2.0.0-dev.9
+  highlight: ^0.7.0
+  rfwpad: 
+    path: ../../../rfwpad
+  vm_service: '>=12.0.0 <15.0.0'
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+dependency_overrides:
+  devtools_app_shared:
+    path: ../../../devtools/packages/devtools_app_shared
+  devtools_extensions:
+    path: ../../../devtools/packages/devtools_extensions

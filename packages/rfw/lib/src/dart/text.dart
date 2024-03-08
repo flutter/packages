@@ -7,6 +7,9 @@
 // This file must not import `dart:ui`, directly or indirectly, as it is
 // intended to function even in pure Dart server or CLI environments.
 
+// TODO(kenz): remove this import and check debug mode another way (maybe using assert)
+import 'package:flutter/foundation.dart';
+
 import 'model.dart';
 
 /// Parse a Remote Flutter Widgets text data file.
@@ -170,7 +173,11 @@ import 'model.dart';
 ///  * [decodeDataBlob], which decodes the binary variant of this format.
 DynamicMap parseDataFile(String file) {
   final _Parser parser = _Parser(_tokenize(file), null);
-  return parser.readDataFile();
+  final DynamicMap library = parser.readDataFile();
+  if (kDebugMode) {
+    _debugLibraryContentExpando[library] = file;
+  }
+  return library;
 }
 
 /// Parses a Remote Flutter Widgets text library file.
@@ -629,7 +636,11 @@ DynamicMap parseDataFile(String file) {
 ///  * [decodeLibraryBlob], which decodes the binary variant of this format.
 RemoteWidgetLibrary parseLibraryFile(String file, { Object? sourceIdentifier }) {
   final _Parser parser = _Parser(_tokenize(file), sourceIdentifier);
-  return parser.readLibraryFile();
+  final RemoteWidgetLibrary library = parser.readLibraryFile();
+  if (kDebugMode) {
+    _debugLibraryContentExpando[library] = file;
+  }
+  return library;
 }
 
 const Set<String> _reservedWords = <String>{
@@ -2520,3 +2531,15 @@ class _Parser {
     assert(!more);
   }
 }
+
+String? getDebugLibraryContent(Object object) {
+  String? content;
+  assert(() {
+    content = _debugLibraryContentExpando[object];
+    return true;
+  }());
+  return content;
+}
+
+final Expando<String> _debugLibraryContentExpando =
+    Expando<String>('debugRfwLibraryContent');
