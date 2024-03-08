@@ -468,7 +468,7 @@ enum BillingResponse {
   @JsonValue(-2)
   featureNotSupported,
 
-  /// The play Store service is not connected now - potentially transient state.
+  /// The Play Store service is not connected now - potentially transient state.
   @JsonValue(-1)
   serviceDisconnected,
 
@@ -515,8 +515,8 @@ enum BillingResponse {
 
 /// Plugin concept to cover billing modes.
 ///
-/// [playBillingOnly] (google play billing only).
-/// [alternativeBillingOnly] (app provided billing with reporting to play).
+/// [playBillingOnly] (google Play billing only).
+/// [alternativeBillingOnly] (app provided billing with reporting to Play).
 @JsonEnum(alwaysCreate: true)
 enum BillingChoiceMode {
   // WARNING: Changes to this class need to be reflected in our generated code.
@@ -525,7 +525,7 @@ enum BillingChoiceMode {
   // Values must match what is used in
   // in_app_purchase_android/android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
 
-  /// Billing through google play. Default state.
+  /// Billing through google Play. Default state.
   @JsonValue(0)
   playBillingOnly,
 
@@ -533,7 +533,7 @@ enum BillingChoiceMode {
   @JsonValue(1)
   alternativeBillingOnly,
 
-  /// Users can choose play billing or alternative billing.
+  /// Users can choose Play billing or alternative billing.
   @JsonValue(2)
   userChoiceBilling,
 }

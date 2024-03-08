@@ -30,6 +30,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         break;
       case BillingChoiceMode.USER_CHOICE_BILLING:
         if (userChoiceBillingListener != null) {
+          // https://developer.android.com/google/play/billing/alternative/alternative-billing-with-user-choice-in-app
           builder.enableUserChoiceBilling(userChoiceBillingListener);
         } else {
           Log.e(
@@ -41,7 +42,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         // Do nothing
         break;
       default:
-        Log.w("BillingClientFactoryImpl", "Unknown BillingChoiceMode " + billingChoiceMode);
+        Log.e("BillingClientFactoryImpl", "Unknown BillingChoiceMode " + billingChoiceMode + ", Defaulting to PLAY_BILLING_ONLY");
         break;
     }
     return builder.setListener(new PluginPurchaseListener(channel)).build();
