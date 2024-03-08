@@ -239,7 +239,7 @@ import java.util.Map;
     HashMap<String, Object> info = new HashMap<>();
     info.put("externalTransactionToken", userChoiceDetails.getExternalTransactionToken());
     info.put("originalExternalTransactionId", userChoiceDetails.getOriginalExternalTransactionId());
-    info.put("productsList", fromProductsList(userChoiceDetails.getProducts()));
+    info.put("products", fromProductsList(userChoiceDetails.getProducts()));
     return info;
   }
 
@@ -256,8 +256,8 @@ import java.util.Map;
 
   static HashMap<String, Object> fromProduct(Product product) {
     HashMap<String, Object> info = new HashMap<>();
-    info.put("productId", product.getId());
-    info.put("productOfferToken", product.getOfferToken());
+    info.put("id", product.getId());
+    info.put("offerToken", product.getOfferToken());
     info.put("productType", product.getType());
 
     return info;

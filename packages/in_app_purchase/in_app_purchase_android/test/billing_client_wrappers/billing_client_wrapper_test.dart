@@ -185,6 +185,45 @@ void main() {
       expect(await completer.future, expected);
     });
 
+    test('UserChoiceDetailsWrapper searilization check', () async {
+      // Test ensures that changes to UserChoiceDetailsWrapper#toJson are
+      // compatible with code in Translator.java.
+      const String transactionIdKey = 'originalExternalTransactionId';
+      const String transactionTokenKey = 'externalTransactionToken';
+      const String productsKey = 'products';
+      const String productIdKey = 'id';
+      const String productOfferTokenKey = 'offerToken';
+      const String productTypeKey = 'productType';
+
+      const UserChoiceDetailsProductWrapper expectedProduct1 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsProductWrapper expectedProduct2 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          expectedProduct1,
+          expectedProduct2,
+        ],
+      );
+      final Map<String, dynamic> detailsJson = expected.toJson();
+      expect(detailsJson.keys, contains(transactionIdKey));
+      expect(detailsJson.keys, contains(transactionTokenKey));
+      expect(detailsJson.keys, contains(productsKey));
+
+      final Map<String, dynamic> productJson = expectedProduct1.toJson();
+      expect(productJson, contains(productIdKey));
+      expect(productJson, contains(productOfferTokenKey));
+      expect(productJson, contains(productTypeKey));
+    });
+
     test('handles method channel returning null', () async {
       stubPlatform.addResponse(
         name: methodName,
