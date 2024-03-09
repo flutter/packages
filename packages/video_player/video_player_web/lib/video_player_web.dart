@@ -234,15 +234,20 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
     capture();
   }
 
+  web.ImageBitmap? source;
+
   Future<void> capture() async {
-    final tmp =
-        await promiseToFuture(web.window.createImageBitmap(widget.element));
-    final ui.Image img = await ui_web.createImageFromImageBitmap(tmp);
+    final newSource =
+        await promiseToFuture(web.window.createImageBitmap(widget.element))
+            as web.ImageBitmap;
+    final ui.Image img = await ui_web.createImageFromImageBitmap(newSource!);
 
     if (mounted) {
       setState(() {
         image?.dispose();
+        source?.close();
         image = img;
+        source = newSource;
       });
       getFrame(widget.element);
     }
@@ -253,6 +258,7 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
     cancelFrame(widget.element);
     super.dispose();
     image?.dispose();
+    source?.close();
     if (web.document.body!.contains(widget.element)) {
       web.document.body!.removeChild(widget.element);
     }
