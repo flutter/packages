@@ -454,7 +454,7 @@ void main() {
           preferences.setStringList(listKey, testList)
         ]);
 
-        final Set<String> keys = preferences.getKeys();
+        final Set<String> keys = preferences.keys;
 
         expect(keys.length, 5);
         expect(keys, contains(stringKey));
@@ -580,7 +580,7 @@ void main() {
           preferences.setStringList(listKey, testList)
         ]);
 
-        final Set<String> keys = preferences.getKeys();
+        final Set<String> keys = preferences.keys;
 
         expect(keys.length, 2);
         expect(keys, contains(stringKey));

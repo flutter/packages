@@ -120,7 +120,7 @@ class SharedPreferencesAsync {
         _options);
   }
 
-  /// Completes with true once the user preferences for the app have been cleared.
+  /// Clears all preferences from the platform.
   ///
   /// If no [parameters] are provided, and [SharedPreferencesAsync] has no filter,
   /// all preferences will be removed. This includes anything not set by this plugin,
@@ -177,7 +177,7 @@ class SharedPreferencesWithCache {
       cache: cache,
     );
 
-    await preferences._init();
+    await preferences.reloadCache();
 
     return preferences;
   }
@@ -197,10 +197,6 @@ class SharedPreferencesWithCache {
   /// Methods called through [_directAccess] will NOT update the cache.
   final SharedPreferencesAsync _directAccess;
 
-  Future<void> _init() async {
-    await reloadCache();
-  }
-
   /// Updates cache with latest values from platform.
   ///
   /// This should be called before reading any values if the values may have
@@ -217,7 +213,7 @@ class SharedPreferencesWithCache {
   bool containsKey(String key) => _cache.containsKey(key);
 
   /// Returns all keys in the cache.
-  Set<String> getKeys() {
+  Set<String> get keys {
     final Set<String> keys = _cache.keys.toSet();
     if (_cacheOptions.filter.allowList != null) {
       keys.removeWhere((String element) =>
@@ -304,12 +300,7 @@ class SharedPreferencesWithCache {
 
   /// Clears cache and platform preferences that match filter options.
   Future<void> clear() async {
-    if (_cacheOptions.filter.allowList == null) {
-      _cache.clear();
-    } else {
-      _cache.removeWhere(
-          (String key, _) => _cacheOptions.filter.allowList!.contains(key));
-    }
+    _cache.clear();
     return _directAccess
         .clear(ClearPreferencesParameters(filter: _cacheOptions.filter));
   }

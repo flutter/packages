@@ -10,8 +10,6 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   const String stringKey = 'testString';
   const String boolKey = 'testBool';
   const String intKey = 'testInt';
@@ -522,7 +520,7 @@ void main() {
         preferences.setStringList(listKey, testList)
       ]);
 
-      final Set<String> keys = preferences.getKeys();
+      final Set<String> keys = preferences.keys;
 
       expect(keys.length, 5);
       expect(keys, contains(stringKey));
@@ -763,7 +761,7 @@ void main() {
         preferences.setStringList(listKey, testList)
       ]);
 
-      final Set<String> keys = preferences.getKeys();
+      final Set<String> keys = preferences.keys;
 
       expect(keys.length, 2);
       expect(keys, contains(stringKey));

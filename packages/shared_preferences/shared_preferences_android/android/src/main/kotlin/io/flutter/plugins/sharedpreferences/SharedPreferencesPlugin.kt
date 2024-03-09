@@ -18,15 +18,14 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.lang.Exception
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 
 const val TAG = "SharedPreferencesPlugin"
 const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
@@ -71,12 +70,8 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
       value: Boolean,
       options: SharedPreferencesPigeonOptions
   ) {
-    return runBlocking { dataStoreSetBool(key, value) }
-  }
-
-  private suspend fun dataStoreSetBool(key: String, value: Boolean) {
-    val boolKey = booleanPreferencesKey(key)
-    context.sharedPreferencesDataStore.edit { preferences -> preferences[boolKey] = value }s
+    return runBlocking {     val boolKey = booleanPreferencesKey(key)
+    context.sharedPreferencesDataStore.edit { preferences -> preferences[boolKey] = value } }
   }
 
   /** Adds property to data store of type String. */
@@ -95,12 +90,8 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
 
   /** Adds property to data store of type int. Converted to Long by pigeon, and saved as such. */
   override fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions) {
-    return runBlocking { dataStoreSetInt(key, value) }
-  }
-
-  private suspend fun dataStoreSetInt(key: String, value: Long) {
-    val intKey = longPreferencesKey(key)
-    context.sharedPreferencesDataStore.edit { preferences -> preferences[intKey] = value }
+    return runBlocking {     val intKey = longPreferencesKey(key)
+    context.sharedPreferencesDataStore.edit { preferences -> preferences[intKey] = value } }
   }
 
   /** Adds property to data store of type double. */
@@ -109,12 +100,8 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
       value: Double,
       options: SharedPreferencesPigeonOptions
   ) {
-    return runBlocking { dataStoreSetDouble(key, value) }
-  }
-
-  private suspend fun dataStoreSetDouble(key: String, value: Double) {
-    val doubleKey = doublePreferencesKey(key)
-    context.sharedPreferencesDataStore.edit { preferences -> preferences[doubleKey] = value }
+    return runBlocking {     val doubleKey = doublePreferencesKey(key)
+    context.sharedPreferencesDataStore.edit { preferences -> preferences[doubleKey] = value } }
   }
 
   /** Adds property to data store of type List<String>. */
@@ -129,18 +116,14 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
 
   /** Removes all properties from data store. */
   override fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions) {
-    runBlocking { clearFromDataStore(allowList) }
-  }
-
-  private suspend fun clearFromDataStore(allowList: List<String>?) {
-    context.sharedPreferencesDataStore.edit { preferences ->
+    runBlocking {     context.sharedPreferencesDataStore.edit { preferences ->
       allowList?.let { list ->
         list.forEach { key ->
           val preferencesKey = booleanPreferencesKey(key)
           preferences.remove(preferencesKey)
         }
       } ?: preferences.clear()
-    }
+    } }
   }
 
   /** Gets all properties from data store. */
@@ -153,56 +136,47 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
 
   /** Gets int (as long) at [key] from data store. */
   override fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long? {
-    return runBlocking { getIntFromPreferences(key) }
-  }
-
-  private suspend fun getIntFromPreferences(key: String): Long? {
-    val preferencesKey = longPreferencesKey(key)
+    val value: Long?
+     runBlocking {     val preferencesKey = longPreferencesKey(key)
     val preferenceFlow: Flow<Long?> =
         context.sharedPreferencesDataStore.data.map { preferences -> preferences[preferencesKey] }
 
-    return preferenceFlow.firstOrNull()
+    value = preferenceFlow.firstOrNull() }
+  return value
   }
 
   /** Gets bool at [key] from data store. */
   override fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean? {
-    return runBlocking { getBoolFromPreferences(key) }
-  }
-
-  private suspend fun getBoolFromPreferences(key: String): Boolean? {
-    val preferencesKey = booleanPreferencesKey(key)
+    val value: Boolean?
+     runBlocking {     val preferencesKey = booleanPreferencesKey(key)
     val preferenceFlow: Flow<Boolean?> =
         context.sharedPreferencesDataStore.data.map { preferences -> preferences[preferencesKey] }
 
-    return preferenceFlow.firstOrNull()
+    value = preferenceFlow.firstOrNull() }
+    return value
   }
-
   /** Gets double at [key] from data store. */
   override fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double? {
-    return runBlocking { getDoubleFromPreferences(key) }
-  }
-
-  private suspend fun getDoubleFromPreferences(key: String): Double? {
-    val preferencesKey = stringPreferencesKey(key)
+    val value: Double?
+     runBlocking {     val preferencesKey = stringPreferencesKey(key)
     val preferenceFlow: Flow<Double?> =
         context.sharedPreferencesDataStore.data.map { preferences ->
           transformPref(preferences[preferencesKey] as Any?) as Double?
         }
 
-    return preferenceFlow.firstOrNull()
+    value = preferenceFlow.firstOrNull() }
+    return value
   }
 
   /** Gets String at [key] from data store. */
   override fun getString(key: String, options: SharedPreferencesPigeonOptions): String? {
-    return runBlocking { getStringFromPreferences(key) }
-  }
-
-  private suspend fun getStringFromPreferences(key: String): String? {
-    val preferencesKey = stringPreferencesKey(key)
+    val value: String?
+     runBlocking {     val preferencesKey = stringPreferencesKey(key)
     val preferenceFlow: Flow<String?> =
         context.sharedPreferencesDataStore.data.map { preferences -> preferences[preferencesKey] }
 
-    return preferenceFlow.firstOrNull()
+    value = preferenceFlow.firstOrNull() }
+    return value
   }
 
   /** Gets StringList at [key] from data store. */
