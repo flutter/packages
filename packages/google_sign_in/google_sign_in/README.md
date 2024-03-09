@@ -185,3 +185,117 @@ implement a more complete scope handling, as described above.
 
 Find the example wiring in the
 [Google sign-in example application](https://github.com/flutter/packages/blob/main/packages/google_sign_in/google_sign_in/example/lib/main.dart).
+
+
+## Using this package without Firebase
+
+If you are developing an app without Firebase integration and aim to obtain the idToken (JWT) for manual handling, the following information will guide you through the process.
+
+### Preparation in Google Cloud Console
+
+In [Google Cloud Console credentials section](https://console.cloud.google.com/apis/credentials) you must register at least three new "OAuth-Client-ID credentials":
+
+**For Android**
+
+You might need more than one of these, e.g.:
+- one for your development app in the PlayStore (signed with the Android keystore)
+- one for your production app in the PlayStore (signed with the Android keystore)
+- one for local testing (signed with AndroidStudio temporary keystore)
+
+For each of these register a new "Android" credential with the following information:
+
+- Name: For displaying purposes. E.g. use your app name with suffix "Android" and the the flavor (Dev/Prod).
+- Package name: Utilize the official package ID from your AndroidManifest.xml file (e.g. "com.example.app" or "com.example.app.dev")
+- SHA1 fingerprint: Obtainable with the `keytool` as documented.
+
+  - For PlayStore deployments:
+    
+    `keytool -keystore path-to-debug-or-production-keystore -list -v`
+
+    The path of your keystore is the one you have set in your `android/key.properties` file (storeFile).
+
+   - For local testing:
+
+     `keytool -list -v -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass android -keypass android`
+
+
+**For Web** (even if you don't have a web app!)
+
+This is apparently needed as the idToken is only delivered if you use a Client-ID of a Web-OAuth-Client. 
+
+If you already/also have a web app, you can use the existing one.
+If not, generate a new OAuth-ClientID for a web application. You don't need to configure anything.
+
+Just copy the "Client-ID" - you will need that one later.
+
+
+**For IOS**
+
+For iOS you just have to give the "Bundle-ID" which is the same as the "Package name" for Android (e.g. com.example.app).
+
+You might also need more than one of these if you have separate flavors of your app with different Bundle-IDs.
+
+You will need the "Client-ID" and the "iOS URL scheme".
+
+
+### iOS integration
+
+Follow only "step 6" in [these instructions](https://pub.dev/packages/google_sign_in_ios#ios-integration) and insert your "iOS URL scheme" in the CFBundleURLSchemes. 
+
+No further steps are required here.
+
+
+### Android integration
+
+This is different if you don't use Firebase.
+
+In your `android/app/build.gradle` file add the following lines:
+
+```
+dependencies {
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+}
+```
+
+In your `android/build.gradle` file modify the dependencies in the buildscript section to include the given class:
+
+```
+buildscript {
+  ... some stuff ...
+  dependencies {
+     ... some other dependencies ...
+     classpath 'com.google.gms:google-services:4.3.15'
+  }
+}
+```
+
+### Code
+
+Implement the following code in your app when a user clicks the "sign in with Google" button. 
+Dynamically use the correct client ID based on your build to match the Client-IDs generated in the Google console. 
+
+For Android, use the **Web** OAuth-Client-ID.
+
+```
+var googleSignIn = GoogleSignIn(
+  scopes: ['email', 'profile'],
+  clientId: Platform.isIOS ? "YOUR_IOS_CLIENT_ID" : null,
+  serverClientId: Platform.isAndroid ? "YOUR_WEB_CLIENT_ID" : null
+);
+
+try {
+  final result = await googleSignIn.signIn();
+  final auth = await result?.authentication;
+
+  if (auth == null) {
+    // handle error
+  }
+
+  String accessToken = auth.accessToken!;
+  String idToken = auth.idToken!;
+
+} catch (e) {
+  // handle error
+}
+```
+
