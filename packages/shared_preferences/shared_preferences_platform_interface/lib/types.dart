@@ -4,10 +4,13 @@
 
 // shared_preferences_async types.
 
+import 'package:flutter/foundation.dart';
+
 /// Basic options for creating SharedPreferencesAsync classes.
 ///
 /// This class exists to provide extension to platform specific options as
 /// there are currently no general options that are not platform specific.
+@immutable
 class SharedPreferencesOptions {
   /// Constructor for SharedPreferencesOptions.
   const SharedPreferencesOptions();

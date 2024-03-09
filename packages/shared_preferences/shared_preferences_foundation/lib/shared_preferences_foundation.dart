@@ -315,14 +315,14 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
 }
 
 /// Options for the Foundation specific SharedPreferences plugin.
+@immutable
 class SharedPreferencesFoundationOptions extends SharedPreferencesOptions {
   /// Creates a new instance with the given options.
   SharedPreferencesFoundationOptions({
     this.suiteName,
   }) {
     if (Platform.isIOS && !(suiteName?.startsWith('group.') ?? true)) {
-      throw ArgumentError(
-          'iOS suite name must follow a specific naming convention as outlined in ');
+      throw ArgumentError('iOS suite name must begin with "group."');
     }
   }
 
