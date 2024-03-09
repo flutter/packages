@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_util';
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:ui_web' as ui_web;
 
@@ -82,6 +83,7 @@ abstract class VideoElementPlayerPlugin extends VideoPlayerPlatform {
     return textureId;
   }
 
+  /// create the video element used to render this video
   web.VideoElement createElement(int textureId);
 
   @override
@@ -151,8 +153,9 @@ class HtmlElementViewVideoPlayerPlugin extends VideoElementPlayerPlugin {
     VideoPlayerPlatform.instance = HtmlElementViewVideoPlayerPlugin();
   }
 
+  @override
   web.VideoElement createElement(int textureId) {
-    final videoElement = web.HTMLVideoElement()
+    final web.VideoElement videoElement = web.HTMLVideoElement()
       ..id = 'videoElement-$textureId'
       ..style.border = 'none'
       ..style.height = '100%'
@@ -178,16 +181,22 @@ class VideoPlayerPlugin extends VideoElementPlayerPlugin {
     VideoPlayerPlatform.instance = VideoPlayerPlugin();
   }
 
+  @override
   web.VideoElement createElement(int textureId) {
-    final videoElement = web.HTMLVideoElement()
+    final web.VideoElement videoElement = web.HTMLVideoElement()
       ..id = 'videoElement-$textureId'
       ..style.border = 'none'
-      ..style.height = '100%'
-      ..style.width = '100%';
-
-    videoElement.crossOrigin = 'anonymous';
-    videoElement.style.opacity = '0';
-    videoElement.style.pointerEvents = 'none';
+      ..style.height = '0'
+      ..style.width = '0'
+      ..style.position = 'absolute'
+      ..style.zIndex = '-1'
+      ..style.top = '0px'
+      ..style.left = '0px'
+      ..style.width = '0px'
+      ..style.height = '0px'
+      ..style.opacity = '0'
+      ..style.pointerEvents = 'none'
+      ..crossOrigin = 'anonymous';
 
     return videoElement;
   }
@@ -231,16 +240,26 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
   }
 
   void frameCallback(JSAny now, JSAny metadata) {
-    capture();
+    final web.HTMLVideoElement element = widget.element;
+    final bool isPlaying = !!(element.currentTime > 0 &&
+        !element.paused &&
+        !element.ended &&
+        element.readyState > 2);
+
+    // only capture frames if video is playing (optimization for RAF)
+    if (isPlaying || element.readyState > 2 && image == null) {
+      capture();
+    } else {
+      getFrame(widget.element);
+    }
   }
 
   web.ImageBitmap? source;
 
   Future<void> capture() async {
-    final newSource =
-        await promiseToFuture(web.window.createImageBitmap(widget.element))
-            as web.ImageBitmap;
-    final ui.Image img = await ui_web.createImageFromImageBitmap(newSource!);
+    final web.ImageBitmap newSource = await promiseToFuture<web.ImageBitmap>(
+        web.window.createImageBitmap(widget.element));
+    final ui.Image img = await ui_web.createImageFromImageBitmap(newSource);
 
     if (mounted) {
       setState(() {
@@ -281,24 +300,35 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
 
   @override
   Widget build(BuildContext context) {
-    if (image != null) {
-      return RawImage(image: image);
-    } else {
-      return const ColoredBox(color: Colors.black);
-    }
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      // adjust video element size to match dimensions of frame so we capture the correct sized bitmap
+      final double dpr = MediaQuery.of(context).devicePixelRatio;
+
+      final double maxWidth = constraints.maxWidth * dpr;
+      final double maxHeight = constraints.maxHeight * dpr;
+      final double videoWidth = widget.element.videoWidth.toDouble();
+      final double videoHeight = widget.element.videoHeight.toDouble();
+
+      widget.element.width =
+          (videoWidth == 0 ? maxWidth : min(videoWidth, maxWidth)).ceil();
+      widget.element.height =
+          (videoHeight == 0 ? maxHeight : min(videoHeight, maxHeight)).ceil();
+      if (image != null) {
+        return RawImage(image: image);
+      } else {
+        return const ColoredBox(color: Colors.black);
+      }
+    });
   }
 }
 
 typedef _VideoFrameRequestCallback = JSFunction;
 
-extension _createImageBitmap on web.Window {
-  external JSPromise createImageBitmap(JSAny source);
-}
-
 extension _HTMLVideoElementRequestAnimationFrame on web.HTMLVideoElement {
   int requestVideoFrameCallbackWithFallback(
       _VideoFrameRequestCallback callback) {
-    if (hasProperty(this, "requestVideoFrameCallback")) {
+    if (hasProperty(this, 'requestVideoFrameCallback')) {
       return requestVideoFrameCallback(callback);
     } else {
       return web.window.requestAnimationFrame((double num) {
@@ -308,7 +338,7 @@ extension _HTMLVideoElementRequestAnimationFrame on web.HTMLVideoElement {
   }
 
   void cancelVideoFrameCallbackWithFallback(int callbackID) {
-    if (hasProperty(this, "requestVideoFrameCallback")) {
+    if (hasProperty(this, 'requestVideoFrameCallback')) {
       cancelVideoFrameCallback(callbackID);
     } else {
       web.window.cancelAnimationFrame(callbackID);
