@@ -220,12 +220,13 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
   int? callbackID;
 
   void getFrame(web.HTMLVideoElement element) {
-    callbackID = element.requestVideoFrameCallback(frameCallback.toJS);
+    callbackID =
+        element.requestVideoFrameCallbackWithFallback(frameCallback.toJS);
   }
 
   void cancelFrame(web.HTMLVideoElement element) {
     if (callbackID != null) {
-      element.cancelVideoFrameCallback(callbackID!);
+      element.cancelVideoFrameCallbackWithFallback(callbackID!);
     }
   }
 
@@ -289,6 +290,25 @@ extension _createImageBitmap on web.Window {
 }
 
 extension _HTMLVideoElementRequestAnimationFrame on web.HTMLVideoElement {
+  int requestVideoFrameCallbackWithFallback(
+      _VideoFrameRequestCallback callback) {
+    if (hasProperty(this, "requestVideoFrameCallback")) {
+      return requestVideoFrameCallback(callback);
+    } else {
+      return web.window.requestAnimationFrame((double num) {
+        callback.callAsFunction(this, 0.toJS, 0.toJS);
+      }.toJS);
+    }
+  }
+
+  void cancelVideoFrameCallbackWithFallback(int callbackID) {
+    if (hasProperty(this, "requestVideoFrameCallback")) {
+      cancelVideoFrameCallback(callbackID);
+    } else {
+      web.window.cancelAnimationFrame(callbackID);
+    }
+  }
+
   external int requestVideoFrameCallback(_VideoFrameRequestCallback callback);
   external void cancelVideoFrameCallback(int callbackID);
 }
