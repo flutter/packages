@@ -70,7 +70,7 @@ void main() {
 
   test('getPreferences', () async {
     final SharedPreferencesAndroid preferences = getPreferences();
-    await Future.wait(<Future<bool>>[
+    await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
@@ -92,7 +92,7 @@ void main() {
 
   test('getPreferences with filter', () async {
     final SharedPreferencesAndroid preferences = getPreferences();
-    await Future.wait(<Future<bool>>[
+    await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
@@ -113,7 +113,7 @@ void main() {
 
   test('getKeys', () async {
     final SharedPreferencesAndroid preferences = getPreferences();
-    await Future.wait(<Future<bool>>[
+    await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
@@ -136,7 +136,7 @@ void main() {
 
   test('getKeys with filter', () async {
     final SharedPreferencesAndroid preferences = getPreferences();
-    await Future.wait(<Future<bool>>[
+    await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
@@ -158,7 +158,7 @@ void main() {
 
   test('clear', () async {
     final SharedPreferencesAndroid preferences = getPreferences();
-    await Future.wait(<Future<bool>>[
+    await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
@@ -177,7 +177,7 @@ void main() {
 
   test('clear with filter', () async {
     final SharedPreferencesAndroid preferences = getPreferences();
-    await Future.wait(<Future<bool>>[
+    await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),

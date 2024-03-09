@@ -109,14 +109,13 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> clear(
+  Future<void> clear(
     ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
     _getAllowedKeys(allowList: filter.allowList)
         .forEach((String key) => html.window.localStorage.removeItem(key));
-    return true;
   }
 
   @override
@@ -145,7 +144,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setString(
+  Future<void> setString(
     String key,
     String value,
     SharedPreferencesOptions options,
@@ -153,7 +152,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
       _setValue(key, value, options);
 
   @override
-  Future<bool> setBool(
+  Future<void> setBool(
     String key,
     bool value,
     SharedPreferencesOptions options,
@@ -161,7 +160,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
       _setValue(key, value, options);
 
   @override
-  Future<bool> setDouble(
+  Future<void> setDouble(
     String key,
     double value,
     SharedPreferencesOptions options,
@@ -169,7 +168,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
       _setValue(key, value, options);
 
   @override
-  Future<bool> setInt(
+  Future<void> setInt(
     String key,
     int value,
     SharedPreferencesOptions options,
@@ -177,20 +176,19 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
       _setValue(key, value, options);
 
   @override
-  Future<bool> setStringList(
+  Future<void> setStringList(
     String key,
     List<String> value,
     SharedPreferencesOptions options,
   ) =>
       _setValue(key, value, options);
 
-  Future<bool> _setValue(
+  Future<void> _setValue(
     String key,
     Object? value,
     SharedPreferencesOptions options,
   ) async {
     html.window.localStorage.setItem(key, _encodeValue(value));
-    return true;
   }
 
   @override

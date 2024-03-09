@@ -4,8 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:shared_preferences/shared_preference_async.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
@@ -224,7 +224,7 @@ void main() {
 
       testWidgets('getAll', (WidgetTester _) async {
         final SharedPreferencesAsync preferences = await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -245,7 +245,7 @@ void main() {
 
       testWidgets('getAll with filter', (WidgetTester _) async {
         final SharedPreferencesAsync preferences = await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -266,7 +266,7 @@ void main() {
 
       testWidgets('getKeys', (WidgetTester _) async {
         final SharedPreferencesAsync preferences = await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -287,7 +287,7 @@ void main() {
 
       testWidgets('getKeys with filter', (WidgetTester _) async {
         final SharedPreferencesAsync preferences = await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -318,7 +318,7 @@ void main() {
 
       testWidgets('clear', (WidgetTester _) async {
         final SharedPreferencesAsync preferences = await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -336,7 +336,7 @@ void main() {
 
       testWidgets('clear with filter', (WidgetTester _) async {
         final SharedPreferencesAsync preferences = await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -446,7 +446,7 @@ void main() {
       testWidgets('getKeys', (WidgetTester _) async {
         final (SharedPreferencesWithCache preferences, _) =
             await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -467,7 +467,7 @@ void main() {
       testWidgets('clear', (WidgetTester _) async {
         final (SharedPreferencesWithCache preferences, _) =
             await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -572,7 +572,7 @@ void main() {
       testWidgets('getKeys', (WidgetTester _) async {
         final (SharedPreferencesWithCache preferences, _) =
             await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),
@@ -590,7 +590,7 @@ void main() {
       testWidgets('clear', (WidgetTester _) async {
         final (SharedPreferencesWithCache preferences, _) =
             await getPreferences();
-        await Future.wait(<Future<bool>>[
+        await Future.wait(<Future<void>>[
           preferences.setString(stringKey, testString),
           preferences.setBool(boolKey, testBool),
           preferences.setInt(intKey, testInt),

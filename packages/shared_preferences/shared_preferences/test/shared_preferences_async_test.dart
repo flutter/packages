@@ -4,7 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preference_async.dart';
+import 'package:shared_preferences/shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -171,7 +171,7 @@ void main() {
 
     test('getAll', () async {
       final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -192,7 +192,7 @@ void main() {
 
     test('getAll with filter', () async {
       final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -232,7 +232,7 @@ void main() {
 
     test('getKeys', () async {
       final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -253,7 +253,7 @@ void main() {
 
     test('getKeys with filter', () async {
       final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -287,7 +287,7 @@ void main() {
         SharedPreferencesAsync preferences,
         FakeSharedPreferencesAsync store
       ) = getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -311,7 +311,7 @@ void main() {
         SharedPreferencesAsync preferences,
         FakeSharedPreferencesAsync store
       ) = getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -514,7 +514,7 @@ void main() {
         _,
         _,
       ) = await getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -558,7 +558,7 @@ void main() {
         FakeSharedPreferencesAsync store,
         _,
       ) = await getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -755,7 +755,7 @@ void main() {
         _,
         _,
       ) = await getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),
@@ -796,7 +796,7 @@ void main() {
         FakeSharedPreferencesAsync store,
         _,
       ) = await getPreferences();
-      await Future.wait(<Future<bool>>[
+      await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString),
         preferences.setBool(boolKey, testBool),
         preferences.setInt(intKey, testInt),

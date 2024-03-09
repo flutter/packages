@@ -15,35 +15,35 @@ abstract base class SharedPreferencesAsyncPlatform {
   static SharedPreferencesAsyncPlatform? instance;
 
   /// Stores the String [value] associated with the [key].
-  Future<bool> setString(
+  Future<void> setString(
     String key,
     String value,
     SharedPreferencesOptions options,
   );
 
   /// Stores the bool [value] associated with the [key].
-  Future<bool> setBool(
+  Future<void> setBool(
     String key,
     bool value,
     SharedPreferencesOptions options,
   );
 
   /// Stores the double [value] associated with the [key].
-  Future<bool> setDouble(
+  Future<void> setDouble(
     String key,
     double value,
     SharedPreferencesOptions options,
   );
 
   /// Stores the int [value] associated with the [key].
-  Future<bool> setInt(
+  Future<void> setInt(
     String key,
     int value,
     SharedPreferencesOptions options,
   );
 
   /// Stores the List<String> [value] associated with the [key].
-  Future<bool> setStringList(
+  Future<void> setStringList(
     String key,
     List<String> value,
     SharedPreferencesOptions options,
@@ -80,7 +80,7 @@ abstract base class SharedPreferencesAsyncPlatform {
   );
 
   /// Removes all keys and values in the store that match the given [parameters].
-  Future<bool> clear(
+  Future<void> clear(
     ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   );

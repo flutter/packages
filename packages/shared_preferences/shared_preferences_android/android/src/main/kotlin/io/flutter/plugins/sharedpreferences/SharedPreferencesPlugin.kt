@@ -70,14 +70,13 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
       key: String,
       value: Boolean,
       options: SharedPreferencesPigeonOptions
-  ): Boolean {
+  ) {
     return runBlocking { dataStoreSetBool(key, value) }
   }
 
-  private suspend fun dataStoreSetBool(key: String, value: Boolean): Boolean {
+  private suspend fun dataStoreSetBool(key: String, value: Boolean) {
     val boolKey = booleanPreferencesKey(key)
-    context.sharedPreferencesDataStore.edit { preferences -> preferences[boolKey] = value }
-    return true
+    context.sharedPreferencesDataStore.edit { preferences -> preferences[boolKey] = value }s
   }
 
   /** Adds property to data store of type String. */
@@ -85,25 +84,23 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
       key: String,
       value: String,
       options: SharedPreferencesPigeonOptions
-  ): Boolean {
+  ) {
     return runBlocking { dataStoreSetString(key, value) }
   }
 
-  private suspend fun dataStoreSetString(key: String, value: String): Boolean {
+  private suspend fun dataStoreSetString(key: String, value: String) {
     val stringKey = stringPreferencesKey(key)
     context.sharedPreferencesDataStore.edit { preferences -> preferences[stringKey] = value }
-    return true
   }
 
   /** Adds property to data store of type int. Converted to Long by pigeon, and saved as such. */
-  override fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions): Boolean {
+  override fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions) {
     return runBlocking { dataStoreSetInt(key, value) }
   }
 
-  private suspend fun dataStoreSetInt(key: String, value: Long): Boolean {
+  private suspend fun dataStoreSetInt(key: String, value: Long) {
     val intKey = longPreferencesKey(key)
     context.sharedPreferencesDataStore.edit { preferences -> preferences[intKey] = value }
-    return true
   }
 
   /** Adds property to data store of type double. */
@@ -111,14 +108,13 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
       key: String,
       value: Double,
       options: SharedPreferencesPigeonOptions
-  ): Boolean {
+  ) {
     return runBlocking { dataStoreSetDouble(key, value) }
   }
 
-  private suspend fun dataStoreSetDouble(key: String, value: Double): Boolean {
+  private suspend fun dataStoreSetDouble(key: String, value: Double) {
     val doubleKey = doublePreferencesKey(key)
     context.sharedPreferencesDataStore.edit { preferences -> preferences[doubleKey] = value }
-    return true
   }
 
   /** Adds property to data store of type List<String>. */
@@ -126,15 +122,14 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
-  ): Boolean {
+  ) {
     val valueString = LIST_PREFIX + listEncoder.encode(value)
     return runBlocking { dataStoreSetString(key, valueString) }
   }
 
   /** Removes all properties from data store. */
-  override fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions): Boolean {
+  override fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions) {
     runBlocking { clearFromDataStore(allowList) }
-    return true
   }
 
   private suspend fun clearFromDataStore(allowList: List<String>?) {

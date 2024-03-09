@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -13,6 +14,7 @@ import 'package:shared_preferences_platform_interface/types.dart';
 /// Data is persisted to and fetched from the disk asynchronously.
 /// If synchronous access to preferences in a locally cached version of preferences
 /// is preferred, consider using [SharedPreferencesWithCache] instead.
+@immutable
 class SharedPreferencesAsync {
   /// Creates a new instance with the given [options].
   SharedPreferencesAsync({required SharedPreferencesOptions options})
@@ -85,33 +87,33 @@ class SharedPreferencesAsync {
           .isNotEmpty;
 
   /// Saves a boolean [value] to the platform.
-  Future<bool> setBool(String key, bool value) =>
+  Future<void> setBool(String key, bool value) =>
       _platform.setBool(key, value, _options);
 
   /// Saves an integer [value] to the platform.
-  Future<bool> setInt(String key, int value) =>
+  Future<void> setInt(String key, int value) =>
       _platform.setInt(key, value, _options);
 
   /// Saves a double [value] to the platform.
   ///
   /// On platforms that do not support storing doubles,
   /// the value will be stored as a float.
-  Future<bool> setDouble(String key, double value) =>
+  Future<void> setDouble(String key, double value) =>
       _platform.setDouble(key, value, _options);
 
   /// Saves a string [value] to the platform.
   ///
   /// Some platforms have special values that cannot be stored, please refer to
   /// the README for more information.
-  Future<bool> setString(String key, String value) =>
+  Future<void> setString(String key, String value) =>
       _platform.setString(key, value, _options);
 
   /// Saves a list of strings [value] to the platform.
-  Future<bool> setStringList(String key, List<String> value) =>
+  Future<void> setStringList(String key, List<String> value) =>
       _platform.setStringList(key, value, _options);
 
   /// Removes an entry from the platform.
-  Future<bool> remove(String key) {
+  Future<void> remove(String key) {
     return _platform.clear(
         ClearPreferencesParameters(
             filter: PreferencesFilters(allowList: <String>{key})),
@@ -124,7 +126,7 @@ class SharedPreferencesAsync {
   /// all preferences will be removed. This includes anything not set by this plugin,
   /// which may create some unwanted behaviors. It is highly recommended that
   /// [PreferencesFilters] be provided to this call.
-  Future<bool> clear(ClearPreferencesParameters parameters) {
+  Future<void> clear(ClearPreferencesParameters parameters) {
     return _platform.clear(parameters, _options);
   }
 }
@@ -149,6 +151,7 @@ class SharedPreferencesWithCacheOptions {
 /// this plugin, consider using [SharedPreferencesAsync] instead. You may also
 /// refresh the cached data using [reloadCache] prior to a get request to prevent
 /// missed changes that may have occurred since the cache was last updated.
+@immutable
 class SharedPreferencesWithCache {
   /// Creates a new instance with the given options.
   SharedPreferencesWithCache._create({
@@ -255,13 +258,13 @@ class SharedPreferencesWithCache {
   }
 
   /// Saves a boolean [value] to the cache and platform.
-  Future<bool> setBool(String key, bool value) async {
+  Future<void> setBool(String key, bool value) async {
     _cache[key] = value;
     return _directAccess.setBool(key, value);
   }
 
   /// Saves an integer [value] to the cache and platform.
-  Future<bool> setInt(String key, int value) async {
+  Future<void> setInt(String key, int value) async {
     _cache[key] = value;
     return _directAccess.setInt(key, value);
   }
@@ -270,7 +273,7 @@ class SharedPreferencesWithCache {
   ///
   /// On platforms that do not support storing doubles,
   /// the value will be stored as a float instead.
-  Future<bool> setDouble(String key, double value) async {
+  Future<void> setDouble(String key, double value) async {
     _cache[key] = value;
     return _directAccess.setDouble(key, value);
   }
@@ -282,25 +285,25 @@ class SharedPreferencesWithCache {
   ///
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu'
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu'
-  Future<bool> setString(String key, String value) async {
+  Future<void> setString(String key, String value) async {
     _cache[key] = value;
     return _directAccess.setString(key, value);
   }
 
   /// Saves a list of strings [value] to the cache and platform.
-  Future<bool> setStringList(String key, List<String> value) async {
+  Future<void> setStringList(String key, List<String> value) async {
     _cache[key] = value;
     return _directAccess.setStringList(key, value);
   }
 
   /// Removes an entry from cache and platform.
-  Future<bool> remove(String key) async {
+  Future<void> remove(String key) async {
     _cache.remove(key);
     return _directAccess.remove(key);
   }
 
   /// Clears cache and platform preferences that match filter options.
-  Future<bool> clear() async {
+  Future<void> clear() async {
     if (_cacheOptions.filter.allowList == null) {
       _cache.clear();
     } else {

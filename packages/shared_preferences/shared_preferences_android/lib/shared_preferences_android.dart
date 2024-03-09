@@ -51,7 +51,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setString(
+  Future<void> setString(
     String key,
     String value,
     SharedPreferencesOptions options,
@@ -68,7 +68,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setInt(
+  Future<void> setInt(
     String key,
     int value,
     SharedPreferencesOptions options,
@@ -80,7 +80,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setDouble(
+  Future<void> setDouble(
     String key,
     double value,
     SharedPreferencesOptions options,
@@ -92,7 +92,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setBool(
+  Future<void> setBool(
     String key,
     bool value,
     SharedPreferencesOptions options,
@@ -104,7 +104,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setStringList(
+  Future<void> setStringList(
     String key,
     List<String> value,
     SharedPreferencesOptions options,
@@ -171,7 +171,7 @@ base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> clear(
+  Future<void> clear(
     ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {

@@ -26,11 +26,11 @@ class SharedPreferencesPigeonOptions {
 abstract class SharedPreferencesAsyncApi {
   /// Adds property to shared preferences data set of type bool.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool setBool(String key, bool value, SharedPreferencesPigeonOptions options);
+  void setBool(String key, bool value, SharedPreferencesPigeonOptions options);
 
   /// Adds property to shared preferences data set of type String.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool setString(
+  void setString(
     String key,
     String value,
     SharedPreferencesPigeonOptions options,
@@ -38,7 +38,7 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Adds property to shared preferences data set of type int.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool setInt(
+  void setInt(
     String key,
     int value,
     SharedPreferencesPigeonOptions options,
@@ -46,7 +46,7 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Adds property to shared preferences data set of type double.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool setDouble(
+  void setDouble(
     String key,
     double value,
     SharedPreferencesPigeonOptions options,
@@ -54,7 +54,7 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Adds property to shared preferences data set of type List<String>.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool setStringList(
+  void setStringList(
     String key,
     List<String> value,
     SharedPreferencesPigeonOptions options,
@@ -66,7 +66,7 @@ abstract class SharedPreferencesAsyncApi {
     SharedPreferencesPigeonOptions options,
   );
 
-  /// Gets individual bool value stored with [key], if any.
+  /// Gets individual  void value stored with [key], if any.
   bool? getBool(
     String key,
     SharedPreferencesPigeonOptions options,
@@ -92,7 +92,7 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Removes all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool clear(
+  void clear(
     List<String>? allowList,
     SharedPreferencesPigeonOptions options,
   );

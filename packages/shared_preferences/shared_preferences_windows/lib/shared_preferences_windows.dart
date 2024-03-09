@@ -168,7 +168,7 @@ base class SharedPreferencesAsyncWindows
   }
 
   @override
-  Future<bool> setString(
+  Future<void> setString(
     String key,
     String value,
     SharedPreferencesOptions options,
@@ -176,7 +176,7 @@ base class SharedPreferencesAsyncWindows
       _setValue(key, value, options);
 
   @override
-  Future<bool> setBool(
+  Future<void> setBool(
     String key,
     bool value,
     SharedPreferencesOptions options,
@@ -184,7 +184,7 @@ base class SharedPreferencesAsyncWindows
       _setValue(key, value, options);
 
   @override
-  Future<bool> setDouble(
+  Future<void> setDouble(
     String key,
     double value,
     SharedPreferencesOptions options,
@@ -192,7 +192,7 @@ base class SharedPreferencesAsyncWindows
       _setValue(key, value, options);
 
   @override
-  Future<bool> setInt(
+  Future<void> setInt(
     String key,
     int value,
     SharedPreferencesOptions options,
@@ -200,7 +200,7 @@ base class SharedPreferencesAsyncWindows
       _setValue(key, value, options);
 
   @override
-  Future<bool> setStringList(
+  Future<void> setStringList(
     String key,
     List<String> value,
     SharedPreferencesOptions options,
@@ -258,7 +258,7 @@ base class SharedPreferencesAsyncWindows
   }
 
   @override
-  Future<bool> clear(ClearPreferencesParameters parameters,
+  Future<void> clear(ClearPreferencesParameters parameters,
       SharedPreferencesOptions options) async {
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
@@ -267,7 +267,7 @@ base class SharedPreferencesAsyncWindows
         await _readPreferences(windowsOptions.fileName);
     preferences.removeWhere((String key, _) =>
         filter.allowList == null || filter.allowList!.contains(key));
-    return _writePreferences(
+    await _writePreferences(
       preferences,
       windowsOptions.fileName,
       fs: fs,
@@ -295,14 +295,14 @@ base class SharedPreferencesAsyncWindows
     return prefs;
   }
 
-  Future<bool> _setValue(
+  Future<void> _setValue(
       String key, Object value, SharedPreferencesOptions options) async {
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
     final Map<String, Object> preferences =
         await _readPreferences(windowsOptions.fileName);
     preferences[key] = value;
-    return _writePreferences(
+    await _writePreferences(
       preferences,
       windowsOptions.fileName,
       fs: fs,

@@ -85,7 +85,7 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setString(
+  Future<void> setString(
     String key,
     String value,
     SharedPreferencesOptions options,
@@ -100,11 +100,10 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
         rethrow;
       }
     }
-    return true;
   }
 
   @override
-  Future<bool> setInt(
+  Future<void> setInt(
     String key,
     int value,
     SharedPreferencesOptions options,
@@ -119,21 +118,19 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
         rethrow;
       }
     }
-    return true;
   }
 
   @override
-  Future<bool> setStringList(
+  Future<void> setStringList(
     String key,
     List<String> value,
     SharedPreferencesOptions options,
   ) async {
     await _setValue(key, value, options);
-    return true;
   }
 
   @override
-  Future<bool> setBool(
+  Future<void> setBool(
     String key,
     bool value,
     SharedPreferencesOptions options,
@@ -151,11 +148,10 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
         rethrow;
       }
     }
-    return true;
   }
 
   @override
-  Future<bool> setDouble(
+  Future<void> setDouble(
     String key,
     double value,
     SharedPreferencesOptions options,
@@ -173,7 +169,6 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
         rethrow;
       }
     }
-    return true;
   }
 
   @override
@@ -276,7 +271,7 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> clear(
+  Future<void> clear(
     ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
@@ -294,7 +289,6 @@ base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
         rethrow;
       }
     }
-    return true;
   }
 
   @override
