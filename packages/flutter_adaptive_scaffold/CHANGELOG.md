@@ -1,6 +1,6 @@
 ## 0.1.9
 
-* FIX : Drawer stays open even on destination tap - [flutter/flutter#41938](https://github.com/flutter/flutter/issues/141938)
+* FIX : Drawer stays open even on destination tap - [flutter/flutter#141938](https://github.com/flutter/flutter/issues/141938)
 
 ## NEXT
 
