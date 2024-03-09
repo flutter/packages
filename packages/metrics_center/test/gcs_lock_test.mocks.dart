@@ -60,9 +60,20 @@ class _FakeStreamedResponse_2 extends _i1.SmartFake
         );
 }
 
-class _FakeBucketAccessControlsResource_3 extends _i1.SmartFake
+class _FakeAnywhereCacheResource_3 extends _i1.SmartFake
+    implements _i4.AnywhereCacheResource {
+  _FakeAnywhereCacheResource_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeBucketAccessControlsResource_4 extends _i1.SmartFake
     implements _i4.BucketAccessControlsResource {
-  _FakeBucketAccessControlsResource_3(
+  _FakeBucketAccessControlsResource_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -71,9 +82,9 @@ class _FakeBucketAccessControlsResource_3 extends _i1.SmartFake
         );
 }
 
-class _FakeBucketsResource_4 extends _i1.SmartFake
+class _FakeBucketsResource_5 extends _i1.SmartFake
     implements _i4.BucketsResource {
-  _FakeBucketsResource_4(
+  _FakeBucketsResource_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -82,9 +93,9 @@ class _FakeBucketsResource_4 extends _i1.SmartFake
         );
 }
 
-class _FakeChannelsResource_5 extends _i1.SmartFake
+class _FakeChannelsResource_6 extends _i1.SmartFake
     implements _i4.ChannelsResource {
-  _FakeChannelsResource_5(
+  _FakeChannelsResource_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -93,9 +104,9 @@ class _FakeChannelsResource_5 extends _i1.SmartFake
         );
 }
 
-class _FakeDefaultObjectAccessControlsResource_6 extends _i1.SmartFake
+class _FakeDefaultObjectAccessControlsResource_7 extends _i1.SmartFake
     implements _i4.DefaultObjectAccessControlsResource {
-  _FakeDefaultObjectAccessControlsResource_6(
+  _FakeDefaultObjectAccessControlsResource_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -104,9 +115,20 @@ class _FakeDefaultObjectAccessControlsResource_6 extends _i1.SmartFake
         );
 }
 
-class _FakeNotificationsResource_7 extends _i1.SmartFake
+class _FakeManagedFoldersResource_8 extends _i1.SmartFake
+    implements _i4.ManagedFoldersResource {
+  _FakeManagedFoldersResource_8(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeNotificationsResource_9 extends _i1.SmartFake
     implements _i4.NotificationsResource {
-  _FakeNotificationsResource_7(
+  _FakeNotificationsResource_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -115,9 +137,9 @@ class _FakeNotificationsResource_7 extends _i1.SmartFake
         );
 }
 
-class _FakeObjectAccessControlsResource_8 extends _i1.SmartFake
+class _FakeObjectAccessControlsResource_10 extends _i1.SmartFake
     implements _i4.ObjectAccessControlsResource {
-  _FakeObjectAccessControlsResource_8(
+  _FakeObjectAccessControlsResource_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -126,9 +148,9 @@ class _FakeObjectAccessControlsResource_8 extends _i1.SmartFake
         );
 }
 
-class _FakeObjectsResource_9 extends _i1.SmartFake
+class _FakeObjectsResource_11 extends _i1.SmartFake
     implements _i4.ObjectsResource {
-  _FakeObjectsResource_9(
+  _FakeObjectsResource_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -137,9 +159,20 @@ class _FakeObjectsResource_9 extends _i1.SmartFake
         );
 }
 
-class _FakeProjectsResource_10 extends _i1.SmartFake
+class _FakeOperationsResource_12 extends _i1.SmartFake
+    implements _i4.OperationsResource {
+  _FakeOperationsResource_12(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeProjectsResource_13 extends _i1.SmartFake
     implements _i4.ProjectsResource {
-  _FakeProjectsResource_10(
+  _FakeProjectsResource_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -148,8 +181,9 @@ class _FakeProjectsResource_10 extends _i1.SmartFake
         );
 }
 
-class _FakeObject_11 extends _i1.SmartFake implements _i4.Object {
-  _FakeObject_11(
+class _FakeGoogleLongrunningOperation_14 extends _i1.SmartFake
+    implements _i4.GoogleLongrunningOperation {
+  _FakeGoogleLongrunningOperation_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -158,8 +192,8 @@ class _FakeObject_11 extends _i1.SmartFake implements _i4.Object {
         );
 }
 
-class _FakeObject_12 extends _i1.SmartFake implements Object {
-  _FakeObject_12(
+class _FakeObject_15 extends _i1.SmartFake implements _i4.Object {
+  _FakeObject_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -168,8 +202,8 @@ class _FakeObject_12 extends _i1.SmartFake implements Object {
         );
 }
 
-class _FakePolicy_13 extends _i1.SmartFake implements _i4.Policy {
-  _FakePolicy_13(
+class _FakeObject_16 extends _i1.SmartFake implements Object {
+  _FakeObject_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -178,8 +212,8 @@ class _FakePolicy_13 extends _i1.SmartFake implements _i4.Policy {
         );
 }
 
-class _FakeObjects_14 extends _i1.SmartFake implements _i4.Objects {
-  _FakeObjects_14(
+class _FakePolicy_17 extends _i1.SmartFake implements _i4.Policy {
+  _FakePolicy_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -188,9 +222,19 @@ class _FakeObjects_14 extends _i1.SmartFake implements _i4.Objects {
         );
 }
 
-class _FakeRewriteResponse_15 extends _i1.SmartFake
+class _FakeObjects_18 extends _i1.SmartFake implements _i4.Objects {
+  _FakeObjects_18(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeRewriteResponse_19 extends _i1.SmartFake
     implements _i4.RewriteResponse {
-  _FakeRewriteResponse_15(
+  _FakeRewriteResponse_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -199,9 +243,9 @@ class _FakeRewriteResponse_15 extends _i1.SmartFake
         );
 }
 
-class _FakeTestIamPermissionsResponse_16 extends _i1.SmartFake
+class _FakeTestIamPermissionsResponse_20 extends _i1.SmartFake
     implements _i4.TestIamPermissionsResponse {
-  _FakeTestIamPermissionsResponse_16(
+  _FakeTestIamPermissionsResponse_20(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -210,8 +254,8 @@ class _FakeTestIamPermissionsResponse_16 extends _i1.SmartFake
         );
 }
 
-class _FakeChannel_17 extends _i1.SmartFake implements _i4.Channel {
-  _FakeChannel_17(
+class _FakeChannel_21 extends _i1.SmartFake implements _i4.Channel {
+  _FakeChannel_21(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -474,10 +518,19 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
   }
 
   @override
+  _i4.AnywhereCacheResource get anywhereCache => (super.noSuchMethod(
+        Invocation.getter(#anywhereCache),
+        returnValue: _FakeAnywhereCacheResource_3(
+          this,
+          Invocation.getter(#anywhereCache),
+        ),
+      ) as _i4.AnywhereCacheResource);
+
+  @override
   _i4.BucketAccessControlsResource get bucketAccessControls =>
       (super.noSuchMethod(
         Invocation.getter(#bucketAccessControls),
-        returnValue: _FakeBucketAccessControlsResource_3(
+        returnValue: _FakeBucketAccessControlsResource_4(
           this,
           Invocation.getter(#bucketAccessControls),
         ),
@@ -486,7 +539,7 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
   @override
   _i4.BucketsResource get buckets => (super.noSuchMethod(
         Invocation.getter(#buckets),
-        returnValue: _FakeBucketsResource_4(
+        returnValue: _FakeBucketsResource_5(
           this,
           Invocation.getter(#buckets),
         ),
@@ -495,7 +548,7 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
   @override
   _i4.ChannelsResource get channels => (super.noSuchMethod(
         Invocation.getter(#channels),
-        returnValue: _FakeChannelsResource_5(
+        returnValue: _FakeChannelsResource_6(
           this,
           Invocation.getter(#channels),
         ),
@@ -505,16 +558,25 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
   _i4.DefaultObjectAccessControlsResource get defaultObjectAccessControls =>
       (super.noSuchMethod(
         Invocation.getter(#defaultObjectAccessControls),
-        returnValue: _FakeDefaultObjectAccessControlsResource_6(
+        returnValue: _FakeDefaultObjectAccessControlsResource_7(
           this,
           Invocation.getter(#defaultObjectAccessControls),
         ),
       ) as _i4.DefaultObjectAccessControlsResource);
 
   @override
+  _i4.ManagedFoldersResource get managedFolders => (super.noSuchMethod(
+        Invocation.getter(#managedFolders),
+        returnValue: _FakeManagedFoldersResource_8(
+          this,
+          Invocation.getter(#managedFolders),
+        ),
+      ) as _i4.ManagedFoldersResource);
+
+  @override
   _i4.NotificationsResource get notifications => (super.noSuchMethod(
         Invocation.getter(#notifications),
-        returnValue: _FakeNotificationsResource_7(
+        returnValue: _FakeNotificationsResource_9(
           this,
           Invocation.getter(#notifications),
         ),
@@ -524,7 +586,7 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
   _i4.ObjectAccessControlsResource get objectAccessControls =>
       (super.noSuchMethod(
         Invocation.getter(#objectAccessControls),
-        returnValue: _FakeObjectAccessControlsResource_8(
+        returnValue: _FakeObjectAccessControlsResource_10(
           this,
           Invocation.getter(#objectAccessControls),
         ),
@@ -533,16 +595,25 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
   @override
   _i4.ObjectsResource get objects => (super.noSuchMethod(
         Invocation.getter(#objects),
-        returnValue: _FakeObjectsResource_9(
+        returnValue: _FakeObjectsResource_11(
           this,
           Invocation.getter(#objects),
         ),
       ) as _i4.ObjectsResource);
 
   @override
+  _i4.OperationsResource get operations => (super.noSuchMethod(
+        Invocation.getter(#operations),
+        returnValue: _FakeOperationsResource_12(
+          this,
+          Invocation.getter(#operations),
+        ),
+      ) as _i4.OperationsResource);
+
+  @override
   _i4.ProjectsResource get projects => (super.noSuchMethod(
         Invocation.getter(#projects),
-        returnValue: _FakeProjectsResource_10(
+        returnValue: _FakeProjectsResource_13(
           this,
           Invocation.getter(#projects),
         ),
@@ -554,6 +625,48 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
 /// See the documentation for Mockito's code generation for more information.
 class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
   @override
+  _i6.Future<_i4.GoogleLongrunningOperation> bulkRestore(
+    _i4.BulkRestoreObjectsRequest? request,
+    String? bucket, {
+    String? $fields,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #bulkRestore,
+          [
+            request,
+            bucket,
+          ],
+          {#$fields: $fields},
+        ),
+        returnValue: _i6.Future<_i4.GoogleLongrunningOperation>.value(
+            _FakeGoogleLongrunningOperation_14(
+          this,
+          Invocation.method(
+            #bulkRestore,
+            [
+              request,
+              bucket,
+            ],
+            {#$fields: $fields},
+          ),
+        )),
+        returnValueForMissingStub:
+            _i6.Future<_i4.GoogleLongrunningOperation>.value(
+                _FakeGoogleLongrunningOperation_14(
+          this,
+          Invocation.method(
+            #bulkRestore,
+            [
+              request,
+              bucket,
+            ],
+            {#$fields: $fields},
+          ),
+        )),
+      ) as _i6.Future<_i4.GoogleLongrunningOperation>);
+
+  @override
   _i6.Future<_i4.Object> compose(
     _i4.ComposeRequest? request,
     String? destinationBucket,
@@ -562,7 +675,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? ifGenerationMatch,
     String? ifMetagenerationMatch,
     String? kmsKeyName,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
   }) =>
@@ -579,12 +691,11 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #ifGenerationMatch: ifGenerationMatch,
             #ifMetagenerationMatch: ifMetagenerationMatch,
             #kmsKeyName: kmsKeyName,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #compose,
@@ -598,13 +709,12 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifGenerationMatch: ifGenerationMatch,
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #kmsKeyName: kmsKeyName,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #compose,
@@ -618,7 +728,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifGenerationMatch: ifGenerationMatch,
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #kmsKeyName: kmsKeyName,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
@@ -644,7 +753,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? ifSourceMetagenerationMatch,
     String? ifSourceMetagenerationNotMatch,
     String? projection,
-    String? provisionalUserProject,
     String? sourceGeneration,
     String? userProject,
     String? $fields,
@@ -671,13 +779,12 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
             #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
             #sourceGeneration: sourceGeneration,
             #userProject: userProject,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #copy,
@@ -700,14 +807,13 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
               #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #sourceGeneration: sourceGeneration,
               #userProject: userProject,
               #$fields: $fields,
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #copy,
@@ -730,7 +836,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
               #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #sourceGeneration: sourceGeneration,
               #userProject: userProject,
               #$fields: $fields,
@@ -748,7 +853,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? ifGenerationNotMatch,
     String? ifMetagenerationMatch,
     String? ifMetagenerationNotMatch,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
   }) =>
@@ -765,7 +869,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #ifGenerationNotMatch: ifGenerationNotMatch,
             #ifMetagenerationMatch: ifMetagenerationMatch,
             #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
           },
@@ -784,7 +887,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? ifMetagenerationMatch,
     String? ifMetagenerationNotMatch,
     String? projection,
-    String? provisionalUserProject,
+    bool? softDeleted,
     String? userProject,
     String? $fields,
     _i10.DownloadOptions? downloadOptions = _i10.DownloadOptions.metadata,
@@ -803,13 +906,13 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #ifMetagenerationMatch: ifMetagenerationMatch,
             #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
+            #softDeleted: softDeleted,
             #userProject: userProject,
             #$fields: $fields,
             #downloadOptions: downloadOptions,
           },
         ),
-        returnValue: _i6.Future<Object>.value(_FakeObject_12(
+        returnValue: _i6.Future<Object>.value(_FakeObject_16(
           this,
           Invocation.method(
             #get,
@@ -824,14 +927,14 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
+              #softDeleted: softDeleted,
               #userProject: userProject,
               #$fields: $fields,
               #downloadOptions: downloadOptions,
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<Object>.value(_FakeObject_12(
+        returnValueForMissingStub: _i6.Future<Object>.value(_FakeObject_16(
           this,
           Invocation.method(
             #get,
@@ -846,7 +949,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
+              #softDeleted: softDeleted,
               #userProject: userProject,
               #$fields: $fields,
               #downloadOptions: downloadOptions,
@@ -860,7 +963,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? bucket,
     String? object, {
     String? generation,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
   }) =>
@@ -873,12 +975,11 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           ],
           {
             #generation: generation,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Policy>.value(_FakePolicy_13(
+        returnValue: _i6.Future<_i4.Policy>.value(_FakePolicy_17(
           this,
           Invocation.method(
             #getIamPolicy,
@@ -888,13 +989,12 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             ],
             {
               #generation: generation,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Policy>.value(_FakePolicy_13(
+        returnValueForMissingStub: _i6.Future<_i4.Policy>.value(_FakePolicy_17(
           this,
           Invocation.method(
             #getIamPolicy,
@@ -904,7 +1004,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             ],
             {
               #generation: generation,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
@@ -925,7 +1024,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? name,
     String? predefinedAcl,
     String? projection,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
     _i10.UploadOptions? uploadOptions = _i10.UploadOptions.defaultOptions,
@@ -948,14 +1046,13 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #name: name,
             #predefinedAcl: predefinedAcl,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
             #uploadOptions: uploadOptions,
             #uploadMedia: uploadMedia,
           },
         ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #insert,
@@ -973,7 +1070,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #name: name,
               #predefinedAcl: predefinedAcl,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
               #uploadOptions: uploadOptions,
@@ -981,7 +1077,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #insert,
@@ -999,7 +1095,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #name: name,
               #predefinedAcl: predefinedAcl,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
               #uploadOptions: uploadOptions,
@@ -1014,12 +1109,14 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? bucket, {
     String? delimiter,
     String? endOffset,
+    bool? includeFoldersAsPrefixes,
     bool? includeTrailingDelimiter,
+    String? matchGlob,
     int? maxResults,
     String? pageToken,
     String? prefix,
     String? projection,
-    String? provisionalUserProject,
+    bool? softDeleted,
     String? startOffset,
     String? userProject,
     bool? versions,
@@ -1032,19 +1129,21 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           {
             #delimiter: delimiter,
             #endOffset: endOffset,
+            #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
             #includeTrailingDelimiter: includeTrailingDelimiter,
+            #matchGlob: matchGlob,
             #maxResults: maxResults,
             #pageToken: pageToken,
             #prefix: prefix,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
+            #softDeleted: softDeleted,
             #startOffset: startOffset,
             #userProject: userProject,
             #versions: versions,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Objects>.value(_FakeObjects_14(
+        returnValue: _i6.Future<_i4.Objects>.value(_FakeObjects_18(
           this,
           Invocation.method(
             #list,
@@ -1052,12 +1151,14 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             {
               #delimiter: delimiter,
               #endOffset: endOffset,
+              #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
               #includeTrailingDelimiter: includeTrailingDelimiter,
+              #matchGlob: matchGlob,
               #maxResults: maxResults,
               #pageToken: pageToken,
               #prefix: prefix,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
+              #softDeleted: softDeleted,
               #startOffset: startOffset,
               #userProject: userProject,
               #versions: versions,
@@ -1066,7 +1167,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i4.Objects>.value(_FakeObjects_14(
+            _i6.Future<_i4.Objects>.value(_FakeObjects_18(
           this,
           Invocation.method(
             #list,
@@ -1074,12 +1175,14 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             {
               #delimiter: delimiter,
               #endOffset: endOffset,
+              #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
               #includeTrailingDelimiter: includeTrailingDelimiter,
+              #matchGlob: matchGlob,
               #maxResults: maxResults,
               #pageToken: pageToken,
               #prefix: prefix,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
+              #softDeleted: softDeleted,
               #startOffset: startOffset,
               #userProject: userProject,
               #versions: versions,
@@ -1099,9 +1202,9 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? ifGenerationNotMatch,
     String? ifMetagenerationMatch,
     String? ifMetagenerationNotMatch,
+    bool? overrideUnlockedRetention,
     String? predefinedAcl,
     String? projection,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
   }) =>
@@ -1119,14 +1222,14 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #ifGenerationNotMatch: ifGenerationNotMatch,
             #ifMetagenerationMatch: ifMetagenerationMatch,
             #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+            #overrideUnlockedRetention: overrideUnlockedRetention,
             #predefinedAcl: predefinedAcl,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #patch,
@@ -1141,15 +1244,15 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifGenerationNotMatch: ifGenerationNotMatch,
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+              #overrideUnlockedRetention: overrideUnlockedRetention,
               #predefinedAcl: predefinedAcl,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #patch,
@@ -1164,9 +1267,90 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifGenerationNotMatch: ifGenerationNotMatch,
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+              #overrideUnlockedRetention: overrideUnlockedRetention,
               #predefinedAcl: predefinedAcl,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
+              #userProject: userProject,
+              #$fields: $fields,
+            },
+          ),
+        )),
+      ) as _i6.Future<_i4.Object>);
+
+  @override
+  _i6.Future<_i4.Object> restore(
+    _i4.Object? request,
+    String? bucket,
+    String? object,
+    String? generation, {
+    bool? copySourceAcl,
+    String? ifGenerationMatch,
+    String? ifGenerationNotMatch,
+    String? ifMetagenerationMatch,
+    String? ifMetagenerationNotMatch,
+    String? projection,
+    String? userProject,
+    String? $fields,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #restore,
+          [
+            request,
+            bucket,
+            object,
+            generation,
+          ],
+          {
+            #copySourceAcl: copySourceAcl,
+            #ifGenerationMatch: ifGenerationMatch,
+            #ifGenerationNotMatch: ifGenerationNotMatch,
+            #ifMetagenerationMatch: ifMetagenerationMatch,
+            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+            #projection: projection,
+            #userProject: userProject,
+            #$fields: $fields,
+          },
+        ),
+        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_15(
+          this,
+          Invocation.method(
+            #restore,
+            [
+              request,
+              bucket,
+              object,
+              generation,
+            ],
+            {
+              #copySourceAcl: copySourceAcl,
+              #ifGenerationMatch: ifGenerationMatch,
+              #ifGenerationNotMatch: ifGenerationNotMatch,
+              #ifMetagenerationMatch: ifMetagenerationMatch,
+              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+              #projection: projection,
+              #userProject: userProject,
+              #$fields: $fields,
+            },
+          ),
+        )),
+        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_15(
+          this,
+          Invocation.method(
+            #restore,
+            [
+              request,
+              bucket,
+              object,
+              generation,
+            ],
+            {
+              #copySourceAcl: copySourceAcl,
+              #ifGenerationMatch: ifGenerationMatch,
+              #ifGenerationNotMatch: ifGenerationNotMatch,
+              #ifMetagenerationMatch: ifMetagenerationMatch,
+              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+              #projection: projection,
               #userProject: userProject,
               #$fields: $fields,
             },
@@ -1193,7 +1377,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? ifSourceMetagenerationNotMatch,
     String? maxBytesRewrittenPerCall,
     String? projection,
-    String? provisionalUserProject,
     String? rewriteToken,
     String? sourceGeneration,
     String? userProject,
@@ -1222,7 +1405,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
             #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
             #rewriteToken: rewriteToken,
             #sourceGeneration: sourceGeneration,
             #userProject: userProject,
@@ -1230,7 +1412,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           },
         ),
         returnValue:
-            _i6.Future<_i4.RewriteResponse>.value(_FakeRewriteResponse_15(
+            _i6.Future<_i4.RewriteResponse>.value(_FakeRewriteResponse_19(
           this,
           Invocation.method(
             #rewrite,
@@ -1254,7 +1436,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
               #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #rewriteToken: rewriteToken,
               #sourceGeneration: sourceGeneration,
               #userProject: userProject,
@@ -1263,7 +1444,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i4.RewriteResponse>.value(_FakeRewriteResponse_15(
+            _i6.Future<_i4.RewriteResponse>.value(_FakeRewriteResponse_19(
           this,
           Invocation.method(
             #rewrite,
@@ -1287,7 +1468,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
               #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #rewriteToken: rewriteToken,
               #sourceGeneration: sourceGeneration,
               #userProject: userProject,
@@ -1303,7 +1483,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? bucket,
     String? object, {
     String? generation,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
   }) =>
@@ -1317,12 +1496,11 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           ],
           {
             #generation: generation,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Policy>.value(_FakePolicy_13(
+        returnValue: _i6.Future<_i4.Policy>.value(_FakePolicy_17(
           this,
           Invocation.method(
             #setIamPolicy,
@@ -1333,13 +1511,12 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             ],
             {
               #generation: generation,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Policy>.value(_FakePolicy_13(
+        returnValueForMissingStub: _i6.Future<_i4.Policy>.value(_FakePolicy_17(
           this,
           Invocation.method(
             #setIamPolicy,
@@ -1350,7 +1527,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             ],
             {
               #generation: generation,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
@@ -1364,7 +1540,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? object,
     List<String>? permissions, {
     String? generation,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
   }) =>
@@ -1378,13 +1553,12 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           ],
           {
             #generation: generation,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
           },
         ),
         returnValue: _i6.Future<_i4.TestIamPermissionsResponse>.value(
-            _FakeTestIamPermissionsResponse_16(
+            _FakeTestIamPermissionsResponse_20(
           this,
           Invocation.method(
             #testIamPermissions,
@@ -1395,7 +1569,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             ],
             {
               #generation: generation,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
@@ -1403,7 +1576,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
         )),
         returnValueForMissingStub:
             _i6.Future<_i4.TestIamPermissionsResponse>.value(
-                _FakeTestIamPermissionsResponse_16(
+                _FakeTestIamPermissionsResponse_20(
           this,
           Invocation.method(
             #testIamPermissions,
@@ -1414,7 +1587,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             ],
             {
               #generation: generation,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
@@ -1432,9 +1604,9 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? ifGenerationNotMatch,
     String? ifMetagenerationMatch,
     String? ifMetagenerationNotMatch,
+    bool? overrideUnlockedRetention,
     String? predefinedAcl,
     String? projection,
-    String? provisionalUserProject,
     String? userProject,
     String? $fields,
   }) =>
@@ -1452,14 +1624,14 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #ifGenerationNotMatch: ifGenerationNotMatch,
             #ifMetagenerationMatch: ifMetagenerationMatch,
             #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+            #overrideUnlockedRetention: overrideUnlockedRetention,
             #predefinedAcl: predefinedAcl,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
             #userProject: userProject,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #update,
@@ -1474,15 +1646,15 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifGenerationNotMatch: ifGenerationNotMatch,
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+              #overrideUnlockedRetention: overrideUnlockedRetention,
               #predefinedAcl: predefinedAcl,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_11(
+        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_15(
           this,
           Invocation.method(
             #update,
@@ -1497,9 +1669,9 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #ifGenerationNotMatch: ifGenerationNotMatch,
               #ifMetagenerationMatch: ifMetagenerationMatch,
               #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+              #overrideUnlockedRetention: overrideUnlockedRetention,
               #predefinedAcl: predefinedAcl,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #userProject: userProject,
               #$fields: $fields,
             },
@@ -1518,7 +1690,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? pageToken,
     String? prefix,
     String? projection,
-    String? provisionalUserProject,
     String? startOffset,
     String? userProject,
     bool? versions,
@@ -1539,14 +1710,13 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
             #pageToken: pageToken,
             #prefix: prefix,
             #projection: projection,
-            #provisionalUserProject: provisionalUserProject,
             #startOffset: startOffset,
             #userProject: userProject,
             #versions: versions,
             #$fields: $fields,
           },
         ),
-        returnValue: _i6.Future<_i4.Channel>.value(_FakeChannel_17(
+        returnValue: _i6.Future<_i4.Channel>.value(_FakeChannel_21(
           this,
           Invocation.method(
             #watchAll,
@@ -1562,7 +1732,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #pageToken: pageToken,
               #prefix: prefix,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #startOffset: startOffset,
               #userProject: userProject,
               #versions: versions,
@@ -1571,7 +1740,7 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i4.Channel>.value(_FakeChannel_17(
+            _i6.Future<_i4.Channel>.value(_FakeChannel_21(
           this,
           Invocation.method(
             #watchAll,
@@ -1587,7 +1756,6 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
               #pageToken: pageToken,
               #prefix: prefix,
               #projection: projection,
-              #provisionalUserProject: provisionalUserProject,
               #startOffset: startOffset,
               #userProject: userProject,
               #versions: versions,

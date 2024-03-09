@@ -86,6 +86,11 @@
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
+/// A wrapper for CMVideoFormatDescriptionGetDimensions.
+/// Allows for alternate implementations in tests.
+@property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
+/// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
+@property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @end
 
 @implementation FLTCam
@@ -116,6 +121,30 @@ NSString *const errorMethod = @"error";
                audioCaptureSession:(AVCaptureSession *)audioCaptureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
+  return [self initWithResolutionPreset:resolutionPreset
+      enableAudio:enableAudio
+      orientation:orientation
+      videoCaptureSession:videoCaptureSession
+      audioCaptureSession:videoCaptureSession
+      captureSessionQueue:captureSessionQueue
+      captureDeviceFactory:^AVCaptureDevice *(void) {
+        return [AVCaptureDevice deviceWithUniqueID:cameraName];
+      }
+      videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+        return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+      }
+      error:error];
+}
+
+- (instancetype)initWithResolutionPreset:(NSString *)resolutionPreset
+                             enableAudio:(BOOL)enableAudio
+                             orientation:(UIDeviceOrientation)orientation
+                     videoCaptureSession:(AVCaptureSession *)videoCaptureSession
+                     audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+                     captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+                    captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+                videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+                                   error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
@@ -136,7 +165,9 @@ NSString *const errorMethod = @"error";
   _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
   _videoCaptureSession = videoCaptureSession;
   _audioCaptureSession = audioCaptureSession;
-  _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
+  _captureDeviceFactory = captureDeviceFactory;
+  _captureDevice = captureDeviceFactory();
+  _videoDimensionsForFormat = videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FLTFlashModeAuto : FLTFlashModeOff;
   _exposureMode = FLTExposureModeAuto;
   _focusMode = FLTFocusModeAuto;
@@ -366,7 +397,24 @@ NSString *const errorMethod = @"error";
 
 - (BOOL)setCaptureSessionPreset:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
   switch (resolutionPreset) {
-    case FLTResolutionPresetMax:
+    case FLTResolutionPresetMax: {
+      AVCaptureDeviceFormat *bestFormat =
+          [self highestResolutionFormatForCaptureDevice:_captureDevice];
+      if (bestFormat) {
+        _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
+        if ([_captureDevice lockForConfiguration:NULL]) {
+          // Set the best device format found and finish the device configuration.
+          _captureDevice.activeFormat = bestFormat;
+          [_captureDevice unlockForConfiguration];
+
+          // Set the preview size based on values from the current capture device.
+          _previewSize =
+              CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
+                         _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
+          break;
+        }
+      }
+    }
     case FLTResolutionPresetUltraHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
@@ -420,6 +468,24 @@ NSString *const errorMethod = @"error";
   }
   _audioCaptureSession.sessionPreset = _videoCaptureSession.sessionPreset;
   return YES;
+}
+
+/// Finds the highest available resolution in terms of pixel count for the given device.
+- (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
+    (AVCaptureDevice *)captureDevice {
+  AVCaptureDeviceFormat *bestFormat = nil;
+  NSUInteger maxPixelCount = 0;
+  for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
+    CMVideoDimensions res = self.videoDimensionsForFormat(format);
+    NSUInteger height = res.height;
+    NSUInteger width = res.width;
+    NSUInteger pixelCount = height * width;
+    if (pixelCount > maxPixelCount) {
+      maxPixelCount = pixelCount;
+      bestFormat = format;
+    }
+  }
+  return bestFormat;
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output
@@ -935,7 +1001,7 @@ NSString *const errorMethod = @"error";
     return;
   }
 
-  _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
+  _captureDevice = self.captureDeviceFactory();
 
   AVCaptureConnection *oldConnection =
       [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];

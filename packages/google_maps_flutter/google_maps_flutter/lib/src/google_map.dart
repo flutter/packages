@@ -91,6 +91,7 @@ class GoogleMap extends StatefulWidget {
   const GoogleMap({
     super.key,
     required this.initialCameraPosition,
+    this.style,
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.webGestureHandling,
@@ -135,6 +136,19 @@ class GoogleMap extends StatefulWidget {
 
   /// The initial position of the map's camera.
   final CameraPosition initialCameraPosition;
+
+  /// The style for the map.
+  ///
+  /// Set to null to clear any previous custom styling.
+  ///
+  /// If problems were detected with the [mapStyle], including un-parsable
+  /// styling JSON, unrecognized feature type, unrecognized element type, or
+  /// invalid styler keys, the style is left unchanged, and the error can be
+  /// retrieved with [GoogleMapController.getStyleError].
+  ///
+  /// The style string can be generated using the
+  /// [map style tool](https://mapstyle.withgoogle.com/).
+  final String? style;
 
   /// True if the map should show a compass when rotated.
   final bool compassEnabled;
@@ -556,5 +570,8 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
     cloudMapId: map.cloudMapId,
+    // A null style in the widget means no style, which is expressed as '' in
+    // the configuration to distinguish from no change (null).
+    style: map.style ?? '',
   );
 }

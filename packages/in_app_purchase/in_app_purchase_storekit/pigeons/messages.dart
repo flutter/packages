@@ -243,4 +243,19 @@ abstract class InAppPurchaseAPI {
   void restoreTransactions(String? applicationUserName);
 
   void presentCodeRedemptionSheet();
+
+  String? retrieveReceiptData();
+
+  @async
+  void refreshReceipt({Map<String, Object?>? receiptProperties});
+
+  void startObservingPaymentQueue();
+
+  void stopObservingPaymentQueue();
+
+  void registerPaymentQueueDelegate();
+
+  void removePaymentQueueDelegate();
+
+  void showPriceConsentIfNeeded();
 }

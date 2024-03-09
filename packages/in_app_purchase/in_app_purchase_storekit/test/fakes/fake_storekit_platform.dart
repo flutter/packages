@@ -5,7 +5,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-import 'package:in_app_purchase_storekit/src/channel.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
@@ -13,11 +12,6 @@ import '../store_kit_wrappers/sk_test_stub_objects.dart';
 import '../test_api.g.dart';
 
 class FakeStoreKitPlatform implements TestInAppPurchaseApi {
-  FakeStoreKitPlatform() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, onMethodCall);
-  }
-
   // pre-configured store information
   String? receiptData;
   late Set<String> validProductIDs;
@@ -32,6 +26,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   SKError? testRestoredError;
   bool queueIsActive = false;
   Map<String, dynamic> discountReceived = <String, dynamic>{};
+  bool isPaymentQueueDelegateRegistered = false;
 
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
@@ -57,6 +52,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     testRestoredError = null;
     queueIsActive = false;
     discountReceived = <String, dynamic>{};
+    isPaymentQueueDelegateRegistered = false;
   }
 
   SKPaymentTransactionWrapper createPendingTransaction(String id,
@@ -118,25 +114,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         transactionState: SKPaymentTransactionStateWrapper.restored,
         transactionTimeStamp: 123123.121,
         transactionIdentifier: transactionId);
-  }
-
-  Future<dynamic> onMethodCall(MethodCall call) {
-    switch (call.method) {
-      case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
-        if (receiptData != null) {
-          return Future<String>.value(receiptData!);
-        } else {
-          throw PlatformException(code: 'no_receipt_data');
-        }
-      case '-[InAppPurchasePlugin refreshReceipt:result:]':
-        receiptData = 'refreshed receipt data';
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue startObservingTransactionQueue]':
-        queueIsActive = true;
-      case '-[SKPaymentQueue stopObservingTransactionQueue]':
-        queueIsActive = false;
-    }
-    return Future<void>.sync(() {});
   }
 
   @override
@@ -245,5 +222,43 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
     return Future<SKProductsResponseMessage>.value(
         SkProductResponseWrapper.convertToPigeon(response));
+  }
+
+  @override
+  Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
+    receiptData = 'refreshed receipt data';
+    return Future<void>.sync(() {});
+  }
+
+  @override
+  void registerPaymentQueueDelegate() {
+    isPaymentQueueDelegateRegistered = true;
+  }
+
+  @override
+  void removePaymentQueueDelegate() {
+    isPaymentQueueDelegateRegistered = false;
+  }
+
+  @override
+  String retrieveReceiptData() {
+    if (receiptData != null) {
+      return receiptData!;
+    } else {
+      throw PlatformException(code: 'no_receipt_data');
+    }
+  }
+
+  @override
+  void showPriceConsentIfNeeded() {}
+
+  @override
+  void startObservingPaymentQueue() {
+    queueIsActive = true;
+  }
+
+  @override
+  void stopObservingPaymentQueue() {
+    queueIsActive = false;
   }
 }

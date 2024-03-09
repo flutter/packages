@@ -10,9 +10,7 @@
 @property(nonatomic) FlutterIntegrationCoreApi *flutterAPI;
 @end
 
-/**
- * This plugin handles the native side of the integration tests in example/integration_test/.
- */
+/// This plugin handles the native side of the integration tests in example/integration_test/.
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];

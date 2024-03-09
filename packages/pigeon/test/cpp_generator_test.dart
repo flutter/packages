@@ -2114,4 +2114,51 @@ void main() {
             '"Unable to establish connection on channel: \'" + channel_name + "\'."'));
     expect(code, contains('on_error(CreateConnectionError(channel_name));'));
   });
+
+  test('stack allocates the message channel.', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'method',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());'));
+    expect(code, contains('channel.Send'));
+  });
 }

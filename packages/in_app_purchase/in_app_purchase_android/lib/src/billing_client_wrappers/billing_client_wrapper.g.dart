@@ -25,6 +25,7 @@ const _$BillingResponseEnumMap = {
 const _$BillingChoiceModeEnumMap = {
   BillingChoiceMode.playBillingOnly: 0,
   BillingChoiceMode.alternativeBillingOnly: 1,
+  BillingChoiceMode.userChoiceBilling: 2,
 };
 
 const _$ProductTypeEnumMap = {

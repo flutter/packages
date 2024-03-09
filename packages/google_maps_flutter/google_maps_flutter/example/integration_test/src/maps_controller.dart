@@ -448,6 +448,28 @@ void runTests() {
       await mapIdCompleter.future;
     },
   );
+
+  testWidgets('getStyleError reports last error', (WidgetTester tester) async {
+    final Key key = GlobalKey();
+    final Completer<GoogleMapController> controllerCompleter =
+        Completer<GoogleMapController>();
+
+    await pumpMap(
+      tester,
+      GoogleMap(
+        key: key,
+        initialCameraPosition: kInitialCameraPosition,
+        style: '[[[this is an invalid style',
+        onMapCreated: (GoogleMapController controller) {
+          controllerCompleter.complete(controller);
+        },
+      ),
+    );
+
+    final GoogleMapController controller = await controllerCompleter.future;
+    final String? error = await controller.getStyleError();
+    expect(error, isNotNull);
+  });
 }
 
 /// Repeatedly checks an asynchronous value against a test condition.

@@ -92,6 +92,8 @@ public class CameraAndroidCameraxPluginTest {
         mock(SystemServicesHostApiImpl.class);
     final DeviceOrientationManagerHostApiImpl mockDeviceOrientationManagerHostApiImpl =
         mock(DeviceOrientationManagerHostApiImpl.class);
+    final MeteringPointHostApiImpl mockMeteringPointHostApiImpl =
+        mock(MeteringPointHostApiImpl.class);
     final ArgumentCaptor<PermissionsRegistry> permissionsRegistryCaptor =
         ArgumentCaptor.forClass(PermissionsRegistry.class);
 
@@ -103,6 +105,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.liveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
     plugin.systemServicesHostApiImpl = mockSystemServicesHostApiImpl;
     plugin.deviceOrientationManagerHostApiImpl = mockDeviceOrientationManagerHostApiImpl;
+    plugin.meteringPointHostApiImpl = mockMeteringPointHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onAttachedToActivity(activityPluginBinding);
@@ -110,6 +113,7 @@ public class CameraAndroidCameraxPluginTest {
     // Check Activity references are set.
     verify(mockSystemServicesHostApiImpl).setActivity(mockActivity);
     verify(mockDeviceOrientationManagerHostApiImpl).setActivity(mockActivity);
+    verify(mockMeteringPointHostApiImpl).setActivity(mockActivity);
 
     // Check permissions registry reference is set.
     verify(mockSystemServicesHostApiImpl)
@@ -129,11 +133,14 @@ public class CameraAndroidCameraxPluginTest {
         mock(SystemServicesHostApiImpl.class);
     final DeviceOrientationManagerHostApiImpl mockDeviceOrientationManagerHostApiImpl =
         mock(DeviceOrientationManagerHostApiImpl.class);
+    final MeteringPointHostApiImpl mockMeteringPointHostApiImpl =
+        mock(MeteringPointHostApiImpl.class);
 
     plugin.processCameraProviderHostApiImpl = mockProcessCameraProviderHostApiImpl;
     plugin.liveDataHostApiImpl = mockLiveDataHostApiImpl;
     plugin.systemServicesHostApiImpl = mockSystemServicesHostApiImpl;
     plugin.deviceOrientationManagerHostApiImpl = mockDeviceOrientationManagerHostApiImpl;
+    plugin.meteringPointHostApiImpl = mockMeteringPointHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onDetachedFromActivityForConfigChanges();
@@ -142,6 +149,7 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockLiveDataHostApiImpl).setLifecycleOwner(null);
     verify(mockSystemServicesHostApiImpl).setActivity(null);
     verify(mockDeviceOrientationManagerHostApiImpl).setActivity(null);
+    verify(mockMeteringPointHostApiImpl).setActivity(null);
   }
 
   @Test
@@ -161,6 +169,8 @@ public class CameraAndroidCameraxPluginTest {
         mock(ImageAnalysisHostApiImpl.class);
     final CameraControlHostApiImpl mockCameraControlHostApiImpl =
         mock(CameraControlHostApiImpl.class);
+    final Camera2CameraControlHostApiImpl mockCamera2CameraControlHostApiImpl =
+        mock(Camera2CameraControlHostApiImpl.class);
 
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mockContext);
 
@@ -172,6 +182,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.imageAnalysisHostApiImpl = mockImageAnalysisHostApiImpl;
     plugin.cameraControlHostApiImpl = mockCameraControlHostApiImpl;
     plugin.liveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
+    plugin.camera2CameraControlHostApiImpl = mockCamera2CameraControlHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onDetachedFromActivityForConfigChanges();
@@ -183,6 +194,7 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockImageCaptureHostApiImpl).setContext(mockContext);
     verify(mockImageAnalysisHostApiImpl).setContext(mockContext);
     verify(mockCameraControlHostApiImpl).setContext(mockContext);
+    verify(mockCamera2CameraControlHostApiImpl).setContext(mockContext);
   }
 
   @Test
@@ -251,6 +263,10 @@ public class CameraAndroidCameraxPluginTest {
         mock(CameraControlHostApiImpl.class);
     final DeviceOrientationManagerHostApiImpl mockDeviceOrientationManagerHostApiImpl =
         mock(DeviceOrientationManagerHostApiImpl.class);
+    final Camera2CameraControlHostApiImpl mockCamera2CameraControlHostApiImpl =
+        mock(Camera2CameraControlHostApiImpl.class);
+    final MeteringPointHostApiImpl mockMeteringPointHostApiImpl =
+        mock(MeteringPointHostApiImpl.class);
     final ArgumentCaptor<PermissionsRegistry> permissionsRegistryCaptor =
         ArgumentCaptor.forClass(PermissionsRegistry.class);
 
@@ -265,7 +281,9 @@ public class CameraAndroidCameraxPluginTest {
     plugin.imageAnalysisHostApiImpl = mockImageAnalysisHostApiImpl;
     plugin.cameraControlHostApiImpl = mockCameraControlHostApiImpl;
     plugin.deviceOrientationManagerHostApiImpl = mockDeviceOrientationManagerHostApiImpl;
+    plugin.meteringPointHostApiImpl = mockMeteringPointHostApiImpl;
     plugin.liveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
+    plugin.camera2CameraControlHostApiImpl = mockCamera2CameraControlHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onReattachedToActivityForConfigChanges(activityPluginBinding);
@@ -273,6 +291,7 @@ public class CameraAndroidCameraxPluginTest {
     // Check Activity references are set.
     verify(mockSystemServicesHostApiImpl).setActivity(mockActivity);
     verify(mockDeviceOrientationManagerHostApiImpl).setActivity(mockActivity);
+    verify(mockMeteringPointHostApiImpl).setActivity(mockActivity);
 
     // Check Activity as Context references are set.
     verify(mockProcessCameraProviderHostApiImpl).setContext(mockActivity);
@@ -282,6 +301,7 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockImageCaptureHostApiImpl).setContext(mockActivity);
     verify(mockImageAnalysisHostApiImpl).setContext(mockActivity);
     verify(mockCameraControlHostApiImpl).setContext(mockActivity);
+    verify(mockCamera2CameraControlHostApiImpl).setContext(mockActivity);
 
     // Check permissions registry reference is set.
     verify(mockSystemServicesHostApiImpl)
@@ -300,11 +320,14 @@ public class CameraAndroidCameraxPluginTest {
     final LiveDataHostApiImpl mockLiveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
     final DeviceOrientationManagerHostApiImpl mockDeviceOrientationManagerHostApiImpl =
         mock(DeviceOrientationManagerHostApiImpl.class);
+    final MeteringPointHostApiImpl mockMeteringPointHostApiImpl =
+        mock(MeteringPointHostApiImpl.class);
 
     plugin.processCameraProviderHostApiImpl = mockProcessCameraProviderHostApiImpl;
     plugin.liveDataHostApiImpl = mockLiveDataHostApiImpl;
     plugin.systemServicesHostApiImpl = mockSystemServicesHostApiImpl;
     plugin.deviceOrientationManagerHostApiImpl = mockDeviceOrientationManagerHostApiImpl;
+    plugin.meteringPointHostApiImpl = mockMeteringPointHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onDetachedFromActivityForConfigChanges();
@@ -313,6 +336,7 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockLiveDataHostApiImpl).setLifecycleOwner(null);
     verify(mockSystemServicesHostApiImpl).setActivity(null);
     verify(mockDeviceOrientationManagerHostApiImpl).setActivity(null);
+    verify(mockMeteringPointHostApiImpl).setActivity(null);
   }
 
   @Test
@@ -331,6 +355,8 @@ public class CameraAndroidCameraxPluginTest {
     final ImageCaptureHostApiImpl mockImageCaptureHostApiImpl = mock(ImageCaptureHostApiImpl.class);
     final CameraControlHostApiImpl mockCameraControlHostApiImpl =
         mock(CameraControlHostApiImpl.class);
+    final Camera2CameraControlHostApiImpl mockCamera2CameraControlHostApiImpl =
+        mock(Camera2CameraControlHostApiImpl.class);
     final ArgumentCaptor<PermissionsRegistry> permissionsRegistryCaptor =
         ArgumentCaptor.forClass(PermissionsRegistry.class);
 
@@ -344,6 +370,7 @@ public class CameraAndroidCameraxPluginTest {
     plugin.imageAnalysisHostApiImpl = mockImageAnalysisHostApiImpl;
     plugin.cameraControlHostApiImpl = mockCameraControlHostApiImpl;
     plugin.liveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
+    plugin.camera2CameraControlHostApiImpl = mockCamera2CameraControlHostApiImpl;
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onDetachedFromActivity();
@@ -355,5 +382,6 @@ public class CameraAndroidCameraxPluginTest {
     verify(mockImageCaptureHostApiImpl).setContext(mockContext);
     verify(mockImageAnalysisHostApiImpl).setContext(mockContext);
     verify(mockCameraControlHostApiImpl).setContext(mockContext);
+    verify(mockCamera2CameraControlHostApiImpl).setContext(mockContext);
   }
 }

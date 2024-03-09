@@ -1,3 +1,8 @@
+## 0.10.2
+
+* Updates web code to package `web: ^0.5.0`.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+
 ## 0.10.1+2
 
 * Fixes "width and height missing" warning on web.
