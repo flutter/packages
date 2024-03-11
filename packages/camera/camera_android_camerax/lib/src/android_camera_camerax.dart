@@ -190,6 +190,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// for an example on how setting target rotations for [UseCase]s works.
   bool shouldSetDefaultRotation = false;
 
+  /// Error code indicating that an exposure offset value failed to be set.
+  static const String setExposureOffsetFailedErrorCode =
+      'setExposureOffsetFailed';
+
   /// The currently set [FocusMeteringAction] used to enable auto-focus and
   /// auto-exposure.
   @visibleForTesting
@@ -634,11 +638,15 @@ class AndroidCameraCameraX extends CameraPlatform {
         (offset / exposureOffsetStepSize).round();
 
     try {
-      await cameraControl
+      final int? newIndex = await cameraControl
           .setExposureCompensationIndex(roundedExposureCompensationIndex);
+      if (newIndex == null) {
+        throw CameraException(setExposureOffsetFailedErrorCode,
+            'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.');
+      }
     } on PlatformException catch (e) {
       throw CameraException(
-          'setExposureOffsetFailed',
+          setExposureOffsetFailedErrorCode,
           e.message ??
               'Setting the camera exposure compensation index failed.');
     }
