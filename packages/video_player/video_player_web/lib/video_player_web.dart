@@ -95,8 +95,11 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
       ..style.border = 'none'
       ..style.height = '100%'
       ..style.width = '100%'
-      ..style.pointerEvents = 'none'
-      ..crossOrigin = 'anonymous';
+      ..style.pointerEvents = 'none';
+
+    if (mode != VideoRenderMode.html) {
+      videoElement.crossOrigin = 'anonymous';
+    }
 
     return videoElement;
   }
