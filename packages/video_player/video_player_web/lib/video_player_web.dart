@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:js_util';
 import 'dart:math';
 import 'dart:ui' as ui;
@@ -19,7 +20,12 @@ import 'src/video_player.dart';
 /// The web implementation of [VideoPlayerPlatform].
 ///
 /// This class implements the `package:video_player` functionality for the web.
-abstract class VideoElementPlayerPlugin extends VideoPlayerPlatform {
+class VideoPlayerPlugin extends VideoPlayerPlatform {
+  /// Registers this class as the default instance of [VideoPlayerPlatform].
+  static void registerWith(Registrar registrar) {
+    VideoPlayerPlatform.instance = VideoPlayerPlugin();
+  }
+
   // Map of textureId -> VideoPlayer instances
   final Map<int, VideoPlayer> _videoPlayers = <int, VideoPlayer>{};
 
@@ -71,7 +77,7 @@ abstract class VideoElementPlayerPlugin extends VideoPlayerPlatform {
             'web implementation of video_player cannot play content uri'));
     }
 
-    final web.HTMLVideoElement videoElement = createElement(textureId);
+    final web.HTMLVideoElement videoElement = _createElement(textureId);
 
     final VideoPlayer player = VideoPlayer(videoElement: videoElement)
       ..initialize(
@@ -83,8 +89,17 @@ abstract class VideoElementPlayerPlugin extends VideoPlayerPlatform {
     return textureId;
   }
 
-  /// create the video element used to render this video
-  web.VideoElement createElement(int textureId);
+  web.VideoElement _createElement(int textureId) {
+    final web.VideoElement videoElement = web.HTMLVideoElement()
+      ..id = 'videoElement-$textureId'
+      ..style.border = 'none'
+      ..style.height = '100%'
+      ..style.width = '100%'
+      ..style.pointerEvents = 'none'
+      ..crossOrigin = 'anonymous';
+
+    return videoElement;
+  }
 
   @override
   Future<void> setLooping(int textureId, bool looping) async {
@@ -138,93 +153,241 @@ abstract class VideoElementPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId);
+  Widget buildView(int textureId) {
+    return _AdapterVideoPlayerRenderer(
+        key: Key(textureId.toString()),
+        textureId: textureId,
+        player: _player(textureId),
+        mode: mode);
+  }
 
   /// Sets the audio mode to mix with other sources (ignored)
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
+
+  /// The mode to render the video with.
+  VideoRenderMode mode = VideoRenderMode.auto;
 }
 
-/// The legacy video player plugin, renders video using a <video> element in
-/// a HtmlElementView.
-class HtmlElementViewVideoPlayerPlugin extends VideoElementPlayerPlugin {
-  /// Registers this class as the default instance of [VideoPlayerPlatform].
-  static void registerWith(Registrar registrar) {
-    VideoPlayerPlatform.instance = HtmlElementViewVideoPlayerPlugin();
-  }
+class _AdapterVideoPlayerRenderer extends StatefulWidget {
+  const _AdapterVideoPlayerRenderer(
+      {required this.textureId,
+      required this.player,
+      required this.mode,
+      super.key});
+
+  final int textureId;
+  final VideoPlayer player;
+  final VideoRenderMode mode;
 
   @override
-  web.VideoElement createElement(int textureId) {
-    final web.VideoElement videoElement = web.HTMLVideoElement()
-      ..id = 'videoElement-$textureId'
-      ..style.border = 'none'
-      ..style.height = '100%'
-      ..style.width = '100%';
-
-    // TODO(hterkelsen): Use initialization parameters once they are available
-    ui_web.platformViewRegistry.registerViewFactory(
-        'videoPlayer-$textureId', (int viewId) => videoElement);
-
-    return videoElement;
-  }
-
-  @override
-  Widget buildView(int textureId) {
-    return HtmlElementView(viewType: 'videoPlayer-$textureId');
-  }
+  State createState() => _AdapterVideoPlayerRendererState();
 }
 
-/// The default video player plugin, renders videos directly into the canvas.
-class VideoPlayerPlugin extends VideoElementPlayerPlugin {
-  /// Registers this class as the default instance of [VideoPlayerPlatform].
-  static void registerWith(Registrar registrar) {
-    VideoPlayerPlatform.instance = VideoPlayerPlugin();
+class _AdapterVideoPlayerRendererState
+    extends State<_AdapterVideoPlayerRenderer> {
+  _AdapterVideoPlayerRendererState() {
+    setDesiredModeRef = setDesiredMode.toJS;
   }
 
-  @override
-  web.VideoElement createElement(int textureId) {
-    final web.VideoElement videoElement = web.HTMLVideoElement()
-      ..id = 'videoElement-$textureId'
-      ..style.border = 'none'
-      ..style.height = '0'
-      ..style.width = '0'
-      ..style.position = 'absolute'
-      ..style.zIndex = '-1'
-      ..style.top = '0px'
-      ..style.left = '0px'
-      ..style.width = '0px'
-      ..style.height = '0px'
-      ..style.opacity = '0'
-      ..style.pointerEvents = 'none'
-      ..crossOrigin = 'anonymous';
+  late JSFunction setDesiredModeRef;
 
-    return videoElement;
+  VideoRenderMode _mode = VideoRenderMode.html;
+
+  VideoRenderMode get mode {
+    return _mode;
   }
 
-  @override
-  Widget buildView(int textureId) {
-    return _WebVideoPlayerRenderer(
-        element: _videoPlayers[textureId]!.videoElement);
+  set mode(VideoRenderMode mode) {
+    if (_mode != mode) {
+      _mode = mode;
+      updateVideoElementStyle();
+      if (mounted) {
+        if (widget.player.videoElement.parentElement == null &&
+            mode != VideoRenderMode.html) {
+          web.document.body!.appendChild(widget.player.videoElement);
+        }
+      }
+    }
   }
-}
 
-class _WebVideoPlayerRenderer extends StatefulWidget {
-  const _WebVideoPlayerRenderer({required this.element});
+  bool get rendererCanvasKit {
+    final JSAny? r = web.window.getProperty('flutterCanvasKit'.toJS);
+    return r != null;
+  }
 
-  final web.HTMLVideoElement element;
-
-  @override
-  State createState() => _WebVideoPlayerRendererState();
-}
-
-class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
   @override
   void initState() {
     super.initState();
 
-    getFrame(widget.element);
-    web.document.body!.appendChild(widget.element);
+    // if auto rendering mode, and in canvaskit renderer, always start in
+    // texture mode to reduce the number of platform layers used for videos
+    // that are not playing
+    mode = widget.mode == VideoRenderMode.auto
+        ? (rendererCanvasKit ? VideoRenderMode.texture : VideoRenderMode.html)
+        : widget.mode;
+
+    if (widget.mode == VideoRenderMode.auto) {
+      widget.player.videoElement
+          .addEventListener('play', setDesiredModeRef, false.toJS);
+      widget.player.videoElement
+          .addEventListener('pause', setDesiredModeRef, false.toJS);
+    }
   }
+
+  // when in auto mode, will optimize based off of the browser
+  void setDesiredMode(web.Event event) {
+    VideoRenderMode desiredMode;
+    final web.HTMLVideoElement element = widget.player.videoElement;
+    isPlaying = !!(!element.paused && !element.ended && element.readyState > 2);
+
+    if (isPlaying) {
+      desiredMode = VideoRenderMode.canvas;
+    } else {
+      desiredMode = VideoRenderMode.texture;
+    }
+    if (desiredMode != mode) {
+      setState(() {
+        mode = desiredMode;
+      });
+    }
+  }
+
+  bool isPlaying = true;
+
+  @override
+  void dispose() {
+    super.dispose();
+    events?.cancel();
+
+    if (widget.mode == VideoRenderMode.auto) {
+      widget.player.videoElement.removeEventListener('play', setDesiredModeRef);
+      widget.player.videoElement
+          .removeEventListener('pause', setDesiredModeRef);
+    }
+
+    if (widget.player.videoElement.parentElement != null) {
+      widget.player.videoElement.parentElement!
+          .removeChild(widget.player.videoElement);
+    }
+  }
+
+  StreamSubscription<VideoEvent>? events;
+
+  void updateVideoElementStyle() {
+    switch (mode) {
+      case VideoRenderMode.html:
+        widget.player.videoElement
+          ..style.width = '100%'
+          ..style.height = '100%'
+          ..style.opacity = '1'
+          ..style.position = 'relative';
+      case VideoRenderMode.auto:
+      case VideoRenderMode.texture:
+      case VideoRenderMode.canvas:
+        widget.player.videoElement
+          ..style.top = '0px'
+          ..style.left = '0px'
+          ..style.width = '0px'
+          ..style.height = '0px'
+          ..style.opacity = '0'
+          ..style.zIndex = '-1'
+          ..style.position = 'absolute';
+    }
+  }
+
+  /// Builds a view that will render the video player using an HtmlElementView
+  Widget buildHtmlView(int textureId, VideoPlayer player) {
+    return HtmlElementView.fromTagName(
+        tagName: 'div',
+        onElementCreated: (Object? element) {
+          final web.HTMLElement tag = element! as web.HTMLElement;
+          tag.appendChild(player.videoElement);
+        });
+  }
+
+  Widget buildTextureView(int textureId, VideoPlayer player) {
+    player.videoElement.style.top = '0px';
+    player.videoElement.style.left = '0px';
+    player.videoElement.style.width = '0px';
+    player.videoElement.style.height = '0px';
+    player.videoElement.style.opacity = '0';
+    player.videoElement.style.zIndex = '-1';
+    player.videoElement.style.position = 'absolute';
+    return _TextureVideoPlayerRenderer(
+        element: player.videoElement, paused: !isPlaying);
+  }
+
+  Widget buildCanvasView(int textureId, VideoPlayer player) {
+    player.videoElement.style.top = '0px';
+    player.videoElement.style.left = '0px';
+    player.videoElement.style.width = '0px';
+    player.videoElement.style.height = '0px';
+    player.videoElement.style.opacity = '0';
+    player.videoElement.style.zIndex = '-1';
+    player.videoElement.style.position = 'absolute';
+    return _CanvasVideoPlayerRenderer(
+        element: player.videoElement, paused: !isPlaying);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (mode) {
+      VideoRenderMode.html => buildHtmlView(widget.textureId, widget.player),
+      VideoRenderMode.texture =>
+        buildTextureView(widget.textureId, widget.player),
+      VideoRenderMode.canvas =>
+        buildCanvasView(widget.textureId, widget.player),
+      VideoRenderMode.auto =>
+        Container(color: Colors.red) // This case should never happen
+    };
+  }
+}
+
+/// Determines whether the video uses a platform layer or renders into the canvas
+enum VideoRenderMode {
+  /// render the video with a a native layer so that it can interact with
+  /// shaders and other flutter features, this will eliminate the need for
+  /// platform layers, but may reduce performance in some browsers.
+  texture,
+
+  /// render the video into an html canvas element layer, this will reduce
+  /// memory usage in browsers without zero copy bitmap operations.
+  canvas,
+
+  /// render the video with a platform layer to enable support for DRM
+  html,
+
+  /// automatically pick an appropriate rendering mode based on the active
+  /// rendering engine and whether the video is playing, if using CanvasKit
+  /// renderer, will attempt to minimize the number of platform layers used
+  /// while optimizing performance. If using HTML renderer, will use a platform
+  /// view.
+  auto
+}
+
+abstract class _VideoPlayerRenderer extends StatefulWidget {
+  const _VideoPlayerRenderer({required this.element, this.paused = true});
+
+  final web.HTMLVideoElement element;
+  final bool paused;
+}
+
+abstract class _VideoPlayerRendererState<T extends _VideoPlayerRenderer>
+    extends State<T> {
+  _VideoPlayerRendererState() {
+    onSeekRef = onSeek.toJS;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    frameCallback(0.toJS, 0.toJS);
+    widget.element.addEventListener('seeked', onSeekRef);
+  }
+
+  late JSFunction onSeekRef;
 
   int? callbackID;
 
@@ -239,6 +402,10 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
     }
   }
 
+  void onSeek(web.Event event) {
+    capture();
+  }
+
   void frameCallback(JSAny now, JSAny metadata) {
     final web.HTMLVideoElement element = widget.element;
     final bool isPlaying = !!(element.currentTime > 0 &&
@@ -247,56 +414,85 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
         element.readyState > 2);
 
     // only capture frames if video is playing (optimization for RAF)
-    if (isPlaying || element.readyState > 2 && image == null) {
-      capture();
+    if (isPlaying || element.readyState > 2 && lastFrameTime == null) {
+      capture().then((_) async {
+        getFrame(widget.element);
+      });
     } else {
       getFrame(widget.element);
     }
   }
 
   web.ImageBitmap? source;
+  num? lastFrameTime;
 
-  Future<void> capture() async {
-    final web.ImageBitmap newSource = await promiseToFuture<web.ImageBitmap>(
-        web.window.createImageBitmap(widget.element));
-    final ui.Image img = await ui_web.createImageFromImageBitmap(newSource);
-
-    if (mounted) {
-      setState(() {
-        image?.dispose();
-        source?.close();
-        image = img;
-        source = newSource;
-      });
-      getFrame(widget.element);
-    }
-  }
+  Future<void> capture();
 
   @override
   void dispose() {
     cancelFrame(widget.element);
     super.dispose();
-    image?.dispose();
     source?.close();
-    if (web.document.body!.contains(widget.element)) {
-      web.document.body!.removeChild(widget.element);
-    }
+    widget.element.removeEventListener('seeked', onSeekRef);
   }
 
   @override
-  void didUpdateWidget(_WebVideoPlayerRenderer oldWidget) {
+  void didUpdateWidget(T oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.element != widget.element) {
-      if (web.document.body!.contains(oldWidget.element)) {
-        web.document.body!.removeChild(oldWidget.element);
-      }
-      web.document.body!.appendChild(widget.element);
+      oldWidget.element.addEventListener('seeked', onSeekRef);
+      widget.element.addEventListener('seeked', onSeekRef);
       cancelFrame(oldWidget.element);
       getFrame(widget.element);
     }
   }
+}
+
+class _TextureVideoPlayerRenderer extends _VideoPlayerRenderer {
+  const _TextureVideoPlayerRenderer({required super.element, super.paused});
+
+  @override
+  State createState() => _TextureVideoPlayerRendererState();
+}
+
+class _TextureVideoPlayerRendererState
+    extends _VideoPlayerRendererState<_TextureVideoPlayerRenderer> {
+  @override
+  Future<void> capture() async {
+    if (!widget.paused || lastFrameTime != widget.element.currentTime) {
+      lastFrameTime = widget.element.currentTime;
+      try {
+        final web.ImageBitmap newSource =
+            await promiseToFuture<web.ImageBitmap>(
+                web.window.createImageBitmap(widget.element));
+        final ui.Image img = await ui_web.createImageFromImageBitmap(newSource);
+
+        if (mounted) {
+          setState(() {
+            image?.dispose();
+            source?.close();
+            image = img;
+            source = newSource;
+          });
+        }
+      } on web.DOMException catch (err) {
+        lastFrameTime = null;
+        if (err.name == 'InvalidStateError') {
+          // We don't have enough data yet, continue on
+        } else {
+          rethrow;
+        }
+      }
+    }
+  }
 
   ui.Image? image;
+
+  @override
+  void dispose() {
+    super.dispose();
+    image?.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -319,6 +515,67 @@ class _WebVideoPlayerRendererState extends State<_WebVideoPlayerRenderer> {
       } else {
         return const ColoredBox(color: Colors.black);
       }
+    });
+  }
+}
+
+class _CanvasVideoPlayerRenderer extends _VideoPlayerRenderer {
+  const _CanvasVideoPlayerRenderer({required super.element, super.paused});
+
+  @override
+  State createState() => _CanvasVideoPlayerRendererState();
+}
+
+class _CanvasVideoPlayerRendererState
+    extends _VideoPlayerRendererState<_CanvasVideoPlayerRenderer> {
+  @override
+  Future<void> capture() async {
+    lastFrameTime = widget.element.currentTime;
+    if (canvas != null) {
+      final web.CanvasRenderingContext2D context =
+          canvas!.getContext('2d')! as web.CanvasRenderingContext2D;
+
+      context.drawImage(widget.element, 0, 0, canvas!.width, canvas!.height);
+    }
+  }
+
+  web.HTMLCanvasElement? canvas;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      // adjust video element size to match dimensions of frame so we capture the correct sized bitmap
+      final double dpr = MediaQuery.of(context).devicePixelRatio;
+
+      final double maxWidth = constraints.maxWidth * dpr;
+      final double maxHeight = constraints.maxHeight * dpr;
+      final double videoWidth = widget.element.videoWidth.toDouble();
+      final double videoHeight = widget.element.videoHeight.toDouble();
+
+      widget.element.width =
+          (videoWidth == 0 ? maxWidth : min(videoWidth, maxWidth)).ceil();
+      widget.element.height =
+          (videoHeight == 0 ? maxHeight : min(videoHeight, maxHeight)).ceil();
+
+      if (canvas != null) {
+        if (canvas!.width != widget.element.width ||
+            canvas!.height != widget.element.height) {
+          canvas!.width = widget.element.width;
+          canvas!.height = widget.element.height;
+          capture();
+        }
+      }
+
+      return HtmlElementView.fromTagName(
+          tagName: 'canvas',
+          onElementCreated: (Object? element) {
+            canvas = element! as web.HTMLCanvasElement;
+            canvas!.width = widget.element.width;
+            canvas!.height = widget.element.height;
+            capture();
+            getFrame(widget.element);
+          });
     });
   }
 }
