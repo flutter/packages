@@ -14,8 +14,8 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 import 'package:web/web.dart' as web;
 
-import 'src/video_player.dart';
 import 'src/browser_detection.dart';
+import 'src/video_player.dart';
 
 /// The web implementation of [VideoPlayerPlatform].
 ///
