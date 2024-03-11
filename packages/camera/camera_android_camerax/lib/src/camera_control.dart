@@ -155,7 +155,7 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
           .add(e.message ?? 'Starting focus and metering failed.');
       // Surfacing error to differentiate an operation cancellation from an
       // illegal argument exception at a plugin layer.
-      rethrow;
+      rethrow; // TODO(camsim99): determine if I want to do this or do similar thing for other methods
     }
   }
 

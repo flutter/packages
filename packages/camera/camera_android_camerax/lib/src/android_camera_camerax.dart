@@ -518,16 +518,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///   * Locked focus mode is unset by setting [FocusMode.auto].
   @override
   Future<void> setFocusMode(int cameraId, FocusMode mode) async {
+    if (_currentFocusMode == mode) {
+      // Desired focus mode is already set.
+      return;
+    }
+
     MeteringPoint? autoFocusPoint;
     bool? disableAutoCancel;
     switch (mode) {
       case FocusMode.auto:
-        if (_currentFocusMode == FocusMode.auto) {
-          // CameraX uses auto-focus mode by default, so no need to reconfigure
-          // auto-focus if already set.
-          return;
-        }
-
         // Determine auto-focus point to restore, if any. We do not restore
         // default auto-focus point if set previously to lock focus.
         final MeteringPoint? unLockedFocusPoint = _defaultFocusPointLocked
