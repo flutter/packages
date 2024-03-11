@@ -15,6 +15,7 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'package:web/web.dart' as web;
 
 import 'src/video_player.dart';
+import 'src/browser_detection.dart';
 
 /// The web implementation of [VideoPlayerPlatform].
 ///
@@ -239,7 +240,7 @@ class _AdapterVideoPlayerRendererState
     final web.HTMLVideoElement element = widget.player.videoElement;
     isPlaying = !!(!element.paused && !element.ended && element.readyState > 2);
 
-    if (isPlaying) {
+    if (isPlaying && (isSafari || isFirefox)) {
       desiredMode = VideoRenderMode.canvas;
     } else {
       desiredMode = VideoRenderMode.texture;
