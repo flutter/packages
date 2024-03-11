@@ -23,7 +23,8 @@ void main() {
     late Future<int> textureId;
 
     setUp(() {
-      VideoPlayerPlatform.instance = VideoPlayerPlugin();
+      VideoPlayerPlatform.instance = VideoPlayerPlugin()
+        ..mode = VideoRenderMode.html;
       textureId = VideoPlayerPlatform.instance
           .create(
             DataSource(
