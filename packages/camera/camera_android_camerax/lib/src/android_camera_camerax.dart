@@ -485,11 +485,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // setting will not be impacted by this lock (setting an exposure mode
     // is implemented with Camera2 interop that will override settings to
     // achieve the expected exposure mode as needed).
-    final bool disableAutoCancel = _currentFocusMode == FocusMode.locked;
     await _startFocusAndMeteringForPoint(
         point: point,
         meteringMode: FocusMeteringAction.flagAe,
-        disableAutoCancel: disableAutoCancel);
+        disableAutoCancel: _currentFocusMode == FocusMode.locked);
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
