@@ -644,13 +644,14 @@ class AndroidCameraCameraX extends CameraPlatform {
         throw CameraException(setExposureOffsetFailedErrorCode,
             'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.');
       }
+
+      return newIndex.toDouble();
     } on PlatformException catch (e) {
       throw CameraException(
           setExposureOffsetFailedErrorCode,
           e.message ??
               'Setting the camera exposure compensation index failed.');
     }
-    return roundedExposureCompensationIndex * exposureOffsetStepSize;
   }
 
   /// Sets the focus point for automatically determining the focus values.

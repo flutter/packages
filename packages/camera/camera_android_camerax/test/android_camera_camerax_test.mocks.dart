@@ -582,6 +582,23 @@ class MockFallbackStrategy extends _i1.Mock implements _i25.FallbackStrategy {
       ) as _i7.VideoResolutionFallbackRule);
 }
 
+/// A class which mocks [FocusMeteringResult].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockFocusMeteringResult extends _i1.Mock
+    implements _i20.FocusMeteringResult {
+  @override
+  _i16.Future<bool> isFocusSuccessful() => (super.noSuchMethod(
+        Invocation.method(
+          #isFocusSuccessful,
+          [],
+        ),
+        returnValue: _i16.Future<bool>.value(false),
+        returnValueForMissingStub: _i16.Future<bool>.value(false),
+      ) as _i16.Future<bool>);
+}
+
 /// A class which mocks [ImageAnalysis].
 ///
 /// See the documentation for Mockito's code generation for more information.
