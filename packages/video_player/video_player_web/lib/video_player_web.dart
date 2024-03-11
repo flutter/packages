@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:js_interop';
-import 'dart:js_interop_unsafe';
 import 'dart:js_util';
 import 'dart:math';
 import 'dart:ui' as ui;
@@ -212,8 +211,7 @@ class _AdapterVideoPlayerRendererState
   }
 
   bool get rendererCanvasKit {
-    final JSAny? r = web.window.getProperty('flutterCanvasKit'.toJS);
-    return r != null;
+    return hasProperty(web.window, 'flutterCanvasKit');
   }
 
   @override
