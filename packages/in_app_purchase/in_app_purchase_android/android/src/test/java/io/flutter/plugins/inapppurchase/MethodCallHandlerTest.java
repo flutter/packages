@@ -5,13 +5,10 @@
 package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
-import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
-import static io.flutter.plugins.inapppurchase.Translator.mapFromBillingResult;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -60,9 +57,8 @@ import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
+import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
 import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
@@ -76,11 +72,8 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,7 +88,7 @@ public class MethodCallHandlerTest {
   private MethodCallHandlerImpl methodChannelHandler;
   @Mock BillingClientFactory factory;
   @Mock BillingClient mockBillingClient;
-  @Mock MethodChannel mockMethodChannel;
+  @Mock InAppPurchaseCallbackApi mockCallbackApi;
 
   @Spy
   Messages.Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse>
@@ -116,12 +109,12 @@ public class MethodCallHandlerTest {
     openMocks = MockitoAnnotations.openMocks(this);
     // Use the same client no matter if alternative billing is enabled or not.
     when(factory.createBillingClient(
-            context, mockMethodChannel, PlatformBillingChoiceMode.PLAY_BILLING_ONLY))
+            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
-            context, mockMethodChannel, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
         .thenReturn(mockBillingClient);
-    methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockMethodChannel, factory);
+    methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockCallbackApi, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
   }
 
@@ -162,8 +155,7 @@ public class MethodCallHandlerTest {
         mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(
-            context, mockMethodChannel, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -182,7 +174,7 @@ public class MethodCallHandlerTest {
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
-            context, mockMethodChannel, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -418,9 +410,9 @@ public class MethodCallHandlerTest {
     // been triggered
     verify(mockBillingClient, times(1)).endConnection();
     stateListener.onBillingServiceDisconnected();
-    Map<String, Long> expectedInvocation = new HashMap<>();
-    expectedInvocation.put("handle", disconnectCallbackHandle);
-    verify(mockMethodChannel, times(1)).invokeMethod(ON_DISCONNECT, expectedInvocation);
+    ArgumentCaptor<Long> handleCaptor = ArgumentCaptor.forClass(Long.class);
+    verify(mockCallbackApi, times(1)).onBillingServiceDisconnected(handleCaptor.capture(), any());
+    assertEquals(handleCaptor.getValue().longValue(), disconnectCallbackHandle);
   }
 
   @Test
@@ -794,17 +786,6 @@ public class MethodCallHandlerTest {
   public void queryPurchases_returns_success() {
     establishConnectedBillingClient();
 
-    final Result mockResult = mock(Result.class);
-    CountDownLatch lock = new CountDownLatch(1);
-    doAnswer(
-            (Answer<Object>)
-                invocation -> {
-                  lock.countDown();
-                  return null;
-                })
-        .when(mockResult)
-        .success(any(HashMap.class));
-
     ArgumentCaptor<PurchasesResponseListener> purchasesResponseListenerArgumentCaptor =
         ArgumentCaptor.forClass(PurchasesResponseListener.class);
     doAnswer(
@@ -881,20 +862,18 @@ public class MethodCallHandlerTest {
 
   @Test
   public void onPurchasesUpdatedListener() {
-    PluginPurchaseListener listener = new PluginPurchaseListener(mockMethodChannel);
+    PluginPurchaseListener listener = new PluginPurchaseListener(mockCallbackApi);
 
     BillingResult billingResult = buildBillingResult();
     List<Purchase> purchasesList = singletonList(buildPurchase("foo"));
-    @SuppressWarnings("unchecked")
-    ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
-    doNothing()
-        .when(mockMethodChannel)
-        .invokeMethod(eq(ON_PURCHASES_UPDATED), resultCaptor.capture());
+    ArgumentCaptor<PlatformPurchasesResponse> resultCaptor =
+        ArgumentCaptor.forClass(PlatformPurchasesResponse.class);
+    doNothing().when(mockCallbackApi).onPurchasesUpdated(resultCaptor.capture(), any());
     listener.onPurchasesUpdated(billingResult, purchasesList);
 
-    HashMap<String, Object> resultData = resultCaptor.getValue();
-    assertEquals(mapFromBillingResult(billingResult), resultData.get("billingResult"));
-    assertEquals(fromPurchasesList(purchasesList), resultData.get("purchasesList"));
+    PlatformPurchasesResponse response = resultCaptor.getValue();
+    assertResultsMatch(response.getBillingResult(), billingResult);
+    assertEquals(fromPurchasesList(purchasesList), response.getPurchasesJsonList());
   }
 
   @Test

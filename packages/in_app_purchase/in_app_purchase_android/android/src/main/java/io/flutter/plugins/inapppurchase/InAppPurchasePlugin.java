@@ -13,7 +13,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 
 /** Wraps a {@link BillingClient} instance and responds to Dart calls for it. */
 public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
@@ -25,7 +24,6 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
   // code owner of this package.
   static final String PROXY_VALUE = "io.flutter.plugins.inapppurchase";
 
-  private MethodChannel methodChannel;
   private MethodCallHandlerImpl methodCallHandler;
 
   /** Plugin registration. */
@@ -71,16 +69,15 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
   }
 
   private void setUpMethodChannel(BinaryMessenger messenger, Context context) {
-    methodChannel = new MethodChannel(messenger, "plugins.flutter.io/in_app_purchase");
+    Messages.InAppPurchaseCallbackApi handler = new Messages.InAppPurchaseCallbackApi(messenger);
     methodCallHandler =
         new MethodCallHandlerImpl(
-            /*activity=*/ null, context, methodChannel, new BillingClientFactoryImpl());
+            /*activity=*/ null, context, handler, new BillingClientFactoryImpl());
     Messages.InAppPurchaseApi.setUp(messenger, methodCallHandler);
   }
 
   private void teardownMethodChannel(BinaryMessenger messenger) {
     Messages.InAppPurchaseApi.setUp(messenger, null);
-    methodChannel = null;
     methodCallHandler = null;
   }
 

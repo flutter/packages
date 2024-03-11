@@ -5,23 +5,14 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
-import '../channel.dart';
 import '../messages.g.dart';
 import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
-
-/// Method identifier for the OnPurchaseUpdated method channel method.
-@visibleForTesting
-const String kOnPurchasesUpdated =
-    'PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)';
-const String _kOnBillingServiceDisconnected =
-    'BillingClientStateListener#onBillingServiceDisconnected()';
 
 /// Callback triggered by Play in response to purchase activity.
 ///
@@ -65,24 +56,18 @@ class BillingClient {
   BillingClient(
     PurchasesUpdatedListener onPurchasesUpdated, {
     @visibleForTesting InAppPurchaseApi? api,
-  }) : _hostApi = api ?? InAppPurchaseApi() {
-    channel.setMethodCallHandler(callHandler);
-    _callbacks[kOnPurchasesUpdated] = <PurchasesUpdatedListener>[
-      onPurchasesUpdated
-    ];
+  })  : _hostApi = api ?? InAppPurchaseApi(),
+        hostCallbackHandler =
+            HostBillingClientCallbackHandler(onPurchasesUpdated) {
+    InAppPurchaseCallbackApi.setup(hostCallbackHandler);
   }
 
+  /// Interface for calling host-side code.
   final InAppPurchaseApi _hostApi;
 
-  // Occasionally methods in the native layer require a Dart callback to be
-  // triggered in response to a Java callback. For example,
-  // [startConnection] registers an [OnBillingServiceDisconnected] callback.
-  // This list of names to callbacks is used to trigger Dart callbacks in
-  // response to those Java callbacks. Dart sends the Java layer a handle to the
-  // matching callback here to remember, and then once its twin is triggered it
-  // sends the handle back over the platform channel. We then access that handle
-  // in this array and call it in Dart code. See also [_callHandler].
-  final Map<String, List<Function>> _callbacks = <String, List<Function>>{};
+  /// Handlers for calls from the host-side code.
+  @visibleForTesting
+  final HostBillingClientCallbackHandler hostCallbackHandler;
 
   /// Calls
   /// [`BillingClient#isReady()`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#isReady())
@@ -117,11 +102,9 @@ class BillingClient {
       {required OnBillingServiceDisconnected onBillingServiceDisconnected,
       BillingChoiceMode billingChoiceMode =
           BillingChoiceMode.playBillingOnly}) async {
-    final List<Function> disconnectCallbacks =
-        _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
-    disconnectCallbacks.add(onBillingServiceDisconnected);
+    hostCallbackHandler.disconnectCallbacks.add(onBillingServiceDisconnected);
     return resultWrapperFromPlatform(await _hostApi.startConnection(
-        disconnectCallbacks.length - 1,
+        hostCallbackHandler.disconnectCallbacks.length - 1,
         platformBillingChoiceMode(billingChoiceMode)));
   }
 
@@ -230,8 +213,24 @@ class BillingClient {
   /// This wraps
   /// [`BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchasesAsync(com.android.billingclient.api.QueryPurchasesParams,%20com.android.billingclient.api.PurchasesResponseListener)).
   Future<PurchasesResultWrapper> queryPurchases(ProductType productType) async {
-    return purchasesResultWrapperFromPlatform(await _hostApi
-        .queryPurchasesAsync(platformProductTypeFromWrapper(productType)));
+    // TODO(stuartmorgan): Investigate whether forceOkResponseCode is actually
+    // correct. This code preserves the behavior of the pre-Pigeon-conversion
+    // Java code, but the way this field is treated in PurchasesResultWrapper is
+    // inconsistent with ProductDetailsResponseWrapper and
+    // PurchasesHistoryResult, which have a getter for
+    // billingResult.responseCode instead of having a separate field, and the
+    // other use of PurchasesResultWrapper (onPurchasesUpdated) was using
+    // billingResult.getResponseCode() for responseCode instead of hard-coding
+    // OK. Several Dart unit tests had to be removed when the hard-coding logic
+    // was moved from Java to here because they were testing a case that the
+    // plugin could never actually generate, and it may well be that those tests
+    // were correct and the functionality they were intended to test had been
+    // broken by the original change to hard-code this on the Java side (instead
+    // of making it a forwarding getter on the Dart side).
+    return purchasesResultWrapperFromPlatform(
+        await _hostApi
+            .queryPurchasesAsync(platformProductTypeFromWrapper(productType)),
+        forceOkResponseCode: true);
   }
 
   /// Fetches purchase history for the given [ProductType].
@@ -321,26 +320,35 @@ class BillingClient {
     return alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
         await _hostApi.createAlternativeBillingOnlyReportingDetailsAsync());
   }
+}
 
-  /// The method call handler for [channel].
-  @visibleForTesting
-  Future<void> callHandler(MethodCall call) async {
-    switch (call.method) {
-      case kOnPurchasesUpdated:
-        // The purchases updated listener is a singleton.
-        assert(_callbacks[kOnPurchasesUpdated]!.length == 1);
-        final PurchasesUpdatedListener listener =
-            _callbacks[kOnPurchasesUpdated]!.first as PurchasesUpdatedListener;
-        listener(PurchasesResultWrapper.fromJson(
-            (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>()));
-      case _kOnBillingServiceDisconnected:
-        final int handle =
-            (call.arguments as Map<Object?, Object?>)['handle']! as int;
-        final List<OnBillingServiceDisconnected> onDisconnected =
-            _callbacks[_kOnBillingServiceDisconnected]!
-                .cast<OnBillingServiceDisconnected>();
-        onDisconnected[handle]();
-    }
+/// Implementation of InAppPurchaseCallbackApi, for use by [BillingClient].
+///
+/// Actual Dart callback functions are stored here, indexed by the handle
+/// provided to the host side when setting up the connection in non-singleton
+/// cases. When a callback is triggered from the host side, the corresponding
+/// Dart function is invoked.
+@visibleForTesting
+class HostBillingClientCallbackHandler implements InAppPurchaseCallbackApi {
+  /// Creates a new handler with the given singleton handlers, and no
+  /// per-connection handlers.
+  HostBillingClientCallbackHandler(this.purchasesUpdatedCallback);
+
+  /// The handler for PurchasesUpdatedListener#onPurchasesUpdated.
+  final PurchasesUpdatedListener purchasesUpdatedCallback;
+
+  /// Handlers for onBillingServiceDisconnected, indexed by handle identifier.
+  final List<OnBillingServiceDisconnected> disconnectCallbacks =
+      <OnBillingServiceDisconnected>[];
+
+  @override
+  void onBillingServiceDisconnected(int callbackHandle) {
+    disconnectCallbacks[callbackHandle]();
+  }
+
+  @override
+  void onPurchasesUpdated(PlatformPurchasesResponse update) {
+    purchasesUpdatedCallback(purchasesResultWrapperFromPlatform(update));
   }
 }
 

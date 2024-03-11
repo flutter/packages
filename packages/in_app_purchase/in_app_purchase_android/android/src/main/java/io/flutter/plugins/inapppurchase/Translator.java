@@ -239,13 +239,6 @@ import java.util.Locale;
     return serialized;
   }
 
-  static HashMap<String, Object> mapFromBillingResult(BillingResult billingResult) {
-    HashMap<String, Object> info = new HashMap<>();
-    info.put("responseCode", billingResult.getResponseCode());
-    info.put("debugMessage", billingResult.getDebugMessage());
-    return info;
-  }
-
   static Messages.PlatformBillingResult fromBillingResult(BillingResult billingResult) {
     return new Messages.PlatformBillingResult.Builder()
         .setResponseCode((long) billingResult.getResponseCode())

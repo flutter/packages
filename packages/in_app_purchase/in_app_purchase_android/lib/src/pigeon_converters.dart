@@ -52,7 +52,8 @@ PurchasesHistoryResult purchaseHistoryResultFromPlatform(
 
 /// Creates a [PurchasesResultWrapper] from the Pigeon equivalent.
 PurchasesResultWrapper purchasesResultWrapperFromPlatform(
-    PlatformPurchasesResponse response) {
+    PlatformPurchasesResponse response,
+    {bool forceOkResponseCode = false}) {
   return PurchasesResultWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
     // See TODOs in messages.dart for why this is currently JSON.
@@ -60,21 +61,10 @@ PurchasesResultWrapper purchasesResultWrapperFromPlatform(
         .map((Object? json) => PurchaseWrapper.fromJson(
             (json! as Map<Object?, Object?>).cast<String, Object?>()))
         .toList(),
-    // This is no longer part of the response in current versions of the billing
-    // library, so use a success placeholder for compatibility with existing
-    // client code.
-    // TODO(stuartmorgan): Investigate whether this is actually correct. This
-    // code preserves the behavior of the pre-Pigeon-conversion Java code, but
-    // the way this field is treated in PurchasesResultWrapper is inconsistent
-    // with ProductDetailsResponseWrapper and PurchasesHistoryResult, which have
-    // a getter for billingResult.responseCode instead of having a separate
-    // field. Several Dart unit tests had to be removed when this was moved from
-    // Java to Dart because they were testing a case that the plugin could never
-    // actually generate, and it may be that those tests were correct and the
-    // functionality they were intended to test had been broken by the original
-    // change to hard-code this on the Java side (instead of making it a
-    // forwarding getter on the Dart side).
-    responseCode: BillingResponse.ok,
+    responseCode: forceOkResponseCode
+        ? BillingResponse.ok
+        : const BillingResponseConverter()
+            .fromJson(response.billingResult.responseCode),
   );
 }
 

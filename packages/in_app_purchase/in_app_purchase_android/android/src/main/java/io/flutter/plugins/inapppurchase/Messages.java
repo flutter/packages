@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /** Generated class from Pigeon. */
@@ -58,6 +59,12 @@ public class Messages {
           "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
+  }
+
+  @NonNull
+  protected static FlutterError createConnectionError(@NonNull String channelName) {
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
 
   @Target(METHOD)
@@ -1441,6 +1448,105 @@ public class Messages {
           channel.setMessageHandler(null);
         }
       }
+    }
+  }
+
+  private static class InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
+    public static final InAppPurchaseCallbackApiCodec INSTANCE =
+        new InAppPurchaseCallbackApiCodec();
+
+    private InAppPurchaseCallbackApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
+          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof PlatformBillingResult) {
+        stream.write(128);
+        writeValue(stream, ((PlatformBillingResult) value).toList());
+      } else if (value instanceof PlatformPurchasesResponse) {
+        stream.write(129);
+        writeValue(stream, ((PlatformPurchasesResponse) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class InAppPurchaseCallbackApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public InAppPurchaseCallbackApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    /** The codec used by InAppPurchaseCallbackApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return InAppPurchaseCallbackApiCodec.INSTANCE;
+    }
+    /** Called for BillingClientStateListener#onBillingServiceDisconnected(). */
+    public void onBillingServiceDisconnected(
+        @NonNull Long callbackHandleArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected";
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(callbackHandleArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>). */
+    public void onPurchasesUpdated(
+        @NonNull PlatformPurchasesResponse updateArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated";
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(updateArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
     }
   }
 }

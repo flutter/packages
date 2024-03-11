@@ -33,9 +33,9 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
+import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
@@ -48,18 +48,9 @@ import io.flutter.plugins.inapppurchase.Messages.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Handles method channel for the plugin. */
 class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, InAppPurchaseApi {
-
-  @VisibleForTesting
-  static final class MethodNames {
-    static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-
-    private MethodNames() {}
-  }
-
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
   // ReplacementMode enum values.
   // https://github.com/flutter/flutter/issues/128957.
@@ -79,7 +70,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
 
   @Nullable private Activity activity;
   private final Context applicationContext;
-  final MethodChannel methodChannel;
+  final InAppPurchaseCallbackApi callbackApi;
 
   private final HashMap<String, ProductDetails> cachedProducts = new HashMap<>();
 
@@ -87,12 +78,12 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   MethodCallHandlerImpl(
       @Nullable Activity activity,
       @NonNull Context applicationContext,
-      @NonNull MethodChannel methodChannel,
+      @NonNull InAppPurchaseCallbackApi callbackApi,
       @NonNull BillingClientFactory billingClientFactory) {
     this.billingClientFactory = billingClientFactory;
     this.applicationContext = applicationContext;
     this.activity = activity;
-    this.methodChannel = methodChannel;
+    this.callbackApi = callbackApi;
   }
 
   /**
@@ -413,7 +404,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =
-          billingClientFactory.createBillingClient(applicationContext, methodChannel, billingMode);
+          billingClientFactory.createBillingClient(applicationContext, callbackApi, billingMode);
     }
 
     billingClient.startConnection(
@@ -434,9 +425,18 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
 
           @Override
           public void onBillingServiceDisconnected() {
-            final Map<String, Object> arguments = new HashMap<>();
-            arguments.put("handle", handle);
-            methodChannel.invokeMethod(MethodNames.ON_DISCONNECT, arguments);
+            callbackApi.onBillingServiceDisconnected(
+                handle,
+                new Messages.VoidResult() {
+                  @Override
+                  public void success() {}
+
+                  @Override
+                  public void error(@NonNull Throwable error) {
+                    io.flutter.Log.e(
+                        "IN_APP_PURCHASE", "onBillingServiceDisconnected handler error: " + error);
+                  }
+                });
           }
         });
   }
@@ -462,15 +462,6 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     for (ProductDetails productDetails : productDetailsList) {
       cachedProducts.put(productDetails.getProductId(), productDetails);
     }
-  }
-
-  private boolean billingClientError(MethodChannel.Result result) {
-    if (billingClient != null) {
-      return false;
-    }
-
-    result.error("UNAVAILABLE", "BillingClient is unset. Try reconnecting.", null);
-    return true;
   }
 
   private @NonNull FlutterError getNullBillingClientError() {

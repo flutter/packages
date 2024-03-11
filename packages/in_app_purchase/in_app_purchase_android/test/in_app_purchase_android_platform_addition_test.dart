@@ -21,8 +21,6 @@ void main() {
 
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatformAddition iapAndroidPlatformAddition;
-  const String onBillingServiceDisconnectedCallback =
-      'BillingClientStateListener#onBillingServiceDisconnected()';
   late BillingClientManager manager;
 
   setUp(() {
@@ -76,10 +74,7 @@ void main() {
           .setBillingChoice(BillingChoiceMode.alternativeBillingOnly);
 
       // Fake the disconnect that we would expect from a endConnectionCall.
-      await manager.client.callHandler(
-        const MethodCall(onBillingServiceDisconnectedCallback,
-            <String, dynamic>{'handle': 0}),
-      );
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
           verify(mockApi.startConnection(any, captureAny));
@@ -94,10 +89,7 @@ void main() {
           .setBillingChoice(BillingChoiceMode.playBillingOnly);
 
       // Fake the disconnect that we would expect from a endConnectionCall.
-      await manager.client.callHandler(
-        const MethodCall(onBillingServiceDisconnectedCallback,
-            <String, dynamic>{'handle': 0}),
-      );
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
           verify(mockApi.startConnection(any, captureAny));

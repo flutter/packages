@@ -224,3 +224,12 @@ abstract class InAppPurchaseApi {
   PlatformAlternativeBillingOnlyReportingDetailsResponse
       createAlternativeBillingOnlyReportingDetailsAsync();
 }
+
+@FlutterApi()
+abstract class InAppPurchaseCallbackApi {
+  /// Called for BillingClientStateListener#onBillingServiceDisconnected().
+  void onBillingServiceDisconnected(int callbackHandle);
+
+  /// Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>).
+  void onPurchasesUpdated(PlatformPurchasesResponse update);
+}

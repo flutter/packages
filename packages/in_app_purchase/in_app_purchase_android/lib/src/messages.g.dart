@@ -18,6 +18,17 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 /// Pigeon version of Java BillingClient.ProductType.
 enum PlatformProductType {
   inapp,
@@ -781,6 +792,106 @@ class InAppPurchaseApi {
     } else {
       return (__pigeon_replyList[0]
           as PlatformAlternativeBillingOnlyReportingDetailsResponse?)!;
+    }
+  }
+}
+
+class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
+  const _InAppPurchaseCallbackApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is PlatformBillingResult) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return PlatformBillingResult.decode(readValue(buffer)!);
+      case 129:
+        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class InAppPurchaseCallbackApi {
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      _InAppPurchaseCallbackApiCodec();
+
+  /// Called for BillingClientStateListener#onBillingServiceDisconnected().
+  void onBillingServiceDisconnected(int callbackHandle);
+
+  /// Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>).
+  void onPurchasesUpdated(PlatformPurchasesResponse update);
+
+  static void setup(InAppPurchaseCallbackApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_callbackHandle = (args[0] as int?);
+          assert(arg_callbackHandle != null,
+              'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected was null, expected non-null int.');
+          try {
+            api.onBillingServiceDisconnected(arg_callbackHandle!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformPurchasesResponse? arg_update =
+              (args[0] as PlatformPurchasesResponse?);
+          assert(arg_update != null,
+              'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated was null, expected non-null PlatformPurchasesResponse.');
+          try {
+            api.onPurchasesUpdated(arg_update!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 }

@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
@@ -18,9 +17,6 @@ void main() {
 
   late MockInAppPurchaseApi mockApi;
   late BillingClientManager manager;
-
-  const String onBillingServiceDisconnectedCallback =
-      'BillingClientStateListener#onBillingServiceDisconnected()';
 
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
@@ -65,10 +61,7 @@ void main() {
       // Ensures all asynchronous connected code finishes.
       await manager.runWithClientNonRetryable((_) async {});
 
-      await manager.client.callHandler(
-        const MethodCall(onBillingServiceDisconnectedCallback,
-            <String, dynamic>{'handle': 0}),
-      );
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       verify(mockApi.startConnection(any, any)).called(2);
     });
 
@@ -85,10 +78,7 @@ void main() {
       clearInteractions(mockApi);
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
-      await manager.client.callHandler(
-        const MethodCall(onBillingServiceDisconnectedCallback,
-            <String, dynamic>{'handle': 0}),
-      );
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
           verify(mockApi.startConnection(any, captureAny));
