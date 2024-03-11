@@ -277,7 +277,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.antiAlias,
       child: source.optionalChild(['child']),
     );
-  }, 
+  },
 
   'ColoredBox': (BuildContext context, DataSource source) {
     return ColoredBox(

@@ -138,5 +138,32 @@ void main() {
       expect(stubPlatform.countPreviousCalls(startConnectionCall), equals(1));
       expect(stubPlatform.countPreviousCalls(endConnectionCall), equals(1));
     });
+
+    test(
+        'Emits UserChoiceDetailsWrapper when onUserChoiceAlternativeBilling is called',
+        () async {
+      connectedCompleter.complete();
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
+
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      final Future<UserChoiceDetailsWrapper> detailsFuture =
+          manager.userChoiceDetailsStream.first;
+      manager.onUserChoiceAlternativeBilling(expected);
+      expect(await detailsFuture, expected);
+    });
   });
 }

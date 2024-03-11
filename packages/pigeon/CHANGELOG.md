@@ -1,3 +1,7 @@
+## 17.1.2
+
+* [swift] Separates message call code generation into separate methods.
+
 ## 17.1.1
 
 * Removes heap allocation in generated C++ code.
