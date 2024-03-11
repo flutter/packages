@@ -338,11 +338,15 @@ class TxtResourceRecord extends ResourceRecord {
   const TxtResourceRecord(
     String name,
     int validUntil, {
-    required this.text,
+    required this.attrs,
   }) : super(ResourceRecordType.text, name, validUntil);
 
-  /// The raw text from this record.
-  final String text;
+  /// List of name/value pairs in the TXT record.
+  final List<String> attrs;
+
+  /// Text of this record combined with newlines. Keep in mind binary-encoded values may legally contain newlines,
+  /// and as such this property should not be used to parse the record.
+  String get text => attrs.join('\n');
 
   @override
   String get _additionalInfo => 'text: $text';
