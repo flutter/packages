@@ -30,6 +30,8 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
+TestSmallApi::TestSmallApi(){};
+
 TestSmallApi::~TestSmallApi() {}
 
 void TestSmallApi::Echo(
@@ -57,7 +59,8 @@ void TestPlugin::RegisterWithRegistrar(
   registrar->AddPlugin(std::move(plugin));
 }
 
-TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger, TestSmallApi* host_small_api)
+TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
+                       TestSmallApi* host_small_api)
     : flutter_small_api_(
           std::make_unique<FlutterSmallApi>(binary_messenger, ".suffix")),
       host_small_api_(host_small_api),

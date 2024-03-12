@@ -18,6 +18,7 @@ namespace test_plugin {
 
 class TestSmallApi : public core_tests_pigeontest::HostSmallApi {
  public:
+  TestSmallApi();
   virtual ~TestSmallApi();
 
   TestSmallApi(const TestSmallApi&) = delete;
@@ -40,7 +41,8 @@ class TestPlugin : public flutter::Plugin,
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
-  TestPlugin(flutter::BinaryMessenger* binary_messenger, TestSmallApi* host_small_api);
+  TestPlugin(flutter::BinaryMessenger* binary_messenger,
+             TestSmallApi* host_small_api);
 
   virtual ~TestPlugin();
 
