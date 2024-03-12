@@ -137,8 +137,12 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       result.error(new FlutterError(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null));
       return;
     }
-    billingClient.showAlternativeBillingOnlyInformationDialog(
-        activity, billingResult -> result.success(fromBillingResult(billingResult)));
+    try {
+      billingClient.showAlternativeBillingOnlyInformationDialog(
+          activity, billingResult -> result.success(fromBillingResult(billingResult)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -148,11 +152,15 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       result.error(getNullBillingClientError());
       return;
     }
-    billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
-        ((billingResult, alternativeBillingOnlyReportingDetails) ->
-            result.success(
-                fromAlternativeBillingOnlyReportingDetails(
-                    billingResult, alternativeBillingOnlyReportingDetails))));
+    try {
+      billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
+          ((billingResult, alternativeBillingOnlyReportingDetails) ->
+              result.success(
+                  fromAlternativeBillingOnlyReportingDetails(
+                      billingResult, alternativeBillingOnlyReportingDetails))));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -162,8 +170,12 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       result.error(getNullBillingClientError());
       return;
     }
-    billingClient.isAlternativeBillingOnlyAvailableAsync(
-        billingResult -> result.success(fromBillingResult(billingResult)));
+    try {
+      billingClient.isAlternativeBillingOnlyAvailableAsync(
+          billingResult -> result.success(fromBillingResult(billingResult)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -173,10 +185,14 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       result.error(getNullBillingClientError());
       return;
     }
-    billingClient.getBillingConfigAsync(
-        GetBillingConfigParams.newBuilder().build(),
-        (billingResult, billingConfig) ->
-            result.success(fromBillingConfig(billingResult, billingConfig)));
+    try {
+      billingClient.getBillingConfigAsync(
+          GetBillingConfigParams.newBuilder().build(),
+          (billingResult, billingConfig) ->
+              result.success(fromBillingConfig(billingResult, billingConfig)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -209,18 +225,22 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       return;
     }
 
-    QueryProductDetailsParams params =
-        QueryProductDetailsParams.newBuilder().setProductList(toProductList(products)).build();
-    billingClient.queryProductDetailsAsync(
-        params,
-        (billingResult, productDetailsList) -> {
-          updateCachedProducts(productDetailsList);
-          final PlatformProductDetailsResponse.Builder responseBuilder =
-              new PlatformProductDetailsResponse.Builder()
-                  .setBillingResult(fromBillingResult(billingResult))
-                  .setProductDetailsJsonList(fromProductDetailsList(productDetailsList));
-          result.success(responseBuilder.build());
-        });
+    try {
+      QueryProductDetailsParams params =
+          QueryProductDetailsParams.newBuilder().setProductList(toProductList(products)).build();
+      billingClient.queryProductDetailsAsync(
+          params,
+          (billingResult, productDetailsList) -> {
+            updateCachedProducts(productDetailsList);
+            final PlatformProductDetailsResponse.Builder responseBuilder =
+                new PlatformProductDetailsResponse.Builder()
+                    .setBillingResult(fromBillingResult(billingResult))
+                    .setProductDetailsJsonList(fromProductDetailsList(productDetailsList));
+            result.success(responseBuilder.build());
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -344,13 +364,17 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       return;
     }
 
-    ConsumeResponseListener listener =
-        (billingResult, outToken) -> result.success(fromBillingResult(billingResult));
-    ConsumeParams.Builder paramsBuilder =
-        ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
-    ConsumeParams params = paramsBuilder.build();
+    try {
+      ConsumeResponseListener listener =
+          (billingResult, outToken) -> result.success(fromBillingResult(billingResult));
+      ConsumeParams.Builder paramsBuilder =
+          ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
+      ConsumeParams params = paramsBuilder.build();
 
-    billingClient.consumeAsync(params, listener);
+      billingClient.consumeAsync(params, listener);
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -362,19 +386,23 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       return;
     }
 
-    // Like in our connect call, consider the billing client responding a "success" here regardless
-    // of status code.
-    QueryPurchasesParams.Builder paramsBuilder = QueryPurchasesParams.newBuilder();
-    paramsBuilder.setProductType(toProductTypeString(productType));
-    billingClient.queryPurchasesAsync(
-        paramsBuilder.build(),
-        (billingResult, purchasesList) -> {
-          PlatformPurchasesResponse.Builder builder =
-              new PlatformPurchasesResponse.Builder()
-                  .setBillingResult(fromBillingResult(billingResult))
-                  .setPurchasesJsonList(fromPurchasesList(purchasesList));
-          result.success(builder.build());
-        });
+    try {
+      // Like in our connect call, consider the billing client responding a "success" here regardless
+      // of status code.
+      QueryPurchasesParams.Builder paramsBuilder = QueryPurchasesParams.newBuilder();
+      paramsBuilder.setProductType(toProductTypeString(productType));
+      billingClient.queryPurchasesAsync(
+          paramsBuilder.build(),
+          (billingResult, purchasesList) -> {
+            PlatformPurchasesResponse.Builder builder =
+                new PlatformPurchasesResponse.Builder()
+                    .setBillingResult(fromBillingResult(billingResult))
+                    .setPurchasesJsonList(fromPurchasesList(purchasesList));
+            result.success(builder.build());
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -386,17 +414,21 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       return;
     }
 
-    billingClient.queryPurchaseHistoryAsync(
-        QueryPurchaseHistoryParams.newBuilder()
-            .setProductType(toProductTypeString(productType))
-            .build(),
-        (billingResult, purchasesList) -> {
-          PlatformPurchaseHistoryResponse.Builder builder =
-              new PlatformPurchaseHistoryResponse.Builder()
-                  .setBillingResult(fromBillingResult(billingResult))
-                  .setPurchaseHistoryRecordJsonList(fromPurchaseHistoryRecordList(purchasesList));
-          result.success(builder.build());
-        });
+    try {
+      billingClient.queryPurchaseHistoryAsync(
+          QueryPurchaseHistoryParams.newBuilder()
+              .setProductType(toProductTypeString(productType))
+              .build(),
+          (billingResult, purchasesList) -> {
+            PlatformPurchaseHistoryResponse.Builder builder =
+                new PlatformPurchaseHistoryResponse.Builder()
+                    .setBillingResult(fromBillingResult(billingResult))
+                    .setPurchaseHistoryRecordJsonList(fromPurchaseHistoryRecordList(purchasesList));
+            result.success(builder.build());
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Override
@@ -411,38 +443,43 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
               applicationContext, callbackApi, billingMode, listener);
     }
 
-    billingClient.startConnection(
-        new BillingClientStateListener() {
-          private boolean alreadyFinished = false;
+    try {
+      billingClient.startConnection(
+          new BillingClientStateListener() {
+            private boolean alreadyFinished = false;
 
-          @Override
-          public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-            if (alreadyFinished) {
-              Log.d(TAG, "Tried to call onBillingSetupFinished multiple times.");
-              return;
+            @Override
+            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+              if (alreadyFinished) {
+                Log.d(TAG, "Tried to call onBillingSetupFinished multiple times.");
+                return;
+              }
+              alreadyFinished = true;
+              // Consider the fact that we've finished a success, leave it to the Dart side to
+              // validate the responseCode.
+              result.success(fromBillingResult(billingResult));
             }
-            alreadyFinished = true;
-            // Consider the fact that we've finished a success, leave it to the Dart side to
-            // validate the responseCode.
-            result.success(fromBillingResult(billingResult));
-          }
 
-          @Override
-          public void onBillingServiceDisconnected() {
-            callbackApi.onBillingServiceDisconnected(
-                handle,
-                new Messages.VoidResult() {
-                  @Override
-                  public void success() {}
+            @Override
+            public void onBillingServiceDisconnected() {
+              callbackApi.onBillingServiceDisconnected(
+                  handle,
+                  new Messages.VoidResult() {
+                    @Override
+                    public void success() {}
 
-                  @Override
-                  public void error(@NonNull Throwable error) {
-                    io.flutter.Log.e(
-                        "IN_APP_PURCHASE", "onBillingServiceDisconnected handler error: " + error);
-                  }
-                });
-          }
-        });
+                    @Override
+                    public void error(@NonNull Throwable error) {
+                      io.flutter.Log.e(
+                          "IN_APP_PURCHASE",
+                          "onBillingServiceDisconnected handler error: " + error);
+                    }
+                  });
+            }
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   @Nullable
@@ -476,10 +513,14 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       result.error(getNullBillingClientError());
       return;
     }
-    AcknowledgePurchaseParams params =
-        AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
-    billingClient.acknowledgePurchase(
-        params, billingResult -> result.success(fromBillingResult(billingResult)));
+    try {
+      AcknowledgePurchaseParams params =
+          AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
+      billingClient.acknowledgePurchase(
+          params, billingResult -> result.success(fromBillingResult(billingResult)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   protected void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {
