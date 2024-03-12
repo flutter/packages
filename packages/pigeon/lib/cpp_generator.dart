@@ -873,7 +873,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       ],
       initializers: <String>[
         'binary_messenger_(binary_messenger)',
-        'message_channel_suffix_(message_channel_suffix.get())'
+        'message_channel_suffix_(message_channel_suffix)'
       ],
     );
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
