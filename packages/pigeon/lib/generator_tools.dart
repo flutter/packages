@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '17.1.2';
+const String pigeonVersion = '17.1.3';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
