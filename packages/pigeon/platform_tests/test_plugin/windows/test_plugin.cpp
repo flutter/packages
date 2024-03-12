@@ -46,7 +46,7 @@ void TestSmallApi::VoidVoid(
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto host_small_api = std::make_unique<TestSmallApi>(registrar->messenger());
+  auto host_small_api = std::make_unique<TestSmallApi>();
 
   HostSmallApi::SetUp(registrar->messenger(), host_small_api.get(), ".suffix");
 
