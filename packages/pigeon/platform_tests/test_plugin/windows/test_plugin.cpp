@@ -30,18 +30,6 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-// static
-void TestSmallApi::RegisterWithRegistrar(
-    flutter::PluginRegistrarWindows* registrar,
-    const std::string& message_channel_suffix) {
-  auto api = std::make_unique<TestSmallApi>(registrar->messenger());
-
-  HostSmallApi::SetUp(registrar->messenger(), api.get(),
-                      message_channel_suffix);
-}
-
-TestSmallApi::TestSmallApi(flutter::BinaryMessenger* binary_messenger){};
-
 TestSmallApi::~TestSmallApi() {}
 
 void TestSmallApi::Echo(
@@ -58,18 +46,21 @@ void TestSmallApi::VoidVoid(
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
+  auto host_small_api = std::make_unique<TestSmallApi>(registrar->messenger());
+
+  HostSmallApi::SetUp(registrar->messenger(), host_small_api.get(), ".suffix");
+
   auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
 
   HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
-
-  TestSmallApi::RegisterWithRegistrar(registrar, ".suffix");
 }
 
-TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger)
+TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger, TestSmallApi* host_small_api)
     : flutter_small_api_(
           std::make_unique<FlutterSmallApi>(binary_messenger, ".suffix")),
+      host_small_api_(host_small_api),
       flutter_api_(
           std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)){};
 

@@ -18,11 +18,6 @@ namespace test_plugin {
 
 class TestSmallApi : public core_tests_pigeontest::HostSmallApi {
  public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar,
-                                    const std::string& message_channel_suffix);
-
-  TestSmallApi(flutter::BinaryMessenger* binary_messenger);
-
   virtual ~TestSmallApi();
 
   TestSmallApi(const TestSmallApi&) = delete;
@@ -45,7 +40,7 @@ class TestPlugin : public flutter::Plugin,
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
-  TestPlugin(flutter::BinaryMessenger* binary_messenger);
+  TestPlugin(flutter::BinaryMessenger* binary_messenger, TestSmallApi* host_small_api);
 
   virtual ~TestPlugin();
 
@@ -364,6 +359,7 @@ class TestPlugin : public flutter::Plugin,
   std::unique_ptr<core_tests_pigeontest::FlutterIntegrationCoreApi>
       flutter_api_;
   std::unique_ptr<core_tests_pigeontest::FlutterSmallApi> flutter_small_api_;
+  std::unique_ptr<TestSmallApi> host_small_api_;
 };
 
 }  // namespace test_plugin
