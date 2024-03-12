@@ -8,6 +8,12 @@
 @import image_picker_ios.Test;
 @import XCTest;
 
+// Corner colors of test image scaled to 3x2. Format is "R G B A".
+static NSString *const kColorRepresentation3x2BottomLeftYellow = @"1 0.776471 0 1";
+static NSString *const kColorRepresentation3x2TopLeftRed = @"1 0.0666667 0 1";
+static NSString *const kColorRepresentation3x2BottomRightCyan = @"0 0.772549 1 1";
+static NSString *const kColorRepresentation3x2TopRightBlue = @"0 0.0705882 0.996078 1";
+
 @interface ImageUtilTests : XCTestCase
 @end
 
@@ -47,6 +53,17 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
   XCTAssertEqual(image, scaledImage);
 }
 
+- (void)testScaledImage_NilSizeReturnsSameImage {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImage *scaledImage = [FLTImagePickerImageUtil scaledImage:image
+                                                     maxWidth:nil
+                                                    maxHeight:nil
+                                          isMetadataAvailable:YES];
+
+  // Assert the same bytes pointer (not just equal objects).
+  XCTAssertEqual(image, scaledImage);
+}
+
 - (void)testScaledImage_ShouldBeScaled {
   UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
 
@@ -59,14 +76,15 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
   XCTAssertEqual(scaledImage.size.width, scaledWidth);
   XCTAssertEqual(scaledImage.size.height, scaledHeight);
 
-  // Check the corners. Format is "R G B A"
-  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, 0), @"1 0.776471 0 1");  // yellow
+  // Check the corners to make sure nothing has been rotated.
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, 0),
+                        kColorRepresentation3x2BottomLeftYellow);
   XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, scaledHeight - 1),
-                        @"1 0.0666667 0 1");  // red
+                        kColorRepresentation3x2TopLeftRed);
   XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, 0),
-                        @"0 0.772549 1 1");  // cyan
+                        kColorRepresentation3x2BottomRightCyan);
   XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, scaledHeight - 1),
-                        @"0 0.0705882 0.996078 1");  // blue
+                        kColorRepresentation3x2TopRightBlue);
 }
 
 - (void)testScaledImage_ShouldBeScaledWithNoMetadata {
@@ -81,14 +99,15 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
   XCTAssertEqual(scaledImage.size.width, scaledWidth);
   XCTAssertEqual(scaledImage.size.height, scaledHeight);
 
-  // Check the corners to make sure nothing has been rotated. Format is "R G B A"
-  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, 0), @"1 0.776471 0 1");  // yellow
+  // Check the corners to make sure nothing has been rotated.
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, 0),
+                        kColorRepresentation3x2BottomLeftYellow);
   XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, scaledHeight - 1),
-                        @"1 0.0666667 0 1");  // red
+                        kColorRepresentation3x2TopLeftRed);
   XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, 0),
-                        @"0 0.772549 1 1");  // cyan
+                        kColorRepresentation3x2BottomRightCyan);
   XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, scaledHeight - 1),
-                        @"0 0.0705882 0.996078 1");  // blue
+                        kColorRepresentation3x2TopRightBlue);
 }
 
 - (void)testScaledImage_ShouldBeCorrectRotation {
