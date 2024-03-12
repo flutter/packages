@@ -4124,6 +4124,179 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
     });
 
+    testWidgets('Preloads routes correctly in a StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'A');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyB =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'B');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyC =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'C');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyD =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'D');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyE =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'E');
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: mockStackedShellBuilder,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <RouteBase>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyStatefulWidget(key: statefulWidgetKeyA),
+              ),
+            ]),
+            StatefulShellBranch(routes: <RouteBase>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyStatefulWidget(key: statefulWidgetKeyB),
+              ),
+            ]),
+          ],
+        ),
+        StatefulShellRoute.indexedStack(
+          builder: mockStackedShellBuilder,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyC),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/d',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyD),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              initialLocation: '/e/details',
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/e',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('E'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'details',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            DummyStatefulWidget(key: statefulWidgetKeyE),
+                      ),
+                    ]),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+      );
+      expect(statefulWidgetKeyA.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyB.currentState?.counter, null);
+      expect(statefulWidgetKeyC.currentState?.counter, null);
+      expect(statefulWidgetKeyD.currentState?.counter, null);
+
+      router.go('/c');
+      await tester.pumpAndSettle();
+      expect(statefulWidgetKeyC.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyD.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyE.currentState?.counter, equals(0));
+    });
+
+    testWidgets('Preloads nested routes correctly in a StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'A');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyB =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'B');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyC =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'C');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyD =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'D');
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: mockStackedShellBuilder,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                StatefulShellRoute.indexedStack(
+                  builder: mockStackedShellBuilder,
+                  branches: <StatefulShellBranch>[
+                    StatefulShellBranch(preload: true, routes: <RouteBase>[
+                      GoRoute(
+                        path: '/a',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            DummyStatefulWidget(key: statefulWidgetKeyA),
+                      ),
+                    ]),
+                    StatefulShellBranch(preload: true, routes: <RouteBase>[
+                      GoRoute(
+                        path: '/b',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            DummyStatefulWidget(key: statefulWidgetKeyB),
+                      ),
+                    ]),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyC),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/d',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyD),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/c',
+        navigatorKey: rootNavigatorKey,
+      );
+      expect(statefulWidgetKeyA.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyB.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyC.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyD.currentState?.counter, null);
+    });
+
     testWidgets(
         'Redirects are correctly handled when switching branch in a '
         'StatefulShellRoute', (WidgetTester tester) async {
