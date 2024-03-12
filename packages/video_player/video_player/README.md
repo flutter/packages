@@ -33,6 +33,13 @@ Android Manifest file, located in `<project root>/android/app/src/main/AndroidMa
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
+Also, If you need to access videos using `http` (rather than `https`) URLs on Android 9 (API level 28) or higher, you will need to add
+the appropriate `android:usesCleartextTraffic` permissions to your app's _AndroidManifest.xml_ file, located
+in `<project root>/android/app/src/main/AndroidManifest.xml`. See
+[Android's documentation]([https://developer.apple.com/documentation/bundleresources/information_property_list/nsapptransportsecurity](https://developer.android.com/media/media3/exoplayer/troubleshooting#fixing-cleartext-http-traffic-not-permitted-errors)).
+
+> If your app targets Android 9 (API level 28) or higher, cleartext HTTP traffic is disabled by the default configuration. You need to enable cleartext HTTP traffic.)
+
 ### macOS
 
 If you are using network-based videos, you will need to [add the
