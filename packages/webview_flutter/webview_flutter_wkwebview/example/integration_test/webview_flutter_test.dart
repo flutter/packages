@@ -1457,9 +1457,13 @@ Future<void> main() async {
             <title>WebResourceError test</title>
             <script type="text/javascript">
             function onLoad() {
-              const circularReference = { otherData: 123 };
-              circularReference.myself = circularReference;
-              console.log(circularReference);
+              const obj = {
+                a: "Flutter",
+                b: {},
+              };
+              obj.self = obj;
+              obj.b.self = obj;
+              console.log(obj);
             }
           </script>
           </head>
@@ -1490,7 +1494,7 @@ Future<void> main() async {
       ));
 
       await expectLater(debugMessageReceived.future,
-          completion('log:{"otherData":123,"myself":"[Circular]"}'));
+          completion('log:{"a":"Flutter","b":{}}'));
     });
   });
 }

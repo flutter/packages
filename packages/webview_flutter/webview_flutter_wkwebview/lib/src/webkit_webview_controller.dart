@@ -633,31 +633,24 @@ class WebKitWebViewController extends PlatformWebViewController {
     // Using the replacer parameter of JSON.stringify() to solve the error
     // TypeError: JSON.stringify cannot serialize cyclic structures.
     // See https://github.com/flutter/flutter/issues/144535.
-    //
-    // The getCircularReplacer() taken from
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value.
+    // 
+    // Considering this is just looking at the logs printed via console.log, 
+    // the cyclic object is not important, so remove it.
     const WKUserScript overrideScript = WKUserScript(
       '''
-function getCircularReplacer() {
-  const ancestors = [];
-  return function (key, value) {
-    if (typeof value !== "object" || value === null) {
-      return value;
-    }
-    while (ancestors.length > 0 && ancestors.at(-1) !== this) {
-      ancestors.pop();
-    }
-    if (ancestors.includes(value)) {
-      return "[Circular]";
-    }
-    ancestors.push(value);
-    return value;
+function removeCyclicObject() {
+  const objects = new WeakSet();
+  return function (k, v) {
+    if (typeof v !== "object" || v === null) { return v; }
+    if (objects.has(v)) { return; }
+    objects.add(v);
+    return v;
   };
 }
 
 function log(type, args) {
   var message =  Object.values(args)
-      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, getCircularReplacer()) : v.toString())
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, removeCyclicObject()) : v.toString())
       .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
       .join(", ");
 

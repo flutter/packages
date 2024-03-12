@@ -1378,26 +1378,19 @@ void main() {
         expect(overrideConsoleScript.injectionTime,
             WKUserScriptInjectionTime.atDocumentStart);
         expect(overrideConsoleScript.source, '''
-function getCircularReplacer() {
-  const ancestors = [];
-  return function (key, value) {
-    if (typeof value !== "object" || value === null) {
-      return value;
-    }
-    while (ancestors.length > 0 && ancestors.at(-1) !== this) {
-      ancestors.pop();
-    }
-    if (ancestors.includes(value)) {
-      return "[Circular]";
-    }
-    ancestors.push(value);
-    return value;
+function removeCyclicObject() {
+  const objects = new WeakSet();
+  return function (k, v) {
+    if (typeof v !== "object" || v === null) { return v; }
+    if (objects.has(v)) { return; }
+    objects.add(v);
+    return v;
   };
 }
 
 function log(type, args) {
   var message =  Object.values(args)
-      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, getCircularReplacer()) : v.toString())
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, removeCyclicObject()) : v.toString())
       .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
       .join(", ");
 
