@@ -372,9 +372,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       });
       indent.addScoped(' private:', null, () {
         indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
-      });
-      indent.addScoped(' private:', null, () {
-        indent.writeln('const std::string& message_channel_suffix_;');
+        indent.writeln('std::string message_channel_suffix_;');
       });
     }, nestCount: 0);
     indent.newln();
@@ -875,7 +873,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       ],
       initializers: <String>[
         'binary_messenger_(binary_messenger)',
-        'message_channel_suffix_(message_channel_suffix)'
+        'message_channel_suffix_(message_channel_suffix.get())'
       ],
     );
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty

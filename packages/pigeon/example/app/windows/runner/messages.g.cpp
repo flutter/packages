@@ -272,7 +272,7 @@ MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
                                      const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
-      message_channel_suffix_(message_channel_suffix) {}
+      message_channel_suffix_(message_channel_suffix.get()) {}
 
 const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(

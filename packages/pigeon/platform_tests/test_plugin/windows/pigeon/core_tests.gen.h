@@ -796,9 +796,7 @@ class FlutterIntegrationCoreApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
-
- private:
-  const std::string& message_channel_suffix_;
+  std::string message_channel_suffix_;
 };
 
 // An API that can be implemented for minimal, compile-only tests.
@@ -891,9 +889,7 @@ class FlutterSmallApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
-
- private:
-  const std::string& message_channel_suffix_;
+  std::string message_channel_suffix_;
 };
 
 }  // namespace core_tests_pigeontest

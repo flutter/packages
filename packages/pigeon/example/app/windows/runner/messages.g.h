@@ -155,9 +155,7 @@ class MessageFlutterApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
-
- private:
-  const std::string& message_channel_suffix_;
+  std::string message_channel_suffix_;
 };
 
 }  // namespace pigeon_example
