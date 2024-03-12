@@ -4711,6 +4711,63 @@ void main() {
         expect(find.byKey(heroKey), findsNothing);
       });
     });
+
+    group('popUntil', () {
+      testWidgets(
+        'It should pop 2 routes',
+        (WidgetTester tester) async {
+          final GoRouter router = GoRouter(
+            initialLocation: '/a/b/c',
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, _) {
+                  return const Scaffold(
+                    body: Text('Home'),
+                  );
+                },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'a',
+                    builder: (_, __) => const Text('A Screen'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'b',
+                        builder: (_, __) => const Text('B Screen'),
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'c',
+                            builder: (_, __) => const Text('C Screen'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+          expect(router.canPop(), isTrue);
+          expect(find.text('C Screen'), findsOne);
+          expect(find.text('B Screen'), findsNothing);
+          expect(find.text('A Screen'), findsNothing);
+          expect(find.text('Home'), findsNothing);
+
+          router.popUntil(
+            (RouteMatchBase routeMatch, Route<dynamic> route) =>
+                routeMatch is RouteMatch && routeMatch.route.path == 'a',
+          );
+          await tester.pumpAndSettle();
+          expect(find.text('C Screen'), findsNothing);
+          expect(find.text('B Screen'), findsNothing);
+          expect(find.text('A Screen'), findsOne);
+          expect(find.text('Home'), findsNothing);
+        },
+      );
+    });
   });
 
   group('of', () {
