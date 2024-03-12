@@ -9,6 +9,7 @@ import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
+import 'package:in_app_purchase_android/src/types/translator.dart';
 import 'package:mockito/mockito.dart';
 
 import 'billing_client_wrappers/billing_client_wrapper_test.dart';
@@ -29,8 +30,10 @@ void main() {
     when(mockApi.startConnection(any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     manager = BillingClientManager(
-        billingClientFactory: (PurchasesUpdatedListener listener) =>
-            BillingClient(listener, api: mockApi));
+        billingClientFactory: (PurchasesUpdatedListener listener,
+                UserSelectedAlternativeBillingListener?
+                    alternativeBillingListener) =>
+            BillingClient(listener, alternativeBillingListener, api: mockApi));
     iapAndroidPlatformAddition = InAppPurchaseAndroidPlatformAddition(manager);
   });
 
@@ -189,6 +192,30 @@ void main() {
       final bool isSupported = await iapAndroidPlatformAddition
           .isFeatureSupported(BillingClientFeature.subscriptions);
       expect(isSupported, isTrue);
+    });
+  });
+
+  group('userChoiceDetails', () {
+    test('called', () async {
+      final Future<GooglePlayUserChoiceDetails> futureDetails =
+          iapAndroidPlatformAddition.userChoiceDetailsStream.first;
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      manager.onUserChoiceAlternativeBilling(expected);
+      expect(
+          await futureDetails, Translator.convertToUserChoiceDetails(expected));
     });
   });
 }

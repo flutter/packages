@@ -15,6 +15,8 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.UserChoiceDetails;
+import com.android.billingclient.api.UserChoiceDetails.Product;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -244,6 +246,38 @@ import java.util.Locale;
         .setResponseCode((long) billingResult.getResponseCode())
         .setDebugMessage(billingResult.getDebugMessage())
         .build();
+  }
+
+  static Messages.PlatformUserChoiceDetails fromUserChoiceDetails(
+      UserChoiceDetails userChoiceDetails) {
+    return new Messages.PlatformUserChoiceDetails.Builder()
+        .setExternalTransactionToken(userChoiceDetails.getExternalTransactionToken())
+        .setOriginalExternalTransactionId(userChoiceDetails.getOriginalExternalTransactionId())
+        .setProductsJsonList(fromProductsList(userChoiceDetails.getProducts()))
+        .build();
+  }
+
+  static List<Object> fromProductsList(List<Product> productsList) {
+    if (productsList.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    // This and the method are generically typed due to Pigeon limitations; see
+    // https://github.com/flutter/flutter/issues/116117.
+    ArrayList<Object> output = new ArrayList<>();
+    for (Product product : productsList) {
+      output.add(fromProduct(product));
+    }
+    return output;
+  }
+
+  static HashMap<String, Object> fromProduct(Product product) {
+    HashMap<String, Object> info = new HashMap<>();
+    info.put("id", product.getId());
+    info.put("offerToken", product.getOfferToken());
+    info.put("productType", product.getType());
+
+    return info;
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */

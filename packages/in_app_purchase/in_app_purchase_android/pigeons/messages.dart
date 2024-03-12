@@ -145,6 +145,31 @@ class PlatformPurchasesResponse {
   final List<Object?> purchasesJsonList;
 }
 
+/// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
+class PlatformUserChoiceDetails {
+  PlatformUserChoiceDetails({
+    required this.originalExternalTransactionId,
+    required this.externalTransactionToken,
+    required this.productsJsonList,
+  });
+
+  final String originalExternalTransactionId;
+  final String externalTransactionToken;
+
+  /// A JSON-compatible list of products, where each entry in the list is a
+  /// Map<String, Object?> JSON encoding of the product.
+  // TODO(stuartmorgan): Finish converting to Pigeon. This is still using the
+  // old serialization system to allow conversion of all the method calls to
+  // Pigeon without converting the entire object graph all at once. See
+  // https://github.com/flutter/flutter/issues/117910. The list items are
+  // currently untyped due to https://github.com/flutter/flutter/issues/116117.
+  //
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats it as non-nullable.
+  final List<Object?> productsJsonList;
+}
+
 /// Pigeon version of Java BillingClient.ProductType.
 enum PlatformProductType {
   inapp,
@@ -160,6 +185,9 @@ enum PlatformBillingChoiceMode {
 
   /// Billing through app provided flow.
   alternativeBillingOnly,
+
+  /// Users can choose Play billing or alternative billing.
+  userChoiceBilling,
 }
 
 @HostApi()
@@ -232,4 +260,7 @@ abstract class InAppPurchaseCallbackApi {
 
   /// Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>).
   void onPurchasesUpdated(PlatformPurchasesResponse update);
+
+  /// Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails).
+  void userSelectedalternativeBilling(PlatformUserChoiceDetails details);
 }

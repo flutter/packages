@@ -24,8 +24,10 @@ void main() {
     when(mockApi.startConnection(any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     manager = BillingClientManager(
-        billingClientFactory: (PurchasesUpdatedListener listener) =>
-            BillingClient(listener, api: mockApi));
+        billingClientFactory: (PurchasesUpdatedListener listener,
+                UserSelectedAlternativeBillingListener?
+                    alternativeBillingListener) =>
+            BillingClient(listener, alternativeBillingListener, api: mockApi));
   });
 
   group('BillingClientWrapper', () {
@@ -113,6 +115,32 @@ void main() {
       manager.dispose();
       verifyNever(mockApi.startConnection(any, any));
       verify(mockApi.endConnection()).called(1);
+    });
+
+    test(
+        'Emits UserChoiceDetailsWrapper when onUserChoiceAlternativeBilling is called',
+        () async {
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
+
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      final Future<UserChoiceDetailsWrapper> detailsFuture =
+          manager.userChoiceDetailsStream.first;
+      manager.onUserChoiceAlternativeBilling(expected);
+      expect(await detailsFuture, expected);
     });
   });
 }

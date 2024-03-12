@@ -13,6 +13,8 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
       PlatformBillingChoiceMode.playBillingOnly,
     BillingChoiceMode.alternativeBillingOnly =>
       PlatformBillingChoiceMode.alternativeBillingOnly,
+    BillingChoiceMode.userChoiceBilling =>
+      PlatformBillingChoiceMode.userChoiceBilling,
   };
 }
 
@@ -106,4 +108,18 @@ PlatformProductType platformProductTypeFromWrapper(ProductType type) {
     ProductType.inapp => PlatformProductType.inapp,
     ProductType.subs => PlatformProductType.subs,
   };
+}
+
+/// Creates a [UserChoiceDetailsWrapper] from the Pigeon equivalent.
+UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
+    PlatformUserChoiceDetails details) {
+  return UserChoiceDetailsWrapper(
+    originalExternalTransactionId: details.originalExternalTransactionId,
+    externalTransactionToken: details.externalTransactionToken,
+    // See TODOs in messages.dart for why this is currently JSON.
+    products: details.productsJsonList
+        .map((Object? json) => UserChoiceDetailsProductWrapper.fromJson(
+            (json! as Map<Object?, Object?>).cast<String, Object?>()))
+        .toList(),
+  );
 }

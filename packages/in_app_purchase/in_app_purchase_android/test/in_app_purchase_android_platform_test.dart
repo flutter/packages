@@ -32,8 +32,11 @@ void main() {
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     iapAndroidPlatform = InAppPurchaseAndroidPlatform(
         manager: BillingClientManager(
-            billingClientFactory: (PurchasesUpdatedListener listener) =>
-                BillingClient(listener, api: mockApi)));
+            billingClientFactory: (PurchasesUpdatedListener listener,
+                    UserSelectedAlternativeBillingListener?
+                        alternativeBillingListener) =>
+                BillingClient(listener, alternativeBillingListener,
+                    api: mockApi)));
     InAppPurchasePlatform.instance = iapAndroidPlatform;
   });
 

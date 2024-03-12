@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
@@ -39,7 +41,9 @@ void main() {
     mockApi = MockInAppPurchaseApi();
     when(mockApi.startConnection(any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
-    billingClient = BillingClient((PurchasesResultWrapper _) {}, api: mockApi);
+    billingClient = BillingClient(
+        (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {},
+        api: mockApi);
   });
 
   group('isReady', () {
@@ -101,13 +105,85 @@ void main() {
       expect(result.captured[1], PlatformBillingChoiceMode.playBillingOnly);
     });
 
-    test('passes billingChoiceMode when set', () async {
+    test('passes billingChoiceMode alternativeBillingOnly when set', () async {
       await billingClient.startConnection(
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
 
       expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
           PlatformBillingChoiceMode.alternativeBillingOnly);
+    });
+
+    test('passes billingChoiceMode userChoiceBilling when set', () async {
+      final Completer<UserChoiceDetailsWrapper> completer =
+          Completer<UserChoiceDetailsWrapper>();
+      billingClient = BillingClient((PurchasesResultWrapper _) {},
+          (UserChoiceDetailsWrapper details) => completer.complete(details),
+          api: mockApi);
+
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
+
+      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+          PlatformBillingChoiceMode.alternativeBillingOnly);
+
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      billingClient.hostCallbackHandler.alternativeBillingListener!(expected);
+      expect(completer.isCompleted, isTrue);
+      expect(await completer.future, expected);
+    });
+
+    test('UserChoiceDetailsWrapper searilization check', () async {
+      // Test ensures that changes to UserChoiceDetailsWrapper#toJson are
+      // compatible with code in Translator.java.
+      const String transactionIdKey = 'originalExternalTransactionId';
+      const String transactionTokenKey = 'externalTransactionToken';
+      const String productsKey = 'products';
+      const String productIdKey = 'id';
+      const String productOfferTokenKey = 'offerToken';
+      const String productTypeKey = 'productType';
+
+      const UserChoiceDetailsProductWrapper expectedProduct1 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsProductWrapper expectedProduct2 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          expectedProduct1,
+          expectedProduct2,
+        ],
+      );
+      final Map<String, dynamic> detailsJson = expected.toJson();
+      expect(detailsJson.keys, contains(transactionIdKey));
+      expect(detailsJson.keys, contains(transactionTokenKey));
+      expect(detailsJson.keys, contains(productsKey));
+
+      final Map<String, dynamic> productJson = expectedProduct1.toJson();
+      expect(productJson, contains(productIdKey));
+      expect(productJson, contains(productOfferTokenKey));
+      expect(productJson, contains(productTypeKey));
     });
   });
 

@@ -33,6 +33,10 @@ part 'billing_client_wrapper.g.dart';
 typedef PurchasesUpdatedListener = void Function(
     PurchasesResultWrapper purchasesResult);
 
+/// Wraps a [UserChoiceBillingListener](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceBillingListener)
+typedef UserSelectedAlternativeBillingListener = void Function(
+    UserChoiceDetailsWrapper userChoiceDetailsWrapper);
+
 /// This class can be used directly instead of [InAppPurchaseConnection] to call
 /// Play-specific billing APIs.
 ///
@@ -54,11 +58,12 @@ typedef PurchasesUpdatedListener = void Function(
 class BillingClient {
   /// Creates a billing client.
   BillingClient(
-    PurchasesUpdatedListener onPurchasesUpdated, {
+    PurchasesUpdatedListener onPurchasesUpdated,
+    UserSelectedAlternativeBillingListener? alternativeBillingListener, {
     @visibleForTesting InAppPurchaseApi? api,
   })  : _hostApi = api ?? InAppPurchaseApi(),
-        hostCallbackHandler =
-            HostBillingClientCallbackHandler(onPurchasesUpdated) {
+        hostCallbackHandler = HostBillingClientCallbackHandler(
+            onPurchasesUpdated, alternativeBillingListener) {
     InAppPurchaseCallbackApi.setup(hostCallbackHandler);
   }
 
@@ -332,10 +337,14 @@ class BillingClient {
 class HostBillingClientCallbackHandler implements InAppPurchaseCallbackApi {
   /// Creates a new handler with the given singleton handlers, and no
   /// per-connection handlers.
-  HostBillingClientCallbackHandler(this.purchasesUpdatedCallback);
+  HostBillingClientCallbackHandler(
+      this.purchasesUpdatedCallback, this.alternativeBillingListener);
 
   /// The handler for PurchasesUpdatedListener#onPurchasesUpdated.
   final PurchasesUpdatedListener purchasesUpdatedCallback;
+
+  /// The handler for UserChoiceBillingListener#userSelectedAlternativeBilling.
+  UserSelectedAlternativeBillingListener? alternativeBillingListener;
 
   /// Handlers for onBillingServiceDisconnected, indexed by handle identifier.
   final List<OnBillingServiceDisconnected> disconnectCallbacks =
@@ -349,6 +358,11 @@ class HostBillingClientCallbackHandler implements InAppPurchaseCallbackApi {
   @override
   void onPurchasesUpdated(PlatformPurchasesResponse update) {
     purchasesUpdatedCallback(purchasesResultWrapperFromPlatform(update));
+  }
+
+  @override
+  void userSelectedalternativeBilling(PlatformUserChoiceDetails details) {
+    alternativeBillingListener!(userChoiceDetailsFromPlatform(details));
   }
 }
 
@@ -379,7 +393,7 @@ enum BillingResponse {
   @JsonValue(-2)
   featureNotSupported,
 
-  /// The play Store service is not connected now - potentially transient state.
+  /// The Play Store service is not connected now - potentially transient state.
   @JsonValue(-1)
   serviceDisconnected,
 
@@ -426,8 +440,8 @@ enum BillingResponse {
 
 /// Plugin concept to cover billing modes.
 ///
-/// [playBillingOnly] (google play billing only).
-/// [alternativeBillingOnly] (app provided billing with reporting to play).
+/// [playBillingOnly] (google Play billing only).
+/// [alternativeBillingOnly] (app provided billing with reporting to Play).
 @JsonEnum(alwaysCreate: true)
 enum BillingChoiceMode {
   // WARNING: Changes to this class need to be reflected in our generated code.
@@ -436,13 +450,17 @@ enum BillingChoiceMode {
   // Values must match what is used in
   // in_app_purchase_android/android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
 
-  /// Billing through google play. Default state.
+  /// Billing through google Play. Default state.
   @JsonValue(0)
   playBillingOnly,
 
   /// Billing through app provided flow.
   @JsonValue(1)
   alternativeBillingOnly,
+
+  /// Users can choose Play billing or alternative billing.
+  @JsonValue(2)
+  userChoiceBilling,
 }
 
 /// Serializer for [BillingChoiceMode].
