@@ -634,7 +634,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     // TypeError: JSON.stringify cannot serialize cyclic structures.
     // See https://github.com/flutter/flutter/issues/144535.
     // 
-    // Considering this is just looking at the logs printed via console.log, 
+    // Considering this is just looking at the logs printed via console.log,
     // the cyclic object is not important, so remove it.
     const WKUserScript overrideScript = WKUserScript(
       '''
