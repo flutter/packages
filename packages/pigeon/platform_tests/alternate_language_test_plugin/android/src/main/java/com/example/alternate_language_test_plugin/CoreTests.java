@@ -1271,13 +1271,13 @@ public class CoreTests {
      */
     static void setUp(
         @NonNull BinaryMessenger binaryMessenger, @Nullable HostIntegrationCoreApi api) {
-      setUp(binaryMessenger, api, "");
+      setUp(binaryMessenger, "", api);
     }
 
     static void setUp(
         @NonNull BinaryMessenger binaryMessenger,
-        @Nullable HostIntegrationCoreApi api,
-        @NonNull String messageChannelSuffix) {
+        @NonNull String messageChannelSuffix,
+        @Nullable HostIntegrationCoreApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -3698,7 +3698,7 @@ public class CoreTests {
     }
 
     public FlutterIntegrationCoreApi(
-        @NonNull BinaryMessenger argBinaryMessenger, String messageChannelSuffix) {
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix;
     }
@@ -4485,13 +4485,13 @@ public class CoreTests {
     }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable HostTrivialApi api) {
-      setUp(binaryMessenger, api, "");
+      setUp(binaryMessenger, "", api);
     }
 
     static void setUp(
         @NonNull BinaryMessenger binaryMessenger,
-        @Nullable HostTrivialApi api,
-        @NonNull String messageChannelSuffix) {
+        @NonNull String messageChannelSuffix,
+        @Nullable HostTrivialApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -4535,13 +4535,13 @@ public class CoreTests {
     }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable HostSmallApi api) {
-      setUp(binaryMessenger, api, "");
+      setUp(binaryMessenger, "", api);
     }
 
     static void setUp(
         @NonNull BinaryMessenger binaryMessenger,
-        @Nullable HostSmallApi api,
-        @NonNull String messageChannelSuffix) {
+        @NonNull String messageChannelSuffix,
+        @Nullable HostSmallApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -4647,7 +4647,7 @@ public class CoreTests {
     }
 
     public FlutterSmallApi(
-        @NonNull BinaryMessenger argBinaryMessenger, String messageChannelSuffix) {
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix;
     }

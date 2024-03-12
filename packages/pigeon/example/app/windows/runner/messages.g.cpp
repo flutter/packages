@@ -145,7 +145,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 
 void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api,
-                           std::string message_channel_suffix) {
+                           const std::string& message_channel_suffix) {
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_example_package."
@@ -267,10 +267,10 @@ EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
 // Generated class from Pigeon that represents Flutter messages that can be
 // called from C++.
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
-    : binary_messenger_(binary_messenger) {}
+    : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
 
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
-                                     std::string message_channel_suffix)
+                                     const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
       message_channel_suffix_(message_channel_suffix) {}
 

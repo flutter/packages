@@ -268,13 +268,13 @@ public class Messages {
     }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
-      setUp(binaryMessenger, api, "");
+      setUp(binaryMessenger, "", api);
     }
 
     static void setUp(
         @NonNull BinaryMessenger binaryMessenger,
-        @Nullable ExampleHostApi api,
-        @NonNull String messageChannelSuffix) {
+        @NonNull String messageChannelSuffix,
+        @Nullable ExampleHostApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -373,7 +373,7 @@ public class Messages {
     }
 
     public MessageFlutterApi(
-        @NonNull BinaryMessenger argBinaryMessenger, String messageChannelSuffix) {
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix;
     }

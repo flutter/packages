@@ -479,7 +479,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 class TestPluginWithSuffix implements CoreTests.HostSmallApi {
 
   public void setUp(FlutterPlugin.FlutterPluginBinding binding, String suffix) {
-    CoreTests.HostSmallApi.setUp(binding.getBinaryMessenger(), this, suffix);
+    CoreTests.HostSmallApi.setUp(binding.getBinaryMessenger(), suffix, this);
   }
 
   @Override

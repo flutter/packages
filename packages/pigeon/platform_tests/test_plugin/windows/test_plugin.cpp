@@ -33,20 +33,25 @@ using flutter::EncodableValue;
 // static
 void TestSmallApi::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar,
-    std::string messageChannelSuffix) {
+    const std::string& message_channel_suffix) {
   auto api = std::make_unique<TestSmallApi>(registrar->messenger());
 
-  HostSmallApi::SetUp(registrar->messenger(), api.get(), messageChannelSuffix);
+  HostSmallApi::SetUp(registrar->messenger(), api.get(),
+                      message_channel_suffix);
 }
+
+TestSmallApi::TestSmallApi(flutter::BinaryMessenger* binary_messenger){};
 
 TestSmallApi::~TestSmallApi() {}
 
-void Echo(const std::string& a_string,
-          std::function<void(ErrorOr<std::string> reply)> result) {
+void TestSmallApi::Echo(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
   result(a_string);
 }
 
-void VoidVoid(std::function<void(std::optional<FlutterError> reply)> result) {
+void TestSmallApi::VoidVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);
 }
 
@@ -59,9 +64,7 @@ void TestPlugin::RegisterWithRegistrar(
 
   registrar->AddPlugin(std::move(plugin));
 
-  auto apiWithSuffix = TestSmallApi(registrar->messenger());
-
-  apiWithSuffix.RegisterWithRegistrar(registrar, ".suffix");
+  TestSmallApi::RegisterWithRegistrar(registrar, ".suffix");
 }
 
 TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger)
@@ -615,14 +618,11 @@ void TestPlugin::CallFlutterEchoNullableEnum(
       [result](const FlutterError& error) { result(error); });
 }
 
-void CallFlutterSmallApiEchoString(
+void TestPlugin::CallFlutterSmallApiEchoString(
     const std::string& a_string,
     std::function<void(ErrorOr<std::string> reply)> result) {
   flutter_small_api_->EchoString(
-      a_string,
-      [result](std::string echo) {
-        result(echo ? std::optional<std::string>(*echo) : std::nullopt);
-      },
+      a_string, [result](const std::string& echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
 }
 

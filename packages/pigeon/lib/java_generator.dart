@@ -434,7 +434,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln('this(argBinaryMessenger, "");');
       });
       indent.write(
-          'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger, String messageChannelSuffix) ');
+          'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) ');
       indent.addScoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
         indent.writeln('this.messageChannelSuffix = messageChannelSuffix;');
@@ -618,10 +618,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.writeScoped(
           'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) {',
           '}', () {
-        indent.writeln('setUp(binaryMessenger, api, "");');
+        indent.writeln('setUp(binaryMessenger, "", api);');
       });
       indent.write(
-          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api, @NonNull String messageChannelSuffix) ');
+          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ${api.name} api) ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
           _writeMethodSetUp(

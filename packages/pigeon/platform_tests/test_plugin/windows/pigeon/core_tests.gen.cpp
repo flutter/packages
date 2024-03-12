@@ -747,7 +747,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 
 void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                    HostIntegrationCoreApi* api,
-                                   std::string message_channel_suffix) {
+                                   const std::string& message_channel_suffix) {
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
@@ -3884,11 +3884,11 @@ void FlutterIntegrationCoreApiCodecSerializer::WriteValue(
 // called from C++.
 FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
     flutter::BinaryMessenger* binary_messenger)
-    : binary_messenger_(binary_messenger) {}
+    : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
 
 FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
     flutter::BinaryMessenger* binary_messenger,
-    std::string message_channel_suffix)
+    const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
       message_channel_suffix_(message_channel_suffix) {}
 
@@ -4808,7 +4808,7 @@ void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 
 void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            HostTrivialApi* api,
-                           std::string message_channel_suffix) {
+                           const std::string& message_channel_suffix) {
   {
     BasicMessageChannel<> channel(
         binary_messenger,
@@ -4865,7 +4865,7 @@ void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
 
 void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                          HostSmallApi* api,
-                         std::string message_channel_suffix) {
+                         const std::string& message_channel_suffix) {
   {
     BasicMessageChannel<> channel(
         binary_messenger,
@@ -4977,10 +4977,10 @@ void FlutterSmallApiCodecSerializer::WriteValue(
 // Generated class from Pigeon that represents Flutter messages that can be
 // called from C++.
 FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger)
-    : binary_messenger_(binary_messenger) {}
+    : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
 
 FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
-                                 std::string message_channel_suffix)
+                                 const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
       message_channel_suffix_(message_channel_suffix) {}
 

@@ -18,11 +18,8 @@ namespace test_plugin {
 
 class TestSmallApi : public core_tests_pigeontest::HostSmallApi {
  public:
-  TestSmallApi(flutter::BinaryMessenger* binary_messenger,
-               std::string messageChannelSuffix);
-
-  void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar,
-                             std::string messageChannelSuffix);
+  static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar,
+                                    const std::string& message_channel_suffix);
 
   TestSmallApi(flutter::BinaryMessenger* binary_messenger);
 

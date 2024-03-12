@@ -344,7 +344,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         ]);
         _writeFunctionDeclaration(indent, api.name, parameters: <String>[
           'flutter::BinaryMessenger* binary_messenger',
-          'std::string message_channel_suffix',
+          'const std::string& message_channel_suffix',
         ]);
         _writeFunctionDeclaration(indent, 'GetCodec',
             returnType: 'const flutter::StandardMessageCodec&', isStatic: true);
@@ -374,7 +374,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
       });
       indent.addScoped(' private:', null, () {
-        indent.writeln('std::string message_channel_suffix_;');
+        indent.writeln('const std::string& message_channel_suffix_;');
       });
     }, nestCount: 0);
     indent.newln();
@@ -464,7 +464,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             parameters: <String>[
               'flutter::BinaryMessenger* binary_messenger',
               '${api.name}* api',
-              'std::string message_channel_suffix',
+              'const std::string& message_channel_suffix',
             ]);
         _writeFunctionDeclaration(indent, 'WrapError',
             returnType: 'flutter::EncodableValue',
@@ -862,6 +862,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       ],
       initializers: <String>[
         'binary_messenger_(binary_messenger)',
+        'message_channel_suffix_("")'
       ],
     );
     _writeFunctionDefinition(
@@ -870,7 +871,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       scope: api.name,
       parameters: <String>[
         'flutter::BinaryMessenger* binary_messenger',
-        'std::string message_channel_suffix'
+        'const std::string& message_channel_suffix'
       ],
       initializers: <String>[
         'binary_messenger_(binary_messenger)',
@@ -1018,7 +1019,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         parameters: <String>[
           'flutter::BinaryMessenger* binary_messenger',
           '${api.name}* api',
-          'std::string message_channel_suffix',
+          'const std::string& message_channel_suffix',
         ], body: () {
       for (final Method method in api.methods) {
         final String channelName =
