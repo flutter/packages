@@ -60,6 +60,9 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 ],
               ),
             ],
+            // To enable preloading of the initial locations of branches, pass
+            // 'true' for the parameter preload.
+            // preload: true,
           ),
 
           // The route branch for the second tab of the bottom navigation bar.
