@@ -1173,6 +1173,7 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
     expect(find.text('oopsie!'), findsOneWidget);
+    expect(find.byType(ErrorWidget), findsNothing);
     ErrorWidget.builder = oldBuilder;
   });
 
