@@ -14,6 +14,11 @@ import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
 
+typedef PopUntilPredicate = bool Function(
+  RouteMatchBase,
+  Route<dynamic>,
+);
+
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     with ChangeNotifier {
@@ -95,6 +100,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Pops the top-most route.
   void pop<T extends Object?>([T? result]) {
     NavigatorState? state;
+
     if (navigatorKey.currentState?.canPop() ?? false) {
       state = navigatorKey.currentState;
     }
@@ -109,6 +115,51 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       throw GoError('There is nothing to pop');
     }
     state.pop(result);
+  }
+
+  /// Pop the Navigator's page stack until the predicate returns `true`.
+  void popUntil(PopUntilPredicate predicate) {
+    bool hasStoppedPopping = false;
+    bool popUntilPredicate(RouteMatchBase routeMatch, Route<dynamic> route) {
+      if (predicate(routeMatch, route)) {
+        hasStoppedPopping = true;
+        return true;
+      }
+      return false;
+    }
+
+    while (!hasStoppedPopping) {
+      final bool couldBePopped = _popWithPredicate(popUntilPredicate);
+      if (!couldBePopped) {
+        break;
+      }
+    }
+  }
+
+  bool _popWithPredicate(
+    PopUntilPredicate predicate,
+  ) {
+    NavigatorState? state;
+
+    if (navigatorKey.currentState?.canPop() ?? false) {
+      state = navigatorKey.currentState;
+    }
+    RouteMatchBase walker = currentConfiguration.matches.last;
+    while (walker is ShellRouteMatch) {
+      if (walker.navigatorKey.currentState?.canPop() ?? false) {
+        state = walker.navigatorKey.currentState;
+      }
+      walker = walker.matches.last;
+    }
+    int count = 0; // Only pop 1 page at the time.
+    state?.popUntil((Route<dynamic> route) {
+      if (count == 1 || predicate(walker, route)) {
+        return true;
+      }
+      count++;
+      return false;
+    });
+    return state != null;
   }
 
   void _debugAssertMatchListNotEmpty() {
