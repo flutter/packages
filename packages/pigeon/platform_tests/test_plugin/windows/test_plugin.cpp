@@ -60,7 +60,7 @@ void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
   auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
 
-  HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get(), nullptr);
+  HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
 
