@@ -25,7 +25,7 @@ import androidx.privacysandbox.ui.provider.SandboxedUiAdapterProxy;
 import java.util.Random;
 import java.util.concurrent.Executor;
 
-public class TestProvider extends Binder implements hello.world.ITestProvider {
+public class TestProvider extends ITestProvider.Stub {
   private final Context sdkContext;
 
   public TestProvider(Context sdkContext) {
@@ -37,10 +37,10 @@ public class TestProvider extends Binder implements hello.world.ITestProvider {
   private static final String TAG = "TestSandboxSdk";
   private static final String AD_URL = "https://www.google.com/";
 
-  @Override
-  public IBinder asBinder() {
-    return this;
-  }
+//  @Override
+//  public IBinder asBinder() {
+//    return this;
+//  }
 
   @Override
   public Bundle loadTestAdWithWaitInsideOnDraw(int count) {
@@ -73,8 +73,9 @@ public class TestProvider extends Binder implements hello.world.ITestProvider {
             Log.i(TAG, "Session requested");
             //final TestView adView = new TestView(context, count);
             final TextView webView = new TextView(context);
-            webView.setText("HELLO");
-            webView.setLayoutParams(new FrameLayout.LayoutParams(300, 300));
+            webView.setText("HELLO WORLD");
+            webView.setTextSize(40);
+            webView.setLayoutParams(new FrameLayout.LayoutParams(initialWidth, initialHeight));
             //webView.loadUrl("https://www.google.com");
             sessionClientExecutor.execute(
                 () -> {

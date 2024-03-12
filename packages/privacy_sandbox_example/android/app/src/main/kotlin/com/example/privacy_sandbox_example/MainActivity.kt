@@ -1,9 +1,9 @@
 package com.example.privacy_sandbox_example
 
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.privacysandbox.sdkruntime.core.AppOwnedSdkSandboxInterfaceCompat
 import androidx.privacysandbox.sdkruntime.core.LoadSdkCompatException
@@ -13,7 +13,6 @@ import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import hello.world.TestProvider
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory

@@ -79,43 +79,53 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!show) {
       return Container(
         color: Colors.yellow,
-        child: ElevatedButton(
-          onPressed: () {
-            setState(() {
-              show = !show;
-            });
-          },
-          child: const Text('CLICK'),
+        child: Center(
+          child: SizedBox(
+            width: 100,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  show = !show;
+                });
+              },
+              child: const Text('CLICK'),
+            ),
+          ),
         ),
       );
     } else {
       return Container(
         color: Colors.green,
-        child: SizedBox(
-          height: 300,
-          width: 300,
-          child: PlatformViewLink(
-            viewType: 'myPlatformView',
-            surfaceFactory: (
-              BuildContext context,
-              PlatformViewController controller,
-            ) {
-              return AndroidViewSurface(
-                controller: controller as AndroidViewController,
-                hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-                gestureRecognizers: const <Factory<
-                    OneSequenceGestureRecognizer>>{},
-              );
-            },
-            onCreatePlatformView: (PlatformViewCreationParams params) {
-              return PlatformViewsService.initSurfaceAndroidView(
-                id: params.id,
-                viewType: 'myPlatformView',
-                layoutDirection: TextDirection.ltr,
-                creationParams: null,
-                creationParamsCodec: const StandardMessageCodec(),
-              );
-            },
+        child: Center(
+          child: SizedBox(
+            height: 300,
+            width: 300,
+            child: PlatformViewLink(
+              viewType: 'myPlatformView',
+              surfaceFactory: (
+                BuildContext context,
+                PlatformViewController controller,
+              ) {
+                return AndroidViewSurface(
+                  controller: controller as AndroidViewController,
+                  hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                  gestureRecognizers: const <Factory<
+                      OneSequenceGestureRecognizer>>{},
+                );
+              },
+              onCreatePlatformView: (PlatformViewCreationParams params) {
+                return PlatformViewsService.initSurfaceAndroidView(
+                  id: params.id,
+                  viewType: 'myPlatformView',
+                  layoutDirection: TextDirection.ltr,
+                  creationParams: null,
+                  creationParamsCodec: const StandardMessageCodec(),
+                )
+                  ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+                  ..create();
+              },
+            ),
           ),
         ),
       );
