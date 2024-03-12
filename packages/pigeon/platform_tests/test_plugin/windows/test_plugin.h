@@ -42,7 +42,7 @@ class TestPlugin : public flutter::Plugin,
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
   TestPlugin(flutter::BinaryMessenger* binary_messenger,
-             TestSmallApi* host_small_api);
+             std::unique_ptr<TestSmallApi> host_small_api);
 
   virtual ~TestPlugin();
 

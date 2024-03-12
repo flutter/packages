@@ -52,7 +52,8 @@ void TestPlugin::RegisterWithRegistrar(
 
   HostSmallApi::SetUp(registrar->messenger(), host_small_api.get(), ".suffix");
 
-  auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
+  auto plugin = std::make_unique<TestPlugin>(registrar->messenger(),
+                                             std::move(host_small_api));
 
   HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
@@ -60,10 +61,10 @@ void TestPlugin::RegisterWithRegistrar(
 }
 
 TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
-                       TestSmallApi* host_small_api)
+                       std::unique_ptr<TestSmallApi> host_small_api)
     : flutter_small_api_(
           std::make_unique<FlutterSmallApi>(binary_messenger, ".suffix")),
-      host_small_api_(host_small_api),
+      host_small_api_(std::move(host_small_api)),
       flutter_api_(
           std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)){};
 
