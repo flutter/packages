@@ -14,6 +14,8 @@ import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
 
+/// Signature for a predicate function that determines whether a route should be
+/// popped or not.
 typedef PopUntilPredicate = bool Function(
   RouteMatchBase,
   Route<dynamic>,
