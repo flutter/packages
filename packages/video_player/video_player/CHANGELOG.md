@@ -1,6 +1,6 @@
 ## 2.8.4
 
-* Added `onScrubbingCallback` to `VideoProgressIndicator`
+* Adds `onScrubbingCallback` to `VideoProgressIndicator`.
 
 ## 2.8.3
 
