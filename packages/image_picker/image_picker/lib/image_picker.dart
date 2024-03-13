@@ -245,7 +245,7 @@ class ImagePicker {
     bool requestFullMetadata = true,
   }) {
     return platform.getMedia(
-      options: MediaOptions.createAndValidate(
+      options: MediaOptions(
         allowMultiple: true,
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,

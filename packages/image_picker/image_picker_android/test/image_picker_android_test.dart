@@ -662,7 +662,7 @@ void main() {
       api.returnValue = fakePaths;
 
       final List<XFile> files = await picker.getMedia(
-        options: const MediaOptions(
+        options: MediaOptions(
           allowMultiple: true,
         ),
       );
@@ -675,7 +675,7 @@ void main() {
 
     test('passes default image options', () async {
       await picker.getMedia(
-        options: const MediaOptions(
+        options: MediaOptions(
           allowMultiple: true,
         ),
       );
@@ -688,9 +688,9 @@ void main() {
 
     test('passes image option arguments correctly', () async {
       await picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions(
         allowMultiple: true,
-        imageOptions: ImageOptions(
+        imageOptions: const ImageOptions(
           maxWidth: 10.0,
           maxHeight: 20.0,
           imageQuality: 70,
@@ -707,9 +707,9 @@ void main() {
     test('does not accept a negative width or height argument', () {
       expect(
         () => picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions(maxWidth: -1.0),
+            imageOptions: const ImageOptions(maxWidth: -1.0),
           ),
         ),
         throwsArgumentError,
@@ -717,9 +717,9 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions(maxHeight: -1.0),
+            imageOptions: const ImageOptions(maxHeight: -1.0),
           ),
         ),
         throwsArgumentError,
@@ -729,9 +729,9 @@ void main() {
     test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions(imageQuality: -1),
+            imageOptions: const ImageOptions(imageQuality: -1),
           ),
         ),
         throwsArgumentError,
@@ -739,9 +739,9 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions(imageQuality: 101),
+            imageOptions: const ImageOptions(imageQuality: 101),
           ),
         ),
         throwsArgumentError,
@@ -751,7 +751,7 @@ void main() {
     test('does not accept an invalid limit argument', () {
       expect(
         () => picker.getMedia(
-          options: MediaOptions.createAndValidate(
+          options: MediaOptions(
             allowMultiple: true,
             limit: -1,
           ),
@@ -761,10 +761,19 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: MediaOptions.createAndValidate(
+          options: MediaOptions(
             allowMultiple: true,
             limit: 0,
           ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept a not null limit when allowMultiple is false', () {
+      expect(
+        () => picker.getMedia(
+          options: MediaOptions(allowMultiple: false, limit: 5),
         ),
         throwsArgumentError,
       );
@@ -775,7 +784,7 @@ void main() {
 
       expect(
           await picker.getMedia(
-            options: const MediaOptions(
+            options: MediaOptions(
               allowMultiple: true,
             ),
           ),
@@ -784,7 +793,7 @@ void main() {
 
     test('defaults to not using Android Photo Picker', () async {
       await picker.getMedia(
-        options: const MediaOptions(
+        options: MediaOptions(
           allowMultiple: true,
         ),
       );
@@ -795,7 +804,7 @@ void main() {
     test('allows using Android Photo Picker', () async {
       picker.useAndroidPhotoPicker = true;
       await picker.getMedia(
-        options: const MediaOptions(
+        options: MediaOptions(
           allowMultiple: true,
         ),
       );

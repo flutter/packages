@@ -912,7 +912,7 @@ void main() {
   group('#getMedia', () {
     test('calls the method correctly', () async {
       log.returnValue = <String>['0', '1'];
-      await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+      await picker.getMedia(options: MediaOptions(allowMultiple: true));
 
       expect(
         log.calls,
@@ -931,7 +931,7 @@ void main() {
 
     test('passes the width and height arguments correctly', () async {
       log.returnValue = <String>['0', '1'];
-      await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+      await picker.getMedia(options: MediaOptions(allowMultiple: true));
       await picker.getMedia(
           options: MediaOptions(
         allowMultiple: true,
@@ -1064,9 +1064,9 @@ void main() {
     test('passes request metadata argument correctly', () async {
       log.returnValue = <String>['0', '1'];
       await picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions(
         allowMultiple: true,
-        imageOptions: ImageOptions(requestFullMetadata: false),
+        imageOptions: const ImageOptions(requestFullMetadata: false),
       ));
 
       expect(
@@ -1087,7 +1087,7 @@ void main() {
     test('passes allowMultiple argument correctly', () async {
       log.returnValue = <String>['0', '1'];
       await picker.getMedia(
-          options: const MediaOptions(
+          options: MediaOptions(
         allowMultiple: false,
       ));
 
@@ -1152,7 +1152,7 @@ void main() {
       log.returnValue = <String>['0', '1'];
       expect(
         () => picker.getMedia(
-            options: const MediaOptions(
+            options: MediaOptions(
           allowMultiple: true,
           limit: -1,
         )),
@@ -1161,7 +1161,7 @@ void main() {
 
       expect(
         () => picker.getMedia(
-            options: const MediaOptions(
+            options: MediaOptions(
           allowMultiple: true,
           limit: 0,
         )),
@@ -1169,12 +1169,19 @@ void main() {
       );
     });
 
+    test('does not accept a not null limit when allowMultiple is false', () {
+      expect(
+        () => picker.getMedia(
+          options: MediaOptions(allowMultiple: false, limit: 5),
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('handles a empty path response gracefully', () async {
       log.returnValue = <String>[];
 
-      expect(
-          await picker.getMedia(
-              options: const MediaOptions(allowMultiple: true)),
+      expect(await picker.getMedia(options: MediaOptions(allowMultiple: true)),
           <String>[]);
     });
   });

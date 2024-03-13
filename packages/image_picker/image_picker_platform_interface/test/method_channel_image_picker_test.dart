@@ -881,7 +881,7 @@ void main() {
     group('#getMedia', () {
       test('calls the method correctly', () async {
         returnValue = <String>['0'];
-        await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+        await picker.getMedia(options: MediaOptions(allowMultiple: true));
 
         expect(
           log,
@@ -900,7 +900,7 @@ void main() {
       test('passes the selection options correctly', () async {
         // Default options
         returnValue = <String>['0'];
-        await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+        await picker.getMedia(options: MediaOptions(allowMultiple: true));
         // Various image options
         returnValue = <String>['0'];
         await picker.getMedia(
@@ -1037,17 +1037,26 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: const MediaOptions(allowMultiple: true, limit: -1),
+            options: MediaOptions(allowMultiple: true, limit: -1),
           ),
           throwsArgumentError,
         );
 
         expect(
           () => picker.getMedia(
-            options: const MediaOptions(
+            options: MediaOptions(
               allowMultiple: true,
               limit: 0,
             ),
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('does not accept a not null limit when allowMultiple is false', () {
+        expect(
+          () => picker.getMedia(
+            options: MediaOptions(allowMultiple: false, limit: 5),
           ),
           throwsArgumentError,
         );
@@ -1058,8 +1067,7 @@ void main() {
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
         expect(
-            await picker.getMedia(
-                options: const MediaOptions(allowMultiple: true)),
+            await picker.getMedia(options: MediaOptions(allowMultiple: true)),
             <XFile>[]);
       });
     });
