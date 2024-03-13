@@ -23,15 +23,19 @@ import java.util.Map;
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrationCoreApi {
   @Nullable FlutterIntegrationCoreApi flutterApi = null;
-  @Nullable FlutterSmallApi flutterSmallApi = null;
+  @Nullable FlutterSmallApi flutterSmallApiOne = null;
+  @Nullable FlutterSmallApi flutterSmallApiTwo = null;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this);
     flutterApi = new FlutterIntegrationCoreApi(binding.getBinaryMessenger());
-    flutterSmallApi = new FlutterSmallApi(binding.getBinaryMessenger(), ".suffix");
-    TestPluginWithSuffix testSuffixApi = new TestPluginWithSuffix();
-    testSuffixApi.setUp(binding, ".suffix");
+    flutterSmallApiOne = new FlutterSmallApi(binding.getBinaryMessenger(), ".suffixOne");
+    flutterSmallApiTwo = new FlutterSmallApi(binding.getBinaryMessenger(), ".suffixTwo");
+    TestPluginWithSuffix testSuffixApiOne = new TestPluginWithSuffix();
+    testSuffixApiOne.setUp(binding, ".suffixOne");
+    TestPluginWithSuffix testSuffixApiTwo = new TestPluginWithSuffix();
+    testSuffixApiTwo.setUp(binding, ".suffixTwo");
   }
 
   @Override
@@ -472,7 +476,42 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void callFlutterSmallApiEchoString(
       @NonNull String aString, @NonNull Result<String> result) {
-    flutterSmallApi.echoString(aString, result);
+    final String[] resultOne = {""};
+
+
+
+    Result<String> resultCallbackTwo =
+        new Result<String>() {
+          public void success(String res) {
+            String resOne = resultOne[0];
+              if (res.equals(resOne)) {
+              result.success(res);
+            } else {
+              result.error(
+                  new CoreTests.FlutterError(
+                      "Responses do not match",
+                      "Multi-instance responses were not matching: " + resultOne[0] + ", " + res,
+                      ""));
+            }
+          }
+
+          public void error(Throwable error) {
+            result.error(error);
+          }
+        };
+
+    Result<String> resultCallbackOne =
+        new Result<String>() {
+          public void success(String res) {
+            resultOne[0] = res;
+            flutterSmallApiTwo.echoString(aString, resultCallbackTwo);
+          }
+
+          public void error(Throwable error) {
+            result.error(error);
+          }
+        };
+    flutterSmallApiOne.echoString(aString, resultCallbackOne);
   }
 }
 

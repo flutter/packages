@@ -42,7 +42,8 @@ class TestPlugin : public flutter::Plugin,
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
   TestPlugin(flutter::BinaryMessenger* binary_messenger,
-             std::unique_ptr<TestSmallApi> host_small_api);
+             std::unique_ptr<TestSmallApi> host_small_api_one,
+             std::unique_ptr<TestSmallApi> host_small_api_two);
 
   virtual ~TestPlugin();
 
@@ -360,8 +361,12 @@ class TestPlugin : public flutter::Plugin,
  private:
   std::unique_ptr<core_tests_pigeontest::FlutterIntegrationCoreApi>
       flutter_api_;
-  std::unique_ptr<core_tests_pigeontest::FlutterSmallApi> flutter_small_api_;
-  std::unique_ptr<TestSmallApi> host_small_api_;
+  std::unique_ptr<core_tests_pigeontest::FlutterSmallApi>
+      flutter_small_api_one_;
+  std::unique_ptr<core_tests_pigeontest::FlutterSmallApi>
+      flutter_small_api_two_;
+  std::unique_ptr<TestSmallApi> host_small_api_one_;
+  std::unique_ptr<TestSmallApi> host_small_api_two_;
 };
 
 }  // namespace test_plugin

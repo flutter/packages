@@ -11,18 +11,22 @@ extension FlutterError: Error {}
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
-  var smallFlutterAPI: FlutterSmallApi
+  var flutterSmallApiOne: FlutterSmallApi
+  var flutterSmallApiTwo: FlutterSmallApi
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger)
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
-    TestPluginWithSuffix.register(with: registrar, suffix: ".suffix")
+    TestPluginWithSuffix.register(with: registrar, suffix: ".suffixOne")
+    TestPluginWithSuffix.register(with: registrar, suffix: ".suffixTwo")
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
-    smallFlutterAPI = FlutterSmallApi(
-      binaryMessenger: binaryMessenger, messageChannelSuffix: ".suffix")
+    flutterSmallApiOne = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: ".suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: ".suffixTwo")
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -555,12 +559,28 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func callFlutterSmallApiEcho(
     _ aString: String, completion: @escaping (Result<String, Error>) -> Void
   ) {
-    smallFlutterAPI.echo(aString) { response in
-      switch response {
-      case .success(let res):
-        completion(.success(res))
-      case .failure(let error):
-        completion(.failure(error))
+    flutterSmallApiOne.echo(string: aString) { responseOne in
+      self.flutterSmallApiTwo.echo(string: aString) { responseTwo in
+        switch responseOne {
+        case .success(let resOne):
+          switch responseTwo {
+          case .success(let resTwo):
+            if resOne == resTwo {
+              completion(.success(resOne))
+            } else {
+              completion(
+                .failure(
+                  FlutterError(
+                    code: "",
+                    message: "Multi-instance responses were not matching: \(resOne), \(resTwo)",
+                    details: nil)))
+            }
+          case .failure(let error):
+            completion(.failure(error))
+          }
+        case .failure(let error):
+          completion(.failure(error))
+        }
       }
     }
   }

@@ -19,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -144,11 +143,11 @@ class _NonNullFieldHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return ExtraData.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return NonNullFieldSearchReply.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return NonNullFieldSearchRequest.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -160,23 +159,18 @@ class NonNullFieldHostApi {
   /// Constructor for [NonNullFieldHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NonNullFieldHostApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  NonNullFieldHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : __pigeon_binaryMessenger = binaryMessenger,
         __pigeon_messageChannelSuffix = messageChannelSuffix;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _NonNullFieldHostApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _NonNullFieldHostApiCodec();
 
   final String __pigeon_messageChannelSuffix;
 
-  Future<NonNullFieldSearchReply> search(
-      NonNullFieldSearchRequest nested) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+  Future<NonNullFieldSearchReply> search(NonNullFieldSearchRequest nested) async {
+    final String __pigeon_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -223,11 +217,11 @@ class _NonNullFieldFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return ExtraData.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return NonNullFieldSearchReply.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return NonNullFieldSearchRequest.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -236,31 +230,23 @@ class _NonNullFieldFlutterApiCodec extends StandardMessageCodec {
 }
 
 abstract class NonNullFieldFlutterApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _NonNullFieldFlutterApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _NonNullFieldFlutterApiCodec();
 
   NonNullFieldSearchReply search(NonNullFieldSearchRequest request);
 
-  static void setup(
-    NonNullFieldFlutterApi? api, {
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) {
+  static void setup(NonNullFieldFlutterApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.');
+          'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final NonNullFieldSearchRequest? arg_request =
-              (args[0] as NonNullFieldSearchRequest?);
+          final NonNullFieldSearchRequest? arg_request = (args[0] as NonNullFieldSearchRequest?);
           assert(arg_request != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null, expected non-null NonNullFieldSearchRequest.');
           try {
@@ -268,9 +254,8 @@ abstract class NonNullFieldFlutterApi {
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

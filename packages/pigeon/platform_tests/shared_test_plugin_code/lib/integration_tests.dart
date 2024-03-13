@@ -1117,12 +1117,17 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Host API with suffix', () {
-    testWidgets('echo string succeeds with suffix', (_) async {
-      final HostSmallApi apiWithSuffix =
-          HostSmallApi(messageChannelSuffix: '.suffix');
+    testWidgets('echo string succeeds with suffix with multiple instances',
+        (_) async {
+      final HostSmallApi apiWithSuffixOne =
+          HostSmallApi(messageChannelSuffix: '.suffixOne');
+      final HostSmallApi apiWithSuffixTwo =
+          HostSmallApi(messageChannelSuffix: '.suffixTwo');
       const String sentString = "I'm a computer";
-      final String echoString = await apiWithSuffix.echo(sentString);
-      expect(sentString, echoString);
+      final String echoStringOne = await apiWithSuffixOne.echo(sentString);
+      final String echoStringTwo = await apiWithSuffixTwo.echo(sentString);
+      expect(sentString, echoStringOne);
+      expect(sentString, echoStringTwo);
     });
   });
 
@@ -1485,11 +1490,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     setUp(() {
       FlutterSmallApi.setup(
         _SmallFlutterApi(),
-        messageChannelSuffix: '.suffix',
+        messageChannelSuffix: '.suffixOne',
+      );
+      FlutterSmallApi.setup(
+        _SmallFlutterApi(),
+        messageChannelSuffix: '.suffixTwo',
       );
     });
 
-    testWidgets('echo string succeeds with suffix', (_) async {
+    testWidgets('echo string succeeds with suffix with multiple instances',
+        (_) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
       const String sentObject = "I'm a computer";
       final String echoObject =

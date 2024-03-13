@@ -10,14 +10,18 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterApi: FlutterIntegrationCoreApi? = null
-  private var flutterSmallApi: FlutterSmallApi? = null
+  private var flutterSmallApiOne: FlutterSmallApi? = null
+  private var flutterSmallApiTwo: FlutterSmallApi? = null
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
-    val testSuffixApi: TestPluginWithSuffix = TestPluginWithSuffix()
-    testSuffixApi.setUp(binding, ".suffix")
+    val testSuffixApiOne: TestPluginWithSuffix = TestPluginWithSuffix()
+    testSuffixApiOne.setUp(binding, ".suffixOne")
+    val testSuffixApiTwo: TestPluginWithSuffix = TestPluginWithSuffix()
+    testSuffixApiTwo.setUp(binding, ".suffixTwo")
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
-    flutterSmallApi = FlutterSmallApi(binding.binaryMessenger, ".suffix")
+    flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, ".suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, ".suffixTwo")
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
@@ -386,7 +390,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit) {
-    flutterSmallApi!!.echoString(aString) { echo -> callback(echo) }
+    flutterSmallApiOne!!.echoString(aString) { echoOne ->
+      flutterSmallApiTwo!!.echoString(aString) { echoTwo ->
+        if (echoOne == echoTwo) {
+          callback(echoTwo)
+        } else {
+          callback(
+              Result.failure(
+                  Exception("Multi-instance responses were not matching: $echoOne, $echoTwo")))
+        }
+      }
+    }
   }
 }
 

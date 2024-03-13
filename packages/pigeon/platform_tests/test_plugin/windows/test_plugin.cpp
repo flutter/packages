@@ -48,12 +48,17 @@ void TestSmallApi::VoidVoid(
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto host_small_api = std::make_unique<TestSmallApi>();
+  auto host_small_api_one = std::make_unique<TestSmallApi>();
+  auto host_small_api_two = std::make_unique<TestSmallApi>();
 
-  HostSmallApi::SetUp(registrar->messenger(), host_small_api.get(), ".suffix");
+  HostSmallApi::SetUp(registrar->messenger(), host_small_api_one.get(),
+                      ".suffixOne");
+  HostSmallApi::SetUp(registrar->messenger(), host_small_api_two.get(),
+                      ".suffixTwo");
 
   auto plugin = std::make_unique<TestPlugin>(registrar->messenger(),
-                                             std::move(host_small_api));
+                                             std::move(host_small_api_one),
+                                             std::move(host_small_api_two));
 
   HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
@@ -61,10 +66,14 @@ void TestPlugin::RegisterWithRegistrar(
 }
 
 TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
-                       std::unique_ptr<TestSmallApi> host_small_api)
-    : flutter_small_api_(
-          std::make_unique<FlutterSmallApi>(binary_messenger, ".suffix")),
-      host_small_api_(std::move(host_small_api)),
+                       std::unique_ptr<TestSmallApi> host_small_api_one,
+                       std::unique_ptr<TestSmallApi> host_small_api_Two)
+    : flutter_small_api_one_(
+          std::make_unique<FlutterSmallApi>(binary_messenger, ".suffixOne")),
+      flutter_small_api_two_(
+          std::make_unique<FlutterSmallApi>(binary_messenger, ".suffixTwo")),
+      host_small_api_one_(std::move(host_small_api_one)),
+      host_small_api_two_(std::move(host_small_api_two)),
       flutter_api_(
           std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)){};
 
@@ -616,8 +625,24 @@ void TestPlugin::CallFlutterEchoNullableEnum(
 void TestPlugin::CallFlutterSmallApiEchoString(
     const std::string& a_string,
     std::function<void(ErrorOr<std::string> reply)> result) {
-  flutter_small_api_->EchoString(
-      a_string, [result](const std::string& echo) { result(echo); },
+  flutter_small_api_one_->EchoString(
+      a_string,
+      [result](const std::string& echoOne) {
+        flutter_small_api_one_->EchoString(
+            a_string,
+            [result](const std::string& echoTwo) {
+              if (echoOne == echoTwo) {
+                result(echoTwo);
+              } else {
+                result(FlutterError(
+                    "Responses do not match",
+                    "Multi-instance responses were not matching: " + echoOne +
+                        ", " + echoTwo,
+                    EncodableValue("")))
+              }
+            },
+            [result](const FlutterError& error) { result(error); });
+      },
       [result](const FlutterError& error) { result(error); });
 }
 

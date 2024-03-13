@@ -695,7 +695,7 @@ abstract class FlutterSmallApi {
   TestMessage echoWrappedList(TestMessage msg);
 
   @ObjCSelector('echoString:')
-  @SwiftFunction('echo(_:)')
+  @SwiftFunction('echo(string:)')
   String echoString(String aString);
 }
 
