@@ -32,7 +32,7 @@ VideoPlayerPlatform get _videoPlayerPlatform {
 }
 
 /// Signature of a callback that returns the current duration after scrubbing through the [VideoProgressIndicator].
-typedef OnScrubbingCallback = void Function(Duration)?;
+typedef OnScrubbingCallback = void Function(Duration);
 
 /// The duration, current position, buffering state, error state and settings
 /// of a [VideoPlayerController].
