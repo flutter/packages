@@ -700,7 +700,8 @@ void main() {
         await controller.pause();
       });
 
-      testWidgets('onScrubbing is called when the controller seeks',
+      testWidgets(
+          'onScrubbing is called when the controller seeks in VideoProgressIndicator',
           (WidgetTester tester) async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(_localhostUri);
@@ -728,6 +729,75 @@ void main() {
         expect(controller.value.isPlaying, isTrue);
         expect(scrubbingDuration, isNotNull);
         expect(scrubbingDuration, controller.value.position);
+
+        await controller.pause();
+      });
+
+      testWidgets(
+          'onScrubbing is called when the controller seeks in VideoScrubber',
+          (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+
+        Duration? scrubbingDuration;
+        await controller.initialize();
+        final VideoScrubber progressWidget = VideoScrubber(
+          controller: controller,
+          onScrubbing: (Duration duration) => scrubbingDuration = duration,
+          child: const LinearProgressIndicator(value: 50),
+        );
+
+        await tester.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: progressWidget,
+        ));
+
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+
+        final Rect progressRect = tester.getRect(find.byWidget(progressWidget));
+        await tester.dragFrom(progressRect.center, const Offset(1.0, 0.0));
+        await tester.pumpAndSettle();
+
+        expect(controller.value.isPlaying, isTrue);
+        expect(scrubbingDuration, isNotNull);
+        expect(scrubbingDuration, controller.value.position);
+
+        await controller.pause();
+      });
+
+      testWidgets(
+          'onScrubbing from VideoPlayerController is called when onScrubbing from VideoScrubber is called',
+          (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(_localhostUri);
+
+        Duration? scrubbingDuration;
+        await controller.initialize();
+        final VideoProgressIndicator progressWidget = VideoProgressIndicator(
+          controller,
+          allowScrubbing: true,
+          onScrubbing: (Duration duration) => scrubbingDuration = duration,
+        );
+
+        await tester.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: progressWidget,
+        ));
+
+        final Finder finder = find.byType(VideoScrubber);
+        final VideoScrubber videoScrubber = tester.widget(finder);
+
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+
+        const Duration duration = Duration(seconds: 1);
+
+        videoScrubber.onScrubbing!.call(duration);
+
+        expect(controller.value.isPlaying, isTrue);
+        expect(scrubbingDuration, isNotNull);
+        expect(scrubbingDuration, duration);
 
         await controller.pause();
       });
