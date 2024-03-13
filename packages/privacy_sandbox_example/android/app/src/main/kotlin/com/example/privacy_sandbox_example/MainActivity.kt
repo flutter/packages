@@ -57,8 +57,6 @@ class MainActivity: FlutterActivity() {
       }
     }
 
-
-
     flutterEngine.platformViewsController.registry.registerViewFactory("myPlatformView", MyViewFactory())
   }
 
