@@ -63,6 +63,7 @@ void main() {
             12,
           ),
         );
+        await tester.pump();
 
         final LatLng coords = await controller.getLatLng(
           ScreenCoordinate(x: size.width ~/ 2, y: size.height ~/ 2),

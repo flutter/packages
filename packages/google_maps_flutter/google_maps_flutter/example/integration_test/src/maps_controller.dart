@@ -132,6 +132,7 @@ void runTests() {
 
     final LatLngBounds secondVisibleRegion =
         await mapController.getVisibleRegion();
+    await tester.pumpAndSettle();
 
     expect(secondVisibleRegion, isNot(zeroLatLngBounds));
 
