@@ -243,24 +243,76 @@ class PlatformBillingFlowParams {
   }
 }
 
+/// Pigeon version of PurchaseHistoryRecord.
+///
+/// See also PurchaseHistoryRecordWrapper on the Dart side.
+class PlatformPurchaseHistoryRecord {
+  PlatformPurchaseHistoryRecord({
+    required this.quantity,
+    required this.purchaseTime,
+    this.developerPayload,
+    required this.originalJson,
+    required this.purchaseToken,
+    required this.signature,
+    required this.products,
+  });
+
+  int quantity;
+
+  int purchaseTime;
+
+  String? developerPayload;
+
+  String originalJson;
+
+  String purchaseToken;
+
+  String signature;
+
+  List<String?> products;
+
+  Object encode() {
+    return <Object?>[
+      quantity,
+      purchaseTime,
+      developerPayload,
+      originalJson,
+      purchaseToken,
+      signature,
+      products,
+    ];
+  }
+
+  static PlatformPurchaseHistoryRecord decode(Object result) {
+    result as List<Object?>;
+    return PlatformPurchaseHistoryRecord(
+      quantity: result[0]! as int,
+      purchaseTime: result[1]! as int,
+      developerPayload: result[2] as String?,
+      originalJson: result[3]! as String,
+      purchaseToken: result[4]! as String,
+      signature: result[5]! as String,
+      products: (result[6] as List<Object?>?)!.cast<String?>(),
+    );
+  }
+}
+
 /// Pigeon version of PurchasesHistoryResult, which contains the components of
 /// the Java PurchaseHistoryResponseListener callback.
 class PlatformPurchaseHistoryResponse {
   PlatformPurchaseHistoryResponse({
     required this.billingResult,
-    required this.purchaseHistoryRecordJsonList,
+    required this.purchases,
   });
 
   PlatformBillingResult billingResult;
 
-  /// A JSON-compatible list of purchase history records, where each entry in
-  /// the list is a Map<String, Object?> JSON encoding of the record.
-  List<Object?> purchaseHistoryRecordJsonList;
+  List<PlatformPurchaseHistoryRecord?> purchases;
 
   Object encode() {
     return <Object?>[
       billingResult.encode(),
-      purchaseHistoryRecordJsonList,
+      purchases,
     ];
   }
 
@@ -268,8 +320,8 @@ class PlatformPurchaseHistoryResponse {
     result as List<Object?>;
     return PlatformPurchaseHistoryResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      purchaseHistoryRecordJsonList:
-          (result[1] as List<Object?>?)!.cast<Object?>(),
+      purchases:
+          (result[1] as List<Object?>?)!.cast<PlatformPurchaseHistoryRecord?>(),
     );
   }
 }
@@ -360,11 +412,14 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
     } else if (value is PlatformProductDetailsResponse) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryResponse) {
+    } else if (value is PlatformPurchaseHistoryRecord) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformPurchaseHistoryResponse) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -388,8 +443,10 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
       case 133:
         return PlatformProductDetailsResponse.decode(readValue(buffer)!);
       case 134:
-        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
       case 135:
+        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+      case 136:
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

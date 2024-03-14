@@ -496,9 +496,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(expectedCode),
                     debugMessage: debugMessage),
-                purchaseHistoryRecordJsonList: expectedList
-                    .map((PurchaseHistoryRecordWrapper purchaseHistoryRecord) =>
-                        buildPurchaseHistoryRecordMap(purchaseHistoryRecord))
+                purchases: expectedList
+                    .map(platformPurchaseHistoryRecordFromWrapper)
                     .toList(),
               ));
 
@@ -519,7 +518,7 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(expectedCode),
                     debugMessage: debugMessage),
-                purchaseHistoryRecordJsonList: <Map<String, dynamic>>[],
+                purchases: <PlatformPurchaseHistoryRecord>[],
               ));
 
       final PurchasesHistoryResult response =
@@ -662,4 +661,19 @@ PlatformAlternativeBillingOnlyReportingDetailsResponse
         debugMessage: original.debugMessage!,
       ),
       externalTransactionToken: original.externalTransactionToken);
+}
+
+PlatformPurchaseHistoryRecord platformPurchaseHistoryRecordFromWrapper(
+    PurchaseHistoryRecordWrapper wrapper) {
+  return PlatformPurchaseHistoryRecord(
+    // For some reason quantity is not currently exposed in
+    // PurchaseHistoryRecordWrapper.
+    quantity: 99,
+    purchaseTime: wrapper.purchaseTime,
+    originalJson: wrapper.originalJson,
+    purchaseToken: wrapper.purchaseToken,
+    signature: wrapper.signature,
+    products: wrapper.products,
+    developerPayload: wrapper.developerPayload,
+  );
 }

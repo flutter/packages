@@ -172,7 +172,6 @@ class PurchaseWrapper {
 @immutable
 class PurchaseHistoryRecordWrapper {
   /// Creates a [PurchaseHistoryRecordWrapper] with the given record details.
-  @visibleForTesting
   const PurchaseHistoryRecordWrapper({
     required this.purchaseTime,
     required this.purchaseToken,

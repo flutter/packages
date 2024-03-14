@@ -123,7 +123,8 @@ public class TranslatorTest {
             new PurchaseHistoryRecord(PURCHASE_EXAMPLE_JSON, signature),
             new PurchaseHistoryRecord(purchase2Json, signature));
 
-    final List<Object> serialized = Translator.fromPurchaseHistoryRecordList(expected);
+    final List<Messages.PlatformPurchaseHistoryRecord> serialized =
+        Translator.fromPurchaseHistoryRecordList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -299,15 +300,15 @@ public class TranslatorTest {
         serialized.get("obfuscatedProfileId"));
   }
 
-  private void assertSerialized(PurchaseHistoryRecord expected, Object serializedGeneric) {
-    @SuppressWarnings("unchecked")
-    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
-    assertEquals(expected.getPurchaseTime(), serialized.get("purchaseTime"));
-    assertEquals(expected.getPurchaseToken(), serialized.get("purchaseToken"));
-    assertEquals(expected.getSignature(), serialized.get("signature"));
-    assertEquals(expected.getOriginalJson(), serialized.get("originalJson"));
-    assertEquals(expected.getProducts(), serialized.get("products"));
-    assertEquals(expected.getDeveloperPayload(), serialized.get("developerPayload"));
+  private void assertSerialized(
+      PurchaseHistoryRecord expected, Messages.PlatformPurchaseHistoryRecord serialized) {
+    assertEquals(expected.getPurchaseTime(), serialized.getPurchaseTime().longValue());
+    assertEquals(expected.getPurchaseToken(), serialized.getPurchaseToken());
+    assertEquals(expected.getSignature(), serialized.getSignature());
+    assertEquals(expected.getOriginalJson(), serialized.getOriginalJson());
+    assertEquals(expected.getProducts(), serialized.getProducts());
+    assertEquals(expected.getDeveloperPayload(), serialized.getDeveloperPayload());
+    assertEquals(expected.getQuantity(), serialized.getQuantity().intValue());
   }
 }
 

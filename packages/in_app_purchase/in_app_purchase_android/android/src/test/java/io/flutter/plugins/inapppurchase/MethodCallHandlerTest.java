@@ -7,7 +7,6 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -949,7 +948,9 @@ public class MethodCallHandlerTest {
     // Set up an established billing client and all our mocked responses
     establishConnectedBillingClient();
     BillingResult billingResult = buildBillingResult();
-    List<PurchaseHistoryRecord> purchasesList = singletonList(buildPurchaseHistoryRecord("foo"));
+    final String purchaseToken = "foo";
+    List<PurchaseHistoryRecord> purchasesList =
+        singletonList(buildPurchaseHistoryRecord(purchaseToken));
     ArgumentCaptor<PurchaseHistoryResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(PurchaseHistoryResponseListener.class);
 
@@ -965,8 +966,8 @@ public class MethodCallHandlerTest {
     verify(platformPurchaseHistoryResult).success(resultCaptor.capture());
     PlatformPurchaseHistoryResponse result = resultCaptor.getValue();
     assertResultsMatch(result.getBillingResult(), billingResult);
-    assertEquals(
-        fromPurchaseHistoryRecordList(purchasesList), result.getPurchaseHistoryRecordJsonList());
+    assertEquals(1, result.getPurchases().size());
+    assertEquals(purchaseToken, result.getPurchases().get(0).getPurchaseToken());
   }
 
   @Test
@@ -1178,6 +1179,12 @@ public class MethodCallHandlerTest {
   private PurchaseHistoryRecord buildPurchaseHistoryRecord(String purchaseToken) {
     PurchaseHistoryRecord purchase = mock(PurchaseHistoryRecord.class);
     when(purchase.getPurchaseToken()).thenReturn(purchaseToken);
+    when(purchase.getQuantity()).thenReturn(1);
+    when(purchase.getPurchaseTime()).thenReturn(0L);
+    when(purchase.getDeveloperPayload()).thenReturn("");
+    when(purchase.getOriginalJson()).thenReturn("");
+    when(purchase.getSignature()).thenReturn("");
+    when(purchase.getProducts()).thenReturn(Collections.emptyList());
     return purchase;
   }
 

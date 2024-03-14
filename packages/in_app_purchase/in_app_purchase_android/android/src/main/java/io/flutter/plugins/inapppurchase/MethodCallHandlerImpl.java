@@ -423,7 +423,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
             PlatformPurchaseHistoryResponse.Builder builder =
                 new PlatformPurchaseHistoryResponse.Builder()
                     .setBillingResult(fromBillingResult(billingResult))
-                    .setPurchaseHistoryRecordJsonList(fromPurchaseHistoryRecordList(purchasesList));
+                    .setPurchases(fromPurchaseHistoryRecordList(purchasesList));
             result.success(builder.build());
           });
     } catch (RuntimeException e) {

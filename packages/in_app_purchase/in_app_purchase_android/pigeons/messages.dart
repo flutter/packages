@@ -97,28 +97,45 @@ class PlatformBillingFlowParams {
   final String? purchaseToken;
 }
 
+/// Pigeon version of PurchaseHistoryRecord.
+///
+/// See also PurchaseHistoryRecordWrapper on the Dart side.
+class PlatformPurchaseHistoryRecord {
+  PlatformPurchaseHistoryRecord({
+    required this.quantity,
+    required this.purchaseTime,
+    required this.developerPayload,
+    required this.originalJson,
+    required this.purchaseToken,
+    required this.signature,
+    required this.products,
+  });
+
+  final int quantity;
+  final int purchaseTime;
+  final String? developerPayload;
+  final String originalJson;
+  final String purchaseToken;
+  final String signature;
+  // TODO(stuartmorgan): Make the type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats it as non-nullable.
+  final List<String?> products;
+}
+
 /// Pigeon version of PurchasesHistoryResult, which contains the components of
 /// the Java PurchaseHistoryResponseListener callback.
 class PlatformPurchaseHistoryResponse {
   PlatformPurchaseHistoryResponse({
     required this.billingResult,
-    required this.purchaseHistoryRecordJsonList,
+    required this.purchases,
   });
 
   final PlatformBillingResult billingResult;
-
-  /// A JSON-compatible list of purchase history records, where each entry in
-  /// the list is a Map<String, Object?> JSON encoding of the record.
-  // TODO(stuartmorgan): Finish converting to Pigeon. This is still using the
-  // old serialization system to allow conversion of all the method calls to
-  // Pigeon without converting the entire object graph all at once. See
-  // https://github.com/flutter/flutter/issues/117910. The list items are
-  // currently untyped due to https://github.com/flutter/flutter/issues/116117.
-  //
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // TODO(stuartmorgan): Make the type non-nullable once supported.
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats it as non-nullable.
-  final List<Object?> purchaseHistoryRecordJsonList;
+  final List<PlatformPurchaseHistoryRecord?> purchases;
 }
 
 /// Pigeon version of PurchasesResultWrapper, which contains the components of

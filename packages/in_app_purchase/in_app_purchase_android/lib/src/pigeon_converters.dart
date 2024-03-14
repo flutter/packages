@@ -44,11 +44,25 @@ PurchasesHistoryResult purchaseHistoryResultFromPlatform(
     PlatformPurchaseHistoryResponse response) {
   return PurchasesHistoryResult(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    // See TODOs in messages.dart for why this is currently JSON.
-    purchaseHistoryRecordList: response.purchaseHistoryRecordJsonList
-        .map((Object? json) => PurchaseHistoryRecordWrapper.fromJson(
-            (json! as Map<Object?, Object?>).cast<String, Object?>()))
+    purchaseHistoryRecordList: response.purchases
+        // See comment in messages.dart for why casting away nullability is safe.
+        .cast<PlatformPurchaseHistoryRecord>()
+        .map(purchaseHistoryRecordWrapperFromPlatform)
         .toList(),
+  );
+}
+
+/// Creates a [PurchaseHistoryRecordWrapper] from the Pigeon equivalent.
+PurchaseHistoryRecordWrapper purchaseHistoryRecordWrapperFromPlatform(
+    PlatformPurchaseHistoryRecord record) {
+  return PurchaseHistoryRecordWrapper(
+    purchaseTime: record.purchaseTime,
+    purchaseToken: record.purchaseToken,
+    signature: record.signature,
+    // See comment in messages.dart for why casting away nullability is safe.
+    products: record.products.cast<String>(),
+    originalJson: record.originalJson,
+    developerPayload: record.developerPayload,
   );
 }
 

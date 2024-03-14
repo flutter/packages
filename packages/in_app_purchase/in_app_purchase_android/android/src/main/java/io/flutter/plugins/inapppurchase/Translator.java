@@ -198,18 +198,17 @@ import java.util.Locale;
     return info;
   }
 
-  static HashMap<String, Object> fromPurchaseHistoryRecord(
+  static Messages.PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
       PurchaseHistoryRecord purchaseHistoryRecord) {
-    HashMap<String, Object> info = new HashMap<>();
-    List<String> products = purchaseHistoryRecord.getProducts();
-    info.put("purchaseTime", purchaseHistoryRecord.getPurchaseTime());
-    info.put("purchaseToken", purchaseHistoryRecord.getPurchaseToken());
-    info.put("signature", purchaseHistoryRecord.getSignature());
-    info.put("products", products);
-    info.put("developerPayload", purchaseHistoryRecord.getDeveloperPayload());
-    info.put("originalJson", purchaseHistoryRecord.getOriginalJson());
-    info.put("quantity", purchaseHistoryRecord.getQuantity());
-    return info;
+    return new Messages.PlatformPurchaseHistoryRecord.Builder()
+        .setPurchaseTime(purchaseHistoryRecord.getPurchaseTime())
+        .setPurchaseToken(purchaseHistoryRecord.getPurchaseToken())
+        .setSignature(purchaseHistoryRecord.getSignature())
+        .setProducts(purchaseHistoryRecord.getProducts())
+        .setDeveloperPayload(purchaseHistoryRecord.getDeveloperPayload())
+        .setOriginalJson(purchaseHistoryRecord.getOriginalJson())
+        .setQuantity((long) purchaseHistoryRecord.getQuantity())
+        .build();
   }
 
   static List<Object> fromPurchasesList(@Nullable List<Purchase> purchases) {
@@ -226,7 +225,7 @@ import java.util.Locale;
     return serialized;
   }
 
-  static List<Object> fromPurchaseHistoryRecordList(
+  static List<Messages.PlatformPurchaseHistoryRecord> fromPurchaseHistoryRecordList(
       @Nullable List<PurchaseHistoryRecord> purchaseHistoryRecords) {
     if (purchaseHistoryRecords == null) {
       return Collections.emptyList();
@@ -234,7 +233,7 @@ import java.util.Locale;
 
     // This and the method are generically typed due to Pigeon limitations; see
     // https://github.com/flutter/flutter/issues/116117.
-    List<Object> serialized = new ArrayList<>();
+    List<Messages.PlatformPurchaseHistoryRecord> serialized = new ArrayList<>();
     for (PurchaseHistoryRecord purchaseHistoryRecord : purchaseHistoryRecords) {
       serialized.add(fromPurchaseHistoryRecord(purchaseHistoryRecord));
     }
