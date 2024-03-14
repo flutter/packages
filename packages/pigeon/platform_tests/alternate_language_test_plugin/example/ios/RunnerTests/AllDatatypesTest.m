@@ -17,14 +17,14 @@
 @implementation AllDatatypesTest
 
 - (void)testAllNull {
-  AllNullableTypes *everything = [[AllNullableTypes alloc] init];
+  FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FlutterIntegrationCoreApiGetCodec()];
-  FlutterIntegrationCoreApi *api =
-      [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTFlutterIntegrationCoreApiGetCodec()];
+  FLTFlutterIntegrationCoreApi *api =
+      [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllNullableTypes:everything
-                 completion:^(AllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
+                 completion:^(FLTAllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
                    XCTAssertNil(result.aNullableBool);
                    XCTAssertNil(result.aNullableInt);
                    XCTAssertNil(result.aNullableDouble);
@@ -41,7 +41,7 @@
 }
 
 - (void)testAllEquals {
-  AllNullableTypes *everything = [[AllNullableTypes alloc] init];
+  FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
   everything.aNullableBool = @NO;
   everything.aNullableInt = @(1);
   everything.aNullableDouble = @(2.0);
@@ -58,12 +58,12 @@
   everything.aNullableMap = @{@"hello" : @(1234)};
   everything.nullableMapWithObject = @{@"hello" : @(1234), @"goodbye" : @"world"};
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FlutterIntegrationCoreApiGetCodec()];
-  FlutterIntegrationCoreApi *api =
-      [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTFlutterIntegrationCoreApiGetCodec()];
+  FLTFlutterIntegrationCoreApi *api =
+      [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllNullableTypes:everything
-                 completion:^(AllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
+                 completion:^(FLTAllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
                    XCTAssertEqual(result.aNullableBool, everything.aNullableBool);
                    XCTAssertEqual(result.aNullableInt, everything.aNullableInt);
                    XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble);
