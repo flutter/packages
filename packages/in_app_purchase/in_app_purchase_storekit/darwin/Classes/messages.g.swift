@@ -523,7 +523,7 @@ protocol InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
   func canMakePayments() throws -> Bool
   func transactions() throws -> [SKPaymentTransactionMessage]
-  func storefront() throws -> SKStorefrontMessage
+  func storefront() throws -> SKStorefrontMessage?
   func addPayment(paymentMap: [String: Any?]) throws
   func startProductRequest(productIdentifiers: [String], completion: @escaping (Result<SKProductsResponseMessage, Error>) -> Void)
   func finishTransaction(finishMap: [String: String?]) throws

@@ -231,7 +231,7 @@ abstract class InAppPurchaseAPI {
 
   List<SKPaymentTransactionMessage> transactions();
 
-  SKStorefrontMessage storefront();
+  SKStorefrontMessage? storefront();
 
   void addPayment(Map<String, Object?> paymentMap);
 

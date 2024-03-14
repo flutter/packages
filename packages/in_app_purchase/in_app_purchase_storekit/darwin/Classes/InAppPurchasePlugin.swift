@@ -9,7 +9,11 @@ import Foundation
 import Flutter
 import StoreKit
 
+extension FlutterError: Error {}
+
+
 class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
+
   // Properties
   private(set) var productsCache: NSMutableDictionary = [:]
   private(set) var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -26,7 +30,7 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     let instance = InAppPurchasePlugin(registrar: registrar)
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
-    SetUpInAppPurchaseAPI(registrar.messenger(), instance)
+    InAppPurchaseAPISetup.setUp(binaryMessenger: registrar.messenger(), api: instance);
   }
 
   init(receiptManager: FIAPReceiptManager) {
@@ -88,65 +92,68 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
   }
 
-  func canMakePaymentsWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> NSNumber? {
-    return SKPaymentQueue.canMakePayments() as NSNumber;
+  func canMakePayments() throws -> Bool {
+    return SKPaymentQueue.canMakePayments() as Bool;
   }
 
-  func transactionsWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> [SKPaymentTransactionMessage]? {
+  func transactions() throws -> [SKPaymentTransactionMessage] {
     let transactions = self.paymentQueueHandler?.getUnfinishedTransactions() ?? [];
     var transactionMaps: [SKPaymentTransactionMessage] = []
     for transaction in transactions {
       if let map = FIAObjectTranslator.convertTransaction(toPigeon: transaction) {
-            transactionMaps.append(map)
+        transactionMaps.append(map as! SKPaymentTransactionMessage)
         }
     }
     return transactionMaps
   }
 
-  func storefrontWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> SKStorefrontMessage? {
+  func storefront() throws -> SKStorefrontMessage? {
     if #available(iOS 13.0, *) {
       let storefront = self.paymentQueueHandler?.storefront
-      if ((storefront == nil)) {
+      if (storefront == nil) {
         return nil;
       }
-      return FIAObjectTranslator.convertStorefront(toPigeon: storefront);
+      return FIAObjectTranslator.convertStorefront(toPigeon: storefront) as? SKStorefrontMessage;
     }
   }
 
-  func addPaymentPaymentMap(_ paymentMap: [String : Any], error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
-    let productID = paymentMap["productIdentifier"];
-    let product = self.getProduct(productID: <#T##NSString#>)
+  func addPayment(paymentMap: [String : Any?]) throws {
+    let productID = paymentMap["productIdentifier"] as? NSString;
+    let product = self.getProduct(productID: productID!);
     if (product == nil) {
-//      error = FlutterError(code: "storekit_invalid_payment_object", message: <#T##String?#>, details: <#T##Any?#>)
+      throw FlutterError(code: "storekit_invalid_payment_object", message: "You have requested a payment for an invalid product. Either the `productIdentifier` of the payment is not valid or the product has not been fetched before adding the payment to the payment queue.", details: paymentMap)
+      return;
+    }
+    let payment = SKMutablePayment(product: product!);
+    payment.applicationUsername = paymentMap["applicationUsername"] as? String;
+    let quantity = paymentMap["quantity"] as? Int ?? 1;
+    payment.quantity = quantity;
+
+    if let simulatesAskToBuyInSandbox = paymentMap["simulatesAskToBuyInSandbox"] as? Bool {
+        payment.simulatesAskToBuyInSandbox = simulatesAskToBuyInSandbox
+    } else {
+        payment.simulatesAskToBuyInSandbox = false
+    }
+
+    if #available(iOS 12.2, *) {
+      var paymentDiscountMap = self.getNonNullValue(from: paymentMap as [String : Any], forKey: "paymentDiscount");
+      var errorMsg : AutoreleasingUnsafeMutablePointer<NSString?>? = nil;
+      var paymentDiscount = FIAObjectTranslator.getSKPaymentDiscount(fromMap: paymentDiscountMap as! [AnyHashable : Any], withError: errorMsg);
+      if (errorMsg != nil) {
+        throw FlutterError(code: "storekit_invalid_payment_discount_object", message: "You have requested a payment and specified a payment discount with invalid properties.", details: paymentMap
+        )
+        return;
+      }
+      payment.paymentDiscount = paymentDiscount;
+
+      if (!(self.paymentQueueHandler?.add(payment))!) {
+           throw FlutterError(code: "storekit_duplicate_product_object",
+                                message: "There is a pending transaction for the same product identifier. Please either wait for it to be finished or finish it manually using `completePurchase` to avoid edge cases.",
+                                details: paymentMap)
+       }
     }
   }
-//
-//  - (void)addPaymentPaymentMap:(nonnull NSDictionary *)paymentMap
-//                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-//    NSString *productID = [paymentMap objectForKey:@"productIdentifier"];
-//    // When a product is already fetched, we create a payment object with
-//    // the product to process the payment.
-//    SKProduct *product = [self getProduct:productID];
-//    if (!product) {
-//      *error = [FlutterError
-//          errorWithCode:@"storekit_invalid_payment_object"
-//                message:
-//                    @"You have requested a payment for an invalid product. Either the "
-//                    @"`productIdentifier` of the payment is not valid or the product has not been "
-//                    @"fetched before adding the payment to the payment queue."
-//                details:paymentMap];
-//      return;
-//    }
-//
-//    SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
-//    payment.applicationUsername = [paymentMap objectForKey:@"applicationUsername"];
-//    NSNumber *quantity = [paymentMap objectForKey:@"quantity"];
-//    payment.quantity = (quantity != nil) ? quantity.integerValue : 1;
-//    NSNumber *simulatesAskToBuyInSandbox = [paymentMap objectForKey:@"simulatesAskToBuyInSandbox"];
-//    payment.simulatesAskToBuyInSandbox = (id)simulatesAskToBuyInSandbox == (id)[NSNull null]
-//                                             ? NO
-//                                             : [simulatesAskToBuyInSandbox boolValue];
-//
+
 //    if (@available(iOS 12.2, *)) {
 //      NSDictionary *paymentDiscountMap = [self getNonNullValueFromDictionary:paymentMap
 //                                                                      forKey:@"paymentDiscount"];
@@ -178,52 +185,58 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 //    }
 //  }
 
-  func startProductRequestProductIdentifiers(_ productIdentifiers: [String]) async -> (SKProductsResponseMessage?, FlutterError?) {
+  func startProductRequest(productIdentifiers: [String], completion: @escaping (Result<SKProductsResponseMessage, Error>) -> Void) {
     <#code#>
   }
 
-  func finishTransactionFinishMap(_ finishMap: [String : String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func finishTransaction(finishMap: [String : String?]) throws {
     <#code#>
   }
 
-  func restoreTransactionsApplicationUserName(_ applicationUserName: String?, error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func restoreTransactions(applicationUserName: String?) throws {
     <#code#>
   }
 
-  func presentCodeRedemptionSheetWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func presentCodeRedemptionSheet() throws {
     <#code#>
   }
 
-  func retrieveReceiptDataWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> String? {
+  func retrieveReceiptData() throws -> String? {
     <#code#>
   }
 
-  func refreshReceiptReceiptProperties(_ receiptProperties: [String : Any]?, completion: @escaping (FlutterError?) -> Void) {
+  func refreshReceipt(receiptProperties: [String : Any?]?, completion: @escaping (Result<Void, Error>) -> Void) {
     <#code#>
   }
 
-  func startObservingPaymentQueueWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func startObservingPaymentQueue() throws {
     <#code#>
   }
 
-  func stopObservingPaymentQueueWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func stopObservingPaymentQueue() throws {
     <#code#>
   }
 
-  func registerPaymentQueueDelegateWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func registerPaymentQueueDelegate() throws {
     <#code#>
   }
 
-  func removePaymentQueueDelegateWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func removePaymentQueueDelegate() throws {
     <#code#>
   }
 
-  func showPriceConsentIfNeededWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func showPriceConsentIfNeeded() throws {
     <#code#>
   }
+
 
   func getProduct (productID : NSString) -> SKProduct? {
     return self.productsCache[productID] as? SKProduct;
+  }
+
+  func getNonNullValue(from dictionary: [String: Any], forKey key: String) -> Any? {
+      let value = dictionary[key]
+      return value is NSNull ? nil : value
   }
 
 }
