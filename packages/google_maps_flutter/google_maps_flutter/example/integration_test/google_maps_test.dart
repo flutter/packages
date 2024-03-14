@@ -6,6 +6,7 @@ import 'package:integration_test/integration_test.dart';
 
 import 'src/maps_controller.dart' as maps_controller;
 import 'src/maps_inspector.dart' as maps_inspector;
+import 'src/shared.dart';
 import 'src/tiles_inspector.dart' as tiles_inspector;
 
 /// Recombine all test files in `src` into a single test app.
@@ -15,7 +16,9 @@ import 'src/tiles_inspector.dart' as tiles_inspector;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  maps_controller.runTests();
-  maps_inspector.runTests();
-  tiles_inspector.runTests();
+  if (!isWeb) {
+    maps_controller.runTests();
+    maps_inspector.runTests();
+    tiles_inspector.runTests();
+  }
 }

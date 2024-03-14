@@ -139,9 +139,7 @@ void runTests() {
     expect(secondVisibleRegion.contains(newCenter), isTrue);
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isIOS || isWeb);
+      skip: isIOS);
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -163,10 +161,7 @@ void runTests() {
     const String mapStyle =
         '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
     await controller.setMapStyle(mapStyle);
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+  });
 
   testWidgets('testSetMapStyle invalid Json String',
       (WidgetTester tester) async {
@@ -192,10 +187,7 @@ void runTests() {
     } on MapStyleException catch (e) {
       expect(e.cause, isNotNull);
     }
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+  });
 
   testWidgets('testSetMapStyle null string', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -215,10 +207,7 @@ void runTests() {
     final GoogleMapController controller = await controllerCompleter.future;
 
     await controller.setMapStyle(null);
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+  });
 
   testWidgets('testGetLatLng', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -252,10 +241,7 @@ void runTests() {
     );
 
     expect(topLeft, northWest);
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+  });
 
   testWidgets('testGetZoomLevel', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -289,9 +275,7 @@ void runTests() {
     expect(zoom, equals(7));
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isIOS || isWeb);
+      skip: isIOS);
 
   testWidgets('testScreenCoordinate', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -326,9 +310,7 @@ void runTests() {
     expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isIOS || isWeb);
+      skip: isIOS);
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
     final Completer<GoogleMapController> controllerCompleter =
@@ -369,10 +351,7 @@ void runTests() {
     final LatLngBounds bounds1 = await controller.getVisibleRegion();
     final LatLngBounds bounds2 = await controller.getVisibleRegion();
     expect(bounds1, bounds2);
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+  });
 
   testWidgets('testToggleInfoWindow', (WidgetTester tester) async {
     const Marker marker = Marker(
@@ -420,10 +399,7 @@ void runTests() {
     await controller.hideMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+  });
 
   testWidgets('testTakeSnapshot', (WidgetTester tester) async {
     final Completer<GoogleMapController> controllerCompleter =
@@ -449,29 +425,29 @@ void runTests() {
       // https://github.com/flutter/flutter/issues/139825
       skip: isAndroid || isWeb || isIOS);
 
-  testWidgets('testCloudMapId', (WidgetTester tester) async {
-    final Completer<int> mapIdCompleter = Completer<int>();
-    final Key key = GlobalKey();
+  testWidgets(
+    'testCloudMapId',
+    (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
 
-    await pumpMap(
-      tester,
-      GoogleMap(
-        key: key,
-        initialCameraPosition: kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) {
-          mapIdCompleter.complete(controller.mapId);
-        },
-        cloudMapId: kCloudMapId,
-      ),
-    );
-    await tester.pumpAndSettle();
+      await pumpMap(
+        tester,
+        GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            mapIdCompleter.complete(controller.mapId);
+          },
+          cloudMapId: kCloudMapId,
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // Await mapIdCompleter to finish to make sure map can be created with cloudMapId
-    await mapIdCompleter.future;
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+      // Await mapIdCompleter to finish to make sure map can be created with cloudMapId
+      await mapIdCompleter.future;
+    },
+  );
 
   testWidgets('getStyleError reports last error', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -493,10 +469,7 @@ void runTests() {
     final GoogleMapController controller = await controllerCompleter.future;
     final String? error = await controller.getStyleError();
     expect(error, isNotNull);
-  },
-      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
-      // See https://github.com/flutter/flutter/issues/145149
-      skip: isWeb);
+  });
 }
 
 /// Repeatedly checks an asynchronous value against a test condition.
