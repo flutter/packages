@@ -153,7 +153,7 @@ class PlatformUserChoiceDetails {
     required this.productsJsonList,
   });
 
-  final String originalExternalTransactionId;
+  final String? originalExternalTransactionId;
   final String externalTransactionToken;
 
   /// A JSON-compatible list of products, where each entry in the list is a

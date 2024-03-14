@@ -894,16 +894,13 @@ public class Messages {
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformUserChoiceDetails {
-    private @NonNull String originalExternalTransactionId;
+    private @Nullable String originalExternalTransactionId;
 
-    public @NonNull String getOriginalExternalTransactionId() {
+    public @Nullable String getOriginalExternalTransactionId() {
       return originalExternalTransactionId;
     }
 
-    public void setOriginalExternalTransactionId(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"originalExternalTransactionId\" is null.");
-      }
+    public void setOriginalExternalTransactionId(@Nullable String setterArg) {
       this.originalExternalTransactionId = setterArg;
     }
 
@@ -945,7 +942,7 @@ public class Messages {
       private @Nullable String originalExternalTransactionId;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setOriginalExternalTransactionId(@NonNull String setterArg) {
+      public @NonNull Builder setOriginalExternalTransactionId(@Nullable String setterArg) {
         this.originalExternalTransactionId = setterArg;
         return this;
       }

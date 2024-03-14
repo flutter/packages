@@ -307,12 +307,12 @@ class PlatformPurchasesResponse {
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
 class PlatformUserChoiceDetails {
   PlatformUserChoiceDetails({
-    required this.originalExternalTransactionId,
+    this.originalExternalTransactionId,
     required this.externalTransactionToken,
     required this.productsJsonList,
   });
 
-  String originalExternalTransactionId;
+  String? originalExternalTransactionId;
 
   String externalTransactionToken;
 
@@ -331,7 +331,7 @@ class PlatformUserChoiceDetails {
   static PlatformUserChoiceDetails decode(Object result) {
     result as List<Object?>;
     return PlatformUserChoiceDetails(
-      originalExternalTransactionId: result[0]! as String,
+      originalExternalTransactionId: result[0] as String?,
       externalTransactionToken: result[1]! as String,
       productsJsonList: (result[2] as List<Object?>?)!.cast<Object?>(),
     );

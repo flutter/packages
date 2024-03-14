@@ -114,7 +114,7 @@ PlatformProductType platformProductTypeFromWrapper(ProductType type) {
 UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
     PlatformUserChoiceDetails details) {
   return UserChoiceDetailsWrapper(
-    originalExternalTransactionId: details.originalExternalTransactionId,
+    originalExternalTransactionId: details.originalExternalTransactionId ?? '',
     externalTransactionToken: details.externalTransactionToken,
     // See TODOs in messages.dart for why this is currently JSON.
     products: details.productsJsonList
