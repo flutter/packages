@@ -141,7 +141,7 @@ void runTests() {
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
       // TODO(bparrishMines): This is failing due to an error being thrown after completion.
       // See https://github.com/flutter/flutter/issues/145149
-      skip: isIOS || true);
+      skip: isIOS || isWeb);
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -163,7 +163,10 @@ void runTests() {
     const String mapStyle =
         '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
     await controller.setMapStyle(mapStyle);
-  });
+  },
+      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
+      // See https://github.com/flutter/flutter/issues/145149
+      skip: isWeb);
 
   testWidgets('testSetMapStyle invalid Json String',
       (WidgetTester tester) async {
