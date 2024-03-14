@@ -192,7 +192,10 @@ void runTests() {
     } on MapStyleException catch (e) {
       expect(e.cause, isNotNull);
     }
-  });
+  },
+      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
+      // See https://github.com/flutter/flutter/issues/145149
+      skip: isWeb);
 
   testWidgets('testSetMapStyle null string', (WidgetTester tester) async {
     final Key key = GlobalKey();
