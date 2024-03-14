@@ -1,5 +1,6 @@
-## NEXT
+## 0.8.9+4
 
+* Minimizes scope of deprecation warning suppression to only the versions where it is required.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates compileSdk version to 34.
 
