@@ -96,6 +96,7 @@ packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
 packages/url_launcher/url_launcher_ios/**                @jmagman
 packages/video_player/video_player_avfoundation/**       @hellohuanlin
 packages/webview_flutter/webview_flutter_wkwebview/**    @hellohuanlin
+packages/pigeon/**/ios/**/*                              @hellohuanlin
 
 # - Linux
 packages/file_selector/file_selector_linux/**            @cbracken
