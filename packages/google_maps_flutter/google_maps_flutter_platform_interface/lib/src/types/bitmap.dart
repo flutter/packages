@@ -12,7 +12,7 @@ import 'package:flutter/material.dart'
         AssetImage,
         ImageConfiguration,
         Size,
-        WidgetsBinding;
+        createLocalImageConfiguration;
 import 'package:flutter/services.dart' show AssetBundle;
 
 /// Type of bitmap scaling to use on BitmapDescriptor creation.
@@ -27,6 +27,9 @@ enum BitmapScaling {
   /// with a large numbers of markers.
   noScaling,
 }
+
+// The default pixel ratio for custom bitmaps.
+const double _naturalPixelRatio = 1.0;
 
 /// Defines a bitmap image. For a marker, this class can be used to set the
 /// image of the marker icon. For a ground overlay, it can be used to set the
@@ -226,85 +229,119 @@ class BitmapDescriptor {
 
 /// Represents a [BitmapDescriptor] that is created from an asset image.
 ///
-/// This class extends [BitmapDescriptor] to support asset images, considering
-/// device pixel ratio and image scaling. It's particularly useful for
-/// displaying resolution-aware images on maps or similar widgets.
+/// This class extends [BitmapDescriptor] to support loading images from assets
+/// and mipmaps.
 ///
-/// The following example demonstrates how to create an [AssetMapBitmap] from
-/// an asset image:
-///
-/// ```dart
-/// Size imageSize = Size(64, 64); // Desired size in logical pixels.
-/// ImageConfiguration config = ImageConfiguration(size: imageSize);
-/// AssetMapBitmap assetMapBitmap = AssetMapBitmap(
-///  config,
-///  'assets/images/map_icon.png',
-///  imagePixelRatio: 1.0,
-/// );
-/// ```
+/// {@template bitmap_scaling_note}
+/// By default, [bitmapScaling] is set to [BitmapScaling.auto], which
+/// automatically scales the bitmap using the [imagePixelRatio] and [size]
+/// parameters to match the devices pixel ratio, to keep the marker sizes
+/// consistent between platforms and devices. This behaviour upscales and
+/// downscales the image to match the devices pixel ratio. To disable automatic
+/// scaling, set the [bitmapScaling] parameter to [BitmapScaling.noScaling].
+/// {@endtemplate}
 ///
 /// To create an instance of [AssetMapBitmap] from mipmapped assets, use the
-/// asynchronous [fromMipmaps] method. Following example demonstrates how to
-/// create an[AssetMapBitmap] using mipmapping:
+/// asynchronous [AssetMapBitmap.fromMipmaps] method.
+///
+/// {@template asset_map_bitmap_from_mipmaps}
+/// Asset mipmap is resolved using the devices pixel ratio from the
+/// [ImageConfiguration.devicePixelRatio] parameter. To initialize the
+/// [ImageConfiguration] with the devices pixel ratio, use the
+/// [createLocalImageConfiguration] method.
+///
+/// Following example demonstrates how to create an [AssetMapBitmap]
+/// using mipmapping:
 ///
 /// ```dart
-/// AssetMapBitmap assetMapBitmap = await AssetMapBitmap.fromMipmaps(
-///   ImageConfiguration.empty,
+/// Future<void> _getAssetMapBitmap(BuildContext context) async {
+///   final ImageConfiguration imageConfiguration = createLocalImageConfiguration(
+///     context,
+//    );
+///   AssetMapBitmap assetMapBitmap = await AssetMapBitmap.fromMipmaps(
+///     imageConfiguration,
+///     'assets/images/map_icon.png',
+///   );
+///   return assetMapBitmap;
+/// }
+/// ```
+///
+/// To give specific size in logical pixels to the mipmapped image, provide size
+/// in the [ImageConfiguration.size] parameter.
+///
+/// ```dart
+/// Future<void> _getAssetMapBitmap(BuildContext context) async {
+///   final ImageConfiguration imageConfiguration = createLocalImageConfiguration(
+///     context,
+///     size: Size(64, 64), // Desired size in logical pixels.
+//    );
+///   AssetMapBitmap assetMapBitmap = await AssetMapBitmap.fromMipmaps(
+///     imageConfiguration,
+///     'assets/images/map_icon.png',
+///   );
+///   return assetMapBitmap;
+/// }
+/// ```
+/// {@endtemplate}
+///
+/// {@template asset_map_bitmap_constructor}
+/// The following example demonstrates how to create an [AssetMapBitmap] from
+/// an asset image without automatic mipmap resolving:
+///
+/// ```dart
+/// AssetMapBitmap assetMapBitmap = AssetMapBitmap(
 ///   'assets/images/map_icon.png',
 /// );
 /// ```
+///
+/// To render the bitmap as sharply as possible, set the [imagePixelRatio] to
+/// the device's pixel ratio. This renders the asset at a pixel-to-pixel ratio
+/// on the screen, but may result in different logical marker sizes across
+/// devices with varying pixel densities.
+///
+///```dart
+/// AssetMapBitmap assetMapBitmap = AssetMapBitmap(
+///   'assets/images/map_icon.png',
+///   imagePixelRatio: MediaQuery.maybeDevicePixelRatioOf(context),
+/// );
+/// ```
+/// {@endtemplate}
+///
+/// {@template size_parameter_note}
+/// Note: Bitmap scaling with size parameter does not maintain the aspect ratio.
+/// If a proportional resize is required, ensure to provide a
+/// [ImageConfiguration.size] with the correct aspect ratio.
+/// {@endtemplate}
 class AssetMapBitmap extends BitmapDescriptor {
   /// Creates a [AssetMapBitmap] from an asset image.
   ///
-  /// [configuration.size] is used to resize the asset image to a
-  /// specific size in logical pixels. If [ImageConfiguration.size] is null,
-  /// the image is rendered at its native resolution.
+  /// To create an instance of [AssetMapBitmap] from mipmapped assets, use the
+  /// asynchronous [AssetMapBitmap.fromMipmaps] method.
   ///
-  /// [configuration.devicePixelRatio] is used to specify the pixel
-  /// density of the asset. If [ImageConfiguration.devicePixelRatio] is null,
-  /// the current device pixel ratio is used. [imagePixelRatio] can be given to
-  /// override the value.
+  /// The [imagePixelRatio] parameter allows to give correct pixel ratio of the
+  /// asset image. If the [imagePixelRatio] is not provided, value is defaulted
+  /// to the natural resolution of 1.0. To render the asset as sharp as possible,
+  /// set the [imagePixelRatio] to the devices pixel ratio.
   ///
-  /// Optional [bitmapScaling] scaling parameter determines how the image is
-  /// scaled. Defaults to [BitmapScaling.auto], which automatically scales the
-  /// image using the [imagePixelRatio] and [size] parameters. Set to
-  /// [BitmapScaling.noScaling] to render the image without scaling and ignore
-  /// size and pixel ratio of the image.
+  /// {@macro bitmap_scaling_note}
   ///
-  /// The following example demonstrates how to create an [AssetMapBitmap] from
-  /// an asset image:
+  /// {@macro asset_map_bitmap_constructor}
   ///
-  /// ```dart
-  /// Size imageSize = Size(64, 64); // Desired size in logical pixels.
-  /// ImageConfiguration config = ImageConfiguration(size: imageSize);
-  /// AssetMapBitmap assetMapBitmap = AssetMapBitmap(
-  ///  config,
-  ///  'assets/images/map_icon.png',
-  /// );
-  /// ```
-  ///
-  /// Note: Image scaling with [ImageConfiguration.size] parameter does not
-  /// maintain the aspect ratio. If a proportional resize is required, ensure to
-  /// provide a [ImageConfiguration.size] with the correct aspect ratio.
+  /// {@macro size_parameter_note}
   AssetMapBitmap(
-    ImageConfiguration configuration,
     String assetName, {
     BitmapScaling bitmapScaling = BitmapScaling.auto,
     double? imagePixelRatio,
+    Size? size,
   }) : this._(
-          configuration: configuration,
           assetName: assetName,
           bitmapScaling: bitmapScaling,
-          imagePixelRatio: imagePixelRatio ??
-              configuration.devicePixelRatio ??
-              WidgetsBinding
-                  .instance.platformDispatcher.views.first.devicePixelRatio,
-          size: configuration.size,
+          imagePixelRatio: imagePixelRatio ?? _naturalPixelRatio,
+          size: size,
         );
 
   /// Internal constructor for creating a [AssetMapBitmap].
   AssetMapBitmap._({
-    required this.configuration,
     required this.assetName,
     required this.bitmapScaling,
     required this.imagePixelRatio,
@@ -323,17 +360,14 @@ class AssetMapBitmap extends BitmapDescriptor {
   /// The name of the asset.
   final String assetName;
 
-  /// The scaling of the bitmap.
+  /// The scaling method of the bitmap.
   final BitmapScaling bitmapScaling;
 
-  /// The pixel ratio of the image.
+  /// The pixel ratio of the bitmap.
   final double imagePixelRatio;
 
-  /// The size of the image.
+  /// The target size of the bitmap in logical pixels.
   final Size? size;
-
-  /// The [ImageConfiguration] used to load the asset.
-  final ImageConfiguration configuration;
 
   /// Creates a [AssetMapBitmap] from an asset image with mipmapping.
   ///
@@ -343,28 +377,16 @@ class AssetMapBitmap extends BitmapDescriptor {
   /// To render asset with specific size in *logical pixels*, the size can be
   /// provided in the [configuration.size] parameter.
   ///
-  /// [configuration.devicePixelRatio] is ignored when mipmapping is enabled.
-  ///
-  /// Optional [bitmapScaling] scaling parameter determines how the image is
-  /// scaled. Defaults to [BitmapScaling.auto], which automatically scales the
-  /// image using the [imagePixelRatio] and [size] parameters. Set to
-  /// [BitmapScaling.noScaling] to render the image without scaling.
+  /// [configuration.devicePixelRatio] is used to find matching asset mipmap.
+  /// [imagePixelRatio] is initialized with the mipmapped asset's pixel ratio.
   ///
   /// Returns a Future that completes with an [AssetMapBitmap] instance.
   ///
-  /// The following example demonstrates how to create an [AssetMapBitmap] using
-  /// mipmapping:
+  /// {@macro bitmap_scaling_note}
   ///
-  /// ```dart
-  /// AssetMapBitmap assetMapBitmap = await AssetMapBitmap.fromMipmaps(
-  ///   ImageConfiguration.empty,
-  ///   'assets/images/map_icon.png',
-  /// );
-  /// ```
+  /// {@macro asset_map_bitmap_from_mipmaps}
   ///
-  /// Note: Image scaling with [ImageConfiguration.size] parameter does not
-  /// maintain the aspect ratio. If a proportional resize is required, ensure to
-  /// provide a [ImageConfiguration.size] with the correct aspect ratio.
+  /// {@macro size_parameter_note}
   static Future<AssetMapBitmap> fromMipmaps(
     ImageConfiguration configuration,
     String assetName, {
@@ -379,7 +401,6 @@ class AssetMapBitmap extends BitmapDescriptor {
         await assetImage.obtainKey(configuration);
 
     return AssetMapBitmap._(
-      configuration: configuration,
       assetName: assetBundleImageKey.name,
       imagePixelRatio: assetBundleImageKey.scale,
       bitmapScaling: bitmapScaling,
@@ -402,37 +423,62 @@ class AssetMapBitmap extends BitmapDescriptor {
 }
 
 /// Represents a [BitmapDescriptor] that is created from an array of bytes that
-/// must be encoded as PNG.
+/// must be encoded as `PNG` in [Uint8List].
 ///
-/// This class extends [BitmapDescriptor] to support images encoded in byte
-/// arrays, particularly useful for displaying dynamic or generated images on
-/// maps or similar widgets.
+/// {@template bytes_map_bitmap_constructor}
+/// The following example demonstrates how to create an [BytesMapBitmap] from
+/// a list of bytes in [Uint8List] format:
 ///
 /// ```dart
 /// Uint8List byteData = await _loadImageData('path/to/image.png');
-/// Size imageSize = Size(64, 64); // Desired size in logical pixels.
 /// double imagePixelRatio = 2.0; // Pixel density of the image.
-///
 /// BytesMapBitmap bytesMapBitmap = BytesMapBitmap(
 ///   byteData,
-///   size: imageSize,
 ///   imagePixelRatio: imagePixelRatio,
 /// );
 /// ```
 ///
-/// Note: If the [size] parameter is provided, the aspect ratio of the image
-/// will not be automatically maintained. To preserve the image's proper
-/// aspect ratio, ensure that the [size] parameter is given in
-/// correct aspect ratio.
+/// To render the bitmap in desired size in *logical pixels*, give the size
+/// in the [size] parameter:
+///
+/// ```dart
+/// Uint8List byteData = await _loadImageData('path/to/image.png');
+/// Size imageSize = Size(64, 64); // Desired size in logical pixels.
+/// BytesMapBitmap bytesMapBitmap = BytesMapBitmap(
+///   byteData,
+///   size: imageSize,
+/// );
+/// ```
+///
+/// To render the bitmap as sharply as possible, set the [imagePixelRatio] to
+/// the device's pixel ratio. This renders the asset at a pixel-to-pixel ratio
+/// on the screen, but may result in different logical marker sizes across
+/// devices with varying pixel densities.
+///
+///```dart
+/// Uint8List byteData = await _loadImageData('path/to/image.png');
+/// BytesMapBitmap bytesMapBitmap = BytesMapBitmap(
+///   byteData,
+///   imagePixelRatio: MediaQuery.maybeDevicePixelRatioOf(context),
+/// );
+/// ```
+/// {@endtemplate}
+/// {@macro size_parameter_note}
 class BytesMapBitmap extends BitmapDescriptor {
-  /// Constructs a [BytesMapBitmap] using an array of bytes that must be encoded
-  /// as PNG.
+  /// Constructs a [BytesMapBitmap] that is created from an array of bytes that
+  /// must be encoded as `PNG` in [Uint8List].
   ///
-  /// The byte array represents the image in a compressed format, which will be
-  /// decoded and rendered by the platform. The optional [size] parameter and
-  /// [imagePixelRatio] are used to correctly scale the image for display,
-  /// taking into account the screen's pixel density.
-  /// If [imagePixelRatio] is null, the current device pixel ratio is used.
+  /// The [byteData] represents the image in a `PNG` format, which will be
+  /// decoded and rendered by the platform. The optional [size] or
+  /// [imagePixelRatio] parameters are used to correctly scale the image for
+  /// display, taking into account the devices pixel ratio.
+  ///
+  /// The [imagePixelRatio] parameter allows to give correct pixel ratio of the
+  /// image. If the [imagePixelRatio] is not provided, value is defaulted
+  /// to the natural resolution of 1.0. To render the asset as sharp as possible,
+  /// set the [imagePixelRatio] to the devices pixel ratio.
+  ///
+  /// {@macro bitmap_scaling_note}
   ///
   /// The optional [size] parameter represents the *logical size* of the
   /// bitmap, regardless of the actual resolution of the encoded PNG.
@@ -442,10 +488,8 @@ class BytesMapBitmap extends BitmapDescriptor {
   /// Throws an [AssertionError] if [byteData] is empty or if incompatible
   /// scaling options are provided.
   ///
-  /// Note: If the [size] parameter is provided, the aspect ratio of the image
-  /// will not be automatically maintained. To preserve the image's proper
-  /// aspect ratio, ensure that the [size] parameter is given in
-  /// correct aspect ratio.
+  /// {@macro bytes_map_bitmap_constructor}
+  /// {@macro size_parameter_note}
   BytesMapBitmap(
     this.byteData, {
     this.bitmapScaling = BitmapScaling.auto,
@@ -458,24 +502,22 @@ class BytesMapBitmap extends BitmapDescriptor {
             'If bitmapScaling is set to BitmapScaling.noScaling, imagePixelRatio parameter cannot be used.'),
         assert(bitmapScaling != BitmapScaling.noScaling || size == null,
             'If bitmapScaling is set to BitmapScaling.noScaling, size parameter cannot be used.'),
-        imagePixelRatio = imagePixelRatio ??
-            WidgetsBinding
-                .instance.platformDispatcher.views.first.devicePixelRatio,
+        imagePixelRatio = imagePixelRatio ?? _naturalPixelRatio,
         super._(const <Object>[]);
 
   /// The type of the MapBitmap object, used for the JSON serialization.
   static const String type = 'bytes';
 
-  /// The bytes of the image.
+  /// The bytes of the bitmap.
   final Uint8List byteData;
 
-  /// The scaling of the bitmap.
+  /// The scaling method of the bitmap.
   final BitmapScaling bitmapScaling;
 
-  /// The pixel ratio of the image.
+  /// The pixel ratio of the bitmap.
   final double imagePixelRatio;
 
-  /// The size of the image.
+  /// The target size of the bitmap in logical pixels.
   final Size? size;
 
   @override

@@ -86,6 +86,11 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
             Text(
                 'Reference box with size of ${size.width} x ${size.height} in logical pixels.'),
             const SizedBox(height: 10),
+            Image.asset(
+              'assets/red_square.png',
+            ),
+            const Text('Asset image with original size'),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -209,13 +214,14 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     final Size? size =
         _scalingEnabled && _customSizeEnabled ? _getCurrentMarkerSize() : null;
 
-    final ImageConfiguration imageConfiguration = createLocalImageConfiguration(
-      context,
-      size: size,
-    );
-
     AssetMapBitmap assetMapBitmap;
     if (_mipMapsEnabled) {
+      final ImageConfiguration imageConfiguration =
+          createLocalImageConfiguration(
+        context,
+        size: size,
+      );
+
       assetMapBitmap = await AssetMapBitmap.fromMipmaps(
         imageConfiguration,
         'assets/red_square.png',
@@ -224,9 +230,8 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
       );
     } else {
       assetMapBitmap = AssetMapBitmap(
-        imageConfiguration,
         'assets/red_square.png',
-        imagePixelRatio: 1.0,
+        size: size,
         bitmapScaling:
             _scalingEnabled ? BitmapScaling.auto : BitmapScaling.noScaling,
       );
@@ -236,7 +241,8 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Future<void> _updateMarkerBytesImage(BuildContext context) async {
-    final double devicePixelRatio = View.of(context).devicePixelRatio;
+    final double? devicePixelRatio =
+        MediaQuery.maybeDevicePixelRatioOf(context);
 
     final Size markerSize = _getCurrentMarkerSize();
 
