@@ -379,12 +379,7 @@ void main() {
 
   group('$AssetMapBitmap', () {
     test('construct', () async {
-      final double devicePixelRatio = WidgetsBinding
-          .instance.platformDispatcher.views.first.devicePixelRatio;
-      final ImageConfiguration imageConfiguration =
-          ImageConfiguration(devicePixelRatio: devicePixelRatio);
       final BitmapDescriptor descriptor = AssetMapBitmap(
-        imageConfiguration,
         'red_square.png',
       );
       expect(descriptor, isA<BitmapDescriptor>());
@@ -395,18 +390,13 @@ void main() {
             'asset',
             'red_square.png',
             BitmapScaling.auto.name,
-            devicePixelRatio
+            1.0
           ]));
     });
 
     test('construct with imagePixelRatio', () async {
-      final double devicePixelRatio = WidgetsBinding
-          .instance.platformDispatcher.views.first.devicePixelRatio;
-      final ImageConfiguration imageConfiguration =
-          ImageConfiguration(devicePixelRatio: devicePixelRatio);
-      final BitmapDescriptor descriptor = AssetMapBitmap(
-          imageConfiguration, 'red_square.png',
-          imagePixelRatio: 1.2345);
+      final BitmapDescriptor descriptor =
+          AssetMapBitmap('red_square.png', imagePixelRatio: 1.2345);
 
       expect(descriptor, isA<BitmapDescriptor>());
       expect(
@@ -420,13 +410,9 @@ void main() {
     });
 
     test('construct with size', () async {
-      final double devicePixelRatio = WidgetsBinding
-          .instance.platformDispatcher.views.first.devicePixelRatio;
       const Size size = Size(100, 200);
-      final ImageConfiguration imageConfiguration =
-          ImageConfiguration(size: size, devicePixelRatio: devicePixelRatio);
       final BitmapDescriptor descriptor =
-          AssetMapBitmap(imageConfiguration, 'red_square.png');
+          AssetMapBitmap('red_square.png', size: size);
 
       expect(descriptor, isA<BitmapDescriptor>());
       expect(
@@ -435,7 +421,7 @@ void main() {
             'asset',
             'red_square.png',
             BitmapScaling.auto.name,
-            devicePixelRatio,
+            1.0,
             <double>[size.width, size.height]
           ]));
     });
@@ -487,8 +473,6 @@ void main() {
     });
 
     test('construct', () {
-      final double devicePixelRatio = WidgetsBinding
-          .instance.platformDispatcher.views.first.devicePixelRatio;
       final BitmapDescriptor descriptor = BytesMapBitmap(
         Uint8List.fromList(<int>[1, 2, 3]),
       );
@@ -499,13 +483,11 @@ void main() {
             'bytes',
             <int>[1, 2, 3],
             BitmapScaling.auto.name,
-            devicePixelRatio
+            1.0,
           ]));
     });
 
     test('construct with size', () {
-      final double devicePixelRatio = WidgetsBinding
-          .instance.platformDispatcher.views.first.devicePixelRatio;
       final BitmapDescriptor descriptor = BytesMapBitmap(
         Uint8List.fromList(<int>[1, 2, 3]),
         size: const Size(40, 20),
@@ -517,8 +499,24 @@ void main() {
             'bytes',
             <int>[1, 2, 3],
             BitmapScaling.auto.name,
-            devicePixelRatio,
+            1.0,
             <int>[40, 20],
+          ]));
+    });
+
+    test('construct with imagePixelRatio', () {
+      final BitmapDescriptor descriptor = BytesMapBitmap(
+        Uint8List.fromList(<int>[1, 2, 3]),
+        imagePixelRatio: 1.2345,
+      );
+
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'bytes',
+            <int>[1, 2, 3],
+            BitmapScaling.auto.name,
+            1.2345,
           ]));
     });
   });
