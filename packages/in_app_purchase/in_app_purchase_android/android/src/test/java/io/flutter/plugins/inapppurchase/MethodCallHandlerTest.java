@@ -7,7 +7,6 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -940,7 +939,7 @@ public class MethodCallHandlerTest {
     assertEquals(
         purchasesResponse.getBillingResult().getResponseCode().longValue(),
         BillingClient.BillingResponseCode.OK);
-    assertTrue(purchasesResponse.getPurchasesJsonList().isEmpty());
+    assertTrue(purchasesResponse.getPurchases().isEmpty());
   }
 
   @Test
@@ -991,7 +990,8 @@ public class MethodCallHandlerTest {
     PluginPurchaseListener listener = new PluginPurchaseListener(mockCallbackApi);
 
     BillingResult billingResult = buildBillingResult();
-    List<Purchase> purchasesList = singletonList(buildPurchase("foo"));
+    final String orderId = "foo";
+    List<Purchase> purchasesList = singletonList(buildPurchase(orderId));
     ArgumentCaptor<PlatformPurchasesResponse> resultCaptor =
         ArgumentCaptor.forClass(PlatformPurchasesResponse.class);
     doNothing().when(mockCallbackApi).onPurchasesUpdated(resultCaptor.capture(), any());
@@ -999,7 +999,8 @@ public class MethodCallHandlerTest {
 
     PlatformPurchasesResponse response = resultCaptor.getValue();
     assertResultsMatch(response.getBillingResult(), billingResult);
-    assertEquals(fromPurchasesList(purchasesList), response.getPurchasesJsonList());
+    assertEquals(1, response.getPurchases().size());
+    assertEquals(orderId, response.getPurchases().get(0).getOrderId());
   }
 
   @Test
@@ -1173,6 +1174,15 @@ public class MethodCallHandlerTest {
   private Purchase buildPurchase(String orderId) {
     Purchase purchase = mock(Purchase.class);
     when(purchase.getOrderId()).thenReturn(orderId);
+    when(purchase.getPurchaseState()).thenReturn(Purchase.PurchaseState.UNSPECIFIED_STATE);
+    when(purchase.getQuantity()).thenReturn(1);
+    when(purchase.getPurchaseTime()).thenReturn(0L);
+    when(purchase.getDeveloperPayload()).thenReturn("");
+    when(purchase.getOriginalJson()).thenReturn("");
+    when(purchase.getPackageName()).thenReturn("");
+    when(purchase.getPurchaseToken()).thenReturn("");
+    when(purchase.getSignature()).thenReturn("");
+    when(purchase.getProducts()).thenReturn(Collections.emptyList());
     return purchase;
   }
 

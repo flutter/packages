@@ -20,6 +20,17 @@ class PlatformProduct {
   final PlatformProductType productType;
 }
 
+/// Pigeon version of Java AccountIdentifiers.
+class PlatformAccountIdentifiers {
+  PlatformAccountIdentifiers({
+    required this.obfuscatedAccountId,
+    required this.obfuscatedProfileId,
+  });
+
+  final String? obfuscatedAccountId;
+  final String? obfuscatedProfileId;
+}
+
 /// Pigeon version of Java BillingResult.
 class PlatformBillingResult {
   PlatformBillingResult(
@@ -97,6 +108,44 @@ class PlatformBillingFlowParams {
   final String? purchaseToken;
 }
 
+/// Pigeon version of Java Purchase.
+///
+/// See also PurchaseWrapper on the Dart side.
+class PlatformPurchase {
+  const PlatformPurchase({
+    required this.orderId,
+    required this.packageName,
+    required this.purchaseTime,
+    required this.purchaseToken,
+    required this.signature,
+    required this.products,
+    required this.isAutoRenewing,
+    required this.originalJson,
+    required this.developerPayload,
+    required this.isAcknowledged,
+    required this.quantity,
+    required this.purchaseState,
+    required this.accountIdentifiers,
+  });
+
+  final String? orderId;
+  final String packageName;
+  final int purchaseTime;
+  final String purchaseToken;
+  final String signature;
+  // TODO(stuartmorgan): Make the type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats it as non-nullable.
+  final List<String?> products;
+  final bool isAutoRenewing;
+  final String originalJson;
+  final String developerPayload;
+  final bool isAcknowledged;
+  final int quantity;
+  final PlatformPurchaseState purchaseState;
+  final PlatformAccountIdentifiers? accountIdentifiers;
+}
+
 /// Pigeon version of PurchaseHistoryRecord.
 ///
 /// See also PurchaseHistoryRecordWrapper on the Dart side.
@@ -143,23 +192,14 @@ class PlatformPurchaseHistoryResponse {
 class PlatformPurchasesResponse {
   PlatformPurchasesResponse({
     required this.billingResult,
-    required this.purchasesJsonList,
+    required this.purchases,
   });
 
   final PlatformBillingResult billingResult;
-
-  /// A JSON-compatible list of purchases, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product details.
-  // TODO(stuartmorgan): Finish converting to Pigeon. This is still using the
-  // old serialization system to allow conversion of all the method calls to
-  // Pigeon without converting the entire object graph all at once. See
-  // https://github.com/flutter/flutter/issues/117910. The list items are
-  // currently untyped due to https://github.com/flutter/flutter/issues/116117.
-  //
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats it as non-nullable.
-  final List<Object?> purchasesJsonList;
+  final List<PlatformPurchase?> purchases;
 }
 
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
@@ -205,6 +245,13 @@ enum PlatformBillingChoiceMode {
 
   /// Users can choose Play billing or alternative billing.
   userChoiceBilling,
+}
+
+/// Pigeon version of Java Purchase.PurchaseState.
+enum PlatformPurchaseState {
+  unspecified,
+  purchased,
+  pending,
 }
 
 @HostApi()

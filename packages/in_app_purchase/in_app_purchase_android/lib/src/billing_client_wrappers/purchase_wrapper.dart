@@ -25,7 +25,6 @@ part 'purchase_wrapper.g.dart';
 @immutable
 class PurchaseWrapper {
   /// Creates a purchase wrapper with the given purchase details.
-  @visibleForTesting
   const PurchaseWrapper({
     required this.orderId,
     required this.packageName,

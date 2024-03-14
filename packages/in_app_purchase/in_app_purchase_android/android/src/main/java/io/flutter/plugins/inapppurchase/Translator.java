@@ -175,27 +175,42 @@ import java.util.Locale;
     return serialized;
   }
 
-  static HashMap<String, Object> fromPurchase(Purchase purchase) {
-    HashMap<String, Object> info = new HashMap<>();
-    List<String> products = purchase.getProducts();
-    info.put("orderId", purchase.getOrderId());
-    info.put("packageName", purchase.getPackageName());
-    info.put("purchaseTime", purchase.getPurchaseTime());
-    info.put("purchaseToken", purchase.getPurchaseToken());
-    info.put("signature", purchase.getSignature());
-    info.put("products", products);
-    info.put("isAutoRenewing", purchase.isAutoRenewing());
-    info.put("originalJson", purchase.getOriginalJson());
-    info.put("developerPayload", purchase.getDeveloperPayload());
-    info.put("isAcknowledged", purchase.isAcknowledged());
-    info.put("purchaseState", purchase.getPurchaseState());
-    info.put("quantity", purchase.getQuantity());
+  static Messages.PlatformPurchaseState toPlatformPurchaseState(int state) {
+    switch (state) {
+      case Purchase.PurchaseState.PURCHASED:
+        return Messages.PlatformPurchaseState.PURCHASED;
+      case Purchase.PurchaseState.PENDING:
+        return Messages.PlatformPurchaseState.PENDING;
+      case Purchase.PurchaseState.UNSPECIFIED_STATE:
+        return Messages.PlatformPurchaseState.UNSPECIFIED;
+    }
+    return Messages.PlatformPurchaseState.UNSPECIFIED;
+  }
+
+  static Messages.PlatformPurchase fromPurchase(Purchase purchase) {
+    Messages.PlatformPurchase.Builder builder =
+        new Messages.PlatformPurchase.Builder()
+            .setOrderId(purchase.getOrderId())
+            .setPackageName(purchase.getPackageName())
+            .setPurchaseTime(purchase.getPurchaseTime())
+            .setPurchaseToken(purchase.getPurchaseToken())
+            .setSignature(purchase.getSignature())
+            .setProducts(purchase.getProducts())
+            .setIsAutoRenewing(purchase.isAutoRenewing())
+            .setOriginalJson(purchase.getOriginalJson())
+            .setDeveloperPayload(purchase.getDeveloperPayload())
+            .setIsAcknowledged(purchase.isAcknowledged())
+            .setPurchaseState(toPlatformPurchaseState(purchase.getPurchaseState()))
+            .setQuantity((long) purchase.getQuantity());
     AccountIdentifiers accountIdentifiers = purchase.getAccountIdentifiers();
     if (accountIdentifiers != null) {
-      info.put("obfuscatedAccountId", accountIdentifiers.getObfuscatedAccountId());
-      info.put("obfuscatedProfileId", accountIdentifiers.getObfuscatedProfileId());
+      builder.setAccountIdentifiers(
+          new Messages.PlatformAccountIdentifiers.Builder()
+              .setObfuscatedAccountId(accountIdentifiers.getObfuscatedAccountId())
+              .setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId())
+              .build());
     }
-    return info;
+    return builder.build();
   }
 
   static Messages.PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
@@ -211,14 +226,14 @@ import java.util.Locale;
         .build();
   }
 
-  static List<Object> fromPurchasesList(@Nullable List<Purchase> purchases) {
+  static List<Messages.PlatformPurchase> fromPurchasesList(@Nullable List<Purchase> purchases) {
     if (purchases == null) {
       return Collections.emptyList();
     }
 
     // This and the method are generically typed due to Pigeon limitations; see
     // https://github.com/flutter/flutter/issues/116117.
-    List<Object> serialized = new ArrayList<>();
+    List<Messages.PlatformPurchase> serialized = new ArrayList<>();
     for (Purchase purchase : purchases) {
       serialized.add(fromPurchase(purchase));
     }

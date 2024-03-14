@@ -17,3 +17,38 @@ PlatformBillingResult convertToPigeonResult(BillingResultWrapper targetResult) {
     debugMessage: targetResult.debugMessage!,
   );
 }
+
+/// Creates a [PlatformPurchase] from the corresponding [PurchaseWrapper].
+PlatformPurchase convertToPigeonPurchase(PurchaseWrapper purchase) {
+  return PlatformPurchase(
+      orderId: purchase.orderId,
+      packageName: purchase.packageName,
+      purchaseTime: purchase.purchaseTime,
+      purchaseToken: purchase.purchaseToken,
+      signature: purchase.signature,
+      products: purchase.products,
+      isAutoRenewing: purchase.isAutoRenewing,
+      originalJson: purchase.originalJson,
+      developerPayload: purchase.developerPayload ?? '',
+      isAcknowledged: purchase.isAcknowledged,
+      purchaseState: _convertToPigeonPurchaseState(purchase.purchaseState),
+      // For some reason quantity is not in PurchaseWrapper.
+      quantity: 99,
+      accountIdentifiers: purchase.obfuscatedAccountId != null ||
+              purchase.obfuscatedProfileId != null
+          ? PlatformAccountIdentifiers(
+              obfuscatedAccountId: purchase.obfuscatedAccountId,
+              obfuscatedProfileId: purchase.obfuscatedProfileId,
+            )
+          : null);
+}
+
+/// Creates a [PlatformPurchaseState] from the Dart wrapper equivalent.
+PlatformPurchaseState _convertToPigeonPurchaseState(
+    PurchaseStateWrapper state) {
+  return switch (state) {
+    PurchaseStateWrapper.unspecified_state => PlatformPurchaseState.unspecified,
+    PurchaseStateWrapper.purchased => PlatformPurchaseState.purchased,
+    PurchaseStateWrapper.pending => PlatformPurchaseState.pending,
+  };
+}

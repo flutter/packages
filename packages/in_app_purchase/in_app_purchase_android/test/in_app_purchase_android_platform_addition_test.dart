@@ -144,8 +144,8 @@ void main() {
                       responseCode:
                           const BillingResponseConverter().toJson(responseCode),
                       debugMessage: debugMessage),
-                  purchasesJsonList: <Map<String, dynamic>>[
-                    buildPurchaseMap(dummyPurchase),
+                  purchases: <PlatformPurchase>[
+                    convertToPigeonPurchase(dummyPurchase),
                   ],
                 ));
 

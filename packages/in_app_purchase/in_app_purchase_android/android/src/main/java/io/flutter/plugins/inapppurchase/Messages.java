@@ -103,6 +103,19 @@ public class Messages {
     }
   }
 
+  /** Pigeon version of Java Purchase.PurchaseState. */
+  public enum PlatformPurchaseState {
+    UNSPECIFIED(0),
+    PURCHASED(1),
+    PENDING(2);
+
+    final int index;
+
+    private PlatformPurchaseState(final int index) {
+      this.index = index;
+    }
+  }
+
   /**
    * Pigeon version of Java Product.
    *
@@ -178,6 +191,76 @@ public class Messages {
       pigeonResult.setProductId((String) productId);
       Object productType = list.get(1);
       pigeonResult.setProductType(PlatformProductType.values()[(int) productType]);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon version of Java AccountIdentifiers.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformAccountIdentifiers {
+    private @Nullable String obfuscatedAccountId;
+
+    public @Nullable String getObfuscatedAccountId() {
+      return obfuscatedAccountId;
+    }
+
+    public void setObfuscatedAccountId(@Nullable String setterArg) {
+      this.obfuscatedAccountId = setterArg;
+    }
+
+    private @Nullable String obfuscatedProfileId;
+
+    public @Nullable String getObfuscatedProfileId() {
+      return obfuscatedProfileId;
+    }
+
+    public void setObfuscatedProfileId(@Nullable String setterArg) {
+      this.obfuscatedProfileId = setterArg;
+    }
+
+    public static final class Builder {
+
+      private @Nullable String obfuscatedAccountId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setObfuscatedAccountId(@Nullable String setterArg) {
+        this.obfuscatedAccountId = setterArg;
+        return this;
+      }
+
+      private @Nullable String obfuscatedProfileId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setObfuscatedProfileId(@Nullable String setterArg) {
+        this.obfuscatedProfileId = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformAccountIdentifiers build() {
+        PlatformAccountIdentifiers pigeonReturn = new PlatformAccountIdentifiers();
+        pigeonReturn.setObfuscatedAccountId(obfuscatedAccountId);
+        pigeonReturn.setObfuscatedProfileId(obfuscatedProfileId);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(obfuscatedAccountId);
+      toListResult.add(obfuscatedProfileId);
+      return toListResult;
+    }
+
+    static @NonNull PlatformAccountIdentifiers fromList(@NonNull ArrayList<Object> list) {
+      PlatformAccountIdentifiers pigeonResult = new PlatformAccountIdentifiers();
+      Object obfuscatedAccountId = list.get(0);
+      pigeonResult.setObfuscatedAccountId((String) obfuscatedAccountId);
+      Object obfuscatedProfileId = list.get(1);
+      pigeonResult.setObfuscatedProfileId((String) obfuscatedProfileId);
       return pigeonResult;
     }
   }
@@ -715,6 +798,366 @@ public class Messages {
   }
 
   /**
+   * Pigeon version of Java Purchase.
+   *
+   * <p>See also PurchaseWrapper on the Dart side.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformPurchase {
+    private @Nullable String orderId;
+
+    public @Nullable String getOrderId() {
+      return orderId;
+    }
+
+    public void setOrderId(@Nullable String setterArg) {
+      this.orderId = setterArg;
+    }
+
+    private @NonNull String packageName;
+
+    public @NonNull String getPackageName() {
+      return packageName;
+    }
+
+    public void setPackageName(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"packageName\" is null.");
+      }
+      this.packageName = setterArg;
+    }
+
+    private @NonNull Long purchaseTime;
+
+    public @NonNull Long getPurchaseTime() {
+      return purchaseTime;
+    }
+
+    public void setPurchaseTime(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"purchaseTime\" is null.");
+      }
+      this.purchaseTime = setterArg;
+    }
+
+    private @NonNull String purchaseToken;
+
+    public @NonNull String getPurchaseToken() {
+      return purchaseToken;
+    }
+
+    public void setPurchaseToken(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"purchaseToken\" is null.");
+      }
+      this.purchaseToken = setterArg;
+    }
+
+    private @NonNull String signature;
+
+    public @NonNull String getSignature() {
+      return signature;
+    }
+
+    public void setSignature(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"signature\" is null.");
+      }
+      this.signature = setterArg;
+    }
+
+    private @NonNull List<String> products;
+
+    public @NonNull List<String> getProducts() {
+      return products;
+    }
+
+    public void setProducts(@NonNull List<String> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"products\" is null.");
+      }
+      this.products = setterArg;
+    }
+
+    private @NonNull Boolean isAutoRenewing;
+
+    public @NonNull Boolean getIsAutoRenewing() {
+      return isAutoRenewing;
+    }
+
+    public void setIsAutoRenewing(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isAutoRenewing\" is null.");
+      }
+      this.isAutoRenewing = setterArg;
+    }
+
+    private @NonNull String originalJson;
+
+    public @NonNull String getOriginalJson() {
+      return originalJson;
+    }
+
+    public void setOriginalJson(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"originalJson\" is null.");
+      }
+      this.originalJson = setterArg;
+    }
+
+    private @NonNull String developerPayload;
+
+    public @NonNull String getDeveloperPayload() {
+      return developerPayload;
+    }
+
+    public void setDeveloperPayload(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"developerPayload\" is null.");
+      }
+      this.developerPayload = setterArg;
+    }
+
+    private @NonNull Boolean isAcknowledged;
+
+    public @NonNull Boolean getIsAcknowledged() {
+      return isAcknowledged;
+    }
+
+    public void setIsAcknowledged(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isAcknowledged\" is null.");
+      }
+      this.isAcknowledged = setterArg;
+    }
+
+    private @NonNull Long quantity;
+
+    public @NonNull Long getQuantity() {
+      return quantity;
+    }
+
+    public void setQuantity(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"quantity\" is null.");
+      }
+      this.quantity = setterArg;
+    }
+
+    private @NonNull PlatformPurchaseState purchaseState;
+
+    public @NonNull PlatformPurchaseState getPurchaseState() {
+      return purchaseState;
+    }
+
+    public void setPurchaseState(@NonNull PlatformPurchaseState setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"purchaseState\" is null.");
+      }
+      this.purchaseState = setterArg;
+    }
+
+    private @Nullable PlatformAccountIdentifiers accountIdentifiers;
+
+    public @Nullable PlatformAccountIdentifiers getAccountIdentifiers() {
+      return accountIdentifiers;
+    }
+
+    public void setAccountIdentifiers(@Nullable PlatformAccountIdentifiers setterArg) {
+      this.accountIdentifiers = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformPurchase() {}
+
+    public static final class Builder {
+
+      private @Nullable String orderId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setOrderId(@Nullable String setterArg) {
+        this.orderId = setterArg;
+        return this;
+      }
+
+      private @Nullable String packageName;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPackageName(@NonNull String setterArg) {
+        this.packageName = setterArg;
+        return this;
+      }
+
+      private @Nullable Long purchaseTime;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPurchaseTime(@NonNull Long setterArg) {
+        this.purchaseTime = setterArg;
+        return this;
+      }
+
+      private @Nullable String purchaseToken;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPurchaseToken(@NonNull String setterArg) {
+        this.purchaseToken = setterArg;
+        return this;
+      }
+
+      private @Nullable String signature;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setSignature(@NonNull String setterArg) {
+        this.signature = setterArg;
+        return this;
+      }
+
+      private @Nullable List<String> products;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setProducts(@NonNull List<String> setterArg) {
+        this.products = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean isAutoRenewing;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIsAutoRenewing(@NonNull Boolean setterArg) {
+        this.isAutoRenewing = setterArg;
+        return this;
+      }
+
+      private @Nullable String originalJson;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setOriginalJson(@NonNull String setterArg) {
+        this.originalJson = setterArg;
+        return this;
+      }
+
+      private @Nullable String developerPayload;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setDeveloperPayload(@NonNull String setterArg) {
+        this.developerPayload = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean isAcknowledged;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIsAcknowledged(@NonNull Boolean setterArg) {
+        this.isAcknowledged = setterArg;
+        return this;
+      }
+
+      private @Nullable Long quantity;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setQuantity(@NonNull Long setterArg) {
+        this.quantity = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformPurchaseState purchaseState;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPurchaseState(@NonNull PlatformPurchaseState setterArg) {
+        this.purchaseState = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformAccountIdentifiers accountIdentifiers;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAccountIdentifiers(
+          @Nullable PlatformAccountIdentifiers setterArg) {
+        this.accountIdentifiers = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformPurchase build() {
+        PlatformPurchase pigeonReturn = new PlatformPurchase();
+        pigeonReturn.setOrderId(orderId);
+        pigeonReturn.setPackageName(packageName);
+        pigeonReturn.setPurchaseTime(purchaseTime);
+        pigeonReturn.setPurchaseToken(purchaseToken);
+        pigeonReturn.setSignature(signature);
+        pigeonReturn.setProducts(products);
+        pigeonReturn.setIsAutoRenewing(isAutoRenewing);
+        pigeonReturn.setOriginalJson(originalJson);
+        pigeonReturn.setDeveloperPayload(developerPayload);
+        pigeonReturn.setIsAcknowledged(isAcknowledged);
+        pigeonReturn.setQuantity(quantity);
+        pigeonReturn.setPurchaseState(purchaseState);
+        pigeonReturn.setAccountIdentifiers(accountIdentifiers);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(13);
+      toListResult.add(orderId);
+      toListResult.add(packageName);
+      toListResult.add(purchaseTime);
+      toListResult.add(purchaseToken);
+      toListResult.add(signature);
+      toListResult.add(products);
+      toListResult.add(isAutoRenewing);
+      toListResult.add(originalJson);
+      toListResult.add(developerPayload);
+      toListResult.add(isAcknowledged);
+      toListResult.add(quantity);
+      toListResult.add(purchaseState == null ? null : purchaseState.index);
+      toListResult.add((accountIdentifiers == null) ? null : accountIdentifiers.toList());
+      return toListResult;
+    }
+
+    static @NonNull PlatformPurchase fromList(@NonNull ArrayList<Object> list) {
+      PlatformPurchase pigeonResult = new PlatformPurchase();
+      Object orderId = list.get(0);
+      pigeonResult.setOrderId((String) orderId);
+      Object packageName = list.get(1);
+      pigeonResult.setPackageName((String) packageName);
+      Object purchaseTime = list.get(2);
+      pigeonResult.setPurchaseTime(
+          (purchaseTime == null)
+              ? null
+              : ((purchaseTime instanceof Integer) ? (Integer) purchaseTime : (Long) purchaseTime));
+      Object purchaseToken = list.get(3);
+      pigeonResult.setPurchaseToken((String) purchaseToken);
+      Object signature = list.get(4);
+      pigeonResult.setSignature((String) signature);
+      Object products = list.get(5);
+      pigeonResult.setProducts((List<String>) products);
+      Object isAutoRenewing = list.get(6);
+      pigeonResult.setIsAutoRenewing((Boolean) isAutoRenewing);
+      Object originalJson = list.get(7);
+      pigeonResult.setOriginalJson((String) originalJson);
+      Object developerPayload = list.get(8);
+      pigeonResult.setDeveloperPayload((String) developerPayload);
+      Object isAcknowledged = list.get(9);
+      pigeonResult.setIsAcknowledged((Boolean) isAcknowledged);
+      Object quantity = list.get(10);
+      pigeonResult.setQuantity(
+          (quantity == null)
+              ? null
+              : ((quantity instanceof Integer) ? (Integer) quantity : (Long) quantity));
+      Object purchaseState = list.get(11);
+      pigeonResult.setPurchaseState(PlatformPurchaseState.values()[(int) purchaseState]);
+      Object accountIdentifiers = list.get(12);
+      pigeonResult.setAccountIdentifiers(
+          (accountIdentifiers == null)
+              ? null
+              : PlatformAccountIdentifiers.fromList((ArrayList<Object>) accountIdentifiers));
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon version of PurchaseHistoryRecord.
    *
    * <p>See also PurchaseHistoryRecordWrapper on the Dart side.
@@ -1026,21 +1469,17 @@ public class Messages {
       this.billingResult = setterArg;
     }
 
-    /**
-     * A JSON-compatible list of purchases, where each entry in the list is a Map<String, Object?>
-     * JSON encoding of the product details.
-     */
-    private @NonNull List<Object> purchasesJsonList;
+    private @NonNull List<PlatformPurchase> purchases;
 
-    public @NonNull List<Object> getPurchasesJsonList() {
-      return purchasesJsonList;
+    public @NonNull List<PlatformPurchase> getPurchases() {
+      return purchases;
     }
 
-    public void setPurchasesJsonList(@NonNull List<Object> setterArg) {
+    public void setPurchases(@NonNull List<PlatformPurchase> setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"purchasesJsonList\" is null.");
+        throw new IllegalStateException("Nonnull field \"purchases\" is null.");
       }
-      this.purchasesJsonList = setterArg;
+      this.purchases = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -1056,18 +1495,18 @@ public class Messages {
         return this;
       }
 
-      private @Nullable List<Object> purchasesJsonList;
+      private @Nullable List<PlatformPurchase> purchases;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setPurchasesJsonList(@NonNull List<Object> setterArg) {
-        this.purchasesJsonList = setterArg;
+      public @NonNull Builder setPurchases(@NonNull List<PlatformPurchase> setterArg) {
+        this.purchases = setterArg;
         return this;
       }
 
       public @NonNull PlatformPurchasesResponse build() {
         PlatformPurchasesResponse pigeonReturn = new PlatformPurchasesResponse();
         pigeonReturn.setBillingResult(billingResult);
-        pigeonReturn.setPurchasesJsonList(purchasesJsonList);
+        pigeonReturn.setPurchases(purchases);
         return pigeonReturn;
       }
     }
@@ -1076,7 +1515,7 @@ public class Messages {
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<Object>(2);
       toListResult.add((billingResult == null) ? null : billingResult.toList());
-      toListResult.add(purchasesJsonList);
+      toListResult.add(purchases);
       return toListResult;
     }
 
@@ -1087,8 +1526,8 @@ public class Messages {
           (billingResult == null)
               ? null
               : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
-      Object purchasesJsonList = list.get(1);
-      pigeonResult.setPurchasesJsonList((List<Object>) purchasesJsonList);
+      Object purchases = list.get(1);
+      pigeonResult.setPurchases((List<PlatformPurchase>) purchases);
       return pigeonResult;
     }
   }
@@ -1232,23 +1671,27 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
+          return PlatformAccountIdentifiers.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
           return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
-          return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return PlatformPurchaseHistoryRecord.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchase.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
+          return PlatformPurchaseHistoryRecord.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
+          return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
           return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -1257,33 +1700,39 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformAlternativeBillingOnlyReportingDetailsResponse) {
+      if (value instanceof PlatformAccountIdentifiers) {
         stream.write(128);
+        writeValue(stream, ((PlatformAccountIdentifiers) value).toList());
+      } else if (value instanceof PlatformAlternativeBillingOnlyReportingDetailsResponse) {
+        stream.write(129);
         writeValue(
             stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
       } else if (value instanceof PlatformBillingConfigResponse) {
-        stream.write(129);
+        stream.write(130);
         writeValue(stream, ((PlatformBillingConfigResponse) value).toList());
       } else if (value instanceof PlatformBillingFlowParams) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((PlatformBillingFlowParams) value).toList());
       } else if (value instanceof PlatformBillingResult) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((PlatformBillingResult) value).toList());
       } else if (value instanceof PlatformProduct) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((PlatformProduct) value).toList());
       } else if (value instanceof PlatformProductDetailsResponse) {
-        stream.write(133);
-        writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
-      } else if (value instanceof PlatformPurchaseHistoryRecord) {
         stream.write(134);
+        writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
+      } else if (value instanceof PlatformPurchase) {
+        stream.write(135);
+        writeValue(stream, ((PlatformPurchase) value).toList());
+      } else if (value instanceof PlatformPurchaseHistoryRecord) {
+        stream.write(136);
         writeValue(stream, ((PlatformPurchaseHistoryRecord) value).toList());
       } else if (value instanceof PlatformPurchaseHistoryResponse) {
-        stream.write(135);
+        stream.write(137);
         writeValue(stream, ((PlatformPurchaseHistoryResponse) value).toList());
       } else if (value instanceof PlatformPurchasesResponse) {
-        stream.write(136);
+        stream.write(138);
         writeValue(stream, ((PlatformPurchasesResponse) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -1778,10 +2227,14 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformAccountIdentifiers.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
+          return PlatformPurchase.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return PlatformUserChoiceDetails.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -1790,14 +2243,20 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformBillingResult) {
+      if (value instanceof PlatformAccountIdentifiers) {
         stream.write(128);
-        writeValue(stream, ((PlatformBillingResult) value).toList());
-      } else if (value instanceof PlatformPurchasesResponse) {
+        writeValue(stream, ((PlatformAccountIdentifiers) value).toList());
+      } else if (value instanceof PlatformBillingResult) {
         stream.write(129);
+        writeValue(stream, ((PlatformBillingResult) value).toList());
+      } else if (value instanceof PlatformPurchase) {
+        stream.write(130);
+        writeValue(stream, ((PlatformPurchase) value).toList());
+      } else if (value instanceof PlatformPurchasesResponse) {
+        stream.write(131);
         writeValue(stream, ((PlatformPurchasesResponse) value).toList());
       } else if (value instanceof PlatformUserChoiceDetails) {
-        stream.write(130);
+        stream.write(132);
         writeValue(stream, ((PlatformUserChoiceDetails) value).toList());
       } else {
         super.writeValue(stream, value);

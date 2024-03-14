@@ -72,10 +72,10 @@ PurchasesResultWrapper purchasesResultWrapperFromPlatform(
     {bool forceOkResponseCode = false}) {
   return PurchasesResultWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    // See TODOs in messages.dart for why this is currently JSON.
-    purchasesList: response.purchasesJsonList
-        .map((Object? json) => PurchaseWrapper.fromJson(
-            (json! as Map<Object?, Object?>).cast<String, Object?>()))
+    purchasesList: response.purchases
+        // See TODOs in messages.dart for why casting away nullability is safe.
+        .cast<PlatformPurchase>()
+        .map(purchaseWrapperFromPlatform)
         .toList(),
     responseCode: forceOkResponseCode
         ? BillingResponse.ok
@@ -121,6 +121,36 @@ PlatformProductType platformProductTypeFromWrapper(ProductType type) {
   return switch (type) {
     ProductType.inapp => PlatformProductType.inapp,
     ProductType.subs => PlatformProductType.subs,
+  };
+}
+
+/// Creates a [PurchaseWrapper] from the Pigeon equivalent.
+PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
+  return PurchaseWrapper(
+    orderId: purchase.orderId ?? '',
+    packageName: purchase.packageName,
+    purchaseTime: purchase.purchaseTime,
+    purchaseToken: purchase.purchaseToken,
+    signature: purchase.signature,
+    // See comment in messages.dart for why casting away nullability is safe.
+    products: purchase.products.cast<String>(),
+    isAutoRenewing: purchase.isAutoRenewing,
+    originalJson: purchase.originalJson,
+    isAcknowledged: purchase.isAcknowledged,
+    purchaseState: purchaseStateWrapperFromPlatform(purchase.purchaseState),
+    developerPayload: purchase.developerPayload,
+    obfuscatedAccountId: purchase.accountIdentifiers?.obfuscatedAccountId,
+    obfuscatedProfileId: purchase.accountIdentifiers?.obfuscatedProfileId,
+  );
+}
+
+/// Creates a [PurchaseStateWrapper] from the Pigeon equivalent.
+PurchaseStateWrapper purchaseStateWrapperFromPlatform(
+    PlatformPurchaseState state) {
+  return switch (state) {
+    PlatformPurchaseState.unspecified => PurchaseStateWrapper.unspecified_state,
+    PlatformPurchaseState.purchased => PurchaseStateWrapper.purchased,
+    PlatformPurchaseState.pending => PurchaseStateWrapper.pending,
   };
 }
 

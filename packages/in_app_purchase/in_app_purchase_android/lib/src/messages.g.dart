@@ -49,6 +49,13 @@ enum PlatformBillingChoiceMode {
   userChoiceBilling,
 }
 
+/// Pigeon version of Java Purchase.PurchaseState.
+enum PlatformPurchaseState {
+  unspecified,
+  purchased,
+  pending,
+}
+
 /// Pigeon version of Java Product.
 class PlatformProduct {
   PlatformProduct({
@@ -72,6 +79,33 @@ class PlatformProduct {
     return PlatformProduct(
       productId: result[0]! as String,
       productType: PlatformProductType.values[result[1]! as int],
+    );
+  }
+}
+
+/// Pigeon version of Java AccountIdentifiers.
+class PlatformAccountIdentifiers {
+  PlatformAccountIdentifiers({
+    this.obfuscatedAccountId,
+    this.obfuscatedProfileId,
+  });
+
+  String? obfuscatedAccountId;
+
+  String? obfuscatedProfileId;
+
+  Object encode() {
+    return <Object?>[
+      obfuscatedAccountId,
+      obfuscatedProfileId,
+    ];
+  }
+
+  static PlatformAccountIdentifiers decode(Object result) {
+    result as List<Object?>;
+    return PlatformAccountIdentifiers(
+      obfuscatedAccountId: result[0] as String?,
+      obfuscatedProfileId: result[1] as String?,
     );
   }
 }
@@ -243,6 +277,92 @@ class PlatformBillingFlowParams {
   }
 }
 
+/// Pigeon version of Java Purchase.
+///
+/// See also PurchaseWrapper on the Dart side.
+class PlatformPurchase {
+  PlatformPurchase({
+    this.orderId,
+    required this.packageName,
+    required this.purchaseTime,
+    required this.purchaseToken,
+    required this.signature,
+    required this.products,
+    required this.isAutoRenewing,
+    required this.originalJson,
+    required this.developerPayload,
+    required this.isAcknowledged,
+    required this.quantity,
+    required this.purchaseState,
+    this.accountIdentifiers,
+  });
+
+  String? orderId;
+
+  String packageName;
+
+  int purchaseTime;
+
+  String purchaseToken;
+
+  String signature;
+
+  List<String?> products;
+
+  bool isAutoRenewing;
+
+  String originalJson;
+
+  String developerPayload;
+
+  bool isAcknowledged;
+
+  int quantity;
+
+  PlatformPurchaseState purchaseState;
+
+  PlatformAccountIdentifiers? accountIdentifiers;
+
+  Object encode() {
+    return <Object?>[
+      orderId,
+      packageName,
+      purchaseTime,
+      purchaseToken,
+      signature,
+      products,
+      isAutoRenewing,
+      originalJson,
+      developerPayload,
+      isAcknowledged,
+      quantity,
+      purchaseState.index,
+      accountIdentifiers?.encode(),
+    ];
+  }
+
+  static PlatformPurchase decode(Object result) {
+    result as List<Object?>;
+    return PlatformPurchase(
+      orderId: result[0] as String?,
+      packageName: result[1]! as String,
+      purchaseTime: result[2]! as int,
+      purchaseToken: result[3]! as String,
+      signature: result[4]! as String,
+      products: (result[5] as List<Object?>?)!.cast<String?>(),
+      isAutoRenewing: result[6]! as bool,
+      originalJson: result[7]! as String,
+      developerPayload: result[8]! as String,
+      isAcknowledged: result[9]! as bool,
+      quantity: result[10]! as int,
+      purchaseState: PlatformPurchaseState.values[result[11]! as int],
+      accountIdentifiers: result[12] != null
+          ? PlatformAccountIdentifiers.decode(result[12]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
 /// Pigeon version of PurchaseHistoryRecord.
 ///
 /// See also PurchaseHistoryRecordWrapper on the Dart side.
@@ -331,19 +451,17 @@ class PlatformPurchaseHistoryResponse {
 class PlatformPurchasesResponse {
   PlatformPurchasesResponse({
     required this.billingResult,
-    required this.purchasesJsonList,
+    required this.purchases,
   });
 
   PlatformBillingResult billingResult;
 
-  /// A JSON-compatible list of purchases, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product details.
-  List<Object?> purchasesJsonList;
+  List<PlatformPurchase?> purchases;
 
   Object encode() {
     return <Object?>[
       billingResult.encode(),
-      purchasesJsonList,
+      purchases,
     ];
   }
 
@@ -351,7 +469,7 @@ class PlatformPurchasesResponse {
     result as List<Object?>;
     return PlatformPurchasesResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      purchasesJsonList: (result[1] as List<Object?>?)!.cast<Object?>(),
+      purchases: (result[1] as List<Object?>?)!.cast<PlatformPurchase?>(),
     );
   }
 }
@@ -394,32 +512,39 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
   const _InAppPurchaseApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
+    if (value is PlatformAccountIdentifiers) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingConfigResponse) {
+    } else if (value
+        is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingFlowParams) {
+    } else if (value is PlatformBillingConfigResponse) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingResult) {
+    } else if (value is PlatformBillingFlowParams) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProduct) {
+    } else if (value is PlatformBillingResult) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProductDetailsResponse) {
+    } else if (value is PlatformProduct) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryRecord) {
+    } else if (value is PlatformProductDetailsResponse) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryResponse) {
+    } else if (value is PlatformPurchase) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformPurchaseHistoryRecord) {
       buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchaseHistoryResponse) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -430,23 +555,27 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
+        return PlatformAccountIdentifiers.decode(readValue(buffer)!);
+      case 129:
         return PlatformAlternativeBillingOnlyReportingDetailsResponse.decode(
             readValue(buffer)!);
-      case 129:
-        return PlatformBillingConfigResponse.decode(readValue(buffer)!);
       case 130:
-        return PlatformBillingFlowParams.decode(readValue(buffer)!);
+        return PlatformBillingConfigResponse.decode(readValue(buffer)!);
       case 131:
-        return PlatformBillingResult.decode(readValue(buffer)!);
+        return PlatformBillingFlowParams.decode(readValue(buffer)!);
       case 132:
-        return PlatformProduct.decode(readValue(buffer)!);
+        return PlatformBillingResult.decode(readValue(buffer)!);
       case 133:
-        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
+        return PlatformProduct.decode(readValue(buffer)!);
       case 134:
-        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
+        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
       case 135:
-        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+        return PlatformPurchase.decode(readValue(buffer)!);
       case 136:
+        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
+      case 137:
+        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+      case 138:
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -894,14 +1023,20 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
   const _InAppPurchaseCallbackApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformBillingResult) {
+    if (value is PlatformAccountIdentifiers) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformBillingResult) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformUserChoiceDetails) {
+    } else if (value is PlatformPurchase) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformUserChoiceDetails) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -912,10 +1047,14 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return PlatformBillingResult.decode(readValue(buffer)!);
+        return PlatformAccountIdentifiers.decode(readValue(buffer)!);
       case 129:
-        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+        return PlatformBillingResult.decode(readValue(buffer)!);
       case 130:
+        return PlatformPurchase.decode(readValue(buffer)!);
+      case 131:
+        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+      case 132:
         return PlatformUserChoiceDetails.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

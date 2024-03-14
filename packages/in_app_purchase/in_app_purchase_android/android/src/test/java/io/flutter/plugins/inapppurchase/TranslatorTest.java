@@ -100,10 +100,9 @@ public class TranslatorTest {
   public void fromPurchaseWithoutAccountIds() throws JSONException {
     final Purchase expected =
         new PurchaseWithoutAccountIdentifiers(PURCHASE_EXAMPLE_JSON, "signature");
-    Map<String, Object> serialized = Translator.fromPurchase(expected);
-    assertNotNull(serialized.get("orderId"));
-    assertNull(serialized.get("obfuscatedProfileId"));
-    assertNull(serialized.get("obfuscatedAccountId"));
+    Messages.PlatformPurchase serialized = Translator.fromPurchase(expected);
+    assertNotNull(serialized.getOrderId());
+    assertNull(serialized.getAccountIdentifiers());
   }
 
   @Test
@@ -145,7 +144,7 @@ public class TranslatorTest {
         Arrays.asList(
             new Purchase(PURCHASE_EXAMPLE_JSON, signature), new Purchase(purchase2Json, signature));
 
-    final List<Object> serialized = Translator.fromPurchasesList(expected);
+    final List<Messages.PlatformPurchase> serialized = Translator.fromPurchasesList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -276,28 +275,38 @@ public class TranslatorTest {
     assertEquals(expected.getRecurrenceMode(), serialized.get("recurrenceMode"));
   }
 
-  private void assertSerialized(Purchase expected, Object serializedGeneric) {
-    @SuppressWarnings("unchecked")
-    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
-    assertEquals(expected.getOrderId(), serialized.get("orderId"));
-    assertEquals(expected.getPackageName(), serialized.get("packageName"));
-    assertEquals(expected.getPurchaseTime(), serialized.get("purchaseTime"));
-    assertEquals(expected.getPurchaseToken(), serialized.get("purchaseToken"));
-    assertEquals(expected.getSignature(), serialized.get("signature"));
-    assertEquals(expected.getOriginalJson(), serialized.get("originalJson"));
-    assertEquals(expected.getProducts(), serialized.get("products"));
-    assertEquals(expected.getDeveloperPayload(), serialized.get("developerPayload"));
-    assertEquals(expected.isAcknowledged(), serialized.get("isAcknowledged"));
-    assertEquals(expected.getPurchaseState(), serialized.get("purchaseState"));
+  private void assertSerialized(Purchase expected, Messages.PlatformPurchase serialized) {
+    assertEquals(expected.getOrderId(), serialized.getOrderId());
+    assertEquals(expected.getPackageName(), serialized.getPackageName());
+    assertEquals(expected.getPurchaseTime(), serialized.getPurchaseTime().longValue());
+    assertEquals(expected.getPurchaseToken(), serialized.getPurchaseToken());
+    assertEquals(expected.getSignature(), serialized.getSignature());
+    assertEquals(expected.getOriginalJson(), serialized.getOriginalJson());
+    assertEquals(expected.getProducts(), serialized.getProducts());
+    assertEquals(expected.getDeveloperPayload(), serialized.getDeveloperPayload());
+    assertEquals(expected.isAcknowledged(), serialized.getIsAcknowledged());
+    assertEquals(expected.getPurchaseState(), stateFromPlatform(serialized.getPurchaseState()));
     assertNotNull(
         Objects.requireNonNull(expected.getAccountIdentifiers()).getObfuscatedAccountId());
     assertEquals(
         expected.getAccountIdentifiers().getObfuscatedAccountId(),
-        serialized.get("obfuscatedAccountId"));
+        Objects.requireNonNull(serialized.getAccountIdentifiers()).getObfuscatedAccountId());
     assertNotNull(expected.getAccountIdentifiers().getObfuscatedProfileId());
     assertEquals(
         expected.getAccountIdentifiers().getObfuscatedProfileId(),
-        serialized.get("obfuscatedProfileId"));
+        Objects.requireNonNull(serialized.getAccountIdentifiers()).getObfuscatedProfileId());
+  }
+
+  private int stateFromPlatform(Messages.PlatformPurchaseState state) {
+    switch (state) {
+      case UNSPECIFIED:
+        return Purchase.PurchaseState.UNSPECIFIED_STATE;
+      case PURCHASED:
+        return Purchase.PurchaseState.PURCHASED;
+      case PENDING:
+        return Purchase.PurchaseState.PENDING;
+    }
+    return Purchase.PurchaseState.UNSPECIFIED_STATE;
   }
 
   private void assertSerialized(
