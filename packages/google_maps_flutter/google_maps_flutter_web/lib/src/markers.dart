@@ -25,11 +25,11 @@ class MarkersController extends GeometryController {
   /// Adds a set of [Marker] objects to the cache.
   ///
   /// Wraps each [Marker] into its corresponding [MarkerController].
-  void addMarkers(Set<Marker> markersToAdd) {
-    markersToAdd.forEach(_addMarker);
+  Future<void> addMarkers(Set<Marker> markersToAdd) async {
+    await Future.wait(markersToAdd.map(_addMarker));
   }
 
-  void _addMarker(Marker marker) {
+  Future<void> _addMarker(Marker marker) async {
     final gmaps.InfoWindowOptions? infoWindowOptions =
         _infoWindowOptionsFromMarker(marker);
     gmaps.InfoWindow? gmInfoWindow;
@@ -52,7 +52,7 @@ class MarkersController extends GeometryController {
         _markerIdToController[marker.markerId]?.marker;
 
     final gmaps.MarkerOptions markerOptions =
-        _markerOptionsFromMarker(marker, currentMarker);
+        await _markerOptionsFromMarker(marker, currentMarker);
     final gmaps.Marker gmMarker = gmaps.Marker(markerOptions)..map = googleMap;
     final MarkerController controller = MarkerController(
       marker: gmMarker,
@@ -76,15 +76,15 @@ class MarkersController extends GeometryController {
   }
 
   /// Updates a set of [Marker] objects with new options.
-  void changeMarkers(Set<Marker> markersToChange) {
-    markersToChange.forEach(_changeMarker);
+  Future<void> changeMarkers(Set<Marker> markersToChange) async {
+    await Future.wait(markersToChange.map(_changeMarker));
   }
 
-  void _changeMarker(Marker marker) {
+  Future<void> _changeMarker(Marker marker) async {
     final MarkerController? markerController =
         _markerIdToController[marker.markerId];
     if (markerController != null) {
-      final gmaps.MarkerOptions markerOptions = _markerOptionsFromMarker(
+      final gmaps.MarkerOptions markerOptions = await _markerOptionsFromMarker(
         marker,
         markerController.marker,
       );

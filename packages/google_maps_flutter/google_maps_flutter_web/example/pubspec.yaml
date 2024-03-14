@@ -6,6 +6,10 @@ environment:
   sdk: ^3.3.0
   flutter: ">=3.19.0"
 
+flutter:
+  assets:
+    - assets/
+
 dependencies:
   flutter:
     sdk: flutter

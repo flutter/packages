@@ -205,10 +205,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Future<void> _updateMarkerAssetImage(BuildContext context) async {
-    // Size is used only for custom size and for a web platform.
-    final Size? size = _scalingEnabled && (_customSizeEnabled || kIsWeb)
-        ? _getCurrentMarkerSize()
-        : null;
+    // Size is used only for custom size.
+    final Size? size =
+        _scalingEnabled && _customSizeEnabled ? _getCurrentMarkerSize() : null;
 
     final ImageConfiguration imageConfiguration = createLocalImageConfiguration(
       context,
@@ -249,10 +248,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
 
     final ByteData bytes = await createCustomMarkerIconImage(size: canvasSize);
 
-    // Size is used only for custom size and for a web platform.
-    final Size? size = _scalingEnabled && (_customSizeEnabled || kIsWeb)
-        ? _getCurrentMarkerSize()
-        : null;
+    // Size is used only for custom size.
+    final Size? size =
+        _scalingEnabled && _customSizeEnabled ? _getCurrentMarkerSize() : null;
 
     final BytesMapBitmap bitmap = BytesMapBitmap(bytes.buffer.asUint8List(),
         imagePixelRatio: imagePixelRatio,

@@ -288,13 +288,15 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updateMarkers(_i2.MarkerUpdates? updates) => super.noSuchMethod(
+  _i3.Future<void> updateMarkers(_i2.MarkerUpdates? updates) =>
+      (super.noSuchMethod(
         Invocation.method(
           #updateMarkers,
           [updates],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
   @override
   void updateTileOverlays(Set<_i2.TileOverlay>? newOverlays) =>
       super.noSuchMethod(

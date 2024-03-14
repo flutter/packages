@@ -449,7 +449,7 @@ class BytesMapBitmap extends BitmapDescriptor {
   BytesMapBitmap(
     this.byteData, {
     this.bitmapScaling = BitmapScaling.auto,
-    this.imagePixelRatio,
+    double? imagePixelRatio,
     this.size,
   })  : assert(byteData.isNotEmpty,
             'Cannot create BitmapDescriptor with empty byteData.'),
@@ -458,6 +458,9 @@ class BytesMapBitmap extends BitmapDescriptor {
             'If bitmapScaling is set to BitmapScaling.noScaling, imagePixelRatio parameter cannot be used.'),
         assert(bitmapScaling != BitmapScaling.noScaling || size == null,
             'If bitmapScaling is set to BitmapScaling.noScaling, size parameter cannot be used.'),
+        imagePixelRatio = imagePixelRatio ??
+            WidgetsBinding
+                .instance.platformDispatcher.views.first.devicePixelRatio,
         super._(const <Object>[]);
 
   /// The type of the MapBitmap object, used for the JSON serialization.
@@ -470,7 +473,7 @@ class BytesMapBitmap extends BitmapDescriptor {
   final BitmapScaling bitmapScaling;
 
   /// The pixel ratio of the image.
-  final double? imagePixelRatio;
+  final double imagePixelRatio;
 
   /// The size of the image.
   final Size? size;
@@ -481,9 +484,7 @@ class BytesMapBitmap extends BitmapDescriptor {
       type,
       byteData,
       bitmapScaling.name,
-      imagePixelRatio ??
-          WidgetsBinding
-              .instance.platformDispatcher.views.first.devicePixelRatio,
+      imagePixelRatio,
       if (size != null)
         <Object>[
           size!.width,
