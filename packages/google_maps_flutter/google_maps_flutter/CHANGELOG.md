@@ -1,3 +1,23 @@
+## 2.6.0
+
+* Adds `style` to the GoogleMap widget constructor. This allows setting the map
+  style during creation, avoiding the possibility of the default style being
+  displayed briefly.
+* Deprecates `GoogleMapController.setMapStyle` in favor of setting the style via
+  the new widget `style` parameter.
+* Updates minimum supported SDK version to Flutter 3.19.
+
+## 2.5.3
+
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to
+  use this package with iOS 11, but will not receive any further
+  updates to the iOS implementation.
+
+## 2.5.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 2.5.1
 
 * Fixes new lint warnings.

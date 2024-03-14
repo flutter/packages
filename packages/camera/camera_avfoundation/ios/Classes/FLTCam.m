@@ -86,6 +86,11 @@
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
+/// A wrapper for CMVideoFormatDescriptionGetDimensions.
+/// Allows for alternate implementations in tests.
+@property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
+/// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
+@property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @end
 
 @implementation FLTCam
@@ -116,6 +121,30 @@ NSString *const errorMethod = @"error";
                audioCaptureSession:(AVCaptureSession *)audioCaptureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
+  return [self initWithResolutionPreset:resolutionPreset
+      enableAudio:enableAudio
+      orientation:orientation
+      videoCaptureSession:videoCaptureSession
+      audioCaptureSession:videoCaptureSession
+      captureSessionQueue:captureSessionQueue
+      captureDeviceFactory:^AVCaptureDevice *(void) {
+        return [AVCaptureDevice deviceWithUniqueID:cameraName];
+      }
+      videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+        return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+      }
+      error:error];
+}
+
+- (instancetype)initWithResolutionPreset:(NSString *)resolutionPreset
+                             enableAudio:(BOOL)enableAudio
+                             orientation:(UIDeviceOrientation)orientation
+                     videoCaptureSession:(AVCaptureSession *)videoCaptureSession
+                     audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+                     captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+                    captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+                videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+                                   error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
@@ -136,7 +165,9 @@ NSString *const errorMethod = @"error";
   _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
   _videoCaptureSession = videoCaptureSession;
   _audioCaptureSession = audioCaptureSession;
-  _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
+  _captureDeviceFactory = captureDeviceFactory;
+  _captureDevice = captureDeviceFactory();
+  _videoDimensionsForFormat = videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FLTFlashModeAuto : FLTFlashModeOff;
   _exposureMode = FLTExposureModeAuto;
   _focusMode = FLTFocusModeAuto;
@@ -144,6 +175,7 @@ NSString *const errorMethod = @"error";
   _deviceOrientation = orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
+  _fileFormat = FCPFileFormatJPEG;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -218,6 +250,10 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
+- (void)setImageFileFormat:(FCPFileFormat)fileFormat {
+  _fileFormat = fileFormat;
+}
+
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation {
   if (_deviceOrientation == orientation) {
     return;
@@ -254,8 +290,22 @@ NSString *const errorMethod = @"error";
 
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
+
   if (_resolutionPreset == FLTResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
+  }
+
+  NSString *extension;
+
+  BOOL isHEVCCodecAvailable =
+      [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
+
+  if (_fileFormat == FCPFileFormatHEIF && isHEVCCodecAvailable) {
+    settings =
+        [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+    extension = @"heif";
+  } else {
+    extension = @"jpg";
   }
 
   AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(_flashMode);
@@ -263,7 +313,7 @@ NSString *const errorMethod = @"error";
     [settings setFlashMode:avFlashMode];
   }
   NSError *error;
-  NSString *path = [self getTemporaryFilePathWithExtension:@"jpg"
+  NSString *path = [self getTemporaryFilePathWithExtension:extension
                                                  subfolder:@"pictures"
                                                     prefix:@"CAP_"
                                                      error:error];
@@ -347,7 +397,24 @@ NSString *const errorMethod = @"error";
 
 - (BOOL)setCaptureSessionPreset:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
   switch (resolutionPreset) {
-    case FLTResolutionPresetMax:
+    case FLTResolutionPresetMax: {
+      AVCaptureDeviceFormat *bestFormat =
+          [self highestResolutionFormatForCaptureDevice:_captureDevice];
+      if (bestFormat) {
+        _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
+        if ([_captureDevice lockForConfiguration:NULL]) {
+          // Set the best device format found and finish the device configuration.
+          _captureDevice.activeFormat = bestFormat;
+          [_captureDevice unlockForConfiguration];
+
+          // Set the preview size based on values from the current capture device.
+          _previewSize =
+              CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
+                         _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
+          break;
+        }
+      }
+    }
     case FLTResolutionPresetUltraHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
@@ -401,6 +468,24 @@ NSString *const errorMethod = @"error";
   }
   _audioCaptureSession.sessionPreset = _videoCaptureSession.sessionPreset;
   return YES;
+}
+
+/// Finds the highest available resolution in terms of pixel count for the given device.
+- (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
+    (AVCaptureDevice *)captureDevice {
+  AVCaptureDeviceFormat *bestFormat = nil;
+  NSUInteger maxPixelCount = 0;
+  for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
+    CMVideoDimensions res = self.videoDimensionsForFormat(format);
+    NSUInteger height = res.height;
+    NSUInteger width = res.width;
+    NSUInteger pixelCount = height * width;
+    if (pixelCount > maxPixelCount) {
+      maxPixelCount = pixelCount;
+      bestFormat = format;
+    }
+  }
+  return bestFormat;
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output
@@ -514,7 +599,6 @@ NSString *const errorMethod = @"error";
       return;
     }
 
-    CFRetain(sampleBuffer);
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
     if (_videoWriter.status != AVAssetWriterStatusWriting) {
@@ -564,18 +648,18 @@ NSString *const errorMethod = @"error";
       _lastAudioSampleTime = currentSampleTime;
 
       if (_audioTimeOffset.value != 0) {
-        CFRelease(sampleBuffer);
-        sampleBuffer = [self adjustTime:sampleBuffer by:_audioTimeOffset];
+        CMSampleBufferRef adjustedSampleBuffer =
+            [self copySampleBufferWithAdjustedTime:sampleBuffer by:_audioTimeOffset];
+        [self newAudioSample:adjustedSampleBuffer];
+        CFRelease(adjustedSampleBuffer);
+      } else {
+        [self newAudioSample:sampleBuffer];
       }
-
-      [self newAudioSample:sampleBuffer];
     }
-
-    CFRelease(sampleBuffer);
   }
 }
 
-- (CMSampleBufferRef)adjustTime:(CMSampleBufferRef)sample by:(CMTime)offset CF_RETURNS_RETAINED {
+- (CMSampleBufferRef)copySampleBufferWithAdjustedTime:(CMSampleBufferRef)sample by:(CMTime)offset {
   CMItemCount count;
   CMSampleBufferGetSampleTimingInfoArray(sample, 0, nil, &count);
   CMSampleTimingInfo *pInfo = malloc(sizeof(CMSampleTimingInfo) * count);
@@ -917,7 +1001,7 @@ NSString *const errorMethod = @"error";
     return;
   }
 
-  _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
+  _captureDevice = self.captureDeviceFactory();
 
   AVCaptureConnection *oldConnection =
       [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];

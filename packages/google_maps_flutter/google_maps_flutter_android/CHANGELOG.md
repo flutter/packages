@@ -1,3 +1,14 @@
+## 2.7.0
+
+* Adds support for `MapConfiguration.style`.
+* Adds support for `getStyleError`.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
+## 2.6.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 2.6.1
 
 * Fixes new lint warnings.

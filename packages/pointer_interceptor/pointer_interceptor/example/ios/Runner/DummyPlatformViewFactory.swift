@@ -5,9 +5,7 @@
 import Flutter
 import UIKit
 
-/**
- * A  simple factory that creates a dummy platform view for testing.
- */
+/// A  simple factory that creates a dummy platform view for testing.
 public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
   private var messenger: FlutterBinaryMessenger
 
@@ -33,38 +31,34 @@ public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
   }
 }
 
-/**
- * A native view that will remove it's tag if clicked.
- */
+/// A native view that will remove it's tag if clicked.
 public class CustomView: UIView {
 
-  var timesClicked = 0;
+  var timesClicked = 0
   var nativeLabel = UILabel()
 
   override public func hitTest(
     _ point: CGPoint,
     with event: UIEvent?
   ) -> UIView? {
-    if (viewWithTag(1) != nil) {
-      viewWithTag(1)?.removeFromSuperview();
-      createNativeView(view: self);
+    if viewWithTag(1) != nil {
+      viewWithTag(1)?.removeFromSuperview()
+      createNativeView(view: self)
     }
-    timesClicked += 1;
+    timesClicked += 1
     nativeLabel.text = "Traversed \(timesClicked) subviews"
     return super.hitTest(point, with: event)
   }
 
-  func createNativeView(view _view: CustomView){
+  func createNativeView(view _view: CustomView) {
     nativeLabel.text = "Traversed \(timesClicked) subviews"
     nativeLabel.frame = CGRect(x: 0, y: 0, width: 180, height: 48.0)
     _view.addSubview(nativeLabel)
   }
 }
-/**
- * A flutter platform view that displays a simple native view.
- */
+/// A flutter platform view that displays a simple native view.
 class DummyPlatformView: NSObject, FlutterPlatformView {
-  private var _view: CustomView;
+  private var _view: CustomView
 
   init(
     frame: CGRect,
@@ -81,9 +75,9 @@ class DummyPlatformView: NSObject, FlutterPlatformView {
     return _view
   }
 
-  func createNativeView(view _view: CustomView){
+  func createNativeView(view _view: CustomView) {
     let nativeLabel = UILabel()
-    nativeLabel.tag = 1;
+    nativeLabel.tag = 1
     nativeLabel.text = "Native View Not Clicked"
     nativeLabel.frame = CGRect(x: 0, y: 0, width: 180, height: 48.0)
     _view.addSubview(nativeLabel)

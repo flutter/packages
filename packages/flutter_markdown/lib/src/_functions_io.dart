@@ -64,8 +64,7 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   }
 
   return result.copyWith(
-    textScaleFactor:
-        MediaQuery.textScaleFactorOf(context), // ignore: deprecated_member_use
+    textScaler: MediaQuery.textScalerOf(context),
   );
 };
 

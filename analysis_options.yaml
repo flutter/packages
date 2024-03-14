@@ -11,8 +11,10 @@ analyzer:
     strict-inference: true
     strict-raw-types: true
   errors:
-    # allow self-reference to deprecated members (we do this because otherwise we have
-    # to annotate every member in every test, assert, etc, when we deprecate something)
+    # allow deprecated members (we do this because otherwise we have to annotate
+    # every member in every test, assert, etc, when we or the Dart SDK deprecates
+    # something (https://github.com/flutter/flutter/issues/143312)
+    deprecated_member_use: ignore
     deprecated_member_use_from_same_package: ignore
   exclude: # DIFFERENT FROM FLUTTER/FLUTTER
     # Ignore generated files
@@ -164,7 +166,7 @@ linter:
     - prefer_is_not_empty
     - prefer_is_not_operator
     - prefer_iterable_whereType
-    # - prefer_mixin # DIFFERENT FROM FLUTTER/FLUTTER: enable when v2.1.7 of plugin_platform_interface is the oldest supported version (which makes MockPlatformInterfaceMixin a mixin class)
+    - prefer_mixin
     # - prefer_null_aware_method_calls # "call()" is confusing to people new to the language since it's not documented anywhere
     - prefer_null_aware_operators
     - prefer_relative_imports
