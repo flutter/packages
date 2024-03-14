@@ -117,11 +117,11 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of Java Product.
+   * Pigeon version of Java QueryProductDetailsParams.Product.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
-  public static final class PlatformProduct {
+  public static final class PlatformQueryProduct {
     private @NonNull String productId;
 
     public @NonNull String getProductId() {
@@ -149,7 +149,7 @@ public class Messages {
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    PlatformProduct() {}
+    PlatformQueryProduct() {}
 
     public static final class Builder {
 
@@ -169,8 +169,8 @@ public class Messages {
         return this;
       }
 
-      public @NonNull PlatformProduct build() {
-        PlatformProduct pigeonReturn = new PlatformProduct();
+      public @NonNull PlatformQueryProduct build() {
+        PlatformQueryProduct pigeonReturn = new PlatformQueryProduct();
         pigeonReturn.setProductId(productId);
         pigeonReturn.setProductType(productType);
         return pigeonReturn;
@@ -185,8 +185,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformProduct fromList(@NonNull ArrayList<Object> list) {
-      PlatformProduct pigeonResult = new PlatformProduct();
+    static @NonNull PlatformQueryProduct fromList(@NonNull ArrayList<Object> list) {
+      PlatformQueryProduct pigeonResult = new PlatformQueryProduct();
       Object productId = list.get(0);
       pigeonResult.setProductId((String) productId);
       Object productType = list.get(1);
@@ -1682,17 +1682,17 @@ public class Messages {
         case (byte) 132:
           return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformProduct.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 134:
           return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 135:
+        case (byte) 134:
           return PlatformPurchase.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 136:
+        case (byte) 135:
           return PlatformPurchaseHistoryRecord.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 137:
+        case (byte) 136:
           return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 138:
+        case (byte) 137:
           return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
+          return PlatformQueryProduct.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -1716,24 +1716,24 @@ public class Messages {
       } else if (value instanceof PlatformBillingResult) {
         stream.write(132);
         writeValue(stream, ((PlatformBillingResult) value).toList());
-      } else if (value instanceof PlatformProduct) {
-        stream.write(133);
-        writeValue(stream, ((PlatformProduct) value).toList());
       } else if (value instanceof PlatformProductDetailsResponse) {
-        stream.write(134);
+        stream.write(133);
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
       } else if (value instanceof PlatformPurchase) {
-        stream.write(135);
+        stream.write(134);
         writeValue(stream, ((PlatformPurchase) value).toList());
       } else if (value instanceof PlatformPurchaseHistoryRecord) {
-        stream.write(136);
+        stream.write(135);
         writeValue(stream, ((PlatformPurchaseHistoryRecord) value).toList());
       } else if (value instanceof PlatformPurchaseHistoryResponse) {
-        stream.write(137);
+        stream.write(136);
         writeValue(stream, ((PlatformPurchaseHistoryResponse) value).toList());
       } else if (value instanceof PlatformPurchasesResponse) {
-        stream.write(138);
+        stream.write(137);
         writeValue(stream, ((PlatformPurchasesResponse) value).toList());
+      } else if (value instanceof PlatformQueryProduct) {
+        stream.write(138);
+        writeValue(stream, ((PlatformQueryProduct) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -1784,7 +1784,7 @@ public class Messages {
      * ProductDetailsResponseListener).
      */
     void queryProductDetailsAsync(
-        @NonNull List<PlatformProduct> products,
+        @NonNull List<PlatformQueryProduct> products,
         @NonNull Result<PlatformProductDetailsResponse> result);
     /** Wraps BillingClient#isFeatureSupported(String). */
     @NonNull
@@ -2081,7 +2081,7 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                List<PlatformProduct> productsArg = (List<PlatformProduct>) args.get(0);
+                List<PlatformQueryProduct> productsArg = (List<PlatformQueryProduct>) args.get(0);
                 Result<PlatformProductDetailsResponse> resultCallback =
                     new Result<PlatformProductDetailsResponse>() {
                       public void success(PlatformProductDetailsResponse result) {

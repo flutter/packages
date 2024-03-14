@@ -12,9 +12,9 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-/// Pigeon version of Java Product.
-class PlatformProduct {
-  PlatformProduct({required this.productId, required this.productType});
+/// Pigeon version of Java QueryProductDetailsParams.Product.
+class PlatformQueryProduct {
+  PlatformQueryProduct({required this.productId, required this.productType});
 
   final String productId;
   final PlatformProductType productType;
@@ -295,7 +295,7 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
   @async
   PlatformProductDetailsResponse queryProductDetailsAsync(
-      List<PlatformProduct> products);
+      List<PlatformQueryProduct> products);
 
   /// Wraps BillingClient#isFeatureSupported(String).
   // TODO(stuartmorgan): Consider making this take a enum, and converting the

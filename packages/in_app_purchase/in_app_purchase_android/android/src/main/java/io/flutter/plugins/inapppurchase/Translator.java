@@ -59,15 +59,16 @@ import java.util.Locale;
   }
 
   static List<QueryProductDetailsParams.Product> toProductList(
-      List<Messages.PlatformProduct> platformProducts) {
+      List<Messages.PlatformQueryProduct> platformProducts) {
     List<QueryProductDetailsParams.Product> products = new ArrayList<>();
-    for (Messages.PlatformProduct platformProduct : platformProducts) {
+    for (Messages.PlatformQueryProduct platformProduct : platformProducts) {
       products.add(toProduct(platformProduct));
     }
     return products;
   }
 
-  static QueryProductDetailsParams.Product toProduct(Messages.PlatformProduct platformProduct) {
+  static QueryProductDetailsParams.Product toProduct(
+      Messages.PlatformQueryProduct platformProduct) {
 
     return QueryProductDetailsParams.Product.newBuilder()
         .setProductId(platformProduct.getProductId())

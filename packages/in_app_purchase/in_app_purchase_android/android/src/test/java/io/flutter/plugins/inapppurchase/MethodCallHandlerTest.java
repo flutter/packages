@@ -64,11 +64,11 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceDetails;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -543,7 +543,7 @@ public class MethodCallHandlerTest {
     // Connect a billing client and set up the product query listeners
     establishConnectedBillingClient();
     List<String> productsIds = asList("id1", "id2");
-    final List<PlatformProduct> productList =
+    final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
     // Query for product details
@@ -575,7 +575,7 @@ public class MethodCallHandlerTest {
     // Disconnect the Billing client and prepare a queryProductDetails call
     methodChannelHandler.endConnection();
     List<String> productsIds = asList("id1", "id2");
-    final List<PlatformProduct> productList =
+    final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
     methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
@@ -1120,7 +1120,7 @@ public class MethodCallHandlerTest {
     // Set up the query method call
     establishConnectedBillingClient();
     List<String> productsIds = asList("id1", "id2");
-    final List<PlatformProduct> productList =
+    final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
     // Call the method.
@@ -1137,12 +1137,12 @@ public class MethodCallHandlerTest {
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
   }
 
-  private List<PlatformProduct> buildProductList(
+  private List<PlatformQueryProduct> buildProductList(
       List<String> productIds, PlatformProductType productType) {
-    List<PlatformProduct> productList = new ArrayList<>();
+    List<PlatformQueryProduct> productList = new ArrayList<>();
     for (String productId : productIds) {
-      PlatformProduct.Builder builder =
-          new PlatformProduct.Builder().setProductId(productId).setProductType(productType);
+      PlatformQueryProduct.Builder builder =
+          new PlatformQueryProduct.Builder().setProductId(productId).setProductType(productType);
       productList.add(builder.build());
     }
     return productList;

@@ -139,8 +139,8 @@ class BillingClient {
   }) async {
     return productDetailsResponseWrapperFromPlatform(
         await _hostApi.queryProductDetailsAsync(productList
-            .map(
-                (ProductWrapper product) => platformProductFromWrapper(product))
+            .map((ProductWrapper product) =>
+                platformQueryProductFromWrapper(product))
             .toList()));
   }
 

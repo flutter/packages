@@ -41,11 +41,11 @@ import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -218,7 +218,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
 
   @Override
   public void queryProductDetailsAsync(
-      @NonNull List<PlatformProduct> products,
+      @NonNull List<PlatformQueryProduct> products,
       @NonNull Result<PlatformProductDetailsResponse> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());

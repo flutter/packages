@@ -109,8 +109,8 @@ BillingConfigWrapper billingConfigWrapperFromPlatform(
 }
 
 /// Creates a Pigeon [PlatformProduct] from a [ProductWrapper].
-PlatformProduct platformProductFromWrapper(ProductWrapper product) {
-  return PlatformProduct(
+PlatformQueryProduct platformQueryProductFromWrapper(ProductWrapper product) {
+  return PlatformQueryProduct(
     productId: product.productId,
     productType: platformProductTypeFromWrapper(product.productType),
   );

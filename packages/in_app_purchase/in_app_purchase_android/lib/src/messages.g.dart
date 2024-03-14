@@ -56,9 +56,9 @@ enum PlatformPurchaseState {
   pending,
 }
 
-/// Pigeon version of Java Product.
-class PlatformProduct {
-  PlatformProduct({
+/// Pigeon version of Java QueryProductDetailsParams.Product.
+class PlatformQueryProduct {
+  PlatformQueryProduct({
     required this.productId,
     required this.productType,
   });
@@ -74,9 +74,9 @@ class PlatformProduct {
     ];
   }
 
-  static PlatformProduct decode(Object result) {
+  static PlatformQueryProduct decode(Object result) {
     result as List<Object?>;
-    return PlatformProduct(
+    return PlatformQueryProduct(
       productId: result[0]! as String,
       productType: PlatformProductType.values[result[1]! as int],
     );
@@ -528,22 +528,22 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
     } else if (value is PlatformBillingResult) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProduct) {
+    } else if (value is PlatformProductDetailsResponse) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProductDetailsResponse) {
+    } else if (value is PlatformPurchase) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchase) {
+    } else if (value is PlatformPurchaseHistoryRecord) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryRecord) {
+    } else if (value is PlatformPurchaseHistoryResponse) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryResponse) {
+    } else if (value is PlatformPurchasesResponse) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformQueryProduct) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
@@ -566,17 +566,17 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
       case 132:
         return PlatformBillingResult.decode(readValue(buffer)!);
       case 133:
-        return PlatformProduct.decode(readValue(buffer)!);
-      case 134:
         return PlatformProductDetailsResponse.decode(readValue(buffer)!);
-      case 135:
+      case 134:
         return PlatformPurchase.decode(readValue(buffer)!);
-      case 136:
+      case 135:
         return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
-      case 137:
+      case 136:
         return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
-      case 138:
+      case 137:
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
+      case 138:
+        return PlatformQueryProduct.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -866,7 +866,7 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
   Future<PlatformProductDetailsResponse> queryProductDetailsAsync(
-      List<PlatformProduct?> products) async {
+      List<PlatformQueryProduct?> products) async {
     const String __pigeon_channelName =
         'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync';
     final BasicMessageChannel<Object?> __pigeon_channel =
