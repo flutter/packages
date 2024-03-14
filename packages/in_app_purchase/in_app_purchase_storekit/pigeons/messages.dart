@@ -10,6 +10,7 @@ import 'package:pigeon/pigeon.dart';
   objcHeaderOut: 'darwin/Classes/messages.g.h',
   objcSourceOut: 'darwin/Classes/messages.g.m',
   copyrightHeader: 'pigeons/copyright.txt',
+  swiftOut: 'darwin/Classes/messages.g.swift'
 ))
 class SKPaymentTransactionMessage {
   SKPaymentTransactionMessage({
