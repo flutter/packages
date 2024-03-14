@@ -139,7 +139,8 @@ void runTests() {
     expect(secondVisibleRegion.contains(newCenter), isTrue);
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      // TODO(bparrishMines): See https://github.com/flutter/flutter/issues/145149
+      // TODO(bparrishMines): This is failing due to an error being thrown after completion.
+      // See https://github.com/flutter/flutter/issues/145149
       skip: isIOS || true);
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
