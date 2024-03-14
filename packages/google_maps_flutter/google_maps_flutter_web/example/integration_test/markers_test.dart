@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:flutter/painting.dart' show ImageConfiguration;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -214,7 +213,6 @@ void main() {
         Marker(
             markerId: const MarkerId('1'),
             icon: AssetMapBitmap(
-              ImageConfiguration.empty,
               'assets/red_square.png',
               imagePixelRatio: 1.0,
             )),
@@ -247,7 +245,6 @@ void main() {
         Marker(
             markerId: const MarkerId('1'),
             icon: AssetMapBitmap(
-              ImageConfiguration.empty,
               'assets/red_square.png',
               imagePixelRatio: 2.0,
             )),
@@ -277,18 +274,11 @@ void main() {
         (WidgetTester tester) async {
       tester.view.devicePixelRatio = 2.0;
 
-      const ImageConfiguration configuration = ImageConfiguration(
-        size: Size(64, 64),
-      );
-
       final Set<Marker> markers = <Marker>{
         Marker(
             markerId: const MarkerId('1'),
-            icon: AssetMapBitmap(
-              configuration,
-              'assets/red_square.png',
-              imagePixelRatio: 2.0,
-            )),
+            icon: AssetMapBitmap('assets/red_square.png',
+                imagePixelRatio: 2.0, size: const Size(64, 64))),
       };
 
       await controller.addMarkers(markers);
@@ -319,7 +309,6 @@ void main() {
         Marker(
             markerId: const MarkerId('1'),
             icon: AssetMapBitmap(
-              ImageConfiguration.empty,
               'assets/broken_asset_name.png',
               imagePixelRatio: 2.0,
             )),
@@ -348,7 +337,10 @@ void main() {
       final Set<Marker> markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
-          icon: BytesMapBitmap(bytes),
+          icon: BytesMapBitmap(
+            bytes,
+            imagePixelRatio: tester.view.devicePixelRatio,
+          ),
         ),
       };
 
@@ -372,7 +364,7 @@ void main() {
 
       // Icon size is 16x16 pixels, this should be automatically read from the
       // bitmap and set to the icon size scaled to 8x8 using the
-      // given devices pixel ratio.
+      // given imagePixelRatio.
       final int expectedSize = 16 ~/ tester.view.devicePixelRatio;
       expect(size.width, expectedSize);
       expect(size.height, expectedSize);
