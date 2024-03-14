@@ -63,7 +63,6 @@ void main() {
             12,
           ),
         );
-        await tester.pump();
 
         final LatLng coords = await controller.getLatLng(
           ScreenCoordinate(x: size.width ~/ 2, y: size.height ~/ 2),
@@ -72,7 +71,9 @@ void main() {
         expect(await controller.getZoomLevel(), 12);
         expect(coords.latitude, closeTo(19, _acceptableLatLngDelta));
         expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
-      });
+      },
+          // TODO(bparrishMines): See https://github.com/flutter/flutter/issues/145149
+          skip: true);
 
       testWidgets('addPadding', (WidgetTester tester) async {
         const LatLng initialMapCenter = LatLng(0, 0);

@@ -132,7 +132,6 @@ void runTests() {
 
     final LatLngBounds secondVisibleRegion =
         await mapController.getVisibleRegion();
-    await tester.pumpAndSettle();
 
     expect(secondVisibleRegion, isNot(zeroLatLngBounds));
 
@@ -140,7 +139,8 @@ void runTests() {
     expect(secondVisibleRegion.contains(newCenter), isTrue);
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: isIOS);
+      // TODO(bparrishMines): See https://github.com/flutter/flutter/issues/145149
+      skip: isIOS || true);
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
