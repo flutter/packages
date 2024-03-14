@@ -9,6 +9,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import android.content.res.AssetManager;
+import android.os.Build;
+import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -21,16 +24,32 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = Build.VERSION_CODES.P)
 public class MarkersControllerTest {
+  private AssetManager assetManager;
+  private final float density = 1;
+
+  @Before
+  public void before() {
+    MockitoAnnotations.openMocks(this);
+    assetManager = ApplicationProvider.getApplicationContext().getAssets();
+  }
 
   @Test
   public void controller_OnMarkerDragStart() {
     final MethodChannel methodChannel =
         spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
-    final MarkersController controller = new MarkersController(methodChannel);
+    final MarkersController controller =
+        new MarkersController(methodChannel, assetManager, density);
     final GoogleMap googleMap = mock(GoogleMap.class);
     controller.setGoogleMap(googleMap);
 
@@ -63,7 +82,8 @@ public class MarkersControllerTest {
   public void controller_OnMarkerDragEnd() {
     final MethodChannel methodChannel =
         spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
-    final MarkersController controller = new MarkersController(methodChannel);
+    final MarkersController controller =
+        new MarkersController(methodChannel, assetManager, density);
     final GoogleMap googleMap = mock(GoogleMap.class);
     controller.setGoogleMap(googleMap);
 
@@ -96,7 +116,8 @@ public class MarkersControllerTest {
   public void controller_OnMarkerDrag() {
     final MethodChannel methodChannel =
         spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
-    final MarkersController controller = new MarkersController(methodChannel);
+    final MarkersController controller =
+        new MarkersController(methodChannel, assetManager, density);
     final GoogleMap googleMap = mock(GoogleMap.class);
     controller.setGoogleMap(googleMap);
 

@@ -160,52 +160,95 @@
                                                        saturation:1.0
                                                        brightness:0.7
                                                             alpha:1.0]];
-  } else if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
-    if (iconData.count == 2) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-    } else {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]
-                                                   fromPackage:iconData[2]]];
-    }
   } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
-    if (iconData.count == 3) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-      id scaleParam = iconData[2];
-      image = [self scaleImage:image by:scaleParam];
-    } else {
-      NSString *error =
-          [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
-                                     (unsigned long)iconData.count];
-      NSException *exception = [NSException exceptionWithName:@"InvalidBitmapDescriptor"
-                                                       reason:error
-                                                     userInfo:nil];
-      @throw exception;
-    }
+    // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
+    // Refer to the flutter google_maps_flutter_platform_interface package for details.
+    NSAssert((iconData.count == 3), @"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
+             (unsigned long)iconData.count);
+    image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
+    id scaleParam = iconData[2];
+    image = [self scaleImage:image by:scaleParam];
   } else if ([iconData[0] isEqualToString:@"fromBytes"]) {
-    if (iconData.count == 2) {
-      @try {
-        FlutterStandardTypedData *byteData = iconData[1];
+    // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
+    // Refer to the flutter google_maps_flutter_platform_interface package for details.
+    NSAssert(iconData.count == 2,
+             @"'fromBytes' should have exactly 2 arguments, the bytes. Got: %lu",
+             (unsigned long)iconData.count);
+    @try {
+      FlutterStandardTypedData *byteData = iconData[1];
+      CGFloat screenScale = [[UIScreen mainScreen] scale];
+      image = [UIImage imageWithData:[byteData data] scale:screenScale];
+    } @catch (NSException *exception) {
+      @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                     reason:@"Unable to interpret bytes as a valid image."
+                                   userInfo:nil];
+    }
+  } else if ([iconData.firstObject isEqualToString:@"asset"]) {
+    NSAssert((iconData.count > 2), @"'asset' should have at least 3 parameters. Got: %lu",
+             (unsigned long)iconData.count);
+    image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
+    if ([iconData[2] isEqualToString:@"auto"]) {
+      NSAssert((iconData.count == 4 || iconData.count == 5),
+
+               @"'asset' with auto setting should have exactly 4 or 5 arguments. Got: %lu",
+               (unsigned long)iconData.count);
+      if (iconData.count == 4) {
+        // Update proper scale information for image object.
+        CGFloat imageScale = [iconData[3] doubleValue];
+        image = [self scaleImage:image withScale:imageScale];
+      } else if (iconData.count == 5) {
         CGFloat screenScale = [[UIScreen mainScreen] scale];
-        image = [UIImage imageWithData:[byteData data] scale:screenScale];
-      } @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                       reason:@"Unable to interpret bytes as a valid image."
-                                     userInfo:nil];
+        // Update proper scale information for image object.
+        image = [self scaleImage:image withScale:screenScale];
+        // Create resized image.
+        CGSize size_param = [FLTGoogleMapJSONConversions sizeFromArray:iconData[4]];
+        // Size paramter is given in logical pixels, convert to physical pixels.
+        CGSize size = [self scaleSizeAndFloorToInt:size_param withFactor:screenScale];
+        image = [self scaleImage:image toSize:size];
       }
-    } else {
-      NSString *error = [NSString
-          stringWithFormat:@"fromBytes should have exactly one argument, the bytes. Got: %lu",
-                           (unsigned long)iconData.count];
-      NSException *exception = [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                                       reason:error
-                                                     userInfo:nil];
-      @throw exception;
+    }
+  } else if ([iconData[0] isEqualToString:@"bytes"]) {
+    NSAssert((iconData.count > 2), @"'bytes' should have at least 3 parameters. Got: %lu",
+             (unsigned long)iconData.count);
+    @try {
+      FlutterStandardTypedData *byteData = iconData[1];
+      if ([iconData[2] isEqualToString:@"auto"]) {
+        NSAssert((iconData.count == 4 || iconData.count == 5),
+                 @"'bytes' with auto setting should have exactly 4 or 5 arguments, Got: %lu",
+                 (unsigned long)iconData.count);
+        if (iconData.count == 4) {
+          CGFloat imageScale = [iconData[3] doubleValue];
+          // Scale parameter given, use it as scale factor
+          image = [UIImage imageWithData:[byteData data] scale:imageScale];
+        } else if (iconData.count == 5) {
+          CGFloat screenScale = [[UIScreen mainScreen] scale];
+          // Size parameter is given, scale image to exact size.
+          // Update proper scale information for image object.
+          image = [UIImage imageWithData:[byteData data] scale:screenScale];
+          // Create resized image.
+          CGSize size_param = [FLTGoogleMapJSONConversions sizeFromArray:iconData[4]];
+          // Size paramter is given in logical pixels, convert to physical pixels.
+          CGSize size = [self scaleSizeAndFloorToInt:size_param withFactor:screenScale];
+          image = [self scaleImage:image toSize:size];
+        }
+      } else {
+        // No scaling, load image from bytes without scale parameter.
+        image = [UIImage imageWithData:[byteData data]];
+      }
+    } @catch (NSException *exception) {
+      @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                     reason:@"Unable to interpret bytes as a valid image."
+                                   userInfo:nil];
     }
   }
 
   return image;
 }
 
+/// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
+/// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'
+/// message handling. It will be removed when the deprecated image bitmap description type
+/// 'fromBytes' is removed from the platform interface.
 - (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
   double scale = 1.0;
   if ([scaleParam isKindOfClass:[NSNumber class]]) {
@@ -217,6 +260,108 @@
                          orientation:(image.imageOrientation)];
   }
   return image;
+}
+
+/// Creates a scaled version of the provided UIImage based on a specified scale factor. If the scale
+/// factor differs from the image's current scale by more than a small epsilon-delta (to account for
+/// minor floating-point inaccuracies), a new UIImage object is created with the specified scale.
+/// Otherwise, the original image is returned.
+///
+/// @param image The UIImage to scale.
+/// @param scale The factor by which to scale the image.
+/// @return UIImage Returns the scaled UIImage.
+- (UIImage *)scaleImage:(UIImage *)image withScale:(CGFloat)scale {
+  if (fabs(scale - image.scale) > 1e-3) {
+    return [UIImage imageWithCGImage:[image CGImage]
+                               scale:scale
+                         orientation:(image.imageOrientation)];
+  }
+  return image;
+}
+
+/// Scales an input UIImage to a specified size. If the aspect ratio of the input image
+/// closely matches the target size, indicated by a small epsilon-delta, the image's scale
+/// property is updated instead of resizing the image. If the aspect ratios differ beyond this
+/// threshold, the method redraws the image at the target size.
+
+/// @param image The UIImage to scale.
+/// @param size The target CGSize to scale the image to.
+/// @return UIImage Returns the scaled UIImage.
+- (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size {
+  CGFloat originalPixelWidth = image.size.width * image.scale;
+  CGFloat originalPixelHeight = image.size.height * image.scale;
+
+  // Return original image if either original image size or target size is so small that
+  // image cannot be resized or displayed.
+  if (originalPixelWidth <= 0 || originalPixelHeight <= 0 || size.width <= 0 || size.height <= 0) {
+    return image;
+  }
+
+  // Check if the image's size, accounting for scale, matches the target size.
+  if (fabs(originalPixelWidth - size.width) <= DBL_EPSILON &&
+      fabs(originalPixelHeight - size.height) <= DBL_EPSILON) {
+    // No need for resizing, return the original image
+    return image;
+  }
+
+  // Check if the aspect ratios are approximately equal.
+  CGSize originalPixelSize = CGSizeMake(originalPixelWidth, originalPixelHeight);
+  if ([self isScalableWithScaleFactorFromSize:originalPixelSize toSize:size]) {
+    // Scaled image has close to same aspect ratio,
+    // updating image scale instead of resizing image.
+    CGFloat factor = originalPixelWidth / size.width;
+    return [self scaleImage:image withScale:(image.scale * factor)];
+  } else {
+    // Aspect ratios differ significantly, resize the image.
+    UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
+    format.scale = 1.0;
+    format.opaque = NO;
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:size
+                                                                               format:format];
+    UIImage *newImage =
+        [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull context) {
+          [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+        }];
+
+    // Return image with proper scaling.
+    return [self scaleImage:newImage withScale:image.scale];
+  }
+}
+
+/// Checks if an image can be scaled from an original size to a target size using a scale factor
+/// while maintaining the aspect ratio.
+///
+/// @param originalSize The original size of the image.
+/// @param targetSize The desired target size to scale the image to.
+/// @return A BOOL indicating whether the image can be scaled to the target size with scale factor.
+- (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize {
+  // Select the scaling factor based on the longer side to have good precision.
+  CGFloat scaleFactor = (originalSize.width > originalSize.height)
+                            ? (targetSize.width / originalSize.width)
+                            : (targetSize.height / originalSize.height);
+
+  // Calculate the scaled dimensions.
+  CGFloat scaledWidth = originalSize.width * scaleFactor;
+  CGFloat scaledHeight = originalSize.height * scaleFactor;
+
+  // Check if the scaled dimensions are within a one-pixel
+  // threshold of the target dimensions.
+  BOOL widthWithinThreshold = fabs(scaledWidth - targetSize.width) <= 1.0;
+  BOOL heightWithinThreshold = fabs(scaledHeight - targetSize.height) <= 1.0;
+
+  // The image is considered scalable with scale factor
+  // if both dimensions are within the threshold.
+  return widthWithinThreshold && heightWithinThreshold;
+}
+
+/// Scales the input CGSize by a specified scale factor and floors the floating point
+/// values to integers.
+///
+/// @param size The CGSize to scale.
+/// @param scale The scale factor to apply to the width and height of the CGSize.
+/// @return CGSize Returns the scaled CGSize with width and height as integers.
+- (CGSize)scaleSizeAndFloorToInt:(CGSize)size withFactor:(CGFloat)scale {
+  return CGSizeMake((int)(size.width * scale), (int)(size.height * scale));
 }
 
 @end

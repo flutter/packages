@@ -25,6 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
 + (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
 
+// Creates a CGSize from an NSArray. The first and second elements of the array are interpreted as
+// the width and height of the CGSize, respectively.
++ (CGSize)sizeFromArray:(NSArray *)array;
+
 @end
 
 NS_ASSUME_NONNULL_END

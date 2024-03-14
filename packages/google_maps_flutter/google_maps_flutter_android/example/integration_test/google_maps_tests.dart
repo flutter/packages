@@ -967,19 +967,6 @@ void googleMapsTests() {
     expect(iwVisibleStatus, false);
   });
 
-  testWidgets('fromAssetImage', (WidgetTester tester) async {
-    const double pixelRatio = 2;
-    const ImageConfiguration imageConfiguration =
-        ImageConfiguration(devicePixelRatio: pixelRatio);
-    final BitmapDescriptor mip = await BitmapDescriptor.fromAssetImage(
-        imageConfiguration, 'red_square.png');
-    final BitmapDescriptor scaled = await BitmapDescriptor.fromAssetImage(
-        imageConfiguration, 'red_square.png',
-        mipmaps: false);
-    expect((mip.toJson() as List<dynamic>)[2], 1);
-    expect((scaled.toJson() as List<dynamic>)[2], 2);
-  });
-
   testWidgets('testTakeSnapshot', (WidgetTester tester) async {
     final Completer<ExampleGoogleMapController> controllerCompleter =
         Completer<ExampleGoogleMapController>();

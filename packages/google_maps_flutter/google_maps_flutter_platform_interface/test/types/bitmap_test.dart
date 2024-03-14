@@ -80,6 +80,7 @@ void main() {
           expect(BitmapDescriptor.fromJson(<dynamic>['defaultMarker']),
               isA<BitmapDescriptor>());
         });
+
         test('wrong type', () {
           expect(() {
             BitmapDescriptor.fromJson(<dynamic>['bogusType']);
@@ -91,15 +92,18 @@ void main() {
           expect(BitmapDescriptor.fromJson(<dynamic>['defaultMarker']),
               isA<BitmapDescriptor>());
         });
+
         test('hue is number', () {
           expect(BitmapDescriptor.fromJson(<dynamic>['defaultMarker', 158]),
               isA<BitmapDescriptor>());
         });
+
         test('hue is not number', () {
           expect(() {
             BitmapDescriptor.fromJson(<dynamic>['defaultMarker', 'nope']);
           }, throwsAssertionError);
         });
+
         test('hue is out of range', () {
           expect(() {
             BitmapDescriptor.fromJson(<dynamic>['defaultMarker', -1]);
@@ -118,6 +122,7 @@ void main() {
               ]),
               isA<BitmapDescriptor>());
         });
+
         test('without bytes', () {
           expect(() {
             BitmapDescriptor.fromJson(<dynamic>['fromBytes', null]);
@@ -134,6 +139,7 @@ void main() {
                   <dynamic>['fromAsset', 'some/path.png']),
               isA<BitmapDescriptor>());
         });
+
         test('name cannot be null or empty', () {
           expect(() {
             BitmapDescriptor.fromJson(<dynamic>['fromAsset', null]);
@@ -142,12 +148,14 @@ void main() {
             BitmapDescriptor.fromJson(<dynamic>['fromAsset', '']);
           }, throwsAssertionError);
         });
+
         test('package is passed', () {
           expect(
               BitmapDescriptor.fromJson(
                   <dynamic>['fromAsset', 'some/path.png', 'some_package']),
               isA<BitmapDescriptor>());
         });
+
         test('package cannot be null or empty', () {
           expect(() {
             BitmapDescriptor.fromJson(
@@ -196,6 +204,7 @@ void main() {
             BitmapDescriptor.fromJson(<dynamic>['fromAssetImage', '', 1.0]);
           }, throwsAssertionError);
         });
+
         test('dpi must be number', () {
           expect(() {
             BitmapDescriptor.fromJson(
@@ -206,6 +215,7 @@ void main() {
                 <dynamic>['fromAssetImage', 'some/path.png', 'one']);
           }, throwsAssertionError);
         });
+
         test('with optional [width, height] List', () {
           expect(
               BitmapDescriptor.fromJson(<dynamic>[
@@ -216,6 +226,7 @@ void main() {
               ]),
               isA<BitmapDescriptor>());
         });
+
         test(
             'optional [width, height] List cannot be null or not contain 2 elements',
             () {
@@ -237,6 +248,276 @@ void main() {
           }, throwsAssertionError);
         });
       });
+
+      group('bytes', () {
+        test('with bytes', () {
+          expect(
+              BitmapDescriptor.fromJson(<dynamic>[
+                'bytes',
+                Uint8List.fromList(<int>[1, 2, 3]),
+                'auto',
+                3.0,
+              ]),
+              isA<BitmapDescriptor>());
+        });
+
+        test('without bytes', () {
+          expect(() {
+            BitmapDescriptor.fromJson(
+                <dynamic>[BytesMapBitmap.type, null, 'auto', 3.0]);
+          }, throwsAssertionError);
+          expect(() {
+            BitmapDescriptor.fromJson(
+                <dynamic>[BytesMapBitmap.type, <dynamic>[], 'auto', 3.0]);
+          }, throwsAssertionError);
+        });
+
+        test(
+            'optional [width, height] List cannot be null or not contain 2 elements',
+            () {
+          expect(() {
+            BitmapDescriptor.fromJson(
+                <dynamic>[BytesMapBitmap.type, <dynamic>[], 'auto', 3.0, null]);
+          }, throwsAssertionError);
+          expect(() {
+            BitmapDescriptor.fromJson(<dynamic>[
+              BytesMapBitmap.type,
+              <dynamic>[],
+              'auto',
+              3.0,
+              <dynamic>[]
+            ]);
+          }, throwsAssertionError);
+          expect(() {
+            BitmapDescriptor.fromJson(<dynamic>[
+              'bytes',
+              <dynamic>[],
+              'auto',
+              3.0,
+              <dynamic>[640, 480, 1024]
+            ]);
+          }, throwsAssertionError);
+        });
+      });
+
+      group('asset', () {
+        test('name and dpi passed', () {
+          expect(
+              BitmapDescriptor.fromJson(
+                  <dynamic>[AssetMapBitmap.type, 'some/path.png', 'auto', 1.0]),
+              isA<BitmapDescriptor>());
+        });
+
+        test('name cannot be null or empty', () {
+          expect(() {
+            BitmapDescriptor.fromJson(
+                <dynamic>[AssetMapBitmap.type, null, 'auto', 1.0]);
+          }, throwsAssertionError);
+          expect(() {
+            BitmapDescriptor.fromJson(
+                <dynamic>[AssetMapBitmap.type, '', 'auto', 1.0]);
+          }, throwsAssertionError);
+        });
+
+        test('dpi must be number', () {
+          expect(() {
+            BitmapDescriptor.fromJson(
+                <dynamic>[AssetMapBitmap.type, 'auto', 'some/path.png', null]);
+          }, throwsAssertionError);
+          expect(() {
+            BitmapDescriptor.fromJson(
+                <dynamic>[AssetMapBitmap.type, 'auto', 'some/path.png', 'one']);
+          }, throwsAssertionError);
+        });
+
+        test('with optional [width, height] List', () {
+          expect(
+              BitmapDescriptor.fromJson(<dynamic>[
+                'asset',
+                'some/path.png',
+                'auto',
+                1.0,
+                <dynamic>[640, 480]
+              ]),
+              isA<BitmapDescriptor>());
+        });
+
+        test(
+            'optional [width, height] List cannot be null or not contain 2 elements',
+            () {
+          expect(() {
+            BitmapDescriptor.fromJson(<dynamic>[
+              'fromAssetImage',
+              'some/path.png',
+              'auto',
+              1.0,
+              null
+            ]);
+          }, throwsAssertionError);
+          expect(() {
+            BitmapDescriptor.fromJson(<dynamic>[
+              'fromAssetImage',
+              'some/path.png',
+              'auto',
+              1.0,
+              <dynamic>[]
+            ]);
+          }, throwsAssertionError);
+          expect(() {
+            BitmapDescriptor.fromJson(<dynamic>[
+              'asset',
+              'some/path.png',
+              'auto',
+              1.0,
+              <dynamic>[640, 480, 1024]
+            ]);
+          }, throwsAssertionError);
+        });
+      });
+    });
+  });
+
+  group('$AssetMapBitmap', () {
+    test('construct', () async {
+      final BitmapDescriptor descriptor = AssetMapBitmap(
+        'red_square.png',
+      );
+      expect(descriptor, isA<BitmapDescriptor>());
+      expect(descriptor, isA<AssetMapBitmap>());
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'asset',
+            'red_square.png',
+            BitmapScaling.auto.name,
+            1.0
+          ]));
+    });
+
+    test('construct with imagePixelRatio', () async {
+      final BitmapDescriptor descriptor =
+          AssetMapBitmap('red_square.png', imagePixelRatio: 1.2345);
+
+      expect(descriptor, isA<BitmapDescriptor>());
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'asset',
+            'red_square.png',
+            BitmapScaling.auto.name,
+            1.2345,
+          ]));
+    });
+
+    test('construct with size', () async {
+      const Size size = Size(100, 200);
+      final BitmapDescriptor descriptor =
+          AssetMapBitmap('red_square.png', size: size);
+
+      expect(descriptor, isA<BitmapDescriptor>());
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'asset',
+            'red_square.png',
+            BitmapScaling.auto.name,
+            1.0,
+            <double>[size.width, size.height]
+          ]));
+    });
+
+    test('fromMipmaps', () async {
+      final BitmapDescriptor descriptor = await AssetMapBitmap.fromMipmaps(
+          ImageConfiguration.empty, 'red_square.png');
+      expect(descriptor, isA<BitmapDescriptor>());
+      expect(descriptor, isA<AssetMapBitmap>());
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'asset',
+            'red_square.png',
+            BitmapScaling.auto.name,
+            1.0
+          ]));
+    },
+        // TODO(stuartmorgan): Investigate timeout on web.
+        skip: kIsWeb);
+
+    test('fromMipmaps with size', () async {
+      const Size size = Size(100, 200);
+      const ImageConfiguration imageConfiguration =
+          ImageConfiguration(size: size);
+      final BitmapDescriptor descriptor = await AssetMapBitmap.fromMipmaps(
+          imageConfiguration, 'red_square.png');
+
+      expect(descriptor, isA<BitmapDescriptor>());
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'asset',
+            'red_square.png',
+            BitmapScaling.auto.name,
+            1.0,
+            <double>[size.width, size.height]
+          ]));
+    });
+  },
+      // TODO(stuartmorgan): Investigate timeout on web.
+      skip: kIsWeb);
+
+  group('$BytesMapBitmap', () {
+    test('construct with empty byte array, throws assertion error', () {
+      expect(() {
+        BytesMapBitmap(Uint8List.fromList(<int>[]));
+      }, throwsAssertionError);
+    });
+
+    test('construct', () {
+      final BitmapDescriptor descriptor = BytesMapBitmap(
+        Uint8List.fromList(<int>[1, 2, 3]),
+      );
+      expect(descriptor, isA<BitmapDescriptor>());
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'bytes',
+            <int>[1, 2, 3],
+            BitmapScaling.auto.name,
+            1.0,
+          ]));
+    });
+
+    test('construct with size', () {
+      final BitmapDescriptor descriptor = BytesMapBitmap(
+        Uint8List.fromList(<int>[1, 2, 3]),
+        size: const Size(40, 20),
+      );
+
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'bytes',
+            <int>[1, 2, 3],
+            BitmapScaling.auto.name,
+            1.0,
+            <int>[40, 20],
+          ]));
+    });
+
+    test('construct with imagePixelRatio', () {
+      final BitmapDescriptor descriptor = BytesMapBitmap(
+        Uint8List.fromList(<int>[1, 2, 3]),
+        imagePixelRatio: 1.2345,
+      );
+
+      expect(
+          descriptor.toJson(),
+          equals(<Object>[
+            'bytes',
+            <int>[1, 2, 3],
+            BitmapScaling.auto.name,
+            1.2345,
+          ]));
     });
   });
 }
