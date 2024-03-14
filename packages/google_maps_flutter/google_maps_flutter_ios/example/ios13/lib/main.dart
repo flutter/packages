@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:maps_example_dart/animate_camera.dart';
+import 'package:maps_example_dart/clustering.dart';
 import 'package:maps_example_dart/lite_mode.dart';
 import 'package:maps_example_dart/map_click.dart';
 import 'package:maps_example_dart/map_coordinates.dart';
@@ -39,6 +40,7 @@ void main() {
     PaddingPage(),
     SnapshotPage(),
     LiteModePage(),
+    ClusteringPage(),
     TileOverlayPage(),
     MapIdPage(),
   ])));

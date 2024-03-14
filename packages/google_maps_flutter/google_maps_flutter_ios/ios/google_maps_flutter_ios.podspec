@@ -22,8 +22,15 @@ Downloaded by pub (not CocoaPods).
   # has been confirmed to be compatible via an example in examples/. See discussion
   # in https://github.com/flutter/flutter/issues/86820 for why this is so broad.
   s.dependency 'GoogleMaps', '< 9.0'
+  # Once the plugin requires iOS version 13+, this should be updated.
+  s.dependency 'Google-Maps-iOS-Utils', '4.1.0'
   s.static_framework = true
   s.platform = :ios, '12.0'
+  # Enabling Swift support for Google-Maps-iOS-Utils
+  s.swift_version = '5.0'
+  s.xcconfig = {
+    'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
+  }
   # GoogleMaps 6.x does not support arm64 simulators, but also doesn't declare
   # explicitly that it doesn't, so mark that here so that the Flutter tool knows
   # to build the Runner for x86_64 instead. See https://github.com/flutter/flutter/issues/94491
