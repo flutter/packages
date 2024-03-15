@@ -6,7 +6,6 @@ import 'package:integration_test/integration_test.dart';
 
 import 'src/maps_controller.dart' as maps_controller;
 import 'src/maps_inspector.dart' as maps_inspector;
-import 'src/shared.dart';
 import 'src/tiles_inspector.dart' as tiles_inspector;
 
 /// Recombine all test files in `src` into a single test app.
