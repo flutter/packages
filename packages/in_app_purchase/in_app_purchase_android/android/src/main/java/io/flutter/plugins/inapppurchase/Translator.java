@@ -16,7 +16,6 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.UserChoiceDetails;
-import com.android.billingclient.api.UserChoiceDetails.Product;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -84,6 +83,17 @@ import java.util.Locale;
         return BillingClient.ProductType.SUBS;
     }
     throw new Messages.FlutterError("UNKNOWN_TYPE", "Unknown product type: " + type, null);
+  }
+
+  static Messages.PlatformProductType toPlatformProductType(String typeString) {
+    switch (typeString) {
+      case BillingClient.ProductType.INAPP:
+        // Fallback handling to avoid throwing an exception if a new type is added in the future.
+      default:
+        return Messages.PlatformProductType.INAPP;
+      case BillingClient.ProductType.SUBS:
+        return Messages.PlatformProductType.SUBS;
+    }
   }
 
   static List<Object> fromProductDetailsList(@Nullable List<ProductDetails> productDetailsList) {
@@ -268,31 +278,30 @@ import java.util.Locale;
     return new Messages.PlatformUserChoiceDetails.Builder()
         .setExternalTransactionToken(userChoiceDetails.getExternalTransactionToken())
         .setOriginalExternalTransactionId(userChoiceDetails.getOriginalExternalTransactionId())
-        .setProductsJsonList(fromProductsList(userChoiceDetails.getProducts()))
+        .setProducts(fromUserChoiceProductsList(userChoiceDetails.getProducts()))
         .build();
   }
 
-  static List<Object> fromProductsList(List<Product> productsList) {
+  static List<Messages.PlatformUserChoiceProduct> fromUserChoiceProductsList(
+      List<UserChoiceDetails.Product> productsList) {
     if (productsList.isEmpty()) {
       return Collections.emptyList();
     }
 
-    // This and the method are generically typed due to Pigeon limitations; see
-    // https://github.com/flutter/flutter/issues/116117.
-    ArrayList<Object> output = new ArrayList<>();
-    for (Product product : productsList) {
-      output.add(fromProduct(product));
+    ArrayList<Messages.PlatformUserChoiceProduct> output = new ArrayList<>();
+    for (UserChoiceDetails.Product product : productsList) {
+      output.add(fromUserChoiceProduct(product));
     }
     return output;
   }
 
-  static HashMap<String, Object> fromProduct(Product product) {
-    HashMap<String, Object> info = new HashMap<>();
-    info.put("id", product.getId());
-    info.put("offerToken", product.getOfferToken());
-    info.put("productType", product.getType());
-
-    return info;
+  static Messages.PlatformUserChoiceProduct fromUserChoiceProduct(
+      UserChoiceDetails.Product product) {
+    return new Messages.PlatformUserChoiceProduct.Builder()
+        .setId(product.getId())
+        .setOfferToken(product.getOfferToken())
+        .setType(toPlatformProductType(product.getType()))
+        .build();
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */

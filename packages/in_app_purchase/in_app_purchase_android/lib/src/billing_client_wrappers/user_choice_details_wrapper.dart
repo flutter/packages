@@ -81,7 +81,6 @@ class UserChoiceDetailsWrapper {
 @immutable
 class UserChoiceDetailsProductWrapper {
   /// Creates a [UserChoiceDetailsProductWrapper] with the given record details.
-  @visibleForTesting
   const UserChoiceDetailsProductWrapper({
     required this.id,
     required this.offerToken,

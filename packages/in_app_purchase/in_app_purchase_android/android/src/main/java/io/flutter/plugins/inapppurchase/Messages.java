@@ -1561,21 +1561,17 @@ public class Messages {
       this.externalTransactionToken = setterArg;
     }
 
-    /**
-     * A JSON-compatible list of products, where each entry in the list is a Map<String, Object?>
-     * JSON encoding of the product.
-     */
-    private @NonNull List<Object> productsJsonList;
+    private @NonNull List<PlatformUserChoiceProduct> products;
 
-    public @NonNull List<Object> getProductsJsonList() {
-      return productsJsonList;
+    public @NonNull List<PlatformUserChoiceProduct> getProducts() {
+      return products;
     }
 
-    public void setProductsJsonList(@NonNull List<Object> setterArg) {
+    public void setProducts(@NonNull List<PlatformUserChoiceProduct> setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"productsJsonList\" is null.");
+        throw new IllegalStateException("Nonnull field \"products\" is null.");
       }
-      this.productsJsonList = setterArg;
+      this.products = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -1599,11 +1595,11 @@ public class Messages {
         return this;
       }
 
-      private @Nullable List<Object> productsJsonList;
+      private @Nullable List<PlatformUserChoiceProduct> products;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setProductsJsonList(@NonNull List<Object> setterArg) {
-        this.productsJsonList = setterArg;
+      public @NonNull Builder setProducts(@NonNull List<PlatformUserChoiceProduct> setterArg) {
+        this.products = setterArg;
         return this;
       }
 
@@ -1611,7 +1607,7 @@ public class Messages {
         PlatformUserChoiceDetails pigeonReturn = new PlatformUserChoiceDetails();
         pigeonReturn.setOriginalExternalTransactionId(originalExternalTransactionId);
         pigeonReturn.setExternalTransactionToken(externalTransactionToken);
-        pigeonReturn.setProductsJsonList(productsJsonList);
+        pigeonReturn.setProducts(products);
         return pigeonReturn;
       }
     }
@@ -1621,7 +1617,7 @@ public class Messages {
       ArrayList<Object> toListResult = new ArrayList<Object>(3);
       toListResult.add(originalExternalTransactionId);
       toListResult.add(externalTransactionToken);
-      toListResult.add(productsJsonList);
+      toListResult.add(products);
       return toListResult;
     }
 
@@ -1631,8 +1627,109 @@ public class Messages {
       pigeonResult.setOriginalExternalTransactionId((String) originalExternalTransactionId);
       Object externalTransactionToken = list.get(1);
       pigeonResult.setExternalTransactionToken((String) externalTransactionToken);
-      Object productsJsonList = list.get(2);
-      pigeonResult.setProductsJsonList((List<Object>) productsJsonList);
+      Object products = list.get(2);
+      pigeonResult.setProducts((List<PlatformUserChoiceProduct>) products);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon version of UserChoiseDetails.Product.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformUserChoiceProduct {
+    private @NonNull String id;
+
+    public @NonNull String getId() {
+      return id;
+    }
+
+    public void setId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"id\" is null.");
+      }
+      this.id = setterArg;
+    }
+
+    private @Nullable String offerToken;
+
+    public @Nullable String getOfferToken() {
+      return offerToken;
+    }
+
+    public void setOfferToken(@Nullable String setterArg) {
+      this.offerToken = setterArg;
+    }
+
+    private @NonNull PlatformProductType type;
+
+    public @NonNull PlatformProductType getType() {
+      return type;
+    }
+
+    public void setType(@NonNull PlatformProductType setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"type\" is null.");
+      }
+      this.type = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformUserChoiceProduct() {}
+
+    public static final class Builder {
+
+      private @Nullable String id;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setId(@NonNull String setterArg) {
+        this.id = setterArg;
+        return this;
+      }
+
+      private @Nullable String offerToken;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setOfferToken(@Nullable String setterArg) {
+        this.offerToken = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformProductType type;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setType(@NonNull PlatformProductType setterArg) {
+        this.type = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformUserChoiceProduct build() {
+        PlatformUserChoiceProduct pigeonReturn = new PlatformUserChoiceProduct();
+        pigeonReturn.setId(id);
+        pigeonReturn.setOfferToken(offerToken);
+        pigeonReturn.setType(type);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(id);
+      toListResult.add(offerToken);
+      toListResult.add(type == null ? null : type.index);
+      return toListResult;
+    }
+
+    static @NonNull PlatformUserChoiceProduct fromList(@NonNull ArrayList<Object> list) {
+      PlatformUserChoiceProduct pigeonResult = new PlatformUserChoiceProduct();
+      Object id = list.get(0);
+      pigeonResult.setId((String) id);
+      Object offerToken = list.get(1);
+      pigeonResult.setOfferToken((String) offerToken);
+      Object type = list.get(2);
+      pigeonResult.setType(PlatformProductType.values()[(int) type]);
       return pigeonResult;
     }
   }
@@ -2236,6 +2333,8 @@ public class Messages {
           return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
           return PlatformUserChoiceDetails.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return PlatformUserChoiceProduct.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2258,6 +2357,9 @@ public class Messages {
       } else if (value instanceof PlatformUserChoiceDetails) {
         stream.write(132);
         writeValue(stream, ((PlatformUserChoiceDetails) value).toList());
+      } else if (value instanceof PlatformUserChoiceProduct) {
+        stream.write(133);
+        writeValue(stream, ((PlatformUserChoiceProduct) value).toList());
       } else {
         super.writeValue(stream, value);
       }

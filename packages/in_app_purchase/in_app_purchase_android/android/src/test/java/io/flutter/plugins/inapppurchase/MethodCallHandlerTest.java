@@ -237,7 +237,7 @@ public class MethodCallHandlerTest {
     assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
     assertEquals(
         callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
-    assertTrue(callbackCaptor.getValue().getProductsJsonList().isEmpty());
+    assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
   }
 
   @Test
@@ -306,7 +306,7 @@ public class MethodCallHandlerTest {
     assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
     assertEquals(
         callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
-    assertTrue(callbackCaptor.getValue().getProductsJsonList().isEmpty());
+    assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
   }
 
   @Test

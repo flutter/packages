@@ -207,24 +207,28 @@ class PlatformUserChoiceDetails {
   PlatformUserChoiceDetails({
     required this.originalExternalTransactionId,
     required this.externalTransactionToken,
-    required this.productsJsonList,
+    required this.products,
   });
 
   final String? originalExternalTransactionId;
   final String externalTransactionToken;
-
-  /// A JSON-compatible list of products, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product.
-  // TODO(stuartmorgan): Finish converting to Pigeon. This is still using the
-  // old serialization system to allow conversion of all the method calls to
-  // Pigeon without converting the entire object graph all at once. See
-  // https://github.com/flutter/flutter/issues/117910. The list items are
-  // currently untyped due to https://github.com/flutter/flutter/issues/116117.
-  //
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats it as non-nullable.
-  final List<Object?> productsJsonList;
+  final List<PlatformUserChoiceProduct?> products;
+}
+
+/// Pigeon version of UserChoiseDetails.Product.
+class PlatformUserChoiceProduct {
+  PlatformUserChoiceProduct({
+    required this.id,
+    required this.offerToken,
+    required this.type,
+  });
+
+  final String id;
+  final String? offerToken;
+  final PlatformProductType type;
 }
 
 /// Pigeon version of Java BillingClient.ProductType.

@@ -124,6 +124,14 @@ PlatformProductType platformProductTypeFromWrapper(ProductType type) {
   };
 }
 
+/// Converts a Pigeon [PlatformProductType] to its public API equivalent.
+ProductType productTypeFromPlatform(PlatformProductType type) {
+  return switch (type) {
+    PlatformProductType.inapp => ProductType.inapp,
+    PlatformProductType.subs => ProductType.subs,
+  };
+}
+
 /// Creates a [PurchaseWrapper] from the Pigeon equivalent.
 PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
   return PurchaseWrapper(
@@ -160,10 +168,20 @@ UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
   return UserChoiceDetailsWrapper(
     originalExternalTransactionId: details.originalExternalTransactionId ?? '',
     externalTransactionToken: details.externalTransactionToken,
-    // See TODOs in messages.dart for why this is currently JSON.
-    products: details.productsJsonList
-        .map((Object? json) => UserChoiceDetailsProductWrapper.fromJson(
-            (json! as Map<Object?, Object?>).cast<String, Object?>()))
+    // See comment in messages.dart for why casting away nullability is safe.
+    products: details.products
+        .cast<PlatformUserChoiceProduct>()
+        .map(userChoiceDetailsProductFromPlatform)
         .toList(),
+  );
+}
+
+/// Creates a [UserChoiceDetailsProductWrapper] from the Pigeon equivalent.
+UserChoiceDetailsProductWrapper userChoiceDetailsProductFromPlatform(
+    PlatformUserChoiceProduct product) {
+  return UserChoiceDetailsProductWrapper(
+    id: product.id,
+    offerToken: product.offerToken ?? '',
+    productType: productTypeFromPlatform(product.type),
   );
 }

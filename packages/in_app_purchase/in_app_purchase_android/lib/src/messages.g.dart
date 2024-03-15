@@ -479,22 +479,20 @@ class PlatformUserChoiceDetails {
   PlatformUserChoiceDetails({
     this.originalExternalTransactionId,
     required this.externalTransactionToken,
-    required this.productsJsonList,
+    required this.products,
   });
 
   String? originalExternalTransactionId;
 
   String externalTransactionToken;
 
-  /// A JSON-compatible list of products, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product.
-  List<Object?> productsJsonList;
+  List<PlatformUserChoiceProduct?> products;
 
   Object encode() {
     return <Object?>[
       originalExternalTransactionId,
       externalTransactionToken,
-      productsJsonList,
+      products,
     ];
   }
 
@@ -503,7 +501,40 @@ class PlatformUserChoiceDetails {
     return PlatformUserChoiceDetails(
       originalExternalTransactionId: result[0] as String?,
       externalTransactionToken: result[1]! as String,
-      productsJsonList: (result[2] as List<Object?>?)!.cast<Object?>(),
+      products:
+          (result[2] as List<Object?>?)!.cast<PlatformUserChoiceProduct?>(),
+    );
+  }
+}
+
+/// Pigeon version of UserChoiseDetails.Product.
+class PlatformUserChoiceProduct {
+  PlatformUserChoiceProduct({
+    required this.id,
+    this.offerToken,
+    required this.type,
+  });
+
+  String id;
+
+  String? offerToken;
+
+  PlatformProductType type;
+
+  Object encode() {
+    return <Object?>[
+      id,
+      offerToken,
+      type.index,
+    ];
+  }
+
+  static PlatformUserChoiceProduct decode(Object result) {
+    result as List<Object?>;
+    return PlatformUserChoiceProduct(
+      id: result[0]! as String,
+      offerToken: result[1] as String?,
+      type: PlatformProductType.values[result[2]! as int],
     );
   }
 }
@@ -1038,6 +1069,9 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
     } else if (value is PlatformUserChoiceDetails) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformUserChoiceProduct) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -1056,6 +1090,8 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
       case 132:
         return PlatformUserChoiceDetails.decode(readValue(buffer)!);
+      case 133:
+        return PlatformUserChoiceProduct.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
