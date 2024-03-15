@@ -1,6 +1,8 @@
-## NEXT
+## 2.7.4
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Documents `getExposureOffsetStepSize` to return -1 if the device does not support
+  exposure compensation.
 
 ## 2.7.3
 

@@ -9,9 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - flash mode
 
-/**
- * Represents camera's flash mode. Mirrors `FlashMode` enum in flash_mode.dart.
- */
+/// Represents camera's flash mode. Mirrors `FlashMode` enum in flash_mode.dart.
 typedef NS_ENUM(NSInteger, FLTFlashMode) {
   FLTFlashModeOff,
   FLTFlashModeAuto,
@@ -22,23 +20,17 @@ typedef NS_ENUM(NSInteger, FLTFlashMode) {
   FLTFlashModeInvalid,
 };
 
-/**
- * Gets FLTFlashMode from its string representation.
- * @param mode a string representation of the FLTFlashMode.
- */
+/// Gets FLTFlashMode from its string representation.
+/// @param mode a string representation of the FLTFlashMode.
 extern FLTFlashMode FLTGetFLTFlashModeForString(NSString *mode);
 
-/**
- * Gets AVCaptureFlashMode from FLTFlashMode.
- * @param mode flash mode.
- */
+/// Gets AVCaptureFlashMode from FLTFlashMode.
+/// @param mode flash mode.
 extern AVCaptureFlashMode FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashMode mode);
 
 #pragma mark - exposure mode
 
-/**
- * Represents camera's exposure mode. Mirrors ExposureMode in camera.dart.
- */
+/// Represents camera's exposure mode. Mirrors ExposureMode in camera.dart.
 typedef NS_ENUM(NSInteger, FLTExposureMode) {
   FLTExposureModeAuto,
   FLTExposureModeLocked,
@@ -47,23 +39,17 @@ typedef NS_ENUM(NSInteger, FLTExposureMode) {
   FLTExposureModeInvalid,
 };
 
-/**
- * Gets a string representation of exposure mode.
- * @param mode exposure mode
- */
+/// Gets a string representation of exposure mode.
+/// @param mode exposure mode
 extern NSString *FLTGetStringForFLTExposureMode(FLTExposureMode mode);
 
-/**
- * Gets FLTExposureMode from its string representation.
- * @param mode a string representation of the FLTExposureMode.
- */
+/// Gets FLTExposureMode from its string representation.
+/// @param mode a string representation of the FLTExposureMode.
 extern FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode);
 
 #pragma mark - focus mode
 
-/**
- * Represents camera's focus mode. Mirrors FocusMode in camera.dart.
- */
+/// Represents camera's focus mode. Mirrors FocusMode in camera.dart.
 typedef NS_ENUM(NSInteger, FLTFocusMode) {
   FLTFocusModeAuto,
   FLTFocusModeLocked,
@@ -72,35 +58,25 @@ typedef NS_ENUM(NSInteger, FLTFocusMode) {
   FLTFocusModeInvalid,
 };
 
-/**
- * Gets a string representation from FLTFocusMode.
- * @param mode focus mode
- */
+/// Gets a string representation from FLTFocusMode.
+/// @param mode focus mode
 extern NSString *FLTGetStringForFLTFocusMode(FLTFocusMode mode);
 
-/**
- * Gets FLTFocusMode from its string representation.
- * @param mode a string representation of focus mode.
- */
+/// Gets FLTFocusMode from its string representation.
+/// @param mode a string representation of focus mode.
 extern FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode);
 
 #pragma mark - device orientation
 
-/**
- * Gets UIDeviceOrientation from its string representation.
- */
+/// Gets UIDeviceOrientation from its string representation.
 extern UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation);
 
-/**
- * Gets a string representation of UIDeviceOrientation.
- */
+/// Gets a string representation of UIDeviceOrientation.
 extern NSString *FLTGetStringForUIDeviceOrientation(UIDeviceOrientation orientation);
 
 #pragma mark - resolution preset
 
-/**
- * Represents camera's resolution present. Mirrors ResolutionPreset in camera.dart.
- */
+/// Represents camera's resolution present. Mirrors ResolutionPreset in camera.dart.
 typedef NS_ENUM(NSInteger, FLTResolutionPreset) {
   FLTResolutionPresetVeryLow,
   FLTResolutionPresetLow,
@@ -114,22 +90,16 @@ typedef NS_ENUM(NSInteger, FLTResolutionPreset) {
   FLTResolutionPresetInvalid,
 };
 
-/**
- * Gets FLTResolutionPreset from its string representation.
- * @param preset a string representation of FLTResolutionPreset.
- */
+/// Gets FLTResolutionPreset from its string representation.
+/// @param preset a string representation of FLTResolutionPreset.
 extern FLTResolutionPreset FLTGetFLTResolutionPresetForString(NSString *preset);
 
 #pragma mark - video format
 
-/**
- * Gets VideoFormat from its string representation.
- */
+/// Gets VideoFormat from its string representation.
 extern OSType FLTGetVideoFormatFromString(NSString *videoFormatString);
 
-/**
- * Represents image format. Mirrors ImageFileFormat in camera.dart.
- */
+/// Represents image format. Mirrors ImageFileFormat in camera.dart.
 typedef NS_ENUM(NSInteger, FCPFileFormat) {
   FCPFileFormatJPEG,
   FCPFileFormatHEIF,
@@ -138,9 +108,7 @@ typedef NS_ENUM(NSInteger, FCPFileFormat) {
 
 #pragma mark - image extension
 
-/**
- * Gets a string representation of ImageFileFormat.
- */
+/// Gets a string representation of ImageFileFormat.
 extern FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString);
 
 NS_ASSUME_NONNULL_END

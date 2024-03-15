@@ -1,5 +1,7 @@
-## NEXT
+## 2.7.0
 
+* Adds support for `MapConfiguration.style`.
+* Adds support for `getStyleError`.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates compileSdk version to 34.
 

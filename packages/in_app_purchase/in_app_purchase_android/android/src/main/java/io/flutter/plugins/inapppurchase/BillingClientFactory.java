@@ -6,7 +6,9 @@ package io.flutter.plugins.inapppurchase;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.UserChoiceBillingListener;
 import io.flutter.plugin.common.MethodChannel;
 
 /** Responsible for creating a {@link BillingClient} object. */
@@ -22,5 +24,8 @@ interface BillingClientFactory {
    * @return The {@link BillingClient} object that is created.
    */
   BillingClient createBillingClient(
-      @NonNull Context context, @NonNull MethodChannel channel, int billingChoiceMode);
+      @NonNull Context context,
+      @NonNull MethodChannel channel,
+      int billingChoiceMode,
+      @Nullable UserChoiceBillingListener userChoiceBillingListener);
 }

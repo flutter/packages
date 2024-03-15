@@ -6,8 +6,7 @@ library google_maps_flutter_web;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html' hide VoidCallback;
-import 'dart:js_util';
+import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:collection/collection.dart';
@@ -20,10 +19,14 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:sanitize_html/sanitize_html.dart';
 import 'package:stream_transform/stream_transform.dart';
+import 'package:web/web.dart';
 
+import 'src/dom_window_extension.dart';
 import 'src/google_maps_inspector_web.dart';
+import 'src/map_styler.dart';
 import 'src/third_party/to_screen_location/to_screen_location.dart';
 import 'src/types.dart';
+import 'src/utils.dart';
 
 part 'src/circle.dart';
 part 'src/circles.dart';

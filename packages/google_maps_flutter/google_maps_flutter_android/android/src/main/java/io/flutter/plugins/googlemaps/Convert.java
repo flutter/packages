@@ -377,6 +377,10 @@ class Convert {
     if (buildingsEnabled != null) {
       sink.setBuildingsEnabled(toBoolean(buildingsEnabled));
     }
+    final Object style = data.get("style");
+    if (style != null) {
+      sink.setMapStyle(toString(style));
+    }
   }
 
   /** Returns the dartMarkerId of the interpreted marker. */

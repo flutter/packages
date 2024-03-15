@@ -1,6 +1,20 @@
-## NEXT
+## 0.5.6+2
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Uses `TrustedTypes` from `web: ^0.5.1`.
+
+## 0.5.6+1
+
+* Fixes an issue where `dart:js_interop` object literal factories did not
+  compile with dart2js.
+
+## 0.5.6
+
+* Adds support for `MapConfiguration.style`.
+* Adds support for `getStyleError`.
+
+## 0.5.5
+* Migrates to `dart:js_interop` and `package:web` APIs.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.5.4+3
 

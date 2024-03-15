@@ -47,9 +47,7 @@
   [self send:FlutterMethodNotImplemented];
 }
 
-/**
- * Sends result to flutterResult on the main thread.
- */
+/// Sends result to flutterResult on the main thread.
 - (void)send:(id _Nullable)result {
   FLTEnsureToRunOnMainQueue(^{
     // WARNING: Should not use weak self, because `FlutterResult`s are passed as arguments

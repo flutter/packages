@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
+import UIKit
 
 public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 

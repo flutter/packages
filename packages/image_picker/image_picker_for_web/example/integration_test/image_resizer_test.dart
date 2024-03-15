@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -11,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_for_web/src/image_resizer.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/helpers.dart';
+import 'package:web/web.dart' as web;
 
 //This is a sample 10x10 png image
 const String pngFileBase64Contents =
@@ -24,14 +26,13 @@ void main() {
   late XFile pngFile;
   setUp(() {
     imageResizer = ImageResizer();
-    final html.File pngHtmlFile =
-        _base64ToFile(pngFileBase64Contents, 'pngImage.png');
-    pngFile = XFile(html.Url.createObjectUrl(pngHtmlFile),
-        name: pngHtmlFile.name, mimeType: pngHtmlFile.type);
+    final web.Blob pngHtmlFile = _base64ToBlob(pngFileBase64Contents);
+    pngFile = XFile(web.URL.createObjectURL(pngHtmlFile),
+        name: 'pngImage.png', mimeType: 'image/png');
   });
 
   testWidgets('image is loaded correctly ', (WidgetTester tester) async {
-    final html.ImageElement imageElement =
+    final web.HTMLImageElement imageElement =
         await imageResizer.loadImage(pngFile.path);
     expect(imageElement.width, 10);
     expect(imageElement.height, 10);
@@ -40,9 +41,9 @@ void main() {
   testWidgets(
       "canvas is loaded with image's width and height when max width and max height are null",
       (WidgetTester widgetTester) async {
-    final html.ImageElement imageElement =
+    final web.HTMLImageElement imageElement =
         await imageResizer.loadImage(pngFile.path);
-    final html.CanvasElement canvas =
+    final web.HTMLCanvasElement canvas =
         imageResizer.resizeImageElement(imageElement, null, null);
     expect(canvas.width, imageElement.width);
     expect(canvas.height, imageElement.height);
@@ -51,9 +52,9 @@ void main() {
   testWidgets(
       'canvas size is scaled when max width and max height are not null',
       (WidgetTester widgetTester) async {
-    final html.ImageElement imageElement =
+    final web.HTMLImageElement imageElement =
         await imageResizer.loadImage(pngFile.path);
-    final html.CanvasElement canvas =
+    final web.HTMLCanvasElement canvas =
         imageResizer.resizeImageElement(imageElement, 8, 8);
     expect(canvas.width, 8);
     expect(canvas.height, 8);
@@ -61,9 +62,9 @@ void main() {
 
   testWidgets('resized image is returned after converting canvas to file',
       (WidgetTester widgetTester) async {
-    final html.ImageElement imageElement =
+    final web.HTMLImageElement imageElement =
         await imageResizer.loadImage(pngFile.path);
-    final html.CanvasElement canvas =
+    final web.HTMLCanvasElement canvas =
         imageResizer.resizeImageElement(imageElement, null, null);
     final XFile resizedImage =
         await imageResizer.writeCanvasToFile(pngFile, canvas, null);
@@ -112,19 +113,21 @@ void main() {
 
 Future<Size> _getImageSize(XFile file) async {
   final Completer<Size> completer = Completer<Size>();
-  final html.ImageElement image = html.ImageElement(src: file.path);
-  image.onLoad.listen((html.Event event) {
-    completer.complete(Size(image.width!.toDouble(), image.height!.toDouble()));
-  });
-  image.onError.listen((html.Event event) {
-    completer.complete(Size.zero);
-  });
+  final web.HTMLImageElement image = web.HTMLImageElement();
+  image
+    ..onLoad.listen((web.Event event) {
+      completer.complete(Size(image.width.toDouble(), image.height.toDouble()));
+    })
+    ..onError.listen((web.Event event) {
+      completer.complete(Size.zero);
+    })
+    ..src = file.path;
   return completer.future;
 }
 
-html.File _base64ToFile(String data, String fileName) {
+web.Blob _base64ToBlob(String data) {
   final List<String> arr = data.split(',');
-  final String bstr = html.window.atob(arr[1]);
+  final String bstr = web.window.atob(arr[1]);
   int n = bstr.length;
   final Uint8List u8arr = Uint8List(n);
 
@@ -133,5 +136,5 @@ html.File _base64ToFile(String data, String fileName) {
     n--;
   }
 
-  return html.File(<Uint8List>[u8arr], fileName);
+  return Blob(<JSUint8Array>[u8arr.toJS].toJS);
 }

@@ -18,18 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 typedef void (^FLTSavePhotoDelegateCompletionHandler)(NSString *_Nullable path,
                                                       NSError *_Nullable error);
 
-/**
- Delegate object that handles photo capture results.
- */
+/// Delegate object that handles photo capture results.
 @interface FLTSavePhotoDelegate : NSObject <AVCapturePhotoCaptureDelegate>
 
-/**
- * Initialize a photo capture delegate.
- * @param path the path for captured photo file.
- * @param ioQueue the queue on which captured photos are written to disk.
- * @param completionHandler The completion handler block for save photo operations. Can
- * be called from either main queue or IO queue.
- */
+/// Initialize a photo capture delegate.
+/// @param path the path for captured photo file.
+/// @param ioQueue the queue on which captured photos are written to disk.
+/// @param completionHandler The completion handler block for save photo operations. Can
+/// be called from either main queue or IO queue.
 - (instancetype)initWithPath:(NSString *)path
                      ioQueue:(dispatch_queue_t)ioQueue
            completionHandler:(FLTSavePhotoDelegateCompletionHandler)completionHandler;

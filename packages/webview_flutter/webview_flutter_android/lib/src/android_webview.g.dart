@@ -115,6 +115,27 @@ class WebResourceRequestData {
   }
 }
 
+class WebResourceResponseData {
+  WebResourceResponseData({
+    required this.statusCode,
+  });
+
+  int statusCode;
+
+  Object encode() {
+    return <Object?>[
+      statusCode,
+    ];
+  }
+
+  static WebResourceResponseData decode(Object result) {
+    result as List<Object?>;
+    return WebResourceResponseData(
+      statusCode: result[0]! as int,
+    );
+  }
+}
+
 class WebResourceErrorData {
   WebResourceErrorData({
     required this.errorCode,
@@ -1700,6 +1721,9 @@ class _WebViewClientFlutterApiCodec extends StandardMessageCodec {
     } else if (value is WebResourceRequestData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
+    } else if (value is WebResourceResponseData) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -1712,6 +1736,8 @@ class _WebViewClientFlutterApiCodec extends StandardMessageCodec {
         return WebResourceErrorData.decode(readValue(buffer)!);
       case 129:
         return WebResourceRequestData.decode(readValue(buffer)!);
+      case 130:
+        return WebResourceResponseData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1724,6 +1750,9 @@ abstract class WebViewClientFlutterApi {
   void onPageStarted(int instanceId, int webViewInstanceId, String url);
 
   void onPageFinished(int instanceId, int webViewInstanceId, String url);
+
+  void onReceivedHttpError(int instanceId, int webViewInstanceId,
+      WebResourceRequestData request, WebResourceResponseData response);
 
   void onReceivedRequestError(int instanceId, int webViewInstanceId,
       WebResourceRequestData request, WebResourceErrorData error);
@@ -1792,6 +1821,38 @@ abstract class WebViewClientFlutterApi {
           assert(arg_url != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onPageFinished was null, expected non-null String.');
           api.onPageFinished(arg_instanceId!, arg_webViewInstanceId!, arg_url!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError was null, expected non-null int.');
+          final int? arg_webViewInstanceId = (args[1] as int?);
+          assert(arg_webViewInstanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError was null, expected non-null int.');
+          final WebResourceRequestData? arg_request =
+              (args[2] as WebResourceRequestData?);
+          assert(arg_request != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError was null, expected non-null WebResourceRequestData.');
+          final WebResourceResponseData? arg_response =
+              (args[3] as WebResourceResponseData?);
+          assert(arg_response != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError was null, expected non-null WebResourceResponseData.');
+          api.onReceivedHttpError(arg_instanceId!, arg_webViewInstanceId!,
+              arg_request!, arg_response!);
           return;
         });
       }

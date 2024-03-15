@@ -11,11 +11,10 @@ dependencies:
   shared_preferences_platform_interface: ^2.3.0
   shared_preferences_web:
     path: ../
-  web: '>=0.3.0 <0.5.0'
+  web: ^0.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  js: ^0.6.3

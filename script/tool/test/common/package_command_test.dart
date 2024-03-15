@@ -222,11 +222,6 @@ void main() {
     test(
         'explicitly specifying the plugin (group) name of a federated plugin '
         'should include all plugins in the group', () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '''
-packages/plugin1/plugin1/plugin1.dart
-''')),
-      ];
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
       final RepositoryPackage appFacingPackage =
           createFakePlugin('plugin1', pluginGroup);
@@ -235,8 +230,7 @@ packages/plugin1/plugin1/plugin1.dart
       final RepositoryPackage implementationPackage =
           createFakePlugin('plugin1_web', pluginGroup);
 
-      await runCapturingPrint(
-          runner, <String>['sample', '--base-sha=main', '--packages=plugin1']);
+      await runCapturingPrint(runner, <String>['sample', '--packages=plugin1']);
 
       expect(
           command.plugins,
@@ -245,6 +239,21 @@ packages/plugin1/plugin1/plugin1.dart
             platformInterfacePackage.path,
             implementationPackage.path
           ]));
+    });
+
+    test(
+        'specifying the app-facing package of a federated plugin with '
+        '--exact-match-only should only include only that package', () async {
+      final Directory pluginGroup = packagesDir.childDirectory('plugin1');
+      final RepositoryPackage appFacingPackage =
+          createFakePlugin('plugin1', pluginGroup);
+      createFakePlugin('plugin1_platform_interface', pluginGroup);
+      createFakePlugin('plugin1_web', pluginGroup);
+
+      await runCapturingPrint(runner,
+          <String>['sample', '--packages=plugin1', '--exact-match-only']);
+
+      expect(command.plugins, unorderedEquals(<String>[appFacingPackage.path]));
     });
 
     test(

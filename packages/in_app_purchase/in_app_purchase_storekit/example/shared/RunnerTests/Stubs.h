@@ -23,6 +23,7 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 @end
 
 @interface SKProductRequestStub : SKProductsRequest
+@property(assign, nonatomic) BOOL returnError;
 - (instancetype)initWithProductIdentifiers:(NSSet<NSString *> *)productIdentifiers;
 - (instancetype)initWithFailureError:(NSError *)error;
 @end
@@ -32,6 +33,9 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 @end
 
 @interface InAppPurchasePluginStub : InAppPurchasePlugin
+@end
+
+@interface SKRequestStub : SKRequest
 @end
 
 @interface SKPaymentQueueStub : SKPaymentQueue

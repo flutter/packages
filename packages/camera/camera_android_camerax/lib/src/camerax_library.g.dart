@@ -27,14 +27,14 @@ enum CameraStateType {
 /// If you need to add another type to support a type S to use a LiveData<S> in
 /// this plugin, ensure the following is done on the Dart side:
 ///
-///  * In `../lib/src/live_data.dart`, add new cases for S in
+///  * In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
 ///    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
 ///    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
 ///    to create the expected type of LiveData<S> when requested.
 ///
 /// On the native side, ensure the following is done:
 ///
-///  * Update `LiveDataHostApiImpl#getValue` is updated to properly return
+///  * Make sure `LiveDataHostApiImpl#getValue` is updated to properly return
 ///    identifiers for instances of type S.
 ///  * Update `ObserverFlutterApiWrapper#onChanged` to properly handle receiving
 ///    calls with instances of type S if a LiveData<S> instance is observed.
@@ -68,6 +68,24 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+/// The types of capture request options this plugin currently supports.
+///
+/// If you need to add another option to support, ensure the following is done
+/// on the Dart side:
+///
+///  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
+///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
+///    to create the expected Map entry of option key index and value to send to
+///    the native side.
+///
+/// On the native side, ensure the following is done:
+///
+///  * Update `CaptureRequestOptionsHostApiImpl#create` to set the correct
+///   `CaptureRequest` key with a valid value type for this option.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
+/// for the sorts of capture request options that can be supported via CameraX's
+/// interoperability with Camera2.
 enum CaptureRequestKeySupportedType {
   controlAeLock,
 }
@@ -2884,7 +2902,7 @@ class CameraControlHostApi {
     }
   }
 
-  Future<int> startFocusAndMetering(
+  Future<int?> startFocusAndMetering(
       int arg_identifier, int arg_focusMeteringActionId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CameraControlHostApi.startFocusAndMetering', codec,
@@ -2903,13 +2921,8 @@ class CameraControlHostApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyList[0] as int?)!;
+      return (replyList[0] as int?);
     }
   }
 
@@ -2935,7 +2948,7 @@ class CameraControlHostApi {
     }
   }
 
-  Future<int> setExposureCompensationIndex(
+  Future<int?> setExposureCompensationIndex(
       int arg_identifier, int arg_index) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CameraControlHostApi.setExposureCompensationIndex',
@@ -2954,13 +2967,8 @@ class CameraControlHostApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyList[0] as int?)!;
+      return (replyList[0] as int?);
     }
   }
 }
@@ -3130,14 +3138,14 @@ class MeteringPointHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(
-      int arg_identifier, double arg_x, double arg_y, double? arg_size) async {
+  Future<void> create(int arg_identifier, double arg_x, double arg_y,
+      double? arg_size, int arg_cameraInfoId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.MeteringPointHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_x, arg_y, arg_size])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_identifier, arg_x, arg_y, arg_size, arg_cameraInfoId])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

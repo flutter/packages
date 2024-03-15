@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import android.net.Uri;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
@@ -135,5 +136,29 @@ public class WebViewClientTest {
     verify(mockFlutterApi)
         .doUpdateVisitedHistory(
             eq(webViewClient), eq(mockWebView), eq("https://www.google.com"), eq(true), any());
+  }
+
+  @Test
+  public void onReceivedHttpError() {
+    final Uri mockUri = mock(Uri.class);
+    when(mockUri.toString()).thenReturn("");
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.getMethod()).thenReturn("method");
+    when(mockRequest.getUrl()).thenReturn(mockUri);
+    when(mockRequest.isForMainFrame()).thenReturn(true);
+    when(mockRequest.getRequestHeaders()).thenReturn(null);
+
+    final WebResourceResponse mockResponse = mock(WebResourceResponse.class);
+    when(mockResponse.getStatusCode()).thenReturn(404);
+
+    webViewClient.onReceivedHttpError(mockWebView, mockRequest, mockResponse);
+    verify(mockFlutterApi)
+        .onReceivedHttpError(
+            eq(webViewClient),
+            eq(mockWebView),
+            any(WebResourceRequest.class),
+            any(WebResourceResponse.class),
+            any());
   }
 }

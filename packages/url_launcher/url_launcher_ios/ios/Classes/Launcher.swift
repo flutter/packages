@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import UIKit
+
 /// Protocol for UIApplication methods relating to launching URLs.
 ///
 /// This protocol exists to allow injecting an alternate implementation for testing.

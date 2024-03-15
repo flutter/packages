@@ -6,6 +6,7 @@ import 'package:camera_android_camerax/src/camera_control.dart';
 import 'package:camera_android_camerax/src/focus_metering_action.dart';
 import 'package:camera_android_camerax/src/focus_metering_result.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -13,7 +14,11 @@ import 'package:mockito/mockito.dart';
 import 'camera_control_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestCameraControlHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  TestCameraControlHostApi,
+  TestInstanceManagerHostApi,
+  FocusMeteringAction
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -90,8 +95,7 @@ void main() {
         instanceManager: instanceManager,
       );
       const int cameraControlIdentifier = 75;
-      final FocusMeteringAction action =
-          FocusMeteringAction.detached(instanceManager: instanceManager);
+      final FocusMeteringAction action = MockFocusMeteringAction();
       const int actionId = 5;
       final FocusMeteringResult result =
           FocusMeteringResult.detached(instanceManager: instanceManager);
@@ -105,8 +109,7 @@ void main() {
       instanceManager.addHostCreatedInstance(
         action,
         actionId,
-        onCopy: (_) =>
-            FocusMeteringAction.detached(instanceManager: instanceManager),
+        onCopy: (_) => MockFocusMeteringAction(),
       );
       instanceManager.addHostCreatedInstance(
         result,
@@ -119,6 +122,41 @@ void main() {
           .thenAnswer((_) => Future<int>.value(resultId));
 
       expect(await cameraControl.startFocusAndMetering(action), equals(result));
+      verify(mockApi.startFocusAndMetering(cameraControlIdentifier, actionId));
+    });
+
+    test('startFocusAndMetering returns null result if operation was canceled',
+        () async {
+      final MockTestCameraControlHostApi mockApi =
+          MockTestCameraControlHostApi();
+      TestCameraControlHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CameraControl cameraControl = CameraControl.detached(
+        instanceManager: instanceManager,
+      );
+      const int cameraControlIdentifier = 75;
+      final FocusMeteringAction action = MockFocusMeteringAction();
+      const int actionId = 5;
+
+      instanceManager.addHostCreatedInstance(
+        cameraControl,
+        cameraControlIdentifier,
+        onCopy: (_) => CameraControl.detached(instanceManager: instanceManager),
+      );
+      instanceManager.addHostCreatedInstance(
+        action,
+        actionId,
+        onCopy: (_) => MockFocusMeteringAction(),
+      );
+
+      when(mockApi.startFocusAndMetering(cameraControlIdentifier, actionId))
+          .thenAnswer((_) => Future<int?>.value());
+
+      expect(await cameraControl.startFocusAndMetering(action), isNull);
       verify(mockApi.startFocusAndMetering(cameraControlIdentifier, actionId));
     });
 
@@ -178,6 +216,72 @@ void main() {
 
       expect(await cameraControl.setExposureCompensationIndex(index),
           equals(fakeTargetExposureValue));
+      verify(
+          mockApi.setExposureCompensationIndex(cameraControlIdentifier, index));
+    });
+
+    test(
+        'setExposureCompensationIndex returns null when operation was canceled',
+        () async {
+      final MockTestCameraControlHostApi mockApi =
+          MockTestCameraControlHostApi();
+      TestCameraControlHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CameraControl cameraControl = CameraControl.detached(
+        instanceManager: instanceManager,
+      );
+      const int cameraControlIdentifier = 40;
+
+      instanceManager.addHostCreatedInstance(
+        cameraControl,
+        cameraControlIdentifier,
+        onCopy: (_) => CameraControl.detached(instanceManager: instanceManager),
+      );
+
+      const int index = 2;
+      when(mockApi.setExposureCompensationIndex(cameraControlIdentifier, index))
+          .thenAnswer((_) => Future<int?>.value());
+
+      expect(await cameraControl.setExposureCompensationIndex(index), isNull);
+      verify(
+          mockApi.setExposureCompensationIndex(cameraControlIdentifier, index));
+    });
+
+    test(
+        'setExposureCompensationIndex throws PlatformException when one is thrown from native side',
+        () async {
+      final MockTestCameraControlHostApi mockApi =
+          MockTestCameraControlHostApi();
+      TestCameraControlHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CameraControl cameraControl = CameraControl.detached(
+        instanceManager: instanceManager,
+      );
+      const int cameraControlIdentifier = 40;
+
+      instanceManager.addHostCreatedInstance(
+        cameraControl,
+        cameraControlIdentifier,
+        onCopy: (_) => CameraControl.detached(instanceManager: instanceManager),
+      );
+
+      const int index = 1;
+      when(mockApi.setExposureCompensationIndex(cameraControlIdentifier, index))
+          .thenThrow(PlatformException(
+              code: 'TEST_ERROR',
+              details: 'Platform exception thrown from Java side.'));
+
+      expect(() => cameraControl.setExposureCompensationIndex(index),
+          throwsA(isA<PlatformException>()));
+
       verify(
           mockApi.setExposureCompensationIndex(cameraControlIdentifier, index));
     });

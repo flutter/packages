@@ -110,8 +110,8 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
     Map<CaptureRequestKeySupportedType, Object> decodedOptions =
         new HashMap<CaptureRequestKeySupportedType, Object>();
     for (Map.Entry<Long, Object> option : options.entrySet()) {
-      decodedOptions.put(
-          CaptureRequestKeySupportedType.values()[option.getKey().intValue()], option.getValue());
+      Integer index = ((Number) option.getKey()).intValue();
+      decodedOptions.put(CaptureRequestKeySupportedType.values()[index], option.getValue());
     }
     instanceManager.addDartCreatedInstance(proxy.create(decodedOptions), identifier);
   }

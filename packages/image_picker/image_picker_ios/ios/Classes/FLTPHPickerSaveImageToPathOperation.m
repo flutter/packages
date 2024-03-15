@@ -124,9 +124,7 @@ API_AVAILABLE(ios(14))
   }
 }
 
-/**
- * Processes the image.
- */
+/// Processes the image.
 - (void)processImage:(NSData *)pickerImageData API_AVAILABLE(ios(14)) {
   UIImage *localImage = [[UIImage alloc] initWithData:pickerImageData];
 
@@ -190,9 +188,7 @@ API_AVAILABLE(ios(14))
   }
 }
 
-/**
- * Processes the video.
- */
+/// Processes the video.
 - (void)processVideo API_AVAILABLE(ios(14)) {
   NSString *typeIdentifier = self.result.itemProvider.registeredTypeIdentifiers.firstObject;
   [self.result.itemProvider

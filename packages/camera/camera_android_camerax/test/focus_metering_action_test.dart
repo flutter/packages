@@ -37,6 +37,9 @@ void main() {
       );
 
       FocusMeteringAction.detached(
+        meteringPointInfos: <(MeteringPoint, int?)>[
+          (MockMeteringPoint(), FocusMeteringAction.flagAwb)
+        ],
         instanceManager: instanceManager,
       );
 

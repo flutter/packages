@@ -2,12 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@JS()
-library integration_test_utils;
+import 'dart:js_interop';
 
-import 'dart:html';
-
-import 'package:js/js.dart';
+import 'package:web/web.dart' as web;
+import 'pkg_web_tweaks.dart';
 
 // Returns the URL to load an asset from this example app as a network source.
 //
@@ -22,35 +20,29 @@ String getUrlForAssetAsNetworkSource(String assetKey) {
       '?raw=true';
 }
 
-@JS()
-@anonymous
-class _Descriptor {
-  // May also contain "configurable" and "enumerable" bools.
-  // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#description
-  external factory _Descriptor({
-    // bool configurable,
-    // bool enumerable,
-    bool writable,
-    Object value,
-  });
-}
-
-@JS('Object.defineProperty')
-external void _defineProperty(
-  Object object,
-  String property,
-  _Descriptor description,
-);
-
 /// Forces a VideoElement to report "Infinity" duration.
 ///
 /// Uses JS Object.defineProperty to set the value of a readonly property.
-void setInfinityDuration(VideoElement element) {
-  _defineProperty(
+void setInfinityDuration(web.HTMLVideoElement element) {
+  DomObject.defineProperty(
+    element,
+    'duration',
+    Descriptor.data(
+      writable: true,
+      value: double.infinity.toJS,
+    ),
+  );
+}
+
+/// Makes the `currentTime` setter throw an exception if used.
+void makeSetCurrentTimeThrow(web.HTMLVideoElement element) {
+  DomObject.defineProperty(
       element,
-      'duration',
-      _Descriptor(
-        writable: true,
-        value: double.infinity,
+      'currentTime',
+      Descriptor.accessor(
+        set: (JSAny? value) {
+          throw Exception('Unexpected call to currentTime with value: $value');
+        },
+        get: () => 100.toJS,
       ));
 }

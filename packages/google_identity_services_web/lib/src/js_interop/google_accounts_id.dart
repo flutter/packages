@@ -338,9 +338,7 @@ abstract class IdConfiguration {
     JSString? context,
     JSString? state_cookie_domain,
     JSString? ux_mode,
-    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-    // ignore: always_specify_types
-    JSArray? allowed_parent_origin,
+    JSArray<JSString>? allowed_parent_origin,
     JSFunction? intermediate_iframe_close_callback,
     JSBoolean? itp_support,
     JSString? login_hint,

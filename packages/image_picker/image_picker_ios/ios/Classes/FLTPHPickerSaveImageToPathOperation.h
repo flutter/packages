@@ -14,17 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns either the saved path, or an error. Both cannot be set.
 typedef void (^FLTGetSavedPath)(NSString *_Nullable savedPath, FlutterError *_Nullable error);
 
-/*!
- @class FLTPHPickerSaveImageToPathOperation
-
- @brief The FLTPHPickerSaveImageToPathOperation class
-
- @discussion    This class was implemented to handle saved image paths and populate the pathList
- with the final result by using GetSavedPath type block.
-
- @superclass SuperClass: NSOperation\n
- @helps It helps FLTImagePickerPlugin class.
- */
+/// @class FLTPHPickerSaveImageToPathOperation
+///
+/// @brief The FLTPHPickerSaveImageToPathOperation class
+///
+/// @discussion    This class was implemented to handle saved image paths and populate the pathList
+/// with the final result by using GetSavedPath type block.
+///
+/// @superclass SuperClass: NSOperation\n
+/// @helps It helps FLTImagePickerPlugin class.
 @interface FLTPHPickerSaveImageToPathOperation : NSOperation
 
 - (instancetype)initWithResult:(PHPickerResult *)result

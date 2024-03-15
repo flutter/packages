@@ -551,4 +551,32 @@ void main() {
 
     expect(map.mapConfiguration.buildingsEnabled, true);
   });
+
+  testWidgets('Can update style', (WidgetTester tester) async {
+    const String initialStyle = '[]';
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          style: initialStyle,
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.style, initialStyle);
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    expect(map.mapConfiguration.style, '');
+  });
 }

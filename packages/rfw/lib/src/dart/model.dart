@@ -439,6 +439,28 @@ class ConstructorCall extends BlobNode {
   String toString() => '$name($arguments)';
 }
 
+/// Representation of functions that return widgets in Remote Flutter Widgets library blobs.
+class WidgetBuilderDeclaration extends BlobNode {
+  /// Represents a callback that takes a single argument [argumentName] and returns the [widget].
+  const WidgetBuilderDeclaration(this.argumentName, this.widget);
+
+  /// The callback single argument name.
+  ///
+  /// In `Builder(builder: (scope) => Container());`, [argumentName] is "scope".
+  final String argumentName;
+
+  /// The widget that will be returned when the builder callback is called.
+  ///
+  /// This is usually a [ConstructorCall], but may be a [Switch] (so long as
+  /// that [Switch] resolves to a [ConstructorCall]. Other values (or a [Switch]
+  /// that does not resolve to a constructor call) will result in an
+  /// [ErrorWidget] being used.
+  final BlobNode widget;
+
+  @override
+  String toString() => '($argumentName) => $widget';
+}
+
 /// Base class for various kinds of references in the RFW data structures.
 abstract class Reference extends BlobNode {
   /// Abstract const constructor. This constructor enables subclasses to provide
@@ -532,6 +554,31 @@ class DataReference extends Reference {
 
   @override
   String toString() => 'data.${parts.join(".")}';
+}
+
+/// Reference to the single argument of type [DynamicMap] passed into the widget builder.
+///
+/// This class is used to represent references to a function argument.
+/// In `(scope) => Container(width: scope.width)`, this represents "scope.width".
+///
+/// See also:
+///
+///   * [WidgetBuilderDeclaration], which represents a widget builder definition.
+class WidgetBuilderArgReference extends Reference {
+  /// Wraps the given [argumentName] and [parts] as a [WidgetBuilderArgReference].
+  ///
+  /// The parts must not be mutated after the object is created.
+  const WidgetBuilderArgReference(this.argumentName, super.parts);
+
+  /// A reference to a [WidgetBuilderDeclaration.argumentName].
+  ///
+  /// In `Builder(builder: (scope) => Text(text: scope.result.text));`,
+  /// "scope.result.text" is the [WidgetBuilderArgReference].
+  /// The [argumentName] is "scope" and its [parts] are `["result", "text"]`.
+  final String argumentName;
+
+  @override
+  String toString() => '$argumentName.${parts.join('.')}';
 }
 
 /// Unbound reference to a [Loop].

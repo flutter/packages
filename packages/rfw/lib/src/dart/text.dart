@@ -272,8 +272,8 @@ DynamicMap parseDataFile(String file) {
 /// declaration, along with its arguments. Arguments are a map of key-value
 /// pairs, where the values can be any of the types in the data model defined
 /// above plus any of the types defined below in this section, such as
-/// references to arguments, the data model, loops, state, switches, or
-/// event handlers.
+/// references to arguments, the data model, widget builders, loops, state,
+/// switches or event handlers.
 ///
 /// In this example, several constructor calls are nested together:
 ///
@@ -282,6 +282,9 @@ DynamicMap parseDataFile(String file) {
 ///   children: [
 ///     Container(
 ///       child: Text(text: "Hello"),
+///     ),
+///     Builder(
+///       builder: (scope) => Text(text: scope.world),
 ///     ),
 ///   ],
 /// );
@@ -292,6 +295,35 @@ DynamicMap parseDataFile(String file) {
 /// list which itself contains a single constructor call, to `Container`. That
 /// constructor call also has only one argument, `child`, whose value, again, is
 /// a constructor call, in this case creating a `Text` widget.
+///
+/// ### Widget Builders
+///
+/// Widget builders take a single argument and return a widget.
+/// The [DynamicMap] argument consists of key-value pairs where values
+/// can be of any types in the data model. Widget builders arguments are lexically
+/// scoped so a given constructor call has access to any arguments where it is
+/// defined plus arguments defined by its parents (if any).
+///
+/// In this example several widget builders are nested together:
+///
+/// ```
+/// widget Foo {text: 'this is cool'} = Builder(
+///   builder: (foo) => Builder(
+///     builder: (bar) => Builder(
+///       builder: (baz) => Text(
+///         text: [
+///           args.text,
+///           state.text,
+///           data.text,
+///           foo.text,
+///           bar.text,
+///           baz.text,
+///         ],
+///       ),
+///     ),
+///   ),
+/// );
+/// ```
 ///
 /// ### References
 ///
@@ -610,6 +642,12 @@ const Set<String> _reservedWords = <String>{
   'true',
 };
 
+void _checkIsNotReservedWord(String identifier, _Token identifierToken) {
+  if (_reservedWords.contains(identifier)) {
+    throw ParserException._fromToken('$identifier is a reserved word', identifierToken);
+  }
+}
+
 sealed class _Token {
   _Token(this.line, this.column, this.start, this.end);
   final int line;
@@ -630,6 +668,7 @@ class _SymbolToken extends _Token {
   static const int colon = 0x3A; // U+003A COLON character (:)
   static const int semicolon = 0x3B; // U+003B SEMICOLON character (;)
   static const int equals = 0x3D; // U+003D EQUALS SIGN character (=)
+  static const int greatherThan = 0x3E; // U+003D GREATHER THAN character (>)
   static const int openBracket = 0x5B; // U+005B LEFT SQUARE BRACKET character ([)
   static const int closeBracket = 0x5D; // U+005D RIGHT SQUARE BRACKET character (])
   static const int openBrace = 0x7B; // U+007B LEFT CURLY BRACKET character ({)
@@ -812,6 +851,7 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x3A: // U+003A COLON character (:)
           case 0x3B: // U+003B SEMICOLON character (;)
           case 0x3D: // U+003D EQUALS SIGN character (=)
+          case 0x3E: // U+003E GREATHER THAN SIGN character (>)
           case 0x5B: // U+005B LEFT SQUARE BRACKET character ([)
           case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
           case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
@@ -2132,14 +2172,23 @@ class _Parser {
     return _readString();
   }
 
-  DynamicMap _readMap({ required bool extended }) {
+  DynamicMap _readMap({
+    required bool extended,
+    List<String> widgetBuilderScope = const <String>[],
+  }) {
     _expectSymbol(_SymbolToken.openBrace);
-    final DynamicMap results = _readMapBody(extended: extended);
+    final DynamicMap results = _readMapBody(
+      widgetBuilderScope: widgetBuilderScope,
+      extended: extended,
+    );
     _expectSymbol(_SymbolToken.closeBrace);
     return results;
   }
 
-  DynamicMap _readMapBody({ required bool extended }) {
+  DynamicMap _readMapBody({
+    required bool extended,
+    List<String> widgetBuilderScope = const <String>[],
+  }) {
     final DynamicMap results = DynamicMap(); // ignore: prefer_collection_literals
     while (_source.current is! _SymbolToken) {
       final String key = _readKey();
@@ -2147,7 +2196,11 @@ class _Parser {
         throw ParserException._fromToken('Duplicate key "$key" in map', _source.current);
       }
       _expectSymbol(_SymbolToken.colon);
-      final Object value = _readValue(extended: extended, nullOk: true);
+      final Object value = _readValue(
+        extended: extended,
+        nullOk: true,
+        widgetBuilderScope: widgetBuilderScope,
+      );
       if (value != missing) {
         results[key] = value;
       }
@@ -2162,7 +2215,10 @@ class _Parser {
 
   final List<String> _loopIdentifiers = <String>[];
 
-  DynamicList _readList({ required bool extended }) {
+  DynamicList _readList({
+    required bool extended,
+    List<String> widgetBuilderScope = const <String>[],
+  }) {
     final DynamicList results = DynamicList.empty(growable: true);
     _expectSymbol(_SymbolToken.openBracket);
     while (!_foundSymbol(_SymbolToken.closeBracket)) {
@@ -2172,19 +2228,26 @@ class _Parser {
         _expectIdentifier('for');
         final _Token loopIdentifierToken = _source.current;
         final String loopIdentifier = _readIdentifier();
-        if (_reservedWords.contains(loopIdentifier)) {
-          throw ParserException._fromToken('$loopIdentifier is a reserved word', loopIdentifierToken);
-        }
+        _checkIsNotReservedWord(loopIdentifier, loopIdentifierToken);
         _expectIdentifier('in');
-        final Object collection = _readValue(extended: true);
+        final Object collection = _readValue(
+          widgetBuilderScope: widgetBuilderScope,
+          extended: true,
+        );
         _expectSymbol(_SymbolToken.colon);
         _loopIdentifiers.add(loopIdentifier);
-        final Object template = _readValue(extended: extended);
+        final Object template = _readValue(
+          widgetBuilderScope: widgetBuilderScope,
+          extended: extended,
+        );
         assert(_loopIdentifiers.last == loopIdentifier);
         _loopIdentifiers.removeLast();
         results.add(_withSourceRange(Loop(collection, template), start));
       } else {
-        final Object value = _readValue(extended: extended);
+        final Object value = _readValue(
+          widgetBuilderScope: widgetBuilderScope,
+          extended: extended,
+        );
         results.add(value);
       }
       if (_foundSymbol(_SymbolToken.comma)) {
@@ -2197,8 +2260,10 @@ class _Parser {
     return results;
   }
 
-  Switch _readSwitch(SourceLocation? start) {
-    final Object value = _readValue(extended: true);
+  Switch _readSwitch(SourceLocation? start, {
+    List<String> widgetBuilderScope = const <String>[],
+  }) {
+    final Object value = _readValue(extended: true, widgetBuilderScope: widgetBuilderScope);
     final Map<Object?, Object> cases = <Object?, Object>{};
     _expectSymbol(_SymbolToken.openBrace);
     while (_source.current is! _SymbolToken) {
@@ -2210,13 +2275,13 @@ class _Parser {
         key = null;
         _advance();
       } else {
-        key = _readValue(extended: true);
+        key = _readValue(extended: true, widgetBuilderScope: widgetBuilderScope);
         if (cases.containsKey(key)) {
           throw ParserException._fromToken('Switch has duplicate cases for key $key', _source.current);
         }
       }
       _expectSymbol(_SymbolToken.colon);
-      final Object value = _readValue(extended: true);
+      final Object value = _readValue(extended: true, widgetBuilderScope: widgetBuilderScope);
       cases[key] = value;
       if (_foundSymbol(_SymbolToken.comma)) {
         _advance();
@@ -2249,13 +2314,19 @@ class _Parser {
     return results;
   }
 
-  Object _readValue({ required bool extended, bool nullOk = false }) {
+  Object _readValue({
+    required bool extended,
+    bool nullOk = false,
+    List<String> widgetBuilderScope = const <String>[],
+  }) {
     if (_source.current is _SymbolToken) {
       switch ((_source.current as _SymbolToken).symbol) {
         case _SymbolToken.openBracket:
-          return _readList(extended: extended);
+          return _readList(widgetBuilderScope: widgetBuilderScope, extended: extended);
         case _SymbolToken.openBrace:
-          return _readMap(extended: extended);
+          return _readMap(widgetBuilderScope: widgetBuilderScope, extended: extended);
+        case _SymbolToken.openParen:
+          return _readWidgetBuilderDeclaration(widgetBuilderScope: widgetBuilderScope);
       }
     } else if (_source.current is _IntegerToken) {
       final Object result = (_source.current as _IntegerToken).value;
@@ -2289,7 +2360,13 @@ class _Parser {
       if (identifier == 'event') {
         final SourceLocation? start = _getSourceLocation();
         _advance();
-        return _withSourceRange(EventHandler(_readString(), _readMap(extended: true)), start);
+        return _withSourceRange(
+          EventHandler(
+            _readString(),
+            _readMap(widgetBuilderScope: widgetBuilderScope, extended: true),
+          ),
+          start,
+        );
       }
       if (identifier == 'args') {
         final SourceLocation? start = _getSourceLocation();
@@ -2309,7 +2386,7 @@ class _Parser {
       if (identifier == 'switch') {
         final SourceLocation? start = _getSourceLocation();
         _advance();
-        return _readSwitch(start);
+        return _readSwitch(start, widgetBuilderScope: widgetBuilderScope);
       }
       if (identifier == 'set') {
         final SourceLocation? start = _getSourceLocation();
@@ -2318,8 +2395,13 @@ class _Parser {
         _expectIdentifier('state');
         final StateReference stateReference = _withSourceRange(StateReference(_readParts()), innerStart);
         _expectSymbol(_SymbolToken.equals);
-        final Object value = _readValue(extended: true);
+        final Object value = _readValue(widgetBuilderScope: widgetBuilderScope, extended: true);
         return _withSourceRange(SetStateHandler(stateReference, value), start);
+      }
+      if (widgetBuilderScope.contains(identifier)) {
+        final SourceLocation? start = _getSourceLocation();
+        _advance();
+        return _withSourceRange(WidgetBuilderArgReference(identifier, _readParts()), start);
       }
       final int index = _loopIdentifiers.lastIndexOf(identifier) + 1;
       if (index > 0) {
@@ -2327,16 +2409,42 @@ class _Parser {
         _advance();
         return _withSourceRange(LoopReference(_loopIdentifiers.length - index, _readParts(optional: true)), start);
       }
-      return _readConstructorCall();
+      return _readConstructorCall(widgetBuilderScope: widgetBuilderScope);
     }
     throw ParserException._unexpected(_source.current);
   }
 
-  ConstructorCall _readConstructorCall() {
+  WidgetBuilderDeclaration _readWidgetBuilderDeclaration({
+    List<String> widgetBuilderScope = const <String>[],
+  }) {
+    _expectSymbol(_SymbolToken.openParen);
+    final _Token argumentNameToken = _source.current;
+    final String argumentName = _readIdentifier();
+    _checkIsNotReservedWord(argumentName, argumentNameToken);
+    _expectSymbol(_SymbolToken.closeParen);
+    _expectSymbol(_SymbolToken.equals);
+    _expectSymbol(_SymbolToken.greatherThan);
+    final _Token valueToken = _source.current;
+    final Object widget = _readValue(
+      extended: true,
+      widgetBuilderScope: <String>[...widgetBuilderScope, argumentName],
+    );
+    if (widget is! ConstructorCall && widget is! Switch) {
+      throw ParserException._fromToken('Expecting a switch or constructor call got $widget', valueToken);
+    }
+    return WidgetBuilderDeclaration(argumentName, widget as BlobNode);
+  }
+
+  ConstructorCall _readConstructorCall({
+    List<String> widgetBuilderScope = const <String>[],
+  }) {
     final SourceLocation? start = _getSourceLocation();
     final String name = _readIdentifier();
     _expectSymbol(_SymbolToken.openParen);
-    final DynamicMap arguments = _readMapBody(extended: true);
+    final DynamicMap arguments = _readMapBody(
+      extended: true,
+      widgetBuilderScope: widgetBuilderScope,
+    );
     _expectSymbol(_SymbolToken.closeParen);
     return _withSourceRange(ConstructorCall(name, arguments), start);
   }

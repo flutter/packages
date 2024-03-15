@@ -124,8 +124,16 @@ class MockGoogleMapController extends _i1.Mock
       ) as bool);
 
   @override
+  List<_i5.MapTypeStyle> get styles => (super.noSuchMethod(
+        Invocation.getter(#styles),
+        returnValue: <_i5.MapTypeStyle>[],
+        returnValueForMissingStub: <_i5.MapTypeStyle>[],
+      ) as List<_i5.MapTypeStyle>);
+
+  @override
   void debugSetOverrides({
     _i4.DebugCreateMapFunction? createMap,
+    _i4.DebugSetOptionsFunction? setOptions,
     _i4.MarkersController? markers,
     _i4.CirclesController? circles,
     _i4.PolygonsController? polygons,
@@ -138,6 +146,7 @@ class MockGoogleMapController extends _i1.Mock
           [],
           {
             #createMap: createMap,
+            #setOptions: setOptions,
             #markers: markers,
             #circles: circles,
             #polygons: polygons,

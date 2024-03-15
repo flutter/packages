@@ -4,8 +4,10 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:in_app_purchase_storekit/src/channel.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+
+import '../fakes/fake_storekit_platform.dart';
+import '../test_api.g.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +15,7 @@ void main() {
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-            SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
+    TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
   });
 
   test(
@@ -144,27 +144,5 @@ class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {
   bool shouldShowPriceConsent() {
     log.add('shouldShowPriceConsent');
     return false;
-  }
-}
-
-class FakeStoreKitPlatform {
-  FakeStoreKitPlatform() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, onMethodCall);
-  }
-
-  // indicate if the payment queue delegate is registered
-  bool isPaymentQueueDelegateRegistered = false;
-
-  Future<dynamic> onMethodCall(MethodCall call) {
-    switch (call.method) {
-      case '-[SKPaymentQueue registerDelegate]':
-        isPaymentQueueDelegateRegistered = true;
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue removeDelegate]':
-        isPaymentQueueDelegateRegistered = false;
-        return Future<void>.sync(() {});
-    }
-    return Future<dynamic>.error('method not mocked');
   }
 }

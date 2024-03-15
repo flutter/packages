@@ -510,6 +510,7 @@ class MockTestWebChromeClientHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setSynchronousReturnValueForOnJsAlert(
     int? instanceId,
@@ -525,6 +526,7 @@ class MockTestWebChromeClientHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setSynchronousReturnValueForOnJsConfirm(
     int? instanceId,
@@ -540,6 +542,7 @@ class MockTestWebChromeClientHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setSynchronousReturnValueForOnJsPrompt(
     int? instanceId,
@@ -1340,6 +1343,7 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setSynchronousReturnValueForOnJsConfirm(bool? value) =>
       (super.noSuchMethod(
@@ -1350,6 +1354,7 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setSynchronousReturnValueForOnJsPrompt(bool? value) =>
       (super.noSuchMethod(
@@ -1360,6 +1365,7 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i2.WebChromeClient copy() => (super.noSuchMethod(
         Invocation.method(

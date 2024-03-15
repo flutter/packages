@@ -1,3 +1,7 @@
+## 0.9.14+1
+
+* Fixes bug where max resolution preset does not produce highest available resolution on iOS.
+
 ## 0.9.14
 
 * Adds support to HEIF format.
