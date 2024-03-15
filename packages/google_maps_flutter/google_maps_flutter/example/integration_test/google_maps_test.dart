@@ -16,11 +16,7 @@ import 'src/tiles_inspector.dart' as tiles_inspector;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // TODO(bparrishMines): Web tests are failing due to an error being thrown after
-  // completion. See https://github.com/flutter/flutter/issues/145149
-  if (!isWeb) {
-    maps_controller.runTests();
-    maps_inspector.runTests();
-    tiles_inspector.runTests();
-  }
+  maps_controller.runTests();
+  maps_inspector.runTests();
+  tiles_inspector.runTests();
 }
