@@ -27,6 +27,7 @@ void main() {
       redirectLimit: redirectLimit,
       redirect: redirect,
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(
       routerConfig: router,
     ));
