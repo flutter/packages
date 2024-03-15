@@ -37,29 +37,23 @@ public class AnalyzerFlutterApiImpl {
   }
 
   /**
-   * Stores the {@link ImageAnalysis.Analyzer} instance and notifies Dart to create and store a new
-   * {@code Analyzer} instance that is attached to this one. If {@code instance} has already been
-   * added, this method does nothing.
+   * Sends a message to Dart to call {@code ResolutionFilter.filter} on the Dart object representing
+   * `instance`.
    */
-  public void create(
-      @NonNull ImageAnalysis.Analyzer instance, @NonNull AnalyzerFlutterApi.Reply<Void> callback) {
-    if (!instanceManager.containsInstance(instance)) {
-      api.create(instanceManager.addHostCreatedInstance(instance), callback);
-    }
-  }
-
-  /**
-   * Sends a message to Dart to call {@code Analyzer.analyze} on the Dart object representing
-   * `analyzerInstance`.
-   */
-  public void analyze(
-      @NonNull ImageAnalysis.Analyzer analyzerInstance,
-      @NonNull ImageProxy imageProxyInstance,
-      @NonNull AnalyzerFlutterApi.Reply<Void> callback) {
-    api.analyze(
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(analyzerInstance)),
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(imageProxyInstance)),
-        callback);
+   public void filter(@NonNull Long identifierArg, @NonNull List<ResolutionInfo> supportedSizesArg, @NonNull Long rotationDegreesArg, @NonNull Reply<List<ResolutionInfo>> callback) {
+    // api.analyze(
+    //     Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(analyzerInstance)),
+    //     Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(imageProxyInstance)),
+    //     callback);
+        api.filter(
+            Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+            supportedSizes,
+            rotationDegrees,
+            callback,
+            filteredResolutions -> {
+                return??? // needsome synchronous something something here
+            }
+        )
   }
 
   /**

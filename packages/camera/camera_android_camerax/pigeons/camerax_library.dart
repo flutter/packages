@@ -535,3 +535,17 @@ abstract class Camera2CameraControlHostApi {
   void addCaptureRequestOptions(
       int identifier, int captureRequestOptionsIdentifier);
 }
+
+@HostApi(dartHostTestHandler: 'TestResolutionFilterHostApi')
+abstract class ResolutionFilterHostApi {
+  void create(int identifier);
+
+  // void setSynchronousReturnValueForFilter(
+  //     int identifier, List<ResolutionInfo> filteredResolutions);
+}
+
+@FlutterApi()
+abstract class ResolutionFilterFlutterApi {
+  List<ResolutionInfo> filter(
+      int identifier, List<ResolutionInfo> supportedSizes, int rotationDegrees);
+}
