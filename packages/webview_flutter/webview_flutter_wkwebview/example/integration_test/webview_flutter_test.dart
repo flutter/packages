@@ -987,6 +987,81 @@ Future<void> main() async {
       },
     );
 
+    testWidgets('onHttpError', (WidgetTester tester) async {
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnHttpError((HttpResponseError error) {
+        errorCompleter.complete(error);
+      }));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse('$prefixUrl/favicon.ico')),
+      ));
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      final HttpResponseError error = await errorCompleter.future;
+
+      expect(error, isNotNull);
+      expect(error.response?.statusCode, 404);
+    });
+
+    testWidgets('onHttpError is not called when no HTTP error is received',
+        (WidgetTester tester) async {
+      const String testPage = '''
+        <!DOCTYPE html><html>
+        </head>
+        <body>
+        </body>
+        </html>
+      ''';
+
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+      final Completer<void> pageFinishCompleter = Completer<void>();
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnHttpError((HttpResponseError error) {
+        errorCompleter.complete(error);
+      }));
+      unawaited(delegate.setOnPageFinished(
+        (_) => pageFinishCompleter.complete(),
+      ));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.loadHtmlString(testPage));
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      expect(errorCompleter.future, doesNotComplete);
+      await pageFinishCompleter.future;
+    });
+
     testWidgets('can block requests', (WidgetTester tester) async {
       Completer<void> pageLoaded = Completer<void>();
 

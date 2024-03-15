@@ -1555,6 +1555,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
     super.didFailNavigation,
     super.didFailProvisionalNavigation,
     super.decidePolicyForNavigationAction,
+    super.decidePolicyForNavigationResponse,
     super.webViewWebContentProcessDidTerminate,
     super.didReceiveAuthenticationChallenge,
   }) : super.detached() {
