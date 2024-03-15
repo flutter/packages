@@ -104,7 +104,7 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[],
+                productDetails: <PlatformProductDetails>[],
               ));
 
       final ProductDetailsResponse response =
@@ -121,8 +121,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[
-                  buildProductMap(dummyOneTimeProductDetails)
+                productDetails: <PlatformProductDetails>[
+                  convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
               ));
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
@@ -149,8 +149,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[
-                  buildProductMap(dummyOneTimeProductDetails)
+                productDetails: <PlatformProductDetails>[
+                  convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
               ));
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead

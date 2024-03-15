@@ -30,12 +30,44 @@ BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
 ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
     PlatformProductDetailsResponse response) {
   return ProductDetailsResponseWrapper(
-    billingResult: resultWrapperFromPlatform(response.billingResult),
-    // See TODOs in messages.dart for why this is currently JSON.
-    productDetailsList: response.productDetailsJsonList
-        .map((Object? json) => ProductDetailsWrapper.fromJson(
-            (json! as Map<Object?, Object?>).cast<String, Object?>()))
+      billingResult: resultWrapperFromPlatform(response.billingResult),
+      productDetailsList: response.productDetails
+          // See TODOs in messages.dart for why casting away nullability is safe.
+          .map((PlatformProductDetails? p) => p!)
+          .map(productDetailsWrapperFromPlatform)
+          .toList());
+}
+
+/// Creates a [ProductDetailsWrapper] from the Pigeon equivalent.
+ProductDetailsWrapper productDetailsWrapperFromPlatform(
+    PlatformProductDetails product) {
+  return ProductDetailsWrapper(
+    description: product.description,
+    name: product.name,
+    productId: product.productId,
+    productType: productTypeFromPlatform(product.productType),
+    title: product.title,
+    oneTimePurchaseOfferDetails: oneTimePurchaseOfferDetailsWrapperFromPlatform(
+        product.oneTimePurchaseOfferDetails),
+    subscriptionOfferDetails: product.subscriptionOfferDetails
+        // See comment in messages.dart for why casting away nullability is safe.
+        ?.map((PlatformSubscriptionOfferDetails? o) => o!)
+        .map(subscriptionOfferDetailsWrapperFromPlatform)
         .toList(),
+  );
+}
+
+/// Creates a [OneTimePurchaseOfferDetailsWrapper] from the Pigeon equivalent.
+OneTimePurchaseOfferDetailsWrapper?
+    oneTimePurchaseOfferDetailsWrapperFromPlatform(
+        PlatformOneTimePurchaseOfferDetails? details) {
+  if (details == null) {
+    return null;
+  }
+  return OneTimePurchaseOfferDetailsWrapper(
+    formattedPrice: details.formattedPrice,
+    priceAmountMicros: details.priceAmountMicros,
+    priceCurrencyCode: details.priceCurrencyCode,
   );
 }
 
@@ -124,6 +156,19 @@ PlatformProductType platformProductTypeFromWrapper(ProductType type) {
   };
 }
 
+/// Creates a [PricingPhaseWrapper] from its Pigeon equivalent.
+PricingPhaseWrapper pricingPhaseWrapperFromPlatform(
+    PlatformPricingPhase phase) {
+  return PricingPhaseWrapper(
+    billingCycleCount: phase.billingCycleCount,
+    billingPeriod: phase.billingPeriod,
+    formattedPrice: phase.formattedPrice,
+    priceAmountMicros: phase.priceAmountMicros,
+    priceCurrencyCode: phase.priceCurrencyCode,
+    recurrenceMode: recurrenceModeFromPlatform(phase.recurrenceMode),
+  );
+}
+
 /// Converts a Pigeon [PlatformProductType] to its public API equivalent.
 ProductType productTypeFromPlatform(PlatformProductType type) {
   return switch (type) {
@@ -160,6 +205,33 @@ PurchaseStateWrapper purchaseStateWrapperFromPlatform(
     PlatformPurchaseState.purchased => PurchaseStateWrapper.purchased,
     PlatformPurchaseState.pending => PurchaseStateWrapper.pending,
   };
+}
+
+/// Creates a [RecurrenceMode] from the Pigeon equivalent.
+RecurrenceMode recurrenceModeFromPlatform(PlatformRecurrenceMode mode) {
+  return switch (mode) {
+    PlatformRecurrenceMode.finiteRecurring => RecurrenceMode.finiteRecurring,
+    PlatformRecurrenceMode.infiniteRecurring =>
+      RecurrenceMode.infiniteRecurring,
+    PlatformRecurrenceMode.nonRecurring => RecurrenceMode.nonRecurring,
+  };
+}
+
+/// Creates a [SubscriptionOfferDetailsWrapper] from the Pigeon equivalent.
+SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
+    PlatformSubscriptionOfferDetails offer) {
+  return SubscriptionOfferDetailsWrapper(
+    basePlanId: offer.basePlanId,
+    offerId: offer.offerId,
+    // See comment in messages.dart for why casting away nullability is safe.
+    offerTags: offer.offerTags.map((String? s) => s!).toList(),
+    offerIdToken: offer.offerToken,
+    pricingPhases: offer.pricingPhases
+        // See comment in messages.dart for why casting away nullability is safe.
+        .map((PlatformPricingPhase? p) => p!)
+        .map(pricingPhaseWrapperFromPlatform)
+        .toList(),
+  );
 }
 
 /// Creates a [UserChoiceDetailsWrapper] from the Pigeon equivalent.

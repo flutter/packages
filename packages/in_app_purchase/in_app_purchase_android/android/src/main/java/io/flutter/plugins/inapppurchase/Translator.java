@@ -16,10 +16,26 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.UserChoiceDetails;
+import io.flutter.plugins.inapppurchase.Messages.FlutterError;
+import io.flutter.plugins.inapppurchase.Messages.PlatformAccountIdentifiers;
+import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
+import io.flutter.plugins.inapppurchase.Messages.PlatformOneTimePurchaseOfferDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPricingPhase;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchase;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryRecord;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseState;
+import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
+import io.flutter.plugins.inapppurchase.Messages.PlatformRecurrenceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformSubscriptionOfferDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceProduct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,46 +44,31 @@ import java.util.Locale;
  * related objects.
  */
 /*package*/ class Translator {
-  static HashMap<String, Object> fromProductDetail(ProductDetails detail) {
-    HashMap<String, Object> info = new HashMap<>();
-    info.put("title", detail.getTitle());
-    info.put("description", detail.getDescription());
-    info.put("productId", detail.getProductId());
-    info.put("productType", detail.getProductType());
-    info.put("name", detail.getName());
-
-    @Nullable
-    ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails =
-        detail.getOneTimePurchaseOfferDetails();
-    if (oneTimePurchaseOfferDetails != null) {
-      info.put(
-          "oneTimePurchaseOfferDetails",
-          fromOneTimePurchaseOfferDetails(oneTimePurchaseOfferDetails));
-    }
-
-    @Nullable
-    List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList =
-        detail.getSubscriptionOfferDetails();
-    if (subscriptionOfferDetailsList != null) {
-      info.put(
-          "subscriptionOfferDetails",
-          fromSubscriptionOfferDetailsList(subscriptionOfferDetailsList));
-    }
-
-    return info;
+  static @NonNull PlatformProductDetails fromProductDetail(@NonNull ProductDetails detail) {
+    return new PlatformProductDetails.Builder()
+        .setTitle(detail.getTitle())
+        .setDescription(detail.getDescription())
+        .setProductId(detail.getProductId())
+        .setProductType(toPlatformProductType(detail.getProductType()))
+        .setName(detail.getName())
+        .setOneTimePurchaseOfferDetails(
+            fromOneTimePurchaseOfferDetails(detail.getOneTimePurchaseOfferDetails()))
+        .setSubscriptionOfferDetails(
+            fromSubscriptionOfferDetailsList(detail.getSubscriptionOfferDetails()))
+        .build();
   }
 
-  static List<QueryProductDetailsParams.Product> toProductList(
-      List<Messages.PlatformQueryProduct> platformProducts) {
+  static @NonNull List<QueryProductDetailsParams.Product> toProductList(
+      @NonNull List<PlatformQueryProduct> platformProducts) {
     List<QueryProductDetailsParams.Product> products = new ArrayList<>();
-    for (Messages.PlatformQueryProduct platformProduct : platformProducts) {
+    for (PlatformQueryProduct platformProduct : platformProducts) {
       products.add(toProduct(platformProduct));
     }
     return products;
   }
 
-  static QueryProductDetailsParams.Product toProduct(
-      Messages.PlatformQueryProduct platformProduct) {
+  static @NonNull QueryProductDetailsParams.Product toProduct(
+      @NonNull PlatformQueryProduct platformProduct) {
 
     return QueryProductDetailsParams.Product.newBuilder()
         .setProductId(platformProduct.getProductId())
@@ -75,63 +76,60 @@ import java.util.Locale;
         .build();
   }
 
-  static String toProductTypeString(Messages.PlatformProductType type) {
+  static @NonNull String toProductTypeString(PlatformProductType type) {
     switch (type) {
       case INAPP:
         return BillingClient.ProductType.INAPP;
       case SUBS:
         return BillingClient.ProductType.SUBS;
     }
-    throw new Messages.FlutterError("UNKNOWN_TYPE", "Unknown product type: " + type, null);
+    throw new FlutterError("UNKNOWN_TYPE", "Unknown product type: " + type, null);
   }
 
-  static Messages.PlatformProductType toPlatformProductType(String typeString) {
+  static PlatformProductType toPlatformProductType(@NonNull String typeString) {
     switch (typeString) {
       case BillingClient.ProductType.INAPP:
         // Fallback handling to avoid throwing an exception if a new type is added in the future.
       default:
-        return Messages.PlatformProductType.INAPP;
+        return PlatformProductType.INAPP;
       case BillingClient.ProductType.SUBS:
-        return Messages.PlatformProductType.SUBS;
+        return PlatformProductType.SUBS;
     }
   }
 
-  static List<Object> fromProductDetailsList(@Nullable List<ProductDetails> productDetailsList) {
+  static @NonNull List<PlatformProductDetails> fromProductDetailsList(
+      @Nullable List<ProductDetails> productDetailsList) {
     if (productDetailsList == null) {
       return Collections.emptyList();
     }
 
-    // This and the method are generically typed due to Pigeon limitations; see
-    // https://github.com/flutter/flutter/issues/116117.
-    ArrayList<Object> output = new ArrayList<>();
+    ArrayList<PlatformProductDetails> output = new ArrayList<>();
     for (ProductDetails detail : productDetailsList) {
       output.add(fromProductDetail(detail));
     }
     return output;
   }
 
-  static HashMap<String, Object> fromOneTimePurchaseOfferDetails(
+  static @Nullable PlatformOneTimePurchaseOfferDetails fromOneTimePurchaseOfferDetails(
       @Nullable ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails) {
-    HashMap<String, Object> serialized = new HashMap<>();
     if (oneTimePurchaseOfferDetails == null) {
-      return serialized;
+      return null;
     }
 
-    serialized.put("priceAmountMicros", oneTimePurchaseOfferDetails.getPriceAmountMicros());
-    serialized.put("priceCurrencyCode", oneTimePurchaseOfferDetails.getPriceCurrencyCode());
-    serialized.put("formattedPrice", oneTimePurchaseOfferDetails.getFormattedPrice());
-
-    return serialized;
+    return new PlatformOneTimePurchaseOfferDetails.Builder()
+        .setPriceAmountMicros(oneTimePurchaseOfferDetails.getPriceAmountMicros())
+        .setPriceCurrencyCode(oneTimePurchaseOfferDetails.getPriceCurrencyCode())
+        .setFormattedPrice(oneTimePurchaseOfferDetails.getFormattedPrice())
+        .build();
   }
 
-  static List<HashMap<String, Object>> fromSubscriptionOfferDetailsList(
+  static @Nullable List<PlatformSubscriptionOfferDetails> fromSubscriptionOfferDetailsList(
       @Nullable List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList) {
     if (subscriptionOfferDetailsList == null) {
-      return Collections.emptyList();
+      return null;
     }
 
-    ArrayList<HashMap<String, Object>> serialized = new ArrayList<>();
-
+    ArrayList<PlatformSubscriptionOfferDetails> serialized = new ArrayList<>();
     for (ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails :
         subscriptionOfferDetailsList) {
       serialized.add(fromSubscriptionOfferDetails(subscriptionOfferDetails));
@@ -140,67 +138,65 @@ import java.util.Locale;
     return serialized;
   }
 
-  static HashMap<String, Object> fromSubscriptionOfferDetails(
-      @Nullable ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails) {
-    HashMap<String, Object> serialized = new HashMap<>();
-    if (subscriptionOfferDetails == null) {
-      return serialized;
-    }
-
-    serialized.put("offerId", subscriptionOfferDetails.getOfferId());
-    serialized.put("basePlanId", subscriptionOfferDetails.getBasePlanId());
-    serialized.put("offerTags", subscriptionOfferDetails.getOfferTags());
-    serialized.put("offerIdToken", subscriptionOfferDetails.getOfferToken());
-
-    ProductDetails.PricingPhases pricingPhases = subscriptionOfferDetails.getPricingPhases();
-    serialized.put("pricingPhases", fromPricingPhases(pricingPhases));
-
-    return serialized;
+  static @NonNull PlatformSubscriptionOfferDetails fromSubscriptionOfferDetails(
+      @NonNull ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails) {
+    return new PlatformSubscriptionOfferDetails.Builder()
+        .setOfferId(subscriptionOfferDetails.getOfferId())
+        .setBasePlanId(subscriptionOfferDetails.getBasePlanId())
+        .setOfferTags(subscriptionOfferDetails.getOfferTags())
+        .setOfferToken(subscriptionOfferDetails.getOfferToken())
+        .setPricingPhases(fromPricingPhases(subscriptionOfferDetails.getPricingPhases()))
+        .build();
   }
 
-  static List<HashMap<String, Object>> fromPricingPhases(
+  static @NonNull List<PlatformPricingPhase> fromPricingPhases(
       @NonNull ProductDetails.PricingPhases pricingPhases) {
-    ArrayList<HashMap<String, Object>> serialized = new ArrayList<>();
-
+    ArrayList<PlatformPricingPhase> serialized = new ArrayList<>();
     for (ProductDetails.PricingPhase pricingPhase : pricingPhases.getPricingPhaseList()) {
       serialized.add(fromPricingPhase(pricingPhase));
     }
     return serialized;
   }
 
-  static HashMap<String, Object> fromPricingPhase(
-      @Nullable ProductDetails.PricingPhase pricingPhase) {
-    HashMap<String, Object> serialized = new HashMap<>();
-
-    if (pricingPhase == null) {
-      return serialized;
-    }
-
-    serialized.put("formattedPrice", pricingPhase.getFormattedPrice());
-    serialized.put("priceCurrencyCode", pricingPhase.getPriceCurrencyCode());
-    serialized.put("priceAmountMicros", pricingPhase.getPriceAmountMicros());
-    serialized.put("billingCycleCount", pricingPhase.getBillingCycleCount());
-    serialized.put("billingPeriod", pricingPhase.getBillingPeriod());
-    serialized.put("recurrenceMode", pricingPhase.getRecurrenceMode());
-
-    return serialized;
+  static @NonNull PlatformPricingPhase fromPricingPhase(
+      @NonNull ProductDetails.PricingPhase pricingPhase) {
+    return new PlatformPricingPhase.Builder()
+        .setFormattedPrice(pricingPhase.getFormattedPrice())
+        .setPriceCurrencyCode(pricingPhase.getPriceCurrencyCode())
+        .setPriceAmountMicros(pricingPhase.getPriceAmountMicros())
+        .setBillingCycleCount((long) pricingPhase.getBillingCycleCount())
+        .setBillingPeriod(pricingPhase.getBillingPeriod())
+        .setRecurrenceMode(toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()))
+        .build();
   }
 
-  static Messages.PlatformPurchaseState toPlatformPurchaseState(int state) {
+  static PlatformRecurrenceMode toPlatformRecurrenceMode(int mode) {
+    switch (mode) {
+      case ProductDetails.RecurrenceMode.FINITE_RECURRING:
+        return PlatformRecurrenceMode.FINITE_RECURRING;
+      case ProductDetails.RecurrenceMode.INFINITE_RECURRING:
+        return PlatformRecurrenceMode.INFINITE_RECURRING;
+      case ProductDetails.RecurrenceMode.NON_RECURRING:
+        return PlatformRecurrenceMode.NON_RECURRING;
+    }
+    return PlatformRecurrenceMode.NON_RECURRING;
+  }
+
+  static PlatformPurchaseState toPlatformPurchaseState(int state) {
     switch (state) {
       case Purchase.PurchaseState.PURCHASED:
-        return Messages.PlatformPurchaseState.PURCHASED;
+        return PlatformPurchaseState.PURCHASED;
       case Purchase.PurchaseState.PENDING:
-        return Messages.PlatformPurchaseState.PENDING;
+        return PlatformPurchaseState.PENDING;
       case Purchase.PurchaseState.UNSPECIFIED_STATE:
-        return Messages.PlatformPurchaseState.UNSPECIFIED;
+        return PlatformPurchaseState.UNSPECIFIED;
     }
-    return Messages.PlatformPurchaseState.UNSPECIFIED;
+    return PlatformPurchaseState.UNSPECIFIED;
   }
 
-  static Messages.PlatformPurchase fromPurchase(Purchase purchase) {
-    Messages.PlatformPurchase.Builder builder =
-        new Messages.PlatformPurchase.Builder()
+  static @NonNull PlatformPurchase fromPurchase(@NonNull Purchase purchase) {
+    PlatformPurchase.Builder builder =
+        new PlatformPurchase.Builder()
             .setOrderId(purchase.getOrderId())
             .setPackageName(purchase.getPackageName())
             .setPurchaseTime(purchase.getPurchaseTime())
@@ -216,7 +212,7 @@ import java.util.Locale;
     AccountIdentifiers accountIdentifiers = purchase.getAccountIdentifiers();
     if (accountIdentifiers != null) {
       builder.setAccountIdentifiers(
-          new Messages.PlatformAccountIdentifiers.Builder()
+          new PlatformAccountIdentifiers.Builder()
               .setObfuscatedAccountId(accountIdentifiers.getObfuscatedAccountId())
               .setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId())
               .build());
@@ -224,9 +220,9 @@ import java.util.Locale;
     return builder.build();
   }
 
-  static Messages.PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
-      PurchaseHistoryRecord purchaseHistoryRecord) {
-    return new Messages.PlatformPurchaseHistoryRecord.Builder()
+  static @NonNull PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
+      @NonNull PurchaseHistoryRecord purchaseHistoryRecord) {
+    return new PlatformPurchaseHistoryRecord.Builder()
         .setPurchaseTime(purchaseHistoryRecord.getPurchaseTime())
         .setPurchaseToken(purchaseHistoryRecord.getPurchaseToken())
         .setSignature(purchaseHistoryRecord.getSignature())
@@ -237,67 +233,63 @@ import java.util.Locale;
         .build();
   }
 
-  static List<Messages.PlatformPurchase> fromPurchasesList(@Nullable List<Purchase> purchases) {
+  static @NonNull List<PlatformPurchase> fromPurchasesList(@Nullable List<Purchase> purchases) {
     if (purchases == null) {
       return Collections.emptyList();
     }
 
-    // This and the method are generically typed due to Pigeon limitations; see
-    // https://github.com/flutter/flutter/issues/116117.
-    List<Messages.PlatformPurchase> serialized = new ArrayList<>();
+    List<PlatformPurchase> serialized = new ArrayList<>();
     for (Purchase purchase : purchases) {
       serialized.add(fromPurchase(purchase));
     }
     return serialized;
   }
 
-  static List<Messages.PlatformPurchaseHistoryRecord> fromPurchaseHistoryRecordList(
+  static @NonNull List<PlatformPurchaseHistoryRecord> fromPurchaseHistoryRecordList(
       @Nullable List<PurchaseHistoryRecord> purchaseHistoryRecords) {
     if (purchaseHistoryRecords == null) {
       return Collections.emptyList();
     }
 
-    // This and the method are generically typed due to Pigeon limitations; see
-    // https://github.com/flutter/flutter/issues/116117.
-    List<Messages.PlatformPurchaseHistoryRecord> serialized = new ArrayList<>();
+    List<PlatformPurchaseHistoryRecord> serialized = new ArrayList<>();
     for (PurchaseHistoryRecord purchaseHistoryRecord : purchaseHistoryRecords) {
       serialized.add(fromPurchaseHistoryRecord(purchaseHistoryRecord));
     }
     return serialized;
   }
 
-  static Messages.PlatformBillingResult fromBillingResult(BillingResult billingResult) {
-    return new Messages.PlatformBillingResult.Builder()
+  static @NonNull PlatformBillingResult fromBillingResult(@NonNull BillingResult billingResult) {
+    return new PlatformBillingResult.Builder()
         .setResponseCode((long) billingResult.getResponseCode())
         .setDebugMessage(billingResult.getDebugMessage())
         .build();
   }
 
-  static Messages.PlatformUserChoiceDetails fromUserChoiceDetails(
-      UserChoiceDetails userChoiceDetails) {
-    return new Messages.PlatformUserChoiceDetails.Builder()
+  static @NonNull PlatformUserChoiceDetails fromUserChoiceDetails(
+      @NonNull UserChoiceDetails userChoiceDetails) {
+    return new PlatformUserChoiceDetails.Builder()
         .setExternalTransactionToken(userChoiceDetails.getExternalTransactionToken())
         .setOriginalExternalTransactionId(userChoiceDetails.getOriginalExternalTransactionId())
         .setProducts(fromUserChoiceProductsList(userChoiceDetails.getProducts()))
         .build();
   }
 
-  static List<Messages.PlatformUserChoiceProduct> fromUserChoiceProductsList(
-      List<UserChoiceDetails.Product> productsList) {
+  static @NonNull List<PlatformUserChoiceProduct> fromUserChoiceProductsList(
+      @NonNull List<UserChoiceDetails.Product> productsList) {
     if (productsList.isEmpty()) {
       return Collections.emptyList();
     }
 
-    ArrayList<Messages.PlatformUserChoiceProduct> output = new ArrayList<>();
+    ArrayList<PlatformUserChoiceProduct> output = new ArrayList<>();
     for (UserChoiceDetails.Product product : productsList) {
       output.add(fromUserChoiceProduct(product));
     }
     return output;
   }
 
-  static Messages.PlatformUserChoiceProduct fromUserChoiceProduct(
-      UserChoiceDetails.Product product) {
-    return new Messages.PlatformUserChoiceProduct.Builder()
+  static @NonNull PlatformUserChoiceProduct fromUserChoiceProduct(
+      @NonNull UserChoiceDetails.Product product) {
+    return new PlatformUserChoiceProduct.Builder()
         .setId(product.getId())
         .setOfferToken(product.getOfferToken())
         .setType(toPlatformProductType(product.getType()))
@@ -305,23 +297,23 @@ import java.util.Locale;
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
-  static Messages.PlatformBillingConfigResponse fromBillingConfig(
-      BillingResult result, BillingConfig billingConfig) {
-    return new Messages.PlatformBillingConfigResponse.Builder()
+  static @NonNull PlatformBillingConfigResponse fromBillingConfig(
+      @NonNull BillingResult result, @Nullable BillingConfig billingConfig) {
+    return new PlatformBillingConfigResponse.Builder()
         .setBillingResult(fromBillingResult(result))
-        .setCountryCode(billingConfig.getCountryCode())
+        .setCountryCode(billingConfig == null ? "" : billingConfig.getCountryCode())
         .build();
   }
 
   /**
    * Converter from {@link BillingResult} and {@link AlternativeBillingOnlyReportingDetails} to map.
    */
-  static Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse
+  static @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse
       fromAlternativeBillingOnlyReportingDetails(
-          BillingResult result, AlternativeBillingOnlyReportingDetails details) {
-    return new Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse.Builder()
+          @NonNull BillingResult result, @Nullable AlternativeBillingOnlyReportingDetails details) {
+    return new PlatformAlternativeBillingOnlyReportingDetailsResponse.Builder()
         .setBillingResult(fromBillingResult(result))
-        .setExternalTransactionToken(details.getExternalTransactionToken())
+        .setExternalTransactionToken(details == null ? "" : details.getExternalTransactionToken())
         .build();
   }
 

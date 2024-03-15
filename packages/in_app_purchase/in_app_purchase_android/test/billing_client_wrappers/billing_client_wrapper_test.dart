@@ -203,7 +203,7 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[],
+                productDetails: <PlatformProductDetails>[],
               ));
 
       final ProductDetailsResponseWrapper response = await billingClient
@@ -227,8 +227,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[
-                  buildProductMap(dummyOneTimeProductDetails)
+                productDetails: <PlatformProductDetails>[
+                  convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
               ));
 

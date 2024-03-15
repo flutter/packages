@@ -20,7 +20,6 @@ part 'subscription_offer_details_wrapper.g.dart';
 @immutable
 class SubscriptionOfferDetailsWrapper {
   /// Creates a [SubscriptionOfferDetailsWrapper].
-  @visibleForTesting
   const SubscriptionOfferDetailsWrapper({
     required this.basePlanId,
     this.offerId,
@@ -90,7 +89,6 @@ class SubscriptionOfferDetailsWrapper {
 @immutable
 class PricingPhaseWrapper {
   /// Creates a new [PricingPhaseWrapper] from the supplied info.
-  @visibleForTesting
   const PricingPhaseWrapper({
     required this.billingCycleCount,
     required this.billingPeriod,

@@ -56,6 +56,13 @@ enum PlatformPurchaseState {
   pending,
 }
 
+/// Pigeon version of Java ProductDetails.RecurrenceMode.
+enum PlatformRecurrenceMode {
+  finiteRecurring,
+  infiniteRecurring,
+  nonRecurring,
+}
+
 /// Pigeon version of Java QueryProductDetailsParams.Product.
 class PlatformQueryProduct {
   PlatformQueryProduct({
@@ -137,24 +144,110 @@ class PlatformBillingResult {
   }
 }
 
+/// Pigeon version of Java ProductDetails.OneTimePurchaseOfferDetails.
+class PlatformOneTimePurchaseOfferDetails {
+  PlatformOneTimePurchaseOfferDetails({
+    required this.priceAmountMicros,
+    required this.formattedPrice,
+    required this.priceCurrencyCode,
+  });
+
+  int priceAmountMicros;
+
+  String formattedPrice;
+
+  String priceCurrencyCode;
+
+  Object encode() {
+    return <Object?>[
+      priceAmountMicros,
+      formattedPrice,
+      priceCurrencyCode,
+    ];
+  }
+
+  static PlatformOneTimePurchaseOfferDetails decode(Object result) {
+    result as List<Object?>;
+    return PlatformOneTimePurchaseOfferDetails(
+      priceAmountMicros: result[0]! as int,
+      formattedPrice: result[1]! as String,
+      priceCurrencyCode: result[2]! as String,
+    );
+  }
+}
+
+/// Pigeon version of Java ProductDetails.
+class PlatformProductDetails {
+  PlatformProductDetails({
+    required this.description,
+    required this.name,
+    required this.productId,
+    required this.productType,
+    required this.title,
+    this.oneTimePurchaseOfferDetails,
+    this.subscriptionOfferDetails,
+  });
+
+  String description;
+
+  String name;
+
+  String productId;
+
+  PlatformProductType productType;
+
+  String title;
+
+  PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
+
+  List<PlatformSubscriptionOfferDetails?>? subscriptionOfferDetails;
+
+  Object encode() {
+    return <Object?>[
+      description,
+      name,
+      productId,
+      productType.index,
+      title,
+      oneTimePurchaseOfferDetails?.encode(),
+      subscriptionOfferDetails,
+    ];
+  }
+
+  static PlatformProductDetails decode(Object result) {
+    result as List<Object?>;
+    return PlatformProductDetails(
+      description: result[0]! as String,
+      name: result[1]! as String,
+      productId: result[2]! as String,
+      productType: PlatformProductType.values[result[3]! as int],
+      title: result[4]! as String,
+      oneTimePurchaseOfferDetails: result[5] != null
+          ? PlatformOneTimePurchaseOfferDetails.decode(
+              result[5]! as List<Object?>)
+          : null,
+      subscriptionOfferDetails: (result[6] as List<Object?>?)
+          ?.cast<PlatformSubscriptionOfferDetails?>(),
+    );
+  }
+}
+
 /// Pigeon version of ProductDetailsResponseWrapper, which contains the
 /// components of the Java ProductDetailsResponseListener callback.
 class PlatformProductDetailsResponse {
   PlatformProductDetailsResponse({
     required this.billingResult,
-    required this.productDetailsJsonList,
+    required this.productDetails,
   });
 
   PlatformBillingResult billingResult;
 
-  /// A JSON-compatible list of details, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product details.
-  List<Object?> productDetailsJsonList;
+  List<PlatformProductDetails?> productDetails;
 
   Object encode() {
     return <Object?>[
       billingResult.encode(),
-      productDetailsJsonList,
+      productDetails,
     ];
   }
 
@@ -162,7 +255,8 @@ class PlatformProductDetailsResponse {
     result as List<Object?>;
     return PlatformProductDetailsResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      productDetailsJsonList: (result[1] as List<Object?>?)!.cast<Object?>(),
+      productDetails:
+          (result[1] as List<Object?>?)!.cast<PlatformProductDetails?>(),
     );
   }
 }
@@ -273,6 +367,53 @@ class PlatformBillingFlowParams {
       obfuscatedProfileId: result[4] as String?,
       oldProduct: result[5] as String?,
       purchaseToken: result[6] as String?,
+    );
+  }
+}
+
+/// Pigeon version of Java ProductDetails.PricingPhase.
+class PlatformPricingPhase {
+  PlatformPricingPhase({
+    required this.billingCycleCount,
+    required this.recurrenceMode,
+    required this.priceAmountMicros,
+    required this.billingPeriod,
+    required this.formattedPrice,
+    required this.priceCurrencyCode,
+  });
+
+  int billingCycleCount;
+
+  PlatformRecurrenceMode recurrenceMode;
+
+  int priceAmountMicros;
+
+  String billingPeriod;
+
+  String formattedPrice;
+
+  String priceCurrencyCode;
+
+  Object encode() {
+    return <Object?>[
+      billingCycleCount,
+      recurrenceMode.index,
+      priceAmountMicros,
+      billingPeriod,
+      formattedPrice,
+      priceCurrencyCode,
+    ];
+  }
+
+  static PlatformPricingPhase decode(Object result) {
+    result as List<Object?>;
+    return PlatformPricingPhase(
+      billingCycleCount: result[0]! as int,
+      recurrenceMode: PlatformRecurrenceMode.values[result[1]! as int],
+      priceAmountMicros: result[2]! as int,
+      billingPeriod: result[3]! as String,
+      formattedPrice: result[4]! as String,
+      priceCurrencyCode: result[5]! as String,
     );
   }
 }
@@ -474,6 +615,49 @@ class PlatformPurchasesResponse {
   }
 }
 
+/// Pigeon version of Java ProductDetails.SubscriptionOfferDetails.
+class PlatformSubscriptionOfferDetails {
+  PlatformSubscriptionOfferDetails({
+    required this.basePlanId,
+    this.offerId,
+    required this.offerToken,
+    required this.offerTags,
+    required this.pricingPhases,
+  });
+
+  String basePlanId;
+
+  String? offerId;
+
+  String offerToken;
+
+  List<String?> offerTags;
+
+  List<PlatformPricingPhase?> pricingPhases;
+
+  Object encode() {
+    return <Object?>[
+      basePlanId,
+      offerId,
+      offerToken,
+      offerTags,
+      pricingPhases,
+    ];
+  }
+
+  static PlatformSubscriptionOfferDetails decode(Object result) {
+    result as List<Object?>;
+    return PlatformSubscriptionOfferDetails(
+      basePlanId: result[0]! as String,
+      offerId: result[1] as String?,
+      offerToken: result[2]! as String,
+      offerTags: (result[3] as List<Object?>?)!.cast<String?>(),
+      pricingPhases:
+          (result[4] as List<Object?>?)!.cast<PlatformPricingPhase?>(),
+    );
+  }
+}
+
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
 class PlatformUserChoiceDetails {
   PlatformUserChoiceDetails({
@@ -559,23 +743,35 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
     } else if (value is PlatformBillingResult) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProductDetailsResponse) {
+    } else if (value is PlatformOneTimePurchaseOfferDetails) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchase) {
+    } else if (value is PlatformPricingPhase) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryRecord) {
+    } else if (value is PlatformProductDetails) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryResponse) {
+    } else if (value is PlatformProductDetailsResponse) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformPurchase) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformQueryProduct) {
+    } else if (value is PlatformPurchaseHistoryRecord) {
       buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchaseHistoryResponse) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformQueryProduct) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformSubscriptionOfferDetails) {
+      buffer.putUint8(142);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -597,17 +793,25 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
       case 132:
         return PlatformBillingResult.decode(readValue(buffer)!);
       case 133:
-        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
+        return PlatformOneTimePurchaseOfferDetails.decode(readValue(buffer)!);
       case 134:
-        return PlatformPurchase.decode(readValue(buffer)!);
+        return PlatformPricingPhase.decode(readValue(buffer)!);
       case 135:
-        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
+        return PlatformProductDetails.decode(readValue(buffer)!);
       case 136:
-        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
       case 137:
-        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+        return PlatformPurchase.decode(readValue(buffer)!);
       case 138:
+        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
+      case 139:
+        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+      case 140:
+        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+      case 141:
         return PlatformQueryProduct.decode(readValue(buffer)!);
+      case 142:
+        return PlatformSubscriptionOfferDetails.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

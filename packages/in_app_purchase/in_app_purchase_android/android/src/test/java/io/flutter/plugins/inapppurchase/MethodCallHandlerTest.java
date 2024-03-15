@@ -6,7 +6,6 @@ package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
-import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -566,8 +565,7 @@ public class MethodCallHandlerTest {
     verify(platformProductDetailsResult).success(resultCaptor.capture());
     PlatformProductDetailsResponse resultData = resultCaptor.getValue();
     assertResultsMatch(resultData.getBillingResult(), billingResult);
-    assertEquals(
-        resultData.getProductDetailsJsonList(), fromProductDetailsList(productDetailsResponse));
+    assertDetailListsMatch(productDetailsResponse, resultData.getProductDetails());
   }
 
   @Test
@@ -1212,5 +1210,27 @@ public class MethodCallHandlerTest {
   private void assertResultsMatch(PlatformBillingResult pigeonResult, BillingResult nativeResult) {
     assertEquals(pigeonResult.getResponseCode().longValue(), nativeResult.getResponseCode());
     assertEquals(pigeonResult.getDebugMessage(), nativeResult.getDebugMessage());
+  }
+
+  private void assertDetailListsMatch(
+      List<ProductDetails> expected, List<Messages.PlatformProductDetails> actual) {
+    assertEquals(expected.size(), actual.size());
+    for (int i = 0; i < expected.size(); i++) {
+      assertDetailsMatch(expected.get(i), actual.get(i));
+    }
+  }
+
+  private void assertDetailsMatch(ProductDetails expected, Messages.PlatformProductDetails actual) {
+    assertEquals(expected.getDescription(), actual.getDescription());
+    assertEquals(expected.getName(), actual.getName());
+    assertEquals(expected.getProductId(), actual.getProductId());
+    assertEquals(expected.getTitle(), actual.getTitle());
+    // This doesn't do a deep match; TranslatorTest covers that. This is just a sanity check.
+    assertEquals(
+        expected.getOneTimePurchaseOfferDetails() == null,
+        actual.getOneTimePurchaseOfferDetails() == null);
+    assertEquals(
+        expected.getSubscriptionOfferDetails() == null,
+        actual.getSubscriptionOfferDetails() == null);
   }
 }

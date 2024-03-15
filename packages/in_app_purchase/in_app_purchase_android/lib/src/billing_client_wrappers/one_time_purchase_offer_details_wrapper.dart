@@ -17,7 +17,6 @@ part 'one_time_purchase_offer_details_wrapper.g.dart';
 @immutable
 class OneTimePurchaseOfferDetailsWrapper {
   /// Creates a [OneTimePurchaseOfferDetailsWrapper].
-  @visibleForTesting
   const OneTimePurchaseOfferDetailsWrapper({
     required this.formattedPrice,
     required this.priceAmountMicros,

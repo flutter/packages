@@ -39,28 +39,57 @@ class PlatformBillingResult {
   final String debugMessage;
 }
 
+/// Pigeon version of Java ProductDetails.OneTimePurchaseOfferDetails.
+class PlatformOneTimePurchaseOfferDetails {
+  PlatformOneTimePurchaseOfferDetails({
+    required this.priceAmountMicros,
+    required this.formattedPrice,
+    required this.priceCurrencyCode,
+  });
+
+  final int priceAmountMicros;
+  final String formattedPrice;
+  final String priceCurrencyCode;
+}
+
+/// Pigeon version of Java ProductDetails.
+class PlatformProductDetails {
+  PlatformProductDetails({
+    required this.description,
+    required this.name,
+    required this.productId,
+    required this.productType,
+    required this.title,
+    required this.oneTimePurchaseOfferDetails,
+    required this.subscriptionOfferDetails,
+  });
+
+  final String description;
+  final String name;
+  final String productId;
+  final PlatformProductType productType;
+  final String title;
+  final PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats it (the entries, not the list itself) as
+  // non-nullable.
+  final List<PlatformSubscriptionOfferDetails?>? subscriptionOfferDetails;
+}
+
 /// Pigeon version of ProductDetailsResponseWrapper, which contains the
 /// components of the Java ProductDetailsResponseListener callback.
 class PlatformProductDetailsResponse {
   PlatformProductDetailsResponse({
     required this.billingResult,
-    required this.productDetailsJsonList,
+    required this.productDetails,
   });
 
   final PlatformBillingResult billingResult;
-
-  /// A JSON-compatible list of details, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product details.
-  // TODO(stuartmorgan): Finish converting to Pigeon. This is still using the
-  // old serialization system to allow conversion of all the method calls to
-  // Pigeon without converting the entire object graph all at once. See
-  // https://github.com/flutter/flutter/issues/117910. The list items are
-  // currently untyped due to https://github.com/flutter/flutter/issues/116117.
-  //
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats it as non-nullable.
-  final List<Object?> productDetailsJsonList;
+  final List<PlatformProductDetails?> productDetails;
 }
 
 /// Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
@@ -106,6 +135,25 @@ class PlatformBillingFlowParams {
   final String? obfuscatedProfileId;
   final String? oldProduct;
   final String? purchaseToken;
+}
+
+/// Pigeon version of Java ProductDetails.PricingPhase.
+class PlatformPricingPhase {
+  PlatformPricingPhase({
+    required this.billingCycleCount,
+    required this.recurrenceMode,
+    required this.priceAmountMicros,
+    required this.billingPeriod,
+    required this.formattedPrice,
+    required this.priceCurrencyCode,
+  });
+
+  final int billingCycleCount;
+  final PlatformRecurrenceMode recurrenceMode;
+  final int priceAmountMicros;
+  final String billingPeriod;
+  final String formattedPrice;
+  final String priceCurrencyCode;
 }
 
 /// Pigeon version of Java Purchase.
@@ -202,6 +250,33 @@ class PlatformPurchasesResponse {
   final List<PlatformPurchase?> purchases;
 }
 
+/// Pigeon version of Java ProductDetails.SubscriptionOfferDetails.
+class PlatformSubscriptionOfferDetails {
+  PlatformSubscriptionOfferDetails({
+    required this.basePlanId,
+    required this.offerId,
+    required this.offerToken,
+    required this.offerTags,
+    required this.pricingPhases,
+  });
+
+  final String basePlanId;
+  final String? offerId;
+  final String offerToken;
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats it as non-nullable.
+  final List<String?> offerTags;
+  // On the native side this is actually a class called PricingPhases,
+  // which contains nothing but a List<PricingPhase>. Since this is an
+  // internal API, we can always add that indirection later if we need it,
+  // so for now this bypasses that unnecessary wrapper.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats it as non-nullable.
+  final List<PlatformPricingPhase?> pricingPhases;
+}
+
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
 class PlatformUserChoiceDetails {
   PlatformUserChoiceDetails({
@@ -256,6 +331,13 @@ enum PlatformPurchaseState {
   unspecified,
   purchased,
   pending,
+}
+
+/// Pigeon version of Java ProductDetails.RecurrenceMode.
+enum PlatformRecurrenceMode {
+  finiteRecurring,
+  infiniteRecurring,
+  nonRecurring,
 }
 
 @HostApi()

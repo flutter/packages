@@ -21,7 +21,6 @@ part 'product_details_wrapper.g.dart';
 @immutable
 class ProductDetailsWrapper {
   /// Creates a [ProductDetailsWrapper] with the given purchase details.
-  @visibleForTesting
   const ProductDetailsWrapper({
     required this.description,
     required this.name,
