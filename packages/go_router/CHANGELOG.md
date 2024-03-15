@@ -1,6 +1,7 @@
-## NEXT
+## 13.2.1
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Adds section for "Stateful nested navigation" to configuration.md.
 
 ## 13.2.0
 
