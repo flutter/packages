@@ -298,21 +298,10 @@ public class ImagePickerDelegate
     Intent pickMediaIntent;
     if (generalOptions.getUsePhotoPicker()) {
       if (generalOptions.getAllowMultiple()) {
-        Long limit = generalOptions.getLimit();
-        int effectiveLimit;
-
-        if (limit != null) {
-          effectiveLimit = Math.toIntExact(limit);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-            || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-                && SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2)) {
-          effectiveLimit = MediaStore.getPickImagesMaxLimit();
-        } else {
-          effectiveLimit = Integer.MAX_VALUE;
-        }
+        int limit = ImagePickerUtils.getLimitFromOption(generalOptions);
 
         pickMediaIntent =
-            new ActivityResultContracts.PickMultipleVisualMedia(effectiveLimit)
+            new ActivityResultContracts.PickMultipleVisualMedia(limit)
                 .createIntent(
                     activity,
                     new PickVisualMediaRequest.Builder()
