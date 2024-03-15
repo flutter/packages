@@ -1457,12 +1457,18 @@ Future<void> main() async {
             <title>WebResourceError test</title>
             <script type="text/javascript">
             function onLoad() {
+              const obj1 = {
+                name: "obj1",
+              };
+              const obj2 = {
+                name: "obj2",
+                obj1: obj1,
+              };
               const obj = {
-                a: "Flutter",
-                b: {},
+                obj1: obj1,
+                obj2: obj2,
               };
               obj.self = obj;
-              obj.b.self = obj;
               console.log(obj);
             }
           </script>
@@ -1493,8 +1499,11 @@ Future<void> main() async {
         },
       ));
 
-      await expectLater(debugMessageReceived.future,
-          completion('log:{"a":"Flutter","b":{}}'));
+      await expectLater(
+        debugMessageReceived.future,
+        completion(
+            'log:{"obj1":{"name":"obj1"},"obj2":{"name":"obj2","obj1":{"name":"obj1"}}}'),
+      );
     });
   });
 }

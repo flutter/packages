@@ -1379,11 +1379,18 @@ void main() {
             WKUserScriptInjectionTime.atDocumentStart);
         expect(overrideConsoleScript.source, '''
 function removeCyclicObject() {
-  const objects = new WeakSet();
+  const levelObjects = [];
   return function (k, v) {
     if (typeof v !== "object" || v === null) { return v; }
-    if (objects.has(v)) { return; }
-    objects.add(v);
+    const currentParentObj = this;
+    while (
+      levelObjects.length > 0 &&
+      levelObjects[levelObjects.length - 1] !== currentParentObj
+    ) {
+      levelObjects.pop();
+    }
+    if (levelObjects.includes(v)) { return; }
+    levelObjects.push(v);
     return v;
   };
 }
