@@ -30,6 +30,8 @@ class SubscriptionOfferDetailsWrapper {
 
   /// Factory for creating a [SubscriptionOfferDetailsWrapper] from a [Map]
   /// with the offer details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory SubscriptionOfferDetailsWrapper.fromJson(Map<String, dynamic> map) =>
       _$SubscriptionOfferDetailsWrapperFromJson(map);
 
@@ -99,6 +101,8 @@ class PricingPhaseWrapper {
   });
 
   /// Factory for creating a [PricingPhaseWrapper] from a [Map] with the phase details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory PricingPhaseWrapper.fromJson(Map<String, dynamic> map) =>
       _$PricingPhaseWrapperFromJson(map);
 

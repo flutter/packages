@@ -42,6 +42,8 @@ class PurchaseWrapper {
   });
 
   /// Factory for creating a [PurchaseWrapper] from a [Map] with the purchase details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory PurchaseWrapper.fromJson(Map<String, dynamic> map) =>
       _$PurchaseWrapperFromJson(map);
 
@@ -181,6 +183,8 @@ class PurchaseHistoryRecordWrapper {
   });
 
   /// Factory for creating a [PurchaseHistoryRecordWrapper] from a [Map] with the record details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory PurchaseHistoryRecordWrapper.fromJson(Map<String, dynamic> map) =>
       _$PurchaseHistoryRecordWrapperFromJson(map);
 
@@ -261,6 +265,8 @@ class PurchasesResultWrapper implements HasBillingResponse {
       required this.purchasesList});
 
   /// Factory for creating a [PurchaseResultWrapper] from a [Map] with the result details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory PurchasesResultWrapper.fromJson(Map<String, dynamic> map) =>
       _$PurchasesResultWrapperFromJson(map);
 
@@ -311,6 +317,8 @@ class PurchasesHistoryResult implements HasBillingResponse {
       {required this.billingResult, required this.purchaseHistoryRecordList});
 
   /// Factory for creating a [PurchasesHistoryResult] from a [Map] with the history result details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory PurchasesHistoryResult.fromJson(Map<String, dynamic> map) =>
       _$PurchasesHistoryResultFromJson(map);
 
@@ -385,6 +393,8 @@ class PurchaseStateConverter
   const PurchaseStateConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   PurchaseStateWrapper fromJson(int? json) {
     if (json == null) {
       return PurchaseStateWrapper.unspecified_state;

@@ -35,6 +35,8 @@ class AlternativeBillingOnlyReportingDetailsWrapper
   ///
   /// The map needs to have named string keys with values matching the names and
   /// types of all of the members on this class.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory AlternativeBillingOnlyReportingDetailsWrapper.fromJson(
       Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) {

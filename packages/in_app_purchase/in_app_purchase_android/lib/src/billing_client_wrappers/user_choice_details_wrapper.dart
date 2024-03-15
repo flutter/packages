@@ -27,6 +27,8 @@ class UserChoiceDetailsWrapper {
 
   /// Factory for creating a [UserChoiceDetailsWrapper] from a [Map] with
   /// the user choice details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory UserChoiceDetailsWrapper.fromJson(Map<String, dynamic> map) =>
       _$UserChoiceDetailsWrapperFromJson(map);
 
@@ -88,6 +90,8 @@ class UserChoiceDetailsProductWrapper {
   });
 
   /// Factory for creating a [UserChoiceDetailsProductWrapper] from a [Map] with the record details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory UserChoiceDetailsProductWrapper.fromJson(Map<String, dynamic> map) =>
       _$UserChoiceDetailsProductWrapperFromJson(map);
 
