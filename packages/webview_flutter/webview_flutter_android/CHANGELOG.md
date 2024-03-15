@@ -1,3 +1,7 @@
+## 3.16.1
+
+* Fixes iframe navigation being handled in the main frame when `NavigationDelegate.onNavigationRequest` is present.
+
 ## 3.16.0
 
 * Adds onReceivedHttpError WebViewClient callback to support

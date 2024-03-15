@@ -5,6 +5,8 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -28,7 +30,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-public class WebViewClientTest {
+public abstract class WebViewClientTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock public WebViewClientFlutterApiImpl mockFlutterApi;
@@ -39,7 +41,11 @@ public class WebViewClientTest {
 
   InstanceManager instanceManager;
   WebViewClientHostApiImpl hostApiImpl;
-  WebViewClientCompatImpl webViewClient;
+  WebViewClient webViewClient;
+
+  abstract WebViewClient createInstance(WebViewClientFlutterApiImpl flutterApi);
+
+  abstract void setReturnValueForShouldOverrideUrlLoading(WebViewClient client, boolean value);
 
   @Before
   public void setUp() {
@@ -51,7 +57,7 @@ public class WebViewClientTest {
           @NonNull
           public WebViewClient createWebViewClient(
               @NonNull WebViewClientFlutterApiImpl flutterApi) {
-            webViewClient = (WebViewClientCompatImpl) super.createWebViewClient(flutterApi);
+            webViewClient = createInstance(flutterApi);
             return webViewClient;
           }
         };
@@ -74,6 +80,7 @@ public class WebViewClientTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   public void onReceivedError() {
     webViewClient.onReceivedError(mockWebView, 32, "description", "https://www.google.com");
     verify(mockFlutterApi)
@@ -87,10 +94,59 @@ public class WebViewClientTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   public void urlLoading() {
     webViewClient.shouldOverrideUrlLoading(mockWebView, "https://www.google.com");
     verify(mockFlutterApi)
         .urlLoading(eq(webViewClient), eq(mockWebView), eq("https://www.google.com"), any());
+  }
+
+  @Test
+  public void urlLoadingForMainFrame() {
+    setReturnValueForShouldOverrideUrlLoading(webViewClient, false);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(true);
+
+    assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
+  }
+
+  @Test
+  public void urlLoadingForMainFrameWithOverride() {
+    setReturnValueForShouldOverrideUrlLoading(webViewClient, true);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(true);
+
+    assertTrue(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
+  }
+
+  @Test
+  public void urlLoadingNotForMainFrame() {
+    setReturnValueForShouldOverrideUrlLoading(webViewClient, false);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(false);
+
+    assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
+  }
+
+  @Test
+  public void urlLoadingNotForMainFrameWithOverride() {
+    setReturnValueForShouldOverrideUrlLoading(webViewClient, true);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(false);
+
+    assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
   }
 
   @Test
