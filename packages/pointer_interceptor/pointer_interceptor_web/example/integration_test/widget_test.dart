@@ -77,7 +77,7 @@ void main() {
       expect(element.getAttribute('aria-label'), 'Works As Expected');
     },
         // TODO(bparrishMines): The semantics label is returning null.
-        //  See https://github.com/flutter/flutter/issues/145238
+        // See https://github.com/flutter/flutter/issues/145238
         skip: true);
 
     testWidgets(
@@ -93,7 +93,7 @@ void main() {
           'Never calls onPressed transparent');
     },
         // TODO(bparrishMines): The semantics label is returning null.
-        //  See https://github.com/flutter/flutter/issues/145238
+        // See https://github.com/flutter/flutter/issues/145238
         skip: true);
 
     testWidgets('finds semantics of unwrapped elements',
@@ -107,7 +107,7 @@ void main() {
       expect(element.getAttribute('aria-label'), 'Never calls onPressed');
     },
         // TODO(bparrishMines): The semantics label is returning null.
-        //  See https://github.com/flutter/flutter/issues/145238
+        // See https://github.com/flutter/flutter/issues/145238
         skip: true);
 
     // Notice that, when hit-testing the background platform view, instead of
