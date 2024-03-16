@@ -67,7 +67,7 @@ void TestPlugin::RegisterWithRegistrar(
 
 TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
                        std::unique_ptr<TestSmallApi> host_small_api_one,
-                       std::unique_ptr<TestSmallApi> host_small_api_Two)
+                       std::unique_ptr<TestSmallApi> host_small_api_two)
     : flutter_small_api_one_(
           std::make_unique<FlutterSmallApi>(binary_messenger, ".suffixOne")),
       flutter_small_api_two_(
