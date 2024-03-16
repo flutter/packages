@@ -478,13 +478,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @NonNull String aString, @NonNull Result<String> result) {
     final String[] resultOne = {""};
 
-
-
     Result<String> resultCallbackTwo =
         new Result<String>() {
           public void success(String res) {
             String resOne = resultOne[0];
-              if (res.equals(resOne)) {
+            if (res.equals(resOne)) {
               result.success(res);
             } else {
               result.error(

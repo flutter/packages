@@ -22,9 +22,9 @@
   plugin.flutterAPI =
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
   plugin.flutterSmallApiOne = [[FlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
-                                                       messageChannelSuffix:@".suffixOne"];
+                                                          messageChannelSuffix:@".suffixOne"];
   plugin.flutterSmallApiTwo = [[FlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
-                                                       messageChannelSuffix:@".suffixTwo"];
+                                                          messageChannelSuffix:@".suffixTwo"];
 }
 
 #pragma mark HostIntegrationCoreApi implementation
@@ -511,18 +511,27 @@
 - (void)callFlutterSmallApiEchoString:(nonnull NSString *)aString
                            completion:(nonnull void (^)(NSString *_Nullable,
                                                         FlutterError *_Nullable))completion {
-  [self.flutterSmallApiOne echoString:aString
-                        completion:^(NSString *valueOne, FlutterError *error) {
-                          [self.flutterSmallApiTwo echoString:aString
-                          completion:^(NSString *valueTwo, FlutterError *error) {
-                            if ([valueOne isEqualToString:valueTwo]) {
-
-                            completion(valueTwo, error);
-                            } else {
-                              completion(nil, [FlutterError errorWithCode:@"Responses do not match" message:[NSString stringWithFormat:@"%@%@%@%@", @"Multi-instance responses were not matching: ", valueOne, @", ", valueTwo] details:nil]);
-                            }
-                        }];
-                        }];
+  [self.flutterSmallApiOne
+      echoString:aString
+      completion:^(NSString *valueOne, FlutterError *error) {
+        [self.flutterSmallApiTwo
+            echoString:aString
+            completion:^(NSString *valueTwo, FlutterError *error) {
+              if ([valueOne isEqualToString:valueTwo]) {
+                completion(valueTwo, error);
+              } else {
+                completion(
+                    nil,
+                    [FlutterError
+                        errorWithCode:@"Responses do not match"
+                              message:[NSString stringWithFormat:
+                                                    @"%@%@%@%@",
+                                                    @"Multi-instance responses were not matching: ",
+                                                    valueOne, @", ", valueTwo]
+                              details:nil]);
+              }
+            }];
+      }];
 }
 
 @end

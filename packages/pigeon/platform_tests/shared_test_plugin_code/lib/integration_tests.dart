@@ -1129,6 +1129,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(sentString, echoStringOne);
       expect(sentString, echoStringTwo);
     });
+
+    testWidgets('multiple instances will have different method channel names',
+        (_) async {
+      // The only way to get the channel name back is to throw an exception.
+      // These APIs have no corresponding APIs on the host platforms.
+      final HostSmallApi apiWithSuffixOne =
+          HostSmallApi(messageChannelSuffix: '.suffixWithNoHost');
+      final HostSmallApi apiWithSuffixTwo =
+          HostSmallApi(messageChannelSuffix: '.suffixWithoutHost');
+      const String sentString = "I'm a computer";
+      try {
+        await apiWithSuffixOne.echo(sentString);
+      } on PlatformException catch (e) {
+        expect(e.message, contains('suffixWithNoHost'));
+      }
+      try {
+        await apiWithSuffixTwo.echo(sentString);
+      } on PlatformException catch (e) {
+        expect(e.message, contains('suffixWithoutHost'));
+      }
+    });
   });
 
   // These tests rely on the async Dart->host calls to work correctly, since
