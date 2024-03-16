@@ -171,7 +171,7 @@ public class ImagePickerPluginTest {
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
         mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), any());
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), any(), any());
     verifyNoInteractions(mockResult);
   }
 
@@ -182,7 +182,7 @@ public class ImagePickerPluginTest {
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
         mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), any());
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), any(), any());
     verifyNoInteractions(mockResult);
   }
 
