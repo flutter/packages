@@ -1,7 +1,11 @@
-## 13.2.1
+## 13.2.2
 
 - Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
-- Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 13.2.1
+
+- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+- Fixes memory leaks.
 
 ## 13.2.0
 
