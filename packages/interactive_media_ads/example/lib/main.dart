@@ -6,8 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_driver/driver_extension.dart';
 
-// ignore_for_file: public_member_api_docs
-
 /// Entry point for integration tests that require espresso.
 @pragma('vm:entry-point')
 void integrationTestMain() {
@@ -19,7 +17,9 @@ void main() {
   runApp(const MyApp());
 }
 
+/// Home widget of the example app.
 class MyApp extends StatefulWidget {
+  /// Constructs [MyApp].
   const MyApp({super.key});
 
   @override

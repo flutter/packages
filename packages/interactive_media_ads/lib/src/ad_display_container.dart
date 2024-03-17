@@ -22,8 +22,8 @@ import 'platform_interface/platform_interface.dart';
 /// ```dart
 /// final AdDisplayContainer container = AdDisplayContainer();
 ///
-/// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-///   final IosAdDisplayContainer iosContainer = container.platform as IosAdDisplayContainer;
+/// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+///   final IOSAdDisplayContainer iosContainer = container.platform as IOSAdDisplayContainer;
 /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
 ///   final AndroidAdDisplayContainer androidContainer =
 ///       container.platform as AndroidAdDisplayContainer;
@@ -58,8 +58,8 @@ class AdDisplayContainer extends StatelessWidget {
   /// PlatformAdDisplayContainerCreationParams params =
   ///     const PlatformAdDisplayContainerCreationParams();
   ///
-  /// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-  ///   params = IosAdDisplayContainerCreationParams
+  /// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+  ///   params = IOSAdDisplayContainerCreationParams
   ///       .fromPlatformAdDisplayContainerCreationParams(
   ///     params,
   ///   );
@@ -90,7 +90,8 @@ class AdDisplayContainer extends StatelessWidget {
   /// Implementation of [PlatformAdDisplayContainer] for the current platform.
   final PlatformAdDisplayContainer platform;
 
-  /// When
+  /// Invoked when the native view that contains the ad has been added to the
+  /// platform view hierarchy.
   void Function(PlatformAdDisplayContainer container) get onContainerAdded =>
       platform.params.onContainerAdded;
 

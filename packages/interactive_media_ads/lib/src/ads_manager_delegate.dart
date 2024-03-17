@@ -19,8 +19,8 @@ import 'platform_interface/platform_interface.dart';
 /// ```dart
 /// final AdsManagerDelegate delegate = AdsManagerDelegate();
 ///
-/// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-///   final IosAdsManagerDelegate iosDelegate = delegate.platform as IosAdsManagerDelegate;
+/// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+///   final IOSAdsManagerDelegate iosDelegate = delegate.platform as IOSAdsManagerDelegate;
 /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
 ///   final AndroidAdsManagerDelegate androidDelegate =
 ///       delegate.platform as AndroidAdsManagerDelegate;
@@ -51,8 +51,8 @@ class AdsManagerDelegate {
   /// PlatformAdsManagerDelegateCreationParams params =
   ///     const PlatformAdsManagerDelegateCreationParams();
   ///
-  /// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-  ///   params = IosAdsManagerDelegateCreationParams
+  /// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+  ///   params = IOSAdsManagerDelegateCreationParams
   ///       .fromPlatformAdsManagerDelegateCreationParams(
   ///     params,
   ///   );

@@ -24,13 +24,10 @@ abstract class InteractiveMediaAdsPlatform extends PlatformInterface {
   /// class that extends [InteractiveMediaAdsPlatform] when they register
   /// themselves.
   static set instance(InteractiveMediaAdsPlatform? instance) {
-    if (instance == null) {
-      throw AssertionError(
-        'Platform interfaces can only be set to a non-null instance',
-      );
+    if (instance != null) {
+      PlatformInterface.verifyToken(instance, _token);
     }
 
-    PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }
 

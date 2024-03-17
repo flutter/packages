@@ -23,8 +23,8 @@ import 'platform_interface/platform_interface.dart';
 /// ```dart
 /// final AdsLoader loader = AdsLoader();
 ///
-/// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-///   final IosAdsLoader iosLoader = loader.platform as IosAdsLoader;
+/// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+///   final IOSAdsLoader iosLoader = loader.platform as IOSAdsLoader;
 /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
 ///   final AndroidAdsLoader androidLoader =
 ///       loader.platform as AndroidAdsLoader;
@@ -59,8 +59,8 @@ class AdsLoader {
   /// PlatformAdsLoaderCreationParams params =
   ///     const PlatformAdsLoaderCreationParams();
   ///
-  /// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-  ///   params = IosAdsLoaderCreationParams
+  /// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+  ///   params = IOSAdsLoaderCreationParams
   ///       .fromPlatformAdsLoaderCreationParams(
   ///     params,
   ///   );
@@ -86,7 +86,7 @@ class AdsLoader {
   /// Implementation of [PlatformAdsLoader] for the current platform.
   final PlatformAdsLoader platform;
 
-  /// Signal to the SDK that the content has completed.
+  /// Signals to the SDK that the content has completed.
   Future<void> contentComplete() {
     return platform.contentComplete();
   }
@@ -125,8 +125,8 @@ class OnAdsLoadedData {
 /// ```dart
 /// final AdsManager manager = AdsManager();
 ///
-/// if (InteractiveMediaAdsPlatform.instance is IosInteractiveMediaAdsPlatform) {
-///   final IosAdsManager iosManager = manager.platform as IosAdsManager;
+/// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+///   final IOSAdsManager iosManager = manager.platform as IOSAdsManager;
 /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
 ///   final AndroidAdsManager androidManager =
 ///       manager.platform as AndroidAdsManager;
