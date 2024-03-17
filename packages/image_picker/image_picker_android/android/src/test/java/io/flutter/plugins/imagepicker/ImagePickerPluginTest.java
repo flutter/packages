@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -171,7 +172,7 @@ public class ImagePickerPluginTest {
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
         mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), any(), any());
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), anyInt(), any());
     verifyNoInteractions(mockResult);
   }
 
@@ -182,7 +183,7 @@ public class ImagePickerPluginTest {
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
         mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), any(), any());
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), anyInt(), any());
     verifyNoInteractions(mockResult);
   }
 
