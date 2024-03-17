@@ -8,6 +8,7 @@ import 'package:camera_windows/camera_windows.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import './utils/method_channel_mock.dart';
 
 void main() {
@@ -34,12 +35,17 @@ void main() {
         final CameraWindows plugin = CameraWindows();
 
         // Act
-        final int cameraId = await plugin.createCamera(
+        final int cameraId = await plugin.createCameraWithSettings(
           const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.front,
               sensorOrientation: 0),
-          ResolutionPreset.high,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+          ),
         );
 
         // Assert
@@ -48,7 +54,10 @@ void main() {
             'create',
             arguments: <String, Object?>{
               'cameraName': 'Test',
-              'resolutionPreset': 'high',
+              'resolutionPreset': 'low',
+              'fps': 15,
+              'videoBitrate': 200000,
+              'audioBitrate': 32000,
               'enableAudio': false
             },
           ),
@@ -72,13 +81,19 @@ void main() {
 
         // Act
         expect(
-          () => plugin.createCamera(
+          () => plugin.createCameraWithSettings(
             const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            ResolutionPreset.high,
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.low,
+              fps: 15,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+              enableAudio: true,
+            ),
           ),
           throwsA(
             isA<CameraException>()
@@ -137,13 +152,19 @@ void main() {
               },
             });
         final CameraWindows plugin = CameraWindows();
-        final int cameraId = await plugin.createCamera(
+        final int cameraId = await plugin.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
 
         // Act
@@ -174,13 +195,19 @@ void main() {
             });
 
         final CameraWindows plugin = CameraWindows();
-        final int cameraId = await plugin.createCamera(
+        final int cameraId = await plugin.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
         await plugin.initializeCamera(cameraId);
 
@@ -216,13 +243,19 @@ void main() {
         );
 
         plugin = CameraWindows();
-        cameraId = await plugin.createCamera(
+        cameraId = await plugin.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
         await plugin.initializeCamera(cameraId);
       });
@@ -295,13 +328,19 @@ void main() {
           },
         );
         plugin = CameraWindows();
-        cameraId = await plugin.createCamera(
+        cameraId = await plugin.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
         await plugin.initializeCamera(cameraId);
       });

@@ -1,3 +1,7 @@
+## 0.5.1
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
 ## 0.5.0+36
 
 * Implements `setExposureMode`.

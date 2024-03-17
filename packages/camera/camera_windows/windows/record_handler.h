@@ -9,7 +9,9 @@
 #include <mfcaptureengine.h>
 #include <wrl/client.h>
 
+#include <cassert>
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace camera_windows {
@@ -30,12 +32,48 @@ enum class RecordingType {
 // sequential order through the states.
 enum class RecordState { kNotStarted, kStarting, kRunning, kStopping };
 
+// Recording media settings.
+//
+// Used in [Camera::InitCamera].
+// Allows to tune recorded video parameters, such as resolution, frame rate,
+// bitrate. If [fps], [video_bitrate] or [audio_bitrate] are passed, they must
+// be greater than zero.
+struct RecordSettings {
+  explicit RecordSettings(
+      const bool record_audio = false,
+      const std::optional<uint32_t>& fps = std::nullopt,
+      const std::optional<uint32_t>& video_bitrate = std::nullopt,
+      const std::optional<uint32_t>& audio_bitrate = std::nullopt)
+      : record_audio(record_audio),
+        fps(fps),
+        video_bitrate(video_bitrate),
+        audio_bitrate(audio_bitrate) {
+    assert(!fps.has_value() || fps.value() > 0);
+    assert(!video_bitrate.has_value() || video_bitrate.value() > 0);
+    assert(!audio_bitrate.has_value() || audio_bitrate.value() > 0);
+  }
+
+  // Controls audio presence in recorded video.
+  bool record_audio{false};
+
+  // Rate at which frames should be captured by the camera in frames per second.
+  std::optional<uint32_t> fps{std::nullopt};
+
+  // The video encoding bit rate for recording.
+  std::optional<uint32_t> video_bitrate{std::nullopt};
+
+  // The audio encoding bit rate for recording.
+  std::optional<uint32_t> audio_bitrate{std::nullopt};
+};
+
 // Handler for video recording via the camera.
 //
 // Handles record sink initialization and manages the state of video recording.
 class RecordHandler {
  public:
-  RecordHandler(bool record_audio) : record_audio_(record_audio) {}
+  explicit RecordHandler(const RecordSettings& record_settings)
+      : media_settings_(record_settings) {}
+
   virtual ~RecordHandler() = default;
 
   // Prevent copying.
@@ -103,7 +141,7 @@ class RecordHandler {
   HRESULT InitRecordSink(IMFCaptureEngine* capture_engine,
                          IMFMediaType* base_media_type);
 
-  bool record_audio_ = false;
+  const RecordSettings media_settings_;
   int64_t max_video_duration_ms_ = -1;
   int64_t recording_start_timestamp_us_ = -1;
   uint64_t recording_duration_us_ = 0;

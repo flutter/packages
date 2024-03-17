@@ -7,6 +7,8 @@
 @import Flutter;
 
 #import "CameraProperties.h"
+#import "FLTCamMediaSettings.h"
+#import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTThreadSafeEventChannel.h"
 #import "FLTThreadSafeFlutterResult.h"
 #import "FLTThreadSafeMethodChannel.h"
@@ -33,13 +35,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
 /// @param resolutionPreset the resolution preset
-/// @param enableAudio YES if audio should be enabled for video capturing; NO otherwise.
+/// @param mediaSettings the media settings configuration parameters
+/// @param mediaSettingsAVWrapper AVFoundation wrapper to perform media settings related operations
+/// (for dependency injection in unit tests).
 /// @param orientation the orientation of camera
 /// @param captureSessionQueue the queue on which camera's capture session operations happen.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
-                       enableAudio:(BOOL)enableAudio
+                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error;
