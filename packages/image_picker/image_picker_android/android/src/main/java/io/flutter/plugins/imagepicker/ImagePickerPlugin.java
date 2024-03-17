@@ -6,10 +6,7 @@ package io.flutter.plugins.imagepicker;
 
 import android.app.Activity;
 import android.app.Application;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.ext.SdkExtensions;
-import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
