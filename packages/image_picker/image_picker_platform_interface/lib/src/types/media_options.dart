@@ -10,6 +10,13 @@ import '../../image_picker_platform_interface.dart';
 @immutable
 class MediaOptions {
   /// Construct a new MediaOptions instance.
+  const MediaOptions({
+    this.imageOptions = const ImageOptions(),
+    required this.allowMultiple,
+    this.limit,
+  });
+
+  /// Construct a new MediaOptions instance.
   ///
   /// Throws if limit is lower than 2,
   /// or allowMultiple is false and limit is not null.

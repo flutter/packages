@@ -662,7 +662,7 @@ void main() {
       api.returnValue = fakePaths;
 
       final List<XFile> files = await picker.getMedia(
-        options: MediaOptions(
+        options: const MediaOptions(
           allowMultiple: true,
         ),
       );
@@ -675,7 +675,7 @@ void main() {
 
     test('passes default image options', () async {
       await picker.getMedia(
-        options: MediaOptions(
+        options: const MediaOptions(
           allowMultiple: true,
         ),
       );
@@ -688,9 +688,9 @@ void main() {
 
     test('passes image option arguments correctly', () async {
       await picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
         allowMultiple: true,
-        imageOptions: const ImageOptions(
+        imageOptions: ImageOptions(
           maxWidth: 10.0,
           maxHeight: 20.0,
           imageQuality: 70,
@@ -707,9 +707,9 @@ void main() {
     test('does not accept a negative width or height argument', () {
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: const ImageOptions(maxWidth: -1.0),
+            imageOptions: ImageOptions(maxWidth: -1.0),
           ),
         ),
         throwsArgumentError,
@@ -717,9 +717,9 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: const ImageOptions(maxHeight: -1.0),
+            imageOptions: ImageOptions(maxHeight: -1.0),
           ),
         ),
         throwsArgumentError,
@@ -729,9 +729,9 @@ void main() {
     test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: const ImageOptions(imageQuality: -1),
+            imageOptions: ImageOptions(imageQuality: -1),
           ),
         ),
         throwsArgumentError,
@@ -739,9 +739,9 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: const ImageOptions(imageQuality: 101),
+            imageOptions: ImageOptions(imageQuality: 101),
           ),
         ),
         throwsArgumentError,
@@ -751,7 +751,7 @@ void main() {
     test('does not accept an invalid limit argument', () {
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
             limit: -1,
           ),
@@ -761,7 +761,7 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
             limit: 0,
           ),
@@ -773,7 +773,7 @@ void main() {
     test('does not accept a not null limit when allowMultiple is false', () {
       expect(
         () => picker.getMedia(
-          options: MediaOptions(allowMultiple: false, limit: 5),
+          options: const MediaOptions(allowMultiple: false, limit: 5),
         ),
         throwsArgumentError,
       );
@@ -784,7 +784,7 @@ void main() {
 
       expect(
           await picker.getMedia(
-            options: MediaOptions(
+            options: const MediaOptions(
               allowMultiple: true,
             ),
           ),
@@ -793,7 +793,7 @@ void main() {
 
     test('defaults to not using Android Photo Picker', () async {
       await picker.getMedia(
-        options: MediaOptions(
+        options: const MediaOptions(
           allowMultiple: true,
         ),
       );
@@ -804,7 +804,7 @@ void main() {
     test('allows using Android Photo Picker', () async {
       picker.useAndroidPhotoPicker = true;
       await picker.getMedia(
-        options: MediaOptions(
+        options: const MediaOptions(
           allowMultiple: true,
         ),
       );

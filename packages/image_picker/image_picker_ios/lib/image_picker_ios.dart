@@ -218,7 +218,17 @@ class ImagePickerIOS extends ImagePickerPlatform {
     final MaxSize maxSize =
         _imageOptionsToMaxSizeWithValidation(mediaOptions.imageOptions);
 
+    final bool allowMultiple = mediaOptions.allowMultiple;
     final int? limit = mediaOptions.limit;
+
+    if (!allowMultiple && limit != null) {
+      throw ArgumentError.value(
+        allowMultiple,
+        'allowMultiple',
+        'cannot be false, when limit is not null',
+      );
+    }
+
     if (limit != null && limit < 2) {
       throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
