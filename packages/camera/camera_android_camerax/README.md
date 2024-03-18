@@ -2,10 +2,12 @@
 
 An Android implementation of [`camera`][1] that uses the [CameraX library][2].
 
-*Note*: This package is under development, so please note the
-[missing features and limitations](#missing-features-and-limitations), but
-otherwise feel free to try out the current implementation and provide any
-feedback by filing issues under [`flutter/flutter`][5] with `[camerax]` in
+*Note*: Unless any of the [missing features and limitations](#missing-features-and-limitations)
+may restrict you from using this implementation, please see [the instructions](#usage)
+on how to use this platform implementation in place of [`camera_android`][4] as
+support for it will eventually stop. Additionally, if there are any reasons you are unable to
+use this package instead of `camera_android` besides those listed [below](#missing-features-and-limitations),
+please report these by filing issues under [`flutter/flutter`][5] with `[camerax]` in
 the title, which will be actively triaged.
 
 ## Usage
