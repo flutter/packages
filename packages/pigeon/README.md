@@ -72,8 +72,8 @@ the threading model for handling HostApi methods can be selected with the
 
 ### Multi-Instance Support
 
-Host and Flutter APIs now support the ability to provide a unique string to the api
-to allow for multiple instances to be created and operate in parallel.
+Host and Flutter APIs now support the ability to provide a unique message channel suffix string 
+to the api to allow for multiple instances to be created and operate in parallel. 
 
 ## Usage
 

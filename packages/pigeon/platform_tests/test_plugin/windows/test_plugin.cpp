@@ -628,7 +628,7 @@ void TestPlugin::CallFlutterSmallApiEchoString(
   flutter_small_api_one_->EchoString(
       a_string,
       [result](const std::string& echoOne) {
-        flutter_small_api_one_->EchoString(
+        flutter_small_api_two_->EchoString(
             a_string,
             [result](const std::string& echoTwo) {
               if (echoOne == echoTwo) {
