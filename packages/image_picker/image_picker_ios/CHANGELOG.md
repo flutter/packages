@@ -1,6 +1,7 @@
-## NEXT
+## 0.8.9+2
 
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+* Replaces deprecated UIGraphicsBeginImageContextWithOptions with UIGraphicsImageRenderer.
 
 ## 0.8.9+1
 

@@ -188,6 +188,7 @@ Future<GoRouter> createRouter(
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
   );
+  addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
       restorationScopeId:
@@ -221,6 +222,7 @@ Future<GoRouter> createRouterWithRoutingConfig(
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
   );
+  addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
       restorationScopeId:
@@ -333,6 +335,12 @@ class DummyRestorableStatefulWidgetState
     if (restorationId != null) {
       registerForRestoration(_counter, restorationId!);
     }
+  }
+
+  @override
+  void dispose() {
+    _counter.dispose();
+    super.dispose();
   }
 
   @override

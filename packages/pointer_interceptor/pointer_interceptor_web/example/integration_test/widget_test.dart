@@ -75,7 +75,10 @@ void main() {
 
       expect(element.tagName.toLowerCase(), 'flt-semantics');
       expect(element.getAttribute('aria-label'), 'Works As Expected');
-    });
+    },
+        // TODO(bparrishMines): The semantics label is returning null.
+        // See https://github.com/flutter/flutter/issues/145238
+        skip: true);
 
     testWidgets(
         'finds semantics of wrapped widgets with intercepting set to false',
@@ -88,7 +91,10 @@ void main() {
       expect(element.tagName.toLowerCase(), 'flt-semantics');
       expect(element.getAttribute('aria-label'),
           'Never calls onPressed transparent');
-    });
+    },
+        // TODO(bparrishMines): The semantics label is returning null.
+        // See https://github.com/flutter/flutter/issues/145238
+        skip: true);
 
     testWidgets('finds semantics of unwrapped elements',
         (WidgetTester tester) async {
@@ -99,7 +105,10 @@ void main() {
 
       expect(element.tagName.toLowerCase(), 'flt-semantics');
       expect(element.getAttribute('aria-label'), 'Never calls onPressed');
-    });
+    },
+        // TODO(bparrishMines): The semantics label is returning null.
+        // See https://github.com/flutter/flutter/issues/145238
+        skip: true);
 
     // Notice that, when hit-testing the background platform view, instead of
     // finding a semantics node, the platform view itself is found. This is

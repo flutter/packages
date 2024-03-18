@@ -12,6 +12,18 @@ import 'package:markdown/markdown.dart' as md;
 import '../flutter_markdown.dart';
 import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 
+/// Signature for callbacks used by [MarkdownWidget] when
+/// [MarkdownWidget.selectable] is set to true and the user changes selection.
+///
+/// The callback will return the entire block of text available for selection,
+/// along with the current [selection] and the [cause] of the selection change.
+/// This is a wrapper of [SelectionChangedCallback] with additional context
+/// [text] for the caller to process.
+///
+/// Used by [MarkdownWidget.onSelectionChanged]
+typedef MarkdownOnSelectionChangedCallback = void Function(
+    String? text, TextSelection selection, SelectionChangedCause? cause);
+
 /// Signature for callbacks used by [MarkdownWidget] when the user taps a link.
 /// The callback will return the link text, destination, and title from the
 /// Markdown link tag in the document.
@@ -173,6 +185,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.styleSheet,
     this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
     this.syntaxHighlighter,
+    this.onSelectionChanged,
     this.onTapLink,
     this.onTapText,
     this.imageDirectory,
@@ -215,6 +228,9 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Called when the user taps a link.
   final MarkdownTapLinkCallback? onTapLink;
+
+  /// Called when the user changes selection when [selectable] is set to true.
+  final MarkdownOnSelectionChangedCallback? onSelectionChanged;
 
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
@@ -353,6 +369,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       paddingBuilders: widget.paddingBuilders,
       fitContent: widget.fitContent,
       listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
+      onSelectionChanged: widget.onSelectionChanged,
       onTapText: widget.onTapText,
       softLineBreak: widget.softLineBreak,
     );
@@ -415,6 +432,7 @@ class MarkdownBody extends MarkdownWidget {
     super.styleSheet,
     super.styleSheetTheme = null,
     super.syntaxHighlighter,
+    super.onSelectionChanged,
     super.onTapLink,
     super.onTapText,
     super.imageDirectory,
@@ -469,6 +487,7 @@ class Markdown extends MarkdownWidget {
     super.styleSheet,
     super.styleSheetTheme = null,
     super.syntaxHighlighter,
+    super.onSelectionChanged,
     super.onTapLink,
     super.onTapText,
     super.imageDirectory,

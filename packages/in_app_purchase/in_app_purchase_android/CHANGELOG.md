@@ -1,5 +1,6 @@
-## NEXT
+## 0.3.2
 
+* Adds UserChoiceBilling APIs to platform addition.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 0.3.1

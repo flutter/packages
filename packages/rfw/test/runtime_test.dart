@@ -244,7 +244,7 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, 'Could not find remote widget named widget in a, possibly because some dependencies were missing: b');
+    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named widget in a, possibly because some dependencies were missing: b'));
   });
 
   testWidgets('Missing libraries in specified widget', (WidgetTester tester) async {
@@ -258,7 +258,7 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, 'Could not find remote widget named widget in a, possibly because some dependencies were missing: a');
+    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named widget in a, possibly because some dependencies were missing: a'));
   });
 
   testWidgets('Missing libraries in import via dependency', (WidgetTester tester) async {
@@ -276,7 +276,7 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, 'Could not find remote widget named test in a, possibly because some dependencies were missing: b');
+    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named test in a, possibly because some dependencies were missing: b'));
   });
 
   testWidgets('Missing widget', (WidgetTester tester) async {
@@ -291,7 +291,7 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, 'Could not find remote widget named widget in a.');
+    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named widget in a.'));
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
@@ -1152,7 +1152,29 @@ void main() {
 
     expect(tester.takeException().toString(), contains(expectedErrorMessage));
     expect(find.byType(ErrorWidget), findsOneWidget);
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, expectedErrorMessage);
+    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains(expectedErrorMessage));
+  });
+
+
+  testWidgets('Customized error widget', (WidgetTester tester) async {
+    final ErrorWidgetBuilder oldBuilder = ErrorWidget.builder;
+    ErrorWidget.builder = (FlutterErrorDetails details) {
+      return const Text('oopsie!', textDirection: TextDirection.ltr);
+    };
+    final Runtime runtime = Runtime()
+      ..update(const LibraryName(<String>['a']), parseLibraryFile(''));
+    final DynamicContent data = DynamicContent();
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['a']), 'widget'),
+      ),
+    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
+    expect(find.text('oopsie!'), findsOneWidget);
+    expect(find.byType(ErrorWidget), findsNothing);
+    ErrorWidget.builder = oldBuilder;
   });
 
   testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {

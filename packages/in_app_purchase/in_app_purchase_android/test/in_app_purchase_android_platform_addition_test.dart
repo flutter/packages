@@ -9,6 +9,7 @@ import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
+import 'package:in_app_purchase_android/src/types/translator.dart';
 
 import 'billing_client_wrappers/billing_client_wrapper_test.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
@@ -279,6 +280,30 @@ void main() {
           .isFeatureSupported(BillingClientFeature.subscriptions);
       expect(isSupported, isTrue);
       expect(arguments['feature'], equals('subscriptions'));
+    });
+  });
+
+  group('userChoiceDetails', () {
+    test('called', () async {
+      final Future<GooglePlayUserChoiceDetails> futureDetails =
+          iapAndroidPlatformAddition.userChoiceDetailsStream.first;
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      manager.onUserChoiceAlternativeBilling(expected);
+      expect(
+          await futureDetails, Translator.convertToUserChoiceDetails(expected));
     });
   });
 }

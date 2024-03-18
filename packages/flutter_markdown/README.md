@@ -72,6 +72,15 @@ but it's possible to create your own custom styling. Use the MarkdownStyle class
 to pass in your own style. If you don't want to use Markdown outside of material
 design, use the MarkdownRaw class.
 
+## Selection
+
+By default, Markdown is not selectable. A caller may use the following ways to
+customize the selection behavior of Markdown:
+
+* Set `selectable` to true, and use `onTapText` and `onSelectionChanged` to
+  handle tapping and selecting events.
+* Set `selectable` to false, and wrap Markdown with [`SelectionArea`](https://api.flutter.dev/flutter/material/SelectionArea-class.html) or [`SelectionRegion`](https://api.flutter.dev/flutter/widgets/SelectableRegion-class.html).
+
 ## Emoji Support
 
 Emoji glyphs can be included in the formatted text displayed by the Markdown

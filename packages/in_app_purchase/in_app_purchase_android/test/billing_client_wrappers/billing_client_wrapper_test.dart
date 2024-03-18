@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
@@ -37,7 +39,8 @@ void main() {
       .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler));
 
   setUp(() {
-    billingClient = BillingClient((PurchasesResultWrapper _) {});
+    billingClient = BillingClient(
+        (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {});
     stubPlatform.reset();
   });
 
@@ -114,7 +117,7 @@ void main() {
           }));
     });
 
-    test('passes billingChoiceMode when set', () async {
+    test('passes billingChoiceMode alternativeBillingOnly when set', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
       stubPlatform.addResponse(
@@ -134,6 +137,91 @@ void main() {
             'handle': 0,
             'billingChoiceMode': 1,
           }));
+    });
+
+    test('passes billingChoiceMode userChoiceBilling when set', () async {
+      const String debugMessage = 'dummy message';
+      const BillingResponse responseCode = BillingResponse.ok;
+      stubPlatform.addResponse(
+        name: methodName,
+        value: <String, dynamic>{
+          'responseCode': const BillingResponseConverter().toJson(responseCode),
+          'debugMessage': debugMessage,
+        },
+      );
+      final Completer<UserChoiceDetailsWrapper> completer =
+          Completer<UserChoiceDetailsWrapper>();
+
+      billingClient = BillingClient((PurchasesResultWrapper _) {},
+          (UserChoiceDetailsWrapper details) => completer.complete(details));
+      stubPlatform.reset();
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.userChoiceBilling);
+      final MethodCall call = stubPlatform.previousCallMatching(methodName);
+      expect(
+          call.arguments,
+          equals(<dynamic, dynamic>{
+            'handle': 0,
+            'billingChoiceMode': 2,
+          }));
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      await billingClient.callHandler(
+          MethodCall(kUserSelectedAlternativeBilling, expected.toJson()));
+      expect(completer.isCompleted, isTrue);
+      expect(await completer.future, expected);
+    });
+
+    test('UserChoiceDetailsWrapper searilization check', () async {
+      // Test ensures that changes to UserChoiceDetailsWrapper#toJson are
+      // compatible with code in Translator.java.
+      const String transactionIdKey = 'originalExternalTransactionId';
+      const String transactionTokenKey = 'externalTransactionToken';
+      const String productsKey = 'products';
+      const String productIdKey = 'id';
+      const String productOfferTokenKey = 'offerToken';
+      const String productTypeKey = 'productType';
+
+      const UserChoiceDetailsProductWrapper expectedProduct1 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsProductWrapper expectedProduct2 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          expectedProduct1,
+          expectedProduct2,
+        ],
+      );
+      final Map<String, dynamic> detailsJson = expected.toJson();
+      expect(detailsJson.keys, contains(transactionIdKey));
+      expect(detailsJson.keys, contains(transactionTokenKey));
+      expect(detailsJson.keys, contains(productsKey));
+
+      final Map<String, dynamic> productJson = expectedProduct1.toJson();
+      expect(productJson, contains(productIdKey));
+      expect(productJson, contains(productOfferTokenKey));
+      expect(productJson, contains(productTypeKey));
     });
 
     test('handles method channel returning null', () async {

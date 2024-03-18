@@ -26,6 +26,7 @@ void main() {
               builder: (_, __) => const SizedBox())
         ],
       );
+      addTearDown(router.dispose);
       await tester.pumpWidget(MaterialApp.router(
         routerConfig: router,
       ));

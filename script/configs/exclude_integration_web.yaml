@@ -1,2 +1,4 @@
 # Currently missing: https://github.com/flutter/flutter/issues/82211
 - file_selector
+# Waiting on https://github.com/flutter/flutter/issues/145149
+- google_maps_flutter

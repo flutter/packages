@@ -12,6 +12,7 @@ import 'test_helpers.dart';
 Future<GoRouter> createGoRouter(
   WidgetTester tester, {
   Listenable? refreshListenable,
+  bool dispose = true,
 }) async {
   final GoRouter router = GoRouter(
     initialLocation: '/',
@@ -25,6 +26,9 @@ Future<GoRouter> createGoRouter(
     ],
     refreshListenable: refreshListenable,
   );
+  if (dispose) {
+    addTearDown(router.dispose);
+  }
   await tester.pumpWidget(MaterialApp.router(
     routerConfig: router,
   ));
@@ -65,6 +69,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
       ], builder: mockStackedShellBuilder),
     ],
   );
+  addTearDown(router.dispose);
   await tester.pumpWidget(MaterialApp.router(
     routerConfig: router,
   ));
@@ -287,6 +292,7 @@ void main() {
           GoRoute(path: '/page-1', builder: (_, __) => const SizedBox()),
         ],
       );
+      addTearDown(goRouter.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: goRouter,
@@ -369,6 +375,7 @@ void main() {
                 builder: (_, __) => const SizedBox()),
           ],
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(
           MaterialApp.router(
             routerConfig: goRouter,
@@ -418,6 +425,7 @@ void main() {
           GoRoute(path: '/page-1', builder: (_, __) => const SizedBox()),
         ],
       );
+      addTearDown(goRouter.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: goRouter,
@@ -535,6 +543,7 @@ void main() {
           ),
         ],
       );
+      addTearDown(router.dispose);
       await tester.pumpWidget(MaterialApp.router(
         routerConfig: router,
       ));
@@ -634,8 +643,13 @@ void main() {
   testWidgets('dispose unsubscribes from refreshListenable',
       (WidgetTester tester) async {
     final FakeRefreshListenable refreshListenable = FakeRefreshListenable();
-    final GoRouter goRouter =
-        await createGoRouter(tester, refreshListenable: refreshListenable);
+    addTearDown(refreshListenable.dispose);
+
+    final GoRouter goRouter = await createGoRouter(
+      tester,
+      refreshListenable: refreshListenable,
+      dispose: false,
+    );
     await tester.pumpWidget(Container());
     goRouter.dispose();
     expect(refreshListenable.unsubscribed, true);
