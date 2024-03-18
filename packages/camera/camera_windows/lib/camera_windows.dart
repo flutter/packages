@@ -227,8 +227,9 @@ class CameraWindows extends CameraPlatform {
   }
 
   @override
-  Future<void> prepareForVideoRecording() =>
-      pluginChannel.invokeMethod<void>('prepareForVideoRecording');
+  Future<void> prepareForVideoRecording() async {
+    // No-op.
+  }
 
   @override
   Future<void> startVideoRecording(int cameraId,
