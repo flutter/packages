@@ -4,13 +4,20 @@
 
 package io.flutter.plugins.camerax;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Build;
+import android.view.Display;
+import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.camera.core.CameraInfo;
+import androidx.camera.core.DisplayOrientedMeteringPointFactory;
 import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
-import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.MeteringPointHostApi;
+import java.util.Objects;
 
 /**
  * Host API implementation for {@link MeteringPoint}.
@@ -22,20 +29,35 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
   private final InstanceManager instanceManager;
   private final MeteringPointProxy proxy;
 
-  /** Proxy for constructors and static method of {@link MeteringPoint}. */
+  /** Proxy for constructor and static methods of {@link MeteringPoint}. */
   @VisibleForTesting
   public static class MeteringPointProxy {
+    Activity activity;
 
     /**
      * Creates a surface oriented {@link MeteringPoint} with the specified x, y, and size.
      *
-     * <p>A {@link SurfaceOrientedMeteringPointFactory} is used to construct the {@link
-     * MeteringPoint} because underlying the camera preview that this plugin uses is a Flutter
-     * texture that is backed by a {@link Surface} created by the Flutter Android embedding.
+     * <p>A {@link DisplayOrientedMeteringPointFactory} is used to construct the {@link
+     * MeteringPoint} because this factory handles the transformation of specified coordinates based
+     * on camera information and the device orientation automatically.
      */
     @NonNull
-    public MeteringPoint create(@NonNull Double x, @NonNull Double y, @Nullable Double size) {
-      SurfaceOrientedMeteringPointFactory factory = getSurfaceOrientedMeteringPointFactory(1f, 1f);
+    public MeteringPoint create(
+        @NonNull Double x,
+        @NonNull Double y,
+        @Nullable Double size,
+        @NonNull CameraInfo cameraInfo) {
+      Display display = null;
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        display = activity.getDisplay();
+      } else {
+        display = getDefaultDisplayForAndroidVersionBelowR(activity);
+      }
+
+      DisplayOrientedMeteringPointFactory factory =
+          getDisplayOrientedMeteringPointFactory(display, cameraInfo, 1f, 1f);
+
       if (size == null) {
         return factory.createPoint(x.floatValue(), y.floatValue());
       } else {
@@ -43,11 +65,18 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
       }
     }
 
+    @NonNull
+    @SuppressWarnings("deprecation")
+    private Display getDefaultDisplayForAndroidVersionBelowR(@NonNull Activity activity) {
+      return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE))
+          .getDefaultDisplay();
+    }
+
     @VisibleForTesting
     @NonNull
-    public SurfaceOrientedMeteringPointFactory getSurfaceOrientedMeteringPointFactory(
-        float width, float height) {
-      return new SurfaceOrientedMeteringPointFactory(width, height);
+    public DisplayOrientedMeteringPointFactory getDisplayOrientedMeteringPointFactory(
+        @NonNull Display display, @NonNull CameraInfo cameraInfo, float width, float height) {
+      return new DisplayOrientedMeteringPointFactory(display, cameraInfo, width, height);
     }
 
     /**
@@ -72,7 +101,7 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
    * Constructs a {@link MeteringPointHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link MeteringPoint}
+   * @param proxy proxy for constructor and static methods of {@link MeteringPoint}
    */
   @VisibleForTesting
   MeteringPointHostApiImpl(
@@ -81,10 +110,23 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
     this.proxy = proxy;
   }
 
+  public void setActivity(@NonNull Activity activity) {
+    this.proxy.activity = activity;
+  }
+
   @Override
   public void create(
-      @NonNull Long identifier, @NonNull Double x, @NonNull Double y, @Nullable Double size) {
-    MeteringPoint meteringPoint = proxy.create(x, y, size);
+      @NonNull Long identifier,
+      @NonNull Double x,
+      @NonNull Double y,
+      @Nullable Double size,
+      @NonNull Long cameraInfoId) {
+    MeteringPoint meteringPoint =
+        proxy.create(
+            x,
+            y,
+            size,
+            (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(cameraInfoId)));
     instanceManager.addDartCreatedInstance(meteringPoint, identifier);
   }
 

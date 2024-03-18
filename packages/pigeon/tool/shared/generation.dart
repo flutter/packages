@@ -81,6 +81,13 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     final Set<GeneratorLanguage> skipLanguages =
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
 
+    final bool kotlinErrorClassGenerationTestFiles =
+        input == 'core_tests' || input == 'background_platform_channels';
+
+    final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
+        ? 'FlutterError'
+        : '${pascalCaseName}Error';
+
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
@@ -90,7 +97,8 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
-      kotlinErrorClassName: '${pascalCaseName}Error',
+      kotlinErrorClassName: kotlinErrorName,
+      kotlinIncludeErrorClass: input != 'core_tests',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
@@ -143,6 +151,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
+      objcPrefix: input == 'core_tests' ? 'FLT' : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
     );
@@ -176,6 +185,7 @@ Future<int> runPigeon({
   String? kotlinOut,
   String? kotlinPackage,
   String? kotlinErrorClassName,
+  bool kotlinIncludeErrorClass = true,
   String? swiftOut,
   String? cppHeaderOut,
   String? cppSourceOut,
@@ -217,7 +227,10 @@ Future<int> runPigeon({
     javaOptions: JavaOptions(package: javaPackage),
     kotlinOut: kotlinOut,
     kotlinOptions: KotlinOptions(
-        package: kotlinPackage, errorClassName: kotlinErrorClassName),
+      package: kotlinPackage,
+      errorClassName: kotlinErrorClassName,
+      includeErrorClass: kotlinIncludeErrorClass,
+    ),
     objcHeaderOut: objcHeaderOut,
     objcSourceOut: objcSourceOut,
     objcOptions: ObjcOptions(prefix: objcPrefix),

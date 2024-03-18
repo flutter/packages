@@ -130,12 +130,21 @@ void main() {
                         onJsPrompt,
                   }) =>
                       MockWebChromeClient(),
-              createAndroidWebView: () => nonNullMockWebView,
+              createAndroidWebView: (
+                      {dynamic Function(
+                              int left, int top, int oldLeft, int oldTop)?
+                          onScrollChanged}) =>
+                  nonNullMockWebView,
               createAndroidWebViewClient: ({
                 void Function(android_webview.WebView webView, String url)?
                     onPageFinished,
                 void Function(android_webview.WebView webView, String url)?
                     onPageStarted,
+                void Function(
+                        android_webview.WebView webView,
+                        android_webview.WebResourceRequest request,
+                        android_webview.WebResourceResponse response)?
+                    onReceivedHttpError,
                 @Deprecated('Only called on Android version < 23.')
                 void Function(
                   android_webview.WebView webView,

@@ -30,13 +30,16 @@ import 'runtime.dart';
 ///  * [DropdownButton]
 ///  * [ElevatedButton]
 ///  * [FloatingActionButton]
+///  * [InkResponse]
 ///  * [InkWell]
 ///  * [LinearProgressIndicator]
 ///  * [ListTile]
+///  * [Material]
 ///  * [OutlinedButton]
 ///  * [Scaffold]
 ///  * [TextButton]
 ///  * [VerticalDivider]
+///  * [OverflowBar]
 ///
 /// For each, every parameter is implemented using the same name. Parameters
 /// that take structured types are represented using maps, with each named
@@ -49,6 +52,22 @@ import 'runtime.dart';
 ///
 ///  * [VisualDensity] is represented in the manner described in the documentation
 ///    of the [ArgumentDecoders.visualDensity] method.
+///
+/// Some features have changed in the underlying Flutter's material library and are
+/// therefore no longer supported, including:
+///
+///  * The [ButtonBar] widget in the Flutter's material library is planned to be
+///    deprecated in favor of the [OverflowBar] widget. The [ButtonBar] widget in
+///    `rfw` package uses the [OverflowBar] widget internally for backward compatibility.
+///    The [ButtonBar] widget in `rfw` package is not deprecated and will continue to
+///    be supported. As a result, the following [ButtonBar] parameters are no longer
+///    supported:
+///
+///    * `buttonMinWidth`
+///    * `buttonHeight`
+///    * `buttonAlignedDropdown`
+///
+///    It is recommended to use the [OverflowBar] widget.
 ///
 /// Some features are not supported:
 ///
@@ -123,18 +142,66 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
+  // The [ButtonBar] widget in Flutter's material library is planned to be deprecated
+  // in favor of the [OverflowBar] widget. This [ButtonBar] implementation uses the
+  // [OverflowBar] widget internally for backward compatibility. The [ButtonBar]
+  // widget in `rfw` package is not deprecated and will continue to be supported.
+  //
+  // The [ButtonBar] widget in Flutter's material library has changed over time.
+  // The following parameters are no longer supported:
+  //  - `buttonMinWidth`
+  //  - `buttonHeight`
+  //  - `buttonAlignedDropdown`
+  //
+  // It is recommended to use the [OverflowBar] widget.
   'ButtonBar': (BuildContext context, DataSource source) {
-    // not implemented: buttonTextTheme
-    return ButtonBar(
+    final EdgeInsetsGeometry buttonPadding = ArgumentDecoders.edgeInsets(source, ['buttonPadding']) ?? const EdgeInsets.all(8.0);
+    final ButtonBarLayoutBehavior layoutBehavior = ArgumentDecoders.enumValue<ButtonBarLayoutBehavior>(ButtonBarLayoutBehavior.values, source, ['layoutBehavior'])
+      ?? ButtonBarLayoutBehavior.padded;
+
+    Widget overflowBar = OverflowBar(
       alignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['alignment']) ?? MainAxisAlignment.start,
-      mainAxisSize: ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) ?? MainAxisSize.max,
-      buttonMinWidth: source.v<double>(['buttonMinWidth']),
-      buttonHeight: source.v<double>(['buttonHeight']),
-      buttonPadding: ArgumentDecoders.edgeInsets(source, ['buttonPadding']),
-      buttonAlignedDropdown: source.v<bool>(['buttonAlignedDropdown']) ?? false,
-      layoutBehavior: ArgumentDecoders.enumValue<ButtonBarLayoutBehavior>(ButtonBarLayoutBehavior.values, source, ['layoutBehavior']),
-      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection']),
-      overflowButtonSpacing: source.v<double>(['overflowButtonSpacing']),
+      spacing: buttonPadding.horizontal / 2,
+      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection']) ?? VerticalDirection.down,
+      overflowSpacing: source.v<double>(['overflowButtonSpacing']) ?? 0.0,
+      children: source.childList(['children']),
+    );
+
+    switch (layoutBehavior) {
+      case ButtonBarLayoutBehavior.padded:
+        overflowBar = Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 2.0 * (buttonPadding.horizontal / 4.0),
+            horizontal: buttonPadding.horizontal / 2.0,
+          ),
+          child: overflowBar,
+        );
+      case ButtonBarLayoutBehavior.constrained:
+        overflowBar = Container(
+          padding: EdgeInsets.symmetric(horizontal: buttonPadding.horizontal / 2.0),
+          constraints: const BoxConstraints(minHeight: 52.0),
+          alignment: Alignment.center,
+          child: overflowBar,
+        );
+    }
+
+    if (ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) == MainAxisSize.min) {
+      return IntrinsicWidth(child: overflowBar);
+    }
+
+    return overflowBar;
+  },
+
+  'OverflowBar': (BuildContext context, DataSource source) {
+    return OverflowBar(
+      spacing: source.v<double>(['spacing']) ?? 0.0,
+      alignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['alignment']),
+      overflowSpacing: source.v<double>(['overflowSpacing']) ?? 0.0,
+      overflowAlignment: ArgumentDecoders.enumValue<OverflowBarAlignment>(OverflowBarAlignment.values, source, ['overflowAlignment'])
+        ?? OverflowBarAlignment.start,
+      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection'])
+        ?? VerticalDirection.down,
+      textDirection: ArgumentDecoders.enumValue<TextDirection>(TextDirection.values, source, ['textDirection']),
       children: source.childList(['children']),
     );
   },
@@ -272,14 +339,58 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
+  'InkResponse': (BuildContext context, DataSource source) {
+    // not implemented: mouseCursor, overlayColor, splashFactory, focusNode.
+    return InkResponse(
+      onTap: source.voidHandler(['onTap']),
+      onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onTapUp: source.handler(['onTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onTapCancel: source.voidHandler(['onTapCancel']),
+      onDoubleTap: source.voidHandler(['onDoubleTap']),
+      onLongPress: source.voidHandler(['onLongPress']),
+      onSecondaryTap: source.voidHandler(['onSecondaryTap']),
+      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
+      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
+      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+      containedInkWell: source.v<bool>(['containedInkWell']) ?? false,
+      highlightShape: ArgumentDecoders.enumValue<BoxShape>(BoxShape.values, source, ['highlightShape']) ?? BoxShape.circle,
+      radius: source.v<double>(['radius']),
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
+      customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
+      focusColor: ArgumentDecoders.color(source, ['focusColor']),
+      hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
+      highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
+      splashColor: ArgumentDecoders.color(source, ['splashColor']),
+      enableFeedback: source.v<bool>(['enableFeedback']) ?? true,
+      excludeFromSemantics: source.v<bool>(['excludeFromSemantics']) ?? false,
+      canRequestFocus: source.v<bool>(['canRequestFocus']) ?? true,
+      onFocusChange: source.handler(['onFocusChange'], (VoidCallback trigger) => (bool focus) => trigger()),
+      autofocus: source.v<bool>(['autofocus']) ?? false,
+      hoverDuration: ArgumentDecoders.duration(source, ['hoverDuration'], context),
+      child: source.optionalChild(['child']),
+    );
+  },
+
   'InkWell': (BuildContext context, DataSource source) {
-    // not implemented: onHighlightChanged, onHover; mouseCursor; focusColor, hoverColor, highlightColor, overlayColor, splashColor; splashFactory; focusNode, onFocusChange
+    // not implemented: mouseCursor; overlayColor, splashFactory; focusNode, onFocusChange
     return InkWell(
       onTap: source.voidHandler(['onTap']),
       onDoubleTap: source.voidHandler(['onDoubleTap']),
       onLongPress: source.voidHandler(['onLongPress']),
       onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
       onTapCancel: source.voidHandler(['onTapCancel']),
+      onSecondaryTap: source.voidHandler(['onSecondaryTap']),
+      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
+      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
+      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+      focusColor: ArgumentDecoders.color(source, ['focusColor']),
+      hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
+      highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
+      splashColor: ArgumentDecoders.color(source, ['splashColor']),
       radius: source.v<double>(['radius']),
       borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
       customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
@@ -327,6 +438,23 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       horizontalTitleGap: source.v<double>(['horizontalTitleGap']),
       minVerticalPadding: source.v<double>(['minVerticalPadding']),
       minLeadingWidth: source.v<double>(['minLeadingWidth']),
+    );
+  },
+
+  'Material': (BuildContext context, DataSource source) {
+    return Material(
+      type: ArgumentDecoders.enumValue<MaterialType>(MaterialType.values,source, ['type']) ?? MaterialType.canvas,
+      elevation: source.v<double>(['elevation']) ?? 0.0,
+      color: ArgumentDecoders.color(source, ['color']),
+      shadowColor: ArgumentDecoders.color(source, ['shadowColor']),
+      surfaceTintColor: ArgumentDecoders.color(source, ['surfaceTintColor']),
+      textStyle: ArgumentDecoders.textStyle(source, ['textStyle']),
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']),
+      shape: ArgumentDecoders.shapeBorder(source, ['shape']),
+      borderOnForeground: source.v<bool>(['borderOnForeground']) ?? true,
+      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      animationDuration: ArgumentDecoders.duration(source, ['animationDuration'], context),
+      child: source.child(['child']),
     );
   },
 

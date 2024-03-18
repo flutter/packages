@@ -27,14 +27,14 @@ enum CameraStateType {
 /// If you need to add another type to support a type S to use a LiveData<S> in
 /// this plugin, ensure the following is done on the Dart side:
 ///
-///  * In `../lib/src/live_data.dart`, add new cases for S in
+///  * In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
 ///    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
 ///    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
 ///    to create the expected type of LiveData<S> when requested.
 ///
 /// On the native side, ensure the following is done:
 ///
-///  * Update `LiveDataHostApiImpl#getValue` is updated to properly return
+///  * Make sure `LiveDataHostApiImpl#getValue` is updated to properly return
 ///    identifiers for instances of type S.
 ///  * Update `ObserverFlutterApiWrapper#onChanged` to properly handle receiving
 ///    calls with instances of type S if a LiveData<S> instance is observed.
@@ -66,6 +66,28 @@ enum VideoResolutionFallbackRule {
   higherQualityThan,
   lowerQualityOrHigherThan,
   lowerQualityThan,
+}
+
+/// The types of capture request options this plugin currently supports.
+///
+/// If you need to add another option to support, ensure the following is done
+/// on the Dart side:
+///
+///  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
+///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
+///    to create the expected Map entry of option key index and value to send to
+///    the native side.
+///
+/// On the native side, ensure the following is done:
+///
+///  * Update `CaptureRequestOptionsHostApiImpl#create` to set the correct
+///   `CaptureRequest` key with a valid value type for this option.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
+/// for the sorts of capture request options that can be supported via CameraX's
+/// interoperability with Camera2.
+enum CaptureRequestKeySupportedType {
+  controlAeLock,
 }
 
 class ResolutionInfo {
@@ -210,7 +232,7 @@ class VideoQualityData {
   }
 }
 
-/// Convenience class for building [FocusMeteringAction] with multiple metering
+/// Convenience class for building [FocusMeteringAction]s with multiple metering
 /// points.
 class MeteringPointInfo {
   MeteringPointInfo({
@@ -218,11 +240,12 @@ class MeteringPointInfo {
     this.meteringMode,
   });
 
-  /// Instance manager ID corresponding to [MeteringPoint] that relates to this
-  /// info.
+  /// InstanceManager ID for a [MeteringPoint].
   int meteringPointId;
 
-  /// Metering mode represented by one of the [FocusMeteringAction] constants.
+  /// The metering mode of the [MeteringPoint] whose ID is [meteringPointId].
+  ///
+  /// Metering mode should be one of the [FocusMeteringAction] constants.
   int? meteringMode;
 
   Object encode() {
@@ -2879,7 +2902,7 @@ class CameraControlHostApi {
     }
   }
 
-  Future<int> startFocusAndMetering(
+  Future<int?> startFocusAndMetering(
       int arg_identifier, int arg_focusMeteringActionId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CameraControlHostApi.startFocusAndMetering', codec,
@@ -2898,13 +2921,8 @@ class CameraControlHostApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyList[0] as int?)!;
+      return (replyList[0] as int?);
     }
   }
 
@@ -2930,7 +2948,7 @@ class CameraControlHostApi {
     }
   }
 
-  Future<int> setExposureCompensationIndex(
+  Future<int?> setExposureCompensationIndex(
       int arg_identifier, int arg_index) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CameraControlHostApi.setExposureCompensationIndex',
@@ -2949,13 +2967,8 @@ class CameraControlHostApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyList[0] as int?)!;
+      return (replyList[0] as int?);
     }
   }
 }
@@ -3125,14 +3138,14 @@ class MeteringPointHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(
-      int arg_identifier, double arg_x, double arg_y, double? arg_size) async {
+  Future<void> create(int arg_identifier, double arg_x, double arg_y,
+      double? arg_size, int arg_cameraInfoId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.MeteringPointHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_x, arg_y, arg_size])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_identifier, arg_x, arg_y, arg_size, arg_cameraInfoId])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -3176,24 +3189,111 @@ class MeteringPointHostApi {
   }
 }
 
-class DisplayOrientedMeteringPointFactoryHostApi {
-  /// Constructor for [DisplayOrientedMeteringPointFactoryHostApi].  The [binaryMessenger] named argument is
+class _CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
+  const _CaptureRequestOptionsHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is CameraPermissionsErrorData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is CameraStateTypeData) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is ExposureCompensationRange) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is MeteringPointInfo) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is ResolutionInfo) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is VideoQualityData) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return CameraPermissionsErrorData.decode(readValue(buffer)!);
+      case 129:
+        return CameraStateTypeData.decode(readValue(buffer)!);
+      case 130:
+        return ExposureCompensationRange.decode(readValue(buffer)!);
+      case 131:
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      case 132:
+        return MeteringPointInfo.decode(readValue(buffer)!);
+      case 133:
+        return ResolutionInfo.decode(readValue(buffer)!);
+      case 134:
+        return VideoQualityData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+class CaptureRequestOptionsHostApi {
+  /// Constructor for [CaptureRequestOptionsHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  DisplayOrientedMeteringPointFactoryHostApi({BinaryMessenger? binaryMessenger})
+  CaptureRequestOptionsHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec =
+      _CaptureRequestOptionsHostApiCodec();
+
+  Future<void> create(
+      int arg_identifier, Map<int?, Object?> arg_options) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CaptureRequestOptionsHostApi.create', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_options]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+class Camera2CameraControlHostApi {
+  /// Constructor for [Camera2CameraControlHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  Camera2CameraControlHostApi({BinaryMessenger? binaryMessenger})
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, int arg_cameraInfoId, int arg_width,
-      int arg_height) async {
+  Future<void> create(
+      int arg_identifier, int arg_cameraControlIdentifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.create',
-        codec,
+        'dev.flutter.pigeon.Camera2CameraControlHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(
-            <Object?>[arg_identifier, arg_cameraInfoId, arg_width, arg_height])
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_cameraControlIdentifier])
         as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
@@ -3211,13 +3311,15 @@ class DisplayOrientedMeteringPointFactoryHostApi {
     }
   }
 
-  Future<int> createPoint(int arg_x, int arg_y, int? arg_size) async {
+  Future<void> addCaptureRequestOptions(
+      int arg_identifier, int arg_captureRequestOptionsIdentifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.createPoint',
+        'dev.flutter.pigeon.Camera2CameraControlHostApi.addCaptureRequestOptions',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_x, arg_y, arg_size]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_identifier, arg_captureRequestOptionsIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -3229,40 +3331,8 @@ class DisplayOrientedMeteringPointFactoryHostApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyList[0] as int?)!;
-    }
-  }
-
-  Future<int> getDefaultPointSize() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DisplayOrientedMeteringPointFactoryHostApi.getDefaultPointSize',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (replyList[0] as int?)!;
+      return;
     }
   }
 }

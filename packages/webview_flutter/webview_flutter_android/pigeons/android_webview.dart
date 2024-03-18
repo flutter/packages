@@ -111,6 +111,14 @@ class WebResourceRequestData {
   Map<String?, String?> requestHeaders;
 }
 
+class WebResourceResponseData {
+  WebResourceResponseData(
+    this.statusCode,
+  );
+
+  int statusCode;
+}
+
 class WebResourceErrorData {
   WebResourceErrorData(this.errorCode, this.description);
 
@@ -268,6 +276,14 @@ abstract class WebViewHostApi {
 abstract class WebViewFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier);
+
+  void onScrollChanged(
+    int webViewInstanceId,
+    int left,
+    int top,
+    int oldLeft,
+    int oldTop,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')
@@ -328,6 +344,13 @@ abstract class WebViewClientFlutterApi {
   void onPageStarted(int instanceId, int webViewInstanceId, String url);
 
   void onPageFinished(int instanceId, int webViewInstanceId, String url);
+
+  void onReceivedHttpError(
+    int instanceId,
+    int webViewInstanceId,
+    WebResourceRequestData request,
+    WebResourceResponseData response,
+  );
 
   void onReceivedRequestError(
     int instanceId,

@@ -132,11 +132,8 @@ class GeolocationPermissionsCallback extends JavaObject {
 /// When a [WebView] is no longer needed [release] must be called.
 class WebView extends View {
   /// Constructs a new WebView.
-  ///
-  /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
-  /// any effect and should not be exposed publicly. More info here:
-  /// https://github.com/flutter/flutter/issues/108106
   WebView({
+    this.onScrollChanged,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -149,6 +146,7 @@ class WebView extends View {
   /// create copies.
   @protected
   WebView.detached({
+    this.onScrollChanged,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -159,6 +157,18 @@ class WebView extends View {
 
   /// The [WebSettings] object used to control the settings for this WebView.
   late final WebSettings settings = WebSettings(this);
+
+  /// Called in response to an internal scroll in this view
+  /// (i.e., the view scrolled its own contents).
+  ///
+  /// This is typically as a result of [scrollBy] or [scrollTo]
+  /// having been called.
+  final void Function(
+    int left,
+    int top,
+    int oldLeft,
+    int oldTop,
+  )? onScrollChanged;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
   ///
@@ -448,6 +458,7 @@ class WebView extends View {
   @override
   WebView copy() {
     return WebView.detached(
+      onScrollChanged: onScrollChanged,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -764,6 +775,7 @@ class WebViewClient extends JavaObject {
   WebViewClient({
     this.onPageStarted,
     this.onPageFinished,
+    this.onReceivedHttpError,
     this.onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
@@ -785,6 +797,7 @@ class WebViewClient extends JavaObject {
   WebViewClient.detached({
     this.onPageStarted,
     this.onPageFinished,
+    this.onReceivedHttpError,
     this.onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
@@ -897,6 +910,15 @@ class WebViewClient extends JavaObject {
   /// reflect the state of the DOM at this point.
   final void Function(WebView webView, String url)? onPageFinished;
 
+  /// Notify the host application that an HTTP error has been received from the
+  /// server while loading a resource.
+  ///
+  /// HTTP errors have status codes >= 400. This callback will be called for any
+  /// resource (iframe, image, etc.), not just for the main page. Thus, it is
+  /// recommended to perform minimum required work in this callback.
+  final void Function(WebView webView, WebResourceRequest request,
+      WebResourceResponse response)? onReceivedHttpError;
+
   /// Report web resource loading error to the host application.
   ///
   /// These errors usually indicate inability to connect to the server. Note
@@ -970,6 +992,7 @@ class WebViewClient extends JavaObject {
     return WebViewClient.detached(
       onPageStarted: onPageStarted,
       onPageFinished: onPageFinished,
+      onReceivedHttpError: onReceivedHttpError,
       onReceivedRequestError: onReceivedRequestError,
       onReceivedError: onReceivedError,
       requestLoading: requestLoading,
@@ -1457,6 +1480,19 @@ class WebResourceRequest {
 
   /// The headers associated with the request.
   final Map<String, String> requestHeaders;
+}
+
+/// Encapsulates information about the web resource response.
+///
+/// See [WebViewClient.onReceivedHttpError].
+class WebResourceResponse {
+  /// Constructs a [WebResourceResponse].
+  WebResourceResponse({
+    required this.statusCode,
+  });
+
+  /// The HTTP status code associated with the response.
+  final int statusCode;
 }
 
 /// Encapsulates information about errors occurred during loading of web resources.
