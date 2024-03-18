@@ -58,11 +58,11 @@ class ResolutionFilter extends JavaObject {
 
   /// Sets the required synchronous return value for the Java method,
   /// `ResolutionFilter.filter`.
-  // Future<void> setSynchronousReturnValueForFilter(
-  //     List<ResolutionInfo> filteredResolutions) {
-  //   return _api.setSynchronousReturnValueFromFilterForInstance(
-  //       this, filteredResolutions);
-  // }
+  Future<void> setSynchronousReturnValueForFilter(
+      List<ResolutionInfo> filteredResolutions) {
+    return _api.setSynchronousReturnValueFromFilterForInstance(
+        this, filteredResolutions);
+  }
 }
 
 /// Host API implementation of [ResolutionFilter].
@@ -93,11 +93,11 @@ class _ResolutionFilterHostApiImpl extends ResolutionFilterHostApi {
     );
   }
 
-  // Future<void> setSynchronousReturnValueFromFilterForInstance(
-  //     ResolutionFilter instance, List<ResolutionInfo> filteredResolutions) {
-  //   return setSynchronousReturnValueForFilter(
-  //       instanceManager.getIdentifier(instance)!, filteredResolutions);
-  // }
+  Future<void> setSynchronousReturnValueFromFilterForInstance(
+      ResolutionFilter instance, List<ResolutionInfo> filteredResolutions) {
+    return setSynchronousReturnValueForFilter(
+        instanceManager.getIdentifier(instance)!, filteredResolutions);
+  }
 }
 
 /// Flutter API implementation for [ResolutionFilter].
@@ -109,9 +109,6 @@ class _ResolutionFilterHostApiImpl extends ResolutionFilterHostApi {
 class ResolutionFilterFlutterApiImpl implements ResolutionFilterFlutterApi {
   /// Constructs a [ResolutionFilterFlutterApiImpl].
   ///
-  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
-  /// which routes to the host platform.
-  ///
   /// An [instanceManager] is typically passed when a copy of an instance
   /// contained by an [InstanceManager] is being created. If left null, it
   /// will default to the global instance defined in [JavaObject].
@@ -122,13 +119,13 @@ class ResolutionFilterFlutterApiImpl implements ResolutionFilterFlutterApi {
   /// Maintains instances stored to communicate with native language objects.
   final InstanceManager _instanceManager;
   @override
-  List<ResolutionInfo?> filter(int identifier,
+  Future<List<ResolutionInfo?>> filter(int identifier,
       List<ResolutionInfo?> supportedSizes, int rotationDegrees) {
     final ResolutionFilter instance =
         _instanceManager.getInstanceWithWeakReference(identifier)!;
-    return instance.filter(
+    return Future<List<ResolutionInfo?>>.value(instance.filter(
       supportedSizes,
       rotationDegrees,
-    );
+    ));
   }
 }

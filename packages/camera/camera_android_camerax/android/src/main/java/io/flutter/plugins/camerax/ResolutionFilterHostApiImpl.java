@@ -57,11 +57,18 @@ public class ResolutionFilterHostApiImpl implements ResolutionFilterHostApi {
     @Override
     @NonNull
     List<Size> filter(@NonNull List<Size> supportedSizes, int rotationDegrees) {
-      List<supportedResolutionInfos> = ... // TODO(camsim99): encode/decode
+      List<supportedResolutionInfos> = new ArrayList<
+
       List<ResolutionInfo> filteredResolutionInfos = api.filter(this, supportedResolutionInfos, rotationDegrees);
       List<Size> filteredSizes = ...
 
       return filteredSizes;
+    }
+
+    private List<Size> getSizesFromResolutionInfos(List<ResolutionInfo> resolutionInfos) {
+      for (ResolutionInfo supportedSize : supportedSizes) {
+
+      }
     }
 
     /**

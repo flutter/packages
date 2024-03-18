@@ -540,12 +540,13 @@ abstract class Camera2CameraControlHostApi {
 abstract class ResolutionFilterHostApi {
   void create(int identifier);
 
-  // void setSynchronousReturnValueForFilter(
-  //     int identifier, List<ResolutionInfo> filteredResolutions);
+  void setSynchronousReturnValueForFilter(
+      int identifier, List<ResolutionInfo> filteredResolutions);
 }
 
 @FlutterApi()
 abstract class ResolutionFilterFlutterApi {
+  @async
   List<ResolutionInfo> filter(
       int identifier, List<ResolutionInfo> supportedSizes, int rotationDegrees);
 }

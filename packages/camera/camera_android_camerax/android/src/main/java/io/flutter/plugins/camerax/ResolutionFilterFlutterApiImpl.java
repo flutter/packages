@@ -40,20 +40,14 @@ public class AnalyzerFlutterApiImpl {
    * Sends a message to Dart to call {@code ResolutionFilter.filter} on the Dart object representing
    * `instance`.
    */
-   public void filter(@NonNull Long identifierArg, @NonNull List<ResolutionInfo> supportedSizesArg, @NonNull Long rotationDegreesArg, @NonNull Reply<List<ResolutionInfo>> callback) {
-    // api.analyze(
-    //     Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(analyzerInstance)),
-    //     Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(imageProxyInstance)),
-    //     callback);
+  public void filter(@NonNull ResolutionFilter instance, @NonNull List<ResolutionInfo> supportedSizes, @NonNull Long rotationDegrees) {
         api.filter(
             Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
             supportedSizes,
             rotationDegrees,
             callback,
-            filteredResolutions -> {
-                return??? // needsome synchronous something something here
-            }
-        )
+            reply -> {},
+        );
   }
 
   /**

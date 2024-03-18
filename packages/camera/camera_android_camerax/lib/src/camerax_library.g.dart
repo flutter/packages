@@ -3344,7 +3344,7 @@ class _ResolutionFilterFlutterApiCodec extends StandardMessageCodec {
 abstract class ResolutionFilterFlutterApi {
   static const MessageCodec<Object?> codec = _ResolutionFilterFlutterApiCodec();
 
-  List<ResolutionInfo?> filter(int identifier, List<ResolutionInfo?> supportedSizes, int rotationDegrees);
+  Future<List<ResolutionInfo?>> filter(int identifier, List<ResolutionInfo?> supportedSizes, int rotationDegrees);
 
   static void setup(ResolutionFilterFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -3367,7 +3367,7 @@ abstract class ResolutionFilterFlutterApi {
           final int? arg_rotationDegrees = (args[2] as int?);
           assert(arg_rotationDegrees != null,
               'Argument for dev.flutter.pigeon.ResolutionFilterFlutterApi.filter was null, expected non-null int.');
-          final List<ResolutionInfo?> output = api.filter(arg_identifier!, arg_supportedSizes!, arg_rotationDegrees!);
+          final List<ResolutionInfo?> output = await api.filter(arg_identifier!, arg_supportedSizes!, arg_rotationDegrees!);
           return output;
         });
       }
