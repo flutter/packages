@@ -14,6 +14,7 @@ import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 
 /// Signature for callbacks used by [MarkdownWidget] when
 /// [MarkdownWidget.selectable] is set to true and the user changes selection.
+///
 /// The callback will return the entire block of text available for selection,
 /// along with the current [selection] and the [cause] of the selection change.
 /// This is a wrapper of [SelectionChangedCallback] with additional context
