@@ -1,7 +1,10 @@
-## 0.6.21
+## 0.6.21+1
 
 * Adds `onSelectionChanged` to the constructors of `Markdown` and `MarkdownBody`.
-* Documents the selection capabilities in README.
+
+## 0.6.21
+
+* Fixes support for `WidgetSpan` in `Text.rich` elements inside `MarkdownElementBuilder`.
 
 ## 0.6.20+1
 

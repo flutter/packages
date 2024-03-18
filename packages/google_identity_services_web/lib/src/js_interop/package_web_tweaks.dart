@@ -17,60 +17,20 @@ extension NullableTrustedTypesGetter on web.Window {
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
   @JS('trustedTypes')
-  external TrustedTypePolicyFactory? get nullableTrustedTypes;
-
-  /// Bindings to window.trustedTypes.
-  ///
-  /// This will crash if accessed in a browser that doesn't support the
-  /// Trusted Types API.
-  ///
-  /// See: https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
-  @JS('trustedTypes')
-  external TrustedTypePolicyFactory get trustedTypes;
+  external web.TrustedTypePolicyFactory? get nullableTrustedTypes;
 }
 
-/// This extension allows setting a TrustedScriptURL as the src of a script element,
-/// which currently only accepts a string.
+/// Allows setting a TrustedScriptURL as the src of a script element.
 extension TrustedTypeSrcAttribute on web.HTMLScriptElement {
   @JS('src')
-  external set trustedSrc(TrustedScriptURL value);
+  external set trustedSrc(web.TrustedScriptURL value);
 }
 
-// TODO(kevmoo): drop all of this once `pkg:web` publishes `0.5.1`.
-
-/// Bindings to a JS TrustedScriptURL.
-///
-/// See: https://developer.mozilla.org/en-US/docs/Web/API/TrustedScriptURL
-extension type TrustedScriptURL._(JSObject _) implements JSObject {}
-
-/// Bindings to a JS TrustedTypePolicyFactory.
-///
-/// See: https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory
-extension type TrustedTypePolicyFactory._(JSObject _) implements JSObject {
-  ///
-  external TrustedTypePolicy createPolicy(
-    String policyName, [
-    TrustedTypePolicyOptions policyOptions,
-  ]);
-}
-
-/// Bindings to a JS TrustedTypePolicy.
-///
-/// See: https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicy
-extension type TrustedTypePolicy._(JSObject _) implements JSObject {
-  ///
+/// Allows creating a script URL only from a string, with no arguments.
+extension CreateScriptUrlNoArgs on web.TrustedTypePolicy {
+  /// Allows calling `createScriptURL` with only the `input` argument.
   @JS('createScriptURL')
-  external TrustedScriptURL createScriptURLNoArgs(
+  external web.TrustedScriptURL createScriptURLNoArgs(
     String input,
   );
-}
-
-/// Bindings to a JS TrustedTypePolicyOptions (anonymous).
-///
-/// See: https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory/createPolicy#policyoptions
-extension type TrustedTypePolicyOptions._(JSObject _) implements JSObject {
-  ///
-  external factory TrustedTypePolicyOptions({
-    JSFunction createScriptURL,
-  });
 }

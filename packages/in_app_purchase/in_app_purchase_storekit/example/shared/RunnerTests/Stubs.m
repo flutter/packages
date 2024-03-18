@@ -111,8 +111,13 @@
   for (NSString *identifier in self.identifers) {
     [productArray addObject:@{@"productIdentifier" : identifier}];
   }
-  SKProductsResponseStub *response =
-      [[SKProductsResponseStub alloc] initWithMap:@{@"products" : productArray}];
+  SKProductsResponseStub *response;
+  if (self.returnError) {
+    response = nil;
+  } else {
+    response = [[SKProductsResponseStub alloc] initWithMap:@{@"products" : productArray}];
+  }
+
   if (self.error) {
     [self.delegate request:self didFailWithError:self.error];
   } else {
@@ -140,7 +145,6 @@
 @end
 
 @interface InAppPurchasePluginStub ()
-
 @end
 
 @implementation InAppPurchasePluginStub
@@ -150,6 +154,9 @@
 }
 
 - (SKProduct *)getProduct:(NSString *)productID {
+  if ([productID isEqualToString:@""]) {
+    return nil;
+  }
   return [[SKProductStub alloc] initWithProductID:productID];
 }
 

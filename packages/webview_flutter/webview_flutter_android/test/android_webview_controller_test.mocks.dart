@@ -344,6 +344,17 @@ class MockAndroidNavigationDelegate extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
+  _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnHttpError,
+          [onHttpError],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
   _i9.Future<void> setOnProgress(_i3.ProgressCallback? onProgress) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -384,17 +395,6 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         Invocation.method(
           #setOnHttpAuthRequest,
           [onHttpAuthRequest],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnHttpError,
-          [onHttpError],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
@@ -892,7 +892,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
     implements _i10.AndroidWebViewProxy {
   @override
   _i2.WebView Function(
-      {dynamic Function(
+      {void Function(
         int,
         int,
         int,
@@ -900,7 +900,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
       )? onScrollChanged}) get createAndroidWebView => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebView),
         returnValue: (
-                {dynamic Function(
+                {void Function(
                   int,
                   int,
                   int,
@@ -911,7 +911,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebView),
         ),
         returnValueForMissingStub: (
-                {dynamic Function(
+                {void Function(
                   int,
                   int,
                   int,
@@ -922,7 +922,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebView),
         ),
       ) as _i2.WebView Function(
-          {dynamic Function(
+          {void Function(
             int,
             int,
             int,
@@ -1140,6 +1140,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
+      _i2.WebResourceResponse,
+    )? onReceivedHttpError,
+    void Function(
+      _i2.WebView,
+      _i2.WebResourceRequest,
       _i2.WebResourceError,
     )? onReceivedRequestError,
     void Function(
@@ -1178,6 +1183,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             String,
           )? onReceivedHttpAuthRequest,
+          void Function(
+            _i2.WebView,
+            _i2.WebResourceRequest,
+            _i2.WebResourceResponse,
+          )? onReceivedHttpError,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
@@ -1225,6 +1235,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
+            _i2.WebResourceResponse,
+          )? onReceivedHttpError,
+          void Function(
+            _i2.WebView,
+            _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
           void Function(
@@ -1266,6 +1281,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           String,
           String,
         )? onReceivedHttpAuthRequest,
+        void Function(
+          _i2.WebView,
+          _i2.WebResourceRequest,
+          _i2.WebResourceResponse,
+        )? onReceivedHttpError,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,
@@ -2117,6 +2137,7 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+
   @override
   _i9.Future<void> setSynchronousReturnValueForOnJsConfirm(bool? value) =>
       (super.noSuchMethod(
@@ -2127,6 +2148,7 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+
   @override
   _i9.Future<void> setSynchronousReturnValueForOnJsPrompt(bool? value) =>
       (super.noSuchMethod(
@@ -2137,6 +2159,7 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+
   @override
   _i2.WebChromeClient copy() => (super.noSuchMethod(
         Invocation.method(
