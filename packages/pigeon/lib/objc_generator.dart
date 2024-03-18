@@ -359,7 +359,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       String? lastArgType;
       String? returnType;
       final String enumReturnType = _enumName(
-        returnTypeName.baseName,
+        func.returnType.baseName,
         suffix: ' *_Nullable',
         prefix: generatorOptions.prefix,
         box: true,
@@ -765,7 +765,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
         } else if (arg.type.isEnum) {
           indent.writeln('NSNumber *${argName}AsNumber = $valueGetter;');
           indent.writeln(
-              '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
+              '${_enumName(arg.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
         } else {
           indent.writeln('${objcArgType.beforeString}$argName = $valueGetter;');
         }
@@ -799,7 +799,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
 
         if (func.returnType.isEnum) {
           returnTypeString =
-              '${_enumName(returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
+              '${_enumName(func.returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
         }
         if (func.parameters.isEmpty) {
           indent.writeScoped(
@@ -1132,7 +1132,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
               indent.writeln('completion(nil);');
             } else {
               if (func.returnType.isEnum) {
-                final String enumName = _enumName(returnType.baseName,
+                final String enumName = _enumName(func.returnType.baseName,
                     prefix: languageOptions.prefix, box: true);
                 indent.writeln('NSNumber *outputAsNumber = $nullCheck;');
                 indent.writeln(
@@ -1212,7 +1212,7 @@ String _callbackForType(
   if (type.isVoid) {
     return 'void (^)(FlutterError *_Nullable)';
   } else if (type.isEnum) {
-    return 'void (^)(${_enumName(objcType.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
+    return 'void (^)(${_enumName(type.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
   } else {
     return 'void (^)(${objcType.beforeString}_Nullable, FlutterError *_Nullable)';
   }
