@@ -638,7 +638,7 @@ void TestPlugin::CallFlutterSmallApiEchoString(
                     "Responses do not match",
                     "Multi-instance responses were not matching: " + echoOne +
                         ", " + echoTwo,
-                    EncodableValue("")))
+                    EncodableValue("")));
               }
             },
             [result](const FlutterError& error) { result(error); });
