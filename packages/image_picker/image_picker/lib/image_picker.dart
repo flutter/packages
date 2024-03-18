@@ -188,7 +188,7 @@ class ImagePicker {
     bool requestFullMetadata = true,
   }) async {
     final List<XFile> listMedia = await platform.getMedia(
-      options: MediaOptions(
+      options: MediaOptions.createAndValidate(
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -245,7 +245,7 @@ class ImagePicker {
     bool requestFullMetadata = true,
   }) {
     return platform.getMedia(
-      options: MediaOptions(
+      options: MediaOptions.createAndValidate(
         allowMultiple: true,
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,

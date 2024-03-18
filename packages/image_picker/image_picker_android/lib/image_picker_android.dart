@@ -241,11 +241,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
   }) async {
     return (await _hostApi.pickMedia(
       _mediaOptionsToMediaSelectionOptions(options),
-      GeneralOptions(
-        allowMultiple: options.allowMultiple,
-        usePhotoPicker: useAndroidPhotoPicker,
-        limit: options.limit,
-      ),
+      _mediaOptionsToGeneralOptions(options),
     ))
         .map((String? path) => XFile(path!))
         .toList();
@@ -296,6 +292,29 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     }
     return ImageSelectionOptions(
         quality: imageQuality ?? 100, maxHeight: maxHeight, maxWidth: maxWidth);
+  }
+
+  GeneralOptions _mediaOptionsToGeneralOptions(MediaOptions options) {
+    final bool allowMultiple = options.allowMultiple;
+    final int? limit = options.limit;
+
+    if (!allowMultiple && limit != null) {
+      throw ArgumentError.value(
+        allowMultiple,
+        'allowMultiple',
+        'cannot be false, when limit is not null',
+      );
+    }
+
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower then 2');
+    }
+
+    return GeneralOptions(
+      allowMultiple: allowMultiple,
+      usePhotoPicker: useAndroidPhotoPicker,
+      limit: limit,
+    );
   }
 
   @override

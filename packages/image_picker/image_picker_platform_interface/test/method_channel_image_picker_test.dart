@@ -881,7 +881,8 @@ void main() {
     group('#getMedia', () {
       test('calls the method correctly', () async {
         returnValue = <String>['0'];
-        await picker.getMedia(options: MediaOptions(allowMultiple: true));
+        await picker.getMedia(
+            options: MediaOptions.createAndValidate(allowMultiple: true));
 
         expect(
           log,
@@ -900,11 +901,12 @@ void main() {
       test('passes the selection options correctly', () async {
         // Default options
         returnValue = <String>['0'];
-        await picker.getMedia(options: MediaOptions(allowMultiple: true));
+        await picker.getMedia(
+            options: MediaOptions.createAndValidate(allowMultiple: true));
         // Various image options
         returnValue = <String>['0'];
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               maxWidth: 10.0,
@@ -912,7 +914,7 @@ void main() {
           ),
         );
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               maxHeight: 10.0,
@@ -920,7 +922,7 @@ void main() {
           ),
         );
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               imageQuality: 70,
@@ -928,7 +930,7 @@ void main() {
           ),
         );
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               imageQuality: 70,
@@ -983,7 +985,7 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 maxWidth: -1.0,
@@ -995,7 +997,7 @@ void main() {
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 maxHeight: -1.0,
@@ -1010,7 +1012,7 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 imageQuality: -1,
@@ -1022,7 +1024,7 @@ void main() {
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 imageQuality: 101,
@@ -1037,14 +1039,15 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: MediaOptions(allowMultiple: true, limit: -1),
+            options:
+                MediaOptions.createAndValidate(allowMultiple: true, limit: -1),
           ),
           throwsArgumentError,
         );
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               limit: 0,
             ),
@@ -1056,7 +1059,8 @@ void main() {
       test('does not accept a not null limit when allowMultiple is false', () {
         expect(
           () => picker.getMedia(
-            options: MediaOptions(allowMultiple: false, limit: 5),
+            options:
+                MediaOptions.createAndValidate(allowMultiple: false, limit: 5),
           ),
           throwsArgumentError,
         );
@@ -1067,7 +1071,8 @@ void main() {
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
         expect(
-            await picker.getMedia(options: MediaOptions(allowMultiple: true)),
+            await picker.getMedia(
+                options: MediaOptions.createAndValidate(allowMultiple: true)),
             <XFile>[]);
       });
     });
