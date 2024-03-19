@@ -1,6 +1,7 @@
-## 17.3.0
+## 18.0.0
 
 * Adds message channel suffix option to all APIs.
+* **Breaking Change** [dart] Changes `FlutterApi` `setup` to `setUp`.
 
 ## 17.2.0
 
