@@ -125,7 +125,7 @@ void main() {
 
     final Heatmap update = map.heatmapUpdates.last.heatmapsToChange.first;
     expect(update, equals(h2));
-    expect(update.radius, 10);
+    expect(update.radius.radius, 10);
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
