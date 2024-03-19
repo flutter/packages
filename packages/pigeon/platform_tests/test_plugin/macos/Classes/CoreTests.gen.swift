@@ -497,11 +497,12 @@ class HostIntegrationCoreApiSetup {
     binaryMessenger: FlutterBinaryMessenger, api: HostIntegrationCoreApi?,
     messageChannelSuffix: String = ""
   ) {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// A no-op function taking no arguments and returning no value, to sanity
     /// test basic calling.
     let noopChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopChannel.setMessageHandler { _, reply in
@@ -518,7 +519,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAllTypesChannel.setMessageHandler { message, reply in
@@ -537,7 +538,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns an error, to test error handling.
     let throwErrorChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwErrorChannel.setMessageHandler { _, reply in
@@ -554,7 +555,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns an error from a void function, to test error handling.
     let throwErrorFromVoidChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwErrorFromVoidChannel.setMessageHandler { _, reply in
@@ -571,7 +572,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns a Flutter error, to test error handling.
     let throwFlutterErrorChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwFlutterErrorChannel.setMessageHandler { _, reply in
@@ -588,7 +589,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in int.
     let echoIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoIntChannel.setMessageHandler { message, reply in
@@ -607,7 +608,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in double.
     let echoDoubleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoDoubleChannel.setMessageHandler { message, reply in
@@ -626,7 +627,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in boolean.
     let echoBoolChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoBoolChannel.setMessageHandler { message, reply in
@@ -645,7 +646,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in string.
     let echoStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoStringChannel.setMessageHandler { message, reply in
@@ -664,7 +665,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in Uint8List.
     let echoUint8ListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoUint8ListChannel.setMessageHandler { message, reply in
@@ -683,7 +684,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in generic Object.
     let echoObjectChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoObjectChannel.setMessageHandler { message, reply in
@@ -702,7 +703,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed list, to test serialization and deserialization.
     let echoListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoListChannel.setMessageHandler { message, reply in
@@ -721,7 +722,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed map, to test serialization and deserialization.
     let echoMapChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoMapChannel.setMessageHandler { message, reply in
@@ -740,7 +741,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed map to test nested class serialization and deserialization.
     let echoClassWrapperChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoClassWrapperChannel.setMessageHandler { message, reply in
@@ -759,7 +760,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed enum to test serialization and deserialization.
     let echoEnumChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoEnumChannel.setMessageHandler { message, reply in
@@ -778,7 +779,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the default string.
     let echoNamedDefaultStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNamedDefaultStringChannel.setMessageHandler { message, reply in
@@ -797,7 +798,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in double.
     let echoOptionalDefaultDoubleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoOptionalDefaultDoubleChannel.setMessageHandler { message, reply in
@@ -816,7 +817,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in int.
     let echoRequiredIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoRequiredIntChannel.setMessageHandler { message, reply in
@@ -835,7 +836,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAllNullableTypesChannel.setMessageHandler { message, reply in
@@ -855,7 +856,7 @@ class HostIntegrationCoreApiSetup {
     /// sending of nested objects.
     let extractNestedNullableStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       extractNestedNullableStringChannel.setMessageHandler { message, reply in
@@ -875,7 +876,7 @@ class HostIntegrationCoreApiSetup {
     /// sending of nested objects.
     let createNestedNullableStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       createNestedNullableStringChannel.setMessageHandler { message, reply in
@@ -894,7 +895,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in arguments of multiple types.
     let sendMultipleNullableTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMultipleNullableTypesChannel.setMessageHandler { message, reply in
@@ -918,7 +919,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in int.
     let echoNullableIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableIntChannel.setMessageHandler { message, reply in
@@ -939,7 +940,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in double.
     let echoNullableDoubleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableDoubleChannel.setMessageHandler { message, reply in
@@ -958,7 +959,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in boolean.
     let echoNullableBoolChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableBoolChannel.setMessageHandler { message, reply in
@@ -977,7 +978,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in string.
     let echoNullableStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableStringChannel.setMessageHandler { message, reply in
@@ -996,7 +997,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in Uint8List.
     let echoNullableUint8ListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableUint8ListChannel.setMessageHandler { message, reply in
@@ -1015,7 +1016,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in generic Object.
     let echoNullableObjectChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableObjectChannel.setMessageHandler { message, reply in
@@ -1034,7 +1035,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed list, to test serialization and deserialization.
     let echoNullableListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableListChannel.setMessageHandler { message, reply in
@@ -1053,7 +1054,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed map, to test serialization and deserialization.
     let echoNullableMapChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableMapChannel.setMessageHandler { message, reply in
@@ -1071,7 +1072,7 @@ class HostIntegrationCoreApiSetup {
     }
     let echoNullableEnumChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableEnumChannel.setMessageHandler { message, reply in
@@ -1090,7 +1091,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in int.
     let echoOptionalNullableIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoOptionalNullableIntChannel.setMessageHandler { message, reply in
@@ -1111,7 +1112,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in string.
     let echoNamedNullableStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNamedNullableStringChannel.setMessageHandler { message, reply in
@@ -1131,7 +1132,7 @@ class HostIntegrationCoreApiSetup {
     /// test basic asynchronous calling.
     let noopAsyncChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopAsyncChannel.setMessageHandler { _, reply in
@@ -1150,7 +1151,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in int asynchronously.
     let echoAsyncIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncIntChannel.setMessageHandler { message, reply in
@@ -1171,7 +1172,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in double asynchronously.
     let echoAsyncDoubleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncDoubleChannel.setMessageHandler { message, reply in
@@ -1192,7 +1193,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in boolean asynchronously.
     let echoAsyncBoolChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncBoolChannel.setMessageHandler { message, reply in
@@ -1213,7 +1214,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed string asynchronously.
     let echoAsyncStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncStringChannel.setMessageHandler { message, reply in
@@ -1234,7 +1235,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in Uint8List asynchronously.
     let echoAsyncUint8ListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncUint8ListChannel.setMessageHandler { message, reply in
@@ -1255,7 +1256,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in generic Object asynchronously.
     let echoAsyncObjectChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncObjectChannel.setMessageHandler { message, reply in
@@ -1276,7 +1277,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed list, to test asynchronous serialization and deserialization.
     let echoAsyncListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncListChannel.setMessageHandler { message, reply in
@@ -1297,7 +1298,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed map, to test asynchronous serialization and deserialization.
     let echoAsyncMapChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncMapChannel.setMessageHandler { message, reply in
@@ -1318,7 +1319,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed enum, to test asynchronous serialization and deserialization.
     let echoAsyncEnumChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncEnumChannel.setMessageHandler { message, reply in
@@ -1339,7 +1340,7 @@ class HostIntegrationCoreApiSetup {
     /// Responds with an error from an async function returning a value.
     let throwAsyncErrorChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncErrorChannel.setMessageHandler { _, reply in
@@ -1358,7 +1359,7 @@ class HostIntegrationCoreApiSetup {
     /// Responds with an error from an async void function.
     let throwAsyncErrorFromVoidChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncErrorFromVoidChannel.setMessageHandler { _, reply in
@@ -1377,7 +1378,7 @@ class HostIntegrationCoreApiSetup {
     /// Responds with a Flutter error from an async function returning a value.
     let throwAsyncFlutterErrorChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncFlutterErrorChannel.setMessageHandler { _, reply in
@@ -1396,7 +1397,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed object, to test async serialization and deserialization.
     let echoAsyncAllTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncAllTypesChannel.setMessageHandler { message, reply in
@@ -1417,7 +1418,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed object, to test serialization and deserialization.
     let echoAsyncNullableAllNullableTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableAllNullableTypesChannel.setMessageHandler { message, reply in
@@ -1438,7 +1439,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in int asynchronously.
     let echoAsyncNullableIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableIntChannel.setMessageHandler { message, reply in
@@ -1461,7 +1462,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns passed in double asynchronously.
     let echoAsyncNullableDoubleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableDoubleChannel.setMessageHandler { message, reply in
@@ -1482,7 +1483,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in boolean asynchronously.
     let echoAsyncNullableBoolChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableBoolChannel.setMessageHandler { message, reply in
@@ -1503,7 +1504,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed string asynchronously.
     let echoAsyncNullableStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableStringChannel.setMessageHandler { message, reply in
@@ -1524,7 +1525,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in Uint8List asynchronously.
     let echoAsyncNullableUint8ListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableUint8ListChannel.setMessageHandler { message, reply in
@@ -1545,7 +1546,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed in generic Object asynchronously.
     let echoAsyncNullableObjectChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableObjectChannel.setMessageHandler { message, reply in
@@ -1566,7 +1567,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed list, to test asynchronous serialization and deserialization.
     let echoAsyncNullableListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableListChannel.setMessageHandler { message, reply in
@@ -1587,7 +1588,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed map, to test asynchronous serialization and deserialization.
     let echoAsyncNullableMapChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableMapChannel.setMessageHandler { message, reply in
@@ -1608,7 +1609,7 @@ class HostIntegrationCoreApiSetup {
     /// Returns the passed enum, to test asynchronous serialization and deserialization.
     let echoAsyncNullableEnumChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
@@ -1628,7 +1629,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterNoopChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterNoopChannel.setMessageHandler { _, reply in
@@ -1646,7 +1647,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterThrowErrorChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterThrowErrorChannel.setMessageHandler { _, reply in
@@ -1664,7 +1665,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterThrowErrorFromVoidChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterThrowErrorFromVoidChannel.setMessageHandler { _, reply in
@@ -1682,7 +1683,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoAllTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoAllTypesChannel.setMessageHandler { message, reply in
@@ -1702,7 +1703,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoAllNullableTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoAllNullableTypesChannel.setMessageHandler { message, reply in
@@ -1722,7 +1723,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterSendMultipleNullableTypesChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterSendMultipleNullableTypesChannel.setMessageHandler { message, reply in
@@ -1748,7 +1749,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoBoolChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoBoolChannel.setMessageHandler { message, reply in
@@ -1768,7 +1769,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoIntChannel.setMessageHandler { message, reply in
@@ -1788,7 +1789,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoDoubleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
@@ -1808,7 +1809,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoStringChannel.setMessageHandler { message, reply in
@@ -1828,7 +1829,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoUint8ListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
@@ -1848,7 +1849,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoListChannel.setMessageHandler { message, reply in
@@ -1868,7 +1869,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoMapChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoMapChannel.setMessageHandler { message, reply in
@@ -1888,7 +1889,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoEnumChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoEnumChannel.setMessageHandler { message, reply in
@@ -1908,7 +1909,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableBoolChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
@@ -1928,7 +1929,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableIntChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
@@ -1950,7 +1951,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableDoubleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
@@ -1970,7 +1971,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
@@ -1990,7 +1991,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableUint8ListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
@@ -2010,7 +2011,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableListChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
@@ -2030,7 +2031,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableMapChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
@@ -2050,7 +2051,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterEchoNullableEnumChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
@@ -2070,7 +2071,7 @@ class HostIntegrationCoreApiSetup {
     }
     let callFlutterSmallApiEchoStringChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterSmallApiEchoStringChannel.setMessageHandler { message, reply in
@@ -2879,9 +2880,9 @@ class HostTrivialApiSetup {
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostTrivialApi?, messageChannelSuffix: String = ""
   ) {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let noopChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+      name: "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger)
     if let api = api {
       noopChannel.setMessageHandler { _, reply in
@@ -2912,9 +2913,9 @@ class HostSmallApiSetup {
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostSmallApi?, messageChannelSuffix: String = ""
   ) {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let echoChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+      name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo\(channelSuffix)",
       binaryMessenger: binaryMessenger)
     if let api = api {
       echoChannel.setMessageHandler { message, reply in
@@ -2933,8 +2934,7 @@ class HostSmallApiSetup {
       echoChannel.setMessageHandler(nil)
     }
     let voidVoidChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
+      name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger)
     if let api = api {
       voidVoidChannel.setMessageHandler { _, reply in

@@ -902,7 +902,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
     required String dartPackageName,
   }) {
     indent.writeln(
-        'messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @"%@%@", @".", messageChannelSuffix] : @"";');
+        'messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";');
     indent.writeln('FlutterBasicMessageChannel *$varName =');
     indent.nest(1, () {
       indent.writeln('[[FlutterBasicMessageChannel alloc]');
@@ -1559,7 +1559,7 @@ void _writeInitializers(Indent indent) {
     indent.addScoped('{', '}', () {
       indent.writeln('_binaryMessenger = binaryMessenger;');
       indent.writeln(
-          '_messageChannelSuffix = [messageChannelSuffix length] == 0 ? @"" : [NSString stringWithFormat: @"%@%@", @".", messageChannelSuffix];');
+          '_messageChannelSuffix = [messageChannelSuffix length] == 0 ? @"" : [NSString stringWithFormat: @".%@", messageChannelSuffix];');
     });
     indent.writeln('return self;');
   });

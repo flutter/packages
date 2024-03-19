@@ -146,7 +146,7 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                       NSString *messageChannelSuffix) {
   {
     messageChannelSuffix = messageChannelSuffix.length > 0
-                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
                                : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
@@ -171,7 +171,7 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
   }
   {
     messageChannelSuffix = messageChannelSuffix.length > 0
-                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
                                : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
@@ -200,7 +200,7 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
   }
   {
     messageChannelSuffix = messageChannelSuffix.length > 0
-                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
                                : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
@@ -250,7 +250,7 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
     _binaryMessenger = binaryMessenger;
     _messageChannelSuffix = [messageChannelSuffix length] == 0
                                 ? @""
-                                : [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix];
+                                : [NSString stringWithFormat:@".%@", messageChannelSuffix];
   }
   return self;
 }
