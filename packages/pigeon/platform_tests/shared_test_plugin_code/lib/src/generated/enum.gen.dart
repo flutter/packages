@@ -169,7 +169,7 @@ abstract class EnumApi2Flutter {
   /// This comment is to test method documentation comments.
   DataWithEnum echo(DataWithEnum data);
 
-  static void setup(
+  static void setUp(
     EnumApi2Flutter? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

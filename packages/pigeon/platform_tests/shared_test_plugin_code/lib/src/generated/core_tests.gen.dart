@@ -2644,7 +2644,7 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   Future<String> echoAsyncString(String aString);
 
-  static void setup(
+  static void setUp(
     FlutterIntegrationCoreApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
@@ -3438,7 +3438,7 @@ abstract class FlutterSmallApi {
 
   String echoString(String aString);
 
-  static void setup(
+  static void setUp(
     FlutterSmallApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

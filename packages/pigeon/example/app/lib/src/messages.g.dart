@@ -203,7 +203,7 @@ abstract class MessageFlutterApi {
 
   String flutterMethod(String? aString);
 
-  static void setup(
+  static void setUp(
     MessageFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

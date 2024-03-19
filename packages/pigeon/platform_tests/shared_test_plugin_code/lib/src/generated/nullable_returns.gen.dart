@@ -77,7 +77,7 @@ abstract class NullableReturnFlutterApi {
 
   int? doit();
 
-  static void setup(
+  static void setUp(
     NullableReturnFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
@@ -161,7 +161,7 @@ abstract class NullableArgFlutterApi {
 
   int? doit(int? x);
 
-  static void setup(
+  static void setUp(
     NullableArgFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
@@ -244,7 +244,7 @@ abstract class NullableCollectionReturnFlutterApi {
 
   List<String?>? doit();
 
-  static void setup(
+  static void setUp(
     NullableCollectionReturnFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
@@ -328,7 +328,7 @@ abstract class NullableCollectionArgFlutterApi {
 
   List<String?> doit(List<String?>? x);
 
-  static void setup(
+  static void setUp(
     NullableCollectionArgFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

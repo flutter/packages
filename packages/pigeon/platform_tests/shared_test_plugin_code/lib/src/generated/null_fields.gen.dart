@@ -214,7 +214,7 @@ abstract class NullFieldsFlutterApi {
 
   NullFieldsSearchReply search(NullFieldsSearchRequest request);
 
-  static void setup(
+  static void setUp(
     NullFieldsFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

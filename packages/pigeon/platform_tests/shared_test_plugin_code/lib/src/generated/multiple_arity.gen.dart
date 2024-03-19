@@ -82,7 +82,7 @@ abstract class MultipleArityFlutterApi {
 
   int subtract(int x, int y);
 
-  static void setup(
+  static void setUp(
     MultipleArityFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

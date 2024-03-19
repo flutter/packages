@@ -242,7 +242,7 @@ abstract class NonNullFieldFlutterApi {
 
   NonNullFieldSearchReply search(NonNullFieldSearchRequest request);
 
-  static void setup(
+  static void setUp(
     NonNullFieldFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

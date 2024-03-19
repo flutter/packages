@@ -1158,7 +1158,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   // return value in the "Host async API tests" group.
   group('Flutter API tests', () {
     setUp(() {
-      FlutterIntegrationCoreApi.setup(_FlutterApiTestImplementation());
+      FlutterIntegrationCoreApi.setUp(_FlutterApiTestImplementation());
     });
 
     testWidgets('basic void->void call works', (WidgetTester _) async {
@@ -1509,11 +1509,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
   group('Flutter API with suffix', () {
     setUp(() {
-      FlutterSmallApi.setup(
+      FlutterSmallApi.setUp(
         _SmallFlutterApi(),
         messageChannelSuffix: 'suffixOne',
       );
-      FlutterSmallApi.setup(
+      FlutterSmallApi.setUp(
         _SmallFlutterApi(),
         messageChannelSuffix: 'suffixTwo',
       );

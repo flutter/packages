@@ -331,7 +331,7 @@ abstract class PrimitiveFlutterApi {
 
   Map<String?, int?> aStringIntMap(Map<String?, int?> value);
 
-  static void setup(
+  static void setUp(
     PrimitiveFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',

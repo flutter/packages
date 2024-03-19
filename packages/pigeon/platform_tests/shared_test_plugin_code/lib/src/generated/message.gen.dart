@@ -367,7 +367,7 @@ abstract class MessageFlutterSearchApi {
   /// This comment is to test method documentation comments.
   MessageSearchReply search(MessageSearchRequest request);
 
-  static void setup(
+  static void setUp(
     MessageFlutterSearchApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
