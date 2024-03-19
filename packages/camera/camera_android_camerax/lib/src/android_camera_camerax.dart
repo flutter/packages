@@ -9,7 +9,8 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart' hide AspectRatio;
+import 'package:flutter/widgets.dart'
+    show Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';

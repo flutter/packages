@@ -116,9 +116,9 @@ class CameraXProxy {
       int? fallbackRule}) createResolutionStrategy;
 
   /// Returns a [ResolutionSelector] configured with the specified
-  /// [ResolutionStrategy].
-  ResolutionSelector Function(ResolutionStrategy resolutionStrategy, AspectRatioStrategy? aspectRatioStrategy)
-      createResolutionSelector;
+  /// [ResolutionStrategy] and [AspectRatioStrategy].
+  ResolutionSelector Function(ResolutionStrategy resolutionStrategy,
+      AspectRatioStrategy? aspectRatioStrategy) createResolutionSelector;
 
   /// Returns a [FallbackStrategy] configured with the specified [VideoQuality]
   /// and [VideoResolutionFallbackRule].
@@ -235,8 +235,11 @@ class CameraXProxy {
   }
 
   static ResolutionSelector _createAttachedResolutionSelector(
-      ResolutionStrategy resolutionStrategy, AspectRatioStrategy? aspectRatioStrategy) {
-    return ResolutionSelector(resolutionStrategy: resolutionStrategy, aspectRatioStrategy: aspectRatioStrategy);
+      ResolutionStrategy resolutionStrategy,
+      AspectRatioStrategy? aspectRatioStrategy) {
+    return ResolutionSelector(
+        resolutionStrategy: resolutionStrategy,
+        aspectRatioStrategy: aspectRatioStrategy);
   }
 
   static FallbackStrategy _createAttachedFallbackStrategy(
