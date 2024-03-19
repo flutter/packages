@@ -357,9 +357,9 @@ gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
   return circleOptions;
 }
 
-visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(
-  Heatmap heatmap,
-) {
+visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
+  final Iterable<Color>? gradientColors =
+      heatmap.gradient?.colors.map((HeatmapGradientColor e) => e.color);
   final visualization.HeatmapLayerOptions heatmapOptions =
       visualization.HeatmapLayerOptions()
         ..data = heatmap.data
@@ -370,9 +370,13 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(
             )
             .toList()
         ..dissipating = heatmap.dissipating
-        ..gradient = heatmap.gradient?.colors
-            .map((HeatmapGradientColor e) => _getCssColorWithAlpha(e.color))
-            .toList()
+        ..gradient = gradientColors == null
+            ? null
+            : <Color>[
+                // Web needs a first color with 0 alpha
+                gradientColors.first.withAlpha(0),
+                ...gradientColors,
+              ].map(_getCssColorWithAlpha).toList()
         ..maxIntensity = heatmap.maxIntensity
         ..opacity = heatmap.opacity
         ..radius = heatmap.radius.pixels;

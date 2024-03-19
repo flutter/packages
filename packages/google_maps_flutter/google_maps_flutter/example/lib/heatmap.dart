@@ -103,12 +103,6 @@ class HeatmapBodyState extends State<HeatmapBody> {
                     data: enabledPoints,
                     gradient: HeatmapGradient(
                       const <HeatmapGradientColor>[
-                        // Web needs a first color with 0 alpha
-                        if (kIsWeb)
-                          HeatmapGradientColor(
-                            Color.fromARGB(0, 0, 255, 255),
-                            0,
-                          ),
                         HeatmapGradientColor(
                           Color.fromARGB(255, 0, 255, 255),
                           0.2,
