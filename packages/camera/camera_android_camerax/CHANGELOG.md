@@ -1,4 +1,4 @@
-## 0.6.1
+## 0.6.0+1
 
 * Updates `README.md` to encourage developers to opt into this implementation of the camera plugin.
 

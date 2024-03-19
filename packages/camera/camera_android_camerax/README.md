@@ -11,17 +11,13 @@ the title.
 
 ## Usage
 
-This package is [non-endorsed][3]; the endorsed Android implementation of `camera`
-is [`camera_android`][4]. To use this implementation of the plugin instead of
-`camera_android`, you will need to specify it in your `pubspec.yaml` file as a
-dependency in addition to `camera`:
+To use this plugin instead of [`camera_android`][4], run
 
-```yaml
-dependencies:
-  # ...along with your other dependencies
-  camera: ^0.10.4
-  camera_android_camerax: ^0.6.0
+```sh
+$ flutter pub add camera_android_camerax
 ```
+
+from your project's root directory.
 
 ## Limitations
 
