@@ -153,7 +153,9 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController
           .add(e.message ?? 'Starting focus and metering failed.');
-      return Future<FocusMeteringResult?>.value();
+      // Surfacing error to differentiate an operation cancellation from an
+      // illegal argument exception at a plugin layer.
+      rethrow;
     }
   }
 
