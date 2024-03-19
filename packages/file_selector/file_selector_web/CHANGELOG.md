@@ -1,3 +1,16 @@
+## 0.9.4+1
+
+* Removes a few deprecated API usages.
+
+## 0.9.4
+
+* Updates web code to package `web: ^0.5.0`.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.16.0`.
+
+## 0.9.3
+
+* Updates minimum supported SDK version to Dart 3.2.
+
 ## 0.9.2+1
 
 * Adds pub topics to package metadata.

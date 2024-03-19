@@ -55,6 +55,20 @@ abstract class CameraPlatform extends PlatformInterface {
     throw UnimplementedError('createCamera() is not implemented.');
   }
 
+  /// Creates an uninitialized camera instance and returns the cameraId.
+  ///
+  /// Pass MediaSettings() for defaults
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
+    MediaSettings mediaSettings,
+  ) {
+    return createCamera(
+      cameraDescription,
+      mediaSettings.resolutionPreset,
+      enableAudio: mediaSettings.enableAudio,
+    );
+  }
+
   /// Initializes the camera on the device.
   ///
   /// [imageFormatGroup] is used to specify the image formatting used.
@@ -207,7 +221,8 @@ abstract class CameraPlatform extends PlatformInterface {
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
   ///
-  /// Returns 0 when the camera supports using a free value without stepping.
+  /// Returns 0 when the camera supports using a free value without stepping and
+  /// returns -1 when exposure compensation is not supported.
   Future<double> getExposureOffsetStepSize(int cameraId) {
     throw UnimplementedError('getMinExposureOffset() is not implemented.');
   }
@@ -283,5 +298,13 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Releases the resources of this camera.
   Future<void> dispose(int cameraId) {
     throw UnimplementedError('dispose() is not implemented.');
+  }
+
+  /// Sets the output image file format for the selected camera.
+  ///
+  // TODO(bmparr): This is only supported on iOS. See
+  // https://github.com/flutter/flutter/issues/139588
+  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
+    throw UnimplementedError('setImageFileFormat() is not implemented.');
   }
 }

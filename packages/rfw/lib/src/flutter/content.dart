@@ -12,6 +12,9 @@ import 'package:flutter/foundation.dart' show objectRuntimeType;
 import '../dart/model.dart';
 
 /// Signature for the callback passed to [DynamicContent.subscribe].
+///
+/// Do not modify the provided value (e.g. if it is a map or list). Doing so
+/// would leave the [DynamicContent] in an inconsistent state.
 typedef SubscriptionCallback = void Function(Object value);
 
 /// Returns a copy of a data structure if it consists of only [DynamicMap]s,
@@ -116,9 +119,12 @@ Object? deepClone(Object? template) {
 /// [missing] as the new value. It is not an error to subscribe to missing data.
 /// It _is_ an error to add [missing] values to the data model, however.
 ///
+/// To subscribe to the root of the [DynamicContent], use an empty list as the
+/// key when subscribing.
+///
 /// The [LocalWidgetBuilder]s passed to a [LocalWidgetLibrary] use a
 /// [DataSource] as their interface into the [DynamicContent]. To ensure the
-/// integrity of the update mechanism, that interface only allows access to
+/// integrity of the update mechanism, _that_ interface only allows access to
 /// leaves, not intermediate nodes (maps and lists).
 ///
 /// It is an error to subscribe to the same key multiple times with the same
@@ -143,6 +149,13 @@ class DynamicContent {
   /// key.
   ///
   /// Existing keys that are not present in the given map are left unmodified.
+  ///
+  /// If the root node has subscribers (see [subscribe]), they are called once
+  /// per key in `initialData`, not just a single time.
+  ///
+  /// Collections (maps and lists) in `initialData` must not be mutated after
+  /// calling this method; doing so would leave the [DynamicContent] in an
+  /// inconsistent state.
   void updateAll(DynamicMap initialData) {
     for (final String key in initialData.keys) {
       final Object value = initialData[key] ?? missing;
@@ -156,6 +169,10 @@ class DynamicContent {
   ///
   /// The `value` must consist exclusively of [DynamicMap], [DynamicList], [int],
   /// [double], [bool], and [String] objects.
+  ///
+  /// Collections (maps and lists) in `value` must not be mutated after calling
+  /// this method; doing so would leave the [DynamicContent] in an inconsistent
+  /// state.
   void update(String rootKey, Object value) {
     _root.updateKey(rootKey, deepClone(value)!);
     _scheduleCleanup();
@@ -167,7 +184,14 @@ class DynamicContent {
   /// The value is always non-null; if the value is missing, the [missing]
   /// object is used instead.
   ///
+  /// The empty key refers to the root of the [DynamicContent] object (i.e.
+  /// the map manipulated by [updateAll] and [update]).
+  ///
   /// Use [unsubscribe] when the subscription is no longer needed.
+  ///
+  /// Do not modify the value returned by this method or passed to the given
+  /// `callback` (e.g. if it is a map or list). Changes made in this manner will
+  /// leave the [DynamicContent] in an inconsistent state.
   Object subscribe(List<Object> key, SubscriptionCallback callback) {
     return _root.subscribe(key, 0, callback);
   }
@@ -329,12 +353,6 @@ class _DynamicNode {
     _sendUpdates(value);
   }
 
-  void _sendUpdates(Object value) {
-    for (final SubscriptionCallback callback in _callbacks) {
-      callback(value);
-    }
-  }
-
   void updateKey(String rootKey, Object value) {
     assert(_value is DynamicMap);
     assert(_hasValidType(value));
@@ -344,6 +362,13 @@ class _DynamicNode {
     (_value as DynamicMap)[rootKey] = value;
     if (_children.containsKey(rootKey)) {
       _children[rootKey]!.update(value);
+    }
+    _sendUpdates(_value);
+  }
+
+  void _sendUpdates(Object value) {
+    for (final SubscriptionCallback callback in _callbacks) {
+      callback(value);
     }
   }
 

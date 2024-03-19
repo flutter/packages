@@ -1,3 +1,34 @@
+## 0.3.2
+
+* Adds UserChoiceBilling APIs to platform addition.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 0.3.1
+
+* Adds alternative-billing-only APIs to InAppPurchaseAndroidPlatformAddition.
+
+## 0.3.0+18
+
+* Adds new getCountryCode() method to InAppPurchaseAndroidPlatformAddition to get a customer's country code.
+* Updates compileSdk version to 34.
+
+## 0.3.0+17
+
+* Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.
+
+## 0.3.0+16
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 0.3.0+15
+
+* Adds missing network error response code to BillingResponse enum.
+
+## 0.3.0+14
+
+* Updates annotations lib to 1.7.0.
+
 ## 0.3.0+13
 
 * Updates example code for current versions of Flutter.

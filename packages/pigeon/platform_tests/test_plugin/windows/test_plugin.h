@@ -63,6 +63,12 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> EchoEnum(
       const core_tests_pigeontest::AnEnum& an_enum) override;
+  core_tests_pigeontest::ErrorOr<std::string> EchoNamedDefaultString(
+      const std::string& a_string) override;
+  core_tests_pigeontest::ErrorOr<double> EchoOptionalDefaultDouble(
+      double a_double) override;
+  core_tests_pigeontest::ErrorOr<int64_t> EchoRequiredInt(
+      int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
       const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
@@ -91,6 +97,10 @@ class TestPlugin : public flutter::Plugin,
   EchoNullableMap(const flutter::EncodableMap* a_nullable_map) override;
   core_tests_pigeontest::ErrorOr<std::optional<core_tests_pigeontest::AnEnum>>
   EchoNullableEnum(const core_tests_pigeontest::AnEnum* an_enum) override;
+  core_tests_pigeontest::ErrorOr<std::optional<int64_t>>
+  EchoOptionalNullableInt(const int64_t* a_nullable_int) override;
+  core_tests_pigeontest::ErrorOr<std::optional<std::string>>
+  EchoNamedNullableString(const std::string* a_nullable_string) override;
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;

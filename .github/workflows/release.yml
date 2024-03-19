@@ -31,21 +31,37 @@ jobs:
       # the change if it doesn't.
       run: |
         cd $HOME
-        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.13.0 _flutter
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.19.0 _flutter
         echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
+      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools
       run: dart pub get
       working-directory: ${{ github.workspace }}/script/tool
 
+    # The next step waits for all tests, but when there are issues with the
+    # hooks it can take a long time for the tests to even be registered. If
+    # "Wait on all tests" runs before that happens, it will pass immediately
+    # because there doesn't appear to be anything to wait for. To avoid that,
+    # explicitly wait for one LUCI test by name first.
+    - name: Wait for test check-in
+      uses: lewagon/wait-on-check-action@595dabb3acf442d47e29c9ec9ba44db0c6bdd18f
+      with:
+        ref: ${{ github.sha }}
+        check-name: 'Linux ci_yaml packages roller'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 30 # seconds
+        allowed-conclusions: success,neutral
+        # verbose:true will produce too many logs that hang github actions web UI.
+        verbose: false
+
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@e106e5c43e8ca1edea6383a39a01c5ca495fd812
+      uses: lewagon/wait-on-check-action@595dabb3acf442d47e29c9ec9ba44db0c6bdd18f
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'

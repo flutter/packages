@@ -141,7 +141,7 @@ class ExampleTransitionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: Text('${App.title}: $kind')),
-        body: Container(
+        body: ColoredBox(
           color: color,
           child: Center(
             child: Column(

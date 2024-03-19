@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'common/instance_manager.dart';
 import 'common/weak_reference_utils.dart';
 import 'foundation/foundation.dart';
+import 'ui_kit/ui_kit.dart';
 import 'web_kit/web_kit.dart';
 import 'webkit_proxy.dart';
 
@@ -69,8 +71,14 @@ class WebKitWebViewControllerCreationParams
       );
     }
     _configuration.setAllowsInlineMediaPlayback(allowsInlineMediaPlayback);
-    _configuration.setLimitsNavigationsToAppBoundDomains(
-        limitsNavigationsToAppBoundDomains);
+    // `WKWebViewConfiguration.limitsNavigationsToAppBoundDomains` is only
+    // supported on iOS versions 14+. So this only calls it if the value is set
+    // to true.
+    if (limitsNavigationsToAppBoundDomains) {
+      _configuration.setLimitsNavigationsToAppBoundDomains(
+        limitsNavigationsToAppBoundDomains,
+      );
+    }
   }
 
   /// Constructs a [WebKitWebViewControllerCreationParams] using a
@@ -185,18 +193,15 @@ class WebKitWebViewController extends PlatformWebViewController {
               types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.camera
               };
-              break;
             case WKMediaCaptureType.cameraAndMicrophone:
               types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.camera,
                 WebViewPermissionResourceType.microphone
               };
-              break;
             case WKMediaCaptureType.microphone:
               types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.microphone
               };
-              break;
             case WKMediaCaptureType.unknown:
               // The default response for iOS is to prompt. See
               // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
@@ -215,6 +220,46 @@ class WebKitWebViewController extends PlatformWebViewController {
 
           return decisionCompleter.future;
         }
+      },
+      runJavaScriptAlertDialog: (String message, WKFrameInfo frame) async {
+        final Future<void> Function(JavaScriptAlertDialogRequest request)?
+            callback = weakThis.target?._onJavaScriptAlertDialog;
+        if (callback != null) {
+          final JavaScriptAlertDialogRequest request =
+              JavaScriptAlertDialogRequest(
+                  message: message, url: frame.request.url);
+          await callback.call(request);
+          return;
+        }
+      },
+      runJavaScriptConfirmDialog: (String message, WKFrameInfo frame) async {
+        final Future<bool> Function(JavaScriptConfirmDialogRequest request)?
+            callback = weakThis.target?._onJavaScriptConfirmDialog;
+        if (callback != null) {
+          final JavaScriptConfirmDialogRequest request =
+              JavaScriptConfirmDialogRequest(
+                  message: message, url: frame.request.url);
+          final bool result = await callback.call(request);
+          return result;
+        }
+
+        return false;
+      },
+      runJavaScriptTextInputDialog:
+          (String prompt, String defaultText, WKFrameInfo frame) async {
+        final Future<String> Function(JavaScriptTextInputDialogRequest request)?
+            callback = weakThis.target?._onJavaScriptTextInputDialog;
+        if (callback != null) {
+          final JavaScriptTextInputDialogRequest request =
+              JavaScriptTextInputDialogRequest(
+                  message: prompt,
+                  url: frame.request.url,
+                  defaultText: defaultText);
+          final String result = await callback.call(request);
+          return result;
+        }
+
+        return '';
       },
     );
 
@@ -246,7 +291,6 @@ class WebKitWebViewController extends PlatformWebViewController {
                   change[NSKeyValueChangeKey.newValue]! as double;
               progressCallback((progress * 100).round());
             }
-            break;
           case 'URL':
             final UrlChangeCallback? urlChangeCallback =
                 controller._currentNavigationDelegate?._onUrlChange;
@@ -254,7 +298,6 @@ class WebKitWebViewController extends PlatformWebViewController {
               final NSUrl? url = change[NSKeyValueChangeKey.newValue] as NSUrl?;
               urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
-            break;
         }
       };
     }),
@@ -263,13 +306,26 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   late final WKUIDelegate _uiDelegate;
 
+  late final UIScrollViewDelegate? _uiScrollViewDelegate;
+
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
 
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
+  void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+
+  Future<void> Function(JavaScriptAlertDialogRequest request)?
+      _onJavaScriptAlertDialog;
+  Future<bool> Function(JavaScriptConfirmDialogRequest request)?
+      _onJavaScriptConfirmDialog;
+  Future<String> Function(JavaScriptTextInputDialogRequest request)?
+      _onJavaScriptTextInputDialog;
+
+  void Function(ScrollPositionChange scrollPositionChange)?
+      _onScrollPositionChangeCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -323,11 +379,19 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<void> addJavaScriptChannel(
     JavaScriptChannelParams javaScriptChannelParams,
   ) {
+    final String channelName = javaScriptChannelParams.name;
+    if (_javaScriptChannelParams.containsKey(channelName)) {
+      throw ArgumentError(
+        'A JavaScriptChannel with name `$channelName` already exists.',
+      );
+    }
+
     final WebKitJavaScriptChannelParams webKitParams =
         javaScriptChannelParams is WebKitJavaScriptChannelParams
             ? javaScriptChannelParams
             : WebKitJavaScriptChannelParams.fromJavaScriptChannelParams(
-                javaScriptChannelParams);
+                javaScriptChannelParams,
+              );
 
     _javaScriptChannelParams[webKitParams.name] = webKitParams;
 
@@ -512,6 +576,100 @@ class WebKitWebViewController extends PlatformWebViewController {
         .addUserScript(userScript);
   }
 
+  /// Sets a callback that notifies the host application of any log messages
+  /// written to the JavaScript console.
+  ///
+  /// Because the iOS WKWebView doesn't provide a built-in way to access the
+  /// console, setting this callback will inject a custom [WKUserScript] which
+  /// overrides the JavaScript `console.debug`, `console.error`, `console.info`,
+  /// `console.log` and `console.warn` methods and forwards the console message
+  /// via a `JavaScriptChannel` to the host application.
+  @override
+  Future<void> setOnConsoleMessage(
+    void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage,
+  ) {
+    _onConsoleMessageCallback = onConsoleMessage;
+
+    final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
+        name: 'fltConsoleMessage',
+        webKitProxy: _webKitParams.webKitProxy,
+        onMessageReceived: (JavaScriptMessage message) {
+          if (_onConsoleMessageCallback == null) {
+            return;
+          }
+
+          final Map<String, dynamic> consoleLog =
+              jsonDecode(message.message) as Map<String, dynamic>;
+
+          JavaScriptLogLevel level;
+          switch (consoleLog['level']) {
+            case 'error':
+              level = JavaScriptLogLevel.error;
+            case 'warning':
+              level = JavaScriptLogLevel.warning;
+            case 'debug':
+              level = JavaScriptLogLevel.debug;
+            case 'info':
+              level = JavaScriptLogLevel.info;
+            case 'log':
+            default:
+              level = JavaScriptLogLevel.log;
+              break;
+          }
+
+          _onConsoleMessageCallback!(
+            JavaScriptConsoleMessage(
+              level: level,
+              message: consoleLog['message']! as String,
+            ),
+          );
+        });
+
+    addJavaScriptChannel(channelParams);
+    return _injectConsoleOverride();
+  }
+
+  Future<void> _injectConsoleOverride() {
+    const WKUserScript overrideScript = WKUserScript(
+      '''
+function log(type, args) {
+  var message =  Object.values(args)
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
+      .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
+      .join(", ");
+
+  var log = {
+    level: type,
+    message: message
+  };
+
+  window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+}
+
+let originalLog = console.log;
+let originalInfo = console.info;
+let originalWarn = console.warn;
+let originalError = console.error;
+let originalDebug = console.debug;
+
+console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
+console.info = function() { log("info", arguments); originalInfo.apply(null, arguments) };
+console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
+console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
+console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
+
+window.addEventListener("error", function(e) {
+  log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
+});
+      ''',
+      WKUserScriptInjectionTime.atDocumentStart,
+      isMainFrameOnly: true,
+    );
+
+    return _webView.configuration.userContentController
+        .addUserScript(overrideScript);
+  }
+
   // WKWebView does not support removing a single user script, so all user
   // scripts and all message handlers are removed instead. And the JavaScript
   // channels that shouldn't be removed are re-registered. Note that this
@@ -537,6 +695,9 @@ class WebKitWebViewController extends PlatformWebViewController {
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.
       if (!_zoomEnabled) _disableZoom(),
+      // Console logs are forwarded with a WKUserScript, so this adds it back
+      // if a console callback was registered with [setOnConsoleMessage].
+      if (_onConsoleMessageCallback != null) _injectConsoleOverride(),
     ]);
   }
 
@@ -545,6 +706,30 @@ class WebKitWebViewController extends PlatformWebViewController {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  @override
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) async {
+    _onScrollPositionChangeCallback = onScrollPositionChange;
+
+    if (onScrollPositionChange != null) {
+      final WeakReference<WebKitWebViewController> weakThis =
+          WeakReference<WebKitWebViewController>(this);
+      _uiScrollViewDelegate =
+          _webKitParams.webKitProxy.createUIScrollViewDelegate(
+        scrollViewDidScroll: (UIScrollView uiScrollView, double x, double y) {
+          weakThis.target?._onScrollPositionChangeCallback?.call(
+            ScrollPositionChange(x, y),
+          );
+        },
+      );
+      return _webView.scrollView.setDelegate(_uiScrollViewDelegate);
+    } else {
+      _uiScrollViewDelegate = null;
+      return _webView.scrollView.setDelegate(null);
+    }
   }
 
   /// Whether to enable tools for debugging the current WKWebView content.
@@ -557,6 +742,41 @@ class WebKitWebViewController extends PlatformWebViewController {
   /// Defaults to true in previous versions.
   Future<void> setInspectable(bool inspectable) {
     return _webView.setInspectable(inspectable);
+  }
+
+  @override
+  Future<String?> getUserAgent() async {
+    final String? customUserAgent = await _webView.getCustomUserAgent();
+    // Despite the official documentation of `WKWebView.customUserAgent`, the
+    // default value seems to be an empty String and not null. It's possible it
+    // could depend on the iOS version, so this checks for both.
+    if (customUserAgent != null && customUserAgent.isNotEmpty) {
+      return customUserAgent;
+    }
+
+    return (await _webView.evaluateJavaScript('navigator.userAgent;')
+        as String?)!;
+  }
+
+  @override
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(JavaScriptAlertDialogRequest request)
+          onJavaScriptAlertDialog) async {
+    _onJavaScriptAlertDialog = onJavaScriptAlertDialog;
+  }
+
+  @override
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(JavaScriptConfirmDialogRequest request)
+          onJavaScriptConfirmDialog) async {
+    _onJavaScriptConfirmDialog = onJavaScriptConfirmDialog;
+  }
+
+  @override
+  Future<void> setOnJavaScriptTextInputDialog(
+      Future<String> Function(JavaScriptTextInputDialogRequest request)
+          onJavaScriptTextInputDialog) async {
+    _onJavaScriptTextInputDialog = onJavaScriptTextInputDialog;
   }
 }
 
@@ -766,6 +986,22 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           weakThis.target!._onPageStarted!(url ?? '');
         }
       },
+      decidePolicyForNavigationResponse:
+          (WKWebView webView, WKNavigationResponse response) async {
+        if (weakThis.target?._onHttpError != null &&
+            response.response.statusCode >= 400) {
+          weakThis.target!._onHttpError!(
+            HttpResponseError(
+              response: WebResourceResponse(
+                uri: null,
+                statusCode: response.response.statusCode,
+              ),
+            ),
+          );
+        }
+
+        return WKNavigationResponsePolicy.allow;
+      },
       decidePolicyForNavigationAction: (
         WKWebView webView,
         WKNavigationAction action,
@@ -824,6 +1060,54 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
       },
+      didReceiveAuthenticationChallenge: (
+        WKWebView webView,
+        NSUrlAuthenticationChallenge challenge,
+        void Function(
+          NSUrlSessionAuthChallengeDisposition disposition,
+          NSUrlCredential? credential,
+        ) completionHandler,
+      ) {
+        if (challenge.protectionSpace.authenticationMethod ==
+            NSUrlAuthenticationMethod.httpBasic) {
+          final void Function(HttpAuthRequest)? callback =
+              weakThis.target?._onHttpAuthRequest;
+          final String? host = challenge.protectionSpace.host;
+          final String? realm = challenge.protectionSpace.realm;
+
+          if (callback != null && host != null) {
+            callback(
+              HttpAuthRequest(
+                onProceed: (WebViewCredential credential) {
+                  completionHandler(
+                    NSUrlSessionAuthChallengeDisposition.useCredential,
+                    NSUrlCredential.withUser(
+                      user: credential.user,
+                      password: credential.password,
+                      persistence: NSUrlCredentialPersistence.session,
+                    ),
+                  );
+                },
+                onCancel: () {
+                  completionHandler(
+                    NSUrlSessionAuthChallengeDisposition
+                        .cancelAuthenticationChallenge,
+                    null,
+                  );
+                },
+                host: host,
+                realm: realm,
+              ),
+            );
+            return;
+          }
+        }
+
+        completionHandler(
+          NSUrlSessionAuthChallengeDisposition.performDefaultHandling,
+          null,
+        );
+      },
     );
   }
 
@@ -832,10 +1116,12 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
   PageEventCallback? _onPageFinished;
   PageEventCallback? _onPageStarted;
+  HttpResponseErrorCallback? _onHttpError;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
   UrlChangeCallback? _onUrlChange;
+  HttpAuthRequestCallback? _onHttpAuthRequest;
 
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {
@@ -845,6 +1131,11 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnPageStarted(PageEventCallback onPageStarted) async {
     _onPageStarted = onPageStarted;
+  }
+
+  @override
+  Future<void> setOnHttpError(HttpResponseErrorCallback onHttpError) async {
+    _onHttpError = onHttpError;
   }
 
   @override
@@ -869,6 +1160,13 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
     _onUrlChange = onUrlChange;
+  }
+
+  @override
+  Future<void> setOnHttpAuthRequest(
+    HttpAuthRequestCallback onHttpAuthRequest,
+  ) async {
+    _onHttpAuthRequest = onHttpAuthRequest;
   }
 }
 

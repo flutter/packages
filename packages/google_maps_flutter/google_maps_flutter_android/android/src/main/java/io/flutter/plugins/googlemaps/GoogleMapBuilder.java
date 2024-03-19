@@ -6,6 +6,7 @@ package io.flutter.plugins.googlemaps;
 
 import android.content.Context;
 import android.graphics.Rect;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -28,6 +29,7 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   private Object initialHeatmaps;
   private List<Map<String, ?>> initialTileOverlays;
   private Rect padding = new Rect(0, 0, 0, 0);
+  private @Nullable String style;
 
   GoogleMapController build(
       int id,
@@ -50,6 +52,7 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
     controller.setInitialHeatmaps(initialHeatmaps);
     controller.setPadding(padding.top, padding.left, padding.bottom, padding.right);
     controller.setInitialTileOverlays(initialTileOverlays);
+    controller.setMapStyle(style);
     return controller;
   }
 
@@ -184,5 +187,10 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   @Override
   public void setInitialTileOverlays(List<Map<String, ?>> initialTileOverlays) {
     this.initialTileOverlays = initialTileOverlays;
+  }
+
+  @Override
+  public void setMapStyle(@Nullable String style) {
+    this.style = style;
   }
 }

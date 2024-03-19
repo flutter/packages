@@ -13,3 +13,21 @@ should add it to your `pubspec.yaml` as usual.
 
 [1]: https://pub.dev/packages/url_launcher
 [2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+
+## Limitations on the Web platform
+
+### A launch needs to be triggered by a user action
+
+Web browsers prevent launching URLs in a new tab/window, unless triggered by a
+user action (e.g. a button click).
+
+Even if a user triggers a launch through a button click, if there is a delay due
+to awaiting a Future before the launch, the browser may still block it. This is
+because the browser might perceive the launch as not being a direct result of
+user interaction, particularly if the Future takes too long to complete.
+
+In such cases, you can use the `webOnlyWindowName` parameter, setting it to
+`_self`, to open the URL within the current tab. Another approach is to ensure
+that the `uri` is synchronously ready.
+
+Read more: MDN > [Transient activation](https://developer.mozilla.org/en-US/docs/Glossary/Transient_activation).

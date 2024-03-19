@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
+
 @testable import test_plugin
 
 class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
@@ -23,7 +24,7 @@ class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
     binaryReply callback: FlutterBinaryReply? = nil
   ) {
     if let result = result {
-      callback?(codec.encode(result))
+      callback?(codec.encode([result]))
     }
   }
 

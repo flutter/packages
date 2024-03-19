@@ -37,3 +37,8 @@ and then deleting everything but `android/` from it:
 - Added license boilerplate.
 - Replaced `jcenter` in build.gradle with `mavenCentral`, due to the
   jcenter.bintray.com shutdown.
+- Update `compileSdkVersion` from 30 to 33 to maintain compatibility
+  with plugins that use API 34.
+- Updates `gradle-wrapper.properties` from `6.7` to `6.7.1`, to add
+  support for the Kotlin gradle plugin. If a user runs into this
+  error, the error message is clear on how to upgrade.

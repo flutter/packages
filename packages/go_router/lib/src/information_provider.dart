@@ -11,10 +11,6 @@ import 'package:flutter/widgets.dart';
 
 import 'match.dart';
 
-// TODO(chunhtai): remove this ignore and migrate the code
-// https://github.com/flutter/flutter/issues/124045.
-// ignore_for_file: deprecated_member_use
-
 /// The type of the navigation.
 ///
 /// This enum is used by [RouteInformationState] to denote the navigation
@@ -33,6 +29,10 @@ enum NavigatingType {
 
   /// Replace the entire [RouteMatchList] with the new location.
   go,
+
+  /// Restore the current match list with
+  /// [RouteInformationState.baseRouteMatchList].
+  restore,
 }
 
 /// The data class to be stored in [RouteInformation.state] to be used by
@@ -48,8 +48,9 @@ class RouteInformationState<T> {
     this.completer,
     this.baseRouteMatchList,
     required this.type,
-  }) : assert((type != NavigatingType.go) ==
-            (completer != null && baseRouteMatchList != null));
+  })  : assert((type == NavigatingType.go || type == NavigatingType.restore) ==
+            (completer == null)),
+        assert((type != NavigatingType.go) == (baseRouteMatchList != null));
 
   /// The extra object used when navigating with [GoRouter].
   final Object? extra;
@@ -57,7 +58,8 @@ class RouteInformationState<T> {
   /// The completer that needs to be completed when the newly added route is
   /// popped off the screen.
   ///
-  /// This is only null if [type] is [NavigatingType.go].
+  /// This is only null if [type] is [NavigatingType.go] or
+  /// [NavigatingType.restore].
   final Completer<T?>? completer;
 
   /// The base route match list to push on top to.
@@ -79,7 +81,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     Listenable? refreshListenable,
   })  : _refreshListenable = refreshListenable,
         _value = RouteInformation(
-          location: initialLocation,
+          uri: Uri.parse(initialLocation),
           state: RouteInformationState<void>(
               extra: initialExtra, type: NavigatingType.go),
         ),
@@ -90,8 +92,8 @@ class GoRouteInformationProvider extends RouteInformationProvider
   final Listenable? _refreshListenable;
 
   static WidgetsBinding get _binding => WidgetsBinding.instance;
-  static const RouteInformation _kEmptyRouteInformation =
-      RouteInformation(location: '');
+  static final RouteInformation _kEmptyRouteInformation =
+      RouteInformation(uri: Uri.parse(''));
 
   @override
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
@@ -103,26 +105,20 @@ class GoRouteInformationProvider extends RouteInformationProvider
     final bool replace;
     switch (type) {
       case RouteInformationReportingType.none:
-        if (_valueInEngine.location == routeInformation.location &&
-            const DeepCollectionEquality()
-                .equals(_valueInEngine.state, routeInformation.state)) {
+        if (!_valueHasChanged(
+            newLocationUri: routeInformation.uri,
+            newState: routeInformation.state)) {
           return;
         }
         replace = _valueInEngine == _kEmptyRouteInformation;
-        break;
       case RouteInformationReportingType.neglect:
         replace = true;
-        break;
       case RouteInformationReportingType.navigate:
         replace = false;
-        break;
     }
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: unnecessary_null_checks, unnecessary_non_null_assertion
-      location: routeInformation.location!,
+      uri: routeInformation.uri,
       state: routeInformation.state,
       replace: replace,
     );
@@ -134,17 +130,16 @@ class GoRouteInformationProvider extends RouteInformationProvider
   RouteInformation _value;
 
   @override
-  // TODO(chunhtai): remove this ignore once package minimum dart version is
-  // above 3.
-  // ignore: unnecessary_overrides
   void notifyListeners() {
     super.notifyListeners();
   }
 
   void _setValue(String location, Object state) {
+    final Uri uri = Uri.parse(location);
+
     final bool shouldNotify =
-        _value.location != location || _value.state != state;
-    _value = RouteInformation(location: location, state: state);
+        _valueHasChanged(newLocationUri: uri, newState: state);
+    _value = RouteInformation(uri: Uri.parse(location), state: state);
     if (shouldNotify) {
       notifyListeners();
     }
@@ -177,11 +172,15 @@ class GoRouteInformationProvider extends RouteInformationProvider
     );
   }
 
-  /// Restores the current route matches with the `encodedMatchList`.
-  void restore(String location, {required Object encodedMatchList}) {
+  /// Restores the current route matches with the `matchList`.
+  void restore(String location, {required RouteMatchList matchList}) {
     _setValue(
-      location,
-      encodedMatchList,
+      matchList.uri.toString(),
+      RouteInformationState<void>(
+        extra: matchList.extra,
+        baseRouteMatchList: matchList,
+        type: NavigatingType.restore,
+      ),
     );
   }
 
@@ -228,12 +227,25 @@ class GoRouteInformationProvider extends RouteInformationProvider
       _value = _valueInEngine = routeInformation;
     } else {
       _value = RouteInformation(
-        location: routeInformation.location,
+        uri: routeInformation.uri,
         state: RouteInformationState<void>(type: NavigatingType.go),
       );
       _valueInEngine = _kEmptyRouteInformation;
     }
     notifyListeners();
+  }
+
+  bool _valueHasChanged(
+      {required Uri newLocationUri, required Object? newState}) {
+    const DeepCollectionEquality deepCollectionEquality =
+        DeepCollectionEquality();
+    return !deepCollectionEquality.equals(
+            _value.uri.path, newLocationUri.path) ||
+        !deepCollectionEquality.equals(
+            _value.uri.queryParameters, newLocationUri.queryParameters) ||
+        !deepCollectionEquality.equals(
+            _value.uri.fragment, newLocationUri.fragment) ||
+        !deepCollectionEquality.equals(_value.state, newState);
   }
 
   @override
@@ -265,13 +277,6 @@ class GoRouteInformationProvider extends RouteInformationProvider
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
-    return SynchronousFuture<bool>(true);
-  }
-
-  @override
-  Future<bool> didPushRoute(String route) {
-    assert(hasListeners);
-    _platformReportsNewRouteInformation(RouteInformation(location: route));
     return SynchronousFuture<bool>(true);
   }
 }

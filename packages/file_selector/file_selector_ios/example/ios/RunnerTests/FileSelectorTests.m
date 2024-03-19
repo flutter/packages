@@ -23,8 +23,7 @@
   plugin.documentPickerViewControllerOverride = picker;
   plugin.presentingViewControllerOverride = mockPresentingVC;
 
-  [plugin openFileSelectorWithConfig:[FFSFileSelectorConfig makeWithUtis:@[]
-                                                     allowMultiSelection:@NO]
+  [plugin openFileSelectorWithConfig:[FFSFileSelectorConfig makeWithUtis:@[] allowMultiSelection:NO]
                           completion:^(NSArray<NSString *> *paths, FlutterError *error){
                           }];
 
@@ -42,7 +41,7 @@
                                                              inMode:UIDocumentPickerModeImport];
   plugin.documentPickerViewControllerOverride = picker;
   [plugin openFileSelectorWithConfig:[FFSFileSelectorConfig makeWithUtis:@[]
-                                                     allowMultiSelection:@YES]
+                                                     allowMultiSelection:YES]
                           completion:^(NSArray<NSString *> *paths, FlutterError *error) {
                             NSArray *expectedPaths = @[ @"/file1.txt", @"/file2.txt" ];
                             XCTAssertEqualObjects(paths, expectedPaths);
@@ -63,8 +62,7 @@
   plugin.documentPickerViewControllerOverride = picker;
 
   XCTestExpectation *completionWasCalled = [self expectationWithDescription:@"completion"];
-  [plugin openFileSelectorWithConfig:[FFSFileSelectorConfig makeWithUtis:@[]
-                                                     allowMultiSelection:@NO]
+  [plugin openFileSelectorWithConfig:[FFSFileSelectorConfig makeWithUtis:@[] allowMultiSelection:NO]
                           completion:^(NSArray<NSString *> *paths, FlutterError *error) {
                             XCTAssertEqual(paths.count, 0);
                             [completionWasCalled fulfill];

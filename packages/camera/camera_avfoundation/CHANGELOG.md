@@ -1,3 +1,38 @@
+## 0.9.14+1
+
+* Fixes bug where max resolution preset does not produce highest available resolution on iOS.
+
+## 0.9.14
+
+* Adds support to HEIF format.
+
+## 0.9.13+11
+
+* Fixes a memory leak of sample buffer when pause and resume the video recording.
+* Removes development team from example app.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.9.13+10
+
+* Adds privacy manifest.
+
+## 0.9.13+9
+
+* Fixes new lint warnings.
+
+## 0.9.13+8
+
+* Updates example app to use non-deprecated video_player method.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.9.13+7
+
+* Fixes inverted orientation strings.
+
+## 0.9.13+6
+
+* Fixes incorrect use of `NSError` that could cause crashes on launch.
+
 ## 0.9.13+5
 
 * Ignores audio samples until the first video sample arrives.

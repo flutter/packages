@@ -4,22 +4,35 @@
 
 import 'dart:async';
 import 'dart:developer' as developer;
+
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 /// The logger for this package.
-final Logger log = Logger('GoRouter');
+@visibleForTesting
+final Logger logger = Logger('GoRouter');
+
+/// Whether or not the logging is enabled.
+bool _enabled = false;
+
+/// Logs the message if logging is enabled.
+void log(String message, {Level level = Level.INFO}) {
+  if (_enabled) {
+    logger.log(level, message);
+  }
+}
 
 StreamSubscription<LogRecord>? _subscription;
 
 /// Forwards diagnostic messages to the dart:developer log() API.
 void setLogging({bool enabled = false}) {
   _subscription?.cancel();
+  _enabled = enabled;
   if (!enabled) {
     return;
   }
 
-  _subscription = log.onRecord.listen((LogRecord e) {
+  _subscription = logger.onRecord.listen((LogRecord e) {
     // use `dumpErrorToConsole` for severe messages to ensure that severe
     // exceptions are formatted consistently with other Flutter examples and
     // avoids printing duplicate exceptions

@@ -22,11 +22,8 @@ class UrlLauncherLinux extends UrlLauncherPlatform {
   final LinkDelegate? linkDelegate = null;
 
   @override
-  Future<bool> canLaunch(String url) {
-    return _channel.invokeMethod<bool>(
-      'canLaunch',
-      <String, Object>{'url': url},
-    ).then((bool? value) => value ?? false);
+  Future<bool> canLaunch(String url) async {
+    return (await _channel.invokeMethod<bool>('canLaunch', url)) ?? false;
   }
 
   @override
@@ -40,15 +37,25 @@ class UrlLauncherLinux extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) {
-    return _channel.invokeMethod<bool>(
-      'launch',
-      <String, Object>{
-        'url': url,
-        'enableJavaScript': enableJavaScript,
-        'enableDomStorage': enableDomStorage,
-        'universalLinksOnly': universalLinksOnly,
-        'headers': headers,
-      },
-    ).then((bool? value) => value ?? false);
+    // None of the options are supported, so they don't need to be converted to
+    // LaunchOptions.
+    return launchUrl(url, const LaunchOptions());
+  }
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    return (await _channel.invokeMethod<bool>('launch', url)) ?? false;
+  }
+
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    return mode == PreferredLaunchMode.platformDefault ||
+        mode == PreferredLaunchMode.externalApplication;
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    // No supported mode is closeable.
+    return false;
   }
 }

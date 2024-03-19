@@ -9,6 +9,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import '../link.dart';
 import '../method_channel_url_launcher.dart';
 import '../url_launcher_platform_interface.dart';
+import 'types.dart';
 
 /// The interface that implementations of url_launcher must implement.
 ///
@@ -72,6 +73,7 @@ abstract class UrlLauncherPlatform extends PlatformInterface {
   Future<bool> launchUrl(String url, LaunchOptions options) {
     final bool isWebURL = url.startsWith('http:') || url.startsWith('https:');
     final bool useWebView = options.mode == PreferredLaunchMode.inAppWebView ||
+        options.mode == PreferredLaunchMode.inAppBrowserView ||
         (isWebURL && options.mode == PreferredLaunchMode.platformDefault);
 
     return launch(
@@ -87,8 +89,31 @@ abstract class UrlLauncherPlatform extends PlatformInterface {
     );
   }
 
-  /// Closes the WebView, if one was opened earlier by [launch].
+  /// Closes the web view, if one was opened earlier by [launchUrl].
+  ///
+  /// This will only work if the launch mode (the actual launch mode used,
+  /// not the requested launch mode, which may not match if [supportsMode] is
+  /// false for the requested mode) was one for which [supportsCloseForMode]
+  /// returns true.
   Future<void> closeWebView() {
     throw UnimplementedError('closeWebView() has not been implemented.');
+  }
+
+  /// Returns true if the given launch mode is supported by the current
+  /// implementation.
+  ///
+  /// Clients are not required to query this, as implementations are strongly
+  /// encouraged to automatically fall back to other modes if a launch is
+  /// requested using an unsupported mode (matching historical behavior of the
+  /// plugin, and thus maximizing compatibility with existing code).
+  Future<bool> supportsMode(PreferredLaunchMode mode) {
+    return Future<bool>.value(mode == PreferredLaunchMode.platformDefault);
+  }
+
+  /// Returns true if the given launch mode can be closed with [closeWebView].
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) {
+    // This is the historical documented behavior, so default to that for
+    // compatibility.
+    return Future<bool>.value(mode == PreferredLaunchMode.inAppWebView);
   }
 }

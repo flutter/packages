@@ -12,7 +12,6 @@ import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
-import 'route.dart';
 import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
@@ -80,16 +79,13 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
 
     late final RouteMatchList initialMatches;
-    initialMatches =
-        // TODO(chunhtai): remove this ignore and migrate the code
-        // https://github.com/flutter/flutter/issues/124045.
-        // ignore: deprecated_member_use, unnecessary_non_null_assertion
-        configuration.findMatch(routeInformation.location!, extra: state.extra);
+    initialMatches = configuration.findMatch(
+        routeInformation.uri.path.isEmpty
+            ? '${routeInformation.uri}/'
+            : routeInformation.uri.toString(),
+        extra: state.extra);
     if (initialMatches.isError) {
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      log.info('No initial matches: ${routeInformation.location}');
+      log('No initial matches: ${routeInformation.uri.path}');
     }
 
     return debugParserFuture = _redirect(
@@ -102,7 +98,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
       assert(() {
         if (matchList.isNotEmpty) {
-          assert(!(matchList.last.route as GoRoute).redirectOnly,
+          assert(!matchList.last.route.redirectOnly,
               'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
         }
         return true;
@@ -140,10 +136,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       location = configuration.uri.toString();
     }
     return RouteInformation(
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      location: location,
+      uri: Uri.parse(location),
       state: _routeMatchListCodec.encode(configuration),
     );
   }
@@ -193,6 +186,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
             );
       case NavigatingType.go:
         return newMatchList;
+      case NavigatingType.restore:
+        // Still need to consider redirection.
+        return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()
+            ? newMatchList
+            : baseRouteMatchList;
     }
   }
 
