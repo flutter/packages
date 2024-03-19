@@ -151,10 +151,9 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
         "getHostLanguage" +
-                    message_channel_suffix.length() >
-                0
-            ? std::string(".") + message_channel_suffix
-            : "",
+            (message_channel_suffix.length() > 0
+                 ? std::string(".") + message_channel_suffix
+                 : ""),
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -181,10 +180,9 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add" +
-                    message_channel_suffix.length() >
-                0
-            ? std::string(".") + message_channel_suffix
-            : "",
+            (message_channel_suffix.length() > 0
+                 ? std::string(".") + message_channel_suffix
+                 : ""),
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -224,10 +222,9 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage" +
-                    message_channel_suffix.length() >
-                0
-            ? std::string(".") + message_channel_suffix
-            : "",
+            (message_channel_suffix.length() > 0
+                 ? std::string(".") + message_channel_suffix
+                 : ""),
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
