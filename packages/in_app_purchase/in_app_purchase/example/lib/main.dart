@@ -9,8 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+// #docregion HandlePaymentPopup
+// #docregion RedeemOffer
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+// #enddocregion HandlePaymentPopup
+// #enddocregion RedeemOffer
+// #docregion PaymentDelegate
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+// #enddocregion PaymentDelegate
 
 import 'consumable_store.dart';
 
@@ -40,9 +46,11 @@ class _MyApp extends StatefulWidget {
   State<_MyApp> createState() => _MyAppState();
 }
 
+// #docregion ListenForPurchase
 class _MyAppState extends State<_MyApp> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
+// #enddocregion ListenForPurchase
   List<String> _notFoundIds = <String>[];
   List<ProductDetails> _products = <ProductDetails>[];
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];
@@ -52,6 +60,7 @@ class _MyAppState extends State<_MyApp> {
   bool _loading = true;
   String? _queryProductError;
 
+// #docregion ListenForPurchase
   @override
   void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated =
@@ -64,13 +73,21 @@ class _MyAppState extends State<_MyApp> {
     }, onError: (Object error) {
       // handle error here.
     });
+// #enddocregion ListenForPurchase
     initStoreInfo();
+// #docregion ListenForPurchase
     super.initState();
   }
+// #enddocregion ListenForPurchase
 
+// #docregion HandlePaymentPopup
   Future<void> initStoreInfo() async {
+// #enddocregion HandlePaymentPopup
+    // #docregion ConnectToStore
     final bool isAvailable = await _inAppPurchase.isAvailable();
     if (!isAvailable) {
+      // The store cannot be reached or accessed. Update the UI accordingly.
+      // #enddocregion ConnectToStore
       setState(() {
         _isAvailable = isAvailable;
         _products = <ProductDetails>[];
@@ -81,14 +98,18 @@ class _MyAppState extends State<_MyApp> {
         _loading = false;
       });
       return;
+      // #docregion ConnectToStore
     }
+    // #enddocregion ConnectToStore
 
+// #docregion HandlePaymentPopup
     if (Platform.isIOS) {
       final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
           _inAppPurchase
               .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
+// #enddocregion HandlePaymentPopup
 
     final ProductDetailsResponse productDetailResponse =
         await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
@@ -129,19 +150,27 @@ class _MyAppState extends State<_MyApp> {
       _purchasePending = false;
       _loading = false;
     });
+// #docregion HandlePaymentPopup
   }
+// #enddocregion HandlePaymentPopup
 
+// #docregion ListenForPurchase
+// #docregion HandlePaymentPopup
   @override
   void dispose() {
+// #enddocregion ListenForPurchase
     if (Platform.isIOS) {
       final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
           _inAppPurchase
               .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       iosPlatformAddition.setDelegate(null);
     }
+// #enddocregion HandlePaymentPopup
+// #docregion ListenForPurchase
     _subscription.cancel();
     super.dispose();
   }
+// #enddocregion ListenForPurchase
 
   @override
   Widget build(BuildContext context) {
@@ -269,11 +298,13 @@ class _MyAppState extends State<_MyApp> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
-                    late PurchaseParam purchaseParam;
+                    // #docregion MakePurchase
+                    PurchaseParam purchaseParam;
 
                     if (Platform.isAndroid) {
+                      // #docregion ChangeSubscription
                       // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-                      // verify the latest status of you your subscription by using server side receipt validation
+                      // verify the latest status of your subscription by using server side receipt validation
                       // and update the UI accordingly. The subscription purchase status shown
                       // inside the app may not be accurate.
                       final GooglePlayPurchaseDetails? oldSubscription =
@@ -288,13 +319,14 @@ class _MyAppState extends State<_MyApp> {
                                       ProrationMode.immediateWithTimeProration,
                                 )
                               : null);
+                      // #enddocregion ChangeSubscription
                     } else {
                       purchaseParam = PurchaseParam(
                         productDetails: productDetails,
                       );
                     }
 
-                    if (productDetails.id == _kConsumableId) {
+                    if (_isConsumable(productDetails)) {
                       _inAppPurchase.buyConsumable(
                           purchaseParam: purchaseParam,
                           autoConsume: _kAutoConsume);
@@ -302,6 +334,7 @@ class _MyAppState extends State<_MyApp> {
                       _inAppPurchase.buyNonConsumable(
                           purchaseParam: purchaseParam);
                     }
+                    // #enddocregion MakePurchase
                   },
                   child: Text(productDetails.price),
                 ),
@@ -367,7 +400,9 @@ class _MyAppState extends State<_MyApp> {
               backgroundColor: Theme.of(context).primaryColor,
               foregroundColor: Colors.white,
             ),
+            // #docregion RestorePurchases
             onPressed: () => _inAppPurchase.restorePurchases(),
+            // #enddocregion RestorePurchases
             child: const Text('Restore purchases'),
           ),
         ],
@@ -460,12 +495,14 @@ class _MyAppState extends State<_MyApp> {
     // instead handled by the Play Store. See
     // https://developer.android.com/google/play/billing/price-changes for more
     // information on price changes on Android.
+    // #docregion ShowPriceConsent
     if (Platform.isIOS) {
       final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition =
           _inAppPurchase
               .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
     }
+    // #enddocregion ShowPriceConsent
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
@@ -489,6 +526,10 @@ class _MyAppState extends State<_MyApp> {
     }
     return oldSubscription;
   }
+
+  bool _isConsumable(ProductDetails productDetails) {
+    return productDetails.id == _kConsumableId;
+  }
 }
 
 /// Example implementation of the
@@ -496,6 +537,7 @@ class _MyAppState extends State<_MyApp> {
 ///
 /// The payment queue delegate can be implementated to provide information
 /// needed to complete transactions.
+// #docregion PaymentDelegate
 class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
   @override
   bool shouldContinueTransaction(
@@ -508,3 +550,4 @@ class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
     return false;
   }
 }
+// #enddocregion PaymentDelegate
