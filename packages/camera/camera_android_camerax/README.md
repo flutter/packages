@@ -3,7 +3,7 @@
 An Android implementation of [`camera`][1] that uses the [CameraX library][2].
 
 *Note*: This implementation will eventually become the default implementation
-of `camera` on Android, so we strongly encourage you to opt into using it
+of `camera` on Android, so **we strongly encourage you to opt into it**
 by using [the instructions](#usage) below. If any of [the limitations](#limitations)
 prevent you from using `camera_android_camerax` or if you run into any problems,
 please report these issues under [`flutter/flutter`][5] with `[camerax]` in
