@@ -112,6 +112,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.paddingBuilders,
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
+    this.onSelectionChanged,
     this.onTapText,
     this.softLineBreak = false,
   });
@@ -154,6 +155,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// Defaults to [MarkdownListItemCrossAxisAlignment.baseline], which
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
+
+  /// Called when the user changes selection when [selectable] is set to true.
+  final MarkdownOnSelectionChangedCallback? onSelectionChanged;
 
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
@@ -942,6 +946,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         text!,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
+        onSelectionChanged:
+            (TextSelection selection, SelectionChangedCause? cause) =>
+                onSelectionChanged!(text.text, selection, cause),
         onTap: onTapText,
         key: k,
       );
