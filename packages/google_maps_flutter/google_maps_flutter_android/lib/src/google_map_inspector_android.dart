@@ -104,9 +104,7 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
       gradient: deserializeHeatmapGradient(heatmapInfo['gradient']),
       maxIntensity: heatmapInfo['maxIntensity']! as double,
       opacity: heatmapInfo['opacity']! as double,
-      radius: HeatmapRadius.fromPlatformSpecificValue(
-        heatmapInfo['radius']! as int,
-      ),
+      radius: HeatmapRadius.fromJson(heatmapInfo['radius']),
     );
   }
 
