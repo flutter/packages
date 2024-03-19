@@ -354,6 +354,9 @@ $resultAt != null
       indent.write(
           "static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) ");
       indent.addScoped('{', '}', () {
+        indent.writeln(
+            r"messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';");
+
         for (final Method func in api.methods) {
           _writeFlutterMethodMessageHandler(
             indent,
@@ -413,7 +416,7 @@ $resultAt != null
 /// BinaryMessenger will be used which routes to the host platform.
 ${api.name}({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : ${_varNamePrefix}binaryMessenger = binaryMessenger,
-      ${_varNamePrefix}messageChannelSuffix = messageChannelSuffix;
+      ${_varNamePrefix}messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.\$messageChannelSuffix' : '';
 final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 ''');
 

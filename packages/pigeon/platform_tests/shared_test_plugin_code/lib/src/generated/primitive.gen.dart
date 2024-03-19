@@ -37,7 +37,8 @@ class PrimitiveHostApi {
   PrimitiveHostApi(
       {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix = messageChannelSuffix;
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
@@ -335,6 +336,8 @@ abstract class PrimitiveFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(

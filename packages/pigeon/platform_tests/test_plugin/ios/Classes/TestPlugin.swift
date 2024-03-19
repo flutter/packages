@@ -17,16 +17,16 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger())
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
-    TestPluginWithSuffix.register(with: registrar, suffix: ".suffixOne")
-    TestPluginWithSuffix.register(with: registrar, suffix: ".suffixTwo")
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(
-      binaryMessenger: binaryMessenger, messageChannelSuffix: ".suffixOne")
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
-      binaryMessenger: binaryMessenger, messageChannelSuffix: ".suffixTwo")
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
   }
 
   // MARK: HostIntegrationCoreApi implementation

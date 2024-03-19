@@ -16,12 +16,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
     val testSuffixApiOne: TestPluginWithSuffix = TestPluginWithSuffix()
-    testSuffixApiOne.setUp(binding, ".suffixOne")
+    testSuffixApiOne.setUp(binding, "suffixOne")
     val testSuffixApiTwo: TestPluginWithSuffix = TestPluginWithSuffix()
-    testSuffixApiTwo.setUp(binding, ".suffixTwo")
+    testSuffixApiTwo.setUp(binding, "suffixTwo")
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
-    flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, ".suffixOne")
-    flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, ".suffixTwo")
+    flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}

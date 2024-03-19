@@ -510,10 +510,12 @@ interface HostIntegrationCoreApi {
         messageChannelSuffix: String = ""
     ) {
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -531,10 +533,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -553,10 +557,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -573,10 +579,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -594,10 +602,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -614,10 +624,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -636,10 +648,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -658,10 +672,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -680,10 +696,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -702,10 +720,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -724,10 +744,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -746,10 +768,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -768,10 +792,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -790,10 +816,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -812,10 +840,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -834,10 +864,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -856,10 +888,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -878,10 +912,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -900,10 +936,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -922,10 +960,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -944,10 +984,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -966,10 +1008,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -993,10 +1037,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1015,10 +1061,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1037,10 +1085,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1059,10 +1109,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1081,10 +1133,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1103,10 +1157,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1125,10 +1181,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1147,10 +1205,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1169,10 +1229,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1191,10 +1253,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1213,10 +1277,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1235,10 +1301,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1256,10 +1324,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1280,10 +1350,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1304,10 +1376,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1328,10 +1402,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1352,10 +1428,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1376,10 +1454,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1400,10 +1480,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1424,10 +1506,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1448,10 +1532,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1472,10 +1558,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1494,10 +1582,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1515,10 +1605,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1537,10 +1629,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1561,10 +1655,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1586,10 +1682,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1610,10 +1708,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1634,10 +1734,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1658,10 +1760,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1682,10 +1786,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1706,10 +1812,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1730,10 +1838,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1754,10 +1864,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1778,10 +1890,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1802,10 +1916,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1823,10 +1939,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1845,10 +1963,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1866,10 +1986,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1890,10 +2012,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1915,10 +2039,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1943,10 +2069,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1967,10 +2095,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1991,10 +2121,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2015,10 +2147,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2039,10 +2173,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2063,10 +2199,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2087,10 +2225,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2111,10 +2251,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2135,10 +2277,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2159,10 +2303,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2183,10 +2329,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2207,10 +2355,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2231,10 +2381,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2255,10 +2407,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2279,10 +2433,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2303,10 +2459,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2327,10 +2485,12 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -2414,8 +2574,10 @@ class FlutterIntegrationCoreApi(
   }
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -2431,8 +2593,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Responds with an error from an async function returning a value. */
   fun throwError(callback: (Result<Any?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -2449,8 +2613,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Responds with an error from an async void function. */
   fun throwErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -2466,8 +2632,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllTypes(everythingArg: AllTypes, callback: (Result<AllTypes>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(everythingArg)) {
       if (it is List<*>) {
@@ -2494,8 +2662,10 @@ class FlutterIntegrationCoreApi(
       everythingArg: AllNullableTypes?,
       callback: (Result<AllNullableTypes?>) -> Unit
   ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(everythingArg)) {
       if (it is List<*>) {
@@ -2521,8 +2691,10 @@ class FlutterIntegrationCoreApi(
       aNullableStringArg: String?,
       callback: (Result<AllNullableTypes>) -> Unit
   ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aNullableBoolArg, aNullableIntArg, aNullableStringArg)) {
       if (it is List<*>) {
@@ -2546,8 +2718,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoBool(aBoolArg: Boolean, callback: (Result<Boolean>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aBoolArg)) {
       if (it is List<*>) {
@@ -2571,8 +2745,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed int, to test serialization and deserialization. */
   fun echoInt(anIntArg: Long, callback: (Result<Long>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anIntArg)) {
       if (it is List<*>) {
@@ -2596,8 +2772,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed double, to test serialization and deserialization. */
   fun echoDouble(aDoubleArg: Double, callback: (Result<Double>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aDoubleArg)) {
       if (it is List<*>) {
@@ -2621,8 +2799,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed string, to test serialization and deserialization. */
   fun echoString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
@@ -2646,8 +2826,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
   fun echoUint8List(aListArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
@@ -2671,8 +2853,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoList(aListArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
@@ -2696,8 +2880,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoMap(aMapArg: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aMapArg)) {
       if (it is List<*>) {
@@ -2721,8 +2907,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnumArg: AnEnum, callback: (Result<AnEnum>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anEnumArg.raw)) {
       if (it is List<*>) {
@@ -2746,8 +2934,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoNullableBool(aBoolArg: Boolean?, callback: (Result<Boolean?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aBoolArg)) {
       if (it is List<*>) {
@@ -2764,8 +2954,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed int, to test serialization and deserialization. */
   fun echoNullableInt(anIntArg: Long?, callback: (Result<Long?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anIntArg)) {
       if (it is List<*>) {
@@ -2782,8 +2974,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed double, to test serialization and deserialization. */
   fun echoNullableDouble(aDoubleArg: Double?, callback: (Result<Double?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aDoubleArg)) {
       if (it is List<*>) {
@@ -2800,8 +2994,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed string, to test serialization and deserialization. */
   fun echoNullableString(aStringArg: String?, callback: (Result<String?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
@@ -2818,8 +3014,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
   fun echoNullableUint8List(aListArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
@@ -2836,8 +3034,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNullableList(aListArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
@@ -2857,8 +3057,10 @@ class FlutterIntegrationCoreApi(
       aMapArg: Map<String?, Any?>?,
       callback: (Result<Map<String?, Any?>?>) -> Unit
   ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aMapArg)) {
       if (it is List<*>) {
@@ -2875,8 +3077,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoNullableEnum(anEnumArg: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anEnumArg?.raw)) {
       if (it is List<*>) {
@@ -2896,8 +3100,10 @@ class FlutterIntegrationCoreApi(
    * calling.
    */
   fun noopAsync(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -2913,8 +3119,10 @@ class FlutterIntegrationCoreApi(
   }
   /** Returns the passed in generic Object asynchronously. */
   fun echoAsyncString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
@@ -2956,10 +3164,12 @@ interface HostTrivialApi {
         messageChannelSuffix: String = ""
     ) {
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -3000,10 +3210,12 @@ interface HostSmallApi {
         messageChannelSuffix: String = ""
     ) {
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -3024,10 +3236,12 @@ interface HostSmallApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -3086,8 +3300,10 @@ class FlutterSmallApi(
   }
 
   fun echoWrappedList(msgArg: TestMessage, callback: (Result<TestMessage>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(msgArg)) {
       if (it is List<*>) {
@@ -3111,8 +3327,10 @@ class FlutterSmallApi(
   }
 
   fun echoString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {

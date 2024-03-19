@@ -675,9 +675,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
       }
-
+      indent.writeln(
+          r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
       indent.write(
-          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName\$messageChannelSuffix", codec');
+          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName\$separatedMessageChannelSuffix", codec');
 
       if (taskQueue != null) {
         indent.addln(', $taskQueue)');
@@ -813,7 +814,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
 
     const String channel = 'channel';
-    indent.writeln('val channelName = "$channelName\$messageChannelSuffix"');
+    indent.writeln(
+        r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
+    indent.writeln(
+        'val channelName = "$channelName\$separatedMessageChannelSuffix"');
     indent.writeln(
         'val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)');
     indent.writeScoped('$channel.send($sendArgument) {', '}', () {

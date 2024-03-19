@@ -30,12 +30,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this);
     flutterApi = new FlutterIntegrationCoreApi(binding.getBinaryMessenger());
-    flutterSmallApiOne = new FlutterSmallApi(binding.getBinaryMessenger(), ".suffixOne");
-    flutterSmallApiTwo = new FlutterSmallApi(binding.getBinaryMessenger(), ".suffixTwo");
+    flutterSmallApiOne = new FlutterSmallApi(binding.getBinaryMessenger(), "suffixOne");
+    flutterSmallApiTwo = new FlutterSmallApi(binding.getBinaryMessenger(), "suffixTwo");
     TestPluginWithSuffix testSuffixApiOne = new TestPluginWithSuffix();
-    testSuffixApiOne.setUp(binding, ".suffixOne");
+    testSuffixApiOne.setUp(binding, "suffixOne");
     TestPluginWithSuffix testSuffixApiTwo = new TestPluginWithSuffix();
-    testSuffixApiTwo.setUp(binding, ".suffixTwo");
+    testSuffixApiTwo.setUp(binding, "suffixTwo");
   }
 
   @Override

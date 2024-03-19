@@ -298,7 +298,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") ');
       indent.addScoped('{', '}', () {
         indent.writeln('self.binaryMessenger = binaryMessenger');
-        indent.writeln('self.messageChannelSuffix = messageChannelSuffix');
+        indent.writeln(
+            r'self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""');
       });
       final String codecName = _getCodecName(api);
       String codecArgumentString = '';
@@ -770,9 +771,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-
     indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName\\(messageChannelSuffix)", binaryMessenger: binaryMessenger$codecArgumentString)');
+        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName\\(messageChannelSuffix.count > 0 ? ".\\(messageChannelSuffix)" : "")", binaryMessenger: binaryMessenger$codecArgumentString)');
     indent.write('if let api = api ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');

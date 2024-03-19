@@ -1120,9 +1120,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echo string succeeds with suffix with multiple instances',
         (_) async {
       final HostSmallApi apiWithSuffixOne =
-          HostSmallApi(messageChannelSuffix: '.suffixOne');
+          HostSmallApi(messageChannelSuffix: 'suffixOne');
       final HostSmallApi apiWithSuffixTwo =
-          HostSmallApi(messageChannelSuffix: '.suffixTwo');
+          HostSmallApi(messageChannelSuffix: 'suffixTwo');
       const String sentString = "I'm a computer";
       final String echoStringOne = await apiWithSuffixOne.echo(sentString);
       final String echoStringTwo = await apiWithSuffixTwo.echo(sentString);
@@ -1135,9 +1135,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       // The only way to get the channel name back is to throw an exception.
       // These APIs have no corresponding APIs on the host platforms.
       final HostSmallApi apiWithSuffixOne =
-          HostSmallApi(messageChannelSuffix: '.suffixWithNoHost');
+          HostSmallApi(messageChannelSuffix: 'suffixWithNoHost');
       final HostSmallApi apiWithSuffixTwo =
-          HostSmallApi(messageChannelSuffix: '.suffixWithoutHost');
+          HostSmallApi(messageChannelSuffix: 'suffixWithoutHost');
       const String sentString = "I'm a computer";
       try {
         await apiWithSuffixOne.echo(sentString);
@@ -1511,11 +1511,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     setUp(() {
       FlutterSmallApi.setup(
         _SmallFlutterApi(),
-        messageChannelSuffix: '.suffixOne',
+        messageChannelSuffix: 'suffixOne',
       );
       FlutterSmallApi.setup(
         _SmallFlutterApi(),
-        messageChannelSuffix: '.suffixTwo',
+        messageChannelSuffix: 'suffixTwo',
       );
     });
 

@@ -437,7 +437,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) ');
       indent.addScoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
-        indent.writeln('this.messageChannelSuffix = messageChannelSuffix;');
+        indent.writeln(
+            'this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
       });
       indent.newln();
       indent.writeln('/** Public interface for sending reply. */ ');
@@ -695,6 +696,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln(
             'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
       }
+      indent.writeln(
+          'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
       indent.writeln('BasicMessageChannel<Object> channel =');
       indent.nest(2, () {
         indent.writeln('new BasicMessageChannel<>(');

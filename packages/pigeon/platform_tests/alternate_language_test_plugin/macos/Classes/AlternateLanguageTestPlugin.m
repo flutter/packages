@@ -17,14 +17,14 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
   SetUpHostIntegrationCoreApi(registrar.messenger, plugin);
-  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@".suffixOne"];
-  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@".suffixTwo"];
+  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixOne"];
+  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixTwo"];
   plugin.flutterAPI =
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:registrar.messenger];
   plugin.flutterSmallApiOne = [[FlutterSmallApi alloc] initWithBinaryMessenger:registrar.messenger
-                                                          messageChannelSuffix:@".suffixOne"];
+                                                          messageChannelSuffix:@"suffixOne"];
   plugin.flutterSmallApiTwo = [[FlutterSmallApi alloc] initWithBinaryMessenger:registrar.messenger
-                                                          messageChannelSuffix:@".suffixTwo"];
+                                                          messageChannelSuffix:@"suffixTwo"];
 }
 
 #pragma mark HostIntegrationCoreApi implementation

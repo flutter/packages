@@ -352,6 +352,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -374,6 +377,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed object, to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -399,6 +405,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns an error, to test error handling.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -422,6 +431,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns an error from a void function, to test error handling.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -445,6 +457,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns a Flutter error, to test error handling.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -468,6 +483,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in int.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -492,6 +510,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in double.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -517,6 +538,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in boolean.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -541,6 +565,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in string.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -566,6 +593,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in Uint8List.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -591,6 +621,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in generic Object.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -616,6 +649,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed list, to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -640,6 +676,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed map, to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -664,6 +703,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed map to test nested class serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -689,6 +731,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed enum to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -714,6 +759,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the default string.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -739,6 +787,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in double.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -765,6 +816,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in int.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -790,6 +844,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed object, to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -816,6 +873,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -843,6 +903,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -870,6 +933,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in arguments of multiple types.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -902,6 +968,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in int.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -927,6 +996,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in double.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -952,6 +1024,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in boolean.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -977,6 +1052,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in string.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1002,6 +1080,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in Uint8List.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1028,6 +1109,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in generic Object.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1053,6 +1137,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed list, to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1078,6 +1165,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed map, to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1102,6 +1192,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1132,6 +1225,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in int.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1158,6 +1254,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in string.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1185,6 +1284,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1208,6 +1310,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in int asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1234,6 +1339,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in double asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1260,6 +1368,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in boolean asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1286,6 +1397,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed string asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1312,6 +1426,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in Uint8List asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1339,6 +1456,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in generic Object asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1365,6 +1485,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1391,6 +1514,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1418,6 +1544,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1446,6 +1575,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Responds with an error from an async function returning a value.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1469,6 +1601,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Responds with an error from an async void function.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1493,6 +1628,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Responds with a Flutter error from an async function returning a value.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1517,6 +1655,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed object, to test async serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1543,6 +1684,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed object, to test serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:
                                       @"%@%@",
@@ -1571,6 +1715,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in int asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1597,6 +1744,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns passed in double asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1624,6 +1774,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in boolean asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1650,6 +1803,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed string asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1677,6 +1833,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in Uint8List asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1705,6 +1864,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed in generic Object asynchronously.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1732,6 +1894,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1758,6 +1923,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1785,6 +1953,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   }
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1817,6 +1988,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1839,6 +2013,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1862,6 +2039,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
                [NSString stringWithFormat:@"%@%@",
@@ -1885,6 +2065,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -1912,6 +2095,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
                [NSString stringWithFormat:@"%@%@",
@@ -1939,6 +2125,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
                [NSString
@@ -1972,6 +2161,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -1997,6 +2189,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -2022,6 +2217,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -2047,6 +2245,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -2072,6 +2273,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -2099,6 +2303,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -2124,6 +2331,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -2150,6 +2360,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -2178,6 +2391,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -2205,6 +2421,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -2232,6 +2451,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
                [NSString stringWithFormat:@"%@%@",
@@ -2259,6 +2481,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
                [NSString stringWithFormat:@"%@%@",
@@ -2286,6 +2511,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:
                                       @"%@%@",
@@ -2313,6 +2541,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -2340,6 +2571,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -2367,6 +2601,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:@"%@%@",
@@ -2401,6 +2638,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
                [NSString stringWithFormat:@"%@%@",
@@ -2510,7 +2750,9 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                    messageChannelSuffix:(NSString *)messageChannelSuffix {
   self = [self initWithBinaryMessenger:binaryMessenger];
   if (self) {
-    _messageChannelSuffix = messageChannelSuffix;
+    _messageChannelSuffix = messageChannelSuffix.length > 0
+                                ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                                : @"";
   }
   return self;
 }
@@ -3193,6 +3435,9 @@ void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                       NSObject<FLTHostTrivialApi> *api,
                                       NSString *messageChannelSuffix) {
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:
@@ -3229,6 +3474,9 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                     NSObject<FLTHostSmallApi> *api,
                                     NSString *messageChannelSuffix) {
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString
                             stringWithFormat:
@@ -3254,6 +3502,9 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
+    messageChannelSuffix = messageChannelSuffix.length > 0
+                               ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_integration_tests."
@@ -3342,7 +3593,9 @@ NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void) {
                    messageChannelSuffix:(NSString *)messageChannelSuffix {
   self = [self initWithBinaryMessenger:binaryMessenger];
   if (self) {
-    _messageChannelSuffix = messageChannelSuffix;
+    _messageChannelSuffix = messageChannelSuffix.length > 0
+                                ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
+                                : @"";
   }
   return self;
 }
