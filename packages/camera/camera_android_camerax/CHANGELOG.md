@@ -1,3 +1,7 @@
+## 0.6.1
+
+* Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios supported by CameraX.
+
 ## 0.6.0
 
 * Implements `setFocusMode`, which makes this plugin reach feature parity with camera_android.
