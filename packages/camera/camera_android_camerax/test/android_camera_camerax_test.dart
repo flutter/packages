@@ -47,7 +47,7 @@ import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException, Uint8List;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' show BuildContext, Size, Texture, Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -57,6 +57,7 @@ import 'test_camerax_library.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Analyzer>(),
+  MockSpec<AspectRatioStrategy>(),
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
   MockSpec<CameraControl>(),
@@ -158,7 +159,6 @@ void main() {
           if (highestAvailable) {
             return ResolutionStrategy.detachedHighestAvailableStrategy();
           }
-
           return ResolutionStrategy.detached(
               boundSize: boundSize, fallbackRule: fallbackRule);
         },
@@ -170,16 +170,22 @@ void main() {
         createFallbackStrategy: (
                 {required VideoQuality quality,
                 required VideoResolutionFallbackRule fallbackRule}) =>
-            MockFallbackStrategy(),
+            FallbackStrategy.detached(
+                quality: quality, fallbackRule: fallbackRule),
         createQualitySelector: (
                 {required VideoQuality videoQuality,
                 required FallbackStrategy fallbackStrategy}) =>
-            MockQualitySelector(),
+            QualitySelector.detached(qualityList: <VideoQualityData>[
+          VideoQualityData(quality: videoQuality)
+        ], fallbackStrategy: fallbackStrategy),
         createCameraStateObserver: (_) => MockObserver(),
         requestCameraPermissions: (_) => Future<void>.value(),
         startListeningForDeviceOrientationChange: (_, __) {},
         setPreviewSurfaceProvider: (_) => Future<int>.value(
-            3), // 3 is a random Flutter SurfaceTexture ID for testing},
+            3), // 3 is a random Flutter SurfaceTexture ID for testing,
+        createAspectRatioStrategy: (int aspectRatio, int fallbackRule) =>
+            AspectRatioStrategy.detached(
+                preferredAspectRatio: aspectRatio, fallbackRule: fallbackRule),
       );
 
   /// CameraXProxy for testing exposure and focus related controls.
@@ -367,6 +373,7 @@ void main() {
       startListeningForDeviceOrientationChange: (_, __) {
         startedListeningForDeviceOrientationChanges = true;
       },
+      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
     );
 
     when(mockPreview.setSurfaceProvider())
@@ -478,6 +485,7 @@ void main() {
           Observer<CameraState>.detached(onChanged: onChanged),
       requestCameraPermissions: (_) => Future<void>.value(),
       startListeningForDeviceOrientationChange: (_, __) {},
+      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
     );
 
     when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
@@ -634,52 +642,63 @@ void main() {
       await camera.createCamera(testCameraDescription, resolutionPreset,
           enableAudio: enableAudio);
 
-      Size? expectedBoundSize;
-      ResolutionStrategy? expectedResolutionStrategy;
+      int? expectedAspectRatio;
+      AspectRatioStrategy? expectedAspectRatioStrategy;
       switch (resolutionPreset) {
         case ResolutionPreset.low:
-          expectedBoundSize = const Size(320, 240);
-        case ResolutionPreset.medium:
-          expectedBoundSize = const Size(720, 480);
+          expectedAspectRatio = AspectRatio.ratio4To3;
         case ResolutionPreset.high:
-          expectedBoundSize = const Size(1280, 720);
         case ResolutionPreset.veryHigh:
-          expectedBoundSize = const Size(1920, 1080);
         case ResolutionPreset.ultraHigh:
-          expectedBoundSize = const Size(3840, 2160);
+          expectedAspectRatio = AspectRatio.ratio16To9;
+        case ResolutionPreset.medium:
+        // Medium resolution preset uses aspect ratio 3:2 which is unsupported
+        // by CameraX.
         case ResolutionPreset.max:
-          expectedResolutionStrategy =
-              ResolutionStrategy.detachedHighestAvailableStrategy();
+          expectedAspectRatioStrategy = null;
       }
 
-      // We expect the strategy to be the highest available or correspond to the
-      // expected bound size, with fallback to the closest and highest available
-      // resolution.
-      expectedResolutionStrategy ??= ResolutionStrategy.detached(
-          boundSize: expectedBoundSize,
-          fallbackRule: ResolutionStrategy.fallbackRuleClosestLowerThenHigher);
+      expectedAspectRatioStrategy = expectedAspectRatio == null
+          ? null
+          : AspectRatioStrategy.detached(
+              preferredAspectRatio: expectedAspectRatio,
+              fallbackRule: AspectRatioStrategy.fallbackRuleAuto);
 
-      expect(camera.preview!.resolutionSelector!.resolutionStrategy!.boundSize,
-          equals(expectedResolutionStrategy.boundSize));
+      if (expectedAspectRatio == null) {
+        expect(camera.preview!.resolutionSelector!.aspectRatioStrategy, isNull);
+        expect(camera.imageCapture!.resolutionSelector!.aspectRatioStrategy,
+            isNull);
+        expect(camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy,
+            isNull);
+        continue;
+      }
+
+      // Check aspect ratio.
       expect(
-          camera
-              .imageCapture!.resolutionSelector!.resolutionStrategy!.boundSize,
-          equals(expectedResolutionStrategy.boundSize));
+          camera.preview!.resolutionSelector!.aspectRatioStrategy!
+              .preferredAspectRatio,
+          equals(expectedAspectRatioStrategy!.preferredAspectRatio));
       expect(
-          camera
-              .imageAnalysis!.resolutionSelector!.resolutionStrategy!.boundSize,
-          equals(expectedResolutionStrategy.boundSize));
+          camera.imageCapture!.resolutionSelector!.aspectRatioStrategy!
+              .preferredAspectRatio,
+          equals(expectedAspectRatioStrategy.preferredAspectRatio));
       expect(
-          camera.preview!.resolutionSelector!.resolutionStrategy!.fallbackRule,
-          equals(expectedResolutionStrategy.fallbackRule));
+          camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy!
+              .preferredAspectRatio,
+          equals(expectedAspectRatioStrategy.preferredAspectRatio));
+
+      // Check fallback rule.
       expect(
-          camera.imageCapture!.resolutionSelector!.resolutionStrategy!
+          camera.preview!.resolutionSelector!.aspectRatioStrategy!.fallbackRule,
+          equals(expectedAspectRatioStrategy.fallbackRule));
+      expect(
+          camera.imageCapture!.resolutionSelector!.aspectRatioStrategy!
               .fallbackRule,
-          equals(expectedResolutionStrategy.fallbackRule));
+          equals(expectedAspectRatioStrategy.fallbackRule));
       expect(
-          camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
+          camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy!
               .fallbackRule,
-          equals(expectedResolutionStrategy.fallbackRule));
+          equals(expectedAspectRatioStrategy.fallbackRule));
     }
 
     // Test null case.
@@ -707,17 +726,13 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final MockPreview mockPreview = MockPreview();
-    final MockImageCapture mockImageCapture = MockImageCapture();
-    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
     camera.proxy =
         getProxyForTestingResolutionPreset(mockProcessCameraProvider);
 
-    when(mockProcessCameraProvider.bindToLifecycle(
-            any, <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]))
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
@@ -839,6 +854,7 @@ void main() {
           Observer<CameraState>.detached(onChanged: onChanged),
       requestCameraPermissions: (_) => Future<void>.value(),
       startListeningForDeviceOrientationChange: (_, __) {},
+      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
     );
 
     final CameraInitializedEvent testCameraInitializedEvent =

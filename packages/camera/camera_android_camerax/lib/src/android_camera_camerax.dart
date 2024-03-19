@@ -1185,9 +1185,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final AspectRatioStrategy? aspectRatioStrategy = aspectRatio == null
         ? null
-        : AspectRatioStrategy(
-            preferredAspectRatio: aspectRatio,
-            fallbackRule: AspectRatioStrategy.fallbackRuleAuto);
+        : proxy.createAspectRatioStrategy(
+            aspectRatio, AspectRatioStrategy.fallbackRuleAuto);
     resolutionStrategy = proxy.createResolutionStrategy(
         boundSize: boundSize, fallbackRule: fallbackRule);
     return proxy.createResolutionSelector(

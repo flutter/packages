@@ -60,6 +60,7 @@ class CameraXProxy {
     this.createCaptureRequestOptions = _createAttachedCaptureRequestOptions,
     this.createMeteringPoint = _createAttachedMeteringPoint,
     this.createFocusMeteringAction = _createAttachedFocusMeteringAction,
+    this.createAspectRatioStrategy = _createAttachedAspectRatioStrategy,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -152,7 +153,7 @@ class CameraXProxy {
   Camera2CameraControl Function(CameraControl cameraControl)
       getCamera2CameraControl;
 
-  /// Create [CapureRequestOptions] with specified options.
+  /// Create [CaptureRequestOptions] with specified options.
   CaptureRequestOptions Function(
           List<(CaptureRequestKeySupportedType, Object?)> options)
       createCaptureRequestOptions;
@@ -167,6 +168,11 @@ class CameraXProxy {
   /// and their modes.
   FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos,
       bool? disableAutoCancel) createFocusMeteringAction;
+
+  /// Creates an [AspectRatioStrategy] with specified aspect ratio and fallback
+  /// rule.
+  AspectRatioStrategy Function(int aspectRatio, int fallbackRule)
+      createAspectRatioStrategy;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -294,5 +300,11 @@ class CameraXProxy {
     return FocusMeteringAction(
         meteringPointInfos: meteringPointInfos,
         disableAutoCancel: disableAutoCancel);
+  }
+
+  static AspectRatioStrategy _createAttachedAspectRatioStrategy(
+      int preferredAspectRatio, int fallbackRule) {
+    return AspectRatioStrategy(
+        preferredAspectRatio: preferredAspectRatio, fallbackRule: fallbackRule);
   }
 }
