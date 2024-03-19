@@ -754,7 +754,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "noop" + message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -784,7 +784,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAllTypes" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -823,7 +823,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.throwError" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -859,7 +859,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.throwErrorFromVoid" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -889,7 +889,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.throwFlutterError" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -926,7 +926,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoInt" + message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -963,7 +963,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoDouble" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1001,7 +1001,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoBool" + message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1038,7 +1038,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoString" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1076,7 +1076,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoUint8List" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1115,7 +1115,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoObject" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1152,7 +1152,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoList" + message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1190,7 +1190,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoMap" + message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1228,7 +1228,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoClassWrapper" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1268,7 +1268,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoEnum" + message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1308,7 +1308,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoNamedDefaultString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1348,7 +1348,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoOptionalDefaultDouble" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1387,7 +1387,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoRequiredInt" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1425,7 +1425,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAllNullableTypes" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1469,7 +1469,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "extractNestedNullableString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1515,7 +1515,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "createNestedNullableString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1552,7 +1552,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "sendMultipleNullableTypes" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1601,7 +1601,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableInt" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1648,7 +1648,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableDouble" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1689,7 +1689,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableBool" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1730,7 +1730,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableString" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1772,7 +1772,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoNullableUint8List" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -1814,7 +1814,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableObject" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1855,7 +1855,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableList" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1896,7 +1896,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableMap" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1937,7 +1937,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoNullableEnum" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -1986,7 +1986,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoOptionalNullableInt" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2034,7 +2034,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoNamedNullableString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2075,7 +2075,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.noopAsync" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2106,7 +2106,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncInt" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2145,7 +2145,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncDouble" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2186,7 +2186,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncBool" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2225,7 +2225,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncString" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2266,7 +2266,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncUint8List" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2308,7 +2308,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncObject" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2348,7 +2348,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncList" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2389,7 +2389,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncMap" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2430,7 +2430,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncEnum" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2471,7 +2471,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.throwAsyncError" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2510,7 +2510,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "throwAsyncErrorFromVoid" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2543,7 +2543,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "throwAsyncFlutterError" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2581,7 +2581,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.echoAsyncAllTypes" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -2623,7 +2623,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableAllNullableTypes" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2669,7 +2669,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableInt" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2717,7 +2717,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableDouble" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2761,7 +2761,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableBool" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2803,7 +2803,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2847,7 +2847,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableUint8List" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2892,7 +2892,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableObject" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2935,7 +2935,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableList" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -2979,7 +2979,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableMap" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3023,7 +3023,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "echoAsyncNullableEnum" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3073,7 +3073,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.callFlutterNoop" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -3106,7 +3106,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterThrowError" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3145,7 +3145,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterThrowErrorFromVoid" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3178,7 +3178,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoAllTypes" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3220,7 +3220,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoAllNullableTypes" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3266,7 +3266,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterSendMultipleNullableTypes" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3317,7 +3317,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.callFlutterEchoBool" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -3357,7 +3357,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.callFlutterEchoInt" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -3398,7 +3398,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoDouble" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3440,7 +3440,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3482,7 +3482,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoUint8List" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3523,7 +3523,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.callFlutterEchoList" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -3564,7 +3564,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.callFlutterEchoMap" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -3605,7 +3605,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                   "HostIntegrationCoreApi.callFlutterEchoEnum" +
                                               message_channel_suffix.length() >
                                           0
-                                      ? "." + message_channel_suffix
+                                      ? string(".") + message_channel_suffix
                                       : "",
                                   &GetCodec());
     if (api != nullptr) {
@@ -3647,7 +3647,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableBool" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3689,7 +3689,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableInt" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3737,7 +3737,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableDouble" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3781,7 +3781,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3825,7 +3825,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableUint8List" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3870,7 +3870,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableList" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3914,7 +3914,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableMap" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -3958,7 +3958,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterEchoNullableEnum" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -4009,7 +4009,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "callFlutterSmallApiEchoString" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -4131,7 +4131,7 @@ FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
     const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
       message_channel_suffix_(message_channel_suffix.length() > 0
-                                  ? "." + message_channel_suffix
+                                  ? string(".") + message_channel_suffix
                                   : "") {}
 
 const flutter::StandardMessageCodec& FlutterIntegrationCoreApi::GetCodec() {
@@ -5057,7 +5057,7 @@ void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -5117,7 +5117,7 @@ void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -5157,7 +5157,7 @@ void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid" +
                     message_channel_suffix.length() >
                 0
-            ? "." + message_channel_suffix
+            ? string(".") + message_channel_suffix
             : "",
         &GetCodec());
     if (api != nullptr) {
@@ -5234,7 +5234,7 @@ FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
                                  const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
       message_channel_suffix_(message_channel_suffix.length() > 0
-                                  ? "." + message_channel_suffix
+                                  ? string(".") + message_channel_suffix
                                   : "") {}
 
 const flutter::StandardMessageCodec& FlutterSmallApi::GetCodec() {

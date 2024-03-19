@@ -2734,20 +2734,16 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 @implementation FlutterIntegrationCoreApi
 
 - (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
-  self = [super init];
-  if (self) {
-    _binaryMessenger = binaryMessenger;
-    _messageChannelSuffix = @"";
-  }
-  return self;
+  return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];
 }
 - (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
-                   messageChannelSuffix:(NSString *)messageChannelSuffix {
-  self = [self initWithBinaryMessenger:binaryMessenger];
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix {
+  self = [self init];
   if (self) {
-    _messageChannelSuffix = messageChannelSuffix.length > 0
-                                ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
-                                : @"";
+    _binaryMessenger = binaryMessenger;
+    _messageChannelSuffix = [messageChannelSuffix length] == 0
+                                ? @""
+                                : [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix];
   }
   return self;
 }
@@ -3573,20 +3569,16 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void) {
 @implementation FlutterSmallApi
 
 - (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
-  self = [super init];
-  if (self) {
-    _binaryMessenger = binaryMessenger;
-    _messageChannelSuffix = @"";
-  }
-  return self;
+  return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];
 }
 - (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
-                   messageChannelSuffix:(NSString *)messageChannelSuffix {
-  self = [self initWithBinaryMessenger:binaryMessenger];
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix {
+  self = [self init];
   if (self) {
-    _messageChannelSuffix = messageChannelSuffix.length > 0
-                                ? [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix]
-                                : @"";
+    _binaryMessenger = binaryMessenger;
+    _messageChannelSuffix = [messageChannelSuffix length] == 0
+                                ? @""
+                                : [NSString stringWithFormat:@"%@%@", @".", messageChannelSuffix];
   }
   return self;
 }

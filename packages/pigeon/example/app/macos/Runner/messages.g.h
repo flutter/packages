@@ -66,7 +66,7 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void);
 @interface PGNMessageFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
-                   messageChannelSuffix:(NSString *)messageChannelSuffix;
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 - (void)flutterMethodAString:(nullable NSString *)aString
                   completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end

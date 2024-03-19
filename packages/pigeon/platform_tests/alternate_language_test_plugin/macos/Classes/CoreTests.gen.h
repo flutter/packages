@@ -410,7 +410,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 @interface FlutterIntegrationCoreApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
-                   messageChannelSuffix:(NSString *)messageChannelSuffix;
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
 - (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
@@ -532,7 +532,7 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void);
 @interface FlutterSmallApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
-                   messageChannelSuffix:(NSString *)messageChannelSuffix;
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 - (void)echoWrappedList:(TestMessage *)msg
              completion:(void (^)(TestMessage *_Nullable, FlutterError *_Nullable))completion;
 - (void)echoString:(NSString *)aString

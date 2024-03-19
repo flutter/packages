@@ -306,7 +306,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln(
         '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
     indent.writeln(
-        '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger messageChannelSuffix:(NSString *)messageChannelSuffix;');
+        '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger messageChannelSuffix:(nullable NSString *)messageChannelSuffix;');
     for (final Method func in api.methods) {
       final _ObjcType returnType = _objcTypeForDartType(
         generatorOptions.prefix, func.returnType,
@@ -1545,22 +1545,18 @@ void _writeInitializers(Indent indent) {
   indent.write(
       '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger ');
   indent.addScoped('{', '}', () {
-    indent.writeln('self = [super init];');
+    indent.writeln(
+        'return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];');
+  });
+  indent.write(
+      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger messageChannelSuffix:(nullable NSString*)messageChannelSuffix');
+  indent.addScoped('{', '}', () {
+    indent.writeln('self = [self init];');
     indent.write('if (self) ');
     indent.addScoped('{', '}', () {
       indent.writeln('_binaryMessenger = binaryMessenger;');
-      indent.writeln('_messageChannelSuffix = @"";');
-    });
-    indent.writeln('return self;');
-  });
-  indent.write(
-      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger messageChannelSuffix:(NSString*)messageChannelSuffix');
-  indent.addScoped('{', '}', () {
-    indent.writeln('self = [self initWithBinaryMessenger:binaryMessenger];');
-    indent.write('if (self) ');
-    indent.addScoped('{', '}', () {
       indent.writeln(
-          '_messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @"%@%@", @".", messageChannelSuffix] : @"";');
+          '_messageChannelSuffix = [messageChannelSuffix length] == 0 ? @"" : [NSString stringWithFormat: @"%@%@", @".", messageChannelSuffix];');
     });
     indent.writeln('return self;');
   });

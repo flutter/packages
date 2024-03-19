@@ -873,7 +873,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       ],
       initializers: <String>[
         'binary_messenger_(binary_messenger)',
-        'message_channel_suffix_(message_channel_suffix.length() > 0 ? "." + message_channel_suffix : "")'
+        'message_channel_suffix_(message_channel_suffix.length() > 0 ? string(".") + message_channel_suffix : "")'
       ],
     );
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
@@ -1024,7 +1024,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             makeChannelName(api, method, dartPackageName);
         indent.writeScoped('{', '}', () {
           indent.writeln('BasicMessageChannel<> channel(binary_messenger, '
-              '"$channelName" + message_channel_suffix.length() > 0 ? "." + message_channel_suffix : "", &GetCodec());');
+              '"$channelName" + message_channel_suffix.length() > 0 ? string(".") + message_channel_suffix : "", &GetCodec());');
           indent.writeScoped('if (api != nullptr) {', '} else {', () {
             indent.write(
                 'channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
