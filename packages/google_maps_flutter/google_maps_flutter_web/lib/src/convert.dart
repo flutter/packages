@@ -375,7 +375,7 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(
             .toList()
         ..maxIntensity = heatmap.maxIntensity
         ..opacity = heatmap.opacity
-        ..radius = heatmap.radius;
+        ..radius = heatmap.radius.pixels;
   return heatmapOptions;
 }
 

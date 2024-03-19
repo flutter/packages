@@ -381,8 +381,14 @@ void main() {
 
     testWidgets('addHeatmaps', (WidgetTester tester) async {
       final Set<Heatmap> heatmaps = <Heatmap>{
-        const Heatmap(heatmapId: HeatmapId('1')),
-        const Heatmap(heatmapId: HeatmapId('2')),
+        const Heatmap(
+          heatmapId: HeatmapId('1'),
+          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+        ),
+        const Heatmap(
+          heatmapId: HeatmapId('2'),
+          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+        ),
       };
 
       controller.addHeatmaps(heatmaps);
@@ -395,7 +401,10 @@ void main() {
 
     testWidgets('changeHeatmaps', (WidgetTester tester) async {
       final Set<Heatmap> heatmaps = <Heatmap>{
-        const Heatmap(heatmapId: HeatmapId('1')),
+        const Heatmap(
+          heatmapId: HeatmapId('1'),
+          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+        ),
       };
       controller.addHeatmaps(heatmaps);
 
@@ -406,6 +415,7 @@ void main() {
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: <WeightedLatLng>[WeightedLatLng(LatLng(0, 0))],
+          radius: HeatmapRadius.fromPlatformSpecificValue(20),
         ),
       };
       controller.changeHeatmaps(updatedHeatmaps);
@@ -417,9 +427,18 @@ void main() {
 
     testWidgets('removeHeatmaps', (WidgetTester tester) async {
       final Set<Heatmap> heatmaps = <Heatmap>{
-        const Heatmap(heatmapId: HeatmapId('1')),
-        const Heatmap(heatmapId: HeatmapId('2')),
-        const Heatmap(heatmapId: HeatmapId('3')),
+        const Heatmap(
+          heatmapId: HeatmapId('1'),
+          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+        ),
+        const Heatmap(
+          heatmapId: HeatmapId('2'),
+          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+        ),
+        const Heatmap(
+          heatmapId: HeatmapId('3'),
+          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+        ),
       };
 
       controller.addHeatmaps(heatmaps);
@@ -449,6 +468,7 @@ void main() {
               HeatmapGradientColor(Color(0xFFFABADA), 0)
             ],
           ),
+          radius: const HeatmapRadius.fromPlatformSpecificValue(20),
         ),
       };
 

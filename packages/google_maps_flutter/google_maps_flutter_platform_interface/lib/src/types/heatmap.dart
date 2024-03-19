@@ -17,6 +17,48 @@ class HeatmapId extends MapsObjectId<Heatmap> {
   const HeatmapId(super.value);
 }
 
+/// A wrapper around platform specific behavior for the radius of a [Heatmap].
+///
+/// Currently this class does nothing. See https://github.com/flutter/flutter/issues/145411
+@immutable
+class HeatmapRadius {
+  const HeatmapRadius._(this.radius);
+
+  /// Create a [HeatmapRadius] with a radius in pixels.
+  ///
+  /// This value will be used verbatim on all platforms. It is up to the
+  /// developer to ensure that the value is appropriate for the platform.
+  const HeatmapRadius.fromPlatformSpecificValue(int radius) : this._(radius);
+
+  /// Create a [HeatmapRadius] from a platform value.
+  ///
+  /// In the future, this will do the opposite conversion that [pixels] does.
+  const HeatmapRadius.fromJson(dynamic json) : this._(json as int);
+
+  /// The platform-independent value of the radius.
+  final int radius;
+
+  /// The radius in pixels derived from [radius].
+  ///
+  /// In the future, this will convert [radius] to the current platform's
+  /// expected value.
+  int get pixels => radius;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is HeatmapRadius && other.radius == radius;
+  }
+
+  @override
+  int get hashCode => radius.hashCode;
+}
+
 /// Draws a heatmap on the map.
 @immutable
 class Heatmap implements MapsObject<Heatmap> {
@@ -29,7 +71,7 @@ class Heatmap implements MapsObject<Heatmap> {
     this.gradient,
     this.maxIntensity,
     this.opacity = 0.7,
-    this.radius = 20,
+    required this.radius,
     this.minimumZoomIntensity = 0,
     this.maximumZoomIntensity = 21,
   }) : assert(opacity >= 0 && opacity <= 1);
@@ -64,7 +106,7 @@ class Heatmap implements MapsObject<Heatmap> {
   final double opacity;
 
   /// The radius of influence for each data point, in pixels.
-  final int radius;
+  final HeatmapRadius radius;
 
   /// The minimum zoom intensity used for normalizing intensities.
   final int minimumZoomIntensity;
@@ -80,7 +122,7 @@ class Heatmap implements MapsObject<Heatmap> {
     HeatmapGradient? gradientParam,
     double? maxIntensityParam,
     double? opacityParam,
-    int? radiusParam,
+    HeatmapRadius? radiusParam,
     int? minimumZoomIntensityParam,
     int? maximumZoomIntensityParam,
   }) {
@@ -122,7 +164,7 @@ class Heatmap implements MapsObject<Heatmap> {
     addIfPresent('gradient', gradient?.toJson());
     addIfPresent('maxIntensity', maxIntensity);
     addIfPresent('opacity', opacity);
-    addIfPresent('radius', radius);
+    addIfPresent('radius', radius.pixels);
     addIfPresent('minimumZoomIntensity', minimumZoomIntensity);
     addIfPresent('maximumZoomIntensity', maximumZoomIntensity);
 

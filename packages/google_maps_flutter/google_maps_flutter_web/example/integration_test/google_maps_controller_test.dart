@@ -326,6 +326,7 @@ void main() {
               WeightedLatLng(LatLng(43.354469, -5.851318)),
               WeightedLatLng(LatLng(43.354762, -5.850824)),
             ],
+            radius: HeatmapRadius.fromPlatformSpecificValue(20),
           ),
         }, markers: <Marker>{
           const Marker(
@@ -697,14 +698,26 @@ void main() {
         controller.debugSetOverrides(heatmaps: mock);
 
         final Set<Heatmap> previous = <Heatmap>{
-          const Heatmap(heatmapId: HeatmapId('to-be-updated')),
-          const Heatmap(heatmapId: HeatmapId('to-be-removed')),
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-updated'),
+            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          ),
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-removed'),
+            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          ),
         };
 
         final Set<Heatmap> current = <Heatmap>{
           const Heatmap(
-              heatmapId: HeatmapId('to-be-updated'), dissipating: false),
-          const Heatmap(heatmapId: HeatmapId('to-be-added')),
+            heatmapId: HeatmapId('to-be-updated'),
+            dissipating: false,
+            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          ),
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-added'),
+            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          ),
         };
 
         controller.updateHeatmaps(HeatmapUpdates.from(previous, current));
@@ -713,11 +726,17 @@ void main() {
           const HeatmapId('to-be-removed'),
         }));
         verify(mock.addHeatmaps(<Heatmap>{
-          const Heatmap(heatmapId: HeatmapId('to-be-added')),
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-added'),
+            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          ),
         }));
         verify(mock.changeHeatmaps(<Heatmap>{
           const Heatmap(
-              heatmapId: HeatmapId('to-be-updated'), dissipating: false),
+            heatmapId: HeatmapId('to-be-updated'),
+            dissipating: false,
+            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          ),
         }));
       });
 

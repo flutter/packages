@@ -7,6 +7,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'page.dart';
 
 class HeatmapPage extends GoogleMapExampleAppPage {
@@ -72,6 +73,17 @@ class HeatmapBodyState extends State<HeatmapBody> {
 
   @override
   Widget build(BuildContext context) {
+    final int radius;
+    if (kIsWeb) {
+      radius = 10;
+    } else {
+      radius = switch (defaultTargetPlatform) {
+        TargetPlatform.android => 20,
+        TargetPlatform.iOS => 40,
+        _ => 20,
+      };
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -121,11 +133,7 @@ class HeatmapBodyState extends State<HeatmapBody> {
                     ),
                     maxIntensity: 1,
                     // Radius behaves differently on web and Android/iOS.
-                    radius: kIsWeb
-                        ? 10
-                        : defaultTargetPlatform == TargetPlatform.android
-                            ? 20
-                            : 40,
+                    radius: HeatmapRadius.fromPlatformSpecificValue(radius),
                   )
                 }),
           ),
