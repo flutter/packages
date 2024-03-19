@@ -1,3 +1,8 @@
+## 0.6.0
+
+* Implements `setFocusMode`, which makes this plugin reach feature parity with camera_android.
+* Fixes `setExposureCompensationIndex` return value to use index returned by CameraX.
+
 ## 0.5.0+36
 
 * Implements `setExposureMode`.

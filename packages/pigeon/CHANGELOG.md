@@ -1,6 +1,10 @@
-## 17.2.0
+## 17.3.0
 
 * Adds message channel suffix option to all APIs.
+
+## 17.2.0
+
+* [dart] Adds implementation for `@ProxyApi`.
 
 ## 17.1.3
 

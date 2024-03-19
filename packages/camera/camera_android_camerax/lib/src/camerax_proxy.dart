@@ -56,9 +56,9 @@ class CameraXProxy {
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
     this.getDefaultDisplayRotation = _getDefaultDisplayRotation,
     this.getCamera2CameraControl = _getCamera2CameraControl,
-    this.createCaptureRequestOptions = _createCaptureRequestOptions,
-    this.createMeteringPoint = _createMeteringPoint,
-    this.createFocusMeteringAction = _createFocusMeteringAction,
+    this.createCaptureRequestOptions = _createAttachedCaptureRequestOptions,
+    this.createMeteringPoint = _createAttachedMeteringPoint,
+    this.createFocusMeteringAction = _createAttachedFocusMeteringAction,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -158,13 +158,14 @@ class CameraXProxy {
 
   /// Returns a [MeteringPoint] with the specified coordinates based on
   /// [cameraInfo].
-  MeteringPoint Function(double x, double y, CameraInfo cameraInfo)
+  MeteringPoint Function(
+          double x, double y, double? size, CameraInfo cameraInfo)
       createMeteringPoint;
 
   /// Returns a [FocusMeteringAction] based on the specified metering points
   /// and their modes.
-  FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos)
-      createFocusMeteringAction;
+  FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos,
+      bool? disableAutoCancel) createFocusMeteringAction;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -274,18 +275,20 @@ class CameraXProxy {
     return Camera2CameraControl(cameraControl: cameraControl);
   }
 
-  static CaptureRequestOptions _createCaptureRequestOptions(
+  static CaptureRequestOptions _createAttachedCaptureRequestOptions(
       List<(CaptureRequestKeySupportedType, Object?)> options) {
     return CaptureRequestOptions(requestedOptions: options);
   }
 
-  static MeteringPoint _createMeteringPoint(
-      double x, double y, CameraInfo cameraInfo) {
-    return MeteringPoint(x: x, y: y, cameraInfo: cameraInfo);
+  static MeteringPoint _createAttachedMeteringPoint(
+      double x, double y, double? size, CameraInfo cameraInfo) {
+    return MeteringPoint(x: x, y: y, size: size, cameraInfo: cameraInfo);
   }
 
-  static FocusMeteringAction _createFocusMeteringAction(
-      List<(MeteringPoint, int?)> meteringPointInfos) {
-    return FocusMeteringAction(meteringPointInfos: meteringPointInfos);
+  static FocusMeteringAction _createAttachedFocusMeteringAction(
+      List<(MeteringPoint, int?)> meteringPointInfos, bool? disableAutoCancel) {
+    return FocusMeteringAction(
+        meteringPointInfos: meteringPointInfos,
+        disableAutoCancel: disableAutoCancel);
   }
 }

@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,7 +44,7 @@ public class FocusMeteringActionTest {
   }
 
   @Test
-  public void hostApiCreatecreatesExpectedFocusMeteringActionWithInitialPointThatHasMode() {
+  public void hostApiCreate_createsExpectedFocusMeteringActionWithInitialPointThatHasMode() {
     FocusMeteringActionHostApiImpl.FocusMeteringActionProxy proxySpy =
         spy(new FocusMeteringActionHostApiImpl.FocusMeteringActionProxy());
     FocusMeteringActionHostApiImpl hostApi =
@@ -89,7 +90,7 @@ public class FocusMeteringActionTest {
     List<MeteringPointInfo> mockMeteringPointInfos =
         Arrays.asList(fakeMeteringPointInfo1, fakeMeteringPointInfo2, fakeMeteringPointInfo3);
 
-    hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos);
+    hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos, null);
 
     verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint2, mockMeteringPoint2Mode);
     verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint3);
@@ -98,7 +99,8 @@ public class FocusMeteringActionTest {
   }
 
   @Test
-  public void hostApiCreatecreatesExpectedFocusMeteringActionWithInitialPointThatDoesNotHaveMode() {
+  public void
+      hostApiCreate_createsExpectedFocusMeteringActionWithInitialPointThatDoesNotHaveMode() {
     FocusMeteringActionHostApiImpl.FocusMeteringActionProxy proxySpy =
         spy(new FocusMeteringActionHostApiImpl.FocusMeteringActionProxy());
     FocusMeteringActionHostApiImpl hostApi =
@@ -142,11 +144,49 @@ public class FocusMeteringActionTest {
     List<MeteringPointInfo> mockMeteringPointInfos =
         Arrays.asList(fakeMeteringPointInfo1, fakeMeteringPointInfo2, fakeMeteringPointInfo3);
 
-    hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos);
+    hostApi.create(focusMeteringActionIdentifier, mockMeteringPointInfos, null);
 
     verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint2, mockMeteringPoint2Mode);
     verify(mockFocusMeteringActionBuilder).addPoint(mockMeteringPoint3);
     assertEquals(
         testInstanceManager.getInstance(focusMeteringActionIdentifier), focusMeteringAction);
+  }
+
+  @Test
+  public void hostApiCreate_disablesAutoCancelAsExpected() {
+    FocusMeteringActionHostApiImpl.FocusMeteringActionProxy proxySpy =
+        spy(new FocusMeteringActionHostApiImpl.FocusMeteringActionProxy());
+    FocusMeteringActionHostApiImpl hostApi =
+        new FocusMeteringActionHostApiImpl(testInstanceManager, proxySpy);
+
+    FocusMeteringAction.Builder mockFocusMeteringActionBuilder =
+        mock(FocusMeteringAction.Builder.class);
+    final MeteringPoint mockMeteringPoint = mock(MeteringPoint.class);
+    final Long mockMeteringPointId = 47L;
+
+    MeteringPointInfo fakeMeteringPointInfo =
+        new MeteringPointInfo.Builder()
+            .setMeteringPointId(mockMeteringPointId)
+            .setMeteringMode(null)
+            .build();
+
+    testInstanceManager.addDartCreatedInstance(mockMeteringPoint, mockMeteringPointId);
+
+    when(proxySpy.getFocusMeteringActionBuilder(mockMeteringPoint))
+        .thenReturn(mockFocusMeteringActionBuilder);
+    when(mockFocusMeteringActionBuilder.build()).thenReturn(focusMeteringAction);
+
+    List<MeteringPointInfo> mockMeteringPointInfos = Arrays.asList(fakeMeteringPointInfo);
+
+    // Test not disabling auto cancel.
+    hostApi.create(73L, mockMeteringPointInfos, /* disableAutoCancel */ null);
+    verify(mockFocusMeteringActionBuilder, never()).disableAutoCancel();
+
+    hostApi.create(74L, mockMeteringPointInfos, /* disableAutoCancel */ false);
+    verify(mockFocusMeteringActionBuilder, never()).disableAutoCancel();
+
+    // Test disabling auto cancel.
+    hostApi.create(75L, mockMeteringPointInfos, /* disableAutoCancel */ true);
+    verify(mockFocusMeteringActionBuilder).disableAutoCancel();
   }
 }

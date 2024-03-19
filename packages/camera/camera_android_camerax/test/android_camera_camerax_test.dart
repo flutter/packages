@@ -22,6 +22,7 @@ import 'package:camera_android_camerax/src/device_orientation_manager.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/fallback_strategy.dart';
 import 'package:camera_android_camerax/src/focus_metering_action.dart';
+import 'package:camera_android_camerax/src/focus_metering_result.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/image_proxy.dart';
@@ -58,10 +59,12 @@ import 'test_camerax_library.g.dart';
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
   MockSpec<CameraControl>(),
+  MockSpec<Camera2CameraControl>(),
   MockSpec<CameraImageData>(),
   MockSpec<CameraSelector>(),
   MockSpec<ExposureState>(),
   MockSpec<FallbackStrategy>(),
+  MockSpec<FocusMeteringResult>(),
   MockSpec<ImageAnalysis>(),
   MockSpec<ImageCapture>(),
   MockSpec<ImageProxy>(),
@@ -80,7 +83,6 @@ import 'test_camerax_library.g.dart';
   MockSpec<TestInstanceManagerHostApi>(),
   MockSpec<TestSystemServicesHostApi>(),
   MockSpec<ZoomState>(),
-  MockSpec<Camera2CameraControl>(),
 ])
 @GenerateMocks(<Type>[], customMocks: <MockSpec<Object>>[
   MockSpec<LiveData<CameraState>>(as: #MockLiveCameraState),
@@ -122,14 +124,42 @@ void main() {
 
   /// CameraXProxy for testing exposure and focus related controls.
   ///
-  /// Modifies the creation of MeteringPoints and FocusMeteringActions to return
-  /// objects detached from a native object.
+  /// Modifies the creation of [MeteringPoint]s and [FocusMeteringAction]s to
+  /// return objects detached from a native object.
   CameraXProxy getProxyForExposureAndFocus() => CameraXProxy(
-      createMeteringPoint: (double x, double y, CameraInfo cameraInfo) =>
-          MeteringPoint.detached(x: x, y: y, cameraInfo: cameraInfo),
-      createFocusMeteringAction: (List<(MeteringPoint, int?)>
-              meteringPointInfos) =>
-          FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos));
+        createMeteringPoint:
+            (double x, double y, double? size, CameraInfo cameraInfo) =>
+                MeteringPoint.detached(
+                    x: x, y: y, size: size, cameraInfo: cameraInfo),
+        createFocusMeteringAction:
+            (List<(MeteringPoint, int?)> meteringPointInfos,
+                    bool? disableAutoCancel) =>
+                FocusMeteringAction.detached(
+                    meteringPointInfos: meteringPointInfos,
+                    disableAutoCancel: disableAutoCancel),
+      );
+
+  /// CameraXProxy for testing setting focus and exposure points.
+  ///
+  /// Modifies the retrieval of a [Camera2CameraControl] instance to depend on
+  /// interaction with expected [cameraControl] instance and modifies creation
+  /// of [CaptureRequestOptions] to return objects detached from a native object.
+  CameraXProxy getProxyForSettingFocusandExposurePoints(
+      CameraControl cameraControlForComparison,
+      Camera2CameraControl camera2cameraControl) {
+    final CameraXProxy proxy = getProxyForExposureAndFocus();
+
+    proxy.getCamera2CameraControl = (CameraControl cameraControl) =>
+        cameraControl == cameraControlForComparison
+            ? camera2cameraControl
+            : Camera2CameraControl.detached(cameraControl: cameraControl);
+
+    proxy.createCaptureRequestOptions =
+        (List<(CaptureRequestKeySupportedType, Object?)> options) =>
+            CaptureRequestOptions.detached(requestedOptions: options);
+
+    return proxy;
+  }
 
   test('Should fetch CameraDescription instances for available cameras',
       () async {
@@ -2139,6 +2169,7 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
 
     camera.proxy = getProxyForExposureAndFocus();
 
@@ -2254,6 +2285,51 @@ void main() {
   });
 
   test(
+      'setExposurePoint disables auto-cancel for focus and metering as expected',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 2;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final FocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    const Point<double> exposurePoint = Point<double>(0.1, 0.2);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, MockCamera2CameraControl());
+
+    // Make setting focus and metering action successful for test.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Test not disabling auto cancel.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+    clearInteractions(mockCameraControl);
+    await camera.setExposurePoint(cameraId, exposurePoint);
+    VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isFalse);
+
+    clearInteractions(mockCameraControl);
+
+    // Test disabling auto cancel.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    clearInteractions(mockCameraControl);
+    await camera.setExposurePoint(cameraId, exposurePoint);
+    verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    capturedAction = verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+  });
+
+  test(
       'setExposureOffset throws exception if exposure compensation not supported',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
@@ -2276,7 +2352,7 @@ void main() {
   });
 
   test(
-      'setExposureOffset throws exception if exposure compensation could not be set',
+      'setExposureOffset throws exception if exposure compensation could not be set for unknown reason',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 11;
@@ -2305,6 +2381,35 @@ void main() {
   });
 
   test(
+      'setExposureOffset throws exception if exposure compensation could not be set due to camera being closed or newer value being set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 21;
+    const double offset = 5;
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final CameraControl mockCameraControl = MockCameraControl();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
+        exposureCompensationStep: 0.1);
+    final int expectedExposureCompensationIndex =
+        (offset / exposureState.exposureCompensationStep).round();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = mockCameraInfo;
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+    when(mockCameraControl
+            .setExposureCompensationIndex(expectedExposureCompensationIndex))
+        .thenAnswer((_) async => Future<int?>.value());
+
+    expect(() => camera.setExposureOffset(cameraId, offset),
+        throwsA(isA<CameraException>()));
+  });
+
+  test(
       'setExposureOffset behaves as expected to successful attempt to set exposure compensation index',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
@@ -2316,6 +2421,8 @@ void main() {
         exposureCompensationRange:
             ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
         exposureCompensationStep: 0.2);
+    final int expectedExposureCompensationIndex =
+        (offset / exposureState.exposureCompensationStep).round();
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
@@ -2323,6 +2430,12 @@ void main() {
 
     when(mockCameraInfo.getExposureState())
         .thenAnswer((_) async => exposureState);
+    when(mockCameraControl
+            .setExposureCompensationIndex(expectedExposureCompensationIndex))
+        .thenAnswer((_) async => Future<int>.value(
+            (expectedExposureCompensationIndex *
+                    exposureState.exposureCompensationStep)
+                .round()));
 
     // Exposure index * exposure offset step size = exposure offset, i.e.
     // 15 * 0.2 = 3.
@@ -2401,6 +2514,7 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
 
     camera.proxy = getProxyForExposureAndFocus();
 
@@ -2512,5 +2626,688 @@ void main() {
     expect(capturedMeteringPointInfos.first.$1.y, equals(focusPointY));
     expect(capturedMeteringPointInfos.first.$2,
         equals(FocusMeteringAction.flagAf));
+  });
+
+  test('setFocusPoint disables auto-cancel for focus and metering as expected',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 2;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockFocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    const Point<double> exposurePoint = Point<double>(0.1, 0.2);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, MockCamera2CameraControl());
+
+    // Make setting focus and metering action successful for test.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Test not disabling auto cancel.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+    clearInteractions(mockCameraControl);
+
+    await camera.setFocusPoint(cameraId, exposurePoint);
+    VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isFalse);
+
+    clearInteractions(mockCameraControl);
+
+    // Test disabling auto cancel.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    clearInteractions(mockCameraControl);
+
+    await camera.setFocusPoint(cameraId, exposurePoint);
+    verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    capturedAction = verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+  });
+
+  test(
+      'setFocusMode does nothing if setting auto-focus mode and is already using auto-focus mode',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 4;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockFocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, MockCamera2CameraControl());
+
+    // Make setting focus and metering action successful for test.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Set locked focus mode and then try to re-set it.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    clearInteractions(mockCameraControl);
+
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    verifyNoMoreInteractions(mockCameraControl);
+  });
+
+  test(
+      'setFocusMode does nothing if setting locked focus mode and is already using locked focus mode',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 4;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    // Camera uses auto-focus by default, so try setting auto mode again.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+
+    verifyNoMoreInteractions(mockCameraControl);
+  });
+
+  test(
+      'setFocusMode removes default auto-focus point if previously set and setting auto-focus mode',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 5;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockFocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+    const double exposurePointX = 0.2;
+    const double exposurePointY = 0.7;
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Make setting focus and metering action successful for test.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Set exposure points.
+    await camera.setExposurePoint(
+        cameraId, const Point<double>(exposurePointX, exposurePointY));
+
+    // Lock focus default focus point.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    clearInteractions(mockCameraControl);
+
+    // Test removal of default focus point.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isFalse);
+
+    // We expect only the previously set exposure point to be re-set.
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(capturedMeteringPointInfos.first.$1.x, equals(exposurePointX));
+    expect(capturedMeteringPointInfos.first.$1.y, equals(exposurePointY));
+    expect(capturedMeteringPointInfos.first.$1.size, isNull);
+    expect(capturedMeteringPointInfos.first.$2,
+        equals(FocusMeteringAction.flagAe));
+  });
+
+  test(
+      'setFocusMode cancels focus and metering if only focus point previously set is a focus point',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 5;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final FocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Make setting focus and metering action successful for test.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Lock focus default focus point.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    // Test removal of default focus point.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+
+    verify(mockCameraControl.cancelFocusAndMetering());
+  });
+
+  test(
+      'setFocusMode re-focuses on previously set auto-focus point with auto-canceled enabled if setting auto-focus mode',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 6;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final FocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+    const double focusPointX = 0.1;
+    const double focusPointY = 0.2;
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Make setting focus and metering action successful for test.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Lock a focus point.
+    await camera.setFocusPoint(
+        cameraId, const Point<double>(focusPointX, focusPointY));
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    clearInteractions(mockCameraControl);
+
+    // Test re-focusing on previously set auto-focus point with auto-cancel enabled.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isFalse);
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(capturedMeteringPointInfos.first.$1.x, equals(focusPointX));
+    expect(capturedMeteringPointInfos.first.$1.y, equals(focusPointY));
+    expect(capturedMeteringPointInfos.first.$1.size, isNull);
+    expect(capturedMeteringPointInfos.first.$2,
+        equals(FocusMeteringAction.flagAf));
+  });
+
+  test(
+      'setFocusMode starts expected focus and metering action with previously set auto-focus point if setting locked focus mode and current focus and metering action has auto-focus point',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 7;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+    const double focusPointX = 0.88;
+    const double focusPointY = 0.33;
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Set a focus point.
+    await camera.setFocusPoint(
+        cameraId, const Point<double>(focusPointX, focusPointY));
+    clearInteractions(mockCameraControl);
+
+    // Lock focus point.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+
+    // We expect the set focus point to be locked.
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(capturedMeteringPointInfos.first.$1.x, equals(focusPointX));
+    expect(capturedMeteringPointInfos.first.$1.y, equals(focusPointY));
+    expect(capturedMeteringPointInfos.first.$1.size, isNull);
+    expect(capturedMeteringPointInfos.first.$2,
+        equals(FocusMeteringAction.flagAf));
+  });
+
+  test(
+      'setFocusMode starts expected focus and metering action with previously set auto-focus point if setting locked focus mode and current focus and metering action has auto-focus point amongst others',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 8;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+    const double focusPointX = 0.38;
+    const double focusPointY = 0.38;
+    const double exposurePointX = 0.54;
+    const double exposurePointY = 0.45;
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Set focus and exposure points.
+    await camera.setFocusPoint(
+        cameraId, const Point<double>(focusPointX, focusPointY));
+    await camera.setExposurePoint(
+        cameraId, const Point<double>(exposurePointX, exposurePointY));
+    clearInteractions(mockCameraControl);
+
+    // Lock focus point.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+
+    // We expect two MeteringPoints, the set focus point and the set exposure
+    // point.
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(2));
+
+    final List<(MeteringPoint, int?)> focusPoints = capturedMeteringPointInfos
+        .where(((MeteringPoint, int?) meteringPointInfo) =>
+            meteringPointInfo.$2 == FocusMeteringAction.flagAf)
+        .toList();
+    expect(focusPoints.length, equals(1));
+    expect(focusPoints.first.$1.x, equals(focusPointX));
+    expect(focusPoints.first.$1.y, equals(focusPointY));
+    expect(focusPoints.first.$1.size, isNull);
+
+    final List<(MeteringPoint, int?)> exposurePoints =
+        capturedMeteringPointInfos
+            .where(((MeteringPoint, int?) meteringPointInfo) =>
+                meteringPointInfo.$2 == FocusMeteringAction.flagAe)
+            .toList();
+    expect(exposurePoints.length, equals(1));
+    expect(exposurePoints.first.$1.x, equals(exposurePointX));
+    expect(exposurePoints.first.$1.y, equals(exposurePointY));
+    expect(exposurePoints.first.$1.size, isNull);
+  });
+
+  test(
+      'setFocusMode starts expected focus and metering action if setting locked focus mode and current focus and metering action does not contain an auto-focus point',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 9;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+    const double exposurePointX = 0.8;
+    const double exposurePointY = 0.3;
+    const double defaultFocusPointX = 0.5;
+    const double defaultFocusPointY = 0.5;
+    const double defaultFocusPointSize = 1;
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Set an exposure point (creates a current focus and metering action
+    // without a focus point).
+    await camera.setExposurePoint(
+        cameraId, const Point<double>(exposurePointX, exposurePointY));
+    clearInteractions(mockCameraControl);
+
+    // Lock focus point.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+
+    // We expect two MeteringPoints, the default focus point and the set
+    //exposure point.
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(2));
+
+    final List<(MeteringPoint, int?)> focusPoints = capturedMeteringPointInfos
+        .where(((MeteringPoint, int?) meteringPointInfo) =>
+            meteringPointInfo.$2 == FocusMeteringAction.flagAf)
+        .toList();
+    expect(focusPoints.length, equals(1));
+    expect(focusPoints.first.$1.x, equals(defaultFocusPointX));
+    expect(focusPoints.first.$1.y, equals(defaultFocusPointY));
+    expect(focusPoints.first.$1.size, equals(defaultFocusPointSize));
+
+    final List<(MeteringPoint, int?)> exposurePoints =
+        capturedMeteringPointInfos
+            .where(((MeteringPoint, int?) meteringPointInfo) =>
+                meteringPointInfo.$2 == FocusMeteringAction.flagAe)
+            .toList();
+    expect(exposurePoints.length, equals(1));
+    expect(exposurePoints.first.$1.x, equals(exposurePointX));
+    expect(exposurePoints.first.$1.y, equals(exposurePointY));
+    expect(exposurePoints.first.$1.size, isNull);
+  });
+
+  test(
+      'setFocusMode starts expected focus and metering action if there is no current focus and metering action',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 10;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+    const double defaultFocusPointX = 0.5;
+    const double defaultFocusPointY = 0.5;
+    const double defaultFocusPointSize = 1;
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Lock focus point.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+
+    // We expect only the default focus point to be set.
+    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
+        capturedAction.meteringPointInfos;
+    expect(capturedMeteringPointInfos.length, equals(1));
+    expect(capturedMeteringPointInfos.first.$1.x, equals(defaultFocusPointX));
+    expect(capturedMeteringPointInfos.first.$1.y, equals(defaultFocusPointY));
+    expect(capturedMeteringPointInfos.first.$1.size,
+        equals(defaultFocusPointSize));
+    expect(capturedMeteringPointInfos.first.$2,
+        equals(FocusMeteringAction.flagAf));
+  });
+
+  test(
+      'setFocusMode re-sets exposure mode if setting locked focus mode while using auto exposure mode',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 11;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final FocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    final MockCamera2CameraControl mockCamera2CameraControl =
+        MockCamera2CameraControl();
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraInfo = MockCameraInfo();
+    camera.cameraControl = mockCameraControl;
+
+    when(mockCamera2CameraControl.addCaptureRequestOptions(any))
+        .thenAnswer((_) async => Future<void>.value());
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, mockCamera2CameraControl);
+
+    // Make setting focus and metering action successful for test.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Set auto exposure mode.
+    await camera.setExposureMode(cameraId, ExposureMode.auto);
+    clearInteractions(mockCamera2CameraControl);
+
+    // Lock focus point.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+
+    final VerificationResult verificationResult =
+        verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
+    final CaptureRequestOptions capturedCaptureRequestOptions =
+        verificationResult.captured.single as CaptureRequestOptions;
+    final List<(CaptureRequestKeySupportedType, Object?)> requestedOptions =
+        capturedCaptureRequestOptions.requestedOptions;
+    expect(requestedOptions.length, equals(1));
+    expect(requestedOptions.first.$1,
+        equals(CaptureRequestKeySupportedType.controlAeLock));
+    expect(requestedOptions.first.$2, equals(false));
+  });
+
+  test(
+      'setFocusPoint disables auto-cancel if auto focus mode fails to be set after locked focus mode is set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 22;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockFocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    const Point<double> focusPoint = Point<double>(0.21, 0.21);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, MockCamera2CameraControl());
+
+    // Make setting focus and metering action successful to set locked focus
+    // mode.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Set exposure point to later mock failed call to set an exposure point (
+    // otherwise, focus and metering will be canceled altogether, which is
+    //considered a successful call).
+    await camera.setExposurePoint(cameraId, const Point<double>(0.3, 0.4));
+
+    // Set locked focus mode so we can set auto mode (cannot set auto mode
+    // directly since it is the default).
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    clearInteractions(mockCameraControl);
+
+    // Make setting focus and metering action fail to test that auto-cancel is
+    // still disabled.
+    reset(mockFocusMeteringResult);
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(false));
+
+    // Test disabling auto cancel.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+    clearInteractions(mockCameraControl);
+
+    await camera.setFocusPoint(cameraId, focusPoint);
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+  });
+
+  test(
+      'setExposurePoint disables auto-cancel if auto focus mode fails to be set after locked focus mode is set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 342;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockFocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    const Point<double> exposurePoint = Point<double>(0.23, 0.32);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, MockCamera2CameraControl());
+
+    // Make setting focus and metering action successful to set locked focus
+    // mode.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Set exposure point to later mock failed call to set an exposure point (
+    // otherwise, focus and metering will be canceled altogether, which is
+    //considered a successful call).
+    await camera.setExposurePoint(cameraId, const Point<double>(0.4, 0.3));
+
+    // Set locked focus mode so we can set auto mode (cannot set auto mode
+    // directly since it is the default).
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    clearInteractions(mockCameraControl);
+
+    // Make setting focus and metering action fail to test that auto-cancel is
+    // still disabled.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(false));
+
+    // Test disabling auto cancel.
+    await camera.setFocusMode(cameraId, FocusMode.auto);
+    clearInteractions(mockCameraControl);
+
+    await camera.setExposurePoint(cameraId, exposurePoint);
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isTrue);
+  });
+
+  test(
+      'setFocusPoint enables auto-cancel if locked focus mode fails to be set after auto focus mode is set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 232;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockFocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    const Point<double> focusPoint = Point<double>(0.221, 0.211);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, MockCamera2CameraControl());
+
+    // Make setting focus and metering action fail to test auto-cancel is not
+    // disabled.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(false));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Set exposure point to later mock failed call to set an exposure point.
+    await camera.setExposurePoint(cameraId, const Point<double>(0.43, 0.34));
+
+    // Test failing to set locked focus mode.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    clearInteractions(mockCameraControl);
+
+    await camera.setFocusPoint(cameraId, focusPoint);
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isFalse);
+  });
+
+  test(
+      'setExposurePoint enables auto-cancel if locked focus mode fails to be set after auto focus mode is set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 323;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockFocusMeteringResult mockFocusMeteringResult =
+        MockFocusMeteringResult();
+    const Point<double> exposurePoint = Point<double>(0.223, 0.332);
+
+    // Set directly for test versus calling createCamera.
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = MockCameraInfo();
+
+    camera.proxy = getProxyForSettingFocusandExposurePoints(
+        mockCameraControl, MockCamera2CameraControl());
+
+    // Make setting focus and metering action fail to test auto-cancel is not
+    // disabled.
+    when(mockFocusMeteringResult.isFocusSuccessful())
+        .thenAnswer((_) async => Future<bool>.value(false));
+    when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
+        Future<FocusMeteringResult>.value(mockFocusMeteringResult));
+
+    // Set exposure point to later mock failed call to set an exposure point.
+    await camera.setExposurePoint(cameraId, const Point<double>(0.5, 0.2));
+
+    // Test failing to set locked focus mode.
+    await camera.setFocusMode(cameraId, FocusMode.locked);
+    clearInteractions(mockCameraControl);
+
+    await camera.setExposurePoint(cameraId, exposurePoint);
+    final VerificationResult verificationResult =
+        verify(mockCameraControl.startFocusAndMetering(captureAny));
+    final FocusMeteringAction capturedAction =
+        verificationResult.captured.single as FocusMeteringAction;
+    expect(capturedAction.disableAutoCancel, isFalse);
   });
 }

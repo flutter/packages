@@ -477,8 +477,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 children: <Widget>[
                   TextButton(
                     style: styleAuto,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () => onSetFocusModeButtonPressed(FocusMode.auto)
+                        : null,
                     onLongPress: () {
                       if (controller != null) {
                         CameraPlatform.instance
@@ -490,8 +491,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () => onSetFocusModeButtonPressed(FocusMode.locked)
+                        : null,
                     child: const Text('LOCKED'),
                   ),
                 ],

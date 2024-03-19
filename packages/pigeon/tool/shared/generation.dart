@@ -68,6 +68,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     'null_fields',
     'nullable_returns',
     'primitive',
+    'proxy_api_tests',
   ];
 
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');

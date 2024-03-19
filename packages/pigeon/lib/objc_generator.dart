@@ -726,7 +726,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       _writeCreateConnectionError(indent);
       indent.newln();
     }
-    _writeGetNullableObjectAtIndex(indent);
+
+    if (hasHostApi || hasFlutterApi) {
+      _writeGetNullableObjectAtIndex(indent);
+    }
   }
 
   void _writeWrapError(Indent indent) {
