@@ -57,7 +57,7 @@ Object serializeHeatmap(Heatmap heatmap) {
   }
   _addIfNonNull(json, 'maxIntensity', heatmap.maxIntensity);
   _addIfNonNull(json, 'opacity', heatmap.opacity);
-  _addIfNonNull(json, 'radius', heatmap.radius);
+  _addIfNonNull(json, 'radius', heatmap.radius.pixels);
   _addIfNonNull(json, 'minimumZoomIntensity', heatmap.minimumZoomIntensity);
   _addIfNonNull(json, 'maximumZoomIntensity', heatmap.maximumZoomIntensity);
 
