@@ -70,6 +70,11 @@ abstract class SyntaxHighlighter {
 
 /// An interface for an element builder.
 abstract class MarkdownElementBuilder {
+  /// For block syntax has to return true.
+  ///
+  /// By default returns false.
+  bool isBlockElement() => false;
+
   /// Called when an Element has been reached, before its children have been
   /// visited.
   void visitElementBefore(md.Element element) {}

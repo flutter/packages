@@ -3035,14 +3035,18 @@ class FocusMeteringActionHostApi {
 
   static const MessageCodec<Object?> codec = _FocusMeteringActionHostApiCodec();
 
-  Future<void> create(int arg_identifier,
-      List<MeteringPointInfo?> arg_meteringPointInfos) async {
+  Future<void> create(
+      int arg_identifier,
+      List<MeteringPointInfo?> arg_meteringPointInfos,
+      bool? arg_disableAutoCancel) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FocusMeteringActionHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_meteringPointInfos])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_meteringPointInfos,
+      arg_disableAutoCancel
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
