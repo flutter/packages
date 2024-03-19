@@ -252,11 +252,12 @@ class _MyAppState extends State<_MyApp> {
               productDetails.description,
             ),
             trailing: previousPurchase != null
-                ? IconButton(
+                ? TextButton(
                     onPressed: () {
                       _iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
                     },
-                    icon: const Icon(Icons.upgrade))
+                    child: const Text('Restored'),
+                  )
                 : TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.green[800],
@@ -298,15 +299,18 @@ class _MyAppState extends State<_MyApp> {
         ListTile(title: Text('Purchased consumables'));
     final List<Widget> tokens = _consumables.map((String id) {
       return GridTile(
-        child: IconButton(
-          icon: const Icon(
-            Icons.stars,
-            size: 42.0,
-            color: Colors.orange,
-          ),
-          splashColor: Colors.yellowAccent,
-          onPressed: () => consume(id),
-        ),
+        child: TextButton(
+            onPressed: () => consume(id),
+            child: const Column(
+              children: <Widget>[
+                Text(textAlign: TextAlign.center, 'Bought Item'),
+                Icon(
+                  Icons.stars,
+                  size: 42.0,
+                  color: Colors.orange,
+                ),
+              ],
+            )),
       );
     }).toList();
     return Card(
