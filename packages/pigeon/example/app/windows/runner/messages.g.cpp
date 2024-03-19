@@ -150,7 +150,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_example_package."
                                   "ExampleHostApi.getHostLanguage" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -180,7 +180,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -223,7 +223,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -281,7 +281,7 @@ MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
                                      const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
-      message_channel_suffix_(message_channel_suffix.length > 0
+      message_channel_suffix_(message_channel_suffix.length() > 0
                                   ? "." + message_channel_suffix
                                   : "") {}
 

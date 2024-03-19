@@ -752,7 +752,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "noop" + message_channel_suffix.length >
+        "noop" + message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -782,7 +782,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAllTypes" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -821,7 +821,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.throwError" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -857,7 +857,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.throwErrorFromVoid" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -887,7 +887,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.throwFlutterError" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -924,7 +924,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoInt" + message_channel_suffix.length >
+        "echoInt" + message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -961,7 +961,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoDouble" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -999,7 +999,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoBool" + message_channel_suffix.length >
+        "echoBool" + message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1036,7 +1036,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoString" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1074,7 +1074,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoUint8List" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1113,7 +1113,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoObject" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1150,7 +1150,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoList" + message_channel_suffix.length >
+        "echoList" + message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1188,7 +1188,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoMap" + message_channel_suffix.length >
+        "echoMap" + message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1226,7 +1226,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoClassWrapper" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1266,7 +1266,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoEnum" + message_channel_suffix.length >
+        "echoEnum" + message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1306,7 +1306,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoNamedDefaultString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1346,7 +1346,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoOptionalDefaultDouble" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1385,7 +1385,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoRequiredInt" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1423,7 +1423,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAllNullableTypes" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1467,7 +1467,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "extractNestedNullableString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1513,7 +1513,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "createNestedNullableString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1550,7 +1550,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "sendMultipleNullableTypes" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1599,7 +1599,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableInt" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1646,7 +1646,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableDouble" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1687,7 +1687,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableBool" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1728,7 +1728,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableString" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1770,7 +1770,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoNullableUint8List" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -1812,7 +1812,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableObject" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1853,7 +1853,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableList" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1894,7 +1894,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableMap" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1935,7 +1935,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoNullableEnum" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -1984,7 +1984,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoOptionalNullableInt" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2032,7 +2032,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoNamedNullableString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2073,7 +2073,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.noopAsync" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2104,7 +2104,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncInt" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2143,7 +2143,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncDouble" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2184,7 +2184,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncBool" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2223,7 +2223,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncString" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2264,7 +2264,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncUint8List" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2306,7 +2306,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncObject" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2346,7 +2346,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncList" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2387,7 +2387,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncMap" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2428,7 +2428,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncEnum" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2469,7 +2469,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.throwAsyncError" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2508,7 +2508,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "throwAsyncErrorFromVoid" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2541,7 +2541,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "throwAsyncFlutterError" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2579,7 +2579,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.echoAsyncAllTypes" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -2621,7 +2621,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableAllNullableTypes" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2667,7 +2667,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableInt" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2715,7 +2715,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableDouble" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2759,7 +2759,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableBool" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2801,7 +2801,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2845,7 +2845,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableUint8List" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2890,7 +2890,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableObject" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2933,7 +2933,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableList" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -2977,7 +2977,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableMap" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3021,7 +3021,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableEnum" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3071,7 +3071,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.callFlutterNoop" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -3104,7 +3104,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterThrowError" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3143,7 +3143,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterThrowErrorFromVoid" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3176,7 +3176,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoAllTypes" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3218,7 +3218,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoAllNullableTypes" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3264,7 +3264,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterSendMultipleNullableTypes" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3315,7 +3315,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.callFlutterEchoBool" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -3355,7 +3355,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.callFlutterEchoInt" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -3396,7 +3396,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoDouble" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3438,7 +3438,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3480,7 +3480,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoUint8List" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3521,7 +3521,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.callFlutterEchoList" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -3562,7 +3562,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.callFlutterEchoMap" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -3603,7 +3603,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
                                   "HostIntegrationCoreApi.callFlutterEchoEnum" +
-                                              message_channel_suffix.length >
+                                              message_channel_suffix.length() >
                                           0
                                       ? "." + message_channel_suffix
                                       : "",
@@ -3645,7 +3645,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableBool" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3687,7 +3687,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableInt" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3735,7 +3735,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableDouble" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3779,7 +3779,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3823,7 +3823,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableUint8List" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3868,7 +3868,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableList" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3912,7 +3912,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableMap" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -3956,7 +3956,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableEnum" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -4007,7 +4007,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterSmallApiEchoString" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -4130,7 +4130,7 @@ FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
     flutter::BinaryMessenger* binary_messenger,
     const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
-      message_channel_suffix_(message_channel_suffix.length > 0
+      message_channel_suffix_(message_channel_suffix.length() > 0
                                   ? "." + message_channel_suffix
                                   : "") {}
 
@@ -5055,7 +5055,7 @@ void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -5115,7 +5115,7 @@ void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -5155,7 +5155,7 @@ void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid" +
-                    message_channel_suffix.length >
+                    message_channel_suffix.length() >
                 0
             ? "." + message_channel_suffix
             : "",
@@ -5233,7 +5233,7 @@ FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger)
 FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
                                  const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
-      message_channel_suffix_(message_channel_suffix.length > 0
+      message_channel_suffix_(message_channel_suffix.length() > 0
                                   ? "." + message_channel_suffix
                                   : "") {}
 
