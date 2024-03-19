@@ -4,7 +4,8 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "messages.g.h"
+#import "messages.g-Swift.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 

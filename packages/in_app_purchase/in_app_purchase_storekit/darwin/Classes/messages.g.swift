@@ -100,13 +100,22 @@ enum SKSubscriptionPeriodUnitMessage: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKPaymentTransactionMessage {
+class SKPaymentTransactionMessage {
   var payment: SKPaymentMessage
   var transactionState: SKPaymentTransactionStateMessage
   var originalTransaction: SKPaymentTransactionMessage? = nil
   var transactionTimeStamp: Double? = nil
   var transactionIdentifier: String? = nil
   var error: SKErrorMessage? = nil
+
+  init(payment: SKPaymentMessage, transactionState: SKPaymentTransactionStateMessage, originalTransaction: SKPaymentTransactionMessage? = nil, transactionTimeStamp: Double? = nil, transactionIdentifier: String? = nil, error: SKErrorMessage? = nil) {
+    self.payment = payment
+    self.transactionState = transactionState
+    self.originalTransaction = originalTransaction
+    self.transactionTimeStamp = transactionTimeStamp
+    self.transactionIdentifier = transactionIdentifier
+    self.error = error
+  }
 
   static func fromList(_ list: [Any?]) -> SKPaymentTransactionMessage? {
     let payment = SKPaymentMessage.fromList(list[0] as! [Any?])!

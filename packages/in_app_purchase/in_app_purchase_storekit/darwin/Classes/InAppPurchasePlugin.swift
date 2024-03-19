@@ -19,6 +19,8 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   private(set) var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
   private(set) var registrar: FlutterPluginRegistrar?
   private(set) var receiptManager: FIAPReceiptManager?
+  private(set) var paymentQueueDelegate: Any? = nil;
+  // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   private var requestHandlers = Set<FIAPRequestHandler>()
   private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)?
   private var paymentQueueHandler: FIAPaymentQueueHandler?
@@ -71,25 +73,43 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
 
   func handleTransactionsUpdated(_ transactions: [SKPaymentTransaction]) {
+    var maps: [[AnyHashable: Any]] = []
+    for transaction in transactions {
+      let map = FIAObjectTranslator.getMapFrom(transaction);
+      maps.append(map);
+    }
+    transactionObserverCallbackChannel!.invokeMethod("updatedTransactions", arguments: maps)
   }
 
   func handleTransactionsRemoved(_ transactions: [SKPaymentTransaction]) {
+    var maps: [[AnyHashable: Any]] = []
+    for transaction in transactions {
+      let map = FIAObjectTranslator.getMapFrom(transaction);
+      maps.append(map);
+    }
+    transactionObserverCallbackChannel!.invokeMethod("removedTransactions", arguments: maps)
   }
 
   func handleTransactionRestoreFailed(_ error: Error) {
-
+    transactionObserverCallbackChannel!.invokeMethod("restoreCompletedTransactionsFailed", arguments: FIAObjectTranslator.getMapFrom(error));
   }
 
   func restoreCompletedTransactionsFinished() {
-
+    transactionObserverCallbackChannel!.invokeMethod("paymentQueueRestoreCompletedTransactionsFinished", arguments:nil);
   }
 
   func shouldAddStorePayment(payment: SKPayment, product: SKProduct) -> Bool {
-
+    productsCache[product.productIdentifier] = product;
+    transactionObserverCallbackChannel!
+      .invokeMethod("shouldAddStorePayment", arguments: [
+        "payment": FIAObjectTranslator.getMapFrom(payment),
+        "product": FIAObjectTranslator.getMapFrom(product)
+      ]);
+    return false;
   }
 
   func updatedDownloads() {
-
+    NSLog("Received an updatedDownloads callback, but downloads are not supported.");
   }
 
   func canMakePayments() throws -> Bool {
@@ -115,123 +135,201 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       }
       return FIAObjectTranslator.convertStorefront(toPigeon: storefront) as? SKStorefrontMessage;
     }
+    return nil;
   }
 
-  func addPayment(paymentMap: [String : Any?]) throws {
-    let productID = paymentMap["productIdentifier"] as? NSString;
-    let product = self.getProduct(productID: productID!);
-    if (product == nil) {
-      throw FlutterError(code: "storekit_invalid_payment_object", message: "You have requested a payment for an invalid product. Either the `productIdentifier` of the payment is not valid or the product has not been fetched before adding the payment to the payment queue.", details: paymentMap)
-      return;
-    }
-    let payment = SKMutablePayment(product: product!);
-    payment.applicationUsername = paymentMap["applicationUsername"] as? String;
-    let quantity = paymentMap["quantity"] as? Int ?? 1;
-    payment.quantity = quantity;
-
-    if let simulatesAskToBuyInSandbox = paymentMap["simulatesAskToBuyInSandbox"] as? Bool {
-        payment.simulatesAskToBuyInSandbox = simulatesAskToBuyInSandbox
-    } else {
-        payment.simulatesAskToBuyInSandbox = false
-    }
-
-    if #available(iOS 12.2, *) {
-      var paymentDiscountMap = self.getNonNullValue(from: paymentMap as [String : Any], forKey: "paymentDiscount");
-      var errorMsg : AutoreleasingUnsafeMutablePointer<NSString?>? = nil;
-      var paymentDiscount = FIAObjectTranslator.getSKPaymentDiscount(fromMap: paymentDiscountMap as! [AnyHashable : Any], withError: errorMsg);
-      if (errorMsg != nil) {
-        throw FlutterError(code: "storekit_invalid_payment_discount_object", message: "You have requested a payment and specified a payment discount with invalid properties.", details: paymentMap
-        )
-        return;
+  func addPayment(paymentMap: [String: Any?]) throws {
+      guard let productID = paymentMap["productIdentifier"] as? String else {
+          throw FlutterError(code: "storekit_missing_product_identifier",
+                             message: "The `productIdentifier` is missing from the payment map.",
+                             details: paymentMap)
       }
-      payment.paymentDiscount = paymentDiscount;
 
-      if (!(self.paymentQueueHandler?.add(payment))!) {
-           throw FlutterError(code: "storekit_duplicate_product_object",
-                                message: "There is a pending transaction for the same product identifier. Please either wait for it to be finished or finish it manually using `completePurchase` to avoid edge cases.",
-                                details: paymentMap)
-       }
-    }
+      guard let product = self.getProduct(productID: productID) else {
+          throw FlutterError(code: "storekit_invalid_payment_object",
+                             message: "You have requested a payment for an invalid product. Either the `productIdentifier` is not valid or the product has not been fetched before adding the payment to the payment queue.",
+                             details: paymentMap)
+      }
+
+      let payment = SKMutablePayment(product: product)
+      payment.applicationUsername = paymentMap["applicationUsername"] as? String
+      payment.quantity = paymentMap["quantity"] as? Int ?? 1
+      payment.simulatesAskToBuyInSandbox = paymentMap["simulatesAskToBuyInSandbox"] as? Bool ?? false
+
+      if #available(iOS 12.2, *) {
+          if let paymentDiscountMap = paymentMap["paymentDiscount"] as? [String: Any], !paymentDiscountMap.isEmpty {
+              var error: NSString?
+            if let paymentDiscount = FIAObjectTranslator.getSKPaymentDiscount(fromMap: paymentDiscountMap, withError: &error) {
+                  payment.paymentDiscount = paymentDiscount
+              } else if let error = error {
+                  throw FlutterError(code: "storekit_invalid_payment_discount_object",
+                                     message: "You have requested a payment and specified a payment discount with invalid properties: \(error)",
+                                     details: paymentMap)
+              }
+          }
+      }
+
+      guard self.paymentQueueHandler?.add(payment) == true else {
+          throw FlutterError(code: "storekit_duplicate_product_object",
+                             message: "There is a pending transaction for the same product identifier. Please either wait for it to be finished or finish it manually using `completePurchase` to avoid edge cases.",
+                             details: paymentMap)
+      }
   }
-
-//    if (@available(iOS 12.2, *)) {
-//      NSDictionary *paymentDiscountMap = [self getNonNullValueFromDictionary:paymentMap
-//                                                                      forKey:@"paymentDiscount"];
-//      NSString *errorMsg = nil;
-//      SKPaymentDiscount *paymentDiscount =
-//          [FIAObjectTranslator getSKPaymentDiscountFromMap:paymentDiscountMap withError:&errorMsg];
-//
-//      if (errorMsg) {
-//        *error = [FlutterError
-//            errorWithCode:@"storekit_invalid_payment_discount_object"
-//                  message:[NSString stringWithFormat:@"You have requested a payment and specified a "
-//                                                     @"payment discount with invalid properties. %@",
-//                                                     errorMsg]
-//                  details:paymentMap];
-//        return;
-//      }
-//
-//      payment.paymentDiscount = paymentDiscount;
-//    }
-//    if (![self.paymentQueueHandler addPayment:payment]) {
-//      *error = [FlutterError
-//          errorWithCode:@"storekit_duplicate_product_object"
-//                message:@"There is a pending transaction for the same product identifier. Please "
-//                        @"either wait for it to be finished or finish it manually using "
-//                        @"`completePurchase` to avoid edge cases."
-//
-//                details:paymentMap];
-//      return;
-//    }
-//  }
 
   func startProductRequest(productIdentifiers: [String], completion: @escaping (Result<SKProductsResponseMessage, Error>) -> Void) {
-    <#code#>
+      let request = getProductRequest(withIdentifiers: Set(productIdentifiers))
+      let handler = handlerFactory!(request)
+      requestHandlers.insert(handler)
+
+      handler.startProductRequest { response, startProductRequestError in
+          var error: FlutterError;
+          if let startProductRequestError = startProductRequestError {
+              error = FlutterError(code: "storekit_getproductrequest_platform_error",
+                                   message: startProductRequestError.localizedDescription,
+                                   details: startProductRequestError.localizedDescription)
+            completion(.failure(error));
+            return
+          }
+
+          guard let response = response else {
+              error = FlutterError(code: "storekit_platform_no_response",
+                                   message: "Failed to get SKProductResponse in startRequest call. Error occurred on iOS platform",
+                                   details: productIdentifiers)
+            completion(.failure(error));
+            return
+          }
+
+          response.products.forEach { product in
+              self.productsCache[product.productIdentifier] = product
+          }
+
+        if let responseMessage = FIAObjectTranslator.convertProductsResponse(toPigeon: response) {
+            completion(.success(responseMessage as! SKProductsResponseMessage))
+          } else {
+              error = FlutterError(code: "conversion_error",
+                                   message: "Could not convert products response to expected format",
+                                   details: nil)
+            completion(.failure(error))
+          }
+
+          self.requestHandlers.remove(handler)
+      }
   }
 
   func finishTransaction(finishMap: [String : String?]) throws {
-    <#code#>
+    guard let transactionIdentifier = finishMap["transactionIdentifier"],
+              let productIdentifier = finishMap["productIdentifier"] else {
+            throw FlutterError(code: "missing_keys", message: "Transaction or product identifier is missing.", details: finishMap)
+        }
+
+        let pendingTransactions = paymentQueueHandler!.getUnfinishedTransactions()
+
+        for transaction in pendingTransactions {
+            // If the user cancels the purchase dialog we won't have a transactionIdentifier.
+            // So if it is nil AND a transaction in the pendingTransactions list has
+            // also a nil transactionIdentifier we check for equal product identifiers.
+            if transaction.transactionIdentifier == transactionIdentifier ||
+               (transaction.transactionIdentifier == nil && transaction.payment.productIdentifier == productIdentifier) {
+              paymentQueueHandler!.finish(transaction)
+              /// The obj c method possibly sets an error, but im not sure how to handle it here
+              /// How can i specify the error that is thrown?
+            }
+        }
   }
 
   func restoreTransactions(applicationUserName: String?) throws {
-    <#code#>
+    paymentQueueHandler?.restoreTransactions(applicationUserName);
   }
 
   func presentCodeRedemptionSheet() throws {
-    <#code#>
+    #if os(iOS)
+        paymentQueueHandler!.presentCodeRedemptionSheet()
+    #endif
   }
 
   func retrieveReceiptData() throws -> String? {
-    <#code#>
+    var error : FlutterError? = nil;
+    let receiptData : String? = receiptManager!.retrieveReceiptWithError(&error);
+    if (receiptData == nil) {
+      throw error!;
+    }
+    return receiptData;
   }
 
   func refreshReceipt(receiptProperties: [String : Any?]?, completion: @escaping (Result<Void, Error>) -> Void) {
-    <#code#>
+      var request: SKReceiptRefreshRequest
+      if let receiptProperties = receiptProperties {
+          // If receiptProperties is not nil, this call is for testing.
+          var properties: [String: Any] = [:]
+        properties[SKReceiptPropertyIsExpired] = receiptProperties["isExpired"]!
+        properties[SKReceiptPropertyIsRevoked] = receiptProperties["isRevoked"]!
+        properties[SKReceiptPropertyIsVolumePurchase] = receiptProperties["isVolumePurchase"]!
+        request = getRefreshReceiptRequest(properties: properties);
+      } else {
+        request = getRefreshReceiptRequest(properties: nil);
+      }
+
+      let handler = handlerFactory!(request)
+      requestHandlers.insert(handler)
+      handler.startProductRequest { [weak self] response, error in
+          if let error = error {
+              let requestError = FlutterError(code: "storekit_refreshreceiptrequest_platform_error",
+                                              message: error.localizedDescription,
+                                              details: error.localizedDescription)
+            completion(.failure(requestError));
+              return
+          }
+        completion(.success(Void()));
+        // that looks wrong ^
+        self?.requestHandlers.remove(handler);
+      }
   }
 
   func startObservingPaymentQueue() throws {
-    <#code#>
+    paymentQueueHandler!.startObservingPaymentQueue();
   }
 
   func stopObservingPaymentQueue() throws {
-    <#code#>
+    paymentQueueHandler!.stopObservingPaymentQueue();
   }
 
   func registerPaymentQueueDelegate() throws {
-    <#code#>
+#if os(iOS)
+    if #available(iOS 13.0, *) {
+      paymentQueueDelegateCallbackChannel = FlutterMethodChannel(name: "plugins.flutter.io/in_app_purchase_payment_queue_delegate",
+                                         binaryMessenger: registrar!.messenger())
+
+      paymentQueueDelegate = FIAPPaymentQueueDelegate(methodChannel: paymentQueueDelegateCallbackChannel!)
+      paymentQueueHandler!.delegate = (paymentQueueDelegate as! any SKPaymentQueueDelegate);
+    }
+#endif
   }
 
   func removePaymentQueueDelegate() throws {
-    <#code#>
+#if os(iOS)
+    if #available(iOS 13.0, *) {
+      paymentQueueDelegateCallbackChannel = nil;
+      paymentQueueHandler!.delegate = nil;
+      paymentQueueDelegate = nil;
+    }
+#endif
   }
 
   func showPriceConsentIfNeeded() throws {
-    <#code#>
+#if os(iOS)
+    if #available(iOS 13.4, *) {
+      paymentQueueHandler!.showPriceConsentIfNeeded();
+    }
+#endif
   }
 
 
-  func getProduct (productID : NSString) -> SKProduct? {
+  func getProduct(productID : String) -> SKProduct? {
     return self.productsCache[productID] as? SKProduct;
+  }
+
+  func getProductRequest(withIdentifiers productIdentifiers: Set<String>) -> SKProductsRequest {
+    return SKProductsRequest(productIdentifiers: productIdentifiers);
   }
 
   func getNonNullValue(from dictionary: [String: Any], forKey key: String) -> Any? {
@@ -239,5 +337,8 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       return value is NSNull ? nil : value
   }
 
+  func getRefreshReceiptRequest(properties: [String: Any]?) -> SKReceiptRefreshRequest {
+    return SKReceiptRefreshRequest(receiptProperties: properties);
+  }
 }
 

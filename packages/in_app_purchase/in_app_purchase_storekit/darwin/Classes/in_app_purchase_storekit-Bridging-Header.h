@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "InAppPurchasePlugin.h"
 #import <StoreKit/StoreKit.h>
+#import "messages.g-Swift.h"
 #import "FIAObjectTranslator.h"
 #import "FIAPPaymentQueueDelegate.h"
 #import "FIAPReceiptManager.h"
