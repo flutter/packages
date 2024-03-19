@@ -1,3 +1,7 @@
+## 17.2.0
+
+* [dart] Adds implementation for `@ProxyApi`.
+
 ## 17.1.3
 
 * [objc] Fixes double prefixes added to enum names.
