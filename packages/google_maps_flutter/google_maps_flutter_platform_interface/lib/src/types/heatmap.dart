@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart'
-    show listEquals, objectRuntimeType, immutable;
+    show immutable, listEquals, objectRuntimeType;
 import 'package:flutter/material.dart' show Color;
 
 import 'types.dart';

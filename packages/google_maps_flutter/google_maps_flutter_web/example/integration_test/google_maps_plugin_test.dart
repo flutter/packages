@@ -271,7 +271,7 @@ void main() {
         await plugin.updateHeatmaps(expectedUpdates, mapId: mapId);
 
         verify(controller.updateHeatmaps(expectedUpdates));
-      )};
+      });
       // Tile Overlays
       testWidgets('updateTileOverlays', (WidgetTester tester) async {
         final Set<TileOverlay> expectedOverlays = <TileOverlay>{

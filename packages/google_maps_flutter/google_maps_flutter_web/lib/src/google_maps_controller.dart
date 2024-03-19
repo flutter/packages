@@ -284,7 +284,7 @@ class GoogleMapController {
 
     _markersController!.addMarkers(_markers);
     _circlesController!.addCircles(_circles);
-    _heatmapsController!.addHeatmaps(heatmaps);
+    _heatmapsController!.addHeatmaps(_heatmaps);
     _polygonsController!.addPolygons(_polygons);
     _polylinesController!.addPolylines(_polylines);
     _tileOverlaysController!.addTileOverlays(_tileOverlays);
