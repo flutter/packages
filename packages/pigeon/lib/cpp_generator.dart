@@ -1019,12 +1019,14 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           '${api.name}* api',
           'const std::string& message_channel_suffix',
         ], body: () {
+      indent.writeln(
+          'const std::string prepended_suffix = message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : "";');
       for (final Method method in api.methods) {
         final String channelName =
             makeChannelName(api, method, dartPackageName);
         indent.writeScoped('{', '}', () {
           indent.writeln('BasicMessageChannel<> channel(binary_messenger, '
-              '"$channelName" + (message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : ""), &GetCodec());');
+              '"$channelName" + prepended_suffix, &GetCodec());');
           indent.writeScoped('if (api != nullptr) {', '} else {', () {
             indent.write(
                 'channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
