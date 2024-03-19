@@ -5,6 +5,7 @@
 import 'dart:ui' show Size;
 
 import 'analyzer.dart';
+import 'aspect_ratio_strategy.dart';
 import 'camera2_camera_control.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
@@ -116,7 +117,7 @@ class CameraXProxy {
 
   /// Returns a [ResolutionSelector] configured with the specified
   /// [ResolutionStrategy].
-  ResolutionSelector Function(ResolutionStrategy resolutionStrategy)
+  ResolutionSelector Function(ResolutionStrategy resolutionStrategy, AspectRatioStrategy? aspectRatioStrategy)
       createResolutionSelector;
 
   /// Returns a [FallbackStrategy] configured with the specified [VideoQuality]
@@ -234,8 +235,8 @@ class CameraXProxy {
   }
 
   static ResolutionSelector _createAttachedResolutionSelector(
-      ResolutionStrategy resolutionStrategy) {
-    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+      ResolutionStrategy resolutionStrategy, AspectRatioStrategy? aspectRatioStrategy) {
+    return ResolutionSelector(resolutionStrategy: resolutionStrategy, aspectRatioStrategy: aspectRatioStrategy);
   }
 
   static FallbackStrategy _createAttachedFallbackStrategy(

@@ -9,10 +9,11 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' hide AspectRatio;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
+import 'aspect_ratio_strategy.dart';
 import 'camera.dart';
 import 'camera2_camera_control.dart';
 import 'camera_control.dart';
@@ -1150,32 +1151,46 @@ class AndroidCameraCameraX extends CameraPlatform {
         ResolutionStrategy.fallbackRuleClosestLowerThenHigher;
 
     Size? boundSize;
+    int? aspectRatio;
     ResolutionStrategy? resolutionStrategy;
     switch (preset) {
       case ResolutionPreset.low:
         boundSize = const Size(320, 240);
+        aspectRatio = AspectRatio.ratio4To3;
       case ResolutionPreset.medium:
+        // TODO(camsim99): Handle the 3:2 aspect ratio case:
+        // https://github.com/flutter/flutter/issues/144363.
         boundSize = const Size(720, 480);
       case ResolutionPreset.high:
         boundSize = const Size(1280, 720);
+        aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.veryHigh:
         boundSize = const Size(1920, 1080);
+        aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.ultraHigh:
         boundSize = const Size(3840, 2160);
+        aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
         resolutionStrategy =
             proxy.createResolutionStrategy(highestAvailable: true);
-        return proxy.createResolutionSelector(resolutionStrategy);
+        return proxy.createResolutionSelector(
+            resolutionStrategy, /* AspectRatioStrategy */ null);
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
 
+    final AspectRatioStrategy? aspectRatioStrategy = aspectRatio == null
+        ? null
+        : AspectRatioStrategy(
+            preferredAspectRatio: aspectRatio,
+            fallbackRule: AspectRatioStrategy.fallbackRuleAuto);
     resolutionStrategy = proxy.createResolutionStrategy(
         boundSize: boundSize, fallbackRule: fallbackRule);
-    return proxy.createResolutionSelector(resolutionStrategy);
+    return proxy.createResolutionSelector(
+        resolutionStrategy, aspectRatioStrategy);
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution
