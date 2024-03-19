@@ -125,10 +125,12 @@ interface ExampleHostApi {
         messageChannelSuffix: String = ""
     ) {
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -145,10 +147,12 @@ interface ExampleHostApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -168,10 +172,12 @@ interface ExampleHostApi {
         }
       }
       run {
+        val separatedMessageChannelSuffix =
+            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$messageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -206,8 +212,10 @@ class MessageFlutterApi(
   }
 
   fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName =
-        "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$messageChannelSuffix"
+        "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {

@@ -136,7 +136,7 @@ class ExampleHostApiSetup {
   ) {
     let getHostLanguageChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(messageChannelSuffix)",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
@@ -151,7 +151,8 @@ class ExampleHostApiSetup {
       getHostLanguageChannel.setMessageHandler(nil)
     }
     let addChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(messageChannelSuffix)",
+      name:
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
@@ -170,7 +171,7 @@ class ExampleHostApiSetup {
     }
     let sendMessageChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(messageChannelSuffix)",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : "")",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
@@ -200,7 +201,7 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
   private let messageChannelSuffix: String
   init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") {
     self.binaryMessenger = binaryMessenger
-    self.messageChannelSuffix = messageChannelSuffix
+    self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
   func flutterMethod(
     aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void

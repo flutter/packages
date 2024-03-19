@@ -150,7 +150,10 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_example_package."
                                   "ExampleHostApi.getHostLanguage" +
-                                      message_channel_suffix,
+                                              message_channel_suffix.length >
+                                          0
+                                      ? "." + message_channel_suffix
+                                      : "",
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -177,7 +180,10 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add" +
-            message_channel_suffix,
+                    message_channel_suffix.length >
+                0
+            ? "." + message_channel_suffix
+            : "",
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -217,7 +223,10 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage" +
-            message_channel_suffix,
+                    message_channel_suffix.length >
+                0
+            ? "." + message_channel_suffix
+            : "",
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -272,7 +281,9 @@ MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
                                      const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
-      message_channel_suffix_(message_channel_suffix) {}
+      message_channel_suffix_(message_channel_suffix.length > 0
+                                  ? "." + message_channel_suffix
+                                  : "") {}
 
 const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(

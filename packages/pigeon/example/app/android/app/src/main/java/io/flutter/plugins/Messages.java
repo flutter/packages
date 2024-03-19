@@ -276,7 +276,7 @@ public class Messages {
         @NonNull String messageChannelSuffix,
         @Nullable ExampleHostApi api) {
       {
-        messageChannelSuffix = messageChannelSuffix.length > 0 ? "." + messageChannelSuffix : "";
+        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -301,7 +301,7 @@ public class Messages {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.length > 0 ? "." + messageChannelSuffix : "";
+        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -332,7 +332,7 @@ public class Messages {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.length > 0 ? "." + messageChannelSuffix : "";
+        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -378,7 +378,7 @@ public class Messages {
     public MessageFlutterApi(
         @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
-      this.messageChannelSuffix = messageChannelSuffix.length > 0 ? "." + messageChannelSuffix : "";
+      this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
     /** Public interface for sending reply. */
