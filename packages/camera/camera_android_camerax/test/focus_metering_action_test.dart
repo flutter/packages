@@ -43,8 +43,8 @@ void main() {
         instanceManager: instanceManager,
       );
 
-      verifyNever(
-          mockApi.create(argThat(isA<int>()), argThat(isA<List<int>>())));
+      verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<List<int>>()),
+          argThat(isA<bool?>())));
     });
     test('create calls create on the Java side', () {
       final MockTestFocusMeteringActionHostApi mockApi =
@@ -67,6 +67,7 @@ void main() {
         (mockMeteringPoint1, mockMeteringPoint1Mode),
         (mockMeteringPoint2, mockMeteringPoint2Mode)
       ];
+      const bool disableAutoCancel = true;
 
       instanceManager
           .addHostCreatedInstance(mockMeteringPoint1, mockMeteringPoint1Id,
@@ -81,12 +82,14 @@ void main() {
 
       final FocusMeteringAction instance = FocusMeteringAction(
         meteringPointInfos: meteringPointInfos,
+        disableAutoCancel: disableAutoCancel,
         instanceManager: instanceManager,
       );
 
       final VerificationResult verificationResult = verify(mockApi.create(
           argThat(equals(instanceManager.getIdentifier(instance))),
-          captureAny));
+          captureAny,
+          argThat(equals(disableAutoCancel))));
       final List<MeteringPointInfo?> captureMeteringPointInfos =
           verificationResult.captured.single as List<MeteringPointInfo?>;
       expect(captureMeteringPointInfos.length, equals(2));
