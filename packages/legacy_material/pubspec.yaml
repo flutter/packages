@@ -1,0 +1,23 @@
+name: legacy_material
+description: ThemeData and associated component themes reflecting legacy Material Design.
+version: 0.0.1
+repository: https://github.com/flutter/packages/tree/main/packages/legacy_material
+#issue_tracker: TODO(Piinks): After publishing
+publish_to: none
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+  flutter: ">=3.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+topics:
+- theme
+- material

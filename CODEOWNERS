@@ -24,6 +24,7 @@ packages/google_maps_flutter/**                          @stuartmorgan
 packages/google_sign_in/**                               @stuartmorgan
 packages/image_picker/**                                 @tarrinneal
 packages/in_app_purchase/**                              @bparrishMines
+packages/legacy_material                                 @Piinks
 packages/local_auth/**                                   @stuartmorgan
 packages/metrics_center/**                               @keyonghan
 packages/multicast_dns/**                                @dnfield

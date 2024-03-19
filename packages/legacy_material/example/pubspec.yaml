@@ -1,0 +1,23 @@
+name: legacy_material_example
+description: 'A sample application that uses LegacyThemeData'
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0-96.0.dev <4.0.0'
+
+dependencies:
+  cupertino_icons: ^1.0.6
+  flutter:
+    sdk: flutter
+  legacy_material:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: ^3.0.0
+  flutter_test:
+    sdk: flutter
+
+# The following section is specific to Flutter packages.
+flutter:
+  uses-material-design: true
