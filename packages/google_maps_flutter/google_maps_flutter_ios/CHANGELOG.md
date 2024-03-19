@@ -1,3 +1,16 @@
+## 2.5.1
+
+* Makes the tile overlay callback invoke the platform channel on the platform thread.
+
+## 2.5.0
+
+* Adds support for `MapConfiguration.style`.
+* Adds support for `getStyleError`.
+
+## 2.4.2
+
+* Fixes a bug in "takeSnapshot" function that incorrectly returns a blank image on iOS 17.
+
 ## 2.4.1
 
 * Restores the workaround to exclude arm64 simulator builds, as it is still necessary for applications targeting iOS 12.

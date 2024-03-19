@@ -94,6 +94,14 @@ enum WKNavigationActionPolicyEnum {
   cancel,
 }
 
+/// Mirror of WKNavigationResponsePolicy.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+enum WKNavigationResponsePolicyEnum {
+  allow,
+  cancel,
+}
+
 /// Mirror of NSHTTPCookiePropertyKey.
 ///
 /// See https://developer.apple.com/documentation/foundation/nshttpcookiepropertykey.
@@ -483,6 +491,30 @@ class NSUrlRequestData {
   }
 }
 
+/// Mirror of NSURLResponse.
+///
+/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+class NSHttpUrlResponseData {
+  NSHttpUrlResponseData({
+    required this.statusCode,
+  });
+
+  int statusCode;
+
+  Object encode() {
+    return <Object?>[
+      statusCode,
+    ];
+  }
+
+  static NSHttpUrlResponseData decode(Object result) {
+    result as List<Object?>;
+    return NSHttpUrlResponseData(
+      statusCode: result[0]! as int,
+    );
+  }
+}
+
 /// Mirror of WKUserScript.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuserscript?language=objc.
@@ -550,6 +582,35 @@ class WKNavigationActionData {
       request: NSUrlRequestData.decode(result[0]! as List<Object?>),
       targetFrame: WKFrameInfoData.decode(result[1]! as List<Object?>),
       navigationType: WKNavigationType.values[result[2]! as int],
+    );
+  }
+}
+
+/// Mirror of WKNavigationResponse.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
+class WKNavigationResponseData {
+  WKNavigationResponseData({
+    required this.response,
+    required this.forMainFrame,
+  });
+
+  NSHttpUrlResponseData response;
+
+  bool forMainFrame;
+
+  Object encode() {
+    return <Object?>[
+      response.encode(),
+      forMainFrame,
+    ];
+  }
+
+  static WKNavigationResponseData decode(Object result) {
+    result as List<Object?>;
+    return WKNavigationResponseData(
+      response: NSHttpUrlResponseData.decode(result[0]! as List<Object?>),
+      forMainFrame: result[1]! as bool,
     );
   }
 }
@@ -1044,6 +1105,31 @@ class UIScrollViewHostApi {
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel
         .send(<Object?>[arg_identifier, arg_x, arg_y]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setDelegate(
+      int arg_identifier, int? arg_uiScrollViewDelegateIdentifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_uiScrollViewDelegateIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1666,17 +1752,23 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
     } else if (value is NSErrorData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationActionPolicyEnumData) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationResponseData) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1691,13 +1783,17 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
       case 129:
         return NSErrorData.decode(readValue(buffer)!);
       case 130:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 131:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 132:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 133:
+        return WKNavigationActionData.decode(readValue(buffer)!);
+      case 134:
         return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+      case 135:
+        return WKNavigationResponseData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1720,6 +1816,11 @@ abstract class WKNavigationDelegateFlutterApi {
       int identifier,
       int webViewIdentifier,
       WKNavigationActionData navigationAction);
+
+  Future<WKNavigationResponsePolicyEnum> decidePolicyForNavigationResponse(
+      int identifier,
+      int webViewIdentifier,
+      WKNavigationResponseData navigationResponse);
 
   void didFailNavigation(
       int identifier, int webViewIdentifier, NSErrorData error);
@@ -1826,6 +1927,42 @@ abstract class WKNavigationDelegateFlutterApi {
                 await api.decidePolicyForNavigationAction(arg_identifier!,
                     arg_webViewIdentifier!, arg_navigationAction!);
             return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null int.');
+          final int? arg_webViewIdentifier = (args[1] as int?);
+          assert(arg_webViewIdentifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null int.');
+          final WKNavigationResponseData? arg_navigationResponse =
+              (args[2] as WKNavigationResponseData?);
+          assert(arg_navigationResponse != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null WKNavigationResponseData.');
+          try {
+            final WKNavigationResponsePolicyEnum output =
+                await api.decidePolicyForNavigationResponse(arg_identifier!,
+                    arg_webViewIdentifier!, arg_navigationResponse!);
+            return wrapResponse(result: output.index);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
@@ -2221,50 +2358,56 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is NSHttpCookiePropertyKeyEnumData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueChangeKeyEnumData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueObservingOptionsEnumData) {
+    } else if (value is NSKeyValueChangeKeyEnumData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSKeyValueObservingOptionsEnumData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is ObjectOrIdentifier) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is WKAudiovisualMediaTypeEnumData) {
+    } else if (value is ObjectOrIdentifier) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKMediaCaptureTypeData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKMediaCaptureTypeData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKPermissionDecisionData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKNavigationResponseData) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is WKSecurityOriginData) {
+    } else if (value is WKPermissionDecisionData) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKSecurityOriginData) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKUserScriptData) {
       buffer.putUint8(146);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(147);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(148);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2283,34 +2426,38 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
       case 131:
         return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
       case 132:
-        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 133:
-        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
+        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
       case 134:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
       case 135:
-        return ObjectOrIdentifier.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 136:
-        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
+        return ObjectOrIdentifier.decode(readValue(buffer)!);
       case 137:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       case 138:
-        return WKMediaCaptureTypeData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 139:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKMediaCaptureTypeData.decode(readValue(buffer)!);
       case 140:
-        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+        return WKNavigationActionData.decode(readValue(buffer)!);
       case 141:
-        return WKPermissionDecisionData.decode(readValue(buffer)!);
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 142:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKNavigationResponseData.decode(readValue(buffer)!);
       case 143:
-        return WKSecurityOriginData.decode(readValue(buffer)!);
+        return WKPermissionDecisionData.decode(readValue(buffer)!);
       case 144:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKScriptMessageData.decode(readValue(buffer)!);
       case 145:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKSecurityOriginData.decode(readValue(buffer)!);
       case 146:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 147:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 148:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -3289,6 +3436,98 @@ abstract class NSUrlFlutterApi {
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlFlutterApi.create was null, expected non-null int.');
           try {
             api.create(arg_identifier!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+class UIScrollViewDelegateHostApi {
+  /// Constructor for [UIScrollViewDelegateHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  UIScrollViewDelegateHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<void> create(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+/// Flutter API for `UIScrollViewDelegate`.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+abstract class UIScrollViewDelegateFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void scrollViewDidScroll(
+      int identifier, int uiScrollViewIdentifier, double x, double y);
+
+  static void setup(UIScrollViewDelegateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null, expected non-null int.');
+          final int? arg_uiScrollViewIdentifier = (args[1] as int?);
+          assert(arg_uiScrollViewIdentifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null, expected non-null int.');
+          final double? arg_x = (args[2] as double?);
+          assert(arg_x != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null, expected non-null double.');
+          final double? arg_y = (args[3] as double?);
+          assert(arg_y != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null, expected non-null double.');
+          try {
+            api.scrollViewDidScroll(
+                arg_identifier!, arg_uiScrollViewIdentifier!, arg_x!, arg_y!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

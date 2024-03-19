@@ -7,11 +7,15 @@ package io.flutter.plugins.inapppurchase;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.AccountIdentifiers;
+import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
+import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.UserChoiceDetails;
+import com.android.billingclient.api.UserChoiceDetails.Product;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -228,6 +232,54 @@ import java.util.Map;
     HashMap<String, Object> info = new HashMap<>();
     info.put("responseCode", billingResult.getResponseCode());
     info.put("debugMessage", billingResult.getDebugMessage());
+    return info;
+  }
+
+  static HashMap<String, Object> fromUserChoiceDetails(UserChoiceDetails userChoiceDetails) {
+    HashMap<String, Object> info = new HashMap<>();
+    info.put("externalTransactionToken", userChoiceDetails.getExternalTransactionToken());
+    info.put("originalExternalTransactionId", userChoiceDetails.getOriginalExternalTransactionId());
+    info.put("products", fromProductsList(userChoiceDetails.getProducts()));
+    return info;
+  }
+
+  static List<HashMap<String, Object>> fromProductsList(List<Product> productsList) {
+    if (productsList.isEmpty()) {
+      return Collections.emptyList();
+    }
+    ArrayList<HashMap<String, Object>> output = new ArrayList<>();
+    for (Product product : productsList) {
+      output.add(fromProduct(product));
+    }
+    return output;
+  }
+
+  static HashMap<String, Object> fromProduct(Product product) {
+    HashMap<String, Object> info = new HashMap<>();
+    info.put("id", product.getId());
+    info.put("offerToken", product.getOfferToken());
+    info.put("productType", product.getType());
+
+    return info;
+  }
+
+  /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
+  static HashMap<String, Object> fromBillingConfig(
+      BillingResult result, BillingConfig billingConfig) {
+    HashMap<String, Object> info = fromBillingResult(result);
+    info.put("countryCode", billingConfig.getCountryCode());
+    return info;
+  }
+
+  /**
+   * Converter from {@link BillingResult} and {@link AlternativeBillingOnlyReportingDetails} to map.
+   */
+  static HashMap<String, Object> fromAlternativeBillingOnlyReportingDetails(
+      BillingResult result, AlternativeBillingOnlyReportingDetails details) {
+    HashMap<String, Object> info = fromBillingResult(result);
+    if (details != null) {
+      info.put("externalTransactionToken", details.getExternalTransactionToken());
+    }
     return info;
   }
 

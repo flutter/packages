@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 4.1.11
+
+* Replaces deprecated loadBuffer API usage.
+
 ## 4.1.10
 
 * Fixes image asset link to use image within package.

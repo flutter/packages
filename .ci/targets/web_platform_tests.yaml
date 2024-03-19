@@ -3,12 +3,12 @@ tasks:
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: download Dart deps
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps", "--web", "--supporting-target-platforms-only"]
     infra_step: true
   - name: build examples
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["build-examples", "--web"]
   - name: drive examples
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["drive-examples", "--web", "--run-chromedriver", "--exclude=script/configs/exclude_integration_web.yaml"]

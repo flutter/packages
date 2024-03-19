@@ -1,3 +1,12 @@
+## 0.3.1+1
+
+* Uses `TrustedTypes` from `web: ^0.5.1`.
+
+## 0.3.1
+
+* Updates web code to package `web: ^0.5.0`.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+
 ## 0.3.0+2
 
 * Adds `fedcm_auto` to `CredentialSelectBy` enum.
