@@ -113,6 +113,14 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
+      // Linux
+      linuxHeaderOut: skipLanguages.contains(GeneratorLanguage.linux)
+          ? null
+          : '$outputBase/linux/pigeon/$input.gen.h',
+      linuxSourceOut: skipLanguages.contains(GeneratorLanguage.linux)
+          ? null
+          : '$outputBase/linux/pigeon/$input.gen.cc',
+      linuxModule: 'My',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
     );
@@ -196,6 +204,7 @@ Future<int> runPigeon({
   String? dartTestOut,
   String? linuxHeaderOut,
   String? linuxSourceOut,
+  String? linuxModule,
   String? javaOut,
   String? javaPackage,
   String? objcHeaderOut,
@@ -229,7 +238,7 @@ Future<int> runPigeon({
     cppOptions: CppOptions(namespace: cppNamespace),
     linuxHeaderOut: linuxHeaderOut,
     linuxSourceOut: linuxSourceOut,
-    linuxOptions: const LinuxOptions(),
+    linuxOptions: LinuxOptions(module: linuxModule),
     javaOut: javaOut,
     javaOptions: JavaOptions(package: javaPackage),
     kotlinOut: kotlinOut,

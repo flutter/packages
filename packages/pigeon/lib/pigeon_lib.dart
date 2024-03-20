@@ -311,7 +311,7 @@ class PigeonOptions {
   /// Path to the ".cc" Linux file that will be generated.
   final String? linuxSourceOut;
 
-  /// Options that control how C++ will be generated.
+  /// Options that control how Linux source will be generated.
   final LinuxOptions? linuxOptions;
 
   /// Options that control how Dart will be generated.

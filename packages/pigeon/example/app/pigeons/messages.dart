@@ -13,7 +13,7 @@ import 'package:pigeon/pigeon.dart';
   cppSourceOut: 'windows/runner/messages.g.cpp',
   linuxHeaderOut: 'linux/messages.g.h',
   linuxSourceOut: 'linux/messages.g.cc',
-  linuxOptions: LinuxOptions(),
+  linuxOptions: LinuxOptions(module: 'My'),
   kotlinOut:
       'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
   kotlinOptions: KotlinOptions(),
