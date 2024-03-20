@@ -6,13 +6,18 @@
 //
 
 import Foundation
-import Flutter
 import StoreKit
+
+#if os(iOS)
+import Flutter
+#elseif os(macOS)
+import FlutterMacOS
+#endif
 
 extension FlutterError: Error {}
 
-
-class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
+@objc
+public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
   // Properties
   private(set) var productsCache: NSMutableDictionary = [:]
@@ -26,7 +31,7 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   private var paymentQueueHandler: FIAPaymentQueueHandler?
   private var transactionObserverCallbackChannel: FlutterMethodChannel?
 
-  static func register(with registrar: FlutterPluginRegistrar) {
+  public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "plugins.flutter.io/in_app_purchase",
                                        binaryMessenger: registrar.messenger())
     let instance = InAppPurchasePlugin(registrar: registrar)
