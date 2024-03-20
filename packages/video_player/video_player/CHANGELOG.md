@@ -1,3 +1,7 @@
+## 2.8.4
+
+* Bumps min version of iOS part to start with version with privacy manifest included.
+
 ## 2.8.3
 
 * Fixes typo in `README.md`.
