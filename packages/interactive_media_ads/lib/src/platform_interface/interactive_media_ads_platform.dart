@@ -2,34 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
 import 'platform_ad_display_container.dart';
 import 'platform_ads_loader.dart';
 import 'platform_ads_manager_delegate.dart';
 
 /// Interface for a platform implementation of the Interactive Media Ads SDKs.
-abstract class InteractiveMediaAdsPlatform extends PlatformInterface {
-  /// Creates a new [InteractiveMediaAdsPlatform].
-  InteractiveMediaAdsPlatform() : super(token: _token);
-
-  static final Object _token = Object();
-
-  static InteractiveMediaAdsPlatform? _instance;
-
+abstract base class InteractiveMediaAdsPlatform {
   /// The instance of [InteractiveMediaAdsPlatform] to use.
-  static InteractiveMediaAdsPlatform? get instance => _instance;
-
+  ///
   /// Platform-specific plugins should set this with their own platform-specific
   /// class that extends [InteractiveMediaAdsPlatform] when they register
   /// themselves.
-  static set instance(InteractiveMediaAdsPlatform? instance) {
-    if (instance != null) {
-      PlatformInterface.verifyToken(instance, _token);
-    }
-
-    _instance = instance;
-  }
+  static InteractiveMediaAdsPlatform? instance;
 
   /// Creates a new [PlatformAdsLoader].
   PlatformAdsLoader createPlatformAdsLoader(

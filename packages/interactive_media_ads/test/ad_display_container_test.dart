@@ -11,6 +11,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'ad_display_container_test.mocks.dart';
+import 'test_stubs.dart';
 
 @GenerateMocks(<Type>[PlatformAdDisplayContainer])
 void main() {
@@ -30,7 +31,13 @@ void main() {
 
   testWidgets('constructor parameters are correctly passed to creation params',
       (WidgetTester tester) async {
-    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform();
+    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
+      onCreatePlatformAdDisplayContainer: (
+        PlatformAdDisplayContainerCreationParams params,
+      ) {
+        return TestPlatformAdDisplayContainer(params);
+      },
+    );
 
     final AdDisplayContainer adDisplayContainer = AdDisplayContainer(
       key: GlobalKey(),
@@ -41,22 +48,4 @@ void main() {
     // and not passed to the platform implementation.
     expect(adDisplayContainer.platform.params.key, isNull);
   });
-}
-
-class TestInteractiveMediaAdsPlatform extends InteractiveMediaAdsPlatform {
-  @override
-  PlatformAdDisplayContainer createPlatformAdDisplayContainer(
-    PlatformAdDisplayContainerCreationParams params,
-  ) {
-    return TestPlatformAdDisplayContainer(params);
-  }
-}
-
-class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
-  TestPlatformAdDisplayContainer(super.params) : super.implementation();
-
-  @override
-  Widget build(BuildContext context) {
-    throw UnimplementedError();
-  }
 }

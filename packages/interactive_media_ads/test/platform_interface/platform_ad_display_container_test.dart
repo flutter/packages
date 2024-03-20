@@ -6,21 +6,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'platform_ad_display_container_test.mocks.dart';
+import '../test_stubs.dart';
 
-@GenerateMocks(<Type>[
-  InteractiveMediaAdsPlatform,
-  PlatformAdDisplayContainer,
-])
 void main() {
-  setUp(() {
-    InteractiveMediaAdsPlatform.instance =
-        MockInteractiveMediaAdsPlatformWithMixin();
-  });
-
   PlatformAdDisplayContainerCreationParams createEmptyParams() {
     return PlatformAdDisplayContainerCreationParams(
       onContainerAdded: (_) {},
@@ -28,10 +17,13 @@ void main() {
   }
 
   test('Cannot be implemented with `implements`', () {
-    when((InteractiveMediaAdsPlatform.instance!
-                as MockInteractiveMediaAdsPlatform)
-            .createPlatformAdDisplayContainer(any))
-        .thenReturn(ImplementsPlatformAdDisplayContainer());
+    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
+      onCreatePlatformAdDisplayContainer: (
+        PlatformAdDisplayContainerCreationParams params,
+      ) {
+        return ImplementsPlatformAdDisplayContainer();
+      },
+    );
 
     expect(
       () => PlatformAdDisplayContainer(createEmptyParams()),
@@ -40,17 +32,17 @@ void main() {
   });
 
   test('Can be extended', () {
-    when((InteractiveMediaAdsPlatform.instance!
-                as MockInteractiveMediaAdsPlatform)
-            .createPlatformAdDisplayContainer(any))
-        .thenReturn(ExtendsPlatformAdDisplayContainer(createEmptyParams()));
+    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
+      onCreatePlatformAdDisplayContainer: (
+        PlatformAdDisplayContainerCreationParams params,
+      ) {
+        return ExtendsPlatformAdDisplayContainer(createEmptyParams());
+      },
+    );
 
     expect(PlatformAdDisplayContainer(createEmptyParams()), isNotNull);
   });
 }
-
-class MockInteractiveMediaAdsPlatformWithMixin
-    extends MockInteractiveMediaAdsPlatform with MockPlatformInterfaceMixin {}
 
 class ImplementsPlatformAdDisplayContainer
     implements PlatformAdDisplayContainer {

@@ -5,22 +5,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import '../test_stubs.dart';
 import 'platform_ads_loader_test.mocks.dart';
 
 @GenerateMocks(<Type>[
-  InteractiveMediaAdsPlatform,
   PlatformAdsLoader,
   PlatformAdDisplayContainer,
 ])
 void main() {
-  setUp(() {
-    InteractiveMediaAdsPlatform.instance =
-        MockInteractiveMediaAdsPlatformWithMixin();
-  });
-
   PlatformAdsLoaderCreationParams createEmptyParams() {
     return PlatformAdsLoaderCreationParams(
       container: MockPlatformAdDisplayContainer(),
@@ -30,10 +23,13 @@ void main() {
   }
 
   test('Cannot be implemented with `implements`', () {
-    when((InteractiveMediaAdsPlatform.instance!
-                as MockInteractiveMediaAdsPlatform)
-            .createPlatformAdsLoader(any))
-        .thenReturn(ImplementsPlatformAdsLoader());
+    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
+      onCreatePlatformAdsLoader: (
+        PlatformAdsLoaderCreationParams params,
+      ) {
+        return ImplementsPlatformAdsLoader();
+      },
+    );
 
     expect(
       () => PlatformAdsLoader(createEmptyParams()),
@@ -42,10 +38,13 @@ void main() {
   });
 
   test('Can be extended', () {
-    when((InteractiveMediaAdsPlatform.instance!
-                as MockInteractiveMediaAdsPlatform)
-            .createPlatformAdsLoader(any))
-        .thenReturn(ExtendsPlatformAdsLoader(createEmptyParams()));
+    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
+      onCreatePlatformAdsLoader: (
+        PlatformAdsLoaderCreationParams params,
+      ) {
+        return ExtendsPlatformAdsLoader(createEmptyParams());
+      },
+    );
 
     expect(PlatformAdsLoader(createEmptyParams()), isNotNull);
   });
@@ -73,9 +72,6 @@ void main() {
     );
   });
 }
-
-class MockInteractiveMediaAdsPlatformWithMixin
-    extends MockInteractiveMediaAdsPlatform with MockPlatformInterfaceMixin {}
 
 class ImplementsPlatformAdsLoader implements PlatformAdsLoader {
   @override

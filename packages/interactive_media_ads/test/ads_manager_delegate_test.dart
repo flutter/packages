@@ -6,9 +6,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 
+import 'test_stubs.dart';
+
 void main() {
   test('passes params to platform instance', () async {
-    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform();
+    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
+      onCreatePlatformAdsManagerDelegate:
+          (PlatformAdsManagerDelegateCreationParams params) {
+        return TestPlatformAdsManagerDelegate(params);
+      },
+    );
 
     void onAdEvent(AdEvent event) {}
     void onAdErrorEvent(AdErrorEvent event) {}
@@ -21,18 +28,4 @@ void main() {
     expect(delegate.platform.params.onAdEvent, onAdEvent);
     expect(delegate.platform.params.onAdErrorEvent, onAdErrorEvent);
   });
-}
-
-class TestInteractiveMediaAdsPlatform extends InteractiveMediaAdsPlatform {
-  @override
-  PlatformAdsManagerDelegate createPlatformAdsManagerDelegate(
-    PlatformAdsManagerDelegateCreationParams params,
-  ) {
-    return TestPlatformPlatformAdsManagerDelegate(params);
-  }
-}
-
-class TestPlatformPlatformAdsManagerDelegate
-    extends PlatformAdsManagerDelegate {
-  TestPlatformPlatformAdsManagerDelegate(super.params) : super.implementation();
 }

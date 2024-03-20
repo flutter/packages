@@ -9,6 +9,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'ads_manager_test.mocks.dart';
+import 'test_stubs.dart';
 
 @GenerateMocks(<Type>[
   PlatformAdsManager,
@@ -20,7 +21,11 @@ void main() {
   AdsManager createAdsManagerWithMockPlatform(
     MockPlatformAdsManager mockManager,
   ) {
-    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform();
+    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
+      onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
+        return TestPlatformAdsLoader(params);
+      },
+    );
 
     late final AdsManager manager;
 
@@ -86,17 +91,4 @@ void main() {
     await manager.destroy();
     verify(mockPlatformAdsManager.destroy());
   });
-}
-
-class TestInteractiveMediaAdsPlatform extends InteractiveMediaAdsPlatform {
-  @override
-  PlatformAdsLoader createPlatformAdsLoader(
-    PlatformAdsLoaderCreationParams params,
-  ) {
-    return TestPlatformAdsLoader(params);
-  }
-}
-
-class TestPlatformAdsLoader extends PlatformAdsLoader {
-  TestPlatformAdsLoader(super.params) : super.implementation();
 }
