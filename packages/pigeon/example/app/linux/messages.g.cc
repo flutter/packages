@@ -72,18 +72,6 @@ static FlValue* my_message_data_to_list(MyMessageData* self) {
 }
 
 static MyMessageData* my_message_data_new_from_list(FlValue* values) {
-  if (fl_value_get_type(values) != FL_VALUE_TYPE_LIST ||
-      fl_value_get_type(fl_value_get_list_value(values, 0)) !=
-          FL_VALUE_TYPE_STRING ||
-      fl_value_get_type(fl_value_get_list_value(values, 1)) !=
-          FL_VALUE_TYPE_STRING ||
-      fl_value_get_type(fl_value_get_list_value(values, 2)) !=
-          FL_VALUE_TYPE_INT ||
-      fl_value_get_type(fl_value_get_list_value(values, 3)) !=
-          FL_VALUE_TYPE_MAP) {
-    return nullptr;
-  }
-
   return my_message_data_new(
       fl_value_get_string(fl_value_get_list_value(values, 0)),
       fl_value_get_string(fl_value_get_list_value(values, 1)),

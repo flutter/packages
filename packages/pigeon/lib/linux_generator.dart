@@ -525,18 +525,6 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     indent.addScoped(
         'static $className* ${methodPrefix}_new_from_list(FlValue* values) {',
         '}', () {
-      final List<String> checks = <String>[
-        'fl_value_get_type(values) != FL_VALUE_TYPE_LIST'
-      ];
-      for (int i = 0; i < classDefinition.fields.length; i++) {
-        final NamedType field = classDefinition.fields[i];
-        checks.add(
-            'fl_value_get_type(fl_value_get_list_value(values, $i)) != ${_getFlValueType(field.type)}');
-      }
-      indent.addScoped("if (${checks.join(' || ')}) {", '}', () {
-        indent.writeln('return nullptr;');
-      });
-      indent.newln();
       final List<String> args = <String>[];
       for (int i = 0; i < classDefinition.fields.length; i++) {
         final NamedType field = classDefinition.fields[i];
@@ -868,27 +856,11 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
           indent.writeln('return;');
         });
 
-        final List<String> checks = <String>[];
-        final List<String> methodArgs = <String>[];
-        if (method.parameters.isEmpty) {
-          checks.add('fl_value_get_type(message) != FL_VALUE_TYPE_NULL');
-        } else {
-          checks.add('fl_value_get_type(message) != FL_VALUE_TYPE_LIST');
-          checks.add(
-              'fl_value_get_length(message) != ${method.parameters.length}');
-          for (int i = 0; i < method.parameters.length; i++) {
-            final Parameter param = method.parameters[i];
-            checks.add(
-                'fl_value_get_type(fl_value_get_list_value(message, $i)) != ${_getFlValueType(param.type)}');
-            methodArgs.add(_fromFlValue(generatorOptions.module, param.type,
-                'fl_value_get_list_value(message, $i)'));
-          }
-        }
-
-        indent.newln();
-        indent.addScoped("if (${checks.join(' || ')}) {", '}', () {
-          indent.writeln('return;');
-        });
+        final List<String> methodArgs = <String>[
+          for (int i = 0; i < method.parameters.length; i++)
+            _fromFlValue(generatorOptions.module, method.parameters[i].type,
+                'fl_value_get_list_value(message, $i)'),
+        ];
 
         indent.newln();
         if (method.isAsynchronous) {
@@ -1278,29 +1250,6 @@ String _fromFlValue(String module, TypeDeclaration type, String variableName) {
     return 'fl_value_get_double($variableName)';
   } else if (type.baseName == 'String') {
     return 'fl_value_get_string($variableName)';
-  } else {
-    throw Exception('Unknown type ${type.baseName}');
-  }
-}
-
-// Returns the FlValueType enumeration for the native data [type].
-String _getFlValueType(TypeDeclaration type) {
-  if (type.isClass) {
-    return 'FL_VALUE_TYPE_CUSTOM';
-  } else if (type.isEnum) {
-    return 'FL_VALUE_TYPE_INT';
-  } else if (type.baseName == 'List') {
-    return 'FL_VALUE_TYPE_LIST';
-  } else if (type.baseName == 'Map') {
-    return 'FL_VALUE_TYPE_MAP';
-  } else if (type.baseName == 'bool') {
-    return 'FL_VALUE_TYPE_BOOL';
-  } else if (type.baseName == 'int') {
-    return 'FL_VALUE_TYPE_INT';
-  } else if (type.baseName == 'double') {
-    return 'FL_VALUE_TYPE_DOUBLE';
-  } else if (type.baseName == 'String') {
-    return 'FL_VALUE_TYPE_STRING';
   } else {
     throw Exception('Unknown type ${type.baseName}');
   }
