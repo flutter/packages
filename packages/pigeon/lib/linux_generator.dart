@@ -237,33 +237,28 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     for (final Method method in api.methods) {
       final String methodName = _snakeCaseFromCamelCase(method.name);
 
-      final List<String> asyncArgs = <String>['$className* object'];
-      for (final Parameter param in method.parameters) {
-        final String paramName = _snakeCaseFromCamelCase(param.name);
-        final String paramType = _getType(generatorOptions.module, param.type);
-        asyncArgs.add('$paramType $paramName');
-      }
-      asyncArgs.addAll(<String>[
+      final List<String> asyncArgs = <String>[
+        '$className* object',
+        for (final Parameter param in method.parameters)
+          '${_getType(generatorOptions.module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
         'GCancellable* cancellable',
         'GAsyncReadyCallback callback',
         'gpointer user_data'
-      ]);
+      ];
       indent.newln();
       addDocumentationComments(
           indent, method.documentationComments, _docCommentSpec);
       indent.writeln(
           "void ${methodPrefix}_${methodName}_async(${asyncArgs.join(', ')});");
 
-      final List<String> finishArgs = <String>[
-        '$className* object',
-        'GAsyncResult* result'
-      ];
       final String returnType =
           _getType(generatorOptions.module, method.returnType, isOutput: true);
-      if (returnType != 'void') {
-        finishArgs.add('$returnType* return_value');
-      }
-      finishArgs.add('GError** error');
+      final List<String> finishArgs = <String>[
+        '$className* object',
+        'GAsyncResult* result',
+        if (returnType != 'void') '$returnType* return_value',
+        'GError** error'
+      ];
       indent.newln();
       indent.writeln(
           "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')});");
@@ -336,21 +331,16 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
         final String responseName = _getResponseName(api.name, method.name);
         final String responseClassName = _getClassName(module, responseName);
 
-        final List<String> methodArgs = <String>['$className* object'];
-        for (final Parameter param in method.parameters) {
-          final String paramName = _snakeCaseFromCamelCase(param.name);
-          final String paramType = _getType(module, param.type);
-          methodArgs.add('$paramType $paramName');
-        }
-        final String returnType;
-        if (method.isAsynchronous) {
-          methodArgs
-              .add('FlBasicMessageChannelResponseHandle* response_handle');
-          returnType = 'void';
-        } else {
-          returnType = '$responseClassName*';
-        }
-        methodArgs.add('gpointer user_data');
+        final List<String> methodArgs = <String>[
+          '$className* object',
+          for (final Parameter param in method.parameters)
+            '${_getType(module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
+          if (method.isAsynchronous)
+            'FlBasicMessageChannelResponseHandle* response_handle',
+          'gpointer user_data',
+        ];
+        final String returnType =
+            method.isAsynchronous ? 'void' : '$responseClassName*';
         indent.writeln("$returnType (*$methodName)(${methodArgs.join(', ')});");
       }
     });
@@ -487,12 +477,10 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     _writeClassInit(
         indent, generatorOptions.module, classDefinition.name, () {});
 
-    final List<String> constructorArgs = <String>[];
-    for (final NamedType field in classDefinition.fields) {
-      final String fieldName = _snakeCaseFromCamelCase(field.name);
-      final String type = _getType(generatorOptions.module, field.type);
-      constructorArgs.add('$type $fieldName');
-    }
+    final List<String> constructorArgs = <String>[
+      for (final NamedType field in classDefinition.fields)
+        '${_getType(generatorOptions.module, field.type)} ${_snakeCaseFromCamelCase(field.name)}',
+    ];
     indent.newln();
     indent.addScoped(
         "$className* ${methodPrefix}_new(${constructorArgs.join(', ')}) {", '}',
@@ -604,33 +592,28 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     for (final Method method in api.methods) {
       final String methodName = _snakeCaseFromCamelCase(method.name);
 
-      final List<String> asyncArgs = <String>['$className* object'];
-      for (final Parameter param in method.parameters) {
-        final String paramName = _snakeCaseFromCamelCase(param.name);
-        final String paramType = _getType(generatorOptions.module, param.type);
-        asyncArgs.add('$paramType $paramName');
-      }
-      asyncArgs.addAll(<String>[
+      final List<String> asyncArgs = <String>[
+        '$className* object',
+        for (final Parameter param in method.parameters)
+          '${_getType(generatorOptions.module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
         'GCancellable* cancellable',
         'GAsyncReadyCallback callback',
-        'gpointer user_data'
-      ]);
+        'gpointer user_data',
+      ];
       indent.newln();
       indent.addScoped(
           "void ${methodPrefix}_${methodName}_async(${asyncArgs.join(', ')}) {",
           '}',
           () {});
 
-      final List<String> finishArgs = <String>[
-        '$className* object',
-        'GAsyncResult* result'
-      ];
       final String returnType =
           _getType(generatorOptions.module, method.returnType, isOutput: true);
-      if (returnType != 'void') {
-        finishArgs.add('$returnType* return_value');
-      }
-      finishArgs.add('GError** error');
+      final List<String> finishArgs = <String>[
+        '$className* object',
+        'GAsyncResult* result',
+        if (returnType != 'void') '$returnType* return_value',
+        'GError** error',
+      ];
       indent.newln();
       indent.addScoped(
           "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')}) {",
