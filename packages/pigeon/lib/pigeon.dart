@@ -10,7 +10,5 @@ export 'java_generator.dart' show JavaOptions;
 export 'kotlin_generator.dart' show KotlinOptions;
 export 'linux_generator.dart' show LinuxOptions;
 export 'objc_generator.dart' show ObjcOptions;
-// TODO(bparrishMines): Remove hide once implementation of the api is finished
-// for Dart and one host language.
-export 'pigeon_lib.dart' hide ProxyApi;
+export 'pigeon_lib.dart';
 export 'swift_generator.dart' show SwiftOptions;

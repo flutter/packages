@@ -3796,7 +3796,10 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface FocusMeteringActionHostApi {
 
-    void create(@NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos);
+    void create(
+        @NonNull Long identifier,
+        @NonNull List<MeteringPointInfo> meteringPointInfos,
+        @Nullable Boolean disableAutoCancel);
 
     /** The codec used by FocusMeteringActionHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -3822,10 +3825,12 @@ public class GeneratedCameraXLibrary {
                 Number identifierArg = (Number) args.get(0);
                 List<MeteringPointInfo> meteringPointInfosArg =
                     (List<MeteringPointInfo>) args.get(1);
+                Boolean disableAutoCancelArg = (Boolean) args.get(2);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
-                      meteringPointInfosArg);
+                      meteringPointInfosArg,
+                      disableAutoCancelArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

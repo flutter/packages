@@ -1,6 +1,18 @@
-## 17.2.0
+## 17.3.0
 
 * Adds Linux support
+
+## 17.2.0
+
+* [dart] Adds implementation for `@ProxyApi`.
+
+## 17.1.3
+
+* [objc] Fixes double prefixes added to enum names.
+
+## 17.1.2
+
+* [swift] Separates message call code generation into separate methods.
 
 ## 17.1.1
 
