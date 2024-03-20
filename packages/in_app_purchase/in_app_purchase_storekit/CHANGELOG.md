@@ -1,3 +1,7 @@
+## 0.3.13+1
+
+* Handle translation of errors nested in dictionaries.
+
 ## 0.3.13
 
 * Added new native tests for more complete test coverage.

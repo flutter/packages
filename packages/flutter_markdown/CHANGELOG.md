@@ -1,3 +1,12 @@
+## 0.6.22
+
+* Introduces a new `MarkdownElementBuilder.isBlockElement()` method to specify if custom element
+  is a block.
+
+## 0.6.21+1
+
+* Adds `onSelectionChanged` to the constructors of `Markdown` and `MarkdownBody`.
+
 ## 0.6.21
 
 * Fixes support for `WidgetSpan` in `Text.rich` elements inside `MarkdownElementBuilder`.

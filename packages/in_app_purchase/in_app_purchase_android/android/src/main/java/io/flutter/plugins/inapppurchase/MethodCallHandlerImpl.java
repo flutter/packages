@@ -10,6 +10,7 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.fromUserChoiceDetails;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 
 import android.app.Activity;
@@ -33,6 +34,7 @@ import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
+import com.android.billingclient.api.UserChoiceBillingListener;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
@@ -72,6 +74,8 @@ class MethodCallHandlerImpl
         "BillingClient#createAlternativeBillingOnlyReportingDetails()";
     static final String SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG =
         "BillingClient#showAlternativeBillingOnlyInformationDialog()";
+    static final String USER_SELECTED_ALTERNATIVE_BILLING =
+        "UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)";
 
     private MethodNames() {}
   }
@@ -94,6 +98,7 @@ class MethodCallHandlerImpl
   static final class BillingChoiceMode {
     static final int PLAY_BILLING_ONLY = 0;
     static final int ALTERNATIVE_BILLING_ONLY = 1;
+    static final int USER_CHOICE_BILLING = 2;
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -507,9 +512,10 @@ class MethodCallHandlerImpl
   private void startConnection(
       final int handle, final MethodChannel.Result result, int billingChoiceMode) {
     if (billingClient == null) {
+      UserChoiceBillingListener listener = getUserChoiceBillingListener(billingChoiceMode);
       billingClient =
           billingClientFactory.createBillingClient(
-              applicationContext, methodChannel, billingChoiceMode);
+              applicationContext, methodChannel, billingChoiceMode, listener);
     }
 
     billingClient.startConnection(
@@ -535,6 +541,19 @@ class MethodCallHandlerImpl
             methodChannel.invokeMethod(MethodNames.ON_DISCONNECT, arguments);
           }
         });
+  }
+
+  @Nullable
+  private UserChoiceBillingListener getUserChoiceBillingListener(int billingChoiceMode) {
+    UserChoiceBillingListener listener = null;
+    if (billingChoiceMode == BillingChoiceMode.USER_CHOICE_BILLING) {
+      listener =
+          userChoiceDetails -> {
+            final Map<String, Object> arguments = fromUserChoiceDetails(userChoiceDetails);
+            methodChannel.invokeMethod(MethodNames.USER_SELECTED_ALTERNATIVE_BILLING, arguments);
+          };
+    }
+    return listener;
   }
 
   private void acknowledgePurchase(String purchaseToken, final MethodChannel.Result result) {
