@@ -5,7 +5,7 @@
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Bumps min version of iOS part to start with version with privacy manifest influded.
+* Bumps min version of iOS part to start with version with privacy manifest included.
 
 ## 2.2.2
 
