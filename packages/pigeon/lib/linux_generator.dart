@@ -279,49 +279,67 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     required String dartPackageName,
   }) {
     final String className = _getClassName(generatorOptions.module, api.name);
-
     final String methodPrefix =
         _getMethodPrefix(generatorOptions.module, api.name);
-    final String vtableName = '${className}VTable';
+    final String vtableName = _getVTableName(generatorOptions.module, api.name);
 
     for (final Method method
         in api.methods.where((Method method) => !method.isAsynchronous)) {
-      final String responseName = _getResponseName(api.name, method.name);
-      final String responseClassName =
-          _getClassName(generatorOptions.module, responseName);
-      final String responseMethodPrefix =
-          _getMethodPrefix(generatorOptions.module, responseName);
-
-      indent.newln();
-      _writeDeclareFinalType(indent, generatorOptions.module, responseName);
-
-      final String returnType =
-          _getType(generatorOptions.module, method.returnType);
-      indent.newln();
-      indent.writeln(
-          '$responseClassName* ${responseMethodPrefix}_new($returnType return_value);');
-
-      indent.newln();
-      indent.writeln(
-          '$responseClassName* ${responseMethodPrefix}_new_error(const gchar* code, const gchar* message, FlValue* details);');
+      _writeApiRespondClass(indent, generatorOptions.module, api, method);
     }
 
     indent.newln();
     _writeDeclareFinalType(indent, generatorOptions.module, api.name);
 
     indent.newln();
+    _writeApiVTable(indent, generatorOptions.module, api);
+
+    indent.newln();
+    indent.writeln(
+        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
+
+    for (final Method method
+        in api.methods.where((Method method) => method.isAsynchronous)) {
+      _writeApiRespondFunctionPrototype(
+          indent, generatorOptions.module, api, method);
+    }
+  }
+
+  // Write the API response classes.
+  void _writeApiRespondClass(
+      Indent indent, String module, Api api, Method method) {
+    final String responseName = _getResponseName(api.name, method.name);
+    final String responseClassName = _getClassName(module, responseName);
+    final String responseMethodPrefix = _getMethodPrefix(module, responseName);
+
+    indent.newln();
+    _writeDeclareFinalType(indent, module, responseName);
+
+    final String returnType = _getType(module, method.returnType);
+    indent.newln();
+    indent.writeln(
+        '$responseClassName* ${responseMethodPrefix}_new($returnType return_value);');
+
+    indent.newln();
+    indent.writeln(
+        '$responseClassName* ${responseMethodPrefix}_new_error(const gchar* code, const gchar* message, FlValue* details);');
+  }
+
+  // Write the vtable for an API.
+  void _writeApiVTable(Indent indent, String module, Api api) {
+    final String className = _getClassName(module, api.name);
+    final String vtableName = _getVTableName(module, api.name);
+
     indent.addScoped('typedef struct {', '} $vtableName;', () {
       for (final Method method in api.methods) {
         final String methodName = _snakeCaseFromCamelCase(method.name);
         final String responseName = _getResponseName(api.name, method.name);
-        final String responseClassName =
-            _getClassName(generatorOptions.module, responseName);
+        final String responseClassName = _getClassName(module, responseName);
 
         final List<String> methodArgs = <String>['$className* object'];
         for (final Parameter param in method.parameters) {
           final String paramName = _snakeCaseFromCamelCase(param.name);
-          final String paramType =
-              _getType(generatorOptions.module, param.type);
+          final String paramType = _getType(module, param.type);
           methodArgs.add('$paramType $paramName');
         }
         final String returnType;
@@ -336,37 +354,35 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
         indent.writeln("$returnType (*$methodName)(${methodArgs.join(', ')});");
       }
     });
+  }
+
+  // Write the function prototype for an API method response.
+  void _writeApiRespondFunctionPrototype(
+      Indent indent, String module, Api api, Method method) {
+    final String className = _getClassName(module, api.name);
+    final String methodPrefix = _getMethodPrefix(module, api.name);
+    final String methodName = _snakeCaseFromCamelCase(method.name);
+    final String returnType = _getType(module, method.returnType);
 
     indent.newln();
+    final List<String> respondArgs = <String>[
+      '$className* self',
+      'FlBasicMessageChannelResponseHandle* response_handle',
+      '$returnType return_value'
+    ];
     indent.writeln(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
+        "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')});");
 
-    for (final Method method
-        in api.methods.where((Method method) => method.isAsynchronous)) {
-      final String methodName = _snakeCaseFromCamelCase(method.name);
-      final String returnType =
-          _getType(generatorOptions.module, method.returnType);
-
-      indent.newln();
-      final List<String> respondArgs = <String>[
-        '$className* self',
-        'FlBasicMessageChannelResponseHandle* response_handle',
-        '$returnType return_value'
-      ];
-      indent.writeln(
-          "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')});");
-
-      indent.newln();
-      final List<String> respondErrorArgs = <String>[
-        '$className* self',
-        'FlBasicMessageChannelResponseHandle* response_handle',
-        'const gchar* code',
-        'const gchar* message',
-        'FlValue* details'
-      ];
-      indent.writeln(
-          "void ${methodPrefix}_respond_error_$methodName(${respondErrorArgs.join(', ')});");
-    }
+    indent.newln();
+    final List<String> respondErrorArgs = <String>[
+      '$className* self',
+      'FlBasicMessageChannelResponseHandle* response_handle',
+      'const gchar* code',
+      'const gchar* message',
+      'FlValue* details'
+    ];
+    indent.writeln(
+        "void ${methodPrefix}_respond_error_$methodName(${respondErrorArgs.join(', ')});");
   }
 
   @override
@@ -636,7 +652,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
     final String methodPrefix =
         _getMethodPrefix(generatorOptions.module, api.name);
-    final String vtableName = '${className}VTable';
+    final String vtableName = _getVTableName(generatorOptions.module, api.name);
 
     final String codecName = '${api.name}Codec';
     final String codecClassName =
@@ -1139,6 +1155,12 @@ String _snakeCaseFromCamelCase(String camelCase) {
 // Returns the GObject class name for [name].
 String _getClassName(String module, String name) {
   return '$module$name';
+}
+
+/// Return the name of the VTable structure to use for API requests.
+String _getVTableName(String module, String name) {
+  final String className = _getClassName(module, name);
+  return '${className}VTable';
 }
 
 // Returns the GObject macro to cast a GObject to a class of [name].
