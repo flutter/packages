@@ -4,8 +4,6 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "messages.g-Swift.h"
-
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,39 +51,42 @@ NS_ASSUME_NONNULL_BEGIN
                  andSKPaymentTransaction:(SKPaymentTransaction *)transaction
     API_AVAILABLE(ios(13), macos(10.15), watchos(6.2));
 
++ (id)encodeNSErrorUserInfo:(id)value;
+
 // Creates an instance of the SKPaymentDiscount class based on the supplied dictionary.
 + (nullable SKPaymentDiscount *)getSKPaymentDiscountFromMap:(NSDictionary *)map
                                                   withError:(NSString *_Nullable *_Nullable)error
     API_AVAILABLE(ios(12.2));
+//
+//+ (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
+//    (nullable SKPaymentTransaction *)transaction;
+//
+//+ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
+//    API_AVAILABLE(ios(13.0));
+//
+//+ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
+//    (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2));
+//
+//+ (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
+//    API_AVAILABLE(ios(12.2));
+//
+//+ (nullable SKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error;
+//
+//+ (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
+//    (nullable SKProductsResponse *)payment;
+//
+//+ (nullable SKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
+//    API_AVAILABLE(ios(12.2));
+//
+//+ (nullable SKProductDiscountMessage *)convertProductDiscountToPigeon:
+//    (nullable SKProductDiscount *)productDiscount API_AVAILABLE(ios(12.2));
+//
+//+ (nullable SKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
+//    API_AVAILABLE(ios(12.2));
+//
+//+ (nullable SKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
+//    (nullable SKProductSubscriptionPeriod *)period API_AVAILABLE(ios(12.2));
 
-+ (nullable SKPaymentTransactionMessage *)convertTransactionToPigeon:
-    (nullable SKPaymentTransaction *)transaction;
-
-+ (nullable SKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
-    API_AVAILABLE(ios(13.0));
-
-+ (nullable SKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
-    (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2));
-
-+ (nullable SKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
-    API_AVAILABLE(ios(12.2));
-
-+ (nullable SKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error;
-
-+ (nullable SKProductsResponseMessage *)convertProductsResponseToPigeon:
-    (nullable SKProductsResponse *)payment;
-
-+ (nullable SKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
-    API_AVAILABLE(ios(12.2));
-
-+ (nullable SKProductDiscountMessage *)convertProductDiscountToPigeon:
-    (nullable SKProductDiscount *)productDiscount API_AVAILABLE(ios(12.2));
-
-+ (nullable SKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
-    API_AVAILABLE(ios(12.2));
-
-+ (nullable SKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
-    (nullable SKProductSubscriptionPeriod *)period API_AVAILABLE(ios(12.2));
 @end
 
 NS_ASSUME_NONNULL_END

@@ -120,9 +120,13 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     let transactions = self.paymentQueueHandler?.getUnfinishedTransactions() ?? [];
     var transactionMaps: [SKPaymentTransactionMessage] = []
     for transaction in transactions {
-      if let map = FIAObjectTranslator.convertTransaction(toPigeon: transaction) {
-        transactionMaps.append(map as! SKPaymentTransactionMessage)
+      if #available(iOS 12.2, *) {
+        if let map = MessageTranslator.convertTransactionToPigeon(transaction: transaction) {
+          transactionMaps.append(map )
         }
+      } else {
+        // throw version error?
+      }
     }
     return transactionMaps
   }
@@ -133,7 +137,7 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       if (storefront == nil) {
         return nil;
       }
-      return FIAObjectTranslator.convertStorefront(toPigeon: storefront) as? SKStorefrontMessage;
+      return MessageTranslator.convertStorefrontToPigeon(storefront: storefront);
     }
     return nil;
   }
@@ -203,15 +207,11 @@ class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
               self.productsCache[product.productIdentifier] = product
           }
 
-        if let responseMessage = FIAObjectTranslator.convertProductsResponse(toPigeon: response) {
-            completion(.success(responseMessage as! SKProductsResponseMessage))
-          } else {
-              error = FlutterError(code: "conversion_error",
-                                   message: "Could not convert products response to expected format",
-                                   details: nil)
-            completion(.failure(error))
+        if #available(iOS 12.2, *) {
+          if let responseMessage = MessageTranslator.convertProductsResponseToPigeon(productsResponse: response){
+            completion(.success(responseMessage ))
           }
-
+        }
           self.requestHandlers.remove(handler)
       }
   }

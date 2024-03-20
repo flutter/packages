@@ -3,10 +3,8 @@
 // found in the LICENSE file.
 
 #import <StoreKit/StoreKit.h>
-#import "messages.g-Swift.h"
 #import "FIAObjectTranslator.h"
 #import "FIAPPaymentQueueDelegate.h"
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
-#import "InAppPurchasePlugin+TestOnly.h"
