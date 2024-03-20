@@ -7,23 +7,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:interactive_media_ads/src/ad_display_container.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
-import 'ad_display_container_test.mocks.dart';
 import 'test_stubs.dart';
 
-@GenerateMocks(<Type>[PlatformAdDisplayContainer])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('build', (WidgetTester tester) async {
-    final MockPlatformAdDisplayContainer mockPlatformAdDisplayContainer =
-        MockPlatformAdDisplayContainer();
-    when(mockPlatformAdDisplayContainer.build(any)).thenReturn(Container());
+    final TestPlatformAdDisplayContainer adDisplayContainer =
+        TestPlatformAdDisplayContainer(
+      PlatformAdDisplayContainerCreationParams(
+        onContainerAdded: (_) {},
+      ),
+      onBuild: (_) => Container(),
+    );
 
     await tester.pumpWidget(AdDisplayContainer.fromPlatform(
-      platform: mockPlatformAdDisplayContainer,
+      platform: adDisplayContainer,
     ));
 
     expect(find.byType(Container), findsOneWidget);
@@ -35,7 +35,10 @@ void main() {
       onCreatePlatformAdDisplayContainer: (
         PlatformAdDisplayContainerCreationParams params,
       ) {
-        return TestPlatformAdDisplayContainer(params);
+        return TestPlatformAdDisplayContainer(
+          params,
+          onBuild: (_) => Container(),
+        );
       },
     );
 

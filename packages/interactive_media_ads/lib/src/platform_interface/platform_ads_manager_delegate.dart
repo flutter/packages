@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'ad_event.dart';
 import 'interactive_media_ads_platform.dart';
@@ -57,7 +56,7 @@ base class PlatformAdsManagerDelegateCreationParams {
 }
 
 /// Interface for a platform implementation of a `AdsManagerDelegate`.
-abstract class PlatformAdsManagerDelegate extends PlatformInterface {
+abstract base class PlatformAdsManagerDelegate {
   /// Creates a new [PlatformAdsManagerDelegate]
   factory PlatformAdsManagerDelegate(
     PlatformAdsManagerDelegateCreationParams params,
@@ -73,7 +72,6 @@ abstract class PlatformAdsManagerDelegate extends PlatformInterface {
     final PlatformAdsManagerDelegate implementation =
         InteractiveMediaAdsPlatform.instance!
             .createPlatformAdsManagerDelegate(params);
-    PlatformInterface.verifyToken(implementation, _token);
     return implementation;
   }
 
@@ -83,9 +81,7 @@ abstract class PlatformAdsManagerDelegate extends PlatformInterface {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformAdsManagerDelegate.implementation(this.params) : super(token: _token);
-
-  static final Object _token = Object();
+  PlatformAdsManagerDelegate.implementation(this.params);
 
   /// The parameters used to initialize the [PlatformAdsManagerDelegate].
   final PlatformAdsManagerDelegateCreationParams params;

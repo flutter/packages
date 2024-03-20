@@ -2,52 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
-import 'package:mockito/annotations.dart';
 
 import '../test_stubs.dart';
-import 'platform_ads_loader_test.mocks.dart';
 
-@GenerateMocks(<Type>[
-  PlatformAdsLoader,
-  PlatformAdDisplayContainer,
-])
 void main() {
   PlatformAdsLoaderCreationParams createEmptyParams() {
     return PlatformAdsLoaderCreationParams(
-      container: MockPlatformAdDisplayContainer(),
+      container: TestPlatformAdDisplayContainer(
+        PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
+        onBuild: (_) => Container(),
+      ),
       onAdsLoaded: (_) {},
       onAdsLoadError: (_) {},
     );
   }
-
-  test('Cannot be implemented with `implements`', () {
-    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
-      onCreatePlatformAdsLoader: (
-        PlatformAdsLoaderCreationParams params,
-      ) {
-        return ImplementsPlatformAdsLoader();
-      },
-    );
-
-    expect(
-      () => PlatformAdsLoader(createEmptyParams()),
-      throwsAssertionError,
-    );
-  });
-
-  test('Can be extended', () {
-    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
-      onCreatePlatformAdsLoader: (
-        PlatformAdsLoaderCreationParams params,
-      ) {
-        return ExtendsPlatformAdsLoader(createEmptyParams());
-      },
-    );
-
-    expect(PlatformAdsLoader(createEmptyParams()), isNotNull);
-  });
 
   test(
       'Default implementation of contentComplete should throw unimplemented error',
@@ -73,11 +44,6 @@ void main() {
   });
 }
 
-class ImplementsPlatformAdsLoader implements PlatformAdsLoader {
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class ExtendsPlatformAdsLoader extends PlatformAdsLoader {
+final class ExtendsPlatformAdsLoader extends PlatformAdsLoader {
   ExtendsPlatformAdsLoader(super.params) : super.implementation();
 }

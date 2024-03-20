@@ -2,35 +2,48 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
-import 'ads_loader_test.mocks.dart';
+import 'test_stubs.dart';
 
-@GenerateMocks(<Type>[PlatformAdsLoader])
 void main() {
   test('contentComplete', () async {
-    final MockPlatformAdsLoader mockPlatformAdsLoader = MockPlatformAdsLoader();
-
-    final AdsLoader loader = AdsLoader.fromPlatform(
-      mockPlatformAdsLoader,
+    final TestPlatformAdsLoader adsLoader = TestPlatformAdsLoader(
+      PlatformAdsLoaderCreationParams(
+        container: createTestAdDisplayContainer(),
+        onAdsLoaded: (PlatformOnAdsLoadedData data) {},
+        onAdsLoadError: (AdsLoadErrorData data) {},
+      ),
+      onContentComplete: expectAsync0(() async {}),
     );
 
+    final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
     await loader.contentComplete();
-    verify(mockPlatformAdsLoader.contentComplete());
   });
 
   test('requestAds', () async {
-    final MockPlatformAdsLoader mockPlatformAdsLoader = MockPlatformAdsLoader();
-
-    final AdsLoader loader = AdsLoader.fromPlatform(
-      mockPlatformAdsLoader,
+    final TestPlatformAdsLoader adsLoader = TestPlatformAdsLoader(
+      PlatformAdsLoaderCreationParams(
+        container: createTestAdDisplayContainer(),
+        onAdsLoaded: (PlatformOnAdsLoadedData data) {},
+        onAdsLoadError: (AdsLoadErrorData data) {},
+      ),
+      onRequestAds: expectAsync1((AdsRequest request) async {}),
     );
 
+    final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
     await loader.requestAds(AdsRequest(adTagUrl: ''));
-    verify(mockPlatformAdsLoader.requestAds(any));
   });
+}
+
+TestPlatformAdDisplayContainer createTestAdDisplayContainer() {
+  return TestPlatformAdDisplayContainer(
+    PlatformAdDisplayContainerCreationParams(
+      onContainerAdded: (_) {},
+    ),
+    onBuild: (_) => Container(),
+  );
 }

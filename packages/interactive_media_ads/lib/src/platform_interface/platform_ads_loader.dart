@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'ad_error.dart';
 import 'ads_request.dart';
@@ -63,7 +62,7 @@ base class PlatformAdsLoaderCreationParams {
 
 /// Interface for a platform implementation of an object that requests ads and
 /// handles events from ads request responses.
-abstract class PlatformAdsLoader extends PlatformInterface {
+abstract base class PlatformAdsLoader {
   /// Creates a new [PlatformAdsLoader]
   factory PlatformAdsLoader(
     PlatformAdsLoaderCreationParams params,
@@ -78,7 +77,6 @@ abstract class PlatformAdsLoader extends PlatformInterface {
     );
     final PlatformAdsLoader implementation =
         InteractiveMediaAdsPlatform.instance!.createPlatformAdsLoader(params);
-    PlatformInterface.verifyToken(implementation, _token);
     return implementation;
   }
 
@@ -87,9 +85,7 @@ abstract class PlatformAdsLoader extends PlatformInterface {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformAdsLoader.implementation(this.params) : super(token: _token);
-
-  static final Object _token = Object();
+  PlatformAdsLoader.implementation(this.params);
 
   /// The parameters used to initialize the [PlatformAdsLoader].
   final PlatformAdsLoaderCreationParams params;

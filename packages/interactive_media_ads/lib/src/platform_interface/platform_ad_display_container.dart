@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'interactive_media_ads_platform.dart';
 
@@ -61,7 +60,7 @@ base class PlatformAdDisplayContainerCreationParams {
 
 /// The interface for a platform implementation for a container in which to
 /// display ads.
-abstract class PlatformAdDisplayContainer extends PlatformInterface {
+abstract base class PlatformAdDisplayContainer {
   /// Creates a new [PlatformAdDisplayContainer]
   factory PlatformAdDisplayContainer(
     PlatformAdDisplayContainerCreationParams params,
@@ -77,7 +76,6 @@ abstract class PlatformAdDisplayContainer extends PlatformInterface {
     final PlatformAdDisplayContainer implementation =
         InteractiveMediaAdsPlatform.instance!
             .createPlatformAdDisplayContainer(params);
-    PlatformInterface.verifyToken(implementation, _token);
     return implementation;
   }
 
@@ -87,9 +85,7 @@ abstract class PlatformAdDisplayContainer extends PlatformInterface {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformAdDisplayContainer.implementation(this.params) : super(token: _token);
-
-  static final Object _token = Object();
+  PlatformAdDisplayContainer.implementation(this.params);
 
   /// The parameters used to initialize the [PlatformAdDisplayContainer].
   final PlatformAdDisplayContainerCreationParams params;

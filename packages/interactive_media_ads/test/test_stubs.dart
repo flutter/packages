@@ -49,19 +49,82 @@ final class TestInteractiveMediaAdsPlatform
   }
 }
 
-class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
-  TestPlatformAdDisplayContainer(super.params) : super.implementation();
+final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
+  TestPlatformAdDisplayContainer(
+    super.params, {
+    required this.onBuild,
+  }) : super.implementation();
+
+  Widget Function(BuildContext context) onBuild;
 
   @override
   Widget build(BuildContext context) {
-    throw UnimplementedError();
+    return onBuild.call(context);
   }
 }
 
-class TestPlatformAdsLoader extends PlatformAdsLoader {
-  TestPlatformAdsLoader(super.params) : super.implementation();
+final class TestPlatformAdsLoader extends PlatformAdsLoader {
+  TestPlatformAdsLoader(
+    super.params, {
+    this.onContentComplete,
+    this.onRequestAds,
+  }) : super.implementation();
+
+  Future<void> Function()? onContentComplete;
+
+  Future<void> Function(AdsRequest request)? onRequestAds;
+
+  @override
+  Future<void> contentComplete() async {
+    return onContentComplete?.call();
+  }
+
+  @override
+  Future<void> requestAds(AdsRequest request) async {
+    return onRequestAds?.call(request);
+  }
 }
 
-class TestPlatformAdsManagerDelegate extends PlatformAdsManagerDelegate {
+final class TestPlatformAdsManagerDelegate extends PlatformAdsManagerDelegate {
   TestPlatformAdsManagerDelegate(super.params) : super.implementation();
+}
+
+class TestAdsManager extends PlatformAdsManager {
+  TestAdsManager({
+    this.onInit,
+    this.onSetAdsManagerDelegate,
+    this.onStart,
+    this.onDestroy,
+  });
+
+  Future<void> Function(AdsManagerInitParams params)? onInit;
+
+  Future<void> Function(PlatformAdsManagerDelegate delegate)?
+      onSetAdsManagerDelegate;
+
+  Future<void> Function(AdsManagerStartParams params)? onStart;
+
+  Future<void> Function()? onDestroy;
+
+  @override
+  Future<void> init(AdsManagerInitParams params) async {
+    return onInit?.call(params);
+  }
+
+  @override
+  Future<void> setAdsManagerDelegate(
+    PlatformAdsManagerDelegate delegate,
+  ) async {
+    return onSetAdsManagerDelegate?.call(delegate);
+  }
+
+  @override
+  Future<void> start(AdsManagerStartParams params) async {
+    return onStart?.call(params);
+  }
+
+  @override
+  Future<void> destroy() async {
+    return onDestroy?.call();
+  }
 }
