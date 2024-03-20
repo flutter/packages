@@ -107,6 +107,12 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
+
+  /// Sets additional options on android.
+  Future<void> setAndroidOptions(
+      int textureId, VideoPlayerAndroidOptions options) {
+    throw UnimplementedError('setAndroidOptions() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -379,6 +385,7 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
+    this.androidOptions,
   });
 
   /// Set this to true to keep playing video in background, when app goes in background.
@@ -394,6 +401,48 @@ class VideoPlayerOptions {
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// Additional android settings.
+  final VideoPlayerAndroidOptions? androidOptions;
+}
+
+/// Mode for using extension renderers for exoplayer in Android.
+enum AndroidVideoPlayerExtensionMode {
+  /// Disallow use of extension renderers. Only core renderers are used.
+  extensionRendererModeOff,
+
+  /// Allow use of extension renderers. Extension renderers are indexed after core renderers of the
+  /// same type. A TrackSelector that prefers the first suitable renderer will therefore
+  /// prefer to use a core renderer to an extension renderer in the case that both are able to play a
+  /// given track.
+  extensionRendererModeOn,
+
+  /// Allow use of extension renderers. Extension renderers are indexed before core renderers of the
+  /// same type. A TrackSelector that prefers the first suitable renderer will therefore
+  /// prefer to use an extension renderer to a core renderer in the case that both are able to play a
+  /// given track.
+  extensionRendererModePrefer;
+}
+
+/// [VideoPlayerAndroidOptions] can be optionally used to set additional android settings.
+class VideoPlayerAndroidOptions {
+  /// [VideoPlayerAndroidOptions] can be optionally used to set additional android settings.
+  const VideoPlayerAndroidOptions({
+    this.extensionMode =
+        AndroidVideoPlayerExtensionMode.extensionRendererModeOff,
+    this.enableDecoderFallback = false,
+  });
+
+  /// Mode for using extension renderers for exoplayer in Android.
+  /// Which determines if and how available extension renderers are used.
+  /// Note that extensions must be included in the application build for them to be considered available.
+  // Defaults to extensionRendererModeOff.
+  final AndroidVideoPlayerExtensionMode extensionMode;
+
+  /// Sets whether to enable fallback to lower-priority decoders if decoder initialization fails.
+  /// This may result in using a decoder that is less efficient or slower than the primary decoder.
+  /// Defaults to false.
+  final bool enableDecoderFallback;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
