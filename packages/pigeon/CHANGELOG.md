@@ -1,4 +1,4 @@
-## 17.1.2
+## 17.2.0
 
 * Add Linux support
 
