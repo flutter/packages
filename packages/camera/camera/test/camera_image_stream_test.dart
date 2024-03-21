@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'camera_test.dart';
@@ -56,8 +57,13 @@ void main() {
 
     await cameraController.initialize();
 
-    cameraController.value =
-        cameraController.value.copyWith(isRecordingVideo: true);
+    cameraController.value = cameraController.value.copyWith(
+      isRecordingVideo: true,
+      isRecordingPaused: false,
+      recordingOrientation: Optional<DeviceOrientation>.of(
+          cameraController.value.lockedCaptureOrientation ??
+              cameraController.value.deviceOrientation),
+    );
 
     expect(
         () => cameraController.startImageStream((CameraImage image) {}),
