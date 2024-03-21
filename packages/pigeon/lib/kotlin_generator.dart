@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math';
+
 import 'package:graphs/graphs.dart';
 
 import 'ast.dart';
@@ -655,7 +657,43 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeScoped(
       'abstract class $kotlinApiName(val codec: $codecName) {',
       '}',
-      () {},
+      () {
+        final String fullKotlinClassName =
+            api.kotlinOptions?.fullClassName ?? api.name;
+        final TypeDeclaration apiAsTypeDeclaration = TypeDeclaration(
+          baseName: api.name,
+          isNullable: false,
+          associatedProxyApi: api,
+        );
+
+        if (api.constructors.isNotEmpty ||
+            api.attachedFields.isNotEmpty ||
+            api.hostMethods.isNotEmpty) {
+          indent.writeScoped('companion object {', '}', () {
+            _writeProxyApiMessageHandlerMethod(
+              indent,
+              api,
+              apiAsTypeDeclaration: apiAsTypeDeclaration,
+              kotlinApiName: kotlinApiName,
+              dartPackageName: dartPackageName,
+              fullKotlinClassName: fullKotlinClassName,
+            );
+          });
+          indent.newln();
+        }
+
+        const String newInstanceMethodName =
+            '${classMemberNamePrefix}newInstance';
+
+        _writeProxyApiNewInstanceMethod(
+          indent,
+          api,
+          generatorOptions: generatorOptions,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+          newInstanceMethodName: newInstanceMethodName,
+          dartPackageName: dartPackageName,
+        );
+      },
     );
   }
 
@@ -784,12 +822,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
+    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
 
-    if (hasHostApi) {
+    if (hasHostApi || hasProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
-    if (hasFlutterApi) {
+    if (hasFlutterApi || hasProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
     if (generatorOptions.includeErrorClass) {
@@ -1056,6 +1095,95 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       });
     });
   }
+
+  // Writes the `..setUpMessageHandler` method to ensure incoming messages are
+  // handled by the correct abstract host methods.
+  void _writeProxyApiMessageHandlerMethod(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String kotlinApiName,
+    required String dartPackageName,
+    required String fullKotlinClassName,
+  }) {
+    indent.writeln('@Suppress("LocalVariableName")');
+    indent.writeScoped(
+      'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: $kotlinApiName?) {',
+      '}',
+      () {},
+    );
+  }
+
+  // Writes the method that calls to Dart to instantiate a new Dart instance.
+  void _writeProxyApiNewInstanceMethod(
+    Indent indent,
+    AstProxyApi api, {
+    required KotlinOptions generatorOptions,
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String newInstanceMethodName,
+    required String dartPackageName,
+  }) {
+    indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
+    _writeFlutterMethod(
+      indent,
+      generatorOptions: generatorOptions,
+      name: newInstanceMethodName,
+      returnType: const TypeDeclaration.voidDeclaration(),
+      documentationComments: <String>[
+        'Creates a Dart instance of ${api.name} and attaches it to [${classMemberNamePrefix}instanceArg].',
+      ],
+      channelName: makeChannelNameWithStrings(
+        apiName: api.name,
+        methodName: newInstanceMethodName,
+        dartPackageName: dartPackageName,
+      ),
+      minApiRequirement: _typeWithHighestApiRequirement(<TypeDeclaration>[
+        apiAsTypeDeclaration,
+        ...api.unattachedFields.map((ApiField field) => field.type),
+      ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
+      dartPackageName: dartPackageName,
+      parameters: <Parameter>[
+        Parameter(
+          name: '${classMemberNamePrefix}instance',
+          type: TypeDeclaration(
+            baseName: api.name,
+            isNullable: false,
+            associatedProxyApi: api,
+          ),
+        ),
+      ],
+      onWriteBody: (
+        Indent indent, {
+        required List<Parameter> parameters,
+        required TypeDeclaration returnType,
+        required String channelName,
+        required String errorClassName,
+      }) {},
+    );
+    indent.newln();
+  }
+}
+
+TypeDeclaration? _typeWithHighestApiRequirement(
+  Iterable<TypeDeclaration> types,
+) {
+  int highestMin = 1;
+  TypeDeclaration? highestNamedType;
+
+  for (final TypeDeclaration type in types) {
+    final int? typeMin = type.associatedProxyApi?.kotlinOptions?.minAndroidApi;
+    final int? typeArgumentMin = _typeWithHighestApiRequirement(
+      type.typeArguments,
+    )?.associatedProxyApi?.kotlinOptions?.minAndroidApi;
+    final int newMin = max(typeMin ?? 1, typeArgumentMin ?? 1);
+
+    if (newMin > highestMin) {
+      highestMin = newMin;
+      highestNamedType = type;
+    }
+  }
+
+  return highestMin == 1 ? null : highestNamedType;
 }
 
 HostDatatype _getHostDatatype(Root root, NamedType field) {

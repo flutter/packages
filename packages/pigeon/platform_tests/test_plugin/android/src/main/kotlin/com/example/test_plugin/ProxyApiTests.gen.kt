@@ -15,6 +15,26 @@ import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
+private fun wrapResult(result: Any?): List<Any?> {
+  return listOf(result)
+}
+
+private fun wrapError(exception: Throwable): List<Any?> {
+  if (exception is ProxyApiTestsError) {
+    return listOf(exception.code, exception.message, exception.details)
+  } else {
+    return listOf(
+        exception.javaClass.simpleName,
+        exception.toString(),
+        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+  }
+}
+
+private fun createConnectionError(channelName: String): ProxyApiTestsError {
+  return ProxyApiTestsError(
+      "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+}
+
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
  *
@@ -389,7 +409,7 @@ abstract class PigeonProxyApiBaseCodec(
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     if (value is ProxyApiTestClass) {
       getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
-    } else if (value is ProxyApiSuperClass) {
+    } else if (value is com.example.test_plugin.ProxyApiSuperClass) {
       getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
     } else if (value is ProxyApiInterface) {
       getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
@@ -421,10 +441,35 @@ enum class ProxyApiTestEnum(val raw: Int) {
  * integration tests.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {}
+abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiTestClass?) {}
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiTestClass and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {}
+}
 /** ProxyApi to serve as a super class to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {}
+abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiSuperClass?) {}
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiSuperClass and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: com.example.test_plugin.ProxyApiSuperClass,
+      callback: (Result<Unit>) -> Unit
+  ) {}
+}
 /** ProxyApi to serve as an interface to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiInterface(val codec: PigeonProxyApiBaseCodec) {}
+abstract class PigeonApiProxyApiInterface(val codec: PigeonProxyApiBaseCodec) {
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {}
+}
