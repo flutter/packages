@@ -15,7 +15,7 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 readonly REPO_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 readonly TOOL_PATH="$REPO_DIR/script/tool/bin/flutter_plugin_tools.dart"
 
-/b/s/w/ir/cache/avd/src/third_party/android_sdk/public/platform-tools/adb logcat > ${SCRIPT_OUTPUT_FILE_0}
+/b/s/w/ir/cache/avd/src/third_party/android_sdk/public/platform-tools/adb logcat > \${SCRIPT_OUTPUT_FILE_0}\
 
 # Ensure that the tool dependencies have been fetched.
 (pushd "$REPO_DIR/script/tool" && dart pub get && popd) >/dev/null
