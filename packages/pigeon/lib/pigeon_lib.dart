@@ -177,12 +177,6 @@ class SwiftFunction {
   final String value;
 }
 
-/// Metadata to annotate data classes to be defined as class in Swift output.
-class SwiftClass {
-  /// Constructor.
-  const SwiftClass();
-}
-
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
@@ -1556,7 +1550,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _currentClass = Class(
         name: node.name.lexeme,
         fields: <NamedType>[],
-        swiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
+        isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
       );

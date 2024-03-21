@@ -639,7 +639,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
-    this.swiftClass = false,
+    this.isSwiftClass = false,
     this.documentationComments = const <String>[],
   });
 
@@ -653,7 +653,7 @@ class Class extends Node {
   /// a class in Swift generation.
   ///
   /// Defaults to false, which would represent a struct.
-  bool swiftClass;
+  bool isSwiftClass;
 
   /// List of documentation comments, separated by line.
   ///

@@ -125,7 +125,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    if (classDefinition.swiftClass) {
+    if (classDefinition.isSwiftClass) {
       indent.write('class ${classDefinition.name} ');
     } else {
       indent.write('struct ${classDefinition.name} ');
@@ -134,7 +134,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       final Iterable<NamedType> fields =
           getFieldsInSerializationOrder(classDefinition);
 
-      if (classDefinition.swiftClass) {
+      if (classDefinition.isSwiftClass) {
         _writeClassInit(indent, fields.toList());
       }
 

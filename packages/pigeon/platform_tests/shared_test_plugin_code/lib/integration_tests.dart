@@ -106,6 +106,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         allNullableTypesTwo.aNullableObject);
     expect(
         allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
+    compareAllNullableTypes(allNullableTypesOne.allNullableTypes,
+        allNullableTypesTwo.allNullableTypes);
   }
 
   void compareAllClassesWrapper(
@@ -170,6 +172,35 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     aNullableObject: 0,
   );
 
+  final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
+    aNullableBool: true,
+    aNullableInt: _regularInt,
+    aNullableInt64: _biggerThanBigInt,
+    aNullableDouble: _doublePi,
+    aNullableString: 'Hello host!',
+    aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+    aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+    aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+    aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
+    aNullableList: <Object?>['Thing 1', 2, true, 3.14, null],
+    aNullableMap: <Object?, Object?>{
+      'a': 1,
+      'b': 2.0,
+      'c': 'three',
+      'd': false,
+      'e': null
+    },
+    nullableNestedList: <List<bool>>[
+      <bool>[true, false],
+      <bool>[false, true]
+    ],
+    nullableMapWithAnnotations: <String?, String?>{},
+    nullableMapWithObject: <String?, Object?>{},
+    aNullableEnum: AnEnum.fourHundredTwentyTwo,
+    aNullableObject: 0,
+    allNullableTypes: genericAllNullableTypes,
+  );
+
   group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -190,9 +221,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllNullableTypes? echoObject =
-          await api.echoAllNullableTypes(genericAllNullableTypes);
+          await api.echoAllNullableTypes(recursiveAllNullableTypes);
 
-      compareAllNullableTypes(echoObject, genericAllNullableTypes);
+      compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
     });
 
     testWidgets('all null datatypes serialize and deserialize correctly',
@@ -266,7 +297,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllClassesWrapper sentObject = AllClassesWrapper(
-          allNullableTypes: genericAllNullableTypes, allTypes: genericAllTypes);
+          allNullableTypes: recursiveAllNullableTypes,
+          allTypes: genericAllTypes);
 
       final String? receivedString =
           await api.extractNestedNullableString(sentObject);
@@ -775,10 +807,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypes? echoObject =
-          await api.echoAsyncNullableAllNullableTypes(genericAllNullableTypes);
+      final AllNullableTypes? echoObject = await api
+          .echoAsyncNullableAllNullableTypes(recursiveAllNullableTypes);
 
-      compareAllNullableTypes(echoObject, genericAllNullableTypes);
+      compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
     });
 
     testWidgets('all null datatypes async serialize and deserialize correctly',
