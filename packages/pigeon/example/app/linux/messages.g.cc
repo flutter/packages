@@ -390,10 +390,6 @@ static void get_host_language_cb(
     return;
   }
 
-  if (fl_value_get_type(message) != FL_VALUE_TYPE_NULL) {
-    return;
-  }
-
   g_autoptr(PigeonExamplePackageExampleHostApiGetHostLanguageResponse)
       response = self->vtable->get_host_language(self, self->user_data);
   if (response == nullptr) {
@@ -416,15 +412,6 @@ static void add_cb(FlBasicMessageChannel* channel, FlValue* message,
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(user_data);
 
   if (self->vtable == nullptr || self->vtable->add == nullptr) {
-    return;
-  }
-
-  if (fl_value_get_type(message) != FL_VALUE_TYPE_LIST ||
-      fl_value_get_length(message) != 2 ||
-      fl_value_get_type(fl_value_get_list_value(message, 0)) !=
-          FL_VALUE_TYPE_INT ||
-      fl_value_get_type(fl_value_get_list_value(message, 1)) !=
-          FL_VALUE_TYPE_INT) {
     return;
   }
 
@@ -453,13 +440,6 @@ static void send_message_cb(
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(user_data);
 
   if (self->vtable == nullptr || self->vtable->send_message == nullptr) {
-    return;
-  }
-
-  if (fl_value_get_type(message) != FL_VALUE_TYPE_LIST ||
-      fl_value_get_length(message) != 1 ||
-      fl_value_get_type(fl_value_get_list_value(message, 0)) !=
-          FL_VALUE_TYPE_CUSTOM) {
     return;
   }
 
