@@ -41,7 +41,7 @@ class LinuxOptions {
   static LinuxOptions fromMap(Map<String, Object> map) {
     return LinuxOptions(
       headerIncludePath: map['header'] as String?,
-      module: map['module'] as String? ?? 'My',
+      module: map['module'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       headerOutPath: map['linuxHeaderOut'] as String?,
     );
@@ -152,8 +152,8 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     Enum anEnum, {
     required String dartPackageName,
   }) {
-    final String enumName =
-        _getClassName(_getModule(generatorOptions), anEnum.name);
+    final String enumName = _getClassName(
+        _getModule(generatorOptions, dartPackageName), anEnum.name);
 
     indent.newln();
     addDocumentationComments(
@@ -162,7 +162,9 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
       for (int i = 0; i < anEnum.members.length; i++) {
         final EnumMember member = anEnum.members[i];
         final String itemName = _getEnumValue(
-            _getModule(generatorOptions), anEnum.name, member.name);
+            _getModule(generatorOptions, dartPackageName),
+            anEnum.name,
+            member.name);
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
@@ -179,23 +181,24 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    final String className =
-        _getClassName(_getModule(generatorOptions), classDefinition.name);
+    final String className = _getClassName(
+        _getModule(generatorOptions, dartPackageName), classDefinition.name);
 
-    final String methodPrefix =
-        _getMethodPrefix(_getModule(generatorOptions), classDefinition.name);
+    final String methodPrefix = _getMethodPrefix(
+        _getModule(generatorOptions, dartPackageName), classDefinition.name);
 
     indent.newln();
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec);
-    _writeDeclareFinalType(
-        indent, _getModule(generatorOptions), classDefinition.name);
+    _writeDeclareFinalType(indent,
+        _getModule(generatorOptions, dartPackageName), classDefinition.name);
 
     indent.newln();
     final List<String> constructorArgs = <String>[];
     for (final NamedType field in classDefinition.fields) {
       final String fieldName = _snakeCaseFromCamelCase(field.name);
-      final String type = _getType(_getModule(generatorOptions), field.type);
+      final String type =
+          _getType(_getModule(generatorOptions, dartPackageName), field.type);
       constructorArgs.add('$type $fieldName');
     }
     indent.writeln(
@@ -204,7 +207,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     for (final NamedType field in classDefinition.fields) {
       final String fieldName = _snakeCaseFromCamelCase(field.name);
       final String returnType =
-          _getType(_getModule(generatorOptions), field.type);
+          _getType(_getModule(generatorOptions, dartPackageName), field.type);
 
       indent.newln();
       addDocumentationComments(
@@ -223,15 +226,16 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     required String dartPackageName,
   }) {
     final String className =
-        _getClassName(_getModule(generatorOptions), api.name);
+        _getClassName(_getModule(generatorOptions, dartPackageName), api.name);
 
-    final String methodPrefix =
-        _getMethodPrefix(_getModule(generatorOptions), api.name);
+    final String methodPrefix = _getMethodPrefix(
+        _getModule(generatorOptions, dartPackageName), api.name);
 
     indent.newln();
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
-    _writeDeclareFinalType(indent, _getModule(generatorOptions), api.name);
+    _writeDeclareFinalType(
+        indent, _getModule(generatorOptions, dartPackageName), api.name);
 
     indent.newln();
     indent.writeln(
@@ -243,7 +247,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
       final List<String> asyncArgs = <String>[
         '$className* object',
         for (final Parameter param in method.parameters)
-          '${_getType(_getModule(generatorOptions), param.type)} ${_snakeCaseFromCamelCase(param.name)}',
+          '${_getType(_getModule(generatorOptions, dartPackageName), param.type)} ${_snakeCaseFromCamelCase(param.name)}',
         'GCancellable* cancellable',
         'GAsyncReadyCallback callback',
         'gpointer user_data'
@@ -255,7 +259,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
           "void ${methodPrefix}_${methodName}_async(${asyncArgs.join(', ')});");
 
       final String returnType = _getType(
-          _getModule(generatorOptions), method.returnType,
+          _getModule(generatorOptions, dartPackageName), method.returnType,
           isOutput: true);
       final List<String> finishArgs = <String>[
         '$className* object',
@@ -278,22 +282,24 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     required String dartPackageName,
   }) {
     final String className =
-        _getClassName(_getModule(generatorOptions), api.name);
-    final String methodPrefix =
-        _getMethodPrefix(_getModule(generatorOptions), api.name);
+        _getClassName(_getModule(generatorOptions, dartPackageName), api.name);
+    final String methodPrefix = _getMethodPrefix(
+        _getModule(generatorOptions, dartPackageName), api.name);
     final String vtableName =
-        _getVTableName(_getModule(generatorOptions), api.name);
+        _getVTableName(_getModule(generatorOptions, dartPackageName), api.name);
 
     for (final Method method
         in api.methods.where((Method method) => !method.isAsynchronous)) {
-      _writeApiRespondClass(indent, _getModule(generatorOptions), api, method);
+      _writeApiRespondClass(
+          indent, _getModule(generatorOptions, dartPackageName), api, method);
     }
 
     indent.newln();
-    _writeDeclareFinalType(indent, _getModule(generatorOptions), api.name);
+    _writeDeclareFinalType(
+        indent, _getModule(generatorOptions, dartPackageName), api.name);
 
     indent.newln();
-    _writeApiVTable(indent, _getModule(generatorOptions), api);
+    _writeApiVTable(indent, _getModule(generatorOptions, dartPackageName), api);
 
     indent.newln();
     indent.writeln(
@@ -302,7 +308,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     for (final Method method
         in api.methods.where((Method method) => method.isAsynchronous)) {
       _writeApiRespondFunctionPrototype(
-          indent, _getModule(generatorOptions), api, method);
+          indent, _getModule(generatorOptions, dartPackageName), api, method);
     }
   }
 
@@ -436,42 +442,46 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     required String dartPackageName,
   }) {
     final String snakeModule =
-        _snakeCaseFromCamelCase(_getModule(generatorOptions));
-    final String className =
-        _getClassName(_getModule(generatorOptions), classDefinition.name);
+        _snakeCaseFromCamelCase(_getModule(generatorOptions, dartPackageName));
+    final String className = _getClassName(
+        _getModule(generatorOptions, dartPackageName), classDefinition.name);
     final String snakeClassName = _snakeCaseFromCamelCase(classDefinition.name);
 
-    final String methodPrefix =
-        _getMethodPrefix(_getModule(generatorOptions), classDefinition.name);
+    final String methodPrefix = _getMethodPrefix(
+        _getModule(generatorOptions, dartPackageName), classDefinition.name);
     final String testMacro = '${snakeModule}_IS_$snakeClassName'.toUpperCase();
 
     indent.newln();
-    _writeObjectStruct(
-        indent, _getModule(generatorOptions), classDefinition.name, () {
+    _writeObjectStruct(indent, _getModule(generatorOptions, dartPackageName),
+        classDefinition.name, () {
       indent.newln();
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _snakeCaseFromCamelCase(field.name);
-        final String fieldType =
-            _getType(_getModule(generatorOptions), field.type, isOutput: true);
+        final String fieldType = _getType(
+            _getModule(generatorOptions, dartPackageName), field.type,
+            isOutput: true);
         indent.writeln('$fieldType $fieldName;');
       }
     });
 
     indent.newln();
-    _writeDefineType(
-        indent, _getModule(generatorOptions), classDefinition.name);
+    _writeDefineType(indent, _getModule(generatorOptions, dartPackageName),
+        classDefinition.name);
 
     indent.newln();
-    _writeDispose(indent, _getModule(generatorOptions), classDefinition.name,
-        () {
+    _writeDispose(indent, _getModule(generatorOptions, dartPackageName),
+        classDefinition.name, () {
       bool haveSelf = false;
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _snakeCaseFromCamelCase(field.name);
         final String? clear = _getClearFunction(field.type, 'self->$fieldName');
         if (clear != null) {
           if (!haveSelf) {
-            _writeCastSelf(indent, _getModule(generatorOptions),
-                classDefinition.name, 'object');
+            _writeCastSelf(
+                indent,
+                _getModule(generatorOptions, dartPackageName),
+                classDefinition.name,
+                'object');
             haveSelf = true;
           }
           indent.writeln('$clear;');
@@ -480,23 +490,23 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     });
 
     indent.newln();
-    _writeInit(
-        indent, _getModule(generatorOptions), classDefinition.name, () {});
+    _writeInit(indent, _getModule(generatorOptions, dartPackageName),
+        classDefinition.name, () {});
 
     indent.newln();
-    _writeClassInit(
-        indent, _getModule(generatorOptions), classDefinition.name, () {});
+    _writeClassInit(indent, _getModule(generatorOptions, dartPackageName),
+        classDefinition.name, () {});
 
     final List<String> constructorArgs = <String>[
       for (final NamedType field in classDefinition.fields)
-        '${_getType(_getModule(generatorOptions), field.type)} ${_snakeCaseFromCamelCase(field.name)}',
+        '${_getType(_getModule(generatorOptions, dartPackageName), field.type)} ${_snakeCaseFromCamelCase(field.name)}',
     ];
     indent.newln();
     indent.addScoped(
         "$className* ${methodPrefix}_new(${constructorArgs.join(', ')}) {", '}',
         () {
-      _writeObjectNew(
-          indent, _getModule(generatorOptions), classDefinition.name);
+      _writeObjectNew(indent, _getModule(generatorOptions, dartPackageName),
+          classDefinition.name);
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _snakeCaseFromCamelCase(field.name);
         final String value = _referenceValue(field.type, fieldName);
@@ -509,14 +519,14 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     for (final NamedType field in classDefinition.fields) {
       final String fieldName = _snakeCaseFromCamelCase(field.name);
       final String returnType =
-          _getType(_getModule(generatorOptions), field.type);
+          _getType(_getModule(generatorOptions, dartPackageName), field.type);
 
       indent.newln();
       indent.addScoped(
           '$returnType ${methodPrefix}_get_$fieldName($className* self) {', '}',
           () {
         indent.writeln(
-            'g_return_val_if_fail($testMacro(self), ${_getDefaultValue(_getModule(generatorOptions), field.type)});');
+            'g_return_val_if_fail($testMacro(self), ${_getDefaultValue(_getModule(generatorOptions, dartPackageName), field.type)});');
         indent.writeln('return self->$fieldName;');
       });
     }
@@ -528,7 +538,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _snakeCaseFromCamelCase(field.name);
         indent.writeln(
-            'fl_value_append_take(values, ${_makeFlValue(_getModule(generatorOptions), field.type, 'self->$fieldName')});');
+            'fl_value_append_take(values, ${_makeFlValue(_getModule(generatorOptions, dartPackageName), field.type, 'self->$fieldName')});');
       }
       indent.writeln('return values;');
     });
@@ -540,8 +550,8 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final List<String> args = <String>[];
       for (int i = 0; i < classDefinition.fields.length; i++) {
         final NamedType field = classDefinition.fields[i];
-        args.add(_fromFlValue(_getModule(generatorOptions), field.type,
-            'fl_value_get_list_value(values, $i)'));
+        args.add(_fromFlValue(_getModule(generatorOptions, dartPackageName),
+            field.type, 'fl_value_get_list_value(values, $i)'));
       }
       indent.writeln('return ${methodPrefix}_new(${args.join(', ')});');
     });
@@ -556,36 +566,43 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     required String dartPackageName,
   }) {
     final String className =
-        _getClassName(_getModule(generatorOptions), api.name);
+        _getClassName(_getModule(generatorOptions, dartPackageName), api.name);
 
-    final String methodPrefix =
-        _getMethodPrefix(_getModule(generatorOptions), api.name);
+    final String methodPrefix = _getMethodPrefix(
+        _getModule(generatorOptions, dartPackageName), api.name);
 
     indent.newln();
-    _writeObjectStruct(indent, _getModule(generatorOptions), api.name, () {
+    _writeObjectStruct(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {
       indent.writeln('FlBinaryMessenger* messenger;');
     });
 
     indent.newln();
-    _writeDefineType(indent, _getModule(generatorOptions), api.name);
+    _writeDefineType(
+        indent, _getModule(generatorOptions, dartPackageName), api.name);
 
     indent.newln();
-    _writeDispose(indent, _getModule(generatorOptions), api.name, () {
-      _writeCastSelf(indent, _getModule(generatorOptions), api.name, 'object');
+    _writeDispose(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {
+      _writeCastSelf(indent, _getModule(generatorOptions, dartPackageName),
+          api.name, 'object');
       indent.writeln('g_clear_object(&self->messenger);');
     });
 
     indent.newln();
-    _writeInit(indent, _getModule(generatorOptions), api.name, () {});
+    _writeInit(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {});
 
     indent.newln();
-    _writeClassInit(indent, _getModule(generatorOptions), api.name, () {});
+    _writeClassInit(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {});
 
     indent.newln();
     indent.addScoped(
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger) {', '}',
         () {
-      _writeObjectNew(indent, _getModule(generatorOptions), api.name);
+      _writeObjectNew(
+          indent, _getModule(generatorOptions, dartPackageName), api.name);
       indent.writeln('self->messenger = g_object_ref(messenger);');
       indent.writeln('return self;');
     });
@@ -596,7 +613,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final List<String> asyncArgs = <String>[
         '$className* object',
         for (final Parameter param in method.parameters)
-          '${_getType(_getModule(generatorOptions), param.type)} ${_snakeCaseFromCamelCase(param.name)}',
+          '${_getType(_getModule(generatorOptions, dartPackageName), param.type)} ${_snakeCaseFromCamelCase(param.name)}',
         'GCancellable* cancellable',
         'GAsyncReadyCallback callback',
         'gpointer user_data',
@@ -608,7 +625,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
           () {});
 
       final String returnType = _getType(
-          _getModule(generatorOptions), method.returnType,
+          _getModule(generatorOptions, dartPackageName), method.returnType,
           isOutput: true);
       final List<String> finishArgs = <String>[
         '$className* object',
@@ -634,33 +651,36 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     required String dartPackageName,
   }) {
     final String className =
-        _getClassName(_getModule(generatorOptions), api.name);
+        _getClassName(_getModule(generatorOptions, dartPackageName), api.name);
 
-    final String methodPrefix =
-        _getMethodPrefix(_getModule(generatorOptions), api.name);
+    final String methodPrefix = _getMethodPrefix(
+        _getModule(generatorOptions, dartPackageName), api.name);
     final String vtableName =
-        _getVTableName(_getModule(generatorOptions), api.name);
+        _getVTableName(_getModule(generatorOptions, dartPackageName), api.name);
 
     final String codecName = '${api.name}Codec';
     final String codecClassName =
-        _getClassName(_getModule(generatorOptions), codecName);
+        _getClassName(_getModule(generatorOptions, dartPackageName), codecName);
     final String codecMethodPrefix = '${methodPrefix}_codec';
 
     indent.newln();
-    _writeDeclareFinalType(indent, _getModule(generatorOptions), codecName,
+    _writeDeclareFinalType(
+        indent, _getModule(generatorOptions, dartPackageName), codecName,
         parentClassName: 'FlStandardMessageCodec');
 
     indent.newln();
-    _writeObjectStruct(indent, _getModule(generatorOptions), codecName, () {},
+    _writeObjectStruct(
+        indent, _getModule(generatorOptions, dartPackageName), codecName, () {},
         parentClassName: 'FlStandardMessageCodec');
 
     indent.newln();
-    _writeDefineType(indent, _getModule(generatorOptions), codecName,
+    _writeDefineType(
+        indent, _getModule(generatorOptions, dartPackageName), codecName,
         parentType: 'fl_standard_message_codec_get_type()');
 
     for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-      final String customClassName =
-          _getClassName(_getModule(generatorOptions), customClass.name);
+      final String customClassName = _getClassName(
+          _getModule(generatorOptions, dartPackageName), customClass.name);
       final String snakeCustomClassName =
           _snakeCaseFromCamelCase(customClassName);
       indent.newln();
@@ -687,12 +707,14 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
               in getCodecClasses(api, root)) {
             indent.writeln('case ${customClass.enumeration}:');
             indent.nest(1, () {
-              final String customClassName =
-                  _getClassName(_getModule(generatorOptions), customClass.name);
+              final String customClassName = _getClassName(
+                  _getModule(generatorOptions, dartPackageName),
+                  customClass.name);
               final String snakeCustomClassName =
                   _snakeCaseFromCamelCase(customClassName);
               final String castMacro = _getClassCastMacro(
-                  _getModule(generatorOptions), customClass.name);
+                  _getModule(generatorOptions, dartPackageName),
+                  customClass.name);
               indent.writeln(
                   'return write_$snakeCustomClassName(codec, buffer, $castMacro(fl_value_get_custom_value_object(value)), error);');
             });
@@ -706,8 +728,8 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     });
 
     for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-      final String customClassName =
-          _getClassName(_getModule(generatorOptions), customClass.name);
+      final String customClassName = _getClassName(
+          _getModule(generatorOptions, dartPackageName), customClass.name);
       final String snakeCustomClassName =
           _snakeCaseFromCamelCase(customClassName);
       indent.newln();
@@ -739,8 +761,8 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         '}', () {
       indent.addScoped('switch (type) {', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          final String customClassName =
-              _getClassName(_getModule(generatorOptions), customClass.name);
+          final String customClassName = _getClassName(
+              _getModule(generatorOptions, dartPackageName), customClass.name);
           final String snakeCustomClassName =
               _snakeCaseFromCamelCase(customClassName);
           indent.writeln('case ${customClass.enumeration}:');
@@ -759,10 +781,12 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     });
 
     indent.newln();
-    _writeInit(indent, _getModule(generatorOptions), codecName, () {});
+    _writeInit(indent, _getModule(generatorOptions, dartPackageName), codecName,
+        () {});
 
     indent.newln();
-    _writeClassInit(indent, _getModule(generatorOptions), codecName, () {
+    _writeClassInit(
+        indent, _getModule(generatorOptions, dartPackageName), codecName, () {
       indent.writeln(
           'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value = ${methodPrefix}_write_value;');
       indent.writeln(
@@ -772,56 +796,63 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     indent.newln();
     indent.addScoped(
         'static $codecClassName* ${codecMethodPrefix}_new() {', '}', () {
-      _writeObjectNew(indent, _getModule(generatorOptions), codecName);
+      _writeObjectNew(
+          indent, _getModule(generatorOptions, dartPackageName), codecName);
       indent.writeln('return self;');
     });
 
     for (final Method method in api.methods) {
       final String responseName = _getResponseName(api.name, method.name);
-      final String responseClassName =
-          _getClassName(_getModule(generatorOptions), responseName);
-      final String responseMethodPrefix =
-          _getMethodPrefix(_getModule(generatorOptions), responseName);
+      final String responseClassName = _getClassName(
+          _getModule(generatorOptions, dartPackageName), responseName);
+      final String responseMethodPrefix = _getMethodPrefix(
+          _getModule(generatorOptions, dartPackageName), responseName);
 
       if (method.isAsynchronous) {
         indent.newln();
-        _writeDeclareFinalType(
-            indent, _getModule(generatorOptions), responseName);
+        _writeDeclareFinalType(indent,
+            _getModule(generatorOptions, dartPackageName), responseName);
       }
 
       indent.newln();
-      _writeObjectStruct(indent, _getModule(generatorOptions), responseName,
+      _writeObjectStruct(
+          indent, _getModule(generatorOptions, dartPackageName), responseName,
           () {
         indent.writeln('FlValue* value;');
       });
 
       indent.newln();
-      _writeDefineType(indent, _getModule(generatorOptions), responseName);
+      _writeDefineType(
+          indent, _getModule(generatorOptions, dartPackageName), responseName);
 
       indent.newln();
-      _writeDispose(indent, _getModule(generatorOptions), responseName, () {
-        _writeCastSelf(
-            indent, _getModule(generatorOptions), responseName, 'object');
+      _writeDispose(
+          indent, _getModule(generatorOptions, dartPackageName), responseName,
+          () {
+        _writeCastSelf(indent, _getModule(generatorOptions, dartPackageName),
+            responseName, 'object');
         indent.writeln('g_clear_pointer(&self->value, fl_value_unref);');
       });
 
       indent.newln();
-      _writeInit(indent, _getModule(generatorOptions), responseName, () {});
+      _writeInit(indent, _getModule(generatorOptions, dartPackageName),
+          responseName, () {});
 
       indent.newln();
-      _writeClassInit(
-          indent, _getModule(generatorOptions), responseName, () {});
+      _writeClassInit(indent, _getModule(generatorOptions, dartPackageName),
+          responseName, () {});
 
-      final String returnType =
-          _getType(_getModule(generatorOptions), method.returnType);
+      final String returnType = _getType(
+          _getModule(generatorOptions, dartPackageName), method.returnType);
       indent.newln();
       indent.addScoped(
           "${method.isAsynchronous ? 'static ' : ''}$responseClassName* ${responseMethodPrefix}_new($returnType return_value) {",
           '}', () {
-        _writeObjectNew(indent, _getModule(generatorOptions), responseName);
+        _writeObjectNew(indent, _getModule(generatorOptions, dartPackageName),
+            responseName);
         indent.writeln('self->value = fl_value_new_list();');
         indent.writeln(
-            "fl_value_append_take(self->value, ${_makeFlValue(_getModule(generatorOptions), method.returnType, 'return_value')});");
+            "fl_value_append_take(self->value, ${_makeFlValue(_getModule(generatorOptions, dartPackageName), method.returnType, 'return_value')});");
         indent.writeln('return self;');
       });
 
@@ -829,7 +860,8 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       indent.addScoped(
           '${method.isAsynchronous ? 'static ' : ''}$responseClassName* ${responseMethodPrefix}_new_error(const gchar* code, const gchar* message, FlValue* details) {',
           '}', () {
-        _writeObjectNew(indent, _getModule(generatorOptions), responseName);
+        _writeObjectNew(indent, _getModule(generatorOptions, dartPackageName),
+            responseName);
         indent.writeln('self->value = fl_value_new_list();');
         indent.writeln(
             'fl_value_append_take(self->value, fl_value_new_string(code));');
@@ -841,7 +873,8 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     }
 
     indent.newln();
-    _writeObjectStruct(indent, _getModule(generatorOptions), api.name, () {
+    _writeObjectStruct(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {
       indent.writeln('FlBinaryMessenger* messenger;');
       indent.writeln('const ${className}VTable* vtable;');
       indent.writeln('gpointer user_data;');
@@ -855,20 +888,21 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     });
 
     indent.newln();
-    _writeDefineType(indent, _getModule(generatorOptions), api.name);
+    _writeDefineType(
+        indent, _getModule(generatorOptions, dartPackageName), api.name);
 
     for (final Method method in api.methods) {
       final String methodName = _snakeCaseFromCamelCase(method.name);
       final String responseName = _getResponseName(api.name, method.name);
-      final String responseClassName =
-          _getClassName(_getModule(generatorOptions), responseName);
+      final String responseClassName = _getClassName(
+          _getModule(generatorOptions, dartPackageName), responseName);
 
       indent.newln();
       indent.addScoped(
           'static void ${methodName}_cb(FlBasicMessageChannel* channel, FlValue* message, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {',
           '}', () {
-        _writeCastSelf(
-            indent, _getModule(generatorOptions), api.name, 'user_data');
+        _writeCastSelf(indent, _getModule(generatorOptions, dartPackageName),
+            api.name, 'user_data');
 
         indent.newln();
         indent.addScoped(
@@ -880,7 +914,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         final List<String> methodArgs = <String>[
           for (int i = 0; i < method.parameters.length; i++)
             _fromFlValue(
-                _getModule(generatorOptions),
+                _getModule(generatorOptions, dartPackageName),
                 method.parameters[i].type,
                 'fl_value_get_list_value(message, $i)'),
         ];
@@ -916,8 +950,10 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     }
 
     indent.newln();
-    _writeDispose(indent, _getModule(generatorOptions), api.name, () {
-      _writeCastSelf(indent, _getModule(generatorOptions), api.name, 'object');
+    _writeDispose(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {
+      _writeCastSelf(indent, _getModule(generatorOptions, dartPackageName),
+          api.name, 'object');
       indent.writeln('g_clear_object(&self->messenger);');
       indent.addScoped('if (self->user_data != nullptr) {', '}', () {
         indent.writeln('self->user_data_free_func(self->user_data);');
@@ -932,16 +968,19 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     });
 
     indent.newln();
-    _writeInit(indent, _getModule(generatorOptions), api.name, () {});
+    _writeInit(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {});
 
     indent.newln();
-    _writeClassInit(indent, _getModule(generatorOptions), api.name, () {});
+    _writeClassInit(
+        indent, _getModule(generatorOptions, dartPackageName), api.name, () {});
 
     indent.newln();
     indent.addScoped(
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
         '}', () {
-      _writeObjectNew(indent, _getModule(generatorOptions), api.name);
+      _writeObjectNew(
+          indent, _getModule(generatorOptions, dartPackageName), api.name);
       indent.writeln('self->messenger = g_object_ref(messenger);');
       indent.writeln('self->vtable = vtable;');
       indent.writeln('self->user_data = user_data;');
@@ -966,14 +1005,14 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
     for (final Method method
         in api.methods.where((Method method) => method.isAsynchronous)) {
-      final String returnType =
-          _getType(_getModule(generatorOptions), method.returnType);
+      final String returnType = _getType(
+          _getModule(generatorOptions, dartPackageName), method.returnType);
       final String methodName = _snakeCaseFromCamelCase(method.name);
       final String responseName = _getResponseName(api.name, method.name);
-      final String responseClassName =
-          _getClassName(_getModule(generatorOptions), responseName);
-      final String responseMethodPrefix =
-          _getMethodPrefix(_getModule(generatorOptions), responseName);
+      final String responseClassName = _getClassName(
+          _getModule(generatorOptions, dartPackageName), responseName);
+      final String responseMethodPrefix = _getMethodPrefix(
+          _getModule(generatorOptions, dartPackageName), responseName);
 
       indent.newln();
       final List<String> respondArgs = <String>[
@@ -1021,8 +1060,9 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 }
 
 // Returns the module name to use.
-String _getModule(LinuxOptions generatorOptions) =>
-    generatorOptions.module ?? 'My';
+String _getModule(LinuxOptions generatorOptions, String dartPackageName) {
+  return generatorOptions.module ?? _camelCaseFromSnakeCase(dartPackageName);
+}
 
 // Returns the header guard defintion for [headerFileName].
 String _getGuardName(String? headerFileName) {
@@ -1037,7 +1077,7 @@ String _getGuardName(String? headerFileName) {
 // Writes the GObject macro to generate a new type.
 void _writeDeclareFinalType(Indent indent, String module, String name,
     {String parentClassName = 'GObject'}) {
-  final String upperModule = module.toUpperCase();
+  final String upperModule = _snakeCaseFromCamelCase(module).toUpperCase();
   final String className = _getClassName(module, name);
   final String snakeClassName = _snakeCaseFromCamelCase(name);
   final String upperSnakeClassName = snakeClassName.toUpperCase();
@@ -1132,6 +1172,14 @@ void _writeCastSelf(
 String _snakeCaseFromCamelCase(String camelCase) {
   return camelCase.replaceAllMapped(RegExp(r'[A-Z]'),
       (Match m) => '${m.start == 0 ? '' : '_'}${m[0]!.toLowerCase()}');
+}
+
+// Converts a string from snake_case to CamelCase
+String _camelCaseFromSnakeCase(String snakeCase) {
+  return snakeCase
+      .split('_')
+      .map((String v) => v[0].toUpperCase() + v.substring(1))
+      .join();
 }
 
 // Returns the GObject class name for [name].

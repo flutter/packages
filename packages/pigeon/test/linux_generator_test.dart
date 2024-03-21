@@ -71,13 +71,15 @@ void main() {
       expect(
           code,
           contains(
-              'G_DECLARE_FINAL_TYPE(MyInput, my_input, MY, INPUT, GObject)'));
+              'G_DECLARE_FINAL_TYPE(TestPackageInput, test_package_input, TEST_PACKAGE, INPUT, GObject)'));
       expect(
           code,
           contains(
-              'G_DECLARE_FINAL_TYPE(MyOutput, my_output, MY, OUTPUT, GObject)'));
-      expect(code,
-          contains('G_DECLARE_FINAL_TYPE(MyApi, my_api, MY, API, GObject)'));
+              'G_DECLARE_FINAL_TYPE(TestPackageOutput, test_package_output, TEST_PACKAGE, OUTPUT, GObject)'));
+      expect(
+          code,
+          contains(
+              'G_DECLARE_FINAL_TYPE(TestPackageApi, test_package_api, TEST_PACKAGE, API, GObject)'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -90,9 +92,18 @@ void main() {
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
-      expect(code, contains('static void my_input_init(MyInput* self) {'));
-      expect(code, contains('static void my_output_init(MyOutput* self) {'));
-      expect(code, contains('static void my_api_init(MyApi* self) {'));
+      expect(
+          code,
+          contains(
+              'static void test_package_input_init(TestPackageInput* self) {'));
+      expect(
+          code,
+          contains(
+              'static void test_package_output_init(TestPackageOutput* self) {'));
+      expect(
+          code,
+          contains(
+              'static void test_package_api_init(TestPackageApi* self) {'));
     }
   });
 
@@ -150,11 +161,15 @@ void main() {
       expect(
           code,
           contains(
-              '  MyApiDoSomethingResponse* (*do_something)(MyApi* object, MyInput* some_input, gpointer user_data);'));
-      expect(code,
-          contains('gboolean my_input_get_input_field(MyInput* object);'));
-      expect(code,
-          contains('gboolean my_output_get_output_field(MyOutput* object);'));
+              '  TestPackageApiDoSomethingResponse* (*do_something)(TestPackageApi* object, TestPackageInput* some_input, gpointer user_data);'));
+      expect(
+          code,
+          contains(
+              'gboolean test_package_input_get_input_field(TestPackageInput* object);'));
+      expect(
+          code,
+          contains(
+              'gboolean test_package_output_get_output_field(TestPackageOutput* object);'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -168,9 +183,13 @@ void main() {
           dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(
-          code, contains('gboolean my_input_get_input_field(MyInput* self) {'));
-      expect(code,
-          contains('gboolean my_output_get_output_field(MyOutput* self) {'));
+          code,
+          contains(
+              'gboolean test_package_input_get_input_field(TestPackageInput* self) {'));
+      expect(
+          code,
+          contains(
+              'gboolean test_package_output_get_output_field(TestPackageOutput* self) {'));
     }
   });
 
@@ -381,7 +400,10 @@ void main() {
       );
       final String code = sink.toString();
 
-      expect(code, contains('MyNested* my_nested_new(gboolean nested_value);'));
+      expect(
+          code,
+          contains(
+              'TestPackageNested* test_package_nested_new(gboolean nested_value);'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -400,7 +422,9 @@ void main() {
       final String code = sink.toString();
 
       expect(
-          code, contains('MyNested* my_nested_new(gboolean nested_value) {'));
+          code,
+          contains(
+              'TestPackageNested* test_package_nested_new(gboolean nested_value) {'));
     }
   });
 
@@ -507,27 +531,27 @@ void main() {
       expect(
           code,
           contains(
-              '  MyApiReturnBoolResponse* (*return_bool)(MyApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnBoolResponse* (*return_bool)(TestPackageApi* object, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  MyApiReturnIntResponse* (*return_int)(MyApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnIntResponse* (*return_int)(TestPackageApi* object, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  MyApiReturnStringResponse* (*return_string)(MyApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnStringResponse* (*return_string)(TestPackageApi* object, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  MyApiReturnListResponse* (*return_list)(MyApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnListResponse* (*return_list)(TestPackageApi* object, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  MyApiReturnMapResponse* (*return_map)(MyApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnMapResponse* (*return_map)(TestPackageApi* object, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  MyApiReturnDataClassResponse* (*return_data_class)(MyApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnDataClassResponse* (*return_data_class)(TestPackageApi* object, gpointer user_data);'));
     }
   });
 
@@ -629,7 +653,7 @@ void main() {
       expect(
           code,
           contains(
-              '  MyApiDoSomethingResponse* (*do_something)(MyApi* object, gboolean a_bool, int64_t an_int, const gchar* a_string, FlValue* a_list, FlValue* a_map, MyParameterObject* an_object, MyObject* a_generic_object, gpointer user_data);'));
+              '  TestPackageApiDoSomethingResponse* (*do_something)(TestPackageApi* object, gboolean a_bool, int64_t an_int, const gchar* a_string, FlValue* a_list, FlValue* a_map, TestPackageParameterObject* an_object, TestPackageObject* a_generic_object, gpointer user_data);'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -649,7 +673,7 @@ void main() {
       expect(
           code,
           contains(
-              '  g_autoptr(MyApiDoSomethingResponse) response = self->vtable->do_something(self, fl_value_get_bool(fl_value_get_list_value(message, 0)), fl_value_get_int(fl_value_get_list_value(message, 1)), fl_value_get_string(fl_value_get_list_value(message, 2)), fl_value_get_list_value(message, 3), fl_value_get_list_value(message, 4), MY_PARAMETER_OBJECT(fl_value_get_custom_value_object(fl_value_get_list_value(message, 5))), MY_OBJECT(fl_value_get_custom_value_object(fl_value_get_list_value(message, 6))), self->user_data);'));
+              '  g_autoptr(TestPackageApiDoSomethingResponse) response = self->vtable->do_something(self, fl_value_get_bool(fl_value_get_list_value(message, 0)), fl_value_get_int(fl_value_get_list_value(message, 1)), fl_value_get_string(fl_value_get_list_value(message, 2)), fl_value_get_list_value(message, 3), fl_value_get_list_value(message, 4), TEST_PACKAGE_PARAMETER_OBJECT(fl_value_get_custom_value_object(fl_value_get_list_value(message, 5))), TEST_PACKAGE_OBJECT(fl_value_get_custom_value_object(fl_value_get_list_value(message, 6))), self->user_data);'));
     }
   });
 

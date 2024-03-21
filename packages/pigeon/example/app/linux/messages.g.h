@@ -11,85 +11,104 @@
 
 G_BEGIN_DECLS
 
-typedef enum { MY_CODE_ONE = 0, MY_CODE_TWO = 1 } MyCode;
+typedef enum {
+  PIGEON_EXAMPLE_PACKAGE_CODE_ONE = 0,
+  PIGEON_EXAMPLE_PACKAGE_CODE_TWO = 1
+} PigeonExamplePackageCode;
 
-G_DECLARE_FINAL_TYPE(MyMessageData, my_message_data, MY, MESSAGE_DATA, GObject)
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageData,
+                     pigeon_example_package_message_data,
+                     PIGEON_EXAMPLE_PACKAGE, MESSAGE_DATA, GObject)
 
-MyMessageData* my_message_data_new(const gchar* name, const gchar* description,
-                                   MyCode code, FlValue* data);
+PigeonExamplePackageMessageData* pigeon_example_package_message_data_new(
+    const gchar* name, const gchar* description, PigeonExamplePackageCode code,
+    FlValue* data);
 
-const gchar* my_message_data_get_name(MyMessageData* object);
+const gchar* pigeon_example_package_message_data_get_name(
+    PigeonExamplePackageMessageData* object);
 
-const gchar* my_message_data_get_description(MyMessageData* object);
+const gchar* pigeon_example_package_message_data_get_description(
+    PigeonExamplePackageMessageData* object);
 
-MyCode my_message_data_get_code(MyMessageData* object);
+PigeonExamplePackageCode pigeon_example_package_message_data_get_code(
+    PigeonExamplePackageMessageData* object);
 
-FlValue* my_message_data_get_data(MyMessageData* object);
+FlValue* pigeon_example_package_message_data_get_data(
+    PigeonExamplePackageMessageData* object);
 
-G_DECLARE_FINAL_TYPE(MyExampleHostApiGetHostLanguageResponse,
-                     my_example_host_api_get_host_language_response, MY,
-                     EXAMPLE_HOST_API_GET_HOST_LANGUAGE_RESPONSE, GObject)
+G_DECLARE_FINAL_TYPE(
+    PigeonExamplePackageExampleHostApiGetHostLanguageResponse,
+    pigeon_example_package_example_host_api_get_host_language_response,
+    PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API_GET_HOST_LANGUAGE_RESPONSE,
+    GObject)
 
-MyExampleHostApiGetHostLanguageResponse*
-my_example_host_api_get_host_language_response_new(const gchar* return_value);
+PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+pigeon_example_package_example_host_api_get_host_language_response_new(
+    const gchar* return_value);
 
-MyExampleHostApiGetHostLanguageResponse*
-my_example_host_api_get_host_language_response_new_error(const gchar* code,
-                                                         const gchar* message,
-                                                         FlValue* details);
-
-G_DECLARE_FINAL_TYPE(MyExampleHostApiAddResponse,
-                     my_example_host_api_add_response, MY,
-                     EXAMPLE_HOST_API_ADD_RESPONSE, GObject)
-
-MyExampleHostApiAddResponse* my_example_host_api_add_response_new(
-    int64_t return_value);
-
-MyExampleHostApiAddResponse* my_example_host_api_add_response_new_error(
+PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+pigeon_example_package_example_host_api_get_host_language_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
-G_DECLARE_FINAL_TYPE(MyExampleHostApi, my_example_host_api, MY,
-                     EXAMPLE_HOST_API, GObject)
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApiAddResponse,
+                     pigeon_example_package_example_host_api_add_response,
+                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API_ADD_RESPONSE,
+                     GObject)
+
+PigeonExamplePackageExampleHostApiAddResponse*
+pigeon_example_package_example_host_api_add_response_new(int64_t return_value);
+
+PigeonExamplePackageExampleHostApiAddResponse*
+pigeon_example_package_example_host_api_add_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
+                     pigeon_example_package_example_host_api,
+                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API, GObject)
 
 typedef struct {
-  MyExampleHostApiGetHostLanguageResponse* (*get_host_language)(
-      MyExampleHostApi* object, gpointer user_data);
-  MyExampleHostApiAddResponse* (*add)(MyExampleHostApi* object, int64_t a,
-                                      int64_t b, gpointer user_data);
-  void (*send_message)(MyExampleHostApi* object, MyMessageData* message,
+  PigeonExamplePackageExampleHostApiGetHostLanguageResponse* (
+      *get_host_language)(PigeonExamplePackageExampleHostApi* object,
+                          gpointer user_data);
+  PigeonExamplePackageExampleHostApiAddResponse* (*add)(
+      PigeonExamplePackageExampleHostApi* object, int64_t a, int64_t b,
+      gpointer user_data);
+  void (*send_message)(PigeonExamplePackageExampleHostApi* object,
+                       PigeonExamplePackageMessageData* message,
                        FlBasicMessageChannelResponseHandle* response_handle,
                        gpointer user_data);
-} MyExampleHostApiVTable;
+} PigeonExamplePackageExampleHostApiVTable;
 
-MyExampleHostApi* my_example_host_api_new(FlBinaryMessenger* messenger,
-                                          const MyExampleHostApiVTable* vtable,
-                                          gpointer user_data,
-                                          GDestroyNotify user_data_free_func);
+PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
+    FlBinaryMessenger* messenger,
+    const PigeonExamplePackageExampleHostApiVTable* vtable, gpointer user_data,
+    GDestroyNotify user_data_free_func);
 
-void my_example_host_api_respond_send_message(
-    MyExampleHostApi* self,
+void pigeon_example_package_example_host_api_respond_send_message(
+    PigeonExamplePackageExampleHostApi* self,
     FlBasicMessageChannelResponseHandle* response_handle,
     gboolean return_value);
 
-void my_example_host_api_respond_error_send_message(
-    MyExampleHostApi* self,
+void pigeon_example_package_example_host_api_respond_error_send_message(
+    PigeonExamplePackageExampleHostApi* self,
     FlBasicMessageChannelResponseHandle* response_handle, const gchar* code,
     const gchar* message, FlValue* details);
 
-G_DECLARE_FINAL_TYPE(MyMessageFlutterApi, my_message_flutter_api, MY,
-                     MESSAGE_FLUTTER_API, GObject)
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageFlutterApi,
+                     pigeon_example_package_message_flutter_api,
+                     PIGEON_EXAMPLE_PACKAGE, MESSAGE_FLUTTER_API, GObject)
 
-MyMessageFlutterApi* my_message_flutter_api_new(FlBinaryMessenger* messenger);
+PigeonExamplePackageMessageFlutterApi*
+pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger);
 
-void my_message_flutter_api_flutter_method_async(MyMessageFlutterApi* object,
-                                                 const gchar* a_string,
-                                                 GCancellable* cancellable,
-                                                 GAsyncReadyCallback callback,
-                                                 gpointer user_data);
+void pigeon_example_package_message_flutter_api_flutter_method_async(
+    PigeonExamplePackageMessageFlutterApi* object, const gchar* a_string,
+    GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data);
 
-gboolean my_message_flutter_api_flutter_method_finish(
-    MyMessageFlutterApi* object, GAsyncResult* result, gchar** return_value,
-    GError** error);
+gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
+    PigeonExamplePackageMessageFlutterApi* object, GAsyncResult* result,
+    gchar** return_value, GError** error);
 
 G_END_DECLS
 

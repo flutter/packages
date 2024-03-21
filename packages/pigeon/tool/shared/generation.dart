@@ -120,7 +120,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       linuxSourceOut: skipLanguages.contains(GeneratorLanguage.linux)
           ? null
           : '$outputBase/linux/pigeon/$input.gen.cc',
-      linuxModule: 'My',
+      linuxModule: '${pascalCaseName}PigeonTest',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
     );

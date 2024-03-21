@@ -16,22 +16,23 @@ struct _MyApplication {
   GtkApplication parent_instance;
   char** dart_entrypoint_arguments;
 
-  MyExampleHostApi* example_host_api;
+  PigeonExamplePackageExampleHostApi* example_host_api;
 
-  MyMessageFlutterApi* flutter_api;
+  PigeonExamplePackageMessageFlutterApi* flutter_api;
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
 // #docregion vtable
-static MyExampleHostApiGetHostLanguageResponse* handle_get_host_language(
-    MyExampleHostApi* object, gpointer user_data) {
+static PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+handle_get_host_language(PigeonExamplePackageExampleHostApi* object,
+                         gpointer user_data) {
   return my_example_host_api_get_host_language_response_new("C++");
 }
 
-static MyExampleHostApiAddResponse* handle_add(MyExampleHostApi* object,
-                                               int64_t a, int64_t b,
-                                               gpointer user_data) {
+static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
+    PigeonExamplePackageExampleHostApi* object, int64_t a, int64_t b,
+    gpointer user_data) {
   if (a < 0 || b < 0) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
     return my_example_host_api_add_response_new_error("code", "message",
@@ -42,10 +43,11 @@ static MyExampleHostApiAddResponse* handle_add(MyExampleHostApi* object,
 }
 
 static void handle_send_message(
-    MyExampleHostApi* object, MyMessageData* message,
+    PigeonExamplePackageExampleHostApi* object,
+    PigeonExamplePackageMessageData* message,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  MyCode code = my_message_data_get_code(message);
-  if (code == MY_CODE_ONE) {
+  PigeonExamplePackageCode code = my_message_data_get_code(message);
+  if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
     my_example_host_api_respond_error_send_message(object, response_handle,
                                                    "code", "message", details);
@@ -62,7 +64,8 @@ static void flutter_method_cb(GObject* object, GAsyncResult* result,
   g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
   if (!my_message_flutter_api_flutter_method_finish(
-          MY_MESSAGE_FLUTTER_API(object), result, &return_value, &error)) {
+          PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result,
+          &return_value, &error)) {
     g_warning("Failed to call Flutter method: %s", error->message);
     return;
   }
@@ -117,7 +120,7 @@ static void my_application_activate(GApplication* application) {
 
   FlBinaryMessenger* messenger =
       fl_engine_get_binary_messenger(fl_view_get_engine(view));
-  static MyExampleHostApiVTable example_host_api_vtable = {
+  static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
       .get_host_language = handle_get_host_language,
       .add = handle_add,
       .send_message = handle_send_message};

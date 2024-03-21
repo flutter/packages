@@ -2210,7 +2210,7 @@ ${_argParser.usage}''';
       linuxHeaderOut: results['linux_header_out'] as String?,
       linuxSourceOut: results['linux_source_out'] as String?,
       linuxOptions: LinuxOptions(
-        module: results['linux_module'] as String? ?? 'My',
+        module: results['linux_module'] as String?,
       ),
       copyrightHeader: results['copyright_header'] as String?,
       oneLanguage: results['one_language'] as bool?,
