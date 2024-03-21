@@ -300,15 +300,12 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
 const String classNamePrefix = 'Pigeon';
-<<<<<<< HEAD
 
 /// Prefix for apis generated for ProxyApi.
 ///
 /// Since ProxyApis are intended to wrap a class and will often share the name
 /// of said class, host APIs should prefix the API with this protected name.
 const String hostApiPrefix = '${classNamePrefix}Api';
-=======
->>>>>>> 7cc7e315e76e39b72cd95b2fc01fbe4327aa71a8
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///
