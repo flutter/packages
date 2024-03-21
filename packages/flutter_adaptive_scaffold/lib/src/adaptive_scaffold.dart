@@ -105,7 +105,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.appBarBreakpoint,
   }) : assert(
           destinations.length >= 2,
-          'At least 2 or more destinations required',
+          'At least two destinations are required',
         );
 
   /// The destinations to be used in navigation items. These are converted to
