@@ -161,7 +161,8 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     indent.addScoped('typedef enum {', '} $enumName;', () {
       for (int i = 0; i < anEnum.members.length; i++) {
         final EnumMember member = anEnum.members[i];
-        final String itemName = _getEnumValue(module, anEnum.name, member.name);
+        final String itemName =
+            _getEnumValue(dartPackageName, anEnum.name, member.name);
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
