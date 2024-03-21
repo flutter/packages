@@ -1,5 +1,6 @@
-## NEXT
+## 0.1.8+1
 
+* Removes a broken design document link from the README.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 0.1.8
