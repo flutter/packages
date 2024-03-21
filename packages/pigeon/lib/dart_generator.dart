@@ -530,7 +530,6 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
         )
         ..constructors.addAll(_proxyApiConstructors(
           api.constructors,
-          api,
           apiName: api.name,
           dartPackageName: dartPackageName,
           codecName: codecName,
