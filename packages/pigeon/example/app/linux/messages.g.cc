@@ -546,7 +546,7 @@ void pigeon_example_package_example_host_api_respond_error_send_message(
 struct _PigeonExamplePackageMessageFlutterApi {
   GObject parent_instance;
 
-  FlBinaryMessenger* messenger;
+  FlMethodChannel* channel;
 };
 
 G_DEFINE_TYPE(PigeonExamplePackageMessageFlutterApi,
@@ -556,7 +556,7 @@ static void pigeon_example_package_message_flutter_api_dispose(
     GObject* object) {
   PigeonExamplePackageMessageFlutterApi* self =
       PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object);
-  g_clear_object(&self->messenger);
+  g_clear_object(&self->channel);
   G_OBJECT_CLASS(pigeon_example_package_message_flutter_api_parent_class)
       ->dispose(object);
 }
@@ -575,17 +575,35 @@ pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger) {
   PigeonExamplePackageMessageFlutterApi* self =
       PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(g_object_new(
           pigeon_example_package_message_flutter_api_get_type(), nullptr));
-  self->messenger = g_object_ref(messenger);
+  self->channel = fl_method_channel_new(messenger, "MessageFlutterApi", codec);
   return self;
 }
 
-void pigeon_example_package_message_flutter_api_flutter_method_async(
+void pigeon_example_package_message_flutter_api_flutter_method(
     PigeonExamplePackageMessageFlutterApi* self, const gchar* a_string,
     GCancellable* cancellable, GAsyncReadyCallback callback,
-    gpointer user_data) {}
+    gpointer user_data) {
+  g_autoptr(FlValue) args =
+      fl_value_new_array_take(fl_value_new_string(a_string), nullptr);
+  fl_method_channel_invoke_method(self->channel, "flutterMethod", args,
+                                  cancellable, callback, user_data);
+}
 
 gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
     PigeonExamplePackageMessageFlutterApi* self, GAsyncResult* result,
     gchar** return_value, GError** error) {
+  g_autoptr(FlMethodResponse) response =
+      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  if (response == nullptr) {
+    return FALSE;
+  }
+
+  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
+  if (r == nullptr) {
+    return FALSE;
+  }
+
+  *return_value = g_strdup(fl_value_get_string(r));
+
   return TRUE;
 }

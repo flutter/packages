@@ -248,7 +248,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
       addDocumentationComments(
           indent, method.documentationComments, _docCommentSpec);
       indent.writeln(
-          "void ${methodPrefix}_${methodName}_async(${asyncArgs.join(', ')});");
+          "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')});");
 
       final String returnType =
           _getType(module, method.returnType, isOutput: true);
@@ -543,7 +543,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
     indent.newln();
     _writeObjectStruct(indent, module, api.name, () {
-      indent.writeln('FlBinaryMessenger* messenger;');
+      indent.writeln('FlMethodChannel* channel;');
     });
 
     indent.newln();
@@ -552,7 +552,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     indent.newln();
     _writeDispose(indent, module, api.name, () {
       _writeCastSelf(indent, module, api.name, 'object');
-      indent.writeln('g_clear_object(&self->messenger);');
+      indent.writeln('g_clear_object(&self->channel);');
     });
 
     indent.newln();
@@ -566,7 +566,8 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger) {', '}',
         () {
       _writeObjectNew(indent, module, api.name);
-      indent.writeln('self->messenger = g_object_ref(messenger);');
+      indent.writeln(
+          'self->channel = fl_method_channel_new(messenger, "${api.name}", codec);');
       indent.writeln('return self;');
     });
 
@@ -583,9 +584,19 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       ];
       indent.newln();
       indent.addScoped(
-          "void ${methodPrefix}_${methodName}_async(${asyncArgs.join(', ')}) {",
-          '}',
-          () {});
+          "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')}) {", '}',
+          () {
+        final List<String> valueArgs = <String>[
+          for (final Parameter param in method.parameters)
+            _makeFlValue(
+                module, param.type, _snakeCaseFromCamelCase(param.name)),
+          'nullptr'
+        ];
+        indent.writeln(
+            'g_autoptr(FlValue) args = fl_value_new_array_take(${valueArgs.join(', ')});');
+        indent.writeln(
+            'fl_method_channel_invoke_method(self->channel, "${method.name}", args, cancellable, callback, user_data);');
+      });
 
       final String returnType =
           _getType(module, method.returnType, isOutput: true);
@@ -599,6 +610,28 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       indent.addScoped(
           "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')}) {",
           '}', () {
+        indent.writeln(
+            'g_autoptr(FlMethodResponse) response = fl_method_channel_invoke_method_finish(self->channel, result, error);');
+        indent.addScoped('if (response == nullptr) {', '}', () {
+          indent.writeln('return FALSE;');
+        });
+
+        indent.newln();
+        indent.writeln(
+            'g_autoptr(FlValue) r = fl_method_response_get_result(response, error);');
+        indent.addScoped('if (r == nullptr) {', '}', () {
+          indent.writeln('return FALSE;');
+        });
+
+        if (returnType != 'void') {
+          indent.newln();
+          final String returnValue =
+              _fromFlValue(module, method.returnType, 'r');
+          indent.writeln(
+              '*return_value = ${_referenceValue(method.returnType, returnValue)};');
+        }
+
+        indent.newln();
         indent.writeln('return TRUE;');
       });
     }

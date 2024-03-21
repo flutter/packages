@@ -22,7 +22,7 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageData,
 
 PigeonExamplePackageMessageData* pigeon_example_package_message_data_new(
     const gchar* name, const gchar* description, PigeonExamplePackageCode code,
-    FlValue* self);
+    FlValue* data);
 
 const gchar* pigeon_example_package_message_data_get_name(
     PigeonExamplePackageMessageData* self);
@@ -101,7 +101,7 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageFlutterApi,
 PigeonExamplePackageMessageFlutterApi*
 pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger);
 
-void pigeon_example_package_message_flutter_api_flutter_method_async(
+void pigeon_example_package_message_flutter_api_flutter_method(
     PigeonExamplePackageMessageFlutterApi* self, const gchar* a_string,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data);
