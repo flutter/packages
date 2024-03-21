@@ -177,6 +177,12 @@ class SwiftFunction {
   final String value;
 }
 
+/// Metadata to annotate data classes to be defined as class in Swift output.
+class SwiftClass {
+  /// Constructor.
+  const SwiftClass();
+}
+
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
