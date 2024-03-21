@@ -653,7 +653,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       api.documentationComments,
       _docCommentSpec,
     );
-    indent.writeln('@Suppress("UNCHECKED_CAST")');
+    // TODO(bparrishMines): Remove "UNUSED_PARAMETER" once the full class implementation
+    // is added.
+    indent.writeln('@Suppress("UNCHECKED_CAST", "UNUSED_PARAMETER")');
     indent.writeScoped(
       'abstract class $kotlinApiName(val codec: $codecName) {',
       '}',
@@ -682,15 +684,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           indent.newln();
         }
 
-        const String newInstanceMethodName =
-            '${classMemberNamePrefix}newInstance';
-
         _writeProxyApiNewInstanceMethod(
           indent,
           api,
           generatorOptions: generatorOptions,
           apiAsTypeDeclaration: apiAsTypeDeclaration,
-          newInstanceMethodName: newInstanceMethodName,
+          newInstanceMethodName: '${classMemberNamePrefix}newInstance',
           dartPackageName: dartPackageName,
         );
       },

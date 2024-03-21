@@ -1,6 +1,6 @@
 ## 17.3.0
 
-* [kotlin] Adds implementation for `@ProxyApi`.
+* [kotlin] Adds skeleton implementation for `@ProxyApi`.
 
 ## 17.2.0
 

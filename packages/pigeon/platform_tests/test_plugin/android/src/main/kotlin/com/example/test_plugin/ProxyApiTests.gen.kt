@@ -290,7 +290,7 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
     if (hasFinalizationListenerStopped()) {
       Log.w(
           tag,
-          "The manager was used after calls to the PigeonFinalizationListener have been stopped.")
+          "The manager was used after calls to the PigeonFinalizationListener has been stopped.")
     }
   }
 }
@@ -440,7 +440,7 @@ enum class ProxyApiTestEnum(val raw: Int) {
  * The core ProxyApi test class that each supported host language must implement in platform_tests
  * integration tests.
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "UNUSED_PARAMETER")
 abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
   companion object {
     @Suppress("LocalVariableName")
@@ -452,7 +452,7 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {}
 }
 /** ProxyApi to serve as a super class to the core ProxyApi class. */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "UNUSED_PARAMETER")
 abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
   companion object {
     @Suppress("LocalVariableName")
@@ -467,7 +467,7 @@ abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
   ) {}
 }
 /** ProxyApi to serve as an interface to the core ProxyApi class. */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "UNUSED_PARAMETER")
 abstract class PigeonApiProxyApiInterface(val codec: PigeonProxyApiBaseCodec) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */

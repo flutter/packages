@@ -256,7 +256,7 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
     if (hasFinalizationListenerStopped()) {
       Log.w(
         tag,
-        "The manager was used after calls to the $_finalizationListenerClassName have been stopped."
+        "The manager was used after calls to the $_finalizationListenerClassName has been stopped."
       )
     }
   }
