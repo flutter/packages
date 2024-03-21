@@ -1115,7 +1115,7 @@ void _writeDispose(Indent indent, String module, String name, Function func) {
   final String methodPrefix = _getMethodPrefix(module, name);
 
   indent.addScoped(
-      'static void ${methodPrefix}_dispose(GObject *object) {', '}', () {
+      'static void ${methodPrefix}_dispose(GObject* object) {', '}', () {
     func(); // ignore: avoid_dynamic_calls
     indent.writeln(
         'G_OBJECT_CLASS(${methodPrefix}_parent_class)->dispose(object);');
