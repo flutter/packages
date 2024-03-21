@@ -983,8 +983,7 @@ if (${_varNamePrefix}replyList == null) {
   /// Converts Constructors from the pigeon AST to a `code_builder` Constructor
   /// for a ProxyApi.
   Iterable<cb.Constructor> _proxyApiConstructors(
-    Iterable<Constructor> constructors,
-    AstProxyApi api, {
+    Iterable<Constructor> constructors, {
     required String apiName,
     required String dartPackageName,
     required String codecName,
