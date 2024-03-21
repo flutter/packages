@@ -1,3 +1,6 @@
+## 2.8.4
+* Adds detailed information about using 'http' sources in Android 9 (API level 28) or higher in `README.md`.
+
 ## 2.8.3
 
 * Fixes typo in `README.md`.
