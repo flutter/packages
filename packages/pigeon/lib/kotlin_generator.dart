@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:graphs/graphs.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
+import 'kotlin/templates.dart';
 import 'pigeon_lib.dart' show TaskQueueType;
 
 /// Documentation open symbol.
@@ -78,6 +81,26 @@ class KotlinOptions {
   KotlinOptions merge(KotlinOptions options) {
     return KotlinOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
+}
+
+/// Options that control how Kotlin code will be generated for a specific
+/// ProxyApi.
+class KotlinProxyApiOptions {
+  /// Construct a [KotlinProxyApiOptions].
+  const KotlinProxyApiOptions({
+    required this.fullClassName,
+    this.minAndroidApi,
+  });
+
+  /// The name of the full runtime Kotlin class name (including the package).
+  final String fullClassName;
+
+  /// The minimum Android api version.
+  ///
+  /// This adds the [RequiresApi](https://developer.android.com/reference/androidx/annotation/RequiresApi)
+  /// annotations on top of any constructor, field, or method that references
+  /// this element.
+  final int? minAndroidApi;
 }
 
 /// Class that manages all Kotlin code generation.
@@ -461,6 +484,179 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
       });
     });
+  }
+
+  @override
+  void writeInstanceManager(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.format(instanceManagerTemplate);
+  }
+
+  @override
+  void writeInstanceManagerApi(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.format(instanceManagerApiTemplate(
+      dartPackageName: dartPackageName,
+      errorClassName: _getErrorClassName(generatorOptions),
+    ));
+  }
+
+  @override
+  void writeProxyApiBaseCodec(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+  ) {
+    const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
+
+    final Iterable<AstProxyApi> allProxyApis =
+        root.apis.whereType<AstProxyApi>();
+
+    // Sort APIs where edges are an API's super class and interfaces.
+    //
+    // This sorts the apis to have child classes be listed before their parent
+    // classes. This prevents the scenario where a method might return the super
+    // class of the actual class, so the incorrect Dart class gets created
+    // because the 'value is <SuperClass>' was checked first in the codec. For
+    // example:
+    //
+    // class Shape {}
+    // class Circle extends Shape {}
+    //
+    // class SomeClass {
+    //   Shape giveMeAShape() => Circle();
+    // }
+    final List<AstProxyApi> sortedApis = topologicalSort(
+      allProxyApis,
+      (AstProxyApi api) {
+        final List<AstProxyApi> edges = <AstProxyApi>[
+          if (api.superClass?.associatedProxyApi != null)
+            api.superClass!.associatedProxyApi!,
+          ...api.interfaces.map(
+            (TypeDeclaration interface) => interface.associatedProxyApi!,
+          ),
+        ];
+        return edges;
+      },
+    );
+
+    indent.writeScoped(
+      'abstract class $codecName(val binaryMessenger: BinaryMessenger, val instanceManager: $instanceManagerClassName) : StandardMessageCodec() {',
+      '}',
+      () {
+        for (final AstProxyApi api in sortedApis) {
+          _writeMethodDeclaration(
+            indent,
+            name: 'get$hostProxyApiPrefix${api.name}',
+            isAbstract: true,
+            documentationComments: <String>[
+              'An implementation of [$hostProxyApiPrefix${api.name}] used to add a new Dart instance of',
+              '`${api.name}` to the Dart `InstanceManager`.'
+            ],
+            returnType: TypeDeclaration(
+              baseName: '$hostProxyApiPrefix${api.name}',
+              isNullable: false,
+            ),
+            parameters: <Parameter>[],
+          );
+          indent.newln();
+        }
+
+        indent.writeScoped('fun setUpMessageHandlers() {', '}', () {
+          for (final AstProxyApi api in sortedApis) {
+            final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
+                api.attachedFields.isNotEmpty ||
+                api.hostMethods.isNotEmpty;
+            if (hasHostMessageCalls) {
+              indent.writeln(
+                '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, get$hostProxyApiPrefix${api.name}())',
+              );
+            }
+          }
+        });
+
+        indent.format(
+          'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {\n'
+          '  return when (type) {\n'
+          '    128.toByte() -> {\n'
+          '      return instanceManager.getInstance(\n'
+          '          readValue(buffer).let { if (it is Int) it.toLong() else it as Long })\n'
+          '    }\n'
+          '    else -> super.readValueOfType(type, buffer)\n'
+          '  }\n'
+          '}',
+        );
+        indent.newln();
+
+        indent.writeScoped(
+          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {',
+          '}',
+          () {
+            enumerate(
+              sortedApis,
+              (int index, AstProxyApi api) {
+                final String className =
+                    api.kotlinOptions?.fullClassName ?? api.name;
+
+                final int? minApi = api.kotlinOptions?.minAndroidApi;
+                final String versionCheck = minApi != null
+                    ? 'android.os.Build.VERSION.SDK_INT >= $minApi && '
+                    : '';
+
+                indent.format(
+                  '${index > 0 ? ' else ' : ''}if (${versionCheck}value is $className) {\n'
+                  '  get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) { }\n'
+                  '}',
+                );
+              },
+            );
+            indent.newln();
+
+            indent.format(
+              'when {\n'
+              '  instanceManager.containsInstance(value) -> {\n'
+              '    stream.write(128)\n'
+              '    writeValue(stream, instanceManager.getIdentifierForStrongReference(value))\n'
+              '  }\n'
+              '  else -> super.writeValue(stream, value)\n'
+              '}',
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  void writeProxyApi(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstProxyApi api, {
+    required String dartPackageName,
+  }) {
+    const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
+    final String kotlinApiName = '$hostProxyApiPrefix${api.name}';
+
+    addDocumentationComments(
+      indent,
+      api.documentationComments,
+      _docCommentSpec,
+    );
+    indent.writeln('@Suppress("UNCHECKED_CAST")');
+    indent.writeScoped(
+      'abstract class $kotlinApiName(val codec: $codecName) {',
+      '}',
+      () {},
+    );
   }
 
   /// Writes the codec class that will be used by [api].
@@ -953,8 +1149,19 @@ String? _kotlinTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
+String? _kotlinTypeForProxyApiType(TypeDeclaration type) {
+  if (type.isProxyApi) {
+    return type.associatedProxyApi!.kotlinOptions?.fullClassName ??
+        type.associatedProxyApi!.name;
+  }
+
+  return null;
+}
+
 String _kotlinTypeForDartType(TypeDeclaration type) {
-  return _kotlinTypeForBuiltinDartType(type) ?? type.baseName;
+  return _kotlinTypeForBuiltinDartType(type) ??
+      _kotlinTypeForProxyApiType(type) ??
+      type.baseName;
 }
 
 String _nullSafeKotlinTypeForDartType(TypeDeclaration type) {

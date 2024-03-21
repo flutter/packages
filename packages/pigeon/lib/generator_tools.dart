@@ -305,8 +305,7 @@ const String classNamePrefix = 'Pigeon';
 ///
 /// Since ProxyApis are intended to wrap a class and will often share the name
 /// of said class, host APIs should prefix the API with this protected name.
-// TODO: -> platformProxyApiPrefix
-const String hostApiPrefix = '${classNamePrefix}Api';
+const String hostProxyApiPrefix = '${classNamePrefix}Api';
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///
