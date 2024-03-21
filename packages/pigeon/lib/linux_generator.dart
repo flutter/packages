@@ -158,7 +158,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
-    indent.addScoped('typedef enum {', '} $enumName;', () {
+    indent.writeScoped('typedef enum {', '} $enumName;', () {
       for (int i = 0; i < anEnum.members.length; i++) {
         final EnumMember member = anEnum.members[i];
         final String itemName =
@@ -323,7 +323,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
     final String className = _getClassName(module, api.name);
     final String vtableName = _getVTableName(module, api.name);
 
-    indent.addScoped('typedef struct {', '} $vtableName;', () {
+    indent.writeScoped('typedef struct {', '} $vtableName;', () {
       for (final Method method in api.methods) {
         final String methodName = _snakeCaseFromCamelCase(method.name);
         final String responseName = _getResponseName(api.name, method.name);
@@ -475,7 +475,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         '${_getType(module, field.type)} ${_snakeCaseFromCamelCase(field.name)}',
     ];
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         "$className* ${methodPrefix}_new(${constructorArgs.join(', ')}) {", '}',
         () {
       _writeObjectNew(indent, module, classDefinition.name);
@@ -493,7 +493,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final String returnType = _getType(module, field.type);
 
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           '$returnType ${methodPrefix}_get_$fieldName($className* self) {', '}',
           () {
         indent.writeln(
@@ -503,7 +503,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     }
 
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         'static FlValue* ${methodPrefix}_to_list($className* self) {', '}', () {
       indent.writeln('FlValue* values = fl_value_new_list();');
       for (final NamedType field in classDefinition.fields) {
@@ -515,7 +515,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     });
 
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         'static $className* ${methodPrefix}_new_from_list(FlValue* values) {',
         '}', () {
       final List<String> args = <String>[];
@@ -562,7 +562,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     _writeClassInit(indent, module, api.name, () {});
 
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger) {', '}',
         () {
       _writeObjectNew(indent, module, api.name);
@@ -583,7 +583,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         'gpointer user_data',
       ];
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')}) {", '}',
           () {
         final List<String> valueArgs = <String>[
@@ -607,19 +607,19 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         'GError** error',
       ];
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')}) {",
           '}', () {
         indent.writeln(
             'g_autoptr(FlMethodResponse) response = fl_method_channel_invoke_method_finish(self->channel, result, error);');
-        indent.addScoped('if (response == nullptr) {', '}', () {
+        indent.writeScoped('if (response == nullptr) {', '}', () {
           indent.writeln('return FALSE;');
         });
 
         indent.newln();
         indent.writeln(
             'g_autoptr(FlValue) r = fl_method_response_get_result(response, error);');
-        indent.addScoped('if (r == nullptr) {', '}', () {
+        indent.writeScoped('if (r == nullptr) {', '}', () {
           indent.writeln('return FALSE;');
         });
 
@@ -672,7 +672,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final String snakeCustomClassName =
           _snakeCaseFromCamelCase(customClassName);
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           'static gboolean write_$snakeCustomClassName(FlStandardMessageCodec* codec, GByteArray* buffer, $customClassName* value, GError** error) {',
           '}', () {
         indent.writeln('uint8_t type = ${customClass.enumeration};');
@@ -685,12 +685,13 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     }
 
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         'static gboolean ${methodPrefix}_write_value(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {',
         '}', () {
-      indent.addScoped(
+      indent.writeScoped(
           'if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {', '}', () {
-        indent.addScoped('switch (fl_value_get_custom_type(value)) {', '}', () {
+        indent.writeScoped('switch (fl_value_get_custom_type(value)) {', '}',
+            () {
           for (final EnumeratedClass customClass
               in getCodecClasses(api, root)) {
             indent.writeln('case ${customClass.enumeration}:');
@@ -718,18 +719,18 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final String snakeCustomClassName =
           _snakeCaseFromCamelCase(customClassName);
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           'static FlValue* read_$snakeCustomClassName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
           '}', () {
         indent.writeln(
             'g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);');
-        indent.addScoped('if (values == nullptr) {', '}', () {
+        indent.writeScoped('if (values == nullptr) {', '}', () {
           indent.writeln('return nullptr;');
         });
         indent.newln();
         indent.writeln(
             'g_autoptr($customClassName) value = ${snakeCustomClassName}_new_from_list(values);');
-        indent.addScoped('if (value == nullptr) {', '}', () {
+        indent.writeScoped('if (value == nullptr) {', '}', () {
           indent.writeln(
               'g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED, "Invalid data received for MessageData");');
           indent.writeln('return nullptr;');
@@ -741,10 +742,10 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     }
 
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         'static FlValue* ${methodPrefix}_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {',
         '}', () {
-      indent.addScoped('switch (type) {', '}', () {
+      indent.writeScoped('switch (type) {', '}', () {
         for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
           final String customClassName =
               _getClassName(module, customClass.name);
@@ -777,7 +778,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     }, hasDispose: false);
 
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         'static $codecClassName* ${codecMethodPrefix}_new() {', '}', () {
       _writeObjectNew(indent, module, codecName);
       indent.writeln('return self;');
@@ -816,7 +817,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
       final String returnType = _getType(module, method.returnType);
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           "${method.isAsynchronous ? 'static ' : ''}$responseClassName* ${responseMethodPrefix}_new($returnType return_value) {",
           '}', () {
         _writeObjectNew(indent, module, responseName);
@@ -827,7 +828,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       });
 
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           '${method.isAsynchronous ? 'static ' : ''}$responseClassName* ${responseMethodPrefix}_new_error(const gchar* code, const gchar* message, FlValue* details) {',
           '}', () {
         _writeObjectNew(indent, module, responseName);
@@ -864,13 +865,13 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final String responseClassName = _getClassName(module, responseName);
 
       indent.newln();
-      indent.addScoped(
+      indent.writeScoped(
           'static void ${methodName}_cb(FlBasicMessageChannel* channel, FlValue* message, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {',
           '}', () {
         _writeCastSelf(indent, module, api.name, 'user_data');
 
         indent.newln();
-        indent.addScoped(
+        indent.writeScoped(
             'if (self->vtable == nullptr || self->vtable->$methodName == nullptr) {',
             '}', () {
           indent.writeln('return;');
@@ -894,7 +895,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
           vfuncArgs.add('self->user_data');
           indent.writeln(
               "g_autoptr($responseClassName) response = self->vtable->$methodName(${vfuncArgs.join(', ')});");
-          indent.addScoped('if (response == nullptr) {', '}', () {
+          indent.writeScoped('if (response == nullptr) {', '}', () {
             indent.writeln(
                 'g_warning("No response returned to ${api.name}.${method.name}");');
             indent.writeln('return;');
@@ -902,7 +903,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
           indent.newln();
           indent.writeln('g_autoptr(GError) error = NULL;');
-          indent.addScoped(
+          indent.writeScoped(
               'if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {',
               '}', () {
             indent.writeln(
@@ -916,7 +917,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     _writeDispose(indent, module, api.name, () {
       _writeCastSelf(indent, module, api.name, 'object');
       indent.writeln('g_clear_object(&self->messenger);');
-      indent.addScoped('if (self->user_data != nullptr) {', '}', () {
+      indent.writeScoped('if (self->user_data != nullptr) {', '}', () {
         indent.writeln('self->user_data_free_func(self->user_data);');
       });
       indent.writeln('self->user_data = nullptr;');
@@ -935,7 +936,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     _writeClassInit(indent, module, api.name, () {});
 
     indent.newln();
-    indent.addScoped(
+    indent.writeScoped(
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
         '}', () {
       _writeObjectNew(indent, module, api.name);
@@ -976,13 +977,13 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         'FlBasicMessageChannelResponseHandle* response_handle',
         '$returnType return_value'
       ];
-      indent.addScoped(
+      indent.writeScoped(
           "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')}) {",
           '}', () {
         indent.writeln(
             'g_autoptr($responseClassName) response = ${responseMethodPrefix}_new(return_value);');
         indent.writeln('g_autoptr(GError) error = nullptr;');
-        indent.addScoped(
+        indent.writeScoped(
             'if (!fl_basic_message_channel_respond(self->${methodName}_channel, response_handle, response->value, &error)) {',
             '}', () {
           indent.writeln(
@@ -998,13 +999,13 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         'const gchar* message',
         'FlValue* details'
       ];
-      indent.addScoped(
+      indent.writeScoped(
           "void ${methodPrefix}_respond_error_$methodName(${respondErrorArgs.join(', ')}) {",
           '}', () {
         indent.writeln(
             'g_autoptr($responseClassName) response = ${responseMethodPrefix}_new_error(code, message, details);');
         indent.writeln('g_autoptr(GError) error = nullptr;');
-        indent.addScoped(
+        indent.writeScoped(
             'if (!fl_basic_message_channel_respond(self->${methodName}_channel, response_handle, response->value, &error)) {',
             '}', () {
           indent.writeln(
@@ -1058,7 +1059,7 @@ void _writeObjectStruct(
     {String parentClassName = 'GObject'}) {
   final String className = _getClassName(module, name);
 
-  indent.addScoped('struct _$className {', '};', () {
+  indent.writeScoped('struct _$className {', '};', () {
     indent.writeln('$parentClassName parent_instance;');
     indent.newln();
 
@@ -1071,7 +1072,7 @@ void _writeDispose(
     Indent indent, String module, String name, void Function() func) {
   final String methodPrefix = _getMethodPrefix(module, name);
 
-  indent.addScoped(
+  indent.writeScoped(
       'static void ${methodPrefix}_dispose(GObject* object) {', '}', () {
     func();
     indent.writeln(
@@ -1085,8 +1086,8 @@ void _writeInit(
   final String className = _getClassName(module, name);
   final String methodPrefix = _getMethodPrefix(module, name);
 
-  indent.addScoped('static void ${methodPrefix}_init($className* self) {', '}',
-      () {
+  indent.writeScoped(
+      'static void ${methodPrefix}_init($className* self) {', '}', () {
     func();
   });
 }
@@ -1098,7 +1099,7 @@ void _writeClassInit(
   final String className = _getClassName(module, name);
   final String methodPrefix = _getMethodPrefix(module, name);
 
-  indent.addScoped(
+  indent.writeScoped(
       'static void ${methodPrefix}_class_init(${className}Class* klass) {', '}',
       () {
     if (hasDispose) {
