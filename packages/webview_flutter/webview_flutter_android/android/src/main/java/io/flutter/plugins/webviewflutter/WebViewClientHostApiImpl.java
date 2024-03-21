@@ -87,14 +87,14 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @Override
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
-      flutterApi.requestLoading(this, view, request, reply -> {});
+      if (!request.isForMainFrame()) {
+        // The client is only allowed to stop navigations that target the main frame because
+        // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
+        return false;
+      }
 
-      // Since we cannot call loadUrl for a subframe, we currently only allow the delegate to stop
-      // navigations that target the main frame, if the request is not for the main frame
-      // we just return false to allow the navigation.
-      //
-      // For more details see: https://github.com/flutter/flutter/issues/25329#issuecomment-464863209
-      return request.isForMainFrame() && returnValueForShouldOverrideUrlLoading;
+      flutterApi.requestLoading(this, view, request, reply -> {});
+      return returnValueForShouldOverrideUrlLoading;
     }
 
     // Legacy codepath for < 24; newer versions use the variant above.
@@ -192,14 +192,14 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @Override
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
-      flutterApi.requestLoading(this, view, request, reply -> {});
+      if (!request.isForMainFrame()) {
+        // The client is only allowed to stop navigations that target the main frame because
+        // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
+        return false;
+      }
 
-      // Since we cannot call loadUrl for a subframe, we currently only allow the delegate to stop
-      // navigations that target the main frame, if the request is not for the main frame
-      // we just return false to allow the navigation.
-      //
-      // For more details see: https://github.com/flutter/flutter/issues/25329#issuecomment-464863209
-      return request.isForMainFrame() && returnValueForShouldOverrideUrlLoading;
+      flutterApi.requestLoading(this, view, request, reply -> {});
+      return returnValueForShouldOverrideUrlLoading;
     }
 
     // Legacy codepath for < Lollipop; newer versions use the variant above.
