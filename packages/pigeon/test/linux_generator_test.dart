@@ -161,15 +161,15 @@ void main() {
       expect(
           code,
           contains(
-              '  TestPackageApiDoSomethingResponse* (*do_something)(TestPackageApi* object, TestPackageInput* some_input, gpointer user_data);'));
+              '  TestPackageApiDoSomethingResponse* (*do_something)(TestPackageApi* self, TestPackageInput* some_input, gpointer user_data);'));
       expect(
           code,
           contains(
-              'gboolean test_package_input_get_input_field(TestPackageInput* object);'));
+              'gboolean test_package_input_get_input_field(TestPackageInput* self);'));
       expect(
           code,
           contains(
-              'gboolean test_package_output_get_output_field(TestPackageOutput* object);'));
+              'gboolean test_package_output_get_output_field(TestPackageOutput* self);'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -531,27 +531,27 @@ void main() {
       expect(
           code,
           contains(
-              '  TestPackageApiReturnBoolResponse* (*return_bool)(TestPackageApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnBoolResponse* (*return_bool)(TestPackageApi* self, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  TestPackageApiReturnIntResponse* (*return_int)(TestPackageApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnIntResponse* (*return_int)(TestPackageApi* self, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  TestPackageApiReturnStringResponse* (*return_string)(TestPackageApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnStringResponse* (*return_string)(TestPackageApi* self, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  TestPackageApiReturnListResponse* (*return_list)(TestPackageApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnListResponse* (*return_list)(TestPackageApi* self, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  TestPackageApiReturnMapResponse* (*return_map)(TestPackageApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnMapResponse* (*return_map)(TestPackageApi* self, gpointer user_data);'));
       expect(
           code,
           contains(
-              '  TestPackageApiReturnDataClassResponse* (*return_data_class)(TestPackageApi* object, gpointer user_data);'));
+              '  TestPackageApiReturnDataClassResponse* (*return_data_class)(TestPackageApi* self, gpointer user_data);'));
     }
   });
 
@@ -653,7 +653,7 @@ void main() {
       expect(
           code,
           contains(
-              '  TestPackageApiDoSomethingResponse* (*do_something)(TestPackageApi* object, gboolean a_bool, int64_t an_int, const gchar* a_string, FlValue* a_list, FlValue* a_map, TestPackageParameterObject* an_object, TestPackageObject* a_generic_object, gpointer user_data);'));
+              '  TestPackageApiDoSomethingResponse* (*do_something)(TestPackageApi* self, gboolean a_bool, int64_t an_int, const gchar* a_string, FlValue* a_list, FlValue* a_map, TestPackageParameterObject* an_object, TestPackageObject* a_generic_object, gpointer user_data);'));
     }
     {
       final StringBuffer sink = StringBuffer();

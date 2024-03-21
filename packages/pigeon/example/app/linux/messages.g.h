@@ -22,19 +22,19 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageData,
 
 PigeonExamplePackageMessageData* pigeon_example_package_message_data_new(
     const gchar* name, const gchar* description, PigeonExamplePackageCode code,
-    FlValue* data);
+    FlValue* self);
 
 const gchar* pigeon_example_package_message_data_get_name(
-    PigeonExamplePackageMessageData* object);
+    PigeonExamplePackageMessageData* self);
 
 const gchar* pigeon_example_package_message_data_get_description(
-    PigeonExamplePackageMessageData* object);
+    PigeonExamplePackageMessageData* self);
 
 PigeonExamplePackageCode pigeon_example_package_message_data_get_code(
-    PigeonExamplePackageMessageData* object);
+    PigeonExamplePackageMessageData* self);
 
 FlValue* pigeon_example_package_message_data_get_data(
-    PigeonExamplePackageMessageData* object);
+    PigeonExamplePackageMessageData* self);
 
 G_DECLARE_FINAL_TYPE(
     PigeonExamplePackageExampleHostApiGetHostLanguageResponse,
@@ -68,12 +68,12 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
 
 typedef struct {
   PigeonExamplePackageExampleHostApiGetHostLanguageResponse* (
-      *get_host_language)(PigeonExamplePackageExampleHostApi* object,
+      *get_host_language)(PigeonExamplePackageExampleHostApi* self,
                           gpointer user_data);
   PigeonExamplePackageExampleHostApiAddResponse* (*add)(
-      PigeonExamplePackageExampleHostApi* object, int64_t a, int64_t b,
+      PigeonExamplePackageExampleHostApi* self, int64_t a, int64_t b,
       gpointer user_data);
-  void (*send_message)(PigeonExamplePackageExampleHostApi* object,
+  void (*send_message)(PigeonExamplePackageExampleHostApi* self,
                        PigeonExamplePackageMessageData* message,
                        FlBasicMessageChannelResponseHandle* response_handle,
                        gpointer user_data);
@@ -102,12 +102,12 @@ PigeonExamplePackageMessageFlutterApi*
 pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger);
 
 void pigeon_example_package_message_flutter_api_flutter_method_async(
-    PigeonExamplePackageMessageFlutterApi* object, const gchar* a_string,
+    PigeonExamplePackageMessageFlutterApi* self, const gchar* a_string,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data);
 
 gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
-    PigeonExamplePackageMessageFlutterApi* object, GAsyncResult* result,
+    PigeonExamplePackageMessageFlutterApi* self, GAsyncResult* result,
     gchar** return_value, GError** error);
 
 G_END_DECLS

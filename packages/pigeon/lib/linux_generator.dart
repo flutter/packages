@@ -206,7 +206,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
       addDocumentationComments(
           indent, field.documentationComments, _docCommentSpec);
       indent.writeln(
-          '$returnType ${methodPrefix}_get_$fieldName($className* object);');
+          '$returnType ${methodPrefix}_get_$fieldName($className* self);');
     }
   }
 
@@ -236,7 +236,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
       final String methodName = _snakeCaseFromCamelCase(method.name);
 
       final List<String> asyncArgs = <String>[
-        '$className* object',
+        '$className* self',
         for (final Parameter param in method.parameters)
           '${_getType(module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
         'GCancellable* cancellable',
@@ -252,7 +252,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
       final String returnType =
           _getType(module, method.returnType, isOutput: true);
       final List<String> finishArgs = <String>[
-        '$className* object',
+        '$className* self',
         'GAsyncResult* result',
         if (returnType != 'void') '$returnType* return_value',
         'GError** error'
@@ -329,7 +329,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
         final String responseClassName = _getClassName(module, responseName);
 
         final List<String> methodArgs = <String>[
-          '$className* object',
+          '$className* self',
           for (final Parameter param in method.parameters)
             '${_getType(module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
           if (method.isAsynchronous)
@@ -573,7 +573,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final String methodName = _snakeCaseFromCamelCase(method.name);
 
       final List<String> asyncArgs = <String>[
-        '$className* object',
+        '$className* self',
         for (final Parameter param in method.parameters)
           '${_getType(module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
         'GCancellable* cancellable',
@@ -589,7 +589,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       final String returnType =
           _getType(module, method.returnType, isOutput: true);
       final List<String> finishArgs = <String>[
-        '$className* object',
+        '$className* self',
         'GAsyncResult* result',
         if (returnType != 'void') '$returnType* return_value',
         'GError** error',

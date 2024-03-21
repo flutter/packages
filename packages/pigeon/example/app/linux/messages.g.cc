@@ -600,12 +600,12 @@ pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger) {
 }
 
 void pigeon_example_package_message_flutter_api_flutter_method_async(
-    PigeonExamplePackageMessageFlutterApi* object, const gchar* a_string,
+    PigeonExamplePackageMessageFlutterApi* self, const gchar* a_string,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {}
 
 gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
-    PigeonExamplePackageMessageFlutterApi* object, GAsyncResult* result,
+    PigeonExamplePackageMessageFlutterApi* self, GAsyncResult* result,
     gchar** return_value, GError** error) {
   return TRUE;
 }
