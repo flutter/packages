@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:html' as html;
+
 import 'package:flutter/foundation.dart';
 
 /// Options used to create a camera with the given
@@ -49,6 +51,14 @@ class CameraOptions {
 
   @override
   int get hashCode => Object.hash(audio, video);
+
+  /// Flips width and height if window is oriented as portrait.
+  CameraOptions orientToWindow(html.Window? window) {
+    if (window?.matchMedia('(orientation: portrait)').matches ?? false) {
+      return CameraOptions(audio: audio, video: video._asPortrait());
+    }
+    return this;
+  }
 }
 
 /// Indicates whether the audio track is requested.
@@ -139,6 +149,13 @@ class VideoConstraints {
 
   @override
   int get hashCode => Object.hash(facingMode, width, height, deviceId);
+
+  VideoConstraints _asPortrait() => VideoConstraints(
+        facingMode: facingMode,
+        width: height,
+        height: width,
+        deviceId: deviceId,
+      );
 }
 
 /// The camera type used in [FacingModeConstraint].
