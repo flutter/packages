@@ -575,7 +575,9 @@ pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger) {
   PigeonExamplePackageMessageFlutterApi* self =
       PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(g_object_new(
           pigeon_example_package_message_flutter_api_get_type(), nullptr));
-  self->channel = fl_method_channel_new(messenger, "MessageFlutterApi", codec);
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  self->channel = fl_method_channel_new(messenger, "MessageFlutterApi",
+                                        FL_METHOD_CODEC(codec));
   return self;
 }
 
@@ -583,8 +585,8 @@ void pigeon_example_package_message_flutter_api_flutter_method(
     PigeonExamplePackageMessageFlutterApi* self, const gchar* a_string,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
-  g_autoptr(FlValue) args =
-      fl_value_new_array_take(fl_value_new_string(a_string), nullptr);
+  g_autoptr(FlValue) args = fl_value_new_list();
+  fl_value_append_take(args, fl_value_new_string(a_string));
   fl_method_channel_invoke_method(self->channel, "flutterMethod", args,
                                   cancellable, callback, user_data);
 }

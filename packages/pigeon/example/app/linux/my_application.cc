@@ -27,7 +27,8 @@ G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 static PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
 handle_get_host_language(PigeonExamplePackageExampleHostApi* object,
                          gpointer user_data) {
-  return my_example_host_api_get_host_language_response_new("C++");
+  return pigeon_example_package_example_host_api_get_host_language_response_new(
+      "C++");
 }
 
 static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
@@ -35,26 +36,28 @@ static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
     gpointer user_data) {
   if (a < 0 || b < 0) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
-    return my_example_host_api_add_response_new_error("code", "message",
-                                                      details);
+    return pigeon_example_package_example_host_api_add_response_new_error(
+        "code", "message", details);
   }
 
-  return my_example_host_api_add_response_new(a + b);
+  return pigeon_example_package_example_host_api_add_response_new(a + b);
 }
 
 static void handle_send_message(
     PigeonExamplePackageExampleHostApi* object,
     PigeonExamplePackageMessageData* message,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  PigeonExamplePackageCode code = my_message_data_get_code(message);
+  PigeonExamplePackageCode code =
+      pigeon_example_package_message_data_get_code(message);
   if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
-    my_example_host_api_respond_error_send_message(object, response_handle,
-                                                   "code", "message", details);
+    pigeon_example_package_example_host_api_respond_error_send_message(
+        object, response_handle, "code", "message", details);
     return;
   }
 
-  my_example_host_api_respond_send_message(object, response_handle, TRUE);
+  pigeon_example_package_example_host_api_respond_send_message(
+      object, response_handle, TRUE);
 }
 // #enddocregion vtable
 
@@ -63,7 +66,7 @@ static void flutter_method_cb(GObject* object, GAsyncResult* result,
                               gpointer user_data) {
   g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!my_message_flutter_api_flutter_method_finish(
+  if (!pigeon_example_package_message_flutter_api_flutter_method_finish(
           PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result,
           &return_value, &error)) {
     g_warning("Failed to call Flutter method: %s", error->message);
@@ -124,7 +127,7 @@ static void my_application_activate(GApplication* application) {
       .get_host_language = handle_get_host_language,
       .add = handle_add,
       .send_message = handle_send_message};
-  self->example_host_api = my_example_host_api_new(
+  self->example_host_api = pigeon_example_package_example_host_api_new(
       messenger, &example_host_api_vtable, self, nullptr);
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
@@ -132,9 +135,9 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_grab_focus(GTK_WIDGET(view));
 
   // #docregion flutter-method
-  self->flutter_api = my_message_flutter_api_new(messenger);
-  my_message_flutter_api_flutter_method_async(self->flutter_api, "hello",
-                                              nullptr, flutter_method_cb, self);
+  self->flutter_api = pigeon_example_package_message_flutter_api_new(messenger);
+  pigeon_example_package_message_flutter_api_flutter_method(
+      self->flutter_api, "hello", nullptr, flutter_method_cb, self);
   // #enddocregion flutter-method
 }
 
