@@ -7,6 +7,34 @@
 
 package com.example.test_plugin
 
+import android.util.Log
+import io.flutter.plugin.common.BasicMessageChannel
+import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.MessageCodec
+import io.flutter.plugin.common.StandardMessageCodec
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+
+private fun wrapResult(result: Any?): List<Any?> {
+  return listOf(result)
+}
+
+private fun wrapError(exception: Throwable): List<Any?> {
+  if (exception is ProxyApiTestsError) {
+    return listOf(exception.code, exception.message, exception.details)
+  } else {
+    return listOf(
+        exception.javaClass.simpleName,
+        exception.toString(),
+        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+  }
+}
+
+private fun createConnectionError(channelName: String): ProxyApiTestsError {
+  return ProxyApiTestsError(
+      "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+}
+
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
  *
@@ -19,6 +47,383 @@ class ProxyApiTestsError(
     override val message: String? = null,
     val details: Any? = null
 ) : Throwable()
+/**
+ * Maintains instances used to communicate with the corresponding objects in Dart.
+ *
+ * <p>Objects stored in this container are represented by an object in Dart that is also stored in
+ * an InstanceManager with the same identifier.
+ *
+ * <p>When an instance is added with an identifier, either can be used to retrieve the other.
+ *
+ * <p>Added instances are added as a weak reference and a strong reference. When the strong
+ * reference is removed with [remove] and the weak reference is deallocated, the
+ * `finalizationListener` is made with the instance's identifier. However, if the strong reference
+ * is removed and then the identifier is retrieved with the intention to pass the identifier to Dart
+ * (e.g. calling [getIdentifierForStrongReference]), the strong reference to the instance is
+ * recreated. The strong reference will then need to be removed manually again.
+ */
+@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate", "unused")
+class PigeonInstanceManager(private val finalizationListener: PigeonFinalizationListener) {
+  /** Interface for listening when a weak reference of an instance is removed from the manager. */
+  interface PigeonFinalizationListener {
+    fun onFinalize(identifier: Long)
+  }
+
+  private val identifiers = java.util.WeakHashMap<Any, Long>()
+  private val weakInstances = HashMap<Long, java.lang.ref.WeakReference<Any>>()
+  private val strongInstances = HashMap<Long, Any>()
+  private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
+  private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
+  private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+  private var nextIdentifier: Long = minHostCreatedIdentifier
+  private var hasFinalizationListenerStopped = false
+
+  init {
+    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+  }
+
+  companion object {
+    // Identifiers are locked to a specific range to avoid collisions with objects
+    // created simultaneously from Dart.
+    // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
+    // 0 <= n < 2^16.
+    private const val minHostCreatedIdentifier: Long = 65536
+    private const val clearFinalizedWeakReferencesInterval: Long = 3000
+    private const val tag = "PigeonInstanceManager"
+
+    /**
+     * Instantiate a new manager.
+     *
+     * When the manager is no longer needed, [stopFinalizationListener] must be called.
+     *
+     * @param finalizationListener the listener for garbage collected weak references.
+     * @return a new `PigeonInstanceManager`.
+     */
+    fun create(finalizationListener: PigeonFinalizationListener): PigeonInstanceManager {
+      return PigeonInstanceManager(finalizationListener)
+    }
+
+    /**
+     * Instantiate a new manager with an `PigeonInstanceManager`.
+     *
+     * @param api handles removing garbage collected weak references.
+     * @return a new `PigeonInstanceManager`.
+     */
+    fun create(api: PigeonInstanceManagerApi): PigeonInstanceManager {
+      val instanceManager =
+          create(
+              object : PigeonFinalizationListener {
+                override fun onFinalize(identifier: Long) {
+                  api.removeStrongReference(identifier) {
+                    if (it.isFailure) {
+                      Log.e(
+                          tag,
+                          "Failed to remove Dart strong reference with identifier: $identifier")
+                    }
+                  }
+                }
+              })
+      PigeonInstanceManagerApi.setUpMessageHandlers(api.binaryMessenger, instanceManager)
+      return instanceManager
+    }
+  }
+
+  /**
+   * Removes `identifier` and its associated strongly referenced instance, if present, from the
+   * manager.
+   *
+   * @param identifier the identifier paired to an instance.
+   * @param <T> the expected return type.
+   * @return the removed instance if the manager contains the given identifier, otherwise `null` if
+   *   the manager doesn't contain the value. </T>
+   */
+  fun <T> remove(identifier: Long): T? {
+    logWarningIfFinalizationListenerHasStopped()
+    return strongInstances.remove(identifier) as T?
+  }
+
+  /**
+   * Retrieves the identifier paired with an instance.
+   *
+   * If the manager contains a strong reference to `instance`, it will return the identifier
+   * associated with `instance`. If the manager contains only a weak reference to `instance`, a new
+   * strong reference to `instance` will be added and will need to be removed again with [remove].
+   *
+   * If this method returns a nonnull identifier, this method also expects the Dart
+   * `PigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
+   * identifier is associated with.
+   *
+   * @param instance an instance that may be stored in the manager.
+   * @return the identifier associated with `instance` if the manager contains the value, otherwise
+   *   `null` if the manager doesn't contain the value.
+   */
+  fun getIdentifierForStrongReference(instance: Any?): Long? {
+    logWarningIfFinalizationListenerHasStopped()
+    val identifier = identifiers[instance]
+    if (identifier != null) {
+      strongInstances[identifier] = instance!!
+    }
+    return identifier
+  }
+
+  /**
+   * Adds a new instance that was instantiated from Dart.
+   *
+   * The same instance can be added multiple times, but each identifier must be unique. This allows
+   * two objects that are equivalent (e.g. the `equals` method returns true and their hashcodes are
+   * equal) to both be added.
+   *
+   * @param instance the instance to be stored.
+   * @param identifier the identifier to be paired with instance. This value must be >= 0 and
+   *   unique.
+   */
+  fun addDartCreatedInstance(instance: Any, identifier: Long) {
+    logWarningIfFinalizationListenerHasStopped()
+    addInstance(instance, identifier)
+  }
+
+  /**
+   * Adds a new instance that was instantiated from the host platform.
+   *
+   * @param instance the instance to be stored. This must be unique to all other added instances.
+   * @return the unique identifier (>= 0) stored with instance.
+   */
+  fun addHostCreatedInstance(instance: Any): Long {
+    logWarningIfFinalizationListenerHasStopped()
+    require(!containsInstance(instance)) {
+      "Instance of ${instance.javaClass} has already been added."
+    }
+    val identifier = nextIdentifier++
+    addInstance(instance, identifier)
+    return identifier
+  }
+
+  /**
+   * Retrieves the instance associated with identifier.
+   *
+   * @param identifier the identifier associated with an instance.
+   * @param <T> the expected return type.
+   * @return the instance associated with `identifier` if the manager contains the value, otherwise
+   *   `null` if the manager doesn't contain the value. </T>
+   */
+  fun <T> getInstance(identifier: Long): T? {
+    logWarningIfFinalizationListenerHasStopped()
+    val instance = weakInstances[identifier] as java.lang.ref.WeakReference<T>?
+    return instance?.get()
+  }
+
+  /**
+   * Returns whether this manager contains the given `instance`.
+   *
+   * @param instance the instance whose presence in this manager is to be tested.
+   * @return whether this manager contains the given `instance`.
+   */
+  fun containsInstance(instance: Any?): Boolean {
+    logWarningIfFinalizationListenerHasStopped()
+    return identifiers.containsKey(instance)
+  }
+
+  /**
+   * Stop the periodic run of the [PigeonFinalizationListener] for instances that have been garbage
+   * collected.
+   *
+   * The InstanceManager can continue to be used, but the [PigeonFinalizationListener] will no
+   * longer be called and methods will log a warning.
+   */
+  fun stopFinalizationListener() {
+    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    hasFinalizationListenerStopped = true
+  }
+
+  /**
+   * Removes all of the instances from this manager.
+   *
+   * The manager will be empty after this call returns.
+   */
+  fun clear() {
+    identifiers.clear()
+    weakInstances.clear()
+    strongInstances.clear()
+    weakReferencesToIdentifiers.clear()
+  }
+
+  /**
+   * Whether the [PigeonFinalizationListener] is still being called for instances that are garbage
+   * collected.
+   *
+   * See [stopFinalizationListener].
+   */
+  fun hasFinalizationListenerStopped(): Boolean {
+    return hasFinalizationListenerStopped
+  }
+
+  private fun releaseAllFinalizedInstances() {
+    if (hasFinalizationListenerStopped()) {
+      return
+    }
+    var reference: java.lang.ref.WeakReference<Any>?
+    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } !=
+        null) {
+      val identifier = weakReferencesToIdentifiers.remove(reference)
+      if (identifier != null) {
+        weakInstances.remove(identifier)
+        strongInstances.remove(identifier)
+        finalizationListener.onFinalize(identifier)
+      }
+    }
+    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+  }
+
+  private fun addInstance(instance: Any, identifier: Long) {
+    require(identifier >= 0) { "Identifier must be >= 0: $identifier" }
+    require(!weakInstances.containsKey(identifier)) {
+      "Identifier has already been added: $identifier"
+    }
+    val weakReference = java.lang.ref.WeakReference(instance, referenceQueue)
+    identifiers[instance] = identifier
+    weakInstances[identifier] = weakReference
+    weakReferencesToIdentifiers[weakReference] = identifier
+    strongInstances[identifier] = instance
+  }
+
+  private fun logWarningIfFinalizationListenerHasStopped() {
+    if (hasFinalizationListenerStopped()) {
+      Log.w(
+          tag,
+          "The manager was used after calls to the PigeonFinalizationListener have been stopped.")
+    }
+  }
+}
+
+/** Generated API for managing the Dart and native `PigeonInstanceManager`s. */
+class PigeonInstanceManagerApi(internal val binaryMessenger: BinaryMessenger) {
+  companion object {
+    /** The codec used by PigeonInstanceManagerApi. */
+    private val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+
+    /**
+     * Sets up an instance of `PigeonInstanceManagerApi` to handle messages from the
+     * `binaryMessenger`.
+     */
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        instanceManager: PigeonInstanceManager
+    ) {
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference",
+                codec)
+        channel.setMessageHandler { message, reply ->
+          val identifier = message as Number
+          val wrapped: List<Any?> =
+              try {
+                instanceManager.remove<Any?>(identifier.toLong())
+                listOf<Any?>(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
+          reply.reply(wrapped)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.clear",
+                codec)
+        channel.setMessageHandler { _, reply ->
+          val wrapped: List<Any?> =
+              try {
+                instanceManager.clear()
+                listOf<Any?>(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
+          reply.reply(wrapped)
+        }
+      }
+    }
+  }
+
+  fun removeStrongReference(identifier: Long, callback: (Result<Unit>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(identifier) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+abstract class PigeonProxyApiBaseCodec(
+    val binaryMessenger: BinaryMessenger,
+    val instanceManager: PigeonInstanceManager
+) : StandardMessageCodec() {
+  /**
+   * An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
+   * `ProxyApiTestClass` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiProxyApiTestClass(): PigeonApiProxyApiTestClass
+
+  /**
+   * An implementation of [PigeonApiProxyApiSuperClass] used to add a new Dart instance of
+   * `ProxyApiSuperClass` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiProxyApiSuperClass(): PigeonApiProxyApiSuperClass
+
+  /**
+   * An implementation of [PigeonApiProxyApiInterface] used to add a new Dart instance of
+   * `ProxyApiInterface` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface
+
+  fun setUpMessageHandlers() {
+    PigeonApiProxyApiTestClass.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiProxyApiTestClass())
+    PigeonApiProxyApiSuperClass.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiProxyApiSuperClass())
+  }
+
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return instanceManager.getInstance(
+            readValue(buffer).let { if (it is Int) it.toLong() else it as Long })
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    if (value is ProxyApiTestClass) {
+      getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
+    } else if (value is ProxyApiSuperClass) {
+      getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
+    } else if (value is ProxyApiInterface) {
+      getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
+    }
+
+    when {
+      instanceManager.containsInstance(value) -> {
+        stream.write(128)
+        writeValue(stream, instanceManager.getIdentifierForStrongReference(value))
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
 
 enum class ProxyApiTestEnum(val raw: Int) {
   ONE(0),
@@ -28,6 +433,3435 @@ enum class ProxyApiTestEnum(val raw: Int) {
   companion object {
     fun ofRaw(raw: Int): ProxyApiTestEnum? {
       return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+/**
+ * The core ProxyApi test class that each supported host language must implement in platform_tests
+ * integration tests.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
+  abstract fun pigeon_defaultConstructor(
+      aBool: Boolean,
+      anInt: Long,
+      aDouble: Double,
+      aString: String,
+      aUint8List: ByteArray,
+      aList: List<Any?>,
+      aMap: Map<String?, Any?>,
+      anEnum: ProxyApiTestEnum,
+      aProxyApi: ProxyApiSuperClass,
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableDouble: Double?,
+      aNullableString: String?,
+      aNullableUint8List: ByteArray?,
+      aNullableList: List<Any?>?,
+      aNullableMap: Map<String?, Any?>?,
+      aNullableEnum: ProxyApiTestEnum?,
+      aNullableProxyApi: ProxyApiSuperClass?,
+      boolParam: Boolean,
+      intParam: Long,
+      doubleParam: Double,
+      stringParam: String,
+      aUint8ListParam: ByteArray,
+      listParam: List<Any?>,
+      mapParam: Map<String?, Any?>,
+      enumParam: ProxyApiTestEnum,
+      proxyApiParam: ProxyApiSuperClass,
+      nullableBoolParam: Boolean?,
+      nullableIntParam: Long?,
+      nullableDoubleParam: Double?,
+      nullableStringParam: String?,
+      nullableUint8ListParam: ByteArray?,
+      nullableListParam: List<Any?>?,
+      nullableMapParam: Map<String?, Any?>?,
+      nullableEnumParam: ProxyApiTestEnum?,
+      nullableProxyApiParam: ProxyApiSuperClass?
+  ): ProxyApiTestClass
+
+  abstract fun attachedField(pigeon_instance: ProxyApiTestClass): ProxyApiSuperClass
+
+  abstract fun staticAttachedField(): ProxyApiSuperClass
+
+  abstract fun aBool(pigeon_instance: ProxyApiTestClass): Boolean
+
+  abstract fun anInt(pigeon_instance: ProxyApiTestClass): Long
+
+  abstract fun aDouble(pigeon_instance: ProxyApiTestClass): Double
+
+  abstract fun aString(pigeon_instance: ProxyApiTestClass): String
+
+  abstract fun aUint8List(pigeon_instance: ProxyApiTestClass): ByteArray
+
+  abstract fun aList(pigeon_instance: ProxyApiTestClass): List<Any?>
+
+  abstract fun aMap(pigeon_instance: ProxyApiTestClass): Map<String?, Any?>
+
+  abstract fun anEnum(pigeon_instance: ProxyApiTestClass): ProxyApiTestEnum
+
+  abstract fun aProxyApi(pigeon_instance: ProxyApiTestClass): ProxyApiSuperClass
+
+  abstract fun aNullableBool(pigeon_instance: ProxyApiTestClass): Boolean?
+
+  abstract fun aNullableInt(pigeon_instance: ProxyApiTestClass): Long?
+
+  abstract fun aNullableDouble(pigeon_instance: ProxyApiTestClass): Double?
+
+  abstract fun aNullableString(pigeon_instance: ProxyApiTestClass): String?
+
+  abstract fun aNullableUint8List(pigeon_instance: ProxyApiTestClass): ByteArray?
+
+  abstract fun aNullableList(pigeon_instance: ProxyApiTestClass): List<Any?>?
+
+  abstract fun aNullableMap(pigeon_instance: ProxyApiTestClass): Map<String?, Any?>?
+
+  abstract fun aNullableEnum(pigeon_instance: ProxyApiTestClass): ProxyApiTestEnum?
+
+  abstract fun aNullableProxyApi(pigeon_instance: ProxyApiTestClass): ProxyApiSuperClass?
+
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  abstract fun noop(pigeon_instance: ProxyApiTestClass)
+
+  /** Returns an error, to test error handling. */
+  abstract fun throwError(pigeon_instance: ProxyApiTestClass): Any?
+
+  /** Returns an error from a void function, to test error handling. */
+  abstract fun throwErrorFromVoid(pigeon_instance: ProxyApiTestClass)
+
+  /** Returns a Flutter error, to test error handling. */
+  abstract fun throwFlutterError(pigeon_instance: ProxyApiTestClass): Any?
+
+  /** Returns passed in int. */
+  abstract fun echoInt(pigeon_instance: ProxyApiTestClass, anInt: Long): Long
+
+  /** Returns passed in double. */
+  abstract fun echoDouble(pigeon_instance: ProxyApiTestClass, aDouble: Double): Double
+
+  /** Returns the passed in boolean. */
+  abstract fun echoBool(pigeon_instance: ProxyApiTestClass, aBool: Boolean): Boolean
+
+  /** Returns the passed in string. */
+  abstract fun echoString(pigeon_instance: ProxyApiTestClass, aString: String): String
+
+  /** Returns the passed in Uint8List. */
+  abstract fun echoUint8List(pigeon_instance: ProxyApiTestClass, aUint8List: ByteArray): ByteArray
+
+  /** Returns the passed in generic Object. */
+  abstract fun echoObject(pigeon_instance: ProxyApiTestClass, anObject: Any): Any
+
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoList(pigeon_instance: ProxyApiTestClass, aList: List<Any?>): List<Any?>
+
+  /** Returns the passed list with ProxyApis, to test serialization and deserialization. */
+  abstract fun echoProxyApiList(
+      pigeon_instance: ProxyApiTestClass,
+      aList: List<ProxyApiTestClass>
+  ): List<ProxyApiTestClass>
+
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoMap(
+      pigeon_instance: ProxyApiTestClass,
+      aMap: Map<String?, Any?>
+  ): Map<String?, Any?>
+
+  /** Returns the passed map with ProxyApis, to test serialization and deserialization. */
+  abstract fun echoProxyApiMap(
+      pigeon_instance: ProxyApiTestClass,
+      aMap: Map<String, ProxyApiTestClass>
+  ): Map<String, ProxyApiTestClass>
+
+  /** Returns the passed enum to test serialization and deserialization. */
+  abstract fun echoEnum(
+      pigeon_instance: ProxyApiTestClass,
+      anEnum: ProxyApiTestEnum
+  ): ProxyApiTestEnum
+
+  /** Returns the passed ProxyApi to test serialization and deserialization. */
+  abstract fun echoProxyApi(
+      pigeon_instance: ProxyApiTestClass,
+      aProxyApi: ProxyApiSuperClass
+  ): ProxyApiSuperClass
+
+  /** Returns passed in int. */
+  abstract fun echoNullableInt(pigeon_instance: ProxyApiTestClass, aNullableInt: Long?): Long?
+
+  /** Returns passed in double. */
+  abstract fun echoNullableDouble(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableDouble: Double?
+  ): Double?
+
+  /** Returns the passed in boolean. */
+  abstract fun echoNullableBool(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableBool: Boolean?
+  ): Boolean?
+
+  /** Returns the passed in string. */
+  abstract fun echoNullableString(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableString: String?
+  ): String?
+
+  /** Returns the passed in Uint8List. */
+  abstract fun echoNullableUint8List(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableUint8List: ByteArray?
+  ): ByteArray?
+
+  /** Returns the passed in generic Object. */
+  abstract fun echoNullableObject(pigeon_instance: ProxyApiTestClass, aNullableObject: Any?): Any?
+
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableList(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableList: List<Any?>?
+  ): List<Any?>?
+
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableMap(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableMap: Map<String?, Any?>?
+  ): Map<String?, Any?>?
+
+  abstract fun echoNullableEnum(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableEnum: ProxyApiTestEnum?
+  ): ProxyApiTestEnum?
+
+  /** Returns the passed ProxyApi to test serialization and deserialization. */
+  abstract fun echoNullableProxyApi(
+      pigeon_instance: ProxyApiTestClass,
+      aNullableProxyApi: ProxyApiSuperClass?
+  ): ProxyApiSuperClass?
+
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  abstract fun noopAsync(pigeon_instance: ProxyApiTestClass, callback: (Result<Unit>) -> Unit)
+
+  /** Returns passed in int asynchronously. */
+  abstract fun echoAsyncInt(
+      pigeon_instance: ProxyApiTestClass,
+      anInt: Long,
+      callback: (Result<Long>) -> Unit
+  )
+
+  /** Returns passed in double asynchronously. */
+  abstract fun echoAsyncDouble(
+      pigeon_instance: ProxyApiTestClass,
+      aDouble: Double,
+      callback: (Result<Double>) -> Unit
+  )
+
+  /** Returns the passed in boolean asynchronously. */
+  abstract fun echoAsyncBool(
+      pigeon_instance: ProxyApiTestClass,
+      aBool: Boolean,
+      callback: (Result<Boolean>) -> Unit
+  )
+
+  /** Returns the passed string asynchronously. */
+  abstract fun echoAsyncString(
+      pigeon_instance: ProxyApiTestClass,
+      aString: String,
+      callback: (Result<String>) -> Unit
+  )
+
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract fun echoAsyncUint8List(
+      pigeon_instance: ProxyApiTestClass,
+      aUint8List: ByteArray,
+      callback: (Result<ByteArray>) -> Unit
+  )
+
+  /** Returns the passed in generic Object asynchronously. */
+  abstract fun echoAsyncObject(
+      pigeon_instance: ProxyApiTestClass,
+      anObject: Any,
+      callback: (Result<Any>) -> Unit
+  )
+
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncList(
+      pigeon_instance: ProxyApiTestClass,
+      aList: List<Any?>,
+      callback: (Result<List<Any?>>) -> Unit
+  )
+
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncMap(
+      pigeon_instance: ProxyApiTestClass,
+      aMap: Map<String?, Any?>,
+      callback: (Result<Map<String?, Any?>>) -> Unit
+  )
+
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncEnum(
+      pigeon_instance: ProxyApiTestClass,
+      anEnum: ProxyApiTestEnum,
+      callback: (Result<ProxyApiTestEnum>) -> Unit
+  )
+
+  /** Responds with an error from an async function returning a value. */
+  abstract fun throwAsyncError(pigeon_instance: ProxyApiTestClass, callback: (Result<Any?>) -> Unit)
+
+  /** Responds with an error from an async void function. */
+  abstract fun throwAsyncErrorFromVoid(
+      pigeon_instance: ProxyApiTestClass,
+      callback: (Result<Unit>) -> Unit
+  )
+
+  /** Responds with a Flutter error from an async function returning a value. */
+  abstract fun throwAsyncFlutterError(
+      pigeon_instance: ProxyApiTestClass,
+      callback: (Result<Any?>) -> Unit
+  )
+
+  /** Returns passed in int asynchronously. */
+  abstract fun echoAsyncNullableInt(
+      pigeon_instance: ProxyApiTestClass,
+      anInt: Long?,
+      callback: (Result<Long?>) -> Unit
+  )
+
+  /** Returns passed in double asynchronously. */
+  abstract fun echoAsyncNullableDouble(
+      pigeon_instance: ProxyApiTestClass,
+      aDouble: Double?,
+      callback: (Result<Double?>) -> Unit
+  )
+
+  /** Returns the passed in boolean asynchronously. */
+  abstract fun echoAsyncNullableBool(
+      pigeon_instance: ProxyApiTestClass,
+      aBool: Boolean?,
+      callback: (Result<Boolean?>) -> Unit
+  )
+
+  /** Returns the passed string asynchronously. */
+  abstract fun echoAsyncNullableString(
+      pigeon_instance: ProxyApiTestClass,
+      aString: String?,
+      callback: (Result<String?>) -> Unit
+  )
+
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract fun echoAsyncNullableUint8List(
+      pigeon_instance: ProxyApiTestClass,
+      aUint8List: ByteArray?,
+      callback: (Result<ByteArray?>) -> Unit
+  )
+
+  /** Returns the passed in generic Object asynchronously. */
+  abstract fun echoAsyncNullableObject(
+      pigeon_instance: ProxyApiTestClass,
+      anObject: Any?,
+      callback: (Result<Any?>) -> Unit
+  )
+
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncNullableList(
+      pigeon_instance: ProxyApiTestClass,
+      aList: List<Any?>?,
+      callback: (Result<List<Any?>?>) -> Unit
+  )
+
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncNullableMap(
+      pigeon_instance: ProxyApiTestClass,
+      aMap: Map<String?, Any?>?,
+      callback: (Result<Map<String?, Any?>?>) -> Unit
+  )
+
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncNullableEnum(
+      pigeon_instance: ProxyApiTestClass,
+      anEnum: ProxyApiTestEnum?,
+      callback: (Result<ProxyApiTestEnum?>) -> Unit
+  )
+
+  abstract fun staticNoop()
+
+  abstract fun echoStaticString(aString: String): String
+
+  abstract fun staticAsyncNoop(callback: (Result<Unit>) -> Unit)
+
+  abstract fun callFlutterNoop(pigeon_instance: ProxyApiTestClass, callback: (Result<Unit>) -> Unit)
+
+  abstract fun callFlutterThrowError(
+      pigeon_instance: ProxyApiTestClass,
+      callback: (Result<Any?>) -> Unit
+  )
+
+  abstract fun callFlutterThrowErrorFromVoid(
+      pigeon_instance: ProxyApiTestClass,
+      callback: (Result<Unit>) -> Unit
+  )
+
+  abstract fun callFlutterEchoBool(
+      pigeon_instance: ProxyApiTestClass,
+      aBool: Boolean,
+      callback: (Result<Boolean>) -> Unit
+  )
+
+  abstract fun callFlutterEchoInt(
+      pigeon_instance: ProxyApiTestClass,
+      anInt: Long,
+      callback: (Result<Long>) -> Unit
+  )
+
+  abstract fun callFlutterEchoDouble(
+      pigeon_instance: ProxyApiTestClass,
+      aDouble: Double,
+      callback: (Result<Double>) -> Unit
+  )
+
+  abstract fun callFlutterEchoString(
+      pigeon_instance: ProxyApiTestClass,
+      aString: String,
+      callback: (Result<String>) -> Unit
+  )
+
+  abstract fun callFlutterEchoUint8List(
+      pigeon_instance: ProxyApiTestClass,
+      aUint8List: ByteArray,
+      callback: (Result<ByteArray>) -> Unit
+  )
+
+  abstract fun callFlutterEchoList(
+      pigeon_instance: ProxyApiTestClass,
+      aList: List<Any?>,
+      callback: (Result<List<Any?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoProxyApiList(
+      pigeon_instance: ProxyApiTestClass,
+      aList: List<ProxyApiTestClass?>,
+      callback: (Result<List<ProxyApiTestClass?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoMap(
+      pigeon_instance: ProxyApiTestClass,
+      aMap: Map<String?, Any?>,
+      callback: (Result<Map<String?, Any?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoProxyApiMap(
+      pigeon_instance: ProxyApiTestClass,
+      aMap: Map<String?, ProxyApiTestClass?>,
+      callback: (Result<Map<String?, ProxyApiTestClass?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoEnum(
+      pigeon_instance: ProxyApiTestClass,
+      anEnum: ProxyApiTestEnum,
+      callback: (Result<ProxyApiTestEnum>) -> Unit
+  )
+
+  abstract fun callFlutterEchoProxyApi(
+      pigeon_instance: ProxyApiTestClass,
+      aProxyApi: ProxyApiSuperClass,
+      callback: (Result<ProxyApiSuperClass>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableBool(
+      pigeon_instance: ProxyApiTestClass,
+      aBool: Boolean?,
+      callback: (Result<Boolean?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableInt(
+      pigeon_instance: ProxyApiTestClass,
+      anInt: Long?,
+      callback: (Result<Long?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableDouble(
+      pigeon_instance: ProxyApiTestClass,
+      aDouble: Double?,
+      callback: (Result<Double?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableString(
+      pigeon_instance: ProxyApiTestClass,
+      aString: String?,
+      callback: (Result<String?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableUint8List(
+      pigeon_instance: ProxyApiTestClass,
+      aUint8List: ByteArray?,
+      callback: (Result<ByteArray?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableList(
+      pigeon_instance: ProxyApiTestClass,
+      aList: List<Any?>?,
+      callback: (Result<List<Any?>?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableMap(
+      pigeon_instance: ProxyApiTestClass,
+      aMap: Map<String?, Any?>?,
+      callback: (Result<Map<String?, Any?>?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableEnum(
+      pigeon_instance: ProxyApiTestClass,
+      anEnum: ProxyApiTestEnum?,
+      callback: (Result<ProxyApiTestEnum?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableProxyApi(
+      pigeon_instance: ProxyApiTestClass,
+      aProxyApi: ProxyApiSuperClass?,
+      callback: (Result<ProxyApiSuperClass?>) -> Unit
+  )
+
+  abstract fun callFlutterNoopAsync(
+      pigeon_instance: ProxyApiTestClass,
+      callback: (Result<Unit>) -> Unit
+  )
+
+  abstract fun callFlutterEchoAsyncString(
+      pigeon_instance: ProxyApiTestClass,
+      aString: String,
+      callback: (Result<String>) -> Unit
+  )
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiTestClass?) {
+      val codec = api?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            val aBoolArg = args[1] as Boolean
+            val anIntArg = args[2].let { if (it is Int) it.toLong() else it as Long }
+            val aDoubleArg = args[3] as Double
+            val aStringArg = args[4] as String
+            val aUint8ListArg = args[5] as ByteArray
+            val aListArg = args[6] as List<Any?>
+            val aMapArg = args[7] as Map<String?, Any?>
+            val anEnumArg = ProxyApiTestEnum.ofRaw(args[8] as Int)!!
+            val aProxyApiArg = args[9] as ProxyApiSuperClass
+            val aNullableBoolArg = args[10] as Boolean?
+            val aNullableIntArg = args[11].let { if (it is Int) it.toLong() else it as Long? }
+            val aNullableDoubleArg = args[12] as Double?
+            val aNullableStringArg = args[13] as String?
+            val aNullableUint8ListArg = args[14] as ByteArray?
+            val aNullableListArg = args[15] as List<Any?>?
+            val aNullableMapArg = args[16] as Map<String?, Any?>?
+            val aNullableEnumArg =
+                if (args[17] == null) null else ProxyApiTestEnum.ofRaw(args[17] as Int)
+            val aNullableProxyApiArg = args[18] as ProxyApiSuperClass?
+            val boolParamArg = args[19] as Boolean
+            val intParamArg = args[20].let { if (it is Int) it.toLong() else it as Long }
+            val doubleParamArg = args[21] as Double
+            val stringParamArg = args[22] as String
+            val aUint8ListParamArg = args[23] as ByteArray
+            val listParamArg = args[24] as List<Any?>
+            val mapParamArg = args[25] as Map<String?, Any?>
+            val enumParamArg = ProxyApiTestEnum.ofRaw(args[26] as Int)!!
+            val proxyApiParamArg = args[27] as ProxyApiSuperClass
+            val nullableBoolParamArg = args[28] as Boolean?
+            val nullableIntParamArg = args[29].let { if (it is Int) it.toLong() else it as Long? }
+            val nullableDoubleParamArg = args[30] as Double?
+            val nullableStringParamArg = args[31] as String?
+            val nullableUint8ListParamArg = args[32] as ByteArray?
+            val nullableListParamArg = args[33] as List<Any?>?
+            val nullableMapParamArg = args[34] as Map<String?, Any?>?
+            val nullableEnumParamArg =
+                if (args[35] == null) null else ProxyApiTestEnum.ofRaw(args[35] as Int)
+            val nullableProxyApiParamArg = args[36] as ProxyApiSuperClass?
+            var wrapped: List<Any?>
+            try {
+              api.codec.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(
+                      aBoolArg,
+                      anIntArg,
+                      aDoubleArg,
+                      aStringArg,
+                      aUint8ListArg,
+                      aListArg,
+                      aMapArg,
+                      anEnumArg,
+                      aProxyApiArg,
+                      aNullableBoolArg,
+                      aNullableIntArg,
+                      aNullableDoubleArg,
+                      aNullableStringArg,
+                      aNullableUint8ListArg,
+                      aNullableListArg,
+                      aNullableMapArg,
+                      aNullableEnumArg,
+                      aNullableProxyApiArg,
+                      boolParamArg,
+                      intParamArg,
+                      doubleParamArg,
+                      stringParamArg,
+                      aUint8ListParamArg,
+                      listParamArg,
+                      mapParamArg,
+                      enumParamArg,
+                      proxyApiParamArg,
+                      nullableBoolParamArg,
+                      nullableIntParamArg,
+                      nullableDoubleParamArg,
+                      nullableStringParamArg,
+                      nullableUint8ListParamArg,
+                      nullableListParamArg,
+                      nullableMapParamArg,
+                      nullableEnumParamArg,
+                      nullableProxyApiParamArg),
+                  pigeon_identifierArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.attachedField",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val pigeon_identifierArg = args[1].let { if (it is Int) it.toLong() else it as Long }
+            var wrapped: List<Any?>
+            try {
+              api.codec.instanceManager.addDartCreatedInstance(
+                  api.attachedField(pigeon_instanceArg), pigeon_identifierArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAttachedField",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            var wrapped: List<Any?>
+            try {
+              api.codec.instanceManager.addDartCreatedInstance(
+                  api.staticAttachedField(), pigeon_identifierArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.noop",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            var wrapped: List<Any?>
+            try {
+              api.noop(pigeon_instanceArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwError",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.throwError(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwErrorFromVoid",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            var wrapped: List<Any?>
+            try {
+              api.throwErrorFromVoid(pigeon_instanceArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwFlutterError",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.throwFlutterError(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anIntArg = args[1].let { if (it is Int) it.toLong() else it as Long }
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoInt(pigeon_instanceArg, anIntArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoDouble",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aDoubleArg = args[1] as Double
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoDouble(pigeon_instanceArg, aDoubleArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoBool",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aBoolArg = args[1] as Boolean
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoBool(pigeon_instanceArg, aBoolArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aStringArg = args[1] as String
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoString(pigeon_instanceArg, aStringArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoUint8List",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aUint8ListArg = args[1] as ByteArray
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoUint8List(pigeon_instanceArg, aUint8ListArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoObject",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anObjectArg = args[1] as Any
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoObject(pigeon_instanceArg, anObjectArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aListArg = args[1] as List<Any?>
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoList(pigeon_instanceArg, aListArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApiList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aListArg = args[1] as List<ProxyApiTestClass>
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoProxyApiList(pigeon_instanceArg, aListArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aMapArg = args[1] as Map<String?, Any?>
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoMap(pigeon_instanceArg, aMapArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApiMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aMapArg = args[1] as Map<String, ProxyApiTestClass>
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoProxyApiMap(pigeon_instanceArg, aMapArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoEnum",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anEnumArg = ProxyApiTestEnum.ofRaw(args[1] as Int)!!
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoEnum(pigeon_instanceArg, anEnumArg).raw)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApi",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aProxyApiArg = args[1] as ProxyApiSuperClass
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoProxyApi(pigeon_instanceArg, aProxyApiArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableIntArg = args[1].let { if (it is Int) it.toLong() else it as Long? }
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableInt(pigeon_instanceArg, aNullableIntArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableDouble",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableDoubleArg = args[1] as Double?
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableDouble(pigeon_instanceArg, aNullableDoubleArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableBool",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableBoolArg = args[1] as Boolean?
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableBool(pigeon_instanceArg, aNullableBoolArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableStringArg = args[1] as String?
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableString(pigeon_instanceArg, aNullableStringArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableUint8List",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableUint8ListArg = args[1] as ByteArray?
+            var wrapped: List<Any?>
+            try {
+              wrapped =
+                  listOf<Any?>(api.echoNullableUint8List(pigeon_instanceArg, aNullableUint8ListArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableObject",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableObjectArg = args[1]
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableObject(pigeon_instanceArg, aNullableObjectArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableListArg = args[1] as List<Any?>?
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableList(pigeon_instanceArg, aNullableListArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableMapArg = args[1] as Map<String?, Any?>?
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableMap(pigeon_instanceArg, aNullableMapArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableEnum",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableEnumArg =
+                if (args[1] == null) null else ProxyApiTestEnum.ofRaw(args[1] as Int)
+            var wrapped: List<Any?>
+            try {
+              wrapped =
+                  listOf<Any?>(api.echoNullableEnum(pigeon_instanceArg, aNullableEnumArg)?.raw)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableProxyApi",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aNullableProxyApiArg = args[1] as ProxyApiSuperClass?
+            var wrapped: List<Any?>
+            try {
+              wrapped =
+                  listOf<Any?>(api.echoNullableProxyApi(pigeon_instanceArg, aNullableProxyApiArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.noopAsync",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.noopAsync(pigeon_instanceArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anIntArg = args[1].let { if (it is Int) it.toLong() else it as Long }
+            api.echoAsyncInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncDouble",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aDoubleArg = args[1] as Double
+            api.echoAsyncDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncBool",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aBoolArg = args[1] as Boolean
+            api.echoAsyncBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aStringArg = args[1] as String
+            api.echoAsyncString(pigeon_instanceArg, aStringArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncUint8List",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aUint8ListArg = args[1] as ByteArray
+            api.echoAsyncUint8List(pigeon_instanceArg, aUint8ListArg) { result: Result<ByteArray> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncObject",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anObjectArg = args[1] as Any
+            api.echoAsyncObject(pigeon_instanceArg, anObjectArg) { result: Result<Any> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aListArg = args[1] as List<Any?>
+            api.echoAsyncList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aMapArg = args[1] as Map<String?, Any?>
+            api.echoAsyncMap(pigeon_instanceArg, aMapArg) { result: Result<Map<String?, Any?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncEnum",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anEnumArg = ProxyApiTestEnum.ofRaw(args[1] as Int)!!
+            api.echoAsyncEnum(pigeon_instanceArg, anEnumArg) { result: Result<ProxyApiTestEnum> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data!!.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncError",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.throwAsyncError(pigeon_instanceArg) { result: Result<Any?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncErrorFromVoid",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.throwAsyncErrorFromVoid(pigeon_instanceArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncFlutterError",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.throwAsyncFlutterError(pigeon_instanceArg) { result: Result<Any?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anIntArg = args[1].let { if (it is Int) it.toLong() else it as Long? }
+            api.echoAsyncNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableDouble",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aDoubleArg = args[1] as Double?
+            api.echoAsyncNullableDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableBool",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aBoolArg = args[1] as Boolean?
+            api.echoAsyncNullableBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aStringArg = args[1] as String?
+            api.echoAsyncNullableString(pigeon_instanceArg, aStringArg) { result: Result<String?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableUint8List",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aUint8ListArg = args[1] as ByteArray?
+            api.echoAsyncNullableUint8List(pigeon_instanceArg, aUint8ListArg) {
+                result: Result<ByteArray?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableObject",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anObjectArg = args[1]
+            api.echoAsyncNullableObject(pigeon_instanceArg, anObjectArg) { result: Result<Any?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aListArg = args[1] as List<Any?>?
+            api.echoAsyncNullableList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aMapArg = args[1] as Map<String?, Any?>?
+            api.echoAsyncNullableMap(pigeon_instanceArg, aMapArg) {
+                result: Result<Map<String?, Any?>?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableEnum",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anEnumArg = if (args[1] == null) null else ProxyApiTestEnum.ofRaw(args[1] as Int)
+            api.echoAsyncNullableEnum(pigeon_instanceArg, anEnumArg) {
+                result: Result<ProxyApiTestEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data?.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticNoop",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped: List<Any?>
+            try {
+              api.staticNoop()
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoStaticString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val aStringArg = args[0] as String
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoStaticString(aStringArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAsyncNoop",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.staticAsyncNoop() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterNoop",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.callFlutterNoop(pigeon_instanceArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterThrowError",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.callFlutterThrowError(pigeon_instanceArg) { result: Result<Any?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterThrowErrorFromVoid",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.callFlutterThrowErrorFromVoid(pigeon_instanceArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoBool",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aBoolArg = args[1] as Boolean
+            api.callFlutterEchoBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anIntArg = args[1].let { if (it is Int) it.toLong() else it as Long }
+            api.callFlutterEchoInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoDouble",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aDoubleArg = args[1] as Double
+            api.callFlutterEchoDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aStringArg = args[1] as String
+            api.callFlutterEchoString(pigeon_instanceArg, aStringArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoUint8List",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aUint8ListArg = args[1] as ByteArray
+            api.callFlutterEchoUint8List(pigeon_instanceArg, aUint8ListArg) {
+                result: Result<ByteArray> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aListArg = args[1] as List<Any?>
+            api.callFlutterEchoList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApiList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aListArg = args[1] as List<ProxyApiTestClass?>
+            api.callFlutterEchoProxyApiList(pigeon_instanceArg, aListArg) {
+                result: Result<List<ProxyApiTestClass?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aMapArg = args[1] as Map<String?, Any?>
+            api.callFlutterEchoMap(pigeon_instanceArg, aMapArg) { result: Result<Map<String?, Any?>>
+              ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApiMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aMapArg = args[1] as Map<String?, ProxyApiTestClass?>
+            api.callFlutterEchoProxyApiMap(pigeon_instanceArg, aMapArg) {
+                result: Result<Map<String?, ProxyApiTestClass?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoEnum",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anEnumArg = ProxyApiTestEnum.ofRaw(args[1] as Int)!!
+            api.callFlutterEchoEnum(pigeon_instanceArg, anEnumArg) {
+                result: Result<ProxyApiTestEnum> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data!!.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApi",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aProxyApiArg = args[1] as ProxyApiSuperClass
+            api.callFlutterEchoProxyApi(pigeon_instanceArg, aProxyApiArg) {
+                result: Result<ProxyApiSuperClass> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableBool",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aBoolArg = args[1] as Boolean?
+            api.callFlutterEchoNullableBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean?>
+              ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anIntArg = args[1].let { if (it is Int) it.toLong() else it as Long? }
+            api.callFlutterEchoNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableDouble",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aDoubleArg = args[1] as Double?
+            api.callFlutterEchoNullableDouble(pigeon_instanceArg, aDoubleArg) {
+                result: Result<Double?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aStringArg = args[1] as String?
+            api.callFlutterEchoNullableString(pigeon_instanceArg, aStringArg) {
+                result: Result<String?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableUint8List",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aUint8ListArg = args[1] as ByteArray?
+            api.callFlutterEchoNullableUint8List(pigeon_instanceArg, aUint8ListArg) {
+                result: Result<ByteArray?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aListArg = args[1] as List<Any?>?
+            api.callFlutterEchoNullableList(pigeon_instanceArg, aListArg) {
+                result: Result<List<Any?>?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableMap",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aMapArg = args[1] as Map<String?, Any?>?
+            api.callFlutterEchoNullableMap(pigeon_instanceArg, aMapArg) {
+                result: Result<Map<String?, Any?>?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableEnum",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val anEnumArg = if (args[1] == null) null else ProxyApiTestEnum.ofRaw(args[1] as Int)
+            api.callFlutterEchoNullableEnum(pigeon_instanceArg, anEnumArg) {
+                result: Result<ProxyApiTestEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data?.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableProxyApi",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aProxyApiArg = args[1] as ProxyApiSuperClass?
+            api.callFlutterEchoNullableProxyApi(pigeon_instanceArg, aProxyApiArg) {
+                result: Result<ProxyApiSuperClass?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterNoopAsync",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            api.callFlutterNoopAsync(pigeon_instanceArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoAsyncString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiTestClass
+            val aStringArg = args[1] as String
+            api.callFlutterEchoAsyncString(pigeon_instanceArg, aStringArg) { result: Result<String>
+              ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiTestClass and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
+    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val aBoolArg = aBool(pigeon_instanceArg)
+    val anIntArg = anInt(pigeon_instanceArg)
+    val aDoubleArg = aDouble(pigeon_instanceArg)
+    val aStringArg = aString(pigeon_instanceArg)
+    val aUint8ListArg = aUint8List(pigeon_instanceArg)
+    val aListArg = aList(pigeon_instanceArg)
+    val aMapArg = aMap(pigeon_instanceArg)
+    val anEnumArg = anEnum(pigeon_instanceArg)
+    val aProxyApiArg = aProxyApi(pigeon_instanceArg)
+    val aNullableBoolArg = aNullableBool(pigeon_instanceArg)
+    val aNullableIntArg = aNullableInt(pigeon_instanceArg)
+    val aNullableDoubleArg = aNullableDouble(pigeon_instanceArg)
+    val aNullableStringArg = aNullableString(pigeon_instanceArg)
+    val aNullableUint8ListArg = aNullableUint8List(pigeon_instanceArg)
+    val aNullableListArg = aNullableList(pigeon_instanceArg)
+    val aNullableMapArg = aNullableMap(pigeon_instanceArg)
+    val aNullableEnumArg = aNullableEnum(pigeon_instanceArg)
+    val aNullableProxyApiArg = aNullableProxyApi(pigeon_instanceArg)
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(
+        listOf(
+            pigeon_identifierArg,
+            aBoolArg,
+            anIntArg,
+            aDoubleArg,
+            aStringArg,
+            aUint8ListArg,
+            aListArg,
+            aMapArg,
+            anEnumArg.raw,
+            aProxyApiArg,
+            aNullableBoolArg,
+            aNullableIntArg,
+            aNullableDoubleArg,
+            aNullableStringArg,
+            aNullableUint8ListArg,
+            aNullableListArg,
+            aNullableMapArg,
+            aNullableEnumArg?.raw,
+            aNullableProxyApiArg)) {
+          if (it is List<*>) {
+            if (it.size > 1) {
+              callback(
+                  Result.failure(
+                      ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+            } else {
+              callback(Result.success(Unit))
+            }
+          } else {
+            callback(Result.failure(createConnectionError(channelName)))
+          }
+        }
+  }
+
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  fun flutterNoop(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Responds with an error from an async function returning a value. */
+  fun flutterThrowError(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Any?>) -> Unit) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0]
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Responds with an error from an async void function. */
+  fun flutterThrowErrorFromVoid(
+      pigeon_instanceArg: ProxyApiTestClass,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun flutterEchoBool(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aBoolArg: Boolean,
+      callback: (Result<Boolean>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aBoolArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Boolean
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun flutterEchoInt(
+      pigeon_instanceArg: ProxyApiTestClass,
+      anIntArg: Long,
+      callback: (Result<Long>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, anIntArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0].let { if (it is Int) it.toLong() else it as Long }
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun flutterEchoDouble(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aDoubleArg: Double,
+      callback: (Result<Double>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aDoubleArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Double
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed string, to test serialization and deserialization. */
+  fun flutterEchoString(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aStringArg: String,
+      callback: (Result<String>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun flutterEchoUint8List(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aListArg: ByteArray,
+      callback: (Result<ByteArray>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as ByteArray
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun flutterEchoList(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aListArg: List<Any?>,
+      callback: (Result<List<Any?>>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as List<Any?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed list with ProxyApis, to test serialization and deserialization. */
+  fun flutterEchoProxyApiList(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aListArg: List<ProxyApiTestClass?>,
+      callback: (Result<List<ProxyApiTestClass?>>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as List<ProxyApiTestClass?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun flutterEchoMap(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aMapArg: Map<String?, Any?>,
+      callback: (Result<Map<String?, Any?>>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aMapArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Map<String?, Any?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed map with ProxyApis, to test serialization and deserialization. */
+  fun flutterEchoProxyApiMap(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aMapArg: Map<String?, ProxyApiTestClass?>,
+      callback: (Result<Map<String?, ProxyApiTestClass?>>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aMapArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Map<String?, ProxyApiTestClass?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun flutterEchoEnum(
+      pigeon_instanceArg: ProxyApiTestClass,
+      anEnumArg: ProxyApiTestEnum,
+      callback: (Result<ProxyApiTestEnum>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, anEnumArg.raw)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = ProxyApiTestEnum.ofRaw(it[0] as Int)!!
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed ProxyApi to test serialization and deserialization. */
+  fun flutterEchoProxyApi(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aProxyApiArg: ProxyApiSuperClass,
+      callback: (Result<ProxyApiSuperClass>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aProxyApiArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as ProxyApiSuperClass
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun flutterEchoNullableBool(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aBoolArg: Boolean?,
+      callback: (Result<Boolean?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aBoolArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as Boolean?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun flutterEchoNullableInt(
+      pigeon_instanceArg: ProxyApiTestClass,
+      anIntArg: Long?,
+      callback: (Result<Long?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, anIntArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0].let { if (it is Int) it.toLong() else it as Long? }
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun flutterEchoNullableDouble(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aDoubleArg: Double?,
+      callback: (Result<Double?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aDoubleArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as Double?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed string, to test serialization and deserialization. */
+  fun flutterEchoNullableString(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aStringArg: String?,
+      callback: (Result<String?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as String?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun flutterEchoNullableUint8List(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aListArg: ByteArray?,
+      callback: (Result<ByteArray?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as ByteArray?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun flutterEchoNullableList(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aListArg: List<Any?>?,
+      callback: (Result<List<Any?>?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as List<Any?>?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun flutterEchoNullableMap(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aMapArg: Map<String?, Any?>?,
+      callback: (Result<Map<String?, Any?>?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aMapArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as Map<String?, Any?>?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun flutterEchoNullableEnum(
+      pigeon_instanceArg: ProxyApiTestClass,
+      anEnumArg: ProxyApiTestEnum?,
+      callback: (Result<ProxyApiTestEnum?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, anEnumArg?.raw)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = (it[0] as Int?)?.let { ProxyApiTestEnum.ofRaw(it) }
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed ProxyApi to test serialization and deserialization. */
+  fun flutterEchoNullableProxyApi(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aProxyApiArg: ProxyApiSuperClass?,
+      callback: (Result<ProxyApiSuperClass?>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aProxyApiArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as ProxyApiSuperClass?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  fun flutterNoopAsync(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Returns the passed in generic Object asynchronously. */
+  fun flutterEchoAsyncString(
+      pigeon_instanceArg: ProxyApiTestClass,
+      aStringArg: String,
+      callback: (Result<String>) -> Unit
+  ) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiProxyApiSuperClass] used to access callback methods */
+  fun pigeon_getPigeonApiProxyApiSuperClass(): PigeonApiProxyApiSuperClass {
+    return codec.getPigeonApiProxyApiSuperClass()
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiProxyApiInterface] used to access callback methods */
+  fun pigeon_getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface {
+    return codec.getPigeonApiProxyApiInterface()
+  }
+}
+/** ProxyApi to serve as a super class to the core ProxyApi class. */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
+  abstract fun pigeon_defaultConstructor(): ProxyApiSuperClass
+
+  abstract fun aSuperMethod(pigeon_instance: ProxyApiSuperClass)
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiSuperClass?) {
+      val codec = api?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            var wrapped: List<Any?>
+            try {
+              api.codec.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.aSuperMethod",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as ProxyApiSuperClass
+            var wrapped: List<Any?>
+            try {
+              api.aSuperMethod(pigeon_instanceArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiSuperClass and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ProxyApiSuperClass, callback: (Result<Unit>) -> Unit) {
+    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+/** ProxyApi to serve as an interface to the core ProxyApi class. */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiProxyApiInterface(val codec: PigeonProxyApiBaseCodec) {
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
+    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  fun anInterfaceMethod(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
+    val binaryMessenger = codec.binaryMessenger
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
     }
   }
 }

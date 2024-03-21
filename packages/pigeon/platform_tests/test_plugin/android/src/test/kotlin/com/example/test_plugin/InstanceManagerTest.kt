@@ -122,8 +122,8 @@ class InstanceManagerTest {
 
   private fun createInstanceManager(): PigeonInstanceManager {
     return PigeonInstanceManager.create(
-      object : PigeonInstanceManager.PigeonFinalizationListener {
-        override fun onFinalize(identifier: Long) {}
-      })
+        object : PigeonInstanceManager.PigeonFinalizationListener {
+          override fun onFinalize(identifier: Long) {}
+        })
   }
 }
