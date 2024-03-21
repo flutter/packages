@@ -172,6 +172,8 @@ class CameraValue {
     CameraDescription? description,
     Optional<DeviceOrientation>? previewPauseOrientation,
   }) {
+    assert((isRecordingVideo ?? false) ==
+        (recordingOrientation?.isPresent ?? false));
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
       errorDescription: errorDescription,

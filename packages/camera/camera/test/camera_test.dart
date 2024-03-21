@@ -359,8 +359,13 @@ void main() {
 
       await cameraController.initialize();
 
-      cameraController.value =
-          cameraController.value.copyWith(isRecordingVideo: true);
+    cameraController.value = cameraController.value.copyWith(
+      isRecordingVideo: true,
+      isRecordingPaused: false,
+      recordingOrientation: Optional<DeviceOrientation>.of(
+          cameraController.value.lockedCaptureOrientation ??
+              cameraController.value.deviceOrientation),
+    );
 
       expect(
           cameraController.startVideoRecording(),

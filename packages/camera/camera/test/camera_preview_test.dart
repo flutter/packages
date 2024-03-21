@@ -175,8 +175,6 @@ void main() {
         lockedCaptureOrientation:
             const Optional<DeviceOrientation>.fromNullable(
                 DeviceOrientation.landscapeRight),
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
         previewSize: const Size(480, 640),
       );
 
@@ -196,6 +194,42 @@ void main() {
     });
 
     testWidgets(
+        'when orientation locked rotatedBox should turn according to recording orientation',
+        (
+      WidgetTester tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+
+      final FakeController controller = FakeController();
+      controller.value = controller.value.copyWith(
+        isInitialized: true,
+        deviceOrientation: DeviceOrientation.portraitUp,
+        lockedCaptureOrientation:
+            const Optional<DeviceOrientation>.fromNullable(
+                DeviceOrientation.landscapeRight),
+        isRecordingVideo: true,
+        isRecordingPaused: false,
+        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
+            DeviceOrientation.landscapeLeft),
+        previewSize: const Size(480, 640),
+      );
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: CameraPreview(controller),
+        ),
+      );
+      expect(find.byType(RotatedBox), findsOneWidget);
+
+      final RotatedBox rotatedBox =
+          tester.widget<RotatedBox>(find.byType(RotatedBox));
+      expect(rotatedBox.quarterTurns, 3);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets(
         'when not locked and not recording rotatedBox should turn according to device orientation',
         (
       WidgetTester tester,
@@ -206,8 +240,6 @@ void main() {
       controller.value = controller.value.copyWith(
         isInitialized: true,
         deviceOrientation: DeviceOrientation.portraitUp,
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
         previewSize: const Size(480, 640),
       );
 
