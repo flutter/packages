@@ -1098,7 +1098,7 @@ void _writeDefineType(Indent indent, String module, String name,
 
 // Writes the struct for a GObject.
 void _writeObjectStruct(
-    Indent indent, String module, String name, Function func,
+    Indent indent, String module, String name, void Function() func,
     {String parentClassName = 'GObject'}) {
   final String className = _getClassName(module, name);
 
@@ -1106,35 +1106,38 @@ void _writeObjectStruct(
     indent.writeln('$parentClassName parent_instance;');
     indent.newln();
 
-    func(); // ignore: avoid_dynamic_calls
+    func();
   });
 }
 
 // Writes the dispose method for a GObject.
-void _writeDispose(Indent indent, String module, String name, Function func) {
+void _writeDispose(
+    Indent indent, String module, String name, void Function() func) {
   final String methodPrefix = _getMethodPrefix(module, name);
 
   indent.addScoped(
       'static void ${methodPrefix}_dispose(GObject* object) {', '}', () {
-    func(); // ignore: avoid_dynamic_calls
+    func();
     indent.writeln(
         'G_OBJECT_CLASS(${methodPrefix}_parent_class)->dispose(object);');
   });
 }
 
 // Writes the init function for a GObject.
-void _writeInit(Indent indent, String module, String name, Function func) {
+void _writeInit(
+    Indent indent, String module, String name, void Function() func) {
   final String className = _getClassName(module, name);
   final String methodPrefix = _getMethodPrefix(module, name);
 
   indent.addScoped('static void ${methodPrefix}_init($className* self) {', '}',
       () {
-    func(); // ignore: avoid_dynamic_calls
+    func();
   });
 }
 
 // Writes the class init function for a GObject.
-void _writeClassInit(Indent indent, String module, String name, Function func,
+void _writeClassInit(
+    Indent indent, String module, String name, void Function() func,
     {bool hasDispose = true}) {
   final String className = _getClassName(module, name);
   final String methodPrefix = _getMethodPrefix(module, name);
@@ -1146,7 +1149,7 @@ void _writeClassInit(Indent indent, String module, String name, Function func,
       indent
           .writeln('G_OBJECT_CLASS(klass)->dispose = ${methodPrefix}_dispose;');
     }
-    func(); // ignore: avoid_dynamic_calls
+    func();
   });
 }
 
