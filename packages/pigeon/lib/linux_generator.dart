@@ -566,8 +566,9 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger) {', '}',
         () {
       _writeObjectNew(indent, module, api.name);
+      indent.writeln('g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();');
       indent.writeln(
-          'self->channel = fl_method_channel_new(messenger, "${api.name}", codec);');
+          'self->channel = fl_method_channel_new(messenger, "${api.name}", FL_METHOD_CODEC(codec));');
       indent.writeln('return self;');
     });
 
@@ -586,14 +587,10 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       indent.writeScoped(
           "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')}) {", '}',
           () {
-        final List<String> valueArgs = <String>[
-          for (final Parameter param in method.parameters)
-            _makeFlValue(
-                module, param.type, _snakeCaseFromCamelCase(param.name)),
-          'nullptr'
-        ];
-        indent.writeln(
-            'g_autoptr(FlValue) args = fl_value_new_array_take(${valueArgs.join(', ')});');
+        indent.writeln('g_autoptr(FlValue) args = fl_value_new_list();');
+	for (final Parameter param in method.parameters) {
+	indent.writeln('fl_value_append_take(args, ${_makeFlValue(module, param.type, _snakeCaseFromCamelCase(param.name))});');
+	}
         indent.writeln(
             'fl_method_channel_invoke_method(self->channel, "${method.name}", args, cancellable, callback, user_data);');
       });
