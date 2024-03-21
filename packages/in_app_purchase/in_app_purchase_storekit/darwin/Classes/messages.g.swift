@@ -100,7 +100,8 @@ enum SKSubscriptionPeriodUnitMessage: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-class SKPaymentTransactionMessage {
+@objc
+class SKPaymentTransactionMessage : NSObject {
   var payment: SKPaymentMessage
   var transactionState: SKPaymentTransactionStateMessage
   var originalTransaction: SKPaymentTransactionMessage? = nil
@@ -153,13 +154,23 @@ class SKPaymentTransactionMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKPaymentMessage {
+@objc
+class SKPaymentMessage : NSObject {
   var productIdentifier: String
   var applicationUsername: String? = nil
   var requestData: String? = nil
   var quantity: Int64
   var simulatesAskToBuyInSandbox: Bool
   var paymentDiscount: SKPaymentDiscountMessage? = nil
+
+  init(productIdentifier: String, applicationUsername: String? = nil, requestData: String? = nil, quantity: Int64, simulatesAskToBuyInSandbox: Bool, paymentDiscount: SKPaymentDiscountMessage? = nil) {
+    self.productIdentifier = productIdentifier
+    self.applicationUsername = applicationUsername
+    self.requestData = requestData
+    self.quantity = quantity
+    self.simulatesAskToBuyInSandbox = simulatesAskToBuyInSandbox
+    self.paymentDiscount = paymentDiscount
+  }
 
   static func fromList(_ list: [Any?]) -> SKPaymentMessage? {
     let productIdentifier = list[0] as! String
@@ -194,10 +205,17 @@ struct SKPaymentMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKErrorMessage {
+@objc
+class SKErrorMessage : NSObject {
   var code: Int64
   var domain: String
   var userInfo: [String?: Any?]? = nil
+
+  init(code: Int64, domain: String, userInfo: [String? : Any?]? = nil) {
+    self.code = code
+    self.domain = domain
+    self.userInfo = userInfo
+  }
 
   static func fromList(_ list: [Any?]) -> SKErrorMessage? {
     let code = list[0] is Int64 ? list[0] as! Int64 : Int64(list[0] as! Int32)
@@ -220,12 +238,21 @@ struct SKErrorMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKPaymentDiscountMessage {
+@objc
+class SKPaymentDiscountMessage : NSObject {
   var identifier: String
   var keyIdentifier: String
   var nonce: String
   var signature: String
   var timestamp: Int64
+
+  init(identifier: String, keyIdentifier: String, nonce: String, signature: String, timestamp: Int64) {
+    self.identifier = identifier
+    self.keyIdentifier = keyIdentifier
+    self.nonce = nonce
+    self.signature = signature
+    self.timestamp = timestamp
+  }
 
   static func fromList(_ list: [Any?]) -> SKPaymentDiscountMessage? {
     let identifier = list[0] as! String
@@ -254,9 +281,15 @@ struct SKPaymentDiscountMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKStorefrontMessage {
+@objc
+class SKStorefrontMessage : NSObject {
   var countryCode: String
   var identifier: String
+
+  init(countryCode: String, identifier: String) {
+    self.countryCode = countryCode
+    self.identifier = identifier
+  }
 
   static func fromList(_ list: [Any?]) -> SKStorefrontMessage? {
     let countryCode = list[0] as! String
@@ -276,9 +309,15 @@ struct SKStorefrontMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKProductsResponseMessage {
+@objc
+class SKProductsResponseMessage : NSObject {
   var products: [SKProductMessage?]? = nil
   var invalidProductIdentifiers: [String?]? = nil
+
+  init(products: [SKProductMessage?]? = nil, invalidProductIdentifiers: [String?]? = nil) {
+    self.products = products
+    self.invalidProductIdentifiers = invalidProductIdentifiers
+  }
 
   static func fromList(_ list: [Any?]) -> SKProductsResponseMessage? {
     let products: [SKProductMessage?]? = nilOrValue(list[0])
@@ -298,7 +337,8 @@ struct SKProductsResponseMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKProductMessage {
+@objc
+class SKProductMessage : NSObject {
   var productIdentifier: String
   var localizedTitle: String
   var localizedDescription: String
@@ -308,6 +348,18 @@ struct SKProductMessage {
   var subscriptionPeriod: SKProductSubscriptionPeriodMessage? = nil
   var introductoryPrice: SKProductDiscountMessage? = nil
   var discounts: [SKProductDiscountMessage?]? = nil
+
+  init(productIdentifier: String, localizedTitle: String, localizedDescription: String, priceLocale: SKPriceLocaleMessage, subscriptionGroupIdentifier: String? = nil, price: String, subscriptionPeriod: SKProductSubscriptionPeriodMessage? = nil, introductoryPrice: SKProductDiscountMessage? = nil, discounts: [SKProductDiscountMessage?]? = nil) {
+    self.productIdentifier = productIdentifier
+    self.localizedTitle = localizedTitle
+    self.localizedDescription = localizedDescription
+    self.priceLocale = priceLocale
+    self.subscriptionGroupIdentifier = subscriptionGroupIdentifier
+    self.price = price
+    self.subscriptionPeriod = subscriptionPeriod
+    self.introductoryPrice = introductoryPrice
+    self.discounts = discounts
+  }
 
   static func fromList(_ list: [Any?]) -> SKProductMessage? {
     let productIdentifier = list[0] as! String
@@ -354,13 +406,20 @@ struct SKProductMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKPriceLocaleMessage {
+@objc
+class SKPriceLocaleMessage : NSObject {
   ///The currency symbol for the locale, e.g. $ for US locale.
   var currencySymbol: String
   ///The currency code for the locale, e.g. USD for US locale.
   var currencyCode: String
   ///The country code for the locale, e.g. US for US locale.
   var countryCode: String
+
+  init(currencySymbol: String, currencyCode: String, countryCode: String) {
+    self.currencySymbol = currencySymbol
+    self.currencyCode = currencyCode
+    self.countryCode = countryCode
+  }
 
   static func fromList(_ list: [Any?]) -> SKPriceLocaleMessage? {
     let currencySymbol = list[0] as! String
@@ -383,7 +442,8 @@ struct SKPriceLocaleMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKProductDiscountMessage {
+@objc
+class SKProductDiscountMessage : NSObject{
   var price: String
   var priceLocale: SKPriceLocaleMessage
   var numberOfPeriods: Int64
@@ -391,6 +451,16 @@ struct SKProductDiscountMessage {
   var subscriptionPeriod: SKProductSubscriptionPeriodMessage
   var identifier: String? = nil
   var type: SKProductDiscountTypeMessage
+
+  init(price: String, priceLocale: SKPriceLocaleMessage, numberOfPeriods: Int64, paymentMode: SKProductDiscountPaymentModeMessage, subscriptionPeriod: SKProductSubscriptionPeriodMessage, identifier: String? = nil, type: SKProductDiscountTypeMessage) {
+    self.price = price
+    self.priceLocale = priceLocale
+    self.numberOfPeriods = numberOfPeriods
+    self.paymentMode = paymentMode
+    self.subscriptionPeriod = subscriptionPeriod
+    self.identifier = identifier
+    self.type = type
+  }
 
   static func fromList(_ list: [Any?]) -> SKProductDiscountMessage? {
     let price = list[0] as! String
@@ -425,9 +495,15 @@ struct SKProductDiscountMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct SKProductSubscriptionPeriodMessage {
+@objc
+class SKProductSubscriptionPeriodMessage : NSObject {
   var numberOfUnits: Int64
   var unit: SKSubscriptionPeriodUnitMessage
+
+  init(numberOfUnits: Int64, unit: SKSubscriptionPeriodUnitMessage) {
+    self.numberOfUnits = numberOfUnits
+    self.unit = unit
+  }
 
   static func fromList(_ list: [Any?]) -> SKProductSubscriptionPeriodMessage? {
     let numberOfUnits = list[0] is Int64 ? list[0] as! Int64 : Int64(list[0] as! Int32)

@@ -32,8 +32,8 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-@interface InAppPurchasePluginStub : InAppPurchasePlugin
-@end
+//@interface InAppPurchasePluginStub : InAppPurchasePlugin
+//@end
 
 @interface SKRequestStub : SKRequest
 @end
