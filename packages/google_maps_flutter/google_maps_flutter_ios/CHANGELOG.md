@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Makes the tile overlay callback invoke the platform channel on the platform thread.
+
 ## 2.5.0
 
 * Adds support for `MapConfiguration.style`.

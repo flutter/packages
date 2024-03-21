@@ -2065,7 +2065,8 @@ abstract class TestFocusMeteringActionHostApi {
   static const MessageCodec<Object?> codec =
       _TestFocusMeteringActionHostApiCodec();
 
-  void create(int identifier, List<MeteringPointInfo?> meteringPointInfos);
+  void create(int identifier, List<MeteringPointInfo?> meteringPointInfos,
+      bool? disableAutoCancel);
 
   static void setup(TestFocusMeteringActionHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -2090,7 +2091,9 @@ abstract class TestFocusMeteringActionHostApi {
               (args[1] as List<Object?>?)?.cast<MeteringPointInfo?>();
           assert(arg_meteringPointInfos != null,
               'Argument for dev.flutter.pigeon.FocusMeteringActionHostApi.create was null, expected non-null List<MeteringPointInfo?>.');
-          api.create(arg_identifier!, arg_meteringPointInfos!);
+          final bool? arg_disableAutoCancel = (args[2] as bool?);
+          api.create(
+              arg_identifier!, arg_meteringPointInfos!, arg_disableAutoCancel);
           return <Object?>[];
         });
       }

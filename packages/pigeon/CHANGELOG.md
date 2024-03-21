@@ -6,6 +6,14 @@
 
 * [dart] Adds implementation for `@ProxyApi`.
 
+## 17.1.3
+
+* [objc] Fixes double prefixes added to enum names.
+
+## 17.1.2
+
+* [swift] Separates message call code generation into separate methods.
+
 ## 17.1.1
 
 * Removes heap allocation in generated C++ code.
