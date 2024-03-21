@@ -160,7 +160,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable AnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(nullable id)aNullableObject {
+                      aNullableObject:(nullable id)aNullableObject
+                     allNullableTypes:(nullable AllNullableTypes *)allNullableTypes {
   AllNullableTypes *pigeonResult = [[AllNullableTypes alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
   pigeonResult.aNullableInt = aNullableInt;
@@ -178,6 +179,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
+  pigeonResult.allNullableTypes = allNullableTypes;
   return pigeonResult;
 }
 + (AllNullableTypes *)fromList:(NSArray *)list {
@@ -203,6 +205,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
   pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.allNullableTypes =
+      [AllNullableTypes nullableFromList:(GetNullableObjectAtIndex(list, 16))];
   return pigeonResult;
 }
 + (nullable AllNullableTypes *)nullableFromList:(NSArray *)list {
@@ -227,6 +231,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                                : [NSNumber numberWithInteger:self.aNullableEnum.value]),
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
+    (self.allNullableTypes ? [self.allNullableTypes toList] : [NSNull null]),
   ];
 }
 @end

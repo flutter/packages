@@ -125,7 +125,11 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
+    // if (classDefinition.swiftClass) {
+    //   indent.write('class ${classDefinition.name} ');
+    // } else {
     indent.write('struct ${classDefinition.name} ');
+    // }
     indent.addScoped('{', '}', () {
       getFieldsInSerializationOrder(classDefinition).forEach((NamedType field) {
         _writeClassField(indent, field);

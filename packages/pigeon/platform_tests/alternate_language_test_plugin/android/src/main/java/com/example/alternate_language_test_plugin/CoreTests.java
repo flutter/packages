@@ -612,6 +612,16 @@ public class CoreTests {
       this.aNullableObject = setterArg;
     }
 
+    private @Nullable AllNullableTypes allNullableTypes;
+
+    public @Nullable AllNullableTypes getAllNullableTypes() {
+      return allNullableTypes;
+    }
+
+    public void setAllNullableTypes(@Nullable AllNullableTypes setterArg) {
+      this.allNullableTypes = setterArg;
+    }
+
     public static final class Builder {
 
       private @Nullable Boolean aNullableBool;
@@ -743,6 +753,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AllNullableTypes allNullableTypes;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAllNullableTypes(@Nullable AllNullableTypes setterArg) {
+        this.allNullableTypes = setterArg;
+        return this;
+      }
+
       public @NonNull AllNullableTypes build() {
         AllNullableTypes pigeonReturn = new AllNullableTypes();
         pigeonReturn.setANullableBool(aNullableBool);
@@ -761,13 +779,14 @@ public class CoreTests {
         pigeonReturn.setANullableEnum(aNullableEnum);
         pigeonReturn.setANullableString(aNullableString);
         pigeonReturn.setANullableObject(aNullableObject);
+        pigeonReturn.setAllNullableTypes(allNullableTypes);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(16);
+      ArrayList<Object> toListResult = new ArrayList<Object>(17);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -784,6 +803,7 @@ public class CoreTests {
       toListResult.add(aNullableEnum == null ? null : aNullableEnum.index);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
+      toListResult.add((allNullableTypes == null) ? null : allNullableTypes.toList());
       return toListResult;
     }
 
@@ -830,6 +850,11 @@ public class CoreTests {
       pigeonResult.setANullableString((String) aNullableString);
       Object aNullableObject = list.get(15);
       pigeonResult.setANullableObject(aNullableObject);
+      Object allNullableTypes = list.get(16);
+      pigeonResult.setAllNullableTypes(
+          (allNullableTypes == null)
+              ? null
+              : AllNullableTypes.fromList((ArrayList<Object>) allNullableTypes));
       return pigeonResult;
     }
   }

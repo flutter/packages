@@ -180,7 +180,8 @@ class AllNullableTypes {
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
       const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
-      const flutter::EncodableValue* a_nullable_object);
+      const flutter::EncodableValue* a_nullable_object,
+      const AllNullableTypes* all_nullable_types);
 
   const bool* a_nullable_bool() const;
   void set_a_nullable_bool(const bool* value_arg);
@@ -248,6 +249,10 @@ class AllNullableTypes {
   void set_a_nullable_object(const flutter::EncodableValue* value_arg);
   void set_a_nullable_object(const flutter::EncodableValue& value_arg);
 
+  const AllNullableTypes* all_nullable_types() const;
+  void set_all_nullable_types(const AllNullableTypes* value_arg);
+  void set_all_nullable_types(const AllNullableTypes& value_arg);
+
  private:
   static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
@@ -279,6 +284,7 @@ class AllNullableTypes {
   std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
+  std::optional<AllNullableTypes> all_nullable_types_;
 };
 
 // A class for testing nested class handling.

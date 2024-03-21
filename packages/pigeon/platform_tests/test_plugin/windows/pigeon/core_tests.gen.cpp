@@ -177,7 +177,8 @@ AllNullableTypes::AllNullableTypes(
     const EncodableMap* nullable_map_with_annotations,
     const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
     const std::string* a_nullable_string,
-    const EncodableValue* a_nullable_object)
+    const EncodableValue* a_nullable_object,
+    const AllNullableTypes* all_nullable_types)
     : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
                                        : std::nullopt),
       a_nullable_int_(a_nullable_int ? std::optional<int64_t>(*a_nullable_int)
@@ -228,7 +229,10 @@ AllNullableTypes::AllNullableTypes(
                              : std::nullopt),
       a_nullable_object_(a_nullable_object
                              ? std::optional<EncodableValue>(*a_nullable_object)
-                             : std::nullopt) {}
+                             : std::nullopt),
+      all_nullable_types_(all_nullable_types ? std::optional<AllNullableTypes>(
+                                                   *all_nullable_types)
+                                             : std::nullopt) {}
 
 const bool* AllNullableTypes::a_nullable_bool() const {
   return a_nullable_bool_ ? &(*a_nullable_bool_) : nullptr;
@@ -456,9 +460,24 @@ void AllNullableTypes::set_a_nullable_object(const EncodableValue& value_arg) {
   a_nullable_object_ = value_arg;
 }
 
+const AllNullableTypes* AllNullableTypes::all_nullable_types() const {
+  return all_nullable_types_ ? &(*all_nullable_types_) : nullptr;
+}
+
+void AllNullableTypes::set_all_nullable_types(
+    const AllNullableTypes* value_arg) {
+  all_nullable_types_ =
+      value_arg ? std::optional<AllNullableTypes>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_all_nullable_types(
+    const AllNullableTypes& value_arg) {
+  all_nullable_types_ = value_arg;
+}
+
 EncodableList AllNullableTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(16);
+  list.reserve(17);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -496,6 +515,9 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
+  list.push_back(all_nullable_types_
+                     ? EncodableValue(all_nullable_types_->ToEncodableList())
+                     : EncodableValue());
   return list;
 }
 
@@ -577,6 +599,11 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   auto& encodable_a_nullable_object = list[15];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
+  }
+  auto& encodable_all_nullable_types = list[16];
+  if (!encodable_all_nullable_types.IsNull()) {
+    decoded.set_all_nullable_types(AllNullableTypes::FromEncodableList(
+        std::get<EncodableList>(encodable_all_nullable_types)));
   }
   return decoded;
 }

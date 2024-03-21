@@ -142,7 +142,8 @@ data class AllNullableTypes(
     val nullableMapWithObject: Map<String?, Any?>? = null,
     val aNullableEnum: AnEnum? = null,
     val aNullableString: String? = null,
-    val aNullableObject: Any? = null
+    val aNullableObject: Any? = null,
+    val allNullableTypes: AllNullableTypes? = null
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
@@ -163,6 +164,8 @@ data class AllNullableTypes(
       val aNullableEnum: AnEnum? = (list[13] as Int?)?.let { AnEnum.ofRaw(it) }
       val aNullableString = list[14] as String?
       val aNullableObject = list[15]
+      val allNullableTypes: AllNullableTypes? =
+          (list[16] as List<Any?>?)?.let { AllNullableTypes.fromList(it) }
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -179,7 +182,8 @@ data class AllNullableTypes(
           nullableMapWithObject,
           aNullableEnum,
           aNullableString,
-          aNullableObject)
+          aNullableObject,
+          allNullableTypes)
     }
   }
 
@@ -201,6 +205,7 @@ data class AllNullableTypes(
         aNullableEnum?.raw,
         aNullableString,
         aNullableObject,
+        allNullableTypes?.toList(),
     )
   }
 }

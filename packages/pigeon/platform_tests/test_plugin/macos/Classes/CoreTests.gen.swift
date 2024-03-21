@@ -145,6 +145,7 @@ struct AllNullableTypes {
   var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
+  var allNullableTypes: AllNullableTypes? = nil
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
@@ -169,6 +170,10 @@ struct AllNullableTypes {
     }
     let aNullableString: String? = nilOrValue(list[14])
     let aNullableObject: Any? = list[15]
+    var allNullableTypes: AllNullableTypes? = nil
+    if let allNullableTypesList: [Any?] = nilOrValue(list[16]) {
+      allNullableTypes = AllNullableTypes.fromList(allNullableTypesList)
+    }
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -186,7 +191,8 @@ struct AllNullableTypes {
       nullableMapWithObject: nullableMapWithObject,
       aNullableEnum: aNullableEnum,
       aNullableString: aNullableString,
-      aNullableObject: aNullableObject
+      aNullableObject: aNullableObject,
+      allNullableTypes: allNullableTypes
     )
   }
   func toList() -> [Any?] {
@@ -207,6 +213,7 @@ struct AllNullableTypes {
       aNullableEnum?.rawValue,
       aNullableString,
       aNullableObject,
+      allNullableTypes?.toList(),
     ]
   }
 }

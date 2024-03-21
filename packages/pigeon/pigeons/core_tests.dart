@@ -48,6 +48,7 @@ class AllTypes {
 }
 
 /// A class containing all supported nullable types.
+@SwiftClass()
 class AllNullableTypes {
   AllNullableTypes(
     this.aNullableBool,
@@ -66,6 +67,7 @@ class AllNullableTypes {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.allNullableTypes,
   );
 
   bool? aNullableBool;
@@ -86,6 +88,7 @@ class AllNullableTypes {
   AnEnum? aNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
+  AllNullableTypes? allNullableTypes;
 }
 
 /// A class for testing nested class handling.

@@ -139,6 +139,7 @@ class AllNullableTypes {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.allNullableTypes,
   });
 
   bool? aNullableBool;
@@ -173,6 +174,8 @@ class AllNullableTypes {
 
   Object? aNullableObject;
 
+  AllNullableTypes? allNullableTypes;
+
   Object encode() {
     return <Object?>[
       aNullableBool,
@@ -191,6 +194,7 @@ class AllNullableTypes {
       aNullableEnum?.index,
       aNullableString,
       aNullableObject,
+      allNullableTypes?.encode(),
     ];
   }
 
@@ -216,6 +220,9 @@ class AllNullableTypes {
           result[13] != null ? AnEnum.values[result[13]! as int] : null,
       aNullableString: result[14] as String?,
       aNullableObject: result[15],
+      allNullableTypes: result[16] != null
+          ? AllNullableTypes.decode(result[16]! as List<Object?>)
+          : null,
     );
   }
 }
