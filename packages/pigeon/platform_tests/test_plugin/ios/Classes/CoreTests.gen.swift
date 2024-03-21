@@ -128,7 +128,44 @@ struct AllTypes {
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllNullableTypes {
+class AllNullableTypes {
+  init(
+    aNullableBool: Bool? = nil,
+    aNullableInt: Int64? = nil,
+    aNullableInt64: Int64? = nil,
+    aNullableDouble: Double? = nil,
+    aNullableByteArray: FlutterStandardTypedData? = nil,
+    aNullable4ByteArray: FlutterStandardTypedData? = nil,
+    aNullable8ByteArray: FlutterStandardTypedData? = nil,
+    aNullableFloatArray: FlutterStandardTypedData? = nil,
+    aNullableList: [Any?]? = nil,
+    aNullableMap: [AnyHashable: Any?]? = nil,
+    nullableNestedList: [[Bool?]?]? = nil,
+    nullableMapWithAnnotations: [String?: String?]? = nil,
+    nullableMapWithObject: [String?: Any?]? = nil,
+    aNullableEnum: AnEnum? = nil,
+    aNullableString: String? = nil,
+    aNullableObject: Any? = nil,
+    allNullableTypes: AllNullableTypes? = nil
+  ) {
+    self.aNullableBool = aNullableBool
+    self.aNullableInt = aNullableInt
+    self.aNullableInt64 = aNullableInt64
+    self.aNullableDouble = aNullableDouble
+    self.aNullableByteArray = aNullableByteArray
+    self.aNullable4ByteArray = aNullable4ByteArray
+    self.aNullable8ByteArray = aNullable8ByteArray
+    self.aNullableFloatArray = aNullableFloatArray
+    self.aNullableList = aNullableList
+    self.aNullableMap = aNullableMap
+    self.nullableNestedList = nullableNestedList
+    self.nullableMapWithAnnotations = nullableMapWithAnnotations
+    self.nullableMapWithObject = nullableMapWithObject
+    self.aNullableEnum = aNullableEnum
+    self.aNullableString = aNullableString
+    self.aNullableObject = aNullableObject
+    self.allNullableTypes = allNullableTypes
+  }
   var aNullableBool: Bool? = nil
   var aNullableInt: Int64? = nil
   var aNullableInt64: Int64? = nil
