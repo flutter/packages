@@ -44,14 +44,16 @@ class CameraPreview extends StatelessWidget {
   }
 
   Widget _wrapInRotatedBox({required Widget child}) {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
-      return child;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      if(kIsWeb) {
+        return child;
+      }
+      return RotatedBox(
+        quarterTurns: _getQuarterTurns(),
+        child: child,
+      );
     }
-
-    return RotatedBox(
-      quarterTurns: _getQuarterTurns(),
-      child: child,
-    );
+    return child;
   }
 
   bool _isLandscape() {
@@ -81,7 +83,7 @@ class CameraPreview extends StatelessWidget {
   DeviceOrientation _getApplicableOrientation() {
     return controller.value.recordingOrientation ??
         controller.value.previewPauseOrientation ??
-            controller.value.lockedCaptureOrientation ??
+        controller.value.lockedCaptureOrientation ??
         controller.value.deviceOrientation;
   }
 }
