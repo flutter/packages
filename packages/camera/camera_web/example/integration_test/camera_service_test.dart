@@ -661,7 +661,7 @@ void main() {
           'returns front '
           'when the facing mode is user', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToLensDirection('user'),
+          mapFacingModeToLensDirection('user'),
           equals(CameraLensDirection.front),
         );
       });
@@ -670,7 +670,7 @@ void main() {
           'returns back '
           'when the facing mode is environment', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToLensDirection('environment'),
+          mapFacingModeToLensDirection('environment'),
           equals(CameraLensDirection.back),
         );
       });
@@ -679,7 +679,7 @@ void main() {
           'returns external '
           'when the facing mode is left', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToLensDirection('left'),
+          mapFacingModeToLensDirection('left'),
           equals(CameraLensDirection.external),
         );
       });
@@ -688,7 +688,7 @@ void main() {
           'returns external '
           'when the facing mode is right', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToLensDirection('right'),
+          mapFacingModeToLensDirection('right'),
           equals(CameraLensDirection.external),
         );
       });
@@ -699,7 +699,7 @@ void main() {
           'returns user '
           'when the facing mode is user', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToCameraType('user'),
+          mapFacingModeToCameraType('user'),
           equals(CameraType.user),
         );
       });
@@ -708,7 +708,7 @@ void main() {
           'returns environment '
           'when the facing mode is environment', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToCameraType('environment'),
+          mapFacingModeToCameraType('environment'),
           equals(CameraType.environment),
         );
       });
@@ -717,7 +717,7 @@ void main() {
           'returns user '
           'when the facing mode is left', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToCameraType('left'),
+          mapFacingModeToCameraType('left'),
           equals(CameraType.user),
         );
       });
@@ -726,7 +726,7 @@ void main() {
           'returns user '
           'when the facing mode is right', (WidgetTester tester) async {
         expect(
-          cameraService.mapFacingModeToCameraType('right'),
+          mapFacingModeToCameraType('right'),
           equals(CameraType.user),
         );
       });
@@ -737,7 +737,7 @@ void main() {
           'returns 4096x2160 '
           'when the resolution preset is max', (WidgetTester tester) async {
         expect(
-          cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
+          mapResolutionPresetToSize(ResolutionPreset.max),
           equals(const Size(4096, 2160)),
         );
       });
@@ -747,7 +747,7 @@ void main() {
           'when the resolution preset is ultraHigh',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+          mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           equals(const Size(4096, 2160)),
         );
       });
@@ -757,7 +757,7 @@ void main() {
           'when the resolution preset is veryHigh',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapResolutionPresetToSize(ResolutionPreset.veryHigh),
+          mapResolutionPresetToSize(ResolutionPreset.veryHigh),
           equals(const Size(1920, 1080)),
         );
       });
@@ -766,7 +766,7 @@ void main() {
           'returns 1280x720 '
           'when the resolution preset is high', (WidgetTester tester) async {
         expect(
-          cameraService.mapResolutionPresetToSize(ResolutionPreset.high),
+          mapResolutionPresetToSize(ResolutionPreset.high),
           equals(const Size(1280, 720)),
         );
       });
@@ -775,7 +775,7 @@ void main() {
           'returns 720x480 '
           'when the resolution preset is medium', (WidgetTester tester) async {
         expect(
-          cameraService.mapResolutionPresetToSize(ResolutionPreset.medium),
+          mapResolutionPresetToSize(ResolutionPreset.medium),
           equals(const Size(720, 480)),
         );
       });
@@ -784,7 +784,7 @@ void main() {
           'returns 320x240 '
           'when the resolution preset is low', (WidgetTester tester) async {
         expect(
-          cameraService.mapResolutionPresetToSize(ResolutionPreset.low),
+          mapResolutionPresetToSize(ResolutionPreset.low),
           equals(const Size(320, 240)),
         );
       });
@@ -796,7 +796,7 @@ void main() {
           'when the device orientation is portraitUp',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(
+          mapDeviceOrientationToOrientationType(
             DeviceOrientation.portraitUp,
           ),
           equals(OrientationType.portraitPrimary),
@@ -808,7 +808,7 @@ void main() {
           'when the device orientation is landscapeLeft',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(
+          mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeLeft,
           ),
           equals(OrientationType.landscapePrimary),
@@ -820,7 +820,7 @@ void main() {
           'when the device orientation is portraitDown',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(
+          mapDeviceOrientationToOrientationType(
             DeviceOrientation.portraitDown,
           ),
           equals(OrientationType.portraitSecondary),
@@ -832,7 +832,7 @@ void main() {
           'when the device orientation is landscapeRight',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(
+          mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeRight,
           ),
           equals(OrientationType.landscapeSecondary),
@@ -846,7 +846,7 @@ void main() {
           'when the orientation type is portraitPrimary',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(
+          mapOrientationTypeToDeviceOrientation(
             OrientationType.portraitPrimary,
           ),
           equals(DeviceOrientation.portraitUp),
@@ -858,7 +858,7 @@ void main() {
           'when the orientation type is landscapePrimary',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(
+          mapOrientationTypeToDeviceOrientation(
             OrientationType.landscapePrimary,
           ),
           equals(DeviceOrientation.landscapeLeft),
@@ -870,7 +870,7 @@ void main() {
           'when the orientation type is portraitSecondary',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(
+          mapOrientationTypeToDeviceOrientation(
             OrientationType.portraitSecondary,
           ),
           equals(DeviceOrientation.portraitDown),
@@ -882,7 +882,7 @@ void main() {
           'when the orientation type is portraitSecondary',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(
+          mapOrientationTypeToDeviceOrientation(
             OrientationType.portraitSecondary,
           ),
           equals(DeviceOrientation.portraitDown),
@@ -894,7 +894,7 @@ void main() {
           'when the orientation type is landscapeSecondary',
           (WidgetTester tester) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(
+          mapOrientationTypeToDeviceOrientation(
             OrientationType.landscapeSecondary,
           ),
           equals(DeviceOrientation.landscapeRight),
@@ -905,7 +905,7 @@ void main() {
           'returns portraitUp '
           'for an unknown orientation type', (WidgetTester tester) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(
+          mapOrientationTypeToDeviceOrientation(
             'unknown',
           ),
           equals(DeviceOrientation.portraitUp),

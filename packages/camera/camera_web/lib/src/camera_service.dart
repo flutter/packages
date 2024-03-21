@@ -47,63 +47,7 @@ class CameraService {
       final Map<String, dynamic> constraints = options.toJson();
       return await mediaDevices.getUserMedia(constraints);
     } on html.DomException catch (e) {
-      switch (e.name) {
-        case 'NotFoundError':
-        case 'DevicesNotFoundError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.notFound,
-            'No camera found for the given camera options.',
-          );
-        case 'NotReadableError':
-        case 'TrackStartError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.notReadable,
-            'The camera is not readable due to a hardware error '
-            'that prevented access to the device.',
-          );
-        case 'OverconstrainedError':
-        case 'ConstraintNotSatisfiedError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.overconstrained,
-            'The camera options are impossible to satisfy.',
-          );
-        case 'NotAllowedError':
-        case 'PermissionDeniedError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.permissionDenied,
-            'The camera cannot be used or the permission '
-            'to access the camera is not granted.',
-          );
-        case 'TypeError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.type,
-            'The camera options are incorrect or attempted '
-            'to access the media input from an insecure context.',
-          );
-        case 'AbortError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.abort,
-            'Some problem occurred that prevented the camera from being used.',
-          );
-        case 'SecurityError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.security,
-            'The user media support is disabled in the current browser.',
-          );
-        default:
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.unknown,
-            'An unknown error occurred when fetching the camera stream.',
-          );
-      }
+      throw _mapDomException(cameraId, e.name);
     } catch (_) {
       throw CameraWebException(
         cameraId,
@@ -249,148 +193,208 @@ class CameraService {
 
     return facingMode;
   }
+}
 
-  /// Maps the given [facingMode] to [CameraLensDirection].
-  ///
-  /// The following values for the facing mode are supported:
-  /// https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings/facingMode
-  CameraLensDirection mapFacingModeToLensDirection(String facingMode) {
-    switch (facingMode) {
-      case 'user':
-        return CameraLensDirection.front;
-      case 'environment':
-        return CameraLensDirection.back;
-      case 'left':
-      case 'right':
-      default:
-        return CameraLensDirection.external;
-    }
+CameraWebException _mapDomException(int cameraId, String name) {
+  switch (name) {
+    case 'NotFoundError':
+    case 'DevicesNotFoundError':
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.notFound,
+        'No camera found for the given camera options.',
+      );
+    case 'NotReadableError':
+    case 'TrackStartError':
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.notReadable,
+        'The camera is not readable due to a hardware error '
+        'that prevented access to the device.',
+      );
+    case 'OverconstrainedError':
+    case 'ConstraintNotSatisfiedError':
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.overconstrained,
+        'The camera options are impossible to satisfy.',
+      );
+    case 'NotAllowedError':
+    case 'PermissionDeniedError':
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.permissionDenied,
+        'The camera cannot be used or the permission '
+        'to access the camera is not granted.',
+      );
+    case 'TypeError':
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.type,
+        'The camera options are incorrect or attempted '
+        'to access the media input from an insecure context.',
+      );
+    case 'AbortError':
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.abort,
+        'Some problem occurred that prevented the camera from being used.',
+      );
+    case 'SecurityError':
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.security,
+        'The user media support is disabled in the current browser.',
+      );
+    default:
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.unknown,
+        'An unknown error occurred when fetching the camera stream.',
+      );
+  }
+}
+
+/// Maps the given [facingMode] to [CameraLensDirection].
+///
+/// The following values for the facing mode are supported:
+/// https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings/facingMode
+CameraLensDirection mapFacingModeToLensDirection(String facingMode) {
+  switch (facingMode) {
+    case 'user':
+      return CameraLensDirection.front;
+    case 'environment':
+      return CameraLensDirection.back;
+    case 'left':
+    case 'right':
+    default:
+      return CameraLensDirection.external;
+  }
+}
+
+/// Maps the given [facingMode] to [CameraType].
+///
+/// See [CameraMetadata.facingMode] for more details.
+CameraType mapFacingModeToCameraType(String facingMode) {
+  switch (facingMode) {
+    case 'user':
+      return CameraType.user;
+    case 'environment':
+      return CameraType.environment;
+    case 'left':
+    case 'right':
+    default:
+      return CameraType.user;
+  }
+}
+
+/// Maps the given [resolutionPreset] to [Size].
+Size mapResolutionPresetToSize(ResolutionPreset resolutionPreset) {
+  switch (resolutionPreset) {
+    case ResolutionPreset.max:
+    case ResolutionPreset.ultraHigh:
+      return const Size(4096, 2160);
+    case ResolutionPreset.veryHigh:
+      return const Size(1920, 1080);
+    case ResolutionPreset.high:
+      return const Size(1280, 720);
+    case ResolutionPreset.medium:
+      return const Size(720, 480);
+    case ResolutionPreset.low:
+      return const Size(320, 240);
+  }
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return const Size(320, 240);
+}
+
+const int _kiloBits = 1000;
+const int _megaBits = _kiloBits * _kiloBits;
+
+/// Maps the given [resolutionPreset] to video bitrate.
+int mapResolutionPresetToVideoBitrate(ResolutionPreset resolutionPreset) {
+  switch (resolutionPreset) {
+    case ResolutionPreset.max:
+    case ResolutionPreset.ultraHigh:
+      return 8 * _megaBits;
+    case ResolutionPreset.veryHigh:
+      return 4 * _megaBits;
+    case ResolutionPreset.high:
+      return 1 * _megaBits;
+    case ResolutionPreset.medium:
+      return 400 * _kiloBits;
+    case ResolutionPreset.low:
+      return 200 * _kiloBits;
   }
 
-  /// Maps the given [facingMode] to [CameraType].
-  ///
-  /// See [CameraMetadata.facingMode] for more details.
-  CameraType mapFacingModeToCameraType(String facingMode) {
-    switch (facingMode) {
-      case 'user':
-        return CameraType.user;
-      case 'environment':
-        return CameraType.environment;
-      case 'left':
-      case 'right':
-      default:
-        return CameraType.user;
-    }
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return 1 * _megaBits;
+}
+
+/// Maps the given [resolutionPreset] to audio bitrate.
+int mapResolutionPresetToAudioBitrate(ResolutionPreset resolutionPreset) {
+  switch (resolutionPreset) {
+    case ResolutionPreset.max:
+    case ResolutionPreset.ultraHigh:
+      return 128 * _kiloBits;
+    case ResolutionPreset.veryHigh:
+      return 128 * _kiloBits;
+    case ResolutionPreset.high:
+      return 64 * _kiloBits;
+    case ResolutionPreset.medium:
+      return 48 * _kiloBits;
+    case ResolutionPreset.low:
+      return 32 * _kiloBits;
   }
 
-  /// Maps the given [resolutionPreset] to [Size].
-  Size mapResolutionPresetToSize(ResolutionPreset resolutionPreset) {
-    switch (resolutionPreset) {
-      case ResolutionPreset.max:
-      case ResolutionPreset.ultraHigh:
-        return const Size(4096, 2160);
-      case ResolutionPreset.veryHigh:
-        return const Size(1920, 1080);
-      case ResolutionPreset.high:
-        return const Size(1280, 720);
-      case ResolutionPreset.medium:
-        return const Size(720, 480);
-      case ResolutionPreset.low:
-        return const Size(320, 240);
-    }
-    // The enum comes from a different package, which could get a new value at
-    // any time, so provide a fallback that ensures this won't break when used
-    // with a version that contains new values. This is deliberately outside
-    // the switch rather than a `default` so that the linter will flag the
-    // switch as needing an update.
-    // ignore: dead_code
-    return const Size(320, 240);
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return 64 * _kiloBits;
+}
+
+/// Maps the given [deviceOrientation] to [OrientationType].
+String mapDeviceOrientationToOrientationType(
+  DeviceOrientation deviceOrientation,
+) {
+  switch (deviceOrientation) {
+    case DeviceOrientation.portraitUp:
+      return OrientationType.portraitPrimary;
+    case DeviceOrientation.landscapeLeft:
+      return OrientationType.landscapePrimary;
+    case DeviceOrientation.portraitDown:
+      return OrientationType.portraitSecondary;
+    case DeviceOrientation.landscapeRight:
+      return OrientationType.landscapeSecondary;
   }
+}
 
-  static const int _kiloBits = 1000;
-  static const int _megaBits = _kiloBits * _kiloBits;
-
-  /// Maps the given [resolutionPreset] to video bitrate.
-  int mapResolutionPresetToVideoBitrate(ResolutionPreset resolutionPreset) {
-    switch (resolutionPreset) {
-      case ResolutionPreset.max:
-      case ResolutionPreset.ultraHigh:
-        return 8 * _megaBits;
-      case ResolutionPreset.veryHigh:
-        return 4 * _megaBits;
-      case ResolutionPreset.high:
-        return 1 * _megaBits;
-      case ResolutionPreset.medium:
-        return 400 * _kiloBits;
-      case ResolutionPreset.low:
-        return 200 * _kiloBits;
-    }
-
-    // The enum comes from a different package, which could get a new value at
-    // any time, so provide a fallback that ensures this won't break when used
-    // with a version that contains new values. This is deliberately outside
-    // the switch rather than a `default` so that the linter will flag the
-    // switch as needing an update.
-    // ignore: dead_code
-    return 1 * _megaBits;
-  }
-
-  /// Maps the given [resolutionPreset] to audio bitrate.
-  int mapResolutionPresetToAudioBitrate(ResolutionPreset resolutionPreset) {
-    switch (resolutionPreset) {
-      case ResolutionPreset.max:
-      case ResolutionPreset.ultraHigh:
-        return 128 * _kiloBits;
-      case ResolutionPreset.veryHigh:
-        return 128 * _kiloBits;
-      case ResolutionPreset.high:
-        return 64 * _kiloBits;
-      case ResolutionPreset.medium:
-        return 48 * _kiloBits;
-      case ResolutionPreset.low:
-        return 32 * _kiloBits;
-    }
-
-    // The enum comes from a different package, which could get a new value at
-    // any time, so provide a fallback that ensures this won't break when used
-    // with a version that contains new values. This is deliberately outside
-    // the switch rather than a `default` so that the linter will flag the
-    // switch as needing an update.
-    // ignore: dead_code
-    return 64 * _kiloBits;
-  }
-
-  /// Maps the given [deviceOrientation] to [OrientationType].
-  String mapDeviceOrientationToOrientationType(
-    DeviceOrientation deviceOrientation,
-  ) {
-    switch (deviceOrientation) {
-      case DeviceOrientation.portraitUp:
-        return OrientationType.portraitPrimary;
-      case DeviceOrientation.landscapeLeft:
-        return OrientationType.landscapePrimary;
-      case DeviceOrientation.portraitDown:
-        return OrientationType.portraitSecondary;
-      case DeviceOrientation.landscapeRight:
-        return OrientationType.landscapeSecondary;
-    }
-  }
-
-  /// Maps the given [orientationType] to [DeviceOrientation].
-  DeviceOrientation mapOrientationTypeToDeviceOrientation(
-    String orientationType,
-  ) {
-    switch (orientationType) {
-      case OrientationType.portraitPrimary:
-        return DeviceOrientation.portraitUp;
-      case OrientationType.landscapePrimary:
-        return DeviceOrientation.landscapeLeft;
-      case OrientationType.portraitSecondary:
-        return DeviceOrientation.portraitDown;
-      case OrientationType.landscapeSecondary:
-        return DeviceOrientation.landscapeRight;
-      default:
-        return DeviceOrientation.portraitUp;
-    }
+/// Maps the given [orientationType] to [DeviceOrientation].
+DeviceOrientation mapOrientationTypeToDeviceOrientation(
+  String orientationType,
+) {
+  switch (orientationType) {
+    case OrientationType.portraitPrimary:
+      return DeviceOrientation.portraitUp;
+    case OrientationType.landscapePrimary:
+      return DeviceOrientation.landscapeLeft;
+    case OrientationType.portraitSecondary:
+      return DeviceOrientation.portraitDown;
+    case OrientationType.landscapeSecondary:
+      return DeviceOrientation.landscapeRight;
+    default:
+      return DeviceOrientation.portraitUp;
   }
 }

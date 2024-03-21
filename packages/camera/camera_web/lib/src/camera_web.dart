@@ -143,7 +143,7 @@ class CameraPlugin extends CameraPlatform {
           // Fallback to the external lens direction
           // if the facing mode is not available.
           final CameraLensDirection lensDirection = facingMode != null
-              ? _cameraService.mapFacingModeToLensDirection(facingMode)
+              ? mapFacingModeToLensDirection(facingMode)
               : CameraLensDirection.external;
 
           // Create a camera description.
@@ -224,12 +224,12 @@ class CameraPlugin extends CameraPlatform {
       final CameraMetadata cameraMetadata = camerasMetadata[cameraDescription]!;
 
       final CameraType? cameraType = cameraMetadata.facingMode != null
-          ? _cameraService.mapFacingModeToCameraType(cameraMetadata.facingMode!)
+          ? mapFacingModeToCameraType(cameraMetadata.facingMode!)
           : null;
 
       // Use the highest resolution possible
       // if the resolution preset is not specified.
-      final Size videoSize = _cameraService.mapResolutionPresetToSize(
+      final Size videoSize = mapResolutionPresetToSize(
           mediaSettings?.resolutionPreset ?? ResolutionPreset.max);
 
       // Create a camera with the given audio and video constraints.
@@ -383,8 +383,8 @@ class CameraPlugin extends CameraPlatform {
 
       return orientation.onChange.startWith(initialOrientationEvent).map(
         (html.Event _) {
-          final DeviceOrientation deviceOrientation = _cameraService
-              .mapOrientationTypeToDeviceOrientation(orientation.type!);
+          final DeviceOrientation deviceOrientation =
+              mapOrientationTypeToDeviceOrientation(orientation.type!);
           return DeviceOrientationChangedEvent(deviceOrientation);
         },
       );
@@ -405,7 +405,7 @@ class CameraPlugin extends CameraPlatform {
 
       if (screenOrientation != null && documentElement != null) {
         final String orientationType =
-            _cameraService.mapDeviceOrientationToOrientationType(orientation);
+            mapDeviceOrientationToOrientationType(orientation);
 
         // Full-screen mode may be required to modify the device orientation.
         // See: https://w3c.github.io/screen-orientation/#interaction-with-fullscreen-api

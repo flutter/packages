@@ -295,7 +295,7 @@ void main() {
           ),
         ).thenReturn('user');
 
-        when(() => cameraService.mapFacingModeToLensDirection('user'))
+        when(() => mapFacingModeToLensDirection('user'))
             .thenReturn(CameraLensDirection.front);
 
         // Mock camera service to return an environment facing mode
@@ -306,7 +306,7 @@ void main() {
           ),
         ).thenReturn('environment');
 
-        when(() => cameraService.mapFacingModeToLensDirection('environment'))
+        when(() => mapFacingModeToLensDirection('environment'))
             .thenReturn(CameraLensDirection.back);
 
         final List<CameraDescription> cameras =
@@ -360,7 +360,7 @@ void main() {
           ),
         ).thenReturn('left');
 
-        when(() => cameraService.mapFacingModeToLensDirection('left'))
+        when(() => mapFacingModeToLensDirection('left'))
             .thenReturn(CameraLensDirection.external);
 
         final CameraDescription camera =
@@ -518,14 +518,13 @@ void main() {
               .camerasMetadata[cameraDescription] = cameraMetadata;
 
           when(
-            () => cameraService.mapFacingModeToCameraType('user'),
+            () => mapFacingModeToCameraType('user'),
           ).thenReturn(CameraType.user);
         });
 
         testWidgets('with appropriate options', (WidgetTester tester) async {
           when(
-            () => cameraService
-                .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+            () => mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
           final int cameraId = await CameraPlatform.instance.createCamera(
@@ -552,8 +551,7 @@ void main() {
         testWidgets('with appropriate createCameraWithSettings options',
             (WidgetTester tester) async {
           when(
-            () => cameraService
-                .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+            () => mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
           final int cameraId =
@@ -587,7 +585,7 @@ void main() {
             'and enabled audio set to false '
             'when no options are specified', (WidgetTester tester) async {
           when(
-            () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
+            () => mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
           final int cameraId = await CameraPlatform.instance.createCamera(
@@ -616,7 +614,7 @@ void main() {
             'when no options are specified '
             'using createCameraWithSettings', (WidgetTester tester) async {
           when(
-            () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
+            () => mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
           final int cameraId =
@@ -835,7 +833,7 @@ void main() {
     group('lockCaptureOrientation', () {
       setUp(() {
         when(
-          () => cameraService.mapDeviceOrientationToOrientationType(any()),
+          () => mapDeviceOrientationToOrientationType(any()),
         ).thenReturn(OrientationType.portraitPrimary);
       });
 
@@ -854,7 +852,7 @@ void main() {
           'locks the capture orientation '
           'based on the given device orientation', (WidgetTester tester) async {
         when(
-          () => cameraService.mapDeviceOrientationToOrientationType(
+          () => mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeRight,
           ),
         ).thenReturn(OrientationType.landscapeSecondary);
@@ -865,7 +863,7 @@ void main() {
         );
 
         verify(
-          () => cameraService.mapDeviceOrientationToOrientationType(
+          () => mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeRight,
           ),
         ).called(1);
@@ -967,7 +965,7 @@ void main() {
     group('unlockCaptureOrientation', () {
       setUp(() {
         when(
-          () => cameraService.mapDeviceOrientationToOrientationType(any()),
+          () => mapDeviceOrientationToOrientationType(any()),
         ).thenReturn(OrientationType.portraitPrimary);
       });
 
@@ -3059,7 +3057,7 @@ void main() {
         testWidgets('emits the initial DeviceOrientationChangedEvent',
             (WidgetTester tester) async {
           when(
-            () => cameraService.mapOrientationTypeToDeviceOrientation(
+            () => mapOrientationTypeToDeviceOrientation(
               OrientationType.portraitPrimary,
             ),
           ).thenReturn(DeviceOrientation.portraitUp);
@@ -3097,13 +3095,13 @@ void main() {
             'when the screen orientation is changed',
             (WidgetTester tester) async {
           when(
-            () => cameraService.mapOrientationTypeToDeviceOrientation(
+            () => mapOrientationTypeToDeviceOrientation(
               OrientationType.landscapePrimary,
             ),
           ).thenReturn(DeviceOrientation.landscapeLeft);
 
           when(
-            () => cameraService.mapOrientationTypeToDeviceOrientation(
+            () => mapOrientationTypeToDeviceOrientation(
               OrientationType.portraitSecondary,
             ),
           ).thenReturn(DeviceOrientation.portraitDown);
