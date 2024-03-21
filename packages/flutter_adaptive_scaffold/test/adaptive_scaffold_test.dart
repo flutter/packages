@@ -257,9 +257,9 @@ void main() {
       ];
 
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: MediaQuery(
-            data: MediaQueryData(size: Size(700, 900)),
+            data: const MediaQueryData(size: Size(700, 900)),
             child: AdaptiveScaffold(
               destinations: destinations,
             ),
@@ -715,6 +715,33 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(appBar, findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'When only one destination passed, shall throw assertion error',
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.inbox_outlined),
+          selectedIcon: Icon(Icons.inbox),
+          label: 'Inbox',
+        ),
+      ];
+
+      expect(
+        () => tester.pumpWidget(
+          MaterialApp(
+            home: MediaQuery(
+              data: const MediaQueryData(size: Size(700, 900)),
+              child: AdaptiveScaffold(
+                destinations: destinations,
+              ),
+            ),
+          ),
+        ),
+        throwsA(isA<AssertionError>()),
+      );
     },
   );
 }

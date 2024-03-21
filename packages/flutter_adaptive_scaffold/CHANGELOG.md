@@ -1,3 +1,7 @@
+## 0.1.10
+
+* FIX : Assertion added when tried with less than 2 destinations - [flutter/flutter#110902](https://github.com/flutter/flutter/issues/110902)
+
 ## 0.1.9
 
 * FIX : Drawer stays open even on destination tap - [flutter/flutter#141938](https://github.com/flutter/flutter/issues/141938)
