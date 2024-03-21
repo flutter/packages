@@ -1,10 +1,11 @@
-## NEXT
+## 0.1.9
 
+* FIX : Drawer stays open even on destination tap - [flutter/flutter#141938](https://github.com/flutter/flutter/issues/141938)
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 0.1.8
 
-*  Adds `transitionDuration` parameter for specifying how long the animation should be.
+* Adds `transitionDuration` parameter for specifying how long the animation should be.
 
 ## 0.1.7+2
 
