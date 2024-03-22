@@ -33,9 +33,8 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// The [buildColumn] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
-  /// particular column.
-  // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
-  // If null, the table will have an infinite number of columns.
+  /// particular column. If null, the table will have an infinite number of
+  /// columns.
   ///
   /// The value returned by this getter may be an estimate of the total
   /// available columns, but [buildColumn] method must provide a valid
@@ -46,15 +45,13 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
-  int get columnCount;
+  int? get columnCount;
 
   /// The number of rows that the table has content for.
   ///
   /// The [buildRow] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
-  /// particular row.
-  // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
-  // If null, the table will have an infinite number of rows.
+  /// particular row. If null, the table will have an infinite number of rows.
   ///
   /// The value returned by this getter may be an estimate of the total
   /// available rows, but [buildRow] method must provide a valid
@@ -65,7 +62,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
-  int get rowCount;
+  int? get rowCount;
 
   /// The number of columns that are permanently shown on the leading vertical
   /// edge of the viewport.
@@ -124,8 +121,8 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     with TableCellDelegateMixin {
   /// Creates a lazy building delegate to use with a [TableView].
   TableCellBuilderDelegate({
-    required int columnCount,
-    required int rowCount,
+    int? columnCount,
+    int? rowCount,
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
     super.addAutomaticKeepAlives,
@@ -134,10 +131,10 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
         assert(pinnedRowCount >= 0),
-        assert(rowCount >= 0),
-        assert(columnCount >= 0),
-        assert(pinnedColumnCount <= columnCount),
-        assert(pinnedRowCount <= rowCount),
+        assert(rowCount == null || rowCount >= 0),
+        assert(columnCount == null || columnCount >= 0),
+        assert(columnCount == null || pinnedColumnCount <= columnCount),
+        assert(rowCount == null || pinnedRowCount <= rowCount),
         _rowBuilder = rowBuilder,
         _columnBuilder = columnBuilder,
         _pinnedColumnCount = pinnedColumnCount,
@@ -145,17 +142,25 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
         super(
           builder: (BuildContext context, ChildVicinity vicinity) =>
               cellBuilder(context, vicinity as TableVicinity),
-          maxXIndex: columnCount - 1,
-          maxYIndex: rowCount - 1,
+          maxXIndex: columnCount == null ? columnCount : columnCount - 1,
+          maxYIndex: rowCount == null ? rowCount : rowCount - 1,
           // repaintBoundaries handled by TableViewCell
           addRepaintBoundaries: false,
         );
 
   @override
-  int get columnCount => maxXIndex! + 1;
-  set columnCount(int value) {
-    assert(pinnedColumnCount <= value);
-    maxXIndex = value - 1;
+  int? get columnCount {
+    return switch (maxXIndex) {
+      null => maxXIndex,
+      _ => maxXIndex! + 1,
+    };
+  }
+  set columnCount(int? value) {
+    assert(value == null || pinnedColumnCount <= value);
+    maxXIndex = switch (value) {
+      null => value,
+      _ => value - 1,
+    };
   }
 
   /// Builds the [TableSpan] that describes the column at the provided index.
@@ -171,7 +176,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
-    assert(value <= columnCount);
+    assert(columnCount == null || value <= columnCount!);
     if (pinnedColumnCount == value) {
       return;
     }
@@ -180,10 +185,18 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   }
 
   @override
-  int get rowCount => maxYIndex! + 1;
-  set rowCount(int value) {
-    assert(pinnedRowCount <= value);
-    maxYIndex = value - 1;
+  int? get rowCount {
+    return switch (maxYIndex) {
+      null => maxYIndex,
+      _ => maxYIndex! + 1,
+    };
+  }
+  set rowCount(int? value) {
+    assert(value == null || pinnedRowCount <= value);
+    maxYIndex = switch (value) {
+      null => value,
+      _ => value -1,
+    };
   }
 
   /// Builds the [TableSpan] that describes the row at the provided index.
@@ -199,7 +212,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int _pinnedRowCount;
   set pinnedRowCount(int value) {
     assert(value >= 0);
-    assert(value <= rowCount);
+    assert(rowCount == null || value <= rowCount!);
     if (pinnedRowCount == value) {
       return;
     }
