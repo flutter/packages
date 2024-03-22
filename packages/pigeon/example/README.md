@@ -198,37 +198,42 @@ class PigeonApiImplementation : public ExampleHostApi {
 ```
 
 ### Linux
-<?code-excerpt "linux/pigeon_example_package_application.cc (vtable)"?>
+<?code-excerpt "linux/my_application.cc (vtable)"?>
 ```c++
-static PigeonExamplePackageExampleHostApiGetHostLanguageResponse* handle_get_host_language(
-    PigeonExamplePackageExampleHostApi* object, gpointer user_data) {
-  return pigeon_example_package_example_host_api_get_host_language_response_new("C++");
+static PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+handle_get_host_language(PigeonExamplePackageExampleHostApi* object,
+                         gpointer user_data) {
+  return pigeon_example_package_example_host_api_get_host_language_response_new(
+      "C++");
 }
 
-static PigeonExamplePackageExampleHostApiAddResponse* handle_add(PigeonExamplePackageExampleHostApi* object,
-                                               int64_t a, int64_t b,
-                                               gpointer user_data) {
+static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
+    PigeonExamplePackageExampleHostApi* object, int64_t a, int64_t b,
+    gpointer user_data) {
   if (a < 0 || b < 0) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
-    return pigeon_example_package_example_host_api_add_response_new_error("code", "message",
-                                                      details);
+    return pigeon_example_package_example_host_api_add_response_new_error(
+        "code", "message", details);
   }
 
   return pigeon_example_package_example_host_api_add_response_new(a + b);
 }
 
 static void handle_send_message(
-    PigeonExamplePackageExampleHostApi* object, PigeonExamplePackageMessageData* message,
+    PigeonExamplePackageExampleHostApi* object,
+    PigeonExamplePackageMessageData* message,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  PigeonExamplePackageCode code = pigeon_example_package_message_data_get_code(message);
+  PigeonExamplePackageCode code =
+      pigeon_example_package_message_data_get_code(message);
   if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
-    pigeon_example_package_example_host_api_respond_error_send_message(object, response_handle,
-                                                   "code", "message", details);
+    pigeon_example_package_example_host_api_respond_error_send_message(
+        object, response_handle, "code", "message", details);
     return;
   }
 
-  pigeon_example_package_example_host_api_respond_send_message(object, response_handle, TRUE);
+  pigeon_example_package_example_host_api_respond_send_message(
+      object, response_handle, TRUE);
 }
 ```
 
@@ -317,14 +322,15 @@ void TestPlugin::CallFlutterMethod(
 
 ### Linux
 
-<?code-excerpt "linux/pigeon_example_package_application.cc (flutter-method-callback)"?>
+<?code-excerpt "linux/my_application.cc (flutter-method-callback)"?>
 ```c++
 static void flutter_method_cb(GObject* object, GAsyncResult* result,
                               gpointer user_data) {
   g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
   if (!pigeon_example_package_message_flutter_api_flutter_method_finish(
-          PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result, &return_value, &error)) {
+          PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result,
+          &return_value, &error)) {
     g_warning("Failed to call Flutter method: %s", error->message);
     return;
   }
@@ -333,11 +339,11 @@ static void flutter_method_cb(GObject* object, GAsyncResult* result,
 }
 ```
 
-<?code-excerpt "linux/pigeon_example_package_application.cc (flutter-method)"?>
+<?code-excerpt "linux/my_application.cc (flutter-method)"?>
 ```c++
 self->flutter_api = pigeon_example_package_message_flutter_api_new(messenger);
-pigeon_example_package_message_flutter_api_flutter_method_async(self->flutter_api, "hello",
-                                            nullptr, flutter_method_cb, self);
+pigeon_example_package_message_flutter_api_flutter_method(
+    self->flutter_api, "hello", nullptr, flutter_method_cb, self);
 ```
 
 ## Swift / Kotlin Plugin Example
