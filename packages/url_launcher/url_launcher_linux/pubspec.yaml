@@ -2,7 +2,7 @@ name: url_launcher_linux
 description: Linux implementation of the url_launcher plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher_linux
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+url_launcher%22
-version: 3.1.1
+version: 3.2.0
 
 environment:
   sdk: ^3.2.0
@@ -19,6 +19,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  pigeon: ^21.1.0
   url_launcher_platform_interface: ^2.2.0
 
 dev_dependencies:
