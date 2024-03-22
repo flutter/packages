@@ -125,7 +125,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    indent.write('struct ${classDefinition.name} ');
+    indent.write('struct ${classDefinition.name}: Sendable ');
     indent.addScoped('{', '}', () {
       getFieldsInSerializationOrder(classDefinition).forEach((NamedType field) {
         _writeClassField(indent, field);
@@ -967,9 +967,9 @@ String _getMethodSignature({
 
   if (isAsynchronous) {
     if (parameters.isEmpty) {
-      return 'func ${components.name}(completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
+      return 'func ${components.name}(completion: @Sendable @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
     } else {
-      return 'func ${components.name}($parameterSignature, completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
+      return 'func ${components.name}($parameterSignature, completion: @Sendable @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
     }
   } else {
     if (returnType.isVoid) {
