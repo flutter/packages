@@ -10,7 +10,7 @@ import '_functions_io.dart' if (dart.library.js_interop) '_functions_web.dart';
 import 'style_sheet.dart';
 import 'widget.dart';
 
-const List<String> _kBlockTags = <String>[
+final List<String> _kBlockTags = <String>[
   'p',
   'h1',
   'h2',
@@ -112,6 +112,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.paddingBuilders,
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
+    this.onSelectionChanged,
     this.onTapText,
     this.softLineBreak = false,
   });
@@ -155,6 +156,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
+  /// Called when the user changes selection when [selectable] is set to true.
+  final MarkdownOnSelectionChangedCallback? onSelectionChanged;
+
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
 
@@ -185,6 +189,12 @@ class MarkdownBuilder implements md.NodeVisitor {
     _inlines.clear();
     _linkHandlers.clear();
     _isInBlockquote = false;
+
+    builders.forEach((String key, MarkdownElementBuilder value) {
+      if (value.isBlockElement()) {
+        _kBlockTags.add(key);
+      }
+    });
 
     _blocks.add(_BlockElement(null));
 
@@ -942,6 +952,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         text!,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
+        onSelectionChanged:
+            (TextSelection selection, SelectionChangedCause? cause) =>
+                onSelectionChanged!(text.text, selection, cause),
         onTap: onTapText,
         key: k,
       );
