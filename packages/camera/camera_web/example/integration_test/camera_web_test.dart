@@ -2384,10 +2384,9 @@ void main() {
 
       testWidgets('onCameraResolutionChanged emits an empty stream',
           (WidgetTester tester) async {
-        expect(
-          CameraPlatform.instance.onCameraResolutionChanged(cameraId),
-          emits(isEmpty),
-        );
+        final Stream<CameraResolutionChangedEvent> stream =
+            CameraPlatform.instance.onCameraResolutionChanged(cameraId);
+        expect(await stream.isEmpty, isTrue);
       });
 
       testWidgets(
@@ -2968,20 +2967,18 @@ void main() {
               (WidgetTester tester) async {
             when(() => window.screen).thenReturn(null);
 
-            expect(
-              CameraPlatform.instance.onDeviceOrientationChanged(),
-              emits(isEmpty),
-            );
+            final Stream<DeviceOrientationChangedEvent> stream =
+                CameraPlatform.instance.onDeviceOrientationChanged();
+            expect(await stream.isEmpty, isTrue);
           });
 
           testWidgets('when screen orientation is not supported',
               (WidgetTester tester) async {
             when(() => screen.orientation).thenReturn(null);
 
-            expect(
-              CameraPlatform.instance.onDeviceOrientationChanged(),
-              emits(isEmpty),
-            );
+            final Stream<DeviceOrientationChangedEvent> stream =
+                CameraPlatform.instance.onDeviceOrientationChanged();
+            expect(await stream.isEmpty, isTrue);
           });
         });
 
