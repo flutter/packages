@@ -494,7 +494,7 @@ void TestPlugin::CallFlutterSendMultipleNullableTypesWithoutRecursion(
     const std::string* a_nullable_string,
     std::function<void(ErrorOr<AllNullableTypesWithoutRecursion> reply)>
         result) {
-  flutter_api_->SendMultipleNullableTypes(
+  flutter_api_->SendMultipleNullableTypesWithoutRecursion(
       a_nullable_bool, a_nullable_int, a_nullable_string,
       [result](const AllNullableTypesWithoutRecursion& echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
