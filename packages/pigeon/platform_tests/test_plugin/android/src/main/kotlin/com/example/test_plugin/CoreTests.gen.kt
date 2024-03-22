@@ -210,6 +210,86 @@ data class AllNullableTypes(
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class AllNullableTypesWithoutRecursion(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableList: List<Any?>? = null,
+    val aNullableMap: Map<Any, Any?>? = null,
+    val nullableNestedList: List<List<Boolean?>?>? = null,
+    val nullableMapWithAnnotations: Map<String?, String?>? = null,
+    val nullableMapWithObject: Map<String?, Any?>? = null,
+    val aNullableEnum: AnEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): AllNullableTypesWithoutRecursion {
+      val aNullableBool = list[0] as Boolean?
+      val aNullableInt = list[1].let { if (it is Int) it.toLong() else it as Long? }
+      val aNullableInt64 = list[2].let { if (it is Int) it.toLong() else it as Long? }
+      val aNullableDouble = list[3] as Double?
+      val aNullableByteArray = list[4] as ByteArray?
+      val aNullable4ByteArray = list[5] as IntArray?
+      val aNullable8ByteArray = list[6] as LongArray?
+      val aNullableFloatArray = list[7] as DoubleArray?
+      val aNullableList = list[8] as List<Any?>?
+      val aNullableMap = list[9] as Map<Any, Any?>?
+      val nullableNestedList = list[10] as List<List<Boolean?>?>?
+      val nullableMapWithAnnotations = list[11] as Map<String?, String?>?
+      val nullableMapWithObject = list[12] as Map<String?, Any?>?
+      val aNullableEnum: AnEnum? = (list[13] as Int?)?.let { AnEnum.ofRaw(it) }
+      val aNullableString = list[14] as String?
+      val aNullableObject = list[15]
+      return AllNullableTypesWithoutRecursion(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableList,
+          aNullableMap,
+          nullableNestedList,
+          nullableMapWithAnnotations,
+          nullableMapWithObject,
+          aNullableEnum,
+          aNullableString,
+          aNullableObject)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableList,
+        aNullableMap,
+        nullableNestedList,
+        nullableMapWithAnnotations,
+        nullableMapWithObject,
+        aNullableEnum?.raw,
+        aNullableString,
+        aNullableObject,
+    )
+  }
+}
+
 /**
  * A class for testing nested class handling.
  *
@@ -221,20 +301,24 @@ data class AllNullableTypes(
  */
 data class AllClassesWrapper(
     val allNullableTypes: AllNullableTypes,
+    val allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = null,
     val allTypes: AllTypes? = null
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
     fun fromList(list: List<Any?>): AllClassesWrapper {
       val allNullableTypes = AllNullableTypes.fromList(list[0] as List<Any?>)
-      val allTypes: AllTypes? = (list[1] as List<Any?>?)?.let { AllTypes.fromList(it) }
-      return AllClassesWrapper(allNullableTypes, allTypes)
+      val allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? =
+          (list[1] as List<Any?>?)?.let { AllNullableTypesWithoutRecursion.fromList(it) }
+      val allTypes: AllTypes? = (list[2] as List<Any?>?)?.let { AllTypes.fromList(it) }
+      return AllClassesWrapper(allNullableTypes, allNullableTypesWithoutRecursion, allTypes)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf<Any?>(
         allNullableTypes.toList(),
+        allNullableTypesWithoutRecursion?.toList(),
         allTypes?.toList(),
     )
   }
@@ -273,9 +357,14 @@ private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
         return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let {
+          AllNullableTypesWithoutRecursion.fromList(it)
+        }
       }
       131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+      }
+      132.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -292,12 +381,16 @@ private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.toList())
       }
-      is AllTypes -> {
+      is AllNullableTypesWithoutRecursion -> {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllTypes -> {
         stream.write(131)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(132)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -350,6 +443,10 @@ interface HostIntegrationCoreApi {
   fun echoRequiredInt(anInt: Long): Long
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?
+  ): AllNullableTypesWithoutRecursion?
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
@@ -364,6 +461,12 @@ interface HostIntegrationCoreApi {
       aNullableInt: Long?,
       aNullableString: String?
   ): AllNullableTypes
+  /** Returns passed in arguments of multiple types. */
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): AllNullableTypesWithoutRecursion
   /** Returns passed in int. */
   fun echoNullableInt(aNullableInt: Long?): Long?
   /** Returns passed in double. */
@@ -422,6 +525,11 @@ interface HostIntegrationCoreApi {
       everything: AllNullableTypes?,
       callback: (Result<AllNullableTypes?>) -> Unit
   )
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoAsyncNullableAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  )
   /** Returns passed in int asynchronously. */
   fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
   /** Returns passed in double asynchronously. */
@@ -462,6 +570,18 @@ interface HostIntegrationCoreApi {
       aNullableInt: Long?,
       aNullableString: String?,
       callback: (Result<AllNullableTypes>) -> Unit
+  )
+
+  fun callFlutterEchoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  )
+
+  fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?,
+      callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit
   )
 
   fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit)
@@ -924,6 +1044,28 @@ interface HostIntegrationCoreApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoAllNullableTypesWithoutRecursion(everythingArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString",
                 codec)
         if (api != null) {
@@ -981,6 +1123,33 @@ interface HostIntegrationCoreApi {
               wrapped =
                   listOf<Any?>(
                       api.sendMultipleNullableTypes(
+                          aNullableBoolArg, aNullableIntArg, aNullableStringArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val aNullableBoolArg = args[0] as Boolean?
+            val aNullableIntArg = args[1].let { if (it is Int) it.toLong() else it as Long? }
+            val aNullableStringArg = args[2] as String?
+            var wrapped: List<Any?>
+            try {
+              wrapped =
+                  listOf<Any?>(
+                      api.sendMultipleNullableTypesWithoutRecursion(
                           aNullableBoolArg, aNullableIntArg, aNullableStringArg))
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
@@ -1588,6 +1757,31 @@ interface HostIntegrationCoreApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
+            api.echoAsyncNullableAllNullableTypesWithoutRecursion(everythingArg) {
+                result: Result<AllNullableTypesWithoutRecursion?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt",
                 codec)
         if (api != null) {
@@ -1928,6 +2122,59 @@ interface HostIntegrationCoreApi {
             api.callFlutterSendMultipleNullableTypes(
                 aNullableBoolArg, aNullableIntArg, aNullableStringArg) {
                     result: Result<AllNullableTypes> ->
+                  val error = result.exceptionOrNull()
+                  if (error != null) {
+                    reply.reply(wrapError(error))
+                  } else {
+                    val data = result.getOrNull()
+                    reply.reply(wrapResult(data))
+                  }
+                }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
+            api.callFlutterEchoAllNullableTypesWithoutRecursion(everythingArg) {
+                result: Result<AllNullableTypesWithoutRecursion?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val aNullableBoolArg = args[0] as Boolean?
+            val aNullableIntArg = args[1].let { if (it is Int) it.toLong() else it as Long? }
+            val aNullableStringArg = args[2] as String?
+            api.callFlutterSendMultipleNullableTypesWithoutRecursion(
+                aNullableBoolArg, aNullableIntArg, aNullableStringArg) {
+                    result: Result<AllNullableTypesWithoutRecursion> ->
                   val error = result.exceptionOrNull()
                   if (error != null) {
                     reply.reply(wrapError(error))
@@ -2340,9 +2587,14 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
         return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let {
+          AllNullableTypesWithoutRecursion.fromList(it)
+        }
       }
       131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+      }
+      132.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -2359,12 +2611,16 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.toList())
       }
-      is AllTypes -> {
+      is AllNullableTypesWithoutRecursion -> {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllTypes -> {
         stream.write(131)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(132)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -2508,6 +2764,61 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
                       "")))
         } else {
           val output = it[0] as AllNullableTypes
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoAllNullableTypesWithoutRecursion(
+      everythingArg: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  ) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(everythingArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as AllNullableTypesWithoutRecursion?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /**
+   * Returns passed in arguments of multiple types.
+   *
+   * Tests multiple-arity FlutterApi handling.
+   */
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBoolArg: Boolean?,
+      aNullableIntArg: Long?,
+      aNullableStringArg: String?,
+      callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit
+  ) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aNullableBoolArg, aNullableIntArg, aNullableStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as AllNullableTypesWithoutRecursion
           callback(Result.success(output))
         }
       } else {

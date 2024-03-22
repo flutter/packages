@@ -91,14 +91,56 @@ class AllNullableTypes {
   AllNullableTypes? allNullableTypes;
 }
 
+class AllNullableTypesWithoutRecursion {
+  AllNullableTypesWithoutRecursion(
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableList,
+    this.aNullableMap,
+    this.nullableNestedList,
+    this.nullableMapWithAnnotations,
+    this.nullableMapWithObject,
+    this.aNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
+  );
+
+  bool? aNullableBool;
+  int? aNullableInt;
+  int? aNullableInt64;
+  double? aNullableDouble;
+  Uint8List? aNullableByteArray;
+  Int32List? aNullable4ByteArray;
+  Int64List? aNullable8ByteArray;
+  Float64List? aNullableFloatArray;
+  // ignore: always_specify_types, strict_raw_type
+  List? aNullableList;
+  // ignore: always_specify_types, strict_raw_type
+  Map? aNullableMap;
+  List<List<bool?>?>? nullableNestedList;
+  Map<String?, String?>? nullableMapWithAnnotations;
+  Map<String?, Object?>? nullableMapWithObject;
+  AnEnum? aNullableEnum;
+  String? aNullableString;
+  Object? aNullableObject;
+}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
 /// `AllNullableTypes` is non-nullable here as it is easier to instantiate
 /// than `AllTypes` when testing doesn't require both (ie. testing null classes).
 class AllClassesWrapper {
-  AllClassesWrapper(this.allNullableTypes, this.allTypes);
+  AllClassesWrapper(this.allNullableTypes,
+      this.allNullableTypesWithoutRecursion, this.allTypes);
   AllNullableTypes allNullableTypes;
+  AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
   AllTypes? allTypes;
 }
 
@@ -198,6 +240,12 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('echo(_:)')
+  AllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      AllNullableTypesWithoutRecursion? everything);
+
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   @ObjCSelector('extractNestedNullableStringFrom:')
@@ -214,6 +262,13 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
   AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  /// Returns passed in arguments of multiple types.
+  @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
+  @SwiftFunction(
+      'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
+  AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns passed in int.
@@ -356,6 +411,14 @@ abstract class HostIntegrationCoreApi {
   AllNullableTypes? echoAsyncNullableAllNullableTypes(
       AllNullableTypes? everything);
 
+  /// Returns the passed object, to test serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('echoAsync(_:)')
+  AllNullableTypesWithoutRecursion?
+      echoAsyncNullableAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything);
+
   /// Returns passed in int asynchronously.
   @async
   @ObjCSelector('echoAsyncNullableInt:')
@@ -437,6 +500,22 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('callFlutterSendMultipleNullableTypes(aBool:anInt:aString:)')
   AllNullableTypes callFlutterSendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  @async
+  @ObjCSelector('callFlutterEchoAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  AllNullableTypesWithoutRecursion?
+      callFlutterEchoAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything);
+
+  @async
+  @ObjCSelector(
+      'callFlutterSendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
+  @SwiftFunction(
+      'callFlutterSendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
+  AllNullableTypesWithoutRecursion
+      callFlutterSendMultipleNullableTypesWithoutRecursion(
+          bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   @async
   @ObjCSelector('callFlutterEchoBool:')
@@ -550,6 +629,21 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
   AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('echoNullable(_:)')
+  AllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      AllNullableTypesWithoutRecursion? everything);
+
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
+  @SwiftFunction(
+      'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
+  AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   // ========== Non-nullable argument/return type tests ==========
