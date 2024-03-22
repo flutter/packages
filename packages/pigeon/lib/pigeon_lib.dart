@@ -183,6 +183,12 @@ class SwiftClass {
   const SwiftClass();
 }
 
+/// Metadata to annotate data classes to be defined as inheriting from NSObject.
+class SwiftObjcInteropClass {
+  /// Constructor.
+  const SwiftObjcInteropClass();
+}
+
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
@@ -1557,6 +1563,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         name: node.name.lexeme,
         fields: <NamedType>[],
         isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
+        isSwiftObjcInteropClass:
+            _hasMetadata(node.metadata, 'SwiftObjcInteropClass'),
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
       );

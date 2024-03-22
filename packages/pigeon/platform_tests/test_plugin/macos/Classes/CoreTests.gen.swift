@@ -128,7 +128,8 @@ struct AllTypes {
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-class AllNullableTypes {
+@objc
+class AllNullableTypes: NSObject {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,

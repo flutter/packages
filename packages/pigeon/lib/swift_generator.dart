@@ -126,7 +126,12 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         generatorComments: generatedComments);
 
     if (classDefinition.isSwiftClass) {
-      indent.write('class ${classDefinition.name} ');
+      String inheritNSObject = '';
+      if (classDefinition.isSwiftObjcInteropClass) {
+        inheritNSObject = ': NSObject';
+        indent.writeln('@objc');
+      }
+      indent.write('class ${classDefinition.name}$inheritNSObject ');
     } else {
       indent.write('struct ${classDefinition.name} ');
     }
