@@ -538,8 +538,14 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
   }) {
     final String module = _getModule(generatorOptions, dartPackageName);
     final String className = _getClassName(module, api.name);
-
     final String methodPrefix = _getMethodPrefix(module, api.name);
+    final String codecName = '${api.name}Codec';
+    final String codecClassName = _getClassName(module, codecName);
+    final String codecMethodPrefix = '${methodPrefix}_codec';
+
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(generatorOptions, root, indent, api, dartPackageName);
+    }
 
     indent.newln();
     _writeObjectStruct(indent, module, api.name, () {
@@ -566,7 +572,15 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger) {', '}',
         () {
       _writeObjectNew(indent, module, api.name);
-      indent.writeln('g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();');
+      if (getCodecClasses(api, root).isNotEmpty) {
+        indent.writeln(
+            'g_autoptr($codecClassName) message_codec = ${codecMethodPrefix}_new();');
+        indent.writeln(
+            'g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new_with_message_codec(FL_STANDARD_MESSAGE_CODEC(message_codec));');
+      } else {
+        indent.writeln(
+            'g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();');
+      }
       indent.writeln(
           'self->channel = fl_method_channel_new(messenger, "${api.name}", FL_METHOD_CODEC(codec));');
       indent.writeln('return self;');
@@ -588,9 +602,10 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
           "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')}) {", '}',
           () {
         indent.writeln('g_autoptr(FlValue) args = fl_value_new_list();');
-	for (final Parameter param in method.parameters) {
-	indent.writeln('fl_value_append_take(args, ${_makeFlValue(module, param.type, _snakeCaseFromCamelCase(param.name))});');
-	}
+        for (final Parameter param in method.parameters) {
+          indent.writeln(
+              'fl_value_append_take(args, ${_makeFlValue(module, param.type, _snakeCaseFromCamelCase(param.name))});');
+        }
         indent.writeln(
             'fl_method_channel_invoke_method(self->channel, "${method.name}", args, cancellable, callback, user_data);');
       });
@@ -652,134 +667,9 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
     final String codecClassName = _getClassName(module, codecName);
     final String codecMethodPrefix = '${methodPrefix}_codec';
 
-    indent.newln();
-    _writeDeclareFinalType(indent, module, codecName,
-        parentClassName: 'FlStandardMessageCodec');
-
-    indent.newln();
-    _writeObjectStruct(indent, module, codecName, () {},
-        parentClassName: 'FlStandardMessageCodec');
-
-    indent.newln();
-    _writeDefineType(indent, module, codecName,
-        parentType: 'fl_standard_message_codec_get_type()');
-
-    for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-      final String customClassName = _getClassName(module, customClass.name);
-      final String snakeCustomClassName =
-          _snakeCaseFromCamelCase(customClassName);
-      indent.newln();
-      indent.writeScoped(
-          'static gboolean write_$snakeCustomClassName(FlStandardMessageCodec* codec, GByteArray* buffer, $customClassName* value, GError** error) {',
-          '}', () {
-        indent.writeln('uint8_t type = ${customClass.enumeration};');
-        indent.writeln('g_byte_array_append(buffer, &type, sizeof(uint8_t));');
-        indent.writeln(
-            'g_autoptr(FlValue) values = ${snakeCustomClassName}_to_list(value);');
-        indent.writeln(
-            'return fl_standard_message_codec_write_value(codec, buffer, values, error);');
-      });
+    if (getCodecClasses(api, root).isNotEmpty) {
+      _writeCodec(generatorOptions, root, indent, api, dartPackageName);
     }
-
-    indent.newln();
-    indent.writeScoped(
-        'static gboolean ${methodPrefix}_write_value(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {',
-        '}', () {
-      indent.writeScoped(
-          'if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {', '}', () {
-        indent.writeScoped('switch (fl_value_get_custom_type(value)) {', '}',
-            () {
-          for (final EnumeratedClass customClass
-              in getCodecClasses(api, root)) {
-            indent.writeln('case ${customClass.enumeration}:');
-            indent.nest(1, () {
-              final String customClassName =
-                  _getClassName(module, customClass.name);
-              final String snakeCustomClassName =
-                  _snakeCaseFromCamelCase(customClassName);
-              final String castMacro =
-                  _getClassCastMacro(module, customClass.name);
-              indent.writeln(
-                  'return write_$snakeCustomClassName(codec, buffer, $castMacro(fl_value_get_custom_value_object(value)), error);');
-            });
-          }
-        });
-      });
-
-      indent.newln();
-      indent.writeln(
-          'return FL_STANDARD_MESSAGE_CODEC_CLASS(${codecMethodPrefix}_parent_class)->write_value(codec, buffer, value, error);');
-    });
-
-    for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-      final String customClassName = _getClassName(module, customClass.name);
-      final String snakeCustomClassName =
-          _snakeCaseFromCamelCase(customClassName);
-      indent.newln();
-      indent.writeScoped(
-          'static FlValue* read_$snakeCustomClassName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
-          '}', () {
-        indent.writeln(
-            'g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);');
-        indent.writeScoped('if (values == nullptr) {', '}', () {
-          indent.writeln('return nullptr;');
-        });
-        indent.newln();
-        indent.writeln(
-            'g_autoptr($customClassName) value = ${snakeCustomClassName}_new_from_list(values);');
-        indent.writeScoped('if (value == nullptr) {', '}', () {
-          indent.writeln(
-              'g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED, "Invalid data received for MessageData");');
-          indent.writeln('return nullptr;');
-        });
-        indent.newln();
-        indent.writeln(
-            'return fl_value_new_custom_object_take(${customClass.enumeration}, G_OBJECT(value));');
-      });
-    }
-
-    indent.newln();
-    indent.writeScoped(
-        'static FlValue* ${methodPrefix}_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {',
-        '}', () {
-      indent.writeScoped('switch (type) {', '}', () {
-        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
-          final String customClassName =
-              _getClassName(module, customClass.name);
-          final String snakeCustomClassName =
-              _snakeCaseFromCamelCase(customClassName);
-          indent.writeln('case ${customClass.enumeration}:');
-          indent.nest(1, () {
-            indent.writeln(
-                'return read_$snakeCustomClassName(codec, buffer, offset, error);');
-          });
-        }
-
-        indent.writeln('default:');
-        indent.nest(1, () {
-          indent.writeln(
-              'return FL_STANDARD_MESSAGE_CODEC_CLASS(${codecMethodPrefix}_parent_class)->read_value_of_type(codec, buffer, offset, type, error);');
-        });
-      });
-    });
-
-    indent.newln();
-    _writeInit(indent, module, codecName, () {});
-
-    indent.newln();
-    _writeClassInit(indent, module, codecName, () {
-      indent.writeln(
-          'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value = ${methodPrefix}_write_value;');
-      indent.writeln(
-          'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type = ${methodPrefix}_read_value_of_type;');
-    }, hasDispose: false);
-
-    indent.newln();
-    indent.writeScoped(
-        'static $codecClassName* ${codecMethodPrefix}_new() {', '}', () {
-      _writeObjectNew(indent, module, codecName);
-      indent.writeln('return self;');
-    });
 
     for (final Method method in api.methods) {
       final String responseName = _getResponseName(api.name, method.name);
@@ -943,8 +833,13 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       indent.writeln('self->user_data_free_func = user_data_free_func;');
 
       indent.newln();
-      indent.writeln(
-          'g_autoptr($codecClassName) codec = ${codecMethodPrefix}_new();');
+      if (getCodecClasses(api, root).isNotEmpty) {
+        indent.writeln(
+            'g_autoptr($codecClassName) codec = ${codecMethodPrefix}_new();');
+      } else {
+        indent.writeln(
+            'g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();');
+      }
       for (final Method method in api.methods) {
         final String methodName = _snakeCaseFromCamelCase(method.name);
         final String channelName =
@@ -1011,6 +906,141 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
       });
     }
   }
+}
+
+void _writeCodec(LinuxOptions generatorOptions, Root root, Indent indent,
+    Api api, String dartPackageName) {
+  final String module = _getModule(generatorOptions, dartPackageName);
+  final String codecName = '${api.name}Codec';
+  final String codecClassName = _getClassName(module, codecName);
+  final String methodPrefix = _getMethodPrefix(module, api.name);
+  final String codecMethodPrefix = '${methodPrefix}_codec';
+
+  indent.newln();
+  _writeDeclareFinalType(indent, module, codecName,
+      parentClassName: 'FlStandardMessageCodec');
+
+  indent.newln();
+  _writeObjectStruct(indent, module, codecName, () {},
+      parentClassName: 'FlStandardMessageCodec');
+
+  indent.newln();
+  _writeDefineType(indent, module, codecName,
+      parentType: 'fl_standard_message_codec_get_type()');
+
+  for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+    final String customClassName = _getClassName(module, customClass.name);
+    final String snakeCustomClassName =
+        _snakeCaseFromCamelCase(customClassName);
+    indent.newln();
+    indent.writeScoped(
+        'static gboolean write_$snakeCustomClassName(FlStandardMessageCodec* codec, GByteArray* buffer, $customClassName* value, GError** error) {',
+        '}', () {
+      indent.writeln('uint8_t type = ${customClass.enumeration};');
+      indent.writeln('g_byte_array_append(buffer, &type, sizeof(uint8_t));');
+      indent.writeln(
+          'g_autoptr(FlValue) values = ${snakeCustomClassName}_to_list(value);');
+      indent.writeln(
+          'return fl_standard_message_codec_write_value(codec, buffer, values, error);');
+    });
+  }
+
+  indent.newln();
+  indent.writeScoped(
+      'static gboolean ${methodPrefix}_write_value(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {',
+      '}', () {
+    indent.writeScoped(
+        'if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {', '}', () {
+      indent.writeScoped('switch (fl_value_get_custom_type(value)) {', '}', () {
+        for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+          indent.writeln('case ${customClass.enumeration}:');
+          indent.nest(1, () {
+            final String customClassName =
+                _getClassName(module, customClass.name);
+            final String snakeCustomClassName =
+                _snakeCaseFromCamelCase(customClassName);
+            final String castMacro =
+                _getClassCastMacro(module, customClass.name);
+            indent.writeln(
+                'return write_$snakeCustomClassName(codec, buffer, $castMacro(fl_value_get_custom_value_object(value)), error);');
+          });
+        }
+      });
+    });
+
+    indent.newln();
+    indent.writeln(
+        'return FL_STANDARD_MESSAGE_CODEC_CLASS(${codecMethodPrefix}_parent_class)->write_value(codec, buffer, value, error);');
+  });
+
+  for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+    final String customClassName = _getClassName(module, customClass.name);
+    final String snakeCustomClassName =
+        _snakeCaseFromCamelCase(customClassName);
+    indent.newln();
+    indent.writeScoped(
+        'static FlValue* read_$snakeCustomClassName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
+        '}', () {
+      indent.writeln(
+          'g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);');
+      indent.writeScoped('if (values == nullptr) {', '}', () {
+        indent.writeln('return nullptr;');
+      });
+      indent.newln();
+      indent.writeln(
+          'g_autoptr($customClassName) value = ${snakeCustomClassName}_new_from_list(values);');
+      indent.writeScoped('if (value == nullptr) {', '}', () {
+        indent.writeln(
+            'g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED, "Invalid data received for MessageData");');
+        indent.writeln('return nullptr;');
+      });
+      indent.newln();
+      indent.writeln(
+          'return fl_value_new_custom_object_take(${customClass.enumeration}, G_OBJECT(value));');
+    });
+  }
+
+  indent.newln();
+  indent.writeScoped(
+      'static FlValue* ${methodPrefix}_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {',
+      '}', () {
+    indent.writeScoped('switch (type) {', '}', () {
+      for (final EnumeratedClass customClass in getCodecClasses(api, root)) {
+        final String customClassName = _getClassName(module, customClass.name);
+        final String snakeCustomClassName =
+            _snakeCaseFromCamelCase(customClassName);
+        indent.writeln('case ${customClass.enumeration}:');
+        indent.nest(1, () {
+          indent.writeln(
+              'return read_$snakeCustomClassName(codec, buffer, offset, error);');
+        });
+      }
+
+      indent.writeln('default:');
+      indent.nest(1, () {
+        indent.writeln(
+            'return FL_STANDARD_MESSAGE_CODEC_CLASS(${codecMethodPrefix}_parent_class)->read_value_of_type(codec, buffer, offset, type, error);');
+      });
+    });
+  });
+
+  indent.newln();
+  _writeInit(indent, module, codecName, () {});
+
+  indent.newln();
+  _writeClassInit(indent, module, codecName, () {
+    indent.writeln(
+        'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value = ${methodPrefix}_write_value;');
+    indent.writeln(
+        'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type = ${methodPrefix}_read_value_of_type;');
+  }, hasDispose: false);
+
+  indent.newln();
+  indent.writeScoped(
+      'static $codecClassName* ${codecMethodPrefix}_new() {', '}', () {
+    _writeObjectNew(indent, module, codecName);
+    indent.writeln('return self;');
+  });
 }
 
 // Returns the module name to use.
