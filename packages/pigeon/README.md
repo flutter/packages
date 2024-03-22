@@ -28,7 +28,7 @@ Custom classes, nested datatypes, and enums are also supported.
 Nullable enums in Objective-C generated code will be wrapped in a class to allow for nullability.
 
 By default, custom classes in Swift are defined as structs. 
-If you need classes instead - for recursive data, or objc interop -
+If you need classes instead - for recursive data, or Objective-C interop -
 use the @SwiftClass annotation when defining the class.
 
 ### Synchronous and Asynchronous methods
