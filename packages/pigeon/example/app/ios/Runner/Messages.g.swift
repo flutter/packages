@@ -54,7 +54,7 @@ enum Code: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct MessageData {
+struct MessageData: Sendable {
   var name: String? = nil
   var description: String? = nil
   var code: Code
@@ -123,7 +123,8 @@ class ExampleHostApiCodec: FlutterStandardMessageCodec {
 protocol ExampleHostApi {
   func getHostLanguage() throws -> String
   func add(_ a: Int64, to b: Int64) throws -> Int64
-  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void)
+  func sendMessage(
+    message: MessageData, completion: @Sendable @escaping (Result<Bool, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -189,7 +190,8 @@ class ExampleHostApiSetup {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
   func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void)
+    aString aStringArg: String?, 
+    completion: @Sendable @escaping (Result<String, FlutterError>) -> Void)
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -197,10 +199,9 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
     self.binaryMessenger = binaryMessenger
   }
   func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+    aString aStringArg: String?, 
+    completion: @Sendable @escaping (Result<String, FlutterError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
