@@ -310,8 +310,7 @@ private class HostIntegrationCoreApiCodecReaderWriter: FlutterStandardReaderWrit
 }
 
 class HostIntegrationCoreApiCodec: FlutterStandardMessageCodec {
-  static let shared = HostIntegrationCoreApiCodec(
-    readerWriter: HostIntegrationCoreApiCodecReaderWriter())
+  static let shared = HostIntegrationCoreApiCodec(readerWriter: HostIntegrationCoreApiCodecReaderWriter())
 }
 
 /// The core interface that each host language plugin must implement in
