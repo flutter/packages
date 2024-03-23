@@ -190,7 +190,7 @@ class ExampleHostApiSetup {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
   func flutterMethod(
-    aString aStringArg: String?, 
+    aString aStringArg: String?,
     completion: @Sendable @escaping (Result<String, FlutterError>) -> Void)
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
@@ -199,9 +199,11 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
     self.binaryMessenger = binaryMessenger
   }
   func flutterMethod(
-    aString aStringArg: String?, 
-    completion: @Sendable @escaping (Result<String, FlutterError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+    aString aStringArg: String?,
+    completion: @Sendable @escaping (Result<String, FlutterError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
