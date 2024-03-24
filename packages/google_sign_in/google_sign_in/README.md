@@ -198,25 +198,41 @@ In [Google Cloud Console credentials section](https://console.cloud.google.com/a
 **For Android**
 
 You might need more than one of these, e.g.:
-- one for your development app in the PlayStore (signed with the Android keystore)
-- one for your production app in the PlayStore (signed with the Android keystore)
+- one for your development app in the PlayStore (signed with Google app signature)
+- one for your production app in the PlayStore (signed with Google app signature)
 - one for local testing (signed with AndroidStudio temporary keystore)
 
 For each of these register a new "Android" credential with the following information:
 
 - Name: For displaying purposes. E.g. use your app name with suffix "Android" and the the flavor (Dev/Prod).
 - Package name: Utilize the official package ID from your AndroidManifest.xml file (e.g. "com.example.app" or "com.example.app.dev")
-- SHA1 fingerprint: Obtainable with the `keytool` as documented.
+- SHA1 fingerprint:
 
-  - For PlayStore deployments:
-    
+  This is a bit confusing. 
+  Every app build is signed with a certificate. For
+
+  - **Debug builds (local)**
+
+    For debug builds this certificate comes from the Android Studio debug keystore. You can obtain the SHA1 with:
+
+    `keytool -list -v -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass android -keypass android`
+
+  - **Release builds (local)**
+
+    When building a release version of your app it is signed with a certificate coming from the keystore you defined in `android/key.properties`. 
+  
+    The SHA1 hash of this certificate will be used when you test your production build locally or when you manually distribute your APKs. You can obtain that one with:
+  
     `keytool -keystore path-to-debug-or-production-keystore -list -v`
 
-    The path of your keystore is the one you have set in your `android/key.properties` file (storeFile).
+  - **Uploads to the play store**
+    
+    For apps you upload to the play store (with `flutter build appbundle`), Google signs your package again with a different certificate managed by Google.
+    The local certificate (in your key.properties) is only used as an "upload key". But for the OAuth stuff you need the "app signature key". You can find that one in the Google Play console of your app.
 
-   - For local testing:
-
-     `keytool -list -v -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass android -keypass android`
+    Please refer to the details [in the official docs](https://support.google.com/googleplay/android-developer/answer/9842756).
+    
+    This is actually the most important OAuth Client you have to create as it is used by all your users downloading the app from Google Play.
 
 
 **For Web** (even if you don't have a web app!)
