@@ -4,7 +4,6 @@
 * Adds support for `getStyleError`.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates compileSdk version to 34.
-* Adds support for patterns in polylines on iOS.
 
 ## 2.6.2
 
