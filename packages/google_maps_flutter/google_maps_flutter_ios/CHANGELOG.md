@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds support for patterns in polylines on iOS.
+
 ## 2.5.1
 
 * Makes the tile overlay callback invoke the platform channel on the platform thread.
