@@ -118,14 +118,6 @@
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
-/**
- * Returns the path for polyline based on the points(locations) the polyline has.
- *
- * @param polyline The polyline instance for which path is calculated.
- * @return An instance of GMSMutablePath.
- */
-- (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline;
-
 @end
 ;
 

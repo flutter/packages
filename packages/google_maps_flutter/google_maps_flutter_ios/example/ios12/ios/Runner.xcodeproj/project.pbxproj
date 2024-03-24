@@ -201,6 +201,7 @@
 		F7151F11265D7ED70028CB91 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				473DC9E42BAFDC5D0001D54E /* GoogleMapPolylineController_Test.h */,
 				479E394C2B6D3C7C00CD60F5 /* GoogleMapsPolylinesControllerTests.m */,
 				6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
