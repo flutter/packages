@@ -70,10 +70,13 @@ class CustomBulletListDemo extends StatelessWidget
         child: Markdown(
           data: _markdownData,
           bulletBuilder: (int index, BulletStyle style, int nestLevel) =>
-              switch (style) {
-            BulletStyle.unorderedList => const Text('・'),
-            BulletStyle.orderedList => Text('${index + 1}-$nestLevel.'),
-          },
+              FittedBox(
+            fit: BoxFit.scaleDown,
+            child: switch (style) {
+              BulletStyle.unorderedList => const Text('・'),
+              BulletStyle.orderedList => Text('$nestLevel-${index + 1}.'),
+            },
+          ),
         ),
       ),
     );
