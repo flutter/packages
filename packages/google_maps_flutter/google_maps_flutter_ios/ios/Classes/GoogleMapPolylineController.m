@@ -147,7 +147,7 @@ id GetValueOrNilFromDict(NSDictionary * dict, NSString *key) {
 }
 - (void)addPolylines:(NSArray *)polylinesToAdd {
   for (NSDictionary *polyline in polylinesToAdd) {
-    GMSMutablePath *path = [self pathForPolyline:polyline];
+    GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
     NSString *identifier = polyline[@"polylineId"];
     FLTGoogleMapPolylineController *controller =
         [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path
@@ -193,7 +193,7 @@ id GetValueOrNilFromDict(NSDictionary * dict, NSString *key) {
   }
   return self.polylineIdentifierToController[identifier] != nil;
 }
-- (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline {
++ (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline {
   NSArray *pointArray = polyline[@"points"];
   NSArray<CLLocation *> *points = [FLTGoogleMapJSONConversions pointsFromLatLongs:pointArray];
   GMSMutablePath *path = [GMSMutablePath path];
