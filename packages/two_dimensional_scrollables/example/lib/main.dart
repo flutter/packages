@@ -96,7 +96,7 @@ class _TableExampleState extends State<TableExample> {
     );
   }
 
-  TableSpan _buildColumnSpan(int index) {
+  TableSpan? _buildColumnSpan(int index) {
     const TableSpanDecoration decoration = TableSpanDecoration(
       border: TableSpanBorder(
         trailing: BorderSide(),
@@ -148,7 +148,7 @@ class _TableExampleState extends State<TableExample> {
         'This should be unreachable, as every index is accounted for in the switch clauses.');
   }
 
-  TableSpan _buildRowSpan(int index) {
+  TableSpan? _buildRowSpan(int index) {
     final TableSpanDecoration decoration = TableSpanDecoration(
       color: index.isEven ? Colors.purple[100] : null,
       border: const TableSpanBorder(

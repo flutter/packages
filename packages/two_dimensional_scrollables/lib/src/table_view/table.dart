@@ -330,7 +330,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   int? _lastNonPinnedRow;
   int? _lastNonPinnedColumn;
 
-  bool _columnNullTerminated = false;
+  int? _columnNullTerminated;
   bool get _columnsAreInfinite => delegate.columnCount == null;
   // How far columns should be laid out in a given frame.
   double get _targetColumnPixel {
@@ -340,7 +340,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         _pinnedColumnsExtent;
   }
 
-  bool _rowNullTerminated = false;
+  int? _rowNullTerminated;
   bool get _rowsAreInfinite => delegate.rowCount == null;
   // How far rows should be laid out in a given frame.
   double get _targetRowPixel {
@@ -449,8 +449,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   // Updates the cached column metrics for the table.
   void _updateColumnMetrics({bool appendColumns = false, int? toColumnIndex}) {
-    final Map<int, _Span> oldColumnMetrics = _columnMetrics;
-    _columnMetrics.clear();
     double startOfRegularColumn = 0;
     double startOfPinnedColumn = 0;
     if (appendColumns) {
@@ -460,22 +458,23 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // number of columns is infinite, and saves us going through all the
       // columns we already know about.
       assert(_columnsAreInfinite);
-      assert(oldColumnMetrics.isNotEmpty);
-      for (int cachedColumn = 0; cachedColumn < oldColumnMetrics.length; cachedColumn++) {
-        _columnMetrics[cachedColumn] = oldColumnMetrics[cachedColumn]!;
-      }
+      assert(_columnMetrics.isNotEmpty);
       if (_firstNonPinnedColumn != 0) {
-        startOfPinnedColumn = oldColumnMetrics[_firstNonPinnedColumn]!.trailingOffset;
+        startOfPinnedColumn = _columnMetrics[_firstNonPinnedColumn]!.trailingOffset;
       }
-      startOfRegularColumn = oldColumnMetrics[_lastNonPinnedColumn]!.trailingOffset;
+      startOfRegularColumn = _columnMetrics[_lastNonPinnedColumn]!.trailingOffset;
     }
     _firstNonPinnedColumn = null;
     _lastNonPinnedColumn = null;
-    _columnNullTerminated = false;
-    int column = appendColumns ? oldColumnMetrics.length : 0;
+    _columnNullTerminated = needsDelegateRebuild ? null : _columnNullTerminated;
+    int column = appendColumns ? _columnMetrics.length : 0;
 
     bool reachedColumnEnd() {
       if (_columnsAreInfinite) {
+        if (_columnNullTerminated != null) {
+          _lastNonPinnedColumn ??= _columnMetrics.length - 1;
+          return true;
+        }
         if (toColumnIndex != null) {
           // Column metrics should be computed up to the provided index.
           // Only relevant when we are filling in missing column metrics in an
@@ -494,7 +493,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       final bool isPinned = column < delegate.pinnedColumnCount;
       final double leadingOffset =
           isPinned ? startOfPinnedColumn : startOfRegularColumn;
-      _Span? span = oldColumnMetrics.remove(column);
+      _Span? span = _columnMetrics.remove(column);
       final TableSpan? configuration = needsDelegateRebuild || span == null
           ? delegate.buildColumn(column)
           : span.configuration;
@@ -503,7 +502,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         // This happens when a row count has not been specified, but we have
         // reached the end.
         assert(_columnsAreInfinite);
-        _columnNullTerminated = true;
+        _columnNullTerminated = column;
+        _updateScrollBounds();
         break;
       }
       span ??= _Span();
@@ -536,15 +536,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     assert(_columnMetrics.length >= delegate.pinnedColumnCount);
-    for (final _Span span in oldColumnMetrics.values) {
-      span.dispose();
-    }
   }
 
   // Updates the cached row metrics for the table.
   void _updateRowMetrics({bool appendRows = false, int? toRowIndex}) {
-    final Map<int, _Span> oldRowMetrics = _rowMetrics;
-    _rowMetrics.clear();
     double startOfRegularRow = 0;
     double startOfPinnedRow = 0;
     if (appendRows) {
@@ -553,22 +548,23 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // updating. This should only be the case when the number of rows is
       // infinite.
       assert(_rowsAreInfinite);
-      assert(oldRowMetrics.isNotEmpty);
-      for (int cachedRow = 0; cachedRow < oldRowMetrics.length; cachedRow++) {
-        _rowMetrics[cachedRow] = oldRowMetrics[cachedRow]!;
-      }
+      assert(_rowMetrics.isNotEmpty);
       if (_firstNonPinnedRow != 0) {
-        startOfPinnedRow = oldRowMetrics[_firstNonPinnedRow]!.trailingOffset;
+        startOfPinnedRow = _rowMetrics[_firstNonPinnedRow]!.trailingOffset;
       }
-      startOfRegularRow = oldRowMetrics[_lastNonPinnedRow]!.trailingOffset;
+      startOfRegularRow = _rowMetrics[_lastNonPinnedRow]!.trailingOffset;
     }
     _firstNonPinnedRow = null;
     _lastNonPinnedRow = null;
-    _rowNullTerminated = false;
-    int row = appendRows ? oldRowMetrics.length : 0;
+    _rowNullTerminated = needsDelegateRebuild ? null : _rowNullTerminated;
+    int row = appendRows ? _rowMetrics.length : 0;
 
     bool reachedRowEnd() {
       if (_rowsAreInfinite) {
+        if (_rowNullTerminated != null) {
+          _lastNonPinnedRow ??= _rowMetrics.length - 1;
+          return true;
+        }
         if (toRowIndex != null) {
           // Row metrics should be computed up to the provided index.
           // Only relevant when we are filling in missing column metrics in an
@@ -587,14 +583,15 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       final bool isPinned = row < delegate.pinnedRowCount;
       final double leadingOffset =
           isPinned ? startOfPinnedRow : startOfRegularRow;
-      _Span? span = oldRowMetrics.remove(row);
+      _Span? span = _rowMetrics.remove(row);
       final TableSpan? configuration = needsDelegateRebuild || span == null ? delegate.buildRow(row) : span.configuration;
       if (configuration == null) {
         // We have reached the end of rows based on a null termination. This
         // This happens when a row count has not been specified, but we have
         // reached the end.
         assert(_rowsAreInfinite);
-        _rowNullTerminated = true;
+        _rowNullTerminated = row;
+        _updateScrollBounds();
         break;
       }
       span ??= _Span();
@@ -627,14 +624,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     assert(_rowMetrics.length >= delegate.pinnedRowCount);
-    for (final _Span span in oldRowMetrics.values) {
-      span.dispose();
-    }
   }
 
   void _updateScrollBounds() {
     final double maxVerticalScrollExtent;
-    if (_rowsAreInfinite && !_rowNullTerminated) {
+    if (_rowsAreInfinite && _rowNullTerminated == null) {
       maxVerticalScrollExtent = double.infinity;
     } else if (!_rowsAreInfinite && _rowMetrics.length <= delegate.pinnedRowCount) {
       assert(_firstNonPinnedRow == null && _lastNonPinnedRow == null);
@@ -653,7 +647,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     final double maxHorizontalScrollExtent;
-    if (_columnsAreInfinite && !_columnNullTerminated) {
+    if (_columnsAreInfinite && _columnNullTerminated == null) {
       maxHorizontalScrollExtent = double.infinity;
     } else if (!_columnsAreInfinite &&
         _columnMetrics.length <= delegate.pinnedColumnCount) {
@@ -690,7 +684,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         _updateColumnMetrics(appendColumns: true);
       lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
         assert(_columnMetrics.length == delegate.columnCount ||
-            lastKnownColumn.trailingOffset >= _targetColumnPixel);
+            lastKnownColumn.trailingOffset >= _targetColumnPixel || _columnNullTerminated != null);
       }
     }
     _firstNonPinnedColumn = null;
@@ -721,7 +715,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         _updateRowMetrics(appendRows: true);
         lastKnownRow = _rowMetrics[_rowMetrics.length - 1]!;
         assert(_rowMetrics.length == delegate.rowCount ||
-            lastKnownRow.trailingOffset >= _targetRowPixel);
+            lastKnownRow.trailingOffset >= _targetRowPixel || _rowNullTerminated != null);
       }
     }
     _firstNonPinnedRow = null;
@@ -1618,6 +1612,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     _clipPinnedRowsHandle.layer = null;
     _clipPinnedColumnsHandle.layer = null;
     _clipCellsHandle.layer = null;
+    for (final _Span span in _rowMetrics.values) {
+      span.dispose();
+    }
+    for (final _Span span in _columnMetrics.values) {
+      span.dispose();
+    }
     super.dispose();
   }
 }
