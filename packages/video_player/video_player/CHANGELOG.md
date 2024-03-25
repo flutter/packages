@@ -1,6 +1,6 @@
 ## 2.8.4
 
-* Bumps min version of iOS part to start with version with privacy manifest included.
+* Updates minimum iOS implementation version to include a privacy manifest.
 
 ## 2.8.3
 
