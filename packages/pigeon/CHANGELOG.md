@@ -1,3 +1,7 @@
+## 17.2.1
+
+* [swift] Adds support for @Sendable.
+
 ## 17.2.0
 
 * [dart] Adds implementation for `@ProxyApi`.
