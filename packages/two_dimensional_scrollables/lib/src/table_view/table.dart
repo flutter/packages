@@ -41,6 +41,17 @@ import 'table_span.dart';
 /// the [TableCellDelegateMixin]. The [TableView.builder] and [TableView.list]
 /// constructors create their own delegate.
 ///
+/// Using a [TableCellBuilderDelegate], or the [TableView.builder] constructor
+/// will allow for infinite rows and columns. Returning null from the
+/// [columnBuilder] or [rowBuilder] in this case will terminate
+/// the row or column at that index, representing the end of the table in that
+/// axis. In this scenario, until the potential end of the table in either
+/// dimension is reached by returning null, the
+/// [ScrollPosition.maxScrollExtent] will reflect [double.infinity]. This is
+/// because as the table is built lazily, it will not know the end has been
+/// reached until the [ScrollPosition] arrives there. This is similar to
+/// returning null from [ListView.builder] to signify the end of the list.
+///
 /// This example shows a TableView of 100 children, all sized 100 by 100
 /// pixels with a few [TableSpanDecoration]s like background colors and borders.
 /// The `builder` constructor is called on demand for the cells that are visible
@@ -116,6 +127,16 @@ class TableView extends TwoDimensionalScrollView {
   /// This constructor generates a [TableCellBuilderDelegate] for building
   /// children on demand using the required [cellBuilder],
   /// [columnBuilder], and [rowBuilder].
+  ///
+  /// For infinite rows and columns, omit providing [columnCount] or [rowCount].
+  /// Returning null from the [columnBuilder] or [rowBuilder] will terminate
+  /// the row or column at that index, representing the end of the table in that
+  /// axis. In this scenario, until the potential end of the table in either
+  /// dimension is reached by returning null, the
+  /// [ScrollPosition.maxScrollExtent] will reflect [double.infinity]. This is
+  /// because as the table is built lazily, it will not know the end has been
+  /// reached until the [ScrollPosition] arrives there. This is similar to
+  /// returning null from [ListView.builder] to signify the end of the list.
   TableView.builder({
     super.key,
     super.primary,
