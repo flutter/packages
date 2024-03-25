@@ -1,6 +1,7 @@
 ## 2.8.4
 
 * Updates minimum iOS implementation version to include a privacy manifest.
+* Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
 
 ## 2.8.3
 
