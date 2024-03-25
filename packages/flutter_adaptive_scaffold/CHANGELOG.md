@@ -1,10 +1,19 @@
-## NEXT
+## 0.1.10+1
 
+* Removes a broken design document link from the README.
+
+## 0.1.10
+
+* FIX : Assertion added when tried with less than 2 destinations - [flutter/flutter#110902](https://github.com/flutter/flutter/issues/110902)
+
+## 0.1.9
+
+* FIX : Drawer stays open even on destination tap - [flutter/flutter#141938](https://github.com/flutter/flutter/issues/141938)
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 0.1.8
 
-*  Adds `transitionDuration` parameter for specifying how long the animation should be.
+* Adds `transitionDuration` parameter for specifying how long the animation should be.
 
 ## 0.1.7+2
 
