@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:ui';
 
+// ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
 import 'package:camera_web/src/shims/dart_js_util.dart';
