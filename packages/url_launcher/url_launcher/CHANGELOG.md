@@ -1,6 +1,6 @@
 ## 6.2.6
 
-* Bumps min version of iOS part to start with version with privacy manifest included.
+* Updates minimum iOS implementation version to include a privacy manifest.
 
 ## 6.2.5
 
