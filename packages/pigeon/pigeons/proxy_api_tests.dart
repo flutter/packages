@@ -455,7 +455,11 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi class.
-@ProxyApi()
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.example.test_plugin.ProxyApiSuperClass',
+  ),
+)
 abstract class ProxyApiSuperClass {
   ProxyApiSuperClass();
 
