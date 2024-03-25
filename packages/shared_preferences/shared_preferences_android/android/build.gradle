@@ -34,7 +34,7 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace 'io.flutter.plugins.sharedpreferences'
     }
-    compileSdkVersion 33
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

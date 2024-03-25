@@ -61,4 +61,21 @@
   XCTAssertEqual(scrollView.contentOffset.y, 2);
   XCTAssertNil(error);
 }
+
+- (void)testSetDelegateForScrollView {
+  UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+  FWFScrollViewDelegate *delegate = [[FWFScrollViewDelegate alloc] init];
+
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+  [instanceManager addDartCreatedInstance:scrollView withIdentifier:0];
+  [instanceManager addDartCreatedInstance:delegate withIdentifier:1];
+
+  FWFScrollViewHostApiImpl *hostAPI =
+      [[FWFScrollViewHostApiImpl alloc] initWithInstanceManager:instanceManager];
+
+  FlutterError *error;
+  [hostAPI setDelegateForScrollViewWithIdentifier:0 uiScrollViewDelegateIdentifier:@1 error:&error];
+  XCTAssertEqual(scrollView.delegate, delegate);
+  XCTAssertNil(error);
+}
 @end

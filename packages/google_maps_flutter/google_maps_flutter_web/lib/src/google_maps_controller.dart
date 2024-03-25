@@ -7,7 +7,11 @@ part of '../google_maps_flutter_web.dart';
 /// Type used when passing an override to the _createMap function.
 @visibleForTesting
 typedef DebugCreateMapFunction = gmaps.GMap Function(
-    HtmlElement div, gmaps.MapOptions options);
+    HTMLElement div, gmaps.MapOptions options);
+
+/// Type used when passing an override to the _setOptions function.
+@visibleForTesting
+typedef DebugSetOptionsFunction = void Function(gmaps.MapOptions options);
 
 /// Encapsulates a [gmaps.GMap], its events, and where in the DOM it's rendered.
 class GoogleMapController {
@@ -32,11 +36,12 @@ class GoogleMapController {
     _polylinesController = PolylinesController(stream: _streamController);
     _markersController = MarkersController(stream: _streamController);
     _tileOverlaysController = TileOverlaysController();
+    _updateStylesFromConfiguration(mapConfiguration);
 
     // Register the view factory that will hold the `_div` that holds the map in the DOM.
     // The `_div` needs to be created outside of the ViewFactory (and cached!) so we can
     // use it to create the [gmaps.GMap] in the `init()` method of this class.
-    _div = DivElement()
+    _div = createDivElement()
       ..id = _getViewType(mapId)
       ..style.width = '100%'
       ..style.height = '100%';
@@ -60,6 +65,8 @@ class GoogleMapController {
   // Caching this allows us to re-create the map faithfully when needed.
   MapConfiguration _lastMapConfiguration = const MapConfiguration();
   List<gmaps.MapTypeStyle> _lastStyles = const <gmaps.MapTypeStyle>[];
+  // The last error resulting from providing a map style, if any.
+  String? _lastStyleError;
 
   /// Configuration accessor for the [GoogleMapsInspectorWeb].
   ///
@@ -74,7 +81,7 @@ class GoogleMapController {
 
   // The Flutter widget that contains the rendered Map.
   HtmlElementView? _widget;
-  late HtmlElement _div;
+  late HTMLElement _div;
 
   /// The Flutter widget that will contain the rendered Map. Used for caching.
   Widget? get widget {
@@ -122,6 +129,7 @@ class GoogleMapController {
   @visibleForTesting
   void debugSetOverrides({
     DebugCreateMapFunction? createMap,
+    DebugSetOptionsFunction? setOptions,
     MarkersController? markers,
     CirclesController? circles,
     PolygonsController? polygons,
@@ -129,6 +137,7 @@ class GoogleMapController {
     TileOverlaysController? tileOverlays,
   }) {
     _overrideCreateMap = createMap;
+    _overrideSetOptions = setOptions;
     _markersController = markers ?? _markersController;
     _circlesController = circles ?? _circlesController;
     _polygonsController = polygons ?? _polygonsController;
@@ -137,8 +146,9 @@ class GoogleMapController {
   }
 
   DebugCreateMapFunction? _overrideCreateMap;
+  DebugSetOptionsFunction? _overrideSetOptions;
 
-  gmaps.GMap _createMap(HtmlElement div, gmaps.MapOptions options) {
+  gmaps.GMap _createMap(HTMLElement div, gmaps.MapOptions options) {
     if (_overrideCreateMap != null) {
       return _overrideCreateMap!(div, options);
     }
@@ -279,15 +289,36 @@ class GoogleMapController {
     return _lastMapConfiguration;
   }
 
+  // TODO(stuartmorgan): Refactor so that _lastMapConfiguration.style is the
+  // source of truth for style info. Currently it's tracked and handled
+  // separately since style didn't used to be part of the configuration.
+  List<gmaps.MapTypeStyle> _updateStylesFromConfiguration(
+      MapConfiguration update) {
+    if (update.style != null) {
+      // Provide async access to the error rather than throwing, to match the
+      // behavior of other platforms where there's no mechanism to return errors
+      // from configuration updates.
+      try {
+        _lastStyles = _mapStyles(update.style);
+        _lastStyleError = null;
+      } on MapStyleException catch (e) {
+        _lastStyleError = e.cause;
+      }
+    }
+    return _lastStyles;
+  }
+
   /// Updates the map options from a [MapConfiguration].
   ///
   /// This method converts the map into the proper [gmaps.MapOptions].
   void updateMapConfiguration(MapConfiguration update) {
     assert(_googleMap != null, 'Cannot update options on a null map.');
 
+    final List<gmaps.MapTypeStyle> styles =
+        _updateStylesFromConfiguration(update);
     final MapConfiguration newConfiguration = _mergeConfigurations(update);
     final gmaps.MapOptions newOptions =
-        _configurationAndStyleToGmapsOptions(newConfiguration, _lastStyles);
+        _configurationAndStyleToGmapsOptions(newConfiguration, styles);
 
     _setOptions(newOptions);
     _setTrafficLayer(_googleMap!, newConfiguration.trafficEnabled ?? false);
@@ -300,9 +331,19 @@ class GoogleMapController {
         _configurationAndStyleToGmapsOptions(_lastMapConfiguration, styles));
   }
 
+  /// A getter for the current styles. Only for tests.
+  @visibleForTesting
+  List<gmaps.MapTypeStyle> get styles => _lastStyles;
+
+  /// Returns the last error from setting the map's style, if any.
+  String? get lastStyleError => _lastStyleError;
+
   // Sets new [gmaps.MapOptions] on the wrapped map.
   // ignore: use_setters_to_change_properties
   void _setOptions(gmaps.MapOptions options) {
+    if (_overrideSetOptions != null) {
+      return _overrideSetOptions!(options);
+    }
     _googleMap?.options = options;
   }
 

@@ -48,8 +48,9 @@ Widget build(BuildContext context) {
         ),
       )
   ];
-
   return AdaptiveScaffold(
+    // An option to override the default transition duration.
+    transitionDuration: Duration(milliseconds: _transitionDuration),
     // An option to override the default breakpoints used for small, medium,
     // and large.
     smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
@@ -139,6 +140,8 @@ displayed and the entrance animation and exit animation.
 // AdaptiveLayout has a number of slots that take SlotLayouts and these
 // SlotLayouts' configs take maps of Breakpoints to SlotLayoutConfigs.
 return AdaptiveLayout(
+  // An option to override the default transition duration.
+  transitionDuration: Duration(milliseconds: _transitionDuration),
   // Primary navigation config has nothing from 0 to 600 dp screen width,
   // then an unextended NavigationRail with no labels and just icons then an
   // extended NavigationRail with both icons and labels.
@@ -244,8 +247,3 @@ return AdaptiveLayout(
 
 Both of the examples shown here produce the same output:
 !["Example of a display made with AdaptiveScaffold"](example/demo_files/adaptiveScaffold.gif)
-
-## Additional information
-
-You can find more information on this package and its usage in the public
-[design doc](https://docs.google.com/document/d/1qhrpTWYs5f67X8v32NCCNTRMIjSrVHuaMEFAul-Q_Ms/edit?usp=sharing).

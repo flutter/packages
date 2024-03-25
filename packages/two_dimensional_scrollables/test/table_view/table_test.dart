@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
-const Widget cell = SizedBox.shrink();
+const TableViewCell cell = TableViewCell(child: SizedBox.shrink());
 
 TableSpan getTappableSpan(int index, VoidCallback callback) {
   return TableSpan(
@@ -59,7 +59,7 @@ void main() {
       expect(
         delegate.builder(
           _NullBuildContext(),
-          const TableVicinity(row: 0, column: 0),
+          TableVicinity.zero,
         ),
         cell,
       );
@@ -188,9 +188,9 @@ void main() {
       final TableView tableView = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
-        cells: const <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell]
+        cells: const <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell]
         ],
       );
       final TableCellListDelegate delegate =
@@ -209,8 +209,8 @@ void main() {
       expect(
         () {
           tableView = TableView.list(
-            cells: const <List<Widget>>[
-              <Widget>[cell]
+            cells: const <List<TableViewCell>>[
+              <TableViewCell>[cell]
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -228,8 +228,8 @@ void main() {
       expect(
         () {
           tableView = TableView.list(
-            cells: const <List<Widget>>[
-              <Widget>[cell]
+            cells: const <List<TableViewCell>>[
+              <TableViewCell>[cell]
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -261,7 +261,12 @@ void main() {
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
       TableViewParentData parentDataOf(RenderBox child) {
@@ -276,7 +281,7 @@ void main() {
       );
       expect(viewport.mainAxis, Axis.vertical);
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -343,7 +348,12 @@ void main() {
         rowBuilder: (_) => rowSpan,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
       TableViewParentData parentDataOf(RenderBox child) {
@@ -357,7 +367,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableVicinity vicinity = TableVicinity.zero;
       TableViewParentData parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -406,7 +416,12 @@ void main() {
         rowBuilder: (_) => rowSpan,
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
-          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+          return TableViewCell(
+            child: SizedBox.square(
+              key: childKeys[vicinity],
+              dimension: 200,
+            ),
+          );
         },
       );
 
@@ -417,7 +432,7 @@ void main() {
         childKeys.values.first,
       );
       // first child
-      vicinity = const TableVicinity(column: 0, row: 0);
+      vicinity = TableVicinity.zero;
       parentData = parentDataOf(
         viewport.firstChild!,
       );
@@ -454,9 +469,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -498,9 +515,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -548,9 +567,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -605,9 +626,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -638,7 +661,9 @@ void main() {
         columnBuilder: (_) => TableSpan(extent: columnExtent),
         rowBuilder: (_) => TableSpan(extent: rowExtent),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const SizedBox.square(dimension: 100);
+          return const TableViewCell(
+            child: SizedBox.square(dimension: 100),
+          );
         },
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -693,9 +718,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -724,9 +751,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -757,9 +786,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -785,9 +816,11 @@ void main() {
         ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -813,9 +846,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -840,9 +875,11 @@ void main() {
         ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 200,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 200,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -872,9 +909,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -950,9 +989,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1028,9 +1069,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1107,9 +1150,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1185,9 +1230,11 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
         verticalDetails: ScrollableDetails.vertical(
@@ -1285,10 +1332,12 @@ void main() {
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1442,10 +1491,12 @@ void main() {
           ),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1541,10 +1592,12 @@ void main() {
           extent: FixedTableSpanExtent(200.0),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1587,10 +1640,12 @@ void main() {
           extent: FixedTableSpanExtent(200.0),
         ),
         cellBuilder: (_, TableVicinity vicinity) {
-          return Container(
-            height: 200,
-            width: 200,
-            color: Colors.grey.withOpacity(0.5),
+          return TableViewCell(
+            child: Container(
+              height: 200,
+              width: 200,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           );
         },
       );
@@ -1634,9 +1689,11 @@ void main() {
               )
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
-          return SizedBox.square(
-            dimension: 100,
-            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          return TableViewCell(
+            child: SizedBox.square(
+              dimension: 100,
+              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+            ),
           );
         },
       );
@@ -1673,6 +1730,550 @@ void main() {
         SystemMouseCursors.basic,
       );
     });
+
+    group('Merged pinned cells layout', () {
+      // Regression tests for https://github.com/flutter/flutter/issues/143526
+      // These tests all use the same collection of merged pinned cells in a
+      // variety of combinations.
+      final Map<TableVicinity, ({int start, int span})> bothMerged =
+          <TableVicinity, ({int start, int span})>{
+        TableVicinity.zero: (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 0): (start: 0, span: 2),
+        const TableVicinity(row: 0, column: 1): (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 1): (start: 0, span: 2),
+      };
+
+      final Map<TableVicinity, ({int start, int span})> rowMerged =
+          <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 2, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 3, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 4, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 5, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 6, column: 1): (start: 4, span: 3),
+      };
+
+      final Map<TableVicinity, ({int start, int span})> columnMerged =
+          <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 0, column: 2): (start: 2, span: 2),
+        const TableVicinity(row: 0, column: 3): (start: 2, span: 2),
+        const TableVicinity(row: 1, column: 4): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 5): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 6): (start: 4, span: 3),
+      };
+      const TableSpan span = TableSpan(extent: FixedTableSpanExtent(75));
+
+      testWidgets('Normal axes', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 150.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 300.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 290.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(140.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(290.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 290.0, 75.0, 225.0),
+        );
+      });
+
+      testWidgets('Vertical reversed', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            reverse: true,
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 300.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 75.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(150.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(300.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 85.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(0.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(140.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(290.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(0.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(75.0, 85.0, 75.0, 225.0),
+        );
+      });
+
+      testWidgets('Horizontal reversed', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            reverse: true,
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 150.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 300.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 290.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 0.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(510.0, 0.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(285.0, 75.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 140.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 290.0, 75.0, 225.0),
+        );
+      });
+
+      testWidgets('Both reversed', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        final TableView tableView = TableView.builder(
+          verticalDetails: ScrollableDetails.vertical(
+            reverse: true,
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            reverse: true,
+            controller: horizontalController,
+          ),
+          columnCount: 20,
+          rowCount: 20,
+          pinnedRowCount: 2,
+          pinnedColumnCount: 2,
+          columnBuilder: (_) => span,
+          rowBuilder: (_) => span,
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              columnMergeStart:
+                  bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start,
+              columnMergeSpan:
+                  bothMerged[vicinity]?.span ?? columnMerged[vicinity]?.span,
+              rowMergeStart:
+                  bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start,
+              rowMergeSpan:
+                  bothMerged[vicinity]?.span ?? rowMerged[vicinity]?.span,
+              child: Text(
+                'R${bothMerged[vicinity]?.start ?? rowMerged[vicinity]?.start ?? vicinity.row}:'
+                'C${bothMerged[vicinity]?.start ?? columnMerged[vicinity]?.start ?? vicinity.column}',
+              ),
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: tableView));
+        await tester.pumpAndSettle();
+
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 300.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 75.0, 75.0, 225.0),
+        );
+
+        verticalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 0.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(500.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(275.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 85.0, 75.0, 225.0),
+        );
+
+        horizontalController.jumpTo(10.0);
+        await tester.pumpAndSettle();
+        expect(verticalController.position.pixels, 10.0);
+        expect(horizontalController.position.pixels, 10.0);
+        expect(
+          tester.getRect(find.text('R0:C0')),
+          const Rect.fromLTWH(650.0, 450.0, 150.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTWH(510.0, 525.0, 150.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R1:C4')),
+          const Rect.fromLTWH(285.0, 450.0, 225.0, 75.0),
+        );
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTWH(725.0, 310.0, 75.0, 150.0),
+        );
+        expect(
+          tester.getRect(find.text('R4:C1')),
+          const Rect.fromLTWH(650.0, 85.0, 75.0, 225.0),
+        );
+      });
+    });
+  });
+
+  testWidgets(
+      'Merged unpinned cells following pinned cells are laid out correctly',
+      (WidgetTester tester) async {
+    final ScrollController verticalController = ScrollController();
+    final ScrollController horizontalController = ScrollController();
+    final Set<TableVicinity> mergedCell = <TableVicinity>{
+      const TableVicinity(row: 2, column: 2),
+      const TableVicinity(row: 3, column: 2),
+      const TableVicinity(row: 2, column: 3),
+      const TableVicinity(row: 3, column: 3),
+    };
+    final TableView tableView = TableView.builder(
+      columnCount: 10,
+      rowCount: 10,
+      columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+      rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+      cellBuilder: (BuildContext context, TableVicinity vicinity) {
+        if (mergedCell.contains(vicinity)) {
+          return const TableViewCell(
+            rowMergeStart: 2,
+            rowMergeSpan: 2,
+            columnMergeStart: 2,
+            columnMergeSpan: 2,
+            child: Text('Tile c: 2, r: 2'),
+          );
+        }
+        return TableViewCell(
+          child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+        );
+      },
+      pinnedRowCount: 1,
+      pinnedColumnCount: 1,
+      verticalDetails: ScrollableDetails.vertical(
+        controller: verticalController,
+      ),
+      horizontalDetails: ScrollableDetails.horizontal(
+        controller: horizontalController,
+      ),
+    );
+    await tester.pumpWidget(MaterialApp(home: tableView));
+    await tester.pumpAndSettle();
+
+    expect(verticalController.position.pixels, 0.0);
+    expect(horizontalController.position.pixels, 0.0);
+    expect(
+      tester.getRect(find.text('Tile c: 2, r: 2')),
+      const Rect.fromLTWH(200.0, 200.0, 200.0, 200.0),
+    );
+
+    verticalController.jumpTo(10.0);
+    await tester.pumpAndSettle();
+    expect(verticalController.position.pixels, 10.0);
+    expect(horizontalController.position.pixels, 0.0);
+    expect(
+      tester.getRect(find.text('Tile c: 2, r: 2')),
+      const Rect.fromLTWH(200.0, 190.0, 200.0, 200.0),
+    );
+
+    horizontalController.jumpTo(10.0);
+    await tester.pumpAndSettle();
+    expect(verticalController.position.pixels, 10.0);
+    expect(horizontalController.position.pixels, 10.0);
+    expect(
+      tester.getRect(find.text('Tile c: 2, r: 2')),
+      const Rect.fromLTWH(190.0, 190.0, 200.0, 200.0),
+    );
   });
 }
 

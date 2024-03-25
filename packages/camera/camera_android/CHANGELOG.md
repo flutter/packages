@@ -1,3 +1,9 @@
+## 0.10.8+17
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+* Updates `README.md` to encourage developers to opt into `camera_android_camerax`.
+
 ## 0.10.8+16
 
 * Fixes new lint warnings.

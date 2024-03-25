@@ -4,6 +4,7 @@
 
 import Flutter
 import XCTest
+
 @testable import test_plugin
 
 class MockNullableArgHostApi: NullableArgHostApi {
@@ -27,11 +28,11 @@ class NullableReturnsTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
     api.doit(x: nil) { result in
       switch result {
-        case .success(let res) :
-          XCTAssertEqual(99, res)
-          expectation.fulfill()
-        case .failure(_) :
-          return
+      case .success(let res):
+        XCTAssertEqual(99, res)
+        expectation.fulfill()
+      case .failure(_):
+        return
       }
     }
     wait(for: [expectation], timeout: 1.0)
