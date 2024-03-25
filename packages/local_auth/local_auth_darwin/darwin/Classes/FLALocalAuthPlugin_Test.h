@@ -17,6 +17,6 @@
 
 @interface FLALocalAuthPlugin ()
 /// Returns an instance that uses the given factory to create LAContexts.
-- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)factory
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
     NS_DESIGNATED_INITIALIZER;
 @end
