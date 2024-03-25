@@ -69,6 +69,10 @@ class WebKitProxy {
       WKWebView webView,
       WKNavigationAction navigationAction,
     )? decidePolicyForNavigationAction,
+    Future<WKNavigationResponsePolicy> Function(
+      WKWebView webView,
+      WKNavigationResponse navigationResponse,
+    )? decidePolicyForNavigationResponse,
     void Function(WKWebView webView, NSError error)? didFailNavigation,
     void Function(WKWebView webView, NSError error)?
         didFailProvisionalNavigation,
