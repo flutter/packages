@@ -60,22 +60,11 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   SetUpFLADLocalAuthApi([registrar messenger], instance);
 }
 
-- (instancetype)init {
-  return [self initWithContextFactory:[[FLADefaultAuthContextFactory alloc] init]];
-}
-
-- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)factory {
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _authContextFactory = factory;
-  }
-  return self;
-}
-
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [self initWithContextFactory:[[FLADefaultAuthContextFactory alloc] init]];
-  if (self) {
     _registrar = registrar;
+    _authContextFactory = [[FLADefaultAuthContextFactory alloc] init];
   }
   return self;
 }
@@ -176,9 +165,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                   [self handleSucceeded:NO withCompletion:completion];
                 }];
   return;
-#endif
-
-#if TARGET_OS_IOS
+#elif TARGET_OS_IOS
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:@""
                                           message:message
