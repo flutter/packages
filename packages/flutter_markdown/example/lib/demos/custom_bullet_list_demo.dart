@@ -65,10 +65,15 @@ class CustomBulletListDemo extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Markdown(
           data: _markdownData,
+          bulletBuilder: (int index, BulletStyle style, int nestLevel) =>
+              switch (style) {
+            BulletStyle.unorderedList => const Text('・'),
+            BulletStyle.orderedList => Text('${index + 1}-$nestLevel.'),
+          },
         ),
       ),
     );
