@@ -14,14 +14,14 @@ import 'table_span.dart';
 /// Used by the [TableCellDelegateMixin.buildColumn] and
 /// [TableCellDelegateMixin.buildRow] to configure rows and columns in the
 /// [TableView].
-typedef TableSpanBuilder = TableSpan Function(int index);
+typedef TableSpanBuilder = TableSpan? Function(int index);
 
 /// Signature for a function that creates a child [TableViewCell] for a given
 /// [TableVicinity] in a [TableView], but may return null.
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder = TableViewCell Function(
+typedef TableViewCellBuilder = TableViewCell? Function(
   BuildContext context,
   TableVicinity vicinity,
 );
@@ -45,6 +45,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
+  // TODO(Piinks): Update all docs where making nullable
   int? get columnCount;
 
   /// The number of rows that the table has content for.
@@ -102,13 +103,13 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
   /// [columnCount].
-  TableSpan buildColumn(int index);
+  TableSpan? buildColumn(int index);
 
   /// Builds the [TableSpan] that describe the row at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
   /// [rowCount].
-  TableSpan buildRow(int index);
+  TableSpan? buildRow(int index);
 }
 
 /// A delegate that supplies children for a [TableViewport] on demand using a
@@ -169,7 +170,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   /// [columnCount].
   final TableSpanBuilder _columnBuilder;
   @override
-  TableSpan buildColumn(int index) => _columnBuilder(index);
+  TableSpan? buildColumn(int index) => _columnBuilder(index);
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
@@ -205,7 +206,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   /// [rowCount].
   final TableSpanBuilder _rowBuilder;
   @override
-  TableSpan buildRow(int index) => _rowBuilder(index);
+  TableSpan? buildRow(int index) => _rowBuilder(index);
 
   @override
   int get pinnedRowCount => _pinnedRowCount;
@@ -274,7 +275,13 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   /// [columnCount].
   final TableSpanBuilder _columnBuilder;
   @override
-  TableSpan buildColumn(int index) => _columnBuilder(index);
+  TableSpan? buildColumn(int index) {
+    if (index >= columnCount) {
+      // The list delegate has a finite number of columns.
+      return null;
+    }
+    return _columnBuilder(index);
+  }
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
@@ -298,7 +305,13 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   /// [rowCount].
   final TableSpanBuilder _rowBuilder;
   @override
-  TableSpan buildRow(int index) => _rowBuilder(index);
+  TableSpan? buildRow(int index) {
+    if (index >= rowCount) {
+      // The list deleagte has a finite number of rows.
+      return null;
+    }
+    return _rowBuilder(index);
+  }
 
   @override
   int get pinnedRowCount => _pinnedRowCount;

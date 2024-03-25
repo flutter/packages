@@ -129,17 +129,17 @@ class TableView extends TwoDimensionalScrollView {
     super.clipBehavior,
     int pinnedRowCount = 0,
     int pinnedColumnCount = 0,
-    required int columnCount,
-    required int rowCount,
+    int? columnCount,
+    int? rowCount,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     required TableViewCellBuilder cellBuilder,
   })  : assert(pinnedRowCount >= 0),
-        assert(rowCount >= 0),
-        assert(rowCount >= pinnedRowCount),
-        assert(columnCount >= 0),
+        assert(rowCount == null || rowCount >= 0),
+        assert(rowCount == null || rowCount >= pinnedRowCount),
+        assert(columnCount == null || columnCount >= 0),
         assert(pinnedColumnCount >= 0),
-        assert(columnCount >= pinnedColumnCount),
+        assert(columnCount == null || columnCount >= pinnedColumnCount),
         super(
           delegate: TableCellBuilderDelegate(
             columnCount: columnCount,
@@ -412,7 +412,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   // Updates the cached column metrics for the table.
-  void _updateColumnMetrics({int fromColumnIndex = 0, int? toColumnIndex,}) {
+  void _updateColumnMetrics({int fromColumnIndex = 0, int? toColumnIndex}) {
     _firstNonPinnedColumn = null;
     _lastNonPinnedColumn = null;
     double startOfRegularColumn = 0;
@@ -424,11 +424,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       if (toColumnIndex != null) {
         // Column metrics should be computed up to the provided index.
         // Only relevant when we are filling in missing column metrics in an
-        //infinite context.
+        // infinite context.
         assert(delegate.columnCount == null);
         return newColumnMetrics.length > toColumnIndex;
       } else if (delegate.columnCount == null) {
-        // There are infinite columns, and no target index, computing metrics
+        // There are infinite columns, and no target index, compute metrics
         // up to what is visible and in the cache extent.
         return _lastNonPinnedColumn != null;
       }
@@ -454,9 +454,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       final double leadingOffset =
           isPinned ? startOfPinnedColumn : startOfRegularColumn;
       _Span? span = _columnMetrics.remove(column);
-      final TableSpan configuration = needsDelegateRebuild || span == null
+      final TableSpan? configuration = needsDelegateRebuild
           ? delegate.buildColumn(column)
-          : span.configuration;
+          : span?.configuration;
+      if (configuration == null) {
+        // We have reached the end of columns.
+        break;
+      }
       span ??= _Span();
       span.update(
         isPinned: isPinned,
@@ -485,6 +489,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       }
       column++;
     }
+
     assert(newColumnMetrics.length >= delegate.pinnedColumnCount);
     for (final _Span span in _columnMetrics.values) {
       span.dispose();
@@ -493,7 +498,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   // Updates the cached row metrics for the table.
-  void _updateRowMetrics({int fromRowIndex = 0, int? toRowIndex,}) {
+  void _updateRowMetrics({int fromRowIndex = 0, int? toRowIndex}) {
     _firstNonPinnedRow = null;
     _lastNonPinnedRow = null;
     double startOfRegularRow = 0;
@@ -507,7 +512,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _Span? span = _rowMetrics.remove(row);
       assert(needsDelegateRebuild || span != null);
       final TableSpan configuration =
-          needsDelegateRebuild ? delegate.buildRow(row) : span!.configuration;
+          needsDelegateRebuild ? delegate.buildRow(row) : span.configuration;
       span ??= _Span();
       span.update(
         isPinned: isPinned,
@@ -878,6 +883,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             mergedColumnOffset = baseColumnOffset +
                 _columnMetrics[firstColumn]!.leadingOffset +
                 _columnMetrics[firstColumn]!.configuration.padding.leading;
+
+            if (delegate.columnCount == null && _columnMetrics[lastColumn] == null) {
+              // The number of columns is infinte, and we have not calculated
+              // the metrics to the full extent of the merged cell. Update the
+              // metrics so we have all the information for the merged area.
+              _updateColumnMetrics(
+                fromColumnIndex: _columnMetrics.length,
+                toColumnIndex: lastColumn,
+              );
+            }
             mergedColumnWidth = _columnMetrics[lastColumn]!.trailingOffset -
                 _columnMetrics[firstColumn]!.leadingOffset -
                 _columnMetrics[lastColumn]!.configuration.padding.trailing -

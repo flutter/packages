@@ -56,9 +56,9 @@ class _TableExampleState extends State<TableExample> {
           verticalDetails:
               ScrollableDetails.vertical(controller: _verticalController),
           cellBuilder: _buildCell,
-          columnCount: 20,
+          // columnCount: 20,
           columnBuilder: _buildColumnSpan,
-          rowCount: _rowCount,
+          // rowCount: _rowCount,
           rowBuilder: _buildRowSpan,
         ),
       ),
