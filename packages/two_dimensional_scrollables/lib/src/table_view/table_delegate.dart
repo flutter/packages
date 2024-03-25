@@ -14,6 +14,9 @@ import 'table_span.dart';
 /// Used by the [TableCellDelegateMixin.buildColumn] and
 /// [TableCellDelegateMixin.buildRow] to configure rows and columns in the
 /// [TableView].
+///
+/// Returning null from this builder signifies the end of rows or columns being
+/// built if a row or column count has not been specified for the table.
 typedef TableSpanBuilder = TableSpan? Function(int index);
 
 /// Signature for a function that creates a child [TableViewCell] for a given
@@ -21,7 +24,7 @@ typedef TableSpanBuilder = TableSpan? Function(int index);
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder = TableViewCell? Function(
+typedef TableViewCellBuilder = TableViewCell Function(
   BuildContext context,
   TableVicinity vicinity,
 );
@@ -45,7 +48,10 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
-  // TODO(Piinks): Update all docs where making nullable
+  ///
+  /// When null, the number of columns will be infinite in number, unless null
+  /// is returned from [TableCellBuilderDelegate.columnBuilder]. The
+  /// [TableCellListDelegate] does not support an infinite number of columns.
   int? get columnCount;
 
   /// The number of rows that the table has content for.
@@ -63,6 +69,10 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
+  ///
+  /// When null, the number of rows will be infinite in number, unless null
+  /// is returned from [TableCellBuilderDelegate.rowBuilder]. The
+  /// [TableCellListDelegate] does not support an infinite number of rows.
   int? get rowCount;
 
   /// The number of columns that are permanently shown on the leading vertical
@@ -102,13 +112,17 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// Builds the [TableSpan] that describes the column at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [columnCount].
+  /// [columnCount]. If [columnCount] is null, the number of columns will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// columns.
   TableSpan? buildColumn(int index);
 
   /// Builds the [TableSpan] that describe the row at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [rowCount].
+  /// [rowCount]. If [rowCount] is null, the number of rows will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// columns.
   TableSpan? buildRow(int index);
 }
 
@@ -118,6 +132,11 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
 /// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
 /// automatically insert repaint boundaries. Instead, repaint boundaries are
 /// controlled by [TableViewCell.addRepaintBoundaries].
+///
+/// If the [rowCount] or [columnCount] is not provided, the number of rows
+/// and/or columns will be infinite. Returning null from the [columnBuilder]
+/// and/or [rowBuilder] in this case can terminate the number of rows and
+/// columns at the given index.
 class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     with TableCellDelegateMixin {
   /// Creates a lazy building delegate to use with a [TableView].
@@ -167,7 +186,9 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   /// Builds the [TableSpan] that describes the column at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [columnCount].
+  /// [columnCount]. If [columnCount] is null, the number of columns will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// columns.
   final TableSpanBuilder _columnBuilder;
   @override
   TableSpan? buildColumn(int index) => _columnBuilder(index);
@@ -196,14 +217,16 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     assert(value == null || pinnedRowCount <= value);
     maxYIndex = switch (value) {
       null => value,
-      _ => value -1,
+      _ => value - 1,
     };
   }
 
   /// Builds the [TableSpan] that describes the row at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [rowCount].
+  /// [rowCount]. If [rowCount] is null, the number of rows will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// rows.
   final TableSpanBuilder _rowBuilder;
   @override
   TableSpan? buildRow(int index) => _rowBuilder(index);

@@ -309,9 +309,24 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   int? _lastNonPinnedRow;
   int? _lastNonPinnedColumn;
 
+  bool _columnNullTerminated = false;
+  bool get _columnsAreInfinite => delegate.columnCount == null;
   // How far columns should be laid out in a given frame.
   double get _targetColumnPixel {
-    return cacheExtent + horizontalOffset.pixels + viewportDimension.width - _pinnedColumnsExtent;
+    return cacheExtent +
+        horizontalOffset.pixels +
+        viewportDimension.width -
+        _pinnedColumnsExtent;
+  }
+
+  bool _rowNullTerminated = false;
+  bool get _rowsAreInfinite => delegate.rowCount == null;
+  // How far rows should be laid out in a given frame.
+  double get _targetRowPixel {
+    return cacheExtent +
+        verticalOffset.pixels +
+        viewportDimension.height -
+        _pinnedRowsExtent;
   }
 
   TableVicinity? get _firstNonPinnedCell {
@@ -412,53 +427,62 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   // Updates the cached column metrics for the table.
-  void _updateColumnMetrics({int fromColumnIndex = 0, int? toColumnIndex}) {
-    _firstNonPinnedColumn = null;
-    _lastNonPinnedColumn = null;
+  void _updateColumnMetrics({bool appendColumns = false, int? toColumnIndex}) {
+    final Map<int, _Span> oldColumnMetrics = _columnMetrics;
+    _columnMetrics.clear();
     double startOfRegularColumn = 0;
     double startOfPinnedColumn = 0;
-    final Map<int, _Span> newColumnMetrics = <int, _Span>{};
-    int column = fromColumnIndex;
+    if (appendColumns) {
+      // If fromColumnIndex is provided, we are only adding to the metrics we
+      // already know, since we lazily compile metrics. Copy over cached column
+      // metrics we aren't updating. This should only be the case when the
+      // number of columns is infinite, and saves us going through all the
+      // columns we already know about.
+      assert(_columnsAreInfinite);
+      assert(oldColumnMetrics.isNotEmpty);
+      for (int cachedColumn = 0; cachedColumn < oldColumnMetrics.length; cachedColumn++) {
+        _columnMetrics[cachedColumn] = oldColumnMetrics[cachedColumn]!;
+      }
+      if (_firstNonPinnedColumn != 0) {
+        startOfPinnedColumn = oldColumnMetrics[_firstNonPinnedColumn]!.trailingOffset;
+      }
+      startOfRegularColumn = oldColumnMetrics[_lastNonPinnedColumn]!.trailingOffset;
+    }
+    _firstNonPinnedColumn = null;
+    _lastNonPinnedColumn = null;
+    _columnNullTerminated = false;
+    int column = appendColumns ? oldColumnMetrics.length : 0;
 
     bool reachedColumnEnd() {
-      if (toColumnIndex != null) {
-        // Column metrics should be computed up to the provided index.
-        // Only relevant when we are filling in missing column metrics in an
-        // infinite context.
-        assert(delegate.columnCount == null);
-        return newColumnMetrics.length > toColumnIndex;
-      } else if (delegate.columnCount == null) {
+      if (_columnsAreInfinite) {
+        if (toColumnIndex != null) {
+          // Column metrics should be computed up to the provided index.
+          // Only relevant when we are filling in missing column metrics in an
+          // infinite context.
+          return _columnMetrics.length > toColumnIndex;
+        }
         // There are infinite columns, and no target index, compute metrics
         // up to what is visible and in the cache extent.
         return _lastNonPinnedColumn != null;
       }
-      // Infinite columns would be satisfied by cases above.
-      assert(delegate.columnCount != null);
       // Compute all the metrics if the columns are finite.
-      return column < delegate.columnCount!;
-    }
-
-    if (fromColumnIndex != 0) {
-      // If fromColumnIndex is provided, we are only adding to the metrics we
-      // already know, since we lazily compile metrics. Copy over cached column
-      // metrics we aren't updating. This should only be the case when the
-      // number of columns is infinite.
-      assert(delegate.columnCount == null);
-      for (int cachedColumn = 0; cachedColumn < fromColumnIndex; cachedColumn++) {
-        newColumnMetrics[cachedColumn] = _columnMetrics[cachedColumn]!;
-      }
+      return column == delegate.columnCount!;
     }
 
     while (!reachedColumnEnd()) {
       final bool isPinned = column < delegate.pinnedColumnCount;
       final double leadingOffset =
           isPinned ? startOfPinnedColumn : startOfRegularColumn;
-      _Span? span = _columnMetrics.remove(column);
-      final TableSpan? configuration = needsDelegateRebuild
+      _Span? span = oldColumnMetrics.remove(column);
+      final TableSpan? configuration = needsDelegateRebuild || span == null
           ? delegate.buildColumn(column)
-          : span?.configuration;
+          : span.configuration;
       if (configuration == null) {
-        // We have reached the end of columns.
+        // We have reached the end of rows based on a null termination. This
+        // This happens when a row count has not been specified, but we have
+        // reached the end.
+        assert(_columnsAreInfinite);
+        _columnNullTerminated = true;
         break;
       }
       span ??= _Span();
@@ -473,7 +497,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           ),
         ),
       );
-      newColumnMetrics[column] = span;
+      _columnMetrics[column] = span;
       if (!isPinned) {
         if (span.trailingOffset >= horizontalOffset.pixels &&
             _firstNonPinnedColumn == null) {
@@ -490,29 +514,68 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       column++;
     }
 
-    assert(newColumnMetrics.length >= delegate.pinnedColumnCount);
-    for (final _Span span in _columnMetrics.values) {
+    assert(_columnMetrics.length >= delegate.pinnedColumnCount);
+    for (final _Span span in oldColumnMetrics.values) {
       span.dispose();
     }
-    _columnMetrics = newColumnMetrics;
   }
 
   // Updates the cached row metrics for the table.
-  void _updateRowMetrics({int fromRowIndex = 0, int? toRowIndex}) {
-    _firstNonPinnedRow = null;
-    _lastNonPinnedRow = null;
+  void _updateRowMetrics({bool appendRows = false, int? toRowIndex}) {
+    final Map<int, _Span> oldRowMetrics = _rowMetrics;
+    _rowMetrics.clear();
     double startOfRegularRow = 0;
     double startOfPinnedRow = 0;
+    if (appendRows) {
+      // We are only adding to the metrics we already know, since we lazily
+      // compile metrics when we can. Copy over cached row metrics we aren't
+      // updating. This should only be the case when the number of rows is
+      // infinite.
+      assert(_rowsAreInfinite);
+      assert(oldRowMetrics.isNotEmpty);
+      for (int cachedRow = 0; cachedRow < oldRowMetrics.length; cachedRow++) {
+        _rowMetrics[cachedRow] = oldRowMetrics[cachedRow]!;
+      }
+      if (_firstNonPinnedRow != 0) {
+        startOfPinnedRow = oldRowMetrics[_firstNonPinnedRow]!.trailingOffset;
+      }
+      startOfRegularRow = oldRowMetrics[_lastNonPinnedRow]!.trailingOffset;
+    }
+    _firstNonPinnedRow = null;
+    _lastNonPinnedRow = null;
+    _rowNullTerminated = false;
+    int row = appendRows ? oldRowMetrics.length : 0;
 
-    final Map<int, _Span> newRowMetrics = <int, _Span>{};
-    for (int row = 0; row < delegate.rowCount; row++) {
+    bool reachedRowEnd() {
+      if (_rowsAreInfinite) {
+        if (toRowIndex != null) {
+          // Row metrics should be computed up to the provided index.
+          // Only relevant when we are filling in missing column metrics in an
+          // infinite context.
+          return _rowMetrics.length > toRowIndex;
+        }
+        // There are infinite row, and no target index, compute metrics
+        // up to what is visible and in the cache extent.
+        return _lastNonPinnedRow != null;
+      }
+      // Compute all the metrics if the rows are finite.
+      return row == delegate.rowCount!;
+    }
+
+    while (!reachedRowEnd()) {
       final bool isPinned = row < delegate.pinnedRowCount;
       final double leadingOffset =
           isPinned ? startOfPinnedRow : startOfRegularRow;
-      _Span? span = _rowMetrics.remove(row);
-      assert(needsDelegateRebuild || span != null);
-      final TableSpan configuration =
-          needsDelegateRebuild ? delegate.buildRow(row) : span.configuration;
+      _Span? span = oldRowMetrics.remove(row);
+      final TableSpan? configuration = needsDelegateRebuild || span == null ? delegate.buildRow(row) : span.configuration;
+      if (configuration == null) {
+        // We have reached the end of rows based on a null termination. This
+        // This happens when a row count has not been specified, but we have
+        // reached the end.
+        assert(_rowsAreInfinite);
+        _rowNullTerminated = true;
+        break;
+      }
       span ??= _Span();
       span.update(
         isPinned: isPinned,
@@ -525,17 +588,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           ),
         ),
       );
-      newRowMetrics[row] = span;
+      _rowMetrics[row] = span;
       if (!isPinned) {
         if (span.trailingOffset >= verticalOffset.pixels &&
             _firstNonPinnedRow == null) {
           _firstNonPinnedRow = row;
         }
-        final double targetRowPixel = cacheExtent +
-            verticalOffset.pixels +
-            viewportDimension.height -
-            startOfPinnedRow;
-        if (span.trailingOffset >= targetRowPixel &&
+        if (span.trailingOffset > _targetRowPixel &&
             _lastNonPinnedRow == null) {
           _lastNonPinnedRow = row;
         }
@@ -543,19 +602,20 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       } else {
         startOfPinnedRow = span.trailingOffset;
       }
+      row++;
     }
-    assert(newRowMetrics.length >= delegate.pinnedRowCount);
-    for (final _Span span in _rowMetrics.values) {
+
+    assert(_rowMetrics.length >= delegate.pinnedRowCount);
+    for (final _Span span in oldRowMetrics.values) {
       span.dispose();
     }
-    _rowMetrics = newRowMetrics;
   }
 
   void _updateScrollBounds() {
     final double maxVerticalScrollExtent;
-    if (delegate.rowCount == null) {
+    if (_rowsAreInfinite && !_rowNullTerminated) {
       maxVerticalScrollExtent = double.infinity;
-    } else if (_rowMetrics.length <= delegate.pinnedRowCount) {
+    } else if (!_rowsAreInfinite && _rowMetrics.length <= delegate.pinnedRowCount) {
       assert(_firstNonPinnedRow == null && _lastNonPinnedRow == null);
       maxVerticalScrollExtent = 0.0;
     } else {
@@ -572,9 +632,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     final double maxHorizontalScrollExtent;
-    if (delegate.columnCount == null) {
+    if (_columnsAreInfinite && !_columnNullTerminated) {
       maxHorizontalScrollExtent = double.infinity;
-    } else if (_columnMetrics.length <= delegate.pinnedColumnCount) {
+    } else if (!_columnsAreInfinite &&
+        _columnMetrics.length <= delegate.pinnedColumnCount) {
       assert(_firstNonPinnedColumn == null && _lastNonPinnedColumn == null);
       maxHorizontalScrollExtent = 0.0;
     } else {
@@ -600,19 +661,19 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   // Uses the cached metrics to update the currently visible cells.
   void _updateFirstAndLastVisibleCell() {
-    _firstNonPinnedColumn = null;
-    _lastNonPinnedColumn = null;
     if (_columnMetrics.isNotEmpty) {
       _Span lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
-      if (_columnMetrics.length != delegate.columnCount || lastKnownColumn.trailingOffset < _targetColumnPixel) {
+      if (_columnsAreInfinite && lastKnownColumn.trailingOffset < _targetColumnPixel) {
         // This will add the column metrics we do not know about up to the
         // _targetColumnPixel, while keeping the ones we already know about.
-        _updateColumnMetrics(fromColumnIndex: _columnMetrics.length);
-        assert(_columnMetrics.length == delegate.columnCount || lastKnownColumn.trailingOffset >= _targetColumnPixel);
-      }
+        _updateColumnMetrics(appendColumns: true);
       lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
+        assert(_columnMetrics.length == delegate.columnCount ||
+            lastKnownColumn.trailingOffset >= _targetColumnPixel);
+      }
     }
-
+    _firstNonPinnedColumn = null;
+    _lastNonPinnedColumn = null;
     for (int column = 0; column < _columnMetrics.length; column++) {
       if (_columnMetrics[column]!.isPinned) {
         continue;
@@ -631,12 +692,19 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _lastNonPinnedColumn ??= _columnMetrics.length - 1;
     }
 
+    if (_rowMetrics.isNotEmpty) {
+      _Span lastKnownRow = _rowMetrics[_rowMetrics.length - 1]!;
+      if (_rowsAreInfinite && lastKnownRow.trailingOffset < _targetRowPixel) {
+        // This will add the row metrics we do not know about up to the
+        // _targetRowPixel, while keeping the ones we already know about.
+        _updateRowMetrics(appendRows: true);
+        lastKnownRow = _rowMetrics[_rowMetrics.length - 1]!;
+        assert(_rowMetrics.length == delegate.rowCount ||
+            lastKnownRow.trailingOffset >= _targetRowPixel);
+      }
+    }
     _firstNonPinnedRow = null;
     _lastNonPinnedRow = null;
-    final double targetRowPixel = cacheExtent +
-        verticalOffset.pixels +
-        viewportDimension.height -
-        _pinnedRowsExtent;
     for (int row = 0; row < _rowMetrics.length; row++) {
       if (_rowMetrics[row]!.isPinned) {
         continue;
@@ -645,7 +713,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       if (endOfRow >= verticalOffset.pixels && _firstNonPinnedRow == null) {
         _firstNonPinnedRow = row;
       }
-      if (endOfRow >= targetRowPixel && _lastNonPinnedRow == null) {
+      if (endOfRow >= _targetRowPixel && _lastNonPinnedRow == null) {
         _lastNonPinnedRow = row;
         break;
       }
@@ -783,6 +851,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     double rowOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
       double columnOffset = -offset.dx;
+      assert(row < _rowMetrics.length);
       rowSpan = _rowMetrics[row]!;
       final double standardRowHeight = rowSpan.extent;
       double? mergedRowHeight;
@@ -790,6 +859,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       rowOffset += rowSpan.configuration.padding.leading;
 
       for (int column = start.column; column <= end.column; column += 1) {
+        assert(column < _columnMetrics.length);
         colSpan = _columnMetrics[column]!;
         final double standardColumnWidth = colSpan.extent;
         double? mergedColumnWidth;
@@ -862,6 +932,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             mergedRowOffset = baseRowOffset +
                 _rowMetrics[firstRow]!.leadingOffset +
                 _rowMetrics[firstRow]!.configuration.padding.leading;
+            if (_rowsAreInfinite && _rowMetrics[lastRow] == null) {
+              // The number of rows is infinte, and we have not calculated
+              // the metrics to the full extent of the merged cell. Update the
+              // metrics so we have all the information for the merged area.
+              _updateRowMetrics(appendRows: true, toRowIndex: lastRow);
+            }
             mergedRowHeight = _rowMetrics[lastRow]!.trailingOffset -
                 _rowMetrics[firstRow]!.leadingOffset -
                 _rowMetrics[lastRow]!.configuration.padding.trailing -
@@ -884,12 +960,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 _columnMetrics[firstColumn]!.leadingOffset +
                 _columnMetrics[firstColumn]!.configuration.padding.leading;
 
-            if (delegate.columnCount == null && _columnMetrics[lastColumn] == null) {
+            if (_columnsAreInfinite && _columnMetrics[lastColumn] == null) {
               // The number of columns is infinte, and we have not calculated
               // the metrics to the full extent of the merged cell. Update the
               // metrics so we have all the information for the merged area.
               _updateColumnMetrics(
-                fromColumnIndex: _columnMetrics.length,
+                appendColumns: true,
                 toColumnIndex: lastColumn,
               );
             }
