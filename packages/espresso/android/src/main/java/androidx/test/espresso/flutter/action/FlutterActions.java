@@ -6,6 +6,7 @@ package androidx.test.espresso.flutter.action;
 
 import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.flutter.api.WidgetAction;
+import androidx.test.espresso.flutter.common.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.annotation.Nonnull;
@@ -72,5 +73,15 @@ public final class FlutterActions {
    */
   public static WidgetAction scrollTo() {
     return new FlutterScrollToAction();
+  }
+
+  /**
+   * Returns an action that waits for up to a specified duration. This action can be useful when
+   * waiting for a UI element or condition to become available before performing further Flutter
+   * test actions.
+   */
+  @Nonnull
+  public static WidgetAction waitFor(@Nonnull Duration timeout) {
+    return new FlutterWaitForAction(timeout);
   }
 }
