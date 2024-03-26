@@ -128,23 +128,61 @@ struct AllTypes {
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllNullableTypes {
-  var aNullableBool: Bool? = nil
-  var aNullableInt: Int64? = nil
-  var aNullableInt64: Int64? = nil
-  var aNullableDouble: Double? = nil
-  var aNullableByteArray: FlutterStandardTypedData? = nil
-  var aNullable4ByteArray: FlutterStandardTypedData? = nil
-  var aNullable8ByteArray: FlutterStandardTypedData? = nil
-  var aNullableFloatArray: FlutterStandardTypedData? = nil
-  var aNullableList: [Any?]? = nil
-  var aNullableMap: [AnyHashable: Any?]? = nil
-  var nullableNestedList: [[Bool?]?]? = nil
-  var nullableMapWithAnnotations: [String?: String?]? = nil
-  var nullableMapWithObject: [String?: Any?]? = nil
-  var aNullableEnum: AnEnum? = nil
-  var aNullableString: String? = nil
-  var aNullableObject: Any? = nil
+class AllNullableTypes {
+  init(
+    aNullableBool: Bool? = nil,
+    aNullableInt: Int64? = nil,
+    aNullableInt64: Int64? = nil,
+    aNullableDouble: Double? = nil,
+    aNullableByteArray: FlutterStandardTypedData? = nil,
+    aNullable4ByteArray: FlutterStandardTypedData? = nil,
+    aNullable8ByteArray: FlutterStandardTypedData? = nil,
+    aNullableFloatArray: FlutterStandardTypedData? = nil,
+    aNullableList: [Any?]? = nil,
+    aNullableMap: [AnyHashable: Any?]? = nil,
+    nullableNestedList: [[Bool?]?]? = nil,
+    nullableMapWithAnnotations: [String?: String?]? = nil,
+    nullableMapWithObject: [String?: Any?]? = nil,
+    aNullableEnum: AnEnum? = nil,
+    aNullableString: String? = nil,
+    aNullableObject: Any? = nil,
+    allNullableTypes: AllNullableTypes? = nil
+  ) {
+    self.aNullableBool = aNullableBool
+    self.aNullableInt = aNullableInt
+    self.aNullableInt64 = aNullableInt64
+    self.aNullableDouble = aNullableDouble
+    self.aNullableByteArray = aNullableByteArray
+    self.aNullable4ByteArray = aNullable4ByteArray
+    self.aNullable8ByteArray = aNullable8ByteArray
+    self.aNullableFloatArray = aNullableFloatArray
+    self.aNullableList = aNullableList
+    self.aNullableMap = aNullableMap
+    self.nullableNestedList = nullableNestedList
+    self.nullableMapWithAnnotations = nullableMapWithAnnotations
+    self.nullableMapWithObject = nullableMapWithObject
+    self.aNullableEnum = aNullableEnum
+    self.aNullableString = aNullableString
+    self.aNullableObject = aNullableObject
+    self.allNullableTypes = allNullableTypes
+  }
+  var aNullableBool: Bool?
+  var aNullableInt: Int64?
+  var aNullableInt64: Int64?
+  var aNullableDouble: Double?
+  var aNullableByteArray: FlutterStandardTypedData?
+  var aNullable4ByteArray: FlutterStandardTypedData?
+  var aNullable8ByteArray: FlutterStandardTypedData?
+  var aNullableFloatArray: FlutterStandardTypedData?
+  var aNullableList: [Any?]?
+  var aNullableMap: [AnyHashable: Any?]?
+  var nullableNestedList: [[Bool?]?]?
+  var nullableMapWithAnnotations: [String?: String?]?
+  var nullableMapWithObject: [String?: Any?]?
+  var aNullableEnum: AnEnum?
+  var aNullableString: String?
+  var aNullableObject: Any?
+  var allNullableTypes: AllNullableTypes?
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
@@ -169,8 +207,102 @@ struct AllNullableTypes {
     }
     let aNullableString: String? = nilOrValue(list[14])
     let aNullableObject: Any? = list[15]
+    var allNullableTypes: AllNullableTypes? = nil
+    if let allNullableTypesList: [Any?] = nilOrValue(list[16]) {
+      allNullableTypes = AllNullableTypes.fromList(allNullableTypesList)
+    }
 
     return AllNullableTypes(
+      aNullableBool: aNullableBool,
+      aNullableInt: aNullableInt,
+      aNullableInt64: aNullableInt64,
+      aNullableDouble: aNullableDouble,
+      aNullableByteArray: aNullableByteArray,
+      aNullable4ByteArray: aNullable4ByteArray,
+      aNullable8ByteArray: aNullable8ByteArray,
+      aNullableFloatArray: aNullableFloatArray,
+      aNullableList: aNullableList,
+      aNullableMap: aNullableMap,
+      nullableNestedList: nullableNestedList,
+      nullableMapWithAnnotations: nullableMapWithAnnotations,
+      nullableMapWithObject: nullableMapWithObject,
+      aNullableEnum: aNullableEnum,
+      aNullableString: aNullableString,
+      aNullableObject: aNullableObject,
+      allNullableTypes: allNullableTypes
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
+      aNullableList,
+      aNullableMap,
+      nullableNestedList,
+      nullableMapWithAnnotations,
+      nullableMapWithObject,
+      aNullableEnum?.rawValue,
+      aNullableString,
+      aNullableObject,
+      allNullableTypes?.toList(),
+    ]
+  }
+}
+
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct AllNullableTypesWithoutRecursion {
+  var aNullableBool: Bool? = nil
+  var aNullableInt: Int64? = nil
+  var aNullableInt64: Int64? = nil
+  var aNullableDouble: Double? = nil
+  var aNullableByteArray: FlutterStandardTypedData? = nil
+  var aNullable4ByteArray: FlutterStandardTypedData? = nil
+  var aNullable8ByteArray: FlutterStandardTypedData? = nil
+  var aNullableFloatArray: FlutterStandardTypedData? = nil
+  var aNullableList: [Any?]? = nil
+  var aNullableMap: [AnyHashable: Any?]? = nil
+  var nullableNestedList: [[Bool?]?]? = nil
+  var nullableMapWithAnnotations: [String?: String?]? = nil
+  var nullableMapWithObject: [String?: Any?]? = nil
+  var aNullableEnum: AnEnum? = nil
+  var aNullableString: String? = nil
+  var aNullableObject: Any? = nil
+
+  static func fromList(_ list: [Any?]) -> AllNullableTypesWithoutRecursion? {
+    let aNullableBool: Bool? = nilOrValue(list[0])
+    let aNullableInt: Int64? =
+      isNullish(list[1]) ? nil : (list[1] is Int64? ? list[1] as! Int64? : Int64(list[1] as! Int32))
+    let aNullableInt64: Int64? =
+      isNullish(list[2]) ? nil : (list[2] is Int64? ? list[2] as! Int64? : Int64(list[2] as! Int32))
+    let aNullableDouble: Double? = nilOrValue(list[3])
+    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(list[4])
+    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(list[5])
+    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(list[6])
+    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(list[7])
+    let aNullableList: [Any?]? = nilOrValue(list[8])
+    let aNullableMap: [AnyHashable: Any?]? = nilOrValue(list[9])
+    let nullableNestedList: [[Bool?]?]? = nilOrValue(list[10])
+    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(list[11])
+    let nullableMapWithObject: [String?: Any?]? = nilOrValue(list[12])
+    var aNullableEnum: AnEnum? = nil
+    let aNullableEnumEnumVal: Int? = nilOrValue(list[13])
+    if let aNullableEnumRawValue = aNullableEnumEnumVal {
+      aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
+    }
+    let aNullableString: String? = nilOrValue(list[14])
+    let aNullableObject: Any? = list[15]
+
+    return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
       aNullableInt: aNullableInt,
       aNullableInt64: aNullableInt64,
@@ -220,23 +352,31 @@ struct AllNullableTypes {
 /// Generated class from Pigeon that represents data sent in messages.
 struct AllClassesWrapper {
   var allNullableTypes: AllNullableTypes
+  var allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nil
   var allTypes: AllTypes? = nil
 
   static func fromList(_ list: [Any?]) -> AllClassesWrapper? {
     let allNullableTypes = AllNullableTypes.fromList(list[0] as! [Any?])!
+    var allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nil
+    if let allNullableTypesWithoutRecursionList: [Any?] = nilOrValue(list[1]) {
+      allNullableTypesWithoutRecursion = AllNullableTypesWithoutRecursion.fromList(
+        allNullableTypesWithoutRecursionList)
+    }
     var allTypes: AllTypes? = nil
-    if let allTypesList: [Any?] = nilOrValue(list[1]) {
+    if let allTypesList: [Any?] = nilOrValue(list[2]) {
       allTypes = AllTypes.fromList(allTypesList)
     }
 
     return AllClassesWrapper(
       allNullableTypes: allNullableTypes,
+      allNullableTypesWithoutRecursion: allNullableTypesWithoutRecursion,
       allTypes: allTypes
     )
   }
   func toList() -> [Any?] {
     return [
       allNullableTypes.toList(),
+      allNullableTypesWithoutRecursion?.toList(),
       allTypes?.toList(),
     ]
   }
@@ -270,8 +410,10 @@ private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
     case 129:
       return AllNullableTypes.fromList(self.readValue() as! [Any?])
     case 130:
-      return AllTypes.fromList(self.readValue() as! [Any?])
+      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
     case 131:
+      return AllTypes.fromList(self.readValue() as! [Any?])
+    case 132:
       return TestMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -287,11 +429,14 @@ private class HostIntegrationCoreApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? AllNullableTypes {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllTypes {
       super.writeByte(131)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(132)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -358,6 +503,9 @@ protocol HostIntegrationCoreApi {
   func echoRequired(_ anInt: Int64) throws -> Int64
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
+  /// Returns the passed object, to test serialization and deserialization.
+  func echo(_ everything: AllNullableTypesWithoutRecursion?) throws
+    -> AllNullableTypesWithoutRecursion?
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   func extractNestedNullableString(from wrapper: AllClassesWrapper) throws -> String?
@@ -368,6 +516,10 @@ protocol HostIntegrationCoreApi {
   func sendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> AllNullableTypes
+  /// Returns passed in arguments of multiple types.
+  func sendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
+  ) throws -> AllNullableTypesWithoutRecursion
   /// Returns passed in int.
   func echo(_ aNullableInt: Int64?) throws -> Int64?
   /// Returns passed in double.
@@ -425,6 +577,10 @@ protocol HostIntegrationCoreApi {
   func echoAsync(
     _ everything: AllNullableTypes?,
     completion: @escaping (Result<AllNullableTypes?, Error>) -> Void)
+  /// Returns the passed object, to test serialization and deserialization.
+  func echoAsync(
+    _ everything: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, Error>) -> Void)
   /// Returns passed in int asynchronously.
   func echoAsyncNullable(_ anInt: Int64?, completion: @escaping (Result<Int64?, Error>) -> Void)
   /// Returns passed in double asynchronously.
@@ -457,6 +613,12 @@ protocol HostIntegrationCoreApi {
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?,
     completion: @escaping (Result<AllNullableTypes, Error>) -> Void)
+  func callFlutterEcho(
+    _ everything: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, Error>) -> Void)
+  func callFlutterSendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion, Error>) -> Void)
   func callFlutterEcho(_ aBool: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
   func callFlutterEcho(_ anInt: Int64, completion: @escaping (Result<Int64, Error>) -> Void)
   func callFlutterEcho(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void)
@@ -830,6 +992,25 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAllNullableTypesChannel.setMessageHandler(nil)
     }
+    /// Returns the passed object, to test serialization and deserialization.
+    let echoAllNullableTypesWithoutRecursionChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
+        do {
+          let result = try api.echo(everythingArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoAllNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
+    }
     /// Returns the inner `aString` value from the wrapped object, to test
     /// sending of nested objects.
     let extractNestedNullableStringChannel = FlutterBasicMessageChannel(
@@ -893,6 +1074,30 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       sendMultipleNullableTypesChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in arguments of multiple types.
+    let sendMultipleNullableTypesWithoutRecursionChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      sendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aNullableBoolArg: Bool? = nilOrValue(args[0])
+        let aNullableIntArg: Int64? =
+          isNullish(args[1])
+          ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
+        let aNullableStringArg: String? = nilOrValue(args[2])
+        do {
+          let result = try api.sendMultipleNullableTypesWithoutRecursion(
+            aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      sendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
     }
     /// Returns passed in int.
     let echoNullableIntChannel = FlutterBasicMessageChannel(
@@ -1394,6 +1599,27 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncNullableAllNullableTypesChannel.setMessageHandler(nil)
     }
+    /// Returns the passed object, to test serialization and deserialization.
+    let echoAsyncNullableAllNullableTypesWithoutRecursionChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
+        api.echoAsync(everythingArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
+    }
     /// Returns passed in int asynchronously.
     let echoAsyncNullableIntChannel = FlutterBasicMessageChannel(
       name:
@@ -1703,6 +1929,53 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       callFlutterSendMultipleNullableTypesChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoAllNullableTypesWithoutRecursionChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
+        api.callFlutterEcho(everythingArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
+    }
+    let callFlutterSendMultipleNullableTypesWithoutRecursionChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterSendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler {
+        message, reply in
+        let args = message as! [Any?]
+        let aNullableBoolArg: Bool? = nilOrValue(args[0])
+        let aNullableIntArg: Int64? =
+          isNullish(args[1])
+          ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
+        let aNullableStringArg: String? = nilOrValue(args[2])
+        api.callFlutterSendMultipleNullableTypesWithoutRecursion(
+          aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg
+        ) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterSendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
     }
     let callFlutterEchoBoolChannel = FlutterBasicMessageChannel(
       name:
@@ -2034,8 +2307,10 @@ private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
     case 129:
       return AllNullableTypes.fromList(self.readValue() as! [Any?])
     case 130:
-      return AllTypes.fromList(self.readValue() as! [Any?])
+      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
     case 131:
+      return AllTypes.fromList(self.readValue() as! [Any?])
+    case 132:
       return TestMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -2051,11 +2326,14 @@ private class FlutterIntegrationCoreApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? AllNullableTypes {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllTypes {
       super.writeByte(131)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(132)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -2104,6 +2382,17 @@ protocol FlutterIntegrationCoreApiProtocol {
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?,
     completion: @escaping (Result<AllNullableTypes, FlutterError>) -> Void)
+  /// Returns the passed object, to test serialization and deserialization.
+  func echoNullable(
+    _ everythingArg: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, FlutterError>) -> Void)
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  func sendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
+    aString aNullableStringArg: String?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion, FlutterError>) -> Void)
   /// Returns the passed boolean, to test serialization and deserialization.
   func echo(_ aBoolArg: Bool, completion: @escaping (Result<Bool, FlutterError>) -> Void)
   /// Returns the passed int, to test serialization and deserialization.
@@ -2314,6 +2603,66 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! AllNullableTypes
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed object, to test serialization and deserialization.
+  func echoNullable(
+    _ everythingArg: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, FlutterError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([everythingArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)))
+      } else {
+        let result: AllNullableTypesWithoutRecursion? = nilOrValue(listResponse[0])
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  func sendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
+    aString aNullableStringArg: String?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion, FlutterError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg] as [Any?]) {
+      response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(
+          .failure(
+            FlutterError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! AllNullableTypesWithoutRecursion
         completion(.success(result))
       }
     }
