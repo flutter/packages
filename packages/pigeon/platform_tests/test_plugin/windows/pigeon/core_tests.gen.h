@@ -180,6 +180,142 @@ class AllNullableTypes {
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
       const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
+      const flutter::EncodableValue* a_nullable_object,
+      const AllNullableTypes* all_nullable_types);
+
+  ~AllNullableTypes() = default;
+  AllNullableTypes(const AllNullableTypes& other);
+  AllNullableTypes& operator=(const AllNullableTypes& other);
+  AllNullableTypes(AllNullableTypes&& other) = default;
+  AllNullableTypes& operator=(AllNullableTypes&& other) noexcept = default;
+  const bool* a_nullable_bool() const;
+  void set_a_nullable_bool(const bool* value_arg);
+  void set_a_nullable_bool(bool value_arg);
+
+  const int64_t* a_nullable_int() const;
+  void set_a_nullable_int(const int64_t* value_arg);
+  void set_a_nullable_int(int64_t value_arg);
+
+  const int64_t* a_nullable_int64() const;
+  void set_a_nullable_int64(const int64_t* value_arg);
+  void set_a_nullable_int64(int64_t value_arg);
+
+  const double* a_nullable_double() const;
+  void set_a_nullable_double(const double* value_arg);
+  void set_a_nullable_double(double value_arg);
+
+  const std::vector<uint8_t>* a_nullable_byte_array() const;
+  void set_a_nullable_byte_array(const std::vector<uint8_t>* value_arg);
+  void set_a_nullable_byte_array(const std::vector<uint8_t>& value_arg);
+
+  const std::vector<int32_t>* a_nullable4_byte_array() const;
+  void set_a_nullable4_byte_array(const std::vector<int32_t>* value_arg);
+  void set_a_nullable4_byte_array(const std::vector<int32_t>& value_arg);
+
+  const std::vector<int64_t>* a_nullable8_byte_array() const;
+  void set_a_nullable8_byte_array(const std::vector<int64_t>* value_arg);
+  void set_a_nullable8_byte_array(const std::vector<int64_t>& value_arg);
+
+  const std::vector<double>* a_nullable_float_array() const;
+  void set_a_nullable_float_array(const std::vector<double>* value_arg);
+  void set_a_nullable_float_array(const std::vector<double>& value_arg);
+
+  const flutter::EncodableList* a_nullable_list() const;
+  void set_a_nullable_list(const flutter::EncodableList* value_arg);
+  void set_a_nullable_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableMap* a_nullable_map() const;
+  void set_a_nullable_map(const flutter::EncodableMap* value_arg);
+  void set_a_nullable_map(const flutter::EncodableMap& value_arg);
+
+  const flutter::EncodableList* nullable_nested_list() const;
+  void set_nullable_nested_list(const flutter::EncodableList* value_arg);
+  void set_nullable_nested_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableMap* nullable_map_with_annotations() const;
+  void set_nullable_map_with_annotations(
+      const flutter::EncodableMap* value_arg);
+  void set_nullable_map_with_annotations(
+      const flutter::EncodableMap& value_arg);
+
+  const flutter::EncodableMap* nullable_map_with_object() const;
+  void set_nullable_map_with_object(const flutter::EncodableMap* value_arg);
+  void set_nullable_map_with_object(const flutter::EncodableMap& value_arg);
+
+  const AnEnum* a_nullable_enum() const;
+  void set_a_nullable_enum(const AnEnum* value_arg);
+  void set_a_nullable_enum(const AnEnum& value_arg);
+
+  const std::string* a_nullable_string() const;
+  void set_a_nullable_string(const std::string_view* value_arg);
+  void set_a_nullable_string(std::string_view value_arg);
+
+  const flutter::EncodableValue* a_nullable_object() const;
+  void set_a_nullable_object(const flutter::EncodableValue* value_arg);
+  void set_a_nullable_object(const flutter::EncodableValue& value_arg);
+
+  const AllNullableTypes* all_nullable_types() const;
+  void set_all_nullable_types(const AllNullableTypes* value_arg);
+  void set_all_nullable_types(const AllNullableTypes& value_arg);
+
+ private:
+  static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class AllClassesWrapper;
+  friend class HostIntegrationCoreApi;
+  friend class HostIntegrationCoreApiCodecSerializer;
+  friend class FlutterIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApiCodecSerializer;
+  friend class HostTrivialApi;
+  friend class HostTrivialApiCodecSerializer;
+  friend class HostSmallApi;
+  friend class HostSmallApiCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class FlutterSmallApiCodecSerializer;
+  friend class CoreTestsTest;
+  std::optional<bool> a_nullable_bool_;
+  std::optional<int64_t> a_nullable_int_;
+  std::optional<int64_t> a_nullable_int64_;
+  std::optional<double> a_nullable_double_;
+  std::optional<std::vector<uint8_t>> a_nullable_byte_array_;
+  std::optional<std::vector<int32_t>> a_nullable4_byte_array_;
+  std::optional<std::vector<int64_t>> a_nullable8_byte_array_;
+  std::optional<std::vector<double>> a_nullable_float_array_;
+  std::optional<flutter::EncodableList> a_nullable_list_;
+  std::optional<flutter::EncodableMap> a_nullable_map_;
+  std::optional<flutter::EncodableList> nullable_nested_list_;
+  std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
+  std::optional<flutter::EncodableMap> nullable_map_with_object_;
+  std::optional<AnEnum> a_nullable_enum_;
+  std::optional<std::string> a_nullable_string_;
+  std::optional<flutter::EncodableValue> a_nullable_object_;
+  std::unique_ptr<AllNullableTypes> all_nullable_types_;
+};
+
+// The primary purpose for this class is to ensure coverage of Swift structs
+// with nullable items, as the primary [AllNullableTypes] class is being used to
+// test Swift classes.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class AllNullableTypesWithoutRecursion {
+ public:
+  // Constructs an object setting all non-nullable fields.
+  AllNullableTypesWithoutRecursion();
+
+  // Constructs an object setting all fields.
+  explicit AllNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const int64_t* a_nullable_int64, const double* a_nullable_double,
+      const std::vector<uint8_t>* a_nullable_byte_array,
+      const std::vector<int32_t>* a_nullable4_byte_array,
+      const std::vector<int64_t>* a_nullable8_byte_array,
+      const std::vector<double>* a_nullable_float_array,
+      const flutter::EncodableList* a_nullable_list,
+      const flutter::EncodableMap* a_nullable_map,
+      const flutter::EncodableList* nullable_nested_list,
+      const flutter::EncodableMap* nullable_map_with_annotations,
+      const flutter::EncodableMap* nullable_map_with_object,
+      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object);
 
   const bool* a_nullable_bool() const;
@@ -249,7 +385,8 @@ class AllNullableTypes {
   void set_a_nullable_object(const flutter::EncodableValue& value_arg);
 
  private:
-  static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
+  static AllNullableTypesWithoutRecursion FromEncodableList(
+      const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
@@ -295,10 +432,24 @@ class AllClassesWrapper {
 
   // Constructs an object setting all fields.
   explicit AllClassesWrapper(const AllNullableTypes& all_nullable_types,
+                             const AllNullableTypesWithoutRecursion*
+                                 all_nullable_types_without_recursion,
                              const AllTypes* all_types);
 
+  ~AllClassesWrapper() = default;
+  AllClassesWrapper(const AllClassesWrapper& other);
+  AllClassesWrapper& operator=(const AllClassesWrapper& other);
+  AllClassesWrapper(AllClassesWrapper&& other) = default;
+  AllClassesWrapper& operator=(AllClassesWrapper&& other) noexcept = default;
   const AllNullableTypes& all_nullable_types() const;
   void set_all_nullable_types(const AllNullableTypes& value_arg);
+
+  const AllNullableTypesWithoutRecursion* all_nullable_types_without_recursion()
+      const;
+  void set_all_nullable_types_without_recursion(
+      const AllNullableTypesWithoutRecursion* value_arg);
+  void set_all_nullable_types_without_recursion(
+      const AllNullableTypesWithoutRecursion& value_arg);
 
   const AllTypes* all_types() const;
   void set_all_types(const AllTypes* value_arg);
@@ -319,8 +470,10 @@ class AllClassesWrapper {
   friend class FlutterSmallApi;
   friend class FlutterSmallApiCodecSerializer;
   friend class CoreTestsTest;
-  AllNullableTypes all_nullable_types_;
-  std::optional<AllTypes> all_types_;
+  std::unique_ptr<AllNullableTypes> all_nullable_types_;
+  std::unique_ptr<AllNullableTypesWithoutRecursion>
+      all_nullable_types_without_recursion_;
+  std::unique_ptr<AllTypes> all_types_;
 };
 
 // A data class containing a List, used in unit tests.
@@ -430,6 +583,10 @@ class HostIntegrationCoreApi {
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
       const AllNullableTypes* everything) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>
+  EchoAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
   virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
@@ -440,6 +597,11 @@ class HostIntegrationCoreApi {
       const std::string* nullable_string) = 0;
   // Returns passed in arguments of multiple types.
   virtual ErrorOr<AllNullableTypes> SendMultipleNullableTypes(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string) = 0;
+  // Returns passed in arguments of multiple types.
+  virtual ErrorOr<AllNullableTypesWithoutRecursion>
+  SendMultipleNullableTypesWithoutRecursion(
       const bool* a_nullable_bool, const int64_t* a_nullable_int,
       const std::string* a_nullable_string) = 0;
   // Returns passed in int.
@@ -534,6 +696,12 @@ class HostIntegrationCoreApi {
       const AllNullableTypes* everything,
       std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
           result) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual void EchoAsyncNullableAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything,
+      std::function<
+          void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+          result) = 0;
   // Returns passed in int asynchronously.
   virtual void EchoAsyncNullableInt(
       const int64_t* an_int,
@@ -596,6 +764,16 @@ class HostIntegrationCoreApi {
       const bool* a_nullable_bool, const int64_t* a_nullable_int,
       const std::string* a_nullable_string,
       std::function<void(ErrorOr<AllNullableTypes> reply)> result) = 0;
+  virtual void CallFlutterEchoAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything,
+      std::function<
+          void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+          result) = 0;
+  virtual void CallFlutterSendMultipleNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<void(ErrorOr<AllNullableTypesWithoutRecursion> reply)>
+          result) = 0;
   virtual void CallFlutterEchoBool(
       bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
   virtual void CallFlutterEchoInt(
@@ -711,6 +889,19 @@ class FlutterIntegrationCoreApi {
       const bool* a_nullable_bool, const int64_t* a_nullable_int,
       const std::string* a_nullable_string,
       std::function<void(const AllNullableTypes&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed object, to test serialization and deserialization.
+  void EchoAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything,
+      std::function<void(const AllNullableTypesWithoutRecursion*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  // Returns passed in arguments of multiple types.
+  //
+  // Tests multiple-arity FlutterApi handling.
+  void SendMultipleNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<void(const AllNullableTypesWithoutRecursion&)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
   void EchoBool(bool a_bool, std::function<void(bool)>&& on_success,

@@ -34,6 +34,12 @@
   return everything;
 }
 
+- (nullable FLTAllNullableTypesWithoutRecursion *)
+    echoAllNullableTypesWithoutRecursion:(nullable FLTAllNullableTypesWithoutRecursion *)everything
+                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return everything;
+}
+
 - (nullable id)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
   return nil;
@@ -119,7 +125,9 @@
                                    error:(FlutterError *_Nullable *_Nonnull)error {
   FLTAllNullableTypes *innerObject = [[FLTAllNullableTypes alloc] init];
   innerObject.aNullableString = nullableString;
-  return [FLTAllClassesWrapper makeWithAllNullableTypes:innerObject allTypes:nil];
+  return [FLTAllClassesWrapper makeWithAllNullableTypes:innerObject
+                       allNullableTypesWithoutRecursion:nil
+                                               allTypes:nil];
 }
 
 - (nullable FLTAllNullableTypes *)
@@ -128,6 +136,21 @@
                            aString:(nullable NSString *)aNullableString
                              error:(FlutterError *_Nullable *_Nonnull)error {
   FLTAllNullableTypes *someTypes = [[FLTAllNullableTypes alloc] init];
+  someTypes.aNullableBool = aNullableBool;
+  someTypes.aNullableInt = aNullableInt;
+  someTypes.aNullableString = aNullableString;
+  return someTypes;
+}
+
+- (nullable FLTAllNullableTypesWithoutRecursion *)
+    sendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
+                                             anInt:(nullable NSNumber *)aNullableInt
+                                           aString:(nullable NSString *)aNullableString
+                                             error:
+                                                 (FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                     error {
+  FLTAllNullableTypesWithoutRecursion *someTypes =
+      [[FLTAllNullableTypesWithoutRecursion alloc] init];
   someTypes.aNullableBool = aNullableBool;
   someTypes.aNullableInt = aNullableInt;
   someTypes.aNullableString = aNullableString;
@@ -216,6 +239,16 @@
 - (void)echoAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                                completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                     FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (void)
+    echoAsyncNullableAllNullableTypesWithoutRecursion:
+        (nullable FLTAllNullableTypesWithoutRecursion *)everything
+                                           completion:
+                                               (nonnull void (^)(
+                                                   FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                   FlutterError *_Nullable))completion {
   completion(everything, nil);
 }
 
@@ -357,6 +390,25 @@
                           }];
 }
 
+- (void)callFlutterSendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
+                                                            anInt:(nullable NSNumber *)aNullableInt
+                                                          aString:
+                                                              (nullable NSString *)aNullableString
+                                                       completion:
+                                                           (nonnull void (^)(
+                                                               FLTAllNullableTypesWithoutRecursion
+                                                                   *_Nullable,
+                                                               FlutterError *_Nullable))completion {
+  [self.flutterAPI
+      sendMultipleNullableTypesWithoutRecursionABool:aNullableBool
+                                               anInt:aNullableInt
+                                             aString:aNullableString
+                                          completion:^(FLTAllNullableTypesWithoutRecursion *value,
+                                                       FlutterError *error) {
+                                            completion(value, error);
+                                          }];
+}
+
 - (void)callFlutterEchoBool:(BOOL)aBool
                  completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoBool:aBool
@@ -430,6 +482,20 @@
                              completion:^(FLTAllNullableTypes *value, FlutterError *error) {
                                completion(value, error);
                              }];
+}
+
+- (void)callFlutterEchoAllNullableTypesWithoutRecursion:
+            (nullable FLTAllNullableTypesWithoutRecursion *)everything
+                                             completion:
+                                                 (nonnull void (^)(
+                                                     FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                     FlutterError *_Nullable))completion {
+  [self.flutterAPI
+      echoAllNullableTypesWithoutRecursion:everything
+                                completion:^(FLTAllNullableTypesWithoutRecursion *value,
+                                             FlutterError *error) {
+                                  completion(value, error);
+                                }];
 }
 
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
