@@ -48,6 +48,8 @@ class BillingResultWrapper implements HasBillingResponse {
   ///
   /// Defaults to `null`.
   /// This message uses an en-US locale and should not be shown to users.
+  // TODO(stuartmorgan): Make this non-nullable, since the underlying native
+  // object's property is annotated as @NonNull.
   final String? debugMessage;
 
   @override
