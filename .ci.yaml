@@ -494,8 +494,7 @@ targets:
 
   - name: Linux_android android_platform_tests_shard_6 master
     recipe: packages/packages
-    bringup: true
-    timeout: 300 # change to see adb logs
+    timeout: 120 # change to see adb logs
     properties:
       target_file: android_platform_tests.yaml
       channel: master
