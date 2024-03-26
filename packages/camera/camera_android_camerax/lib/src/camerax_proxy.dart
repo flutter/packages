@@ -158,7 +158,7 @@ class CameraXProxy {
   Camera2CameraControl Function(CameraControl cameraControl)
       getCamera2CameraControl;
 
-  /// Create [CaptureRequestOptions] with specified options.
+  /// Creates a [CaptureRequestOptions] with specified options.
   CaptureRequestOptions Function(
           List<(CaptureRequestKeySupportedType, Object?)> options)
       createCaptureRequestOptions;
