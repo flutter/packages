@@ -11,4 +11,9 @@
 #import "messages.g.h"
 
 @interface FLALocalAuthPlugin : NSObject <FlutterPlugin, FLADLocalAuthApi>
+
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+    NS_DESIGNATED_INITIALIZER;
 @end
