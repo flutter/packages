@@ -770,6 +770,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     if (needsDelegateRebuild || didResize) {
       // Recomputes the table metrics, invalidates any cached information.
+      _columnMetrics.clear();
+      _rowMetrics.clear();
       _updateColumnMetrics();
       _updateRowMetrics();
       _updateScrollBounds();
@@ -1221,7 +1223,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // A merged cell spans multiple vicinities, but only lays out one child for
     // the full area. Returns the child that has been laid out to span the given
     // vicinity.
-    assert(_mergedVicinities.keys.contains(vicinity));
+    assert(
+      _mergedVicinities.keys.contains(vicinity),
+      'The vicinity $vicinity is not accounted for as covered by a merged cell.',
+    );
     final TableVicinity mergedVicinity = _mergedVicinities[vicinity]!;
     // This vicinity must resolve to a child, unless something has gone wrong!
     return getChildFor(
