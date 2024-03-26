@@ -323,8 +323,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   final List<int> _mergedColumns = <int>[];
 
   // Cached Table metrics
-  Map<int, _Span> _columnMetrics = <int, _Span>{};
-  Map<int, _Span> _rowMetrics = <int, _Span>{};
+  final Map<int, _Span> _columnMetrics = <int, _Span>{};
+  final Map<int, _Span> _rowMetrics = <int, _Span>{};
   int? _firstNonPinnedRow;
   int? _firstNonPinnedColumn;
   int? _lastNonPinnedRow;
@@ -473,7 +473,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       startOfRegularColumn =
           _columnMetrics[_lastNonPinnedColumn]!.trailingOffset;
     }
-    _firstNonPinnedColumn = toColumnIndex == null ? null : _firstNonPinnedColumn;
+    _firstNonPinnedColumn =
+        toColumnIndex == null ? null : _firstNonPinnedColumn;
     _lastNonPinnedColumn = toColumnIndex == null ? null : _lastNonPinnedColumn;
     _columnNullTerminated = needsDelegateRebuild ? null : _columnNullTerminated;
     int column = appendColumns ? _columnMetrics.length : 0;

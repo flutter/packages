@@ -175,6 +175,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
       _ => maxXIndex! + 1,
     };
   }
+
   set columnCount(int? value) {
     assert(value == null || pinnedColumnCount <= value);
     maxXIndex = switch (value) {
@@ -213,6 +214,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
       _ => maxYIndex! + 1,
     };
   }
+
   set rowCount(int? value) {
     assert(value == null || pinnedRowCount <= value);
     maxYIndex = switch (value) {

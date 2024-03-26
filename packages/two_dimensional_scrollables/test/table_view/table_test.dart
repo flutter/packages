@@ -220,11 +220,12 @@ void main() {
           rowCount: rowCount,
           pinnedRowCount: pinnedRowCount,
           rowBuilder: rowBuilder ?? (_) => largeSpan,
-          cellBuilder: cellBuilder ?? (_, TableVicinity vicinity) {
-            return TableViewCell(
-              child: Text('R${vicinity.row}:C${vicinity.column}'),
-            );
-          },
+          cellBuilder: cellBuilder ??
+              (_, TableVicinity vicinity) {
+                return TableViewCell(
+                  child: Text('R${vicinity.row}:C${vicinity.column}'),
+                );
+              },
         );
       }
 
@@ -1607,32 +1608,39 @@ void main() {
         // available for a merged cell if it extends into an area we have not
         // computed the layout for yet.
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final List<int> mergedRows = List<int>.generate(10, (int index) => index,);
+        final List<int> mergedRows = List<int>.generate(
+          10,
+          (int index) => index,
+        );
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final List<int> mergedColumns = List<int>.generate(10, (int index) => index + 1,);
+        final List<int> mergedColumns = List<int>.generate(
+          10,
+          (int index) => index + 1,
+        );
         await tester.pumpWidget(MaterialApp(
           home: getTableView(
             cellBuilder: (_, TableVicinity vicinity) {
-            // Merged row
-            if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+              // Merged row
+              if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+                return TableViewCell(
+                  rowMergeStart: rowConfig.start,
+                  rowMergeSpan: rowConfig.span,
+                  child: const Text('R0:C0'),
+                );
+              }
+              // Merged column
+              if (mergedColumns.contains(vicinity.column) &&
+                  vicinity.row == 0) {
+                return TableViewCell(
+                  columnMergeStart: columnConfig.start,
+                  columnMergeSpan: columnConfig.span,
+                  child: const Text('R0:C1'),
+                );
+              }
               return TableViewCell(
-                rowMergeStart: rowConfig.start,
-                rowMergeSpan: rowConfig.span,
-                child: const Text('R0:C0'),
+                child: Text('R${vicinity.row}:C${vicinity.column}'),
               );
-            }
-            // Merged column
-            if (mergedColumns.contains(vicinity.column) && vicinity.row == 0) {
-              return TableViewCell(
-                columnMergeStart: columnConfig.start,
-                columnMergeSpan: columnConfig.span,
-                child: const Text('R0:C1'),
-              );
-            }
-            return TableViewCell(
-              child: Text('R${vicinity.row}:C${vicinity.column}'),
-            );
-          },
+            },
           ),
         ));
         await tester.pumpAndSettle();
@@ -1659,13 +1667,16 @@ void main() {
 
       testWidgets('merged column that exceeds metrics will assert',
           (WidgetTester tester) async {
-            final List<Object> exceptions = <Object>[];
+        final List<Object> exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final List<int> mergedColumns = List<int>.generate(10, (int index) => index + 1,);
+        final List<int> mergedColumns = List<int>.generate(
+          10,
+          (int index) => index + 1,
+        );
         await tester.pumpWidget(MaterialApp(
           home: getTableView(
             columnBuilder: (int index) {
@@ -1676,18 +1687,19 @@ void main() {
               return largeSpan;
             },
             cellBuilder: (_, TableVicinity vicinity) {
-            // Merged column
-            if (mergedColumns.contains(vicinity.column) && vicinity.row == 0) {
+              // Merged column
+              if (mergedColumns.contains(vicinity.column) &&
+                  vicinity.row == 0) {
+                return TableViewCell(
+                  columnMergeStart: columnConfig.start,
+                  columnMergeSpan: columnConfig.span,
+                  child: const Text('R0:C1'),
+                );
+              }
               return TableViewCell(
-                columnMergeStart: columnConfig.start,
-                columnMergeSpan: columnConfig.span,
-                child: const Text('R0:C1'),
+                child: Text('R${vicinity.row}:C${vicinity.column}'),
               );
-            }
-            return TableViewCell(
-              child: Text('R${vicinity.row}:C${vicinity.column}'),
-            );
-          },
+            },
           ),
         ));
         await tester.pumpWidget(Container());
@@ -1706,13 +1718,16 @@ void main() {
 
       testWidgets('merged row that exceeds metrics will assert',
           (WidgetTester tester) async {
-            final List<Object> exceptions = <Object>[];
+        final List<Object> exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final List<int> mergedRows = List<int>.generate(10, (int index) => index,);
+        final List<int> mergedRows = List<int>.generate(
+          10,
+          (int index) => index,
+        );
         await tester.pumpWidget(MaterialApp(
           home: getTableView(
             rowBuilder: (int index) {
@@ -1723,18 +1738,18 @@ void main() {
               return largeSpan;
             },
             cellBuilder: (_, TableVicinity vicinity) {
-            // Merged column
-            if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+              // Merged column
+              if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+                return TableViewCell(
+                  rowMergeStart: rowConfig.start,
+                  rowMergeSpan: rowConfig.span,
+                  child: const Text('R0:C0'),
+                );
+              }
               return TableViewCell(
-                rowMergeStart: rowConfig.start,
-                rowMergeSpan: rowConfig.span,
-                child: const Text('R0:C0'),
+                child: Text('R${vicinity.row}:C${vicinity.column}'),
               );
-            }
-            return TableViewCell(
-              child: Text('R${vicinity.row}:C${vicinity.column}'),
-            );
-          },
+            },
           ),
         ));
         await tester.pumpWidget(Container());
