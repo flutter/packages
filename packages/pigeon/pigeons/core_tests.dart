@@ -48,7 +48,7 @@ class AllTypes {
 }
 
 /// A class containing all supported nullable types.
-@SwiftClass(inheritNSObject: true)
+@SwiftClass()
 class AllNullableTypes {
   AllNullableTypes(
     this.aNullableBool,

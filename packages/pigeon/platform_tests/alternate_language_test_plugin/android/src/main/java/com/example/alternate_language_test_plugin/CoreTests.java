@@ -859,7 +859,12 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * The primary purpose for this class is to ensure coverage of Swift structs with nullable items,
+   * as the primary [AllNullableTypes] class is being used to test Swift classes.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class AllNullableTypesWithoutRecursion {
     private @Nullable Boolean aNullableBool;
 

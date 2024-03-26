@@ -230,9 +230,98 @@ AllNullableTypes::AllNullableTypes(
       a_nullable_object_(a_nullable_object
                              ? std::optional<EncodableValue>(*a_nullable_object)
                              : std::nullopt),
-      all_nullable_types_(all_nullable_types ? std::optional<AllNullableTypes>(
-                                                   *all_nullable_types)
-                                             : std::nullopt) {}
+      all_nullable_types_(
+          all_nullable_types
+              ? std::make_unique<AllNullableTypes>(*all_nullable_types)
+              : nullptr) {}
+
+AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
+    : a_nullable_bool_(other.a_nullable_bool_
+                           ? std::optional<bool>(*other.a_nullable_bool_)
+                           : std::nullopt),
+      a_nullable_int_(other.a_nullable_int_
+                          ? std::optional<int64_t>(*other.a_nullable_int_)
+                          : std::nullopt),
+      a_nullable_int64_(other.a_nullable_int64_
+                            ? std::optional<int64_t>(*other.a_nullable_int64_)
+                            : std::nullopt),
+      a_nullable_double_(other.a_nullable_double_
+                             ? std::optional<double>(*other.a_nullable_double_)
+                             : std::nullopt),
+      a_nullable_byte_array_(other.a_nullable_byte_array_
+                                 ? std::optional<std::vector<uint8_t>>(
+                                       *other.a_nullable_byte_array_)
+                                 : std::nullopt),
+      a_nullable4_byte_array_(other.a_nullable4_byte_array_
+                                  ? std::optional<std::vector<int32_t>>(
+                                        *other.a_nullable4_byte_array_)
+                                  : std::nullopt),
+      a_nullable8_byte_array_(other.a_nullable8_byte_array_
+                                  ? std::optional<std::vector<int64_t>>(
+                                        *other.a_nullable8_byte_array_)
+                                  : std::nullopt),
+      a_nullable_float_array_(other.a_nullable_float_array_
+                                  ? std::optional<std::vector<double>>(
+                                        *other.a_nullable_float_array_)
+                                  : std::nullopt),
+      a_nullable_list_(other.a_nullable_list_ ? std::optional<EncodableList>(
+                                                    *other.a_nullable_list_)
+                                              : std::nullopt),
+      a_nullable_map_(other.a_nullable_map_
+                          ? std::optional<EncodableMap>(*other.a_nullable_map_)
+                          : std::nullopt),
+      nullable_nested_list_(
+          other.nullable_nested_list_
+              ? std::optional<EncodableList>(*other.nullable_nested_list_)
+              : std::nullopt),
+      nullable_map_with_annotations_(
+          other.nullable_map_with_annotations_
+              ? std::optional<EncodableMap>(
+                    *other.nullable_map_with_annotations_)
+              : std::nullopt),
+      nullable_map_with_object_(
+          other.nullable_map_with_object_
+              ? std::optional<EncodableMap>(*other.nullable_map_with_object_)
+              : std::nullopt),
+      a_nullable_enum_(other.a_nullable_enum_
+                           ? std::optional<AnEnum>(*other.a_nullable_enum_)
+                           : std::nullopt),
+      a_nullable_string_(
+          other.a_nullable_string_
+              ? std::optional<std::string>(*other.a_nullable_string_)
+              : std::nullopt),
+      a_nullable_object_(
+          other.a_nullable_object_
+              ? std::optional<EncodableValue>(*other.a_nullable_object_)
+              : std::nullopt),
+      all_nullable_types_(
+          other.all_nullable_types_
+              ? std::make_unique<AllNullableTypes>(*other.all_nullable_types_)
+              : nullptr) {}
+
+AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
+  a_nullable_bool_ = other.a_nullable_bool_;
+  a_nullable_int_ = other.a_nullable_int_;
+  a_nullable_int64_ = other.a_nullable_int64_;
+  a_nullable_double_ = other.a_nullable_double_;
+  a_nullable_byte_array_ = other.a_nullable_byte_array_;
+  a_nullable4_byte_array_ = other.a_nullable4_byte_array_;
+  a_nullable8_byte_array_ = other.a_nullable8_byte_array_;
+  a_nullable_float_array_ = other.a_nullable_float_array_;
+  a_nullable_list_ = other.a_nullable_list_;
+  a_nullable_map_ = other.a_nullable_map_;
+  nullable_nested_list_ = other.nullable_nested_list_;
+  nullable_map_with_annotations_ = other.nullable_map_with_annotations_;
+  nullable_map_with_object_ = other.nullable_map_with_object_;
+  a_nullable_enum_ = other.a_nullable_enum_;
+  a_nullable_string_ = other.a_nullable_string_;
+  a_nullable_object_ = other.a_nullable_object_;
+  all_nullable_types_ =
+      other.all_nullable_types_
+          ? std::make_unique<AllNullableTypes>(*other.all_nullable_types_)
+          : nullptr;
+  return *this;
+}
 
 const bool* AllNullableTypes::a_nullable_bool() const {
   return a_nullable_bool_ ? &(*a_nullable_bool_) : nullptr;
@@ -461,18 +550,18 @@ void AllNullableTypes::set_a_nullable_object(const EncodableValue& value_arg) {
 }
 
 const AllNullableTypes* AllNullableTypes::all_nullable_types() const {
-  return all_nullable_types_ ? &(*all_nullable_types_) : nullptr;
+  return all_nullable_types_.get();
 }
 
 void AllNullableTypes::set_all_nullable_types(
     const AllNullableTypes* value_arg) {
   all_nullable_types_ =
-      value_arg ? std::optional<AllNullableTypes>(*value_arg) : std::nullopt;
+      value_arg ? std::make_unique<AllNullableTypes>(*value_arg) : nullptr;
 }
 
 void AllNullableTypes::set_all_nullable_types(
     const AllNullableTypes& value_arg) {
-  all_nullable_types_ = value_arg;
+  all_nullable_types_ = std::make_unique<AllNullableTypes>(value_arg);
 }
 
 EncodableList AllNullableTypes::ToEncodableList() const {
@@ -1052,65 +1141,92 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
 // AllClassesWrapper
 
 AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types)
-    : all_nullable_types_(all_nullable_types) {}
+    : all_nullable_types_(
+          std::make_unique<AllNullableTypes>(all_nullable_types)) {}
 
 AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
                                      const AllNullableTypesWithoutRecursion*
                                          all_nullable_types_without_recursion,
                                      const AllTypes* all_types)
-    : all_nullable_types_(all_nullable_types),
+    : all_nullable_types_(
+          std::make_unique<AllNullableTypes>(all_nullable_types)),
       all_nullable_types_without_recursion_(
           all_nullable_types_without_recursion
-              ? std::optional<AllNullableTypesWithoutRecursion>(
+              ? std::make_unique<AllNullableTypesWithoutRecursion>(
                     *all_nullable_types_without_recursion)
-              : std::nullopt),
-      all_types_(all_types ? std::optional<AllTypes>(*all_types)
-                           : std::nullopt) {}
+              : nullptr),
+      all_types_(all_types ? std::make_unique<AllTypes>(*all_types) : nullptr) {
+}
+
+AllClassesWrapper::AllClassesWrapper(const AllClassesWrapper& other)
+    : all_nullable_types_(
+          std::make_unique<AllNullableTypes>(*other.all_nullable_types_)),
+      all_nullable_types_without_recursion_(
+          other.all_nullable_types_without_recursion_
+              ? std::make_unique<AllNullableTypesWithoutRecursion>(
+                    *other.all_nullable_types_without_recursion_)
+              : nullptr),
+      all_types_(other.all_types_
+                     ? std::make_unique<AllTypes>(*other.all_types_)
+                     : nullptr) {}
+
+AllClassesWrapper& AllClassesWrapper::operator=(
+    const AllClassesWrapper& other) {
+  all_nullable_types_ =
+      std::make_unique<AllNullableTypes>(*other.all_nullable_types_);
+  all_nullable_types_without_recursion_ =
+      other.all_nullable_types_without_recursion_
+          ? std::make_unique<AllNullableTypesWithoutRecursion>(
+                *other.all_nullable_types_without_recursion_)
+          : nullptr;
+  all_types_ = other.all_types_ ? std::make_unique<AllTypes>(*other.all_types_)
+                                : nullptr;
+  return *this;
+}
 
 const AllNullableTypes& AllClassesWrapper::all_nullable_types() const {
-  return all_nullable_types_;
+  return *all_nullable_types_;
 }
 
 void AllClassesWrapper::set_all_nullable_types(
     const AllNullableTypes& value_arg) {
-  all_nullable_types_ = value_arg;
+  all_nullable_types_ = std::make_unique<AllNullableTypes>(value_arg);
 }
 
 const AllNullableTypesWithoutRecursion*
 AllClassesWrapper::all_nullable_types_without_recursion() const {
-  return all_nullable_types_without_recursion_
-             ? &(*all_nullable_types_without_recursion_)
-             : nullptr;
+  return all_nullable_types_without_recursion_.get();
 }
 
 void AllClassesWrapper::set_all_nullable_types_without_recursion(
     const AllNullableTypesWithoutRecursion* value_arg) {
   all_nullable_types_without_recursion_ =
-      value_arg ? std::optional<AllNullableTypesWithoutRecursion>(*value_arg)
-                : std::nullopt;
+      value_arg ? std::make_unique<AllNullableTypesWithoutRecursion>(*value_arg)
+                : nullptr;
 }
 
 void AllClassesWrapper::set_all_nullable_types_without_recursion(
     const AllNullableTypesWithoutRecursion& value_arg) {
-  all_nullable_types_without_recursion_ = value_arg;
+  all_nullable_types_without_recursion_ =
+      std::make_unique<AllNullableTypesWithoutRecursion>(value_arg);
 }
 
 const AllTypes* AllClassesWrapper::all_types() const {
-  return all_types_ ? &(*all_types_) : nullptr;
+  return all_types_.get();
 }
 
 void AllClassesWrapper::set_all_types(const AllTypes* value_arg) {
-  all_types_ = value_arg ? std::optional<AllTypes>(*value_arg) : std::nullopt;
+  all_types_ = value_arg ? std::make_unique<AllTypes>(*value_arg) : nullptr;
 }
 
 void AllClassesWrapper::set_all_types(const AllTypes& value_arg) {
-  all_types_ = value_arg;
+  all_types_ = std::make_unique<AllTypes>(value_arg);
 }
 
 EncodableList AllClassesWrapper::ToEncodableList() const {
   EncodableList list;
   list.reserve(3);
-  list.push_back(EncodableValue(all_nullable_types_.ToEncodableList()));
+  list.push_back(EncodableValue(all_nullable_types_->ToEncodableList()));
   list.push_back(
       all_nullable_types_without_recursion_
           ? EncodableValue(

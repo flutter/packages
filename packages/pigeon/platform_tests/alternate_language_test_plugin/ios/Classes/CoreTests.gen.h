@@ -106,6 +106,9 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong, nullable) FLTAllNullableTypes *allNullableTypes;
 @end
 
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
 @interface FLTAllNullableTypesWithoutRecursion : NSObject
 + (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
                          aNullableInt:(nullable NSNumber *)aNullableInt

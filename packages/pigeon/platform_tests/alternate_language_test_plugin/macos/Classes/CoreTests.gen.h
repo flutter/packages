@@ -106,6 +106,9 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable) AllNullableTypes *allNullableTypes;
 @end
 
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
 @interface AllNullableTypesWithoutRecursion : NSObject
 + (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
                          aNullableInt:(nullable NSNumber *)aNullableInt

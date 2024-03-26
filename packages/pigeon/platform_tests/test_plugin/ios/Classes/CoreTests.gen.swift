@@ -128,8 +128,7 @@ struct AllTypes {
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-@objc
-class AllNullableTypes: NSObject {
+class AllNullableTypes {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,
@@ -256,6 +255,10 @@ class AllNullableTypes: NSObject {
   }
 }
 
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
+///
 /// Generated class from Pigeon that represents data sent in messages.
 struct AllNullableTypesWithoutRecursion {
   var aNullableBool: Bool? = nil

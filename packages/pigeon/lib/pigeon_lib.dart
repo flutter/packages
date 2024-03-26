@@ -180,10 +180,7 @@ class SwiftFunction {
 /// Metadata to annotate data classes to be defined as class in Swift output.
 class SwiftClass {
   /// Constructor.
-  const SwiftClass({this.inheritNSObject = false});
-
-  /// Whether to define data class as inheriting from NSObject with `@objc` annotation.
-  final bool inheritNSObject;
+  const SwiftClass();
 }
 
 /// Type of TaskQueue which determines how handlers are dispatched for
@@ -1560,13 +1557,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         name: node.name.lexeme,
         fields: <NamedType>[],
         isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
-        isNSObjectSubclass: _findMetadata(node.metadata, 'SwiftClass')
-                ?.arguments
-                ?.arguments
-                .first
-                .toString()
-                .contains('true') ??
-            false,
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
       );

@@ -227,6 +227,9 @@ class AllNullableTypes {
   }
 }
 
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
 class AllNullableTypesWithoutRecursion {
   AllNullableTypesWithoutRecursion({
     this.aNullableBool,

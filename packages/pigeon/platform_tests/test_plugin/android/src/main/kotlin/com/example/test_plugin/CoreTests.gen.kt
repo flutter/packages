@@ -210,7 +210,12 @@ data class AllNullableTypes(
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
+/**
+ * The primary purpose for this class is to ensure coverage of Swift structs with nullable items, as
+ * the primary [AllNullableTypes] class is being used to test Swift classes.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
 data class AllNullableTypesWithoutRecursion(
     val aNullableBool: Boolean? = null,
     val aNullableInt: Long? = null,

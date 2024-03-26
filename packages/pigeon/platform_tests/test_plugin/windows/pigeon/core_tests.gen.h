@@ -183,6 +183,11 @@ class AllNullableTypes {
       const flutter::EncodableValue* a_nullable_object,
       const AllNullableTypes* all_nullable_types);
 
+  ~AllNullableTypes() = default;
+  AllNullableTypes(const AllNullableTypes& other);
+  AllNullableTypes& operator=(const AllNullableTypes& other);
+  AllNullableTypes(AllNullableTypes&& other) = default;
+  AllNullableTypes& operator=(AllNullableTypes&& other) noexcept = default;
   const bool* a_nullable_bool() const;
   void set_a_nullable_bool(const bool* value_arg);
   void set_a_nullable_bool(bool value_arg);
@@ -284,9 +289,13 @@ class AllNullableTypes {
   std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
-  std::optional<AllNullableTypes> all_nullable_types_;
+  std::unique_ptr<AllNullableTypes> all_nullable_types_;
 };
 
+// The primary purpose for this class is to ensure coverage of Swift structs
+// with nullable items, as the primary [AllNullableTypes] class is being used to
+// test Swift classes.
+//
 // Generated class from Pigeon that represents data sent in messages.
 class AllNullableTypesWithoutRecursion {
  public:
@@ -427,6 +436,11 @@ class AllClassesWrapper {
                                  all_nullable_types_without_recursion,
                              const AllTypes* all_types);
 
+  ~AllClassesWrapper() = default;
+  AllClassesWrapper(const AllClassesWrapper& other);
+  AllClassesWrapper& operator=(const AllClassesWrapper& other);
+  AllClassesWrapper(AllClassesWrapper&& other) = default;
+  AllClassesWrapper& operator=(AllClassesWrapper&& other) noexcept = default;
   const AllNullableTypes& all_nullable_types() const;
   void set_all_nullable_types(const AllNullableTypes& value_arg);
 
@@ -456,10 +470,10 @@ class AllClassesWrapper {
   friend class FlutterSmallApi;
   friend class FlutterSmallApiCodecSerializer;
   friend class CoreTestsTest;
-  AllNullableTypes all_nullable_types_;
-  std::optional<AllNullableTypesWithoutRecursion>
+  std::unique_ptr<AllNullableTypes> all_nullable_types_;
+  std::unique_ptr<AllNullableTypesWithoutRecursion>
       all_nullable_types_without_recursion_;
-  std::optional<AllTypes> all_types_;
+  std::unique_ptr<AllTypes> all_types_;
 };
 
 // A data class containing a List, used in unit tests.
