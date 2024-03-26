@@ -42,6 +42,7 @@ import 'process_camera_provider.dart';
 import 'quality_selector.dart';
 import 'recorder.dart';
 import 'recording.dart';
+import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
 import 'surface.dart';
@@ -1159,8 +1160,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         boundSize = const Size(320, 240);
         aspectRatio = AspectRatio.ratio4To3;
       case ResolutionPreset.medium:
-        // TODO(camsim99): Handle the 3:2 aspect ratio case:
-        // https://github.com/flutter/flutter/issues/144363.
         boundSize = const Size(720, 480);
       case ResolutionPreset.high:
         boundSize = const Size(1280, 720);
@@ -1175,22 +1174,24 @@ class AndroidCameraCameraX extends CameraPlatform {
         // Automatically set strategy to choose highest available.
         resolutionStrategy =
             proxy.createResolutionStrategy(highestAvailable: true);
-        return proxy.createResolutionSelector(
-            resolutionStrategy, /* AspectRatioStrategy */ null);
+        return proxy.createResolutionSelector(resolutionStrategy,
+            /* ResolutionFilter */ null, /* AspectRatioStrategy */ null);
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
 
+    resolutionStrategy = proxy.createResolutionStrategy(
+        boundSize: boundSize, fallbackRule: fallbackRule);
+    final ResolutionFilter resolutionFilter =
+        proxy.createResolutionFilterWithOnePreferredSize(boundSize);
     final AspectRatioStrategy? aspectRatioStrategy = aspectRatio == null
         ? null
         : proxy.createAspectRatioStrategy(
             aspectRatio, AspectRatioStrategy.fallbackRuleAuto);
-    resolutionStrategy = proxy.createResolutionStrategy(
-        boundSize: boundSize, fallbackRule: fallbackRule);
     return proxy.createResolutionSelector(
-        resolutionStrategy, aspectRatioStrategy);
+        resolutionStrategy, resolutionFilter, aspectRatioStrategy);
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution
