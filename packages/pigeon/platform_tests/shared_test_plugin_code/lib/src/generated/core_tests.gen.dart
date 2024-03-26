@@ -139,6 +139,115 @@ class AllNullableTypes {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.allNullableTypes,
+  });
+
+  bool? aNullableBool;
+
+  int? aNullableInt;
+
+  int? aNullableInt64;
+
+  double? aNullableDouble;
+
+  Uint8List? aNullableByteArray;
+
+  Int32List? aNullable4ByteArray;
+
+  Int64List? aNullable8ByteArray;
+
+  Float64List? aNullableFloatArray;
+
+  List<Object?>? aNullableList;
+
+  Map<Object?, Object?>? aNullableMap;
+
+  List<List<bool?>?>? nullableNestedList;
+
+  Map<String?, String?>? nullableMapWithAnnotations;
+
+  Map<String?, Object?>? nullableMapWithObject;
+
+  AnEnum? aNullableEnum;
+
+  String? aNullableString;
+
+  Object? aNullableObject;
+
+  AllNullableTypes? allNullableTypes;
+
+  Object encode() {
+    return <Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
+      aNullableList,
+      aNullableMap,
+      nullableNestedList,
+      nullableMapWithAnnotations,
+      nullableMapWithObject,
+      aNullableEnum?.index,
+      aNullableString,
+      aNullableObject,
+      allNullableTypes?.encode(),
+    ];
+  }
+
+  static AllNullableTypes decode(Object result) {
+    result as List<Object?>;
+    return AllNullableTypes(
+      aNullableBool: result[0] as bool?,
+      aNullableInt: result[1] as int?,
+      aNullableInt64: result[2] as int?,
+      aNullableDouble: result[3] as double?,
+      aNullableByteArray: result[4] as Uint8List?,
+      aNullable4ByteArray: result[5] as Int32List?,
+      aNullable8ByteArray: result[6] as Int64List?,
+      aNullableFloatArray: result[7] as Float64List?,
+      aNullableList: result[8] as List<Object?>?,
+      aNullableMap: result[9] as Map<Object?, Object?>?,
+      nullableNestedList: (result[10] as List<Object?>?)?.cast<List<bool?>?>(),
+      nullableMapWithAnnotations:
+          (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      nullableMapWithObject:
+          (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+      aNullableEnum:
+          result[13] != null ? AnEnum.values[result[13]! as int] : null,
+      aNullableString: result[14] as String?,
+      aNullableObject: result[15],
+      allNullableTypes: result[16] != null
+          ? AllNullableTypes.decode(result[16]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
+class AllNullableTypesWithoutRecursion {
+  AllNullableTypesWithoutRecursion({
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableList,
+    this.aNullableMap,
+    this.nullableNestedList,
+    this.nullableMapWithAnnotations,
+    this.nullableMapWithObject,
+    this.aNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
   });
 
   bool? aNullableBool;
@@ -194,9 +303,9 @@ class AllNullableTypes {
     ];
   }
 
-  static AllNullableTypes decode(Object result) {
+  static AllNullableTypesWithoutRecursion decode(Object result) {
     result as List<Object?>;
-    return AllNullableTypes(
+    return AllNullableTypesWithoutRecursion(
       aNullableBool: result[0] as bool?,
       aNullableInt: result[1] as int?,
       aNullableInt64: result[2] as int?,
@@ -228,16 +337,20 @@ class AllNullableTypes {
 class AllClassesWrapper {
   AllClassesWrapper({
     required this.allNullableTypes,
+    this.allNullableTypesWithoutRecursion,
     this.allTypes,
   });
 
   AllNullableTypes allNullableTypes;
+
+  AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
 
   AllTypes? allTypes;
 
   Object encode() {
     return <Object?>[
       allNullableTypes.encode(),
+      allNullableTypesWithoutRecursion?.encode(),
       allTypes?.encode(),
     ];
   }
@@ -246,8 +359,11 @@ class AllClassesWrapper {
     result as List<Object?>;
     return AllClassesWrapper(
       allNullableTypes: AllNullableTypes.decode(result[0]! as List<Object?>),
-      allTypes: result[1] != null
-          ? AllTypes.decode(result[1]! as List<Object?>)
+      allNullableTypesWithoutRecursion: result[1] != null
+          ? AllNullableTypesWithoutRecursion.decode(result[1]! as List<Object?>)
+          : null,
+      allTypes: result[2] != null
+          ? AllTypes.decode(result[2]! as List<Object?>)
           : null,
     );
   }
@@ -285,11 +401,14 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
     } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllTypes) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -304,8 +423,10 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
       case 129:
         return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
-        return AllTypes.decode(readValue(buffer)!);
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 131:
+        return AllTypes.decode(readValue(buffer)!);
+      case 132:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -874,6 +995,33 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<AllNullableTypesWithoutRecursion?>
+      echoAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?);
+    }
+  }
+
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   Future<String?> extractNestedNullableString(AllClassesWrapper wrapper) async {
@@ -961,6 +1109,39 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (__pigeon_replyList[0] as AllNullableTypes?)!;
+    }
+  }
+
+  /// Returns passed in arguments of multiple types.
+  Future<AllNullableTypesWithoutRecursion>
+      sendMultipleNullableTypesWithoutRecursion(bool? aNullableBool,
+          int? aNullableInt, String? aNullableString) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+            .send(<Object?>[aNullableBool, aNullableInt, aNullableString])
+        as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?)!;
     }
   }
 
@@ -1671,6 +1852,33 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<AllNullableTypesWithoutRecursion?>
+      echoAsyncNullableAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?);
+    }
+  }
+
   /// Returns passed in int asynchronously.
   Future<int?> echoAsyncNullableInt(int? anInt) async {
     const String __pigeon_channelName =
@@ -2054,6 +2262,64 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (__pigeon_replyList[0] as AllNullableTypes?)!;
+    }
+  }
+
+  Future<AllNullableTypesWithoutRecursion?>
+      callFlutterEchoAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?);
+    }
+  }
+
+  Future<AllNullableTypesWithoutRecursion>
+      callFlutterSendMultipleNullableTypesWithoutRecursion(bool? aNullableBool,
+          int? aNullableInt, String? aNullableString) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+            .send(<Object?>[aNullableBool, aNullableInt, aNullableString])
+        as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?)!;
     }
   }
 
@@ -2499,11 +2765,14 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
     } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllTypes) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2518,8 +2787,10 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
       case 129:
         return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
-        return AllTypes.decode(readValue(buffer)!);
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 131:
+        return AllTypes.decode(readValue(buffer)!);
+      case 132:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2553,6 +2824,16 @@ abstract class FlutterIntegrationCoreApi {
   ///
   /// Tests multiple-arity FlutterApi handling.
   AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  AllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      AllNullableTypesWithoutRecursion? everything);
+
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns the passed boolean, to test serialization and deserialization.
@@ -2753,6 +3034,64 @@ abstract class FlutterIntegrationCoreApi {
           try {
             final AllNullableTypes output = api.sendMultipleNullableTypes(
                 arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AllNullableTypesWithoutRecursion? arg_everything =
+              (args[0] as AllNullableTypesWithoutRecursion?);
+          try {
+            final AllNullableTypesWithoutRecursion? output =
+                api.echoAllNullableTypesWithoutRecursion(arg_everything);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final bool? arg_aNullableBool = (args[0] as bool?);
+          final int? arg_aNullableInt = (args[1] as int?);
+          final String? arg_aNullableString = (args[2] as String?);
+          try {
+            final AllNullableTypesWithoutRecursion output =
+                api.sendMultipleNullableTypesWithoutRecursion(
+                    arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
