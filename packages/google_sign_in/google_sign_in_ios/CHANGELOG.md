@@ -1,3 +1,7 @@
+## 5.7.5
+
+* Upgrades GoogleSignIn iOS SDK to 7.1.
+
 ## 5.7.4
 
 * Improves type handling in Objective-C code.
