@@ -430,8 +430,7 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeProratedPrice;
+      const ReplacementMode prorationMode = ReplacementMode.chargeProratedPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -439,7 +438,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: prorationMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final Map<dynamic, dynamic> arguments = stubPlatform
@@ -452,7 +451,7 @@ void main() {
       expect(
           arguments['purchaseToken'], equals(dummyOldPurchase.purchaseToken));
       expect(arguments['prorationMode'],
-          const ProrationModeConverter().toJson(prorationMode));
+          const ReplacementModeConverter().toJson(prorationMode));
     });
 
     test(
@@ -469,8 +468,7 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeFullPrice;
+      const ReplacementMode prorationMode = ReplacementMode.chargeFullPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -478,7 +476,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: prorationMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final Map<dynamic, dynamic> arguments = stubPlatform
@@ -491,7 +489,7 @@ void main() {
       expect(
           arguments['purchaseToken'], equals(dummyOldPurchase.purchaseToken));
       expect(arguments['prorationMode'],
-          const ProrationModeConverter().toJson(prorationMode));
+          const ReplacementModeConverter().toJson(prorationMode));
     });
 
     test('handles null accountId', () async {

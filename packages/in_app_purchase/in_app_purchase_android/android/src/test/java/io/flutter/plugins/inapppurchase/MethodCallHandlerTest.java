@@ -807,13 +807,13 @@ public class MethodCallHandlerTest {
     String accountId = "account";
     String queryOldProductId = "oldFoo";
     String oldProductId = null;
-    int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
+    int replacementMode = BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("product", productId);
     arguments.put("accountId", accountId);
     arguments.put("oldProduct", oldProductId);
-    arguments.put("prorationMode", prorationMode);
+    arguments.put("replacementMode", replacementMode);
     MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
 
     // Launch the billing flow
