@@ -142,7 +142,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         addDocumentationComments(
             indent, field.documentationComments, _docCommentSpec);
         indent.write('var ');
-        _writeClassField(indent, field);
+        _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
         indent.newln();
       }
 
@@ -183,9 +183,9 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     });
   }
 
-  void _writeClassField(Indent indent, NamedType field) {
+  void _writeClassField(Indent indent, NamedType field, {bool addNil = true}) {
     indent.add('${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
-    final String defaultNil = field.type.isNullable ? ' = nil' : '';
+    final String defaultNil = field.type.isNullable && addNil ? ' = nil' : '';
     indent.add(defaultNil);
   }
 

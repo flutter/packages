@@ -166,23 +166,23 @@ class AllNullableTypes {
     self.aNullableObject = aNullableObject
     self.allNullableTypes = allNullableTypes
   }
-  var aNullableBool: Bool? = nil
-  var aNullableInt: Int64? = nil
-  var aNullableInt64: Int64? = nil
-  var aNullableDouble: Double? = nil
-  var aNullableByteArray: FlutterStandardTypedData? = nil
-  var aNullable4ByteArray: FlutterStandardTypedData? = nil
-  var aNullable8ByteArray: FlutterStandardTypedData? = nil
-  var aNullableFloatArray: FlutterStandardTypedData? = nil
-  var aNullableList: [Any?]? = nil
-  var aNullableMap: [AnyHashable: Any?]? = nil
-  var nullableNestedList: [[Bool?]?]? = nil
-  var nullableMapWithAnnotations: [String?: String?]? = nil
-  var nullableMapWithObject: [String?: Any?]? = nil
-  var aNullableEnum: AnEnum? = nil
-  var aNullableString: String? = nil
-  var aNullableObject: Any? = nil
-  var allNullableTypes: AllNullableTypes? = nil
+  var aNullableBool: Bool?
+  var aNullableInt: Int64?
+  var aNullableInt64: Int64?
+  var aNullableDouble: Double?
+  var aNullableByteArray: FlutterStandardTypedData?
+  var aNullable4ByteArray: FlutterStandardTypedData?
+  var aNullable8ByteArray: FlutterStandardTypedData?
+  var aNullableFloatArray: FlutterStandardTypedData?
+  var aNullableList: [Any?]?
+  var aNullableMap: [AnyHashable: Any?]?
+  var nullableNestedList: [[Bool?]?]?
+  var nullableMapWithAnnotations: [String?: String?]?
+  var nullableMapWithObject: [String?: Any?]?
+  var aNullableEnum: AnEnum?
+  var aNullableString: String?
+  var aNullableObject: Any?
+  var allNullableTypes: AllNullableTypes?
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
