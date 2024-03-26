@@ -18,6 +18,14 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 ## Usage
 To use this plugin, add `shared_preferences` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
 
+### API declaration (only for macOS and iOS)
+Starting May 1st, 2024 you need to declare usage of the `NSUserDefaults` API as per [Apple devs docs](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api#4278401):
+1. Create a [`PrivacyInfo` manifest file](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files#4284009).
+2. At the top level of this property list file, add the key [`NSPrivacyAccessedAPITypes`](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api) to the dictionary, which has an array as a value.
+3. Create one dictionary inside the above mentioned array, and create 2 pairs of key/value inside it:
+    1. Add key `NSPrivacyAccessedAPIType` with value [`NSPrivacyAccessedAPICategoryDiskSpace`](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api#4278401).
+    2. Add key `NSPrivacyAccessedAPITypeReasons` with an array as value. This array must contain one key: `CA92.1`.
+
 ### Examples
 Here are small examples that show you how to use the API.
 
