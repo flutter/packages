@@ -6,6 +6,10 @@
   package with iOS 11, but will not receive any further updates to the iOS implementation.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
+## 2.2.3
+
+* Updates documentation to reflect requirement of API usage declaration for Apple platforms.
+
 ## 2.2.2
 
 * Updates documentation for `containsKey`.
