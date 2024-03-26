@@ -1,3 +1,8 @@
+## 17.3.0
+
+* [swift] Adds `@SwiftClass` annotation to allow choice between `struct` and `class` for data classes.
+* [cpp] Adds support for recursive data class definitions.
+
 ## 17.2.0
 
 * [dart] Adds implementation for `@ProxyApi`.
