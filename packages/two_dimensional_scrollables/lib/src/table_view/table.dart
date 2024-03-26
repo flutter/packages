@@ -449,6 +449,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   // Updates the cached column metrics for the table.
   void _updateColumnMetrics({bool appendColumns = false, int? toColumnIndex}) {
+    assert(() {
+      if (toColumnIndex != null) {
+        // If we are computing up to an index, we must be appending.
+        return appendColumns;
+      }
+      return true;
+    }());
     double startOfRegularColumn = 0;
     double startOfPinnedColumn = 0;
     if (appendColumns) {
@@ -460,12 +467,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       assert(_columnsAreInfinite);
       assert(_columnMetrics.isNotEmpty);
       if (_firstNonPinnedColumn != 0) {
-        startOfPinnedColumn = _columnMetrics[_firstNonPinnedColumn]!.trailingOffset;
+        startOfPinnedColumn =
+            _columnMetrics[_firstNonPinnedColumn]!.trailingOffset;
       }
-      startOfRegularColumn = _columnMetrics[_lastNonPinnedColumn]!.trailingOffset;
+      startOfRegularColumn =
+          _columnMetrics[_lastNonPinnedColumn]!.trailingOffset;
     }
-    _firstNonPinnedColumn = null;
-    _lastNonPinnedColumn = null;
+    _firstNonPinnedColumn = toColumnIndex == null ? null : _firstNonPinnedColumn;
+    _lastNonPinnedColumn = toColumnIndex == null ? null : _lastNonPinnedColumn;
     _columnNullTerminated = needsDelegateRebuild ? null : _columnNullTerminated;
     int column = appendColumns ? _columnMetrics.length : 0;
 
@@ -540,6 +549,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   // Updates the cached row metrics for the table.
   void _updateRowMetrics({bool appendRows = false, int? toRowIndex}) {
+    assert(() {
+      if (toRowIndex != null) {
+        // If we are computing up to an index, we must be appending.
+        return appendRows;
+      }
+      return true;
+    }());
     double startOfRegularRow = 0;
     double startOfPinnedRow = 0;
     if (appendRows) {
@@ -554,8 +570,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       }
       startOfRegularRow = _rowMetrics[_lastNonPinnedRow]!.trailingOffset;
     }
-    _firstNonPinnedRow = null;
-    _lastNonPinnedRow = null;
+    _firstNonPinnedRow = toRowIndex == null ? null : _firstNonPinnedRow;
+    _lastNonPinnedRow = toRowIndex == null ? null : _lastNonPinnedRow;
     _rowNullTerminated = needsDelegateRebuild ? null : _rowNullTerminated;
     int row = appendRows ? _rowMetrics.length : 0;
 
@@ -584,7 +600,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       final double leadingOffset =
           isPinned ? startOfPinnedRow : startOfRegularRow;
       _Span? span = _rowMetrics.remove(row);
-      final TableSpan? configuration = needsDelegateRebuild || span == null ? delegate.buildRow(row) : span.configuration;
+      final TableSpan? configuration = needsDelegateRebuild || span == null
+          ? delegate.buildRow(row)
+          : span.configuration;
       if (configuration == null) {
         // We have reached the end of rows based on a null termination. This
         // This happens when a row count has not been specified, but we have
@@ -630,7 +648,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final double maxVerticalScrollExtent;
     if (_rowsAreInfinite && _rowNullTerminated == null) {
       maxVerticalScrollExtent = double.infinity;
-    } else if (!_rowsAreInfinite && _rowMetrics.length <= delegate.pinnedRowCount) {
+    } else if (!_rowsAreInfinite &&
+        _rowMetrics.length <= delegate.pinnedRowCount) {
       assert(_firstNonPinnedRow == null && _lastNonPinnedRow == null);
       maxVerticalScrollExtent = 0.0;
     } else {
@@ -678,13 +697,15 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   void _updateFirstAndLastVisibleCell() {
     if (_columnMetrics.isNotEmpty) {
       _Span lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
-      if (_columnsAreInfinite && lastKnownColumn.trailingOffset < _targetColumnPixel) {
+      if (_columnsAreInfinite &&
+          lastKnownColumn.trailingOffset < _targetColumnPixel) {
         // This will add the column metrics we do not know about up to the
         // _targetColumnPixel, while keeping the ones we already know about.
         _updateColumnMetrics(appendColumns: true);
-      lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
+        lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
         assert(_columnMetrics.length == delegate.columnCount ||
-            lastKnownColumn.trailingOffset >= _targetColumnPixel || _columnNullTerminated != null);
+            lastKnownColumn.trailingOffset >= _targetColumnPixel ||
+            _columnNullTerminated != null);
       }
     }
     _firstNonPinnedColumn = null;
@@ -715,7 +736,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         _updateRowMetrics(appendRows: true);
         lastKnownRow = _rowMetrics[_rowMetrics.length - 1]!;
         assert(_rowMetrics.length == delegate.rowCount ||
-            lastKnownRow.trailingOffset >= _targetRowPixel || _rowNullTerminated != null);
+            lastKnownRow.trailingOffset >= _targetRowPixel ||
+            _rowNullTerminated != null);
       }
     }
     _firstNonPinnedRow = null;
@@ -953,6 +975,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               // metrics so we have all the information for the merged area.
               _updateRowMetrics(appendRows: true, toRowIndex: lastRow);
             }
+            assert(
+              _rowMetrics[lastRow] != null,
+              'The merged cell containing $vicinity is missing TableSpan '
+              'information necessary for layout. The rowBuilder returned '
+              'null, signifying the end, at row $_rowNullTerminated but the '
+              'merged cell is configured to end with row $lastRow.',
+            );
             mergedRowHeight = _rowMetrics[lastRow]!.trailingOffset -
                 _rowMetrics[firstRow]!.leadingOffset -
                 _rowMetrics[lastRow]!.configuration.padding.trailing -
@@ -984,6 +1013,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 toColumnIndex: lastColumn,
               );
             }
+            assert(
+              _columnMetrics[lastColumn] != null,
+              'The merged cell containing $vicinity is missing TableSpan '
+              'information necessary for layout. The columnBuilder returned '
+              'null, signifying the end, at column $_columnNullTerminated but '
+              'the merged cell is configured to end with column $lastColumn.',
+            );
             mergedColumnWidth = _columnMetrics[lastColumn]!.trailingOffset -
                 _columnMetrics[firstColumn]!.leadingOffset -
                 _columnMetrics[lastColumn]!.configuration.padding.trailing -
