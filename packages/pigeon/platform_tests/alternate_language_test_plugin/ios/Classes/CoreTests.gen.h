@@ -30,6 +30,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
+@class FLTAllNullableTypesWithoutRecursion;
 @class FLTAllClassesWrapper;
 @class FLTTestMessage;
 
@@ -83,6 +84,48 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
+                      aNullableObject:(nullable id)aNullableObject
+                     allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes;
+@property(nonatomic, strong, nullable) NSNumber *aNullableBool;
+@property(nonatomic, strong, nullable) NSNumber *aNullableInt;
+@property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
+@property(nonatomic, strong, nullable) NSNumber *aNullableDouble;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullableByteArray;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable4ByteArray;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable8ByteArray;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullableFloatArray;
+@property(nonatomic, copy, nullable) NSArray *aNullableList;
+@property(nonatomic, copy, nullable) NSDictionary *aNullableMap;
+@property(nonatomic, copy, nullable) NSArray<NSArray<NSNumber *> *> *nullableNestedList;
+@property(nonatomic, copy, nullable)
+    NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
+@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
+@property(nonatomic, strong, nullable) FLTAnEnumBox *aNullableEnum;
+@property(nonatomic, copy, nullable) NSString *aNullableString;
+@property(nonatomic, strong, nullable) id aNullableObject;
+@property(nonatomic, strong, nullable) FLTAllNullableTypes *allNullableTypes;
+@end
+
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
+@interface FLTAllNullableTypesWithoutRecursion : NSObject
++ (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
+                         aNullableInt:(nullable NSNumber *)aNullableInt
+                       aNullableInt64:(nullable NSNumber *)aNullableInt64
+                      aNullableDouble:(nullable NSNumber *)aNullableDouble
+                   aNullableByteArray:(nullable FlutterStandardTypedData *)aNullableByteArray
+                  aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
+                  aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
+                  aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
+                        aNullableList:(nullable NSArray *)aNullableList
+                         aNullableMap:(nullable NSDictionary *)aNullableMap
+                   nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
+           nullableMapWithAnnotations:
+               (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
+                nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
+                        aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+                      aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
@@ -112,8 +155,12 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithAllNullableTypes:(FLTAllNullableTypes *)allNullableTypes
+        allNullableTypesWithoutRecursion:
+            (nullable FLTAllNullableTypesWithoutRecursion *)allNullableTypesWithoutRecursion
                                 allTypes:(nullable FLTAllTypes *)allTypes;
 @property(nonatomic, strong) FLTAllNullableTypes *allNullableTypes;
+@property(nonatomic, strong, nullable)
+    FLTAllNullableTypesWithoutRecursion *allNullableTypesWithoutRecursion;
 @property(nonatomic, strong, nullable) FLTAllTypes *allTypes;
 @end
 
@@ -207,6 +254,10 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 /// Returns the passed object, to test serialization and deserialization.
 - (nullable FLTAllNullableTypes *)echoAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                                                  error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed object, to test serialization and deserialization.
+- (nullable FLTAllNullableTypesWithoutRecursion *)
+    echoAllNullableTypesWithoutRecursion:(nullable FLTAllNullableTypesWithoutRecursion *)everything
+                                   error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the inner `aString` value from the wrapped object, to test
 /// sending of nested objects.
 - (nullable NSString *)extractNestedNullableStringFrom:(FLTAllClassesWrapper *)wrapper
@@ -226,6 +277,14 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
                              anInt:(nullable NSNumber *)aNullableInt
                            aString:(nullable NSString *)aNullableString
                              error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns passed in arguments of multiple types.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable FLTAllNullableTypesWithoutRecursion *)
+    sendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
+                                             anInt:(nullable NSNumber *)aNullableInt
+                                           aString:(nullable NSString *)aNullableString
+                                             error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in int.
 - (nullable NSNumber *)echoNullableInt:(nullable NSNumber *)aNullableInt
                                  error:(FlutterError *_Nullable *_Nonnull)error;
@@ -306,6 +365,13 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                                completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                     FlutterError *_Nullable))completion;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)echoAsyncNullableAllNullableTypesWithoutRecursion:
+            (nullable FLTAllNullableTypesWithoutRecursion *)everything
+                                               completion:
+                                                   (void (^)(FLTAllNullableTypesWithoutRecursion
+                                                                 *_Nullable,
+                                                             FlutterError *_Nullable))completion;
 /// Returns passed in int asynchronously.
 - (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -351,6 +417,21 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
                                           aString:(nullable NSString *)aNullableString
                                        completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                             FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAllNullableTypesWithoutRecursion:
+            (nullable FLTAllNullableTypesWithoutRecursion *)everything
+                                             completion:
+                                                 (void (^)(
+                                                     FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                     FlutterError *_Nullable))completion;
+- (void)
+    callFlutterSendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
+                                                        anInt:(nullable NSNumber *)aNullableInt
+                                                      aString:(nullable NSString *)aNullableString
+                                                   completion:
+                                                       (void (^)(FLTAllNullableTypesWithoutRecursion
+                                                                     *_Nullable,
+                                                                 FlutterError *_Nullable))
+                                                           completion;
 - (void)callFlutterEchoBool:(BOOL)aBool
                  completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoInt:(NSInteger)anInt
@@ -427,6 +508,21 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
                                aString:(nullable NSString *)aNullableString
                             completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                  FlutterError *_Nullable))completion;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)
+    echoAllNullableTypesWithoutRecursion:(nullable FLTAllNullableTypesWithoutRecursion *)everything
+                              completion:(void (^)(FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                   FlutterError *_Nullable))completion;
+/// Returns passed in arguments of multiple types.
+///
+/// Tests multiple-arity FlutterApi handling.
+- (void)sendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
+                                                 anInt:(nullable NSNumber *)aNullableInt
+                                               aString:(nullable NSString *)aNullableString
+                                            completion:
+                                                (void (^)(
+                                                    FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                    FlutterError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoBool:(BOOL)aBool
       completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;

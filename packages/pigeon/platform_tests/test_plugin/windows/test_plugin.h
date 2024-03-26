@@ -39,6 +39,11 @@ class TestPlugin : public flutter::Plugin,
       std::optional<core_tests_pigeontest::AllNullableTypes>>
   EchoAllNullableTypes(
       const core_tests_pigeontest::AllNullableTypes* everything) override;
+  core_tests_pigeontest::ErrorOr<
+      std::optional<core_tests_pigeontest::AllNullableTypesWithoutRecursion>>
+  EchoAllNullableTypesWithoutRecursion(
+      const core_tests_pigeontest::AllNullableTypesWithoutRecursion* everything)
+      override;
   core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
   ThrowError() override;
   std::optional<core_tests_pigeontest::FlutterError> ThrowErrorFromVoid()
@@ -78,6 +83,11 @@ class TestPlugin : public flutter::Plugin,
   SendMultipleNullableTypes(const bool* a_nullable_bool,
                             const int64_t* a_nullable_int,
                             const std::string* a_nullable_string) override;
+  core_tests_pigeontest::ErrorOr<
+      core_tests_pigeontest::AllNullableTypesWithoutRecursion>
+  SendMultipleNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string) override;
   core_tests_pigeontest::ErrorOr<std::optional<int64_t>> EchoNullableInt(
       const int64_t* a_nullable_int) override;
   core_tests_pigeontest::ErrorOr<std::optional<double>> EchoNullableDouble(
@@ -129,6 +139,13 @@ class TestPlugin : public flutter::Plugin,
       std::function<void(core_tests_pigeontest::ErrorOr<
                          std::optional<core_tests_pigeontest::AllNullableTypes>>
                              reply)>
+          result) override;
+  void EchoAsyncNullableAllNullableTypesWithoutRecursion(
+      const core_tests_pigeontest::AllNullableTypesWithoutRecursion* everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<
+                   core_tests_pigeontest::AllNullableTypesWithoutRecursion>>
+                   reply)>
           result) override;
   void EchoAsyncInt(
       int64_t an_int,
@@ -252,6 +269,21 @@ class TestPlugin : public flutter::Plugin,
       std::function<void(core_tests_pigeontest::ErrorOr<
                          core_tests_pigeontest::AllNullableTypes>
                              reply)>
+          result) override;
+  void CallFlutterEchoAllNullableTypesWithoutRecursion(
+      const core_tests_pigeontest::AllNullableTypesWithoutRecursion* everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<std::optional<
+                   core_tests_pigeontest::AllNullableTypesWithoutRecursion>>
+                   reply)>
+          result) override;
+  void CallFlutterSendMultipleNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<
+               core_tests_pigeontest::AllNullableTypesWithoutRecursion>
+                   reply)>
           result) override;
   void CallFlutterEchoBool(
       bool a_bool,
