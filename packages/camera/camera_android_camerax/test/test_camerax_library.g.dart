@@ -2364,8 +2364,8 @@ abstract class TestCamera2CameraControlHostApi {
   }
 }
 
-class _ResolutionFilterHostApiCodec extends StandardMessageCodec {
-  const _ResolutionFilterHostApiCodec();
+class _TestResolutionFilterHostApiCodec extends StandardMessageCodec {
+  const _TestResolutionFilterHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is ResolutionInfo) {
@@ -2387,15 +2387,16 @@ class _ResolutionFilterHostApiCodec extends StandardMessageCodec {
   }
 }
 
-abstract class ResolutionFilterHostApi {
+abstract class TestResolutionFilterHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
       TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = _ResolutionFilterHostApiCodec();
+  static const MessageCodec<Object?> codec =
+      _TestResolutionFilterHostApiCodec();
 
   void createWithOnePreferredSize(
       int identifier, ResolutionInfo preferredResolution);
 
-  static void setup(ResolutionFilterHostApi? api,
+  static void setup(TestResolutionFilterHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(

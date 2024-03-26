@@ -538,7 +538,7 @@ abstract class Camera2CameraControlHostApi {
       int identifier, int captureRequestOptionsIdentifier);
 }
 
-@HostApi(dartHostTestHandler: 'ResolutionFilterHostApi')
+@HostApi(dartHostTestHandler: 'TestResolutionFilterHostApi')
 abstract class ResolutionFilterHostApi {
   void createWithOnePreferredSize(
       int identifier, ResolutionInfo preferredResolution);
