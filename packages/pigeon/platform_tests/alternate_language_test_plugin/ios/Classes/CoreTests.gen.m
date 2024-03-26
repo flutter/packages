@@ -62,6 +62,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
+@interface FLTAllNullableTypesWithoutRecursion ()
++ (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray *)list;
++ (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @interface FLTAllClassesWrapper ()
 + (FLTAllClassesWrapper *)fromList:(NSArray *)list;
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray *)list;
@@ -160,7 +166,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(nullable id)aNullableObject {
+                      aNullableObject:(nullable id)aNullableObject
+                     allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes {
   FLTAllNullableTypes *pigeonResult = [[FLTAllNullableTypes alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
   pigeonResult.aNullableInt = aNullableInt;
@@ -178,6 +185,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
+  pigeonResult.allNullableTypes = allNullableTypes;
   return pigeonResult;
 }
 + (FLTAllNullableTypes *)fromList:(NSArray *)list {
@@ -203,10 +211,103 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
   pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.allNullableTypes =
+      [FLTAllNullableTypes nullableFromList:(GetNullableObjectAtIndex(list, 16))];
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypes *)nullableFromList:(NSArray *)list {
   return (list) ? [FLTAllNullableTypes fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    self.aNullableBool ?: [NSNull null],
+    self.aNullableInt ?: [NSNull null],
+    self.aNullableInt64 ?: [NSNull null],
+    self.aNullableDouble ?: [NSNull null],
+    self.aNullableByteArray ?: [NSNull null],
+    self.aNullable4ByteArray ?: [NSNull null],
+    self.aNullable8ByteArray ?: [NSNull null],
+    self.aNullableFloatArray ?: [NSNull null],
+    self.aNullableList ?: [NSNull null],
+    self.aNullableMap ?: [NSNull null],
+    self.nullableNestedList ?: [NSNull null],
+    self.nullableMapWithAnnotations ?: [NSNull null],
+    self.nullableMapWithObject ?: [NSNull null],
+    (self.aNullableEnum == nil ? [NSNull null]
+                               : [NSNumber numberWithInteger:self.aNullableEnum.value]),
+    self.aNullableString ?: [NSNull null],
+    self.aNullableObject ?: [NSNull null],
+    (self.allNullableTypes ? [self.allNullableTypes toList] : [NSNull null]),
+  ];
+}
+@end
+
+@implementation FLTAllNullableTypesWithoutRecursion
++ (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
+                         aNullableInt:(nullable NSNumber *)aNullableInt
+                       aNullableInt64:(nullable NSNumber *)aNullableInt64
+                      aNullableDouble:(nullable NSNumber *)aNullableDouble
+                   aNullableByteArray:(nullable FlutterStandardTypedData *)aNullableByteArray
+                  aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
+                  aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
+                  aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
+                        aNullableList:(nullable NSArray *)aNullableList
+                         aNullableMap:(nullable NSDictionary *)aNullableMap
+                   nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
+           nullableMapWithAnnotations:
+               (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
+                nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
+                        aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
+                      aNullableString:(nullable NSString *)aNullableString
+                      aNullableObject:(nullable id)aNullableObject {
+  FLTAllNullableTypesWithoutRecursion *pigeonResult =
+      [[FLTAllNullableTypesWithoutRecursion alloc] init];
+  pigeonResult.aNullableBool = aNullableBool;
+  pigeonResult.aNullableInt = aNullableInt;
+  pigeonResult.aNullableInt64 = aNullableInt64;
+  pigeonResult.aNullableDouble = aNullableDouble;
+  pigeonResult.aNullableByteArray = aNullableByteArray;
+  pigeonResult.aNullable4ByteArray = aNullable4ByteArray;
+  pigeonResult.aNullable8ByteArray = aNullable8ByteArray;
+  pigeonResult.aNullableFloatArray = aNullableFloatArray;
+  pigeonResult.aNullableList = aNullableList;
+  pigeonResult.aNullableMap = aNullableMap;
+  pigeonResult.nullableNestedList = nullableNestedList;
+  pigeonResult.nullableMapWithAnnotations = nullableMapWithAnnotations;
+  pigeonResult.nullableMapWithObject = nullableMapWithObject;
+  pigeonResult.aNullableEnum = aNullableEnum;
+  pigeonResult.aNullableString = aNullableString;
+  pigeonResult.aNullableObject = aNullableObject;
+  return pigeonResult;
+}
++ (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray *)list {
+  FLTAllNullableTypesWithoutRecursion *pigeonResult =
+      [[FLTAllNullableTypesWithoutRecursion alloc] init];
+  pigeonResult.aNullableBool = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.aNullableInt = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.aNullableInt64 = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.aNullableDouble = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.aNullableByteArray = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.aNullable4ByteArray = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.aNullable8ByteArray = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.aNullableFloatArray = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.aNullableList = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.aNullableMap = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
+  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
+  FLTAnEnumBox *aNullableEnum =
+      aNullableEnumAsNumber == nil
+          ? nil
+          : [[FLTAnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
+  pigeonResult.aNullableEnum = aNullableEnum;
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
+  return pigeonResult;
+}
++ (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTAllNullableTypesWithoutRecursion fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -233,9 +334,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FLTAllClassesWrapper
 + (instancetype)makeWithAllNullableTypes:(FLTAllNullableTypes *)allNullableTypes
+        allNullableTypesWithoutRecursion:
+            (nullable FLTAllNullableTypesWithoutRecursion *)allNullableTypesWithoutRecursion
                                 allTypes:(nullable FLTAllTypes *)allTypes {
   FLTAllClassesWrapper *pigeonResult = [[FLTAllClassesWrapper alloc] init];
   pigeonResult.allNullableTypes = allNullableTypes;
+  pigeonResult.allNullableTypesWithoutRecursion = allNullableTypesWithoutRecursion;
   pigeonResult.allTypes = allTypes;
   return pigeonResult;
 }
@@ -243,7 +347,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   FLTAllClassesWrapper *pigeonResult = [[FLTAllClassesWrapper alloc] init];
   pigeonResult.allNullableTypes =
       [FLTAllNullableTypes nullableFromList:(GetNullableObjectAtIndex(list, 0))];
-  pigeonResult.allTypes = [FLTAllTypes nullableFromList:(GetNullableObjectAtIndex(list, 1))];
+  pigeonResult.allNullableTypesWithoutRecursion =
+      [FLTAllNullableTypesWithoutRecursion nullableFromList:(GetNullableObjectAtIndex(list, 1))];
+  pigeonResult.allTypes = [FLTAllTypes nullableFromList:(GetNullableObjectAtIndex(list, 2))];
   return pigeonResult;
 }
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray *)list {
@@ -252,6 +358,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     (self.allNullableTypes ? [self.allNullableTypes toList] : [NSNull null]),
+    (self.allNullableTypesWithoutRecursion ? [self.allNullableTypesWithoutRecursion toList]
+                                           : [NSNull null]),
     (self.allTypes ? [self.allTypes toList] : [NSNull null]),
   ];
 }
@@ -288,8 +396,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     case 129:
       return [FLTAllNullableTypes fromList:[self readValue]];
     case 130:
-      return [FLTAllTypes fromList:[self readValue]];
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 131:
+      return [FLTAllTypes fromList:[self readValue]];
+    case 132:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -307,11 +417,14 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:131];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:132];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -767,6 +880,30 @@ void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed object, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAllNullableTypesWithoutRecursion"
+        binaryMessenger:binaryMessenger
+                  codec:FLTHostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAllNullableTypesWithoutRecursion:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAllNullableTypesWithoutRecursion:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        FLTAllNullableTypesWithoutRecursion *arg_everything = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTAllNullableTypesWithoutRecursion *output =
+            [api echoAllNullableTypesWithoutRecursion:arg_everything error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   {
@@ -839,6 +976,36 @@ void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                                                     anInt:arg_aNullableInt
                                                                   aString:arg_aNullableString
                                                                     error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns passed in arguments of multiple types.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"sendMultipleNullableTypesWithoutRecursion"
+        binaryMessenger:binaryMessenger
+                  codec:FLTHostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
+        NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 2);
+        FlutterError *error;
+        FLTAllNullableTypesWithoutRecursion *output =
+            [api sendMultipleNullableTypesWithoutRecursionABool:arg_aNullableBool
+                                                          anInt:arg_aNullableInt
+                                                        aString:arg_aNullableString
+                                                          error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1458,6 +1625,33 @@ void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed object, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableAllNullableTypesWithoutRecursion"
+        binaryMessenger:binaryMessenger
+                  codec:FLTHostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (echoAsyncNullableAllNullableTypesWithoutRecursion:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAsyncNullableAllNullableTypesWithoutRecursion:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        FLTAllNullableTypesWithoutRecursion *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api echoAsyncNullableAllNullableTypesWithoutRecursion:arg_everything
+                                                    completion:^(FLTAllNullableTypesWithoutRecursion
+                                                                     *_Nullable output,
+                                                                 FlutterError *_Nullable error) {
+                                                      callback(wrapResult(output, error));
+                                                    }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Returns passed in int asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -1816,6 +2010,66 @@ void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                                          FlutterError *_Nullable error) {
                                               callback(wrapResult(output, error));
                                             }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoAllNullableTypesWithoutRecursion"
+        binaryMessenger:binaryMessenger
+                  codec:FLTHostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (callFlutterEchoAllNullableTypesWithoutRecursion:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoAllNullableTypesWithoutRecursion:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        FLTAllNullableTypesWithoutRecursion *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoAllNullableTypesWithoutRecursion:arg_everything
+                                                  completion:^(FLTAllNullableTypesWithoutRecursion
+                                                                   *_Nullable output,
+                                                               FlutterError *_Nullable error) {
+                                                    callback(wrapResult(output, error));
+                                                  }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterSendMultipleNullableTypesWithoutRecursion"
+        binaryMessenger:binaryMessenger
+                  codec:FLTHostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector
+               (callFlutterSendMultipleNullableTypesWithoutRecursionABool:
+                                                                    anInt:aString:completion:)],
+          @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+          @"@selector(callFlutterSendMultipleNullableTypesWithoutRecursionABool:anInt:aString:"
+          @"completion:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_aNullableBool = GetNullableObjectAtIndex(args, 0);
+        NSNumber *arg_aNullableInt = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_aNullableString = GetNullableObjectAtIndex(args, 2);
+        [api callFlutterSendMultipleNullableTypesWithoutRecursionABool:arg_aNullableBool
+                                                                 anInt:arg_aNullableInt
+                                                               aString:arg_aNullableString
+                                                            completion:^(
+                                                                FLTAllNullableTypesWithoutRecursion
+                                                                    *_Nullable output,
+                                                                FlutterError *_Nullable error) {
+                                                              callback(wrapResult(output, error));
+                                                            }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -2220,8 +2474,10 @@ void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
     case 129:
       return [FLTAllNullableTypes fromList:[self readValue]];
     case 130:
-      return [FLTAllTypes fromList:[self readValue]];
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 131:
+      return [FLTAllTypes fromList:[self readValue]];
+    case 132:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -2239,11 +2495,14 @@ void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
   } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:131];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:132];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -2425,6 +2684,67 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                                                            details:reply[2]]);
                      } else {
                        FLTAllNullableTypes *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
+}
+- (void)echoAllNullableTypesWithoutRecursion:
+            (nullable FLTAllNullableTypesWithoutRecursion *)arg_everything
+                                  completion:
+                                      (void (^)(FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                FlutterError *_Nullable))completion {
+  NSString *channelName = @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+                          @"echoAllNullableTypesWithoutRecursion";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FLTAllNullableTypesWithoutRecursion *output =
+                           reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
+}
+- (void)sendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)arg_aNullableBool
+                                                 anInt:(nullable NSNumber *)arg_aNullableInt
+                                               aString:(nullable NSString *)arg_aNullableString
+                                            completion:
+                                                (void (^)(
+                                                    FLTAllNullableTypesWithoutRecursion *_Nullable,
+                                                    FlutterError *_Nullable))completion {
+  NSString *channelName = @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+                          @"sendMultipleNullableTypesWithoutRecursion";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[
+    arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
+    arg_aNullableString ?: [NSNull null]
+  ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FLTAllNullableTypesWithoutRecursion *output =
+                           reply[0] == [NSNull null] ? nil : reply[0];
                        completion(output, nil);
                      }
                    } else {
