@@ -96,7 +96,7 @@ class _TableExampleState extends State<TableExample> {
     );
   }
 
-  TableSpan? _buildColumnSpan(int index) {
+  TableSpan _buildColumnSpan(int index) {
     const TableSpanDecoration decoration = TableSpanDecoration(
       border: TableSpanBorder(
         trailing: BorderSide(),
@@ -108,7 +108,7 @@ class _TableExampleState extends State<TableExample> {
         return TableSpan(
           foregroundDecoration: decoration,
           extent: const FixedTableSpanExtent(100),
-          // onEnter: (_) => print('Entered column $index'),
+          onEnter: (_) => print('Entered column $index'),
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
@@ -121,34 +121,34 @@ class _TableExampleState extends State<TableExample> {
       case 1:
         return TableSpan(
           foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
-          // onEnter: (_) => print('Entered column $index'),
+          extent: const FractionalTableSpanExtent(0.5),
+          onEnter: (_) => print('Entered column $index'),
           cursor: SystemMouseCursors.contextMenu,
         );
       case 2:
         return TableSpan(
           foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
-          // onEnter: (_) => print('Entered column $index'),
+          extent: const FixedTableSpanExtent(120),
+          onEnter: (_) => print('Entered column $index'),
         );
       case 3:
         return TableSpan(
           foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
-          // onEnter: (_) => print('Entered column $index'),
+          extent: const FixedTableSpanExtent(145),
+          onEnter: (_) => print('Entered column $index'),
         );
       case 4:
         return TableSpan(
           foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
-          // onEnter: (_) => print('Entered column $index'),
+          extent: const FixedTableSpanExtent(200),
+          onEnter: (_) => print('Entered column $index'),
         );
     }
     throw AssertionError(
         'This should be unreachable, as every index is accounted for in the switch clauses.');
   }
 
-  TableSpan? _buildRowSpan(int index) {
+  TableSpan _buildRowSpan(int index) {
     final TableSpanDecoration decoration = TableSpanDecoration(
       color: index.isEven ? Colors.purple[100] : null,
       border: const TableSpanBorder(
@@ -162,7 +162,7 @@ class _TableExampleState extends State<TableExample> {
       case 0:
         return TableSpan(
           backgroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
+          extent: const FixedTableSpanExtent(50),
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
@@ -175,13 +175,13 @@ class _TableExampleState extends State<TableExample> {
       case 1:
         return TableSpan(
           backgroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
+          extent: const FixedTableSpanExtent(65),
           cursor: SystemMouseCursors.click,
         );
       case 2:
         return TableSpan(
           backgroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
+          extent: const FractionalTableSpanExtent(0.15),
         );
     }
     throw AssertionError(
