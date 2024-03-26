@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter_plugin_tools/src/common/pub_version_finder.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:mockito/mockito.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
@@ -85,5 +83,3 @@ void main() {
     expect(response.httpResponse.body, json.encode(httpResponse));
   });
 }
-
-class MockProcessResult extends Mock implements ProcessResult {}

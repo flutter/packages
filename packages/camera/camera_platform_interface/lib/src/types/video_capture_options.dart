@@ -32,7 +32,7 @@ class VideoCaptureOptions {
   ///
   /// If set, then each image captured by the camera will be
   /// passed to this callback.
-  final Function(CameraImageData image)? streamCallback;
+  final void Function(CameraImageData image)? streamCallback;
 
   /// Configuration options for streaming.
   ///

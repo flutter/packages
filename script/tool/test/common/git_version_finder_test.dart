@@ -25,15 +25,14 @@ void main() {
       final List<String> arguments =
           invocation.positionalArguments[0]! as List<String>;
       gitDirCommands.add(arguments);
-      final MockProcessResult mockProcessResult = MockProcessResult();
+      String? gitStdOut;
       if (arguments[0] == 'diff') {
-        when<String?>(mockProcessResult.stdout as String?)
-            .thenReturn(gitDiffResponse);
+        gitStdOut = gitDiffResponse;
       } else if (arguments[0] == 'merge-base') {
-        when<String?>(mockProcessResult.stdout as String?)
-            .thenReturn(mergeBaseResponse);
+        gitStdOut = mergeBaseResponse;
       }
-      return Future<ProcessResult>.value(mockProcessResult);
+      return Future<ProcessResult>.value(
+          ProcessResult(0, 0, gitStdOut ?? '', ''));
     });
   });
 
@@ -128,5 +127,3 @@ file2/file2.cc
     verify(gitDir.runCommand(<String>['diff', '--name-only', customBaseSha]));
   });
 }
-
-class MockProcessResult extends Mock implements ProcessResult {}

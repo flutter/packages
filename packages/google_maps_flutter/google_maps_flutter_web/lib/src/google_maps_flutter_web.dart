@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// The web implementation of [GoogleMapsFlutterPlatform].
 ///
@@ -277,6 +277,11 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   @override
   Stream<MapLongPressEvent> onLongPress({required int mapId}) {
     return _events(mapId).whereType<MapLongPressEvent>();
+  }
+
+  @override
+  Future<String?> getStyleError({required int mapId}) async {
+    return _map(mapId).lastStyleError;
   }
 
   /// Disposes of the current map. It can't be used afterwards!

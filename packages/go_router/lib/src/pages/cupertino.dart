@@ -8,8 +8,8 @@ import 'package:flutter/cupertino.dart';
 import '../misc/extensions.dart';
 
 /// Checks for CupertinoApp in the widget tree.
-bool isCupertinoApp(Element elem) =>
-    elem.findAncestorWidgetOfExactType<CupertinoApp>() != null;
+bool isCupertinoApp(BuildContext context) =>
+    context.findAncestorWidgetOfExactType<CupertinoApp>() != null;
 
 /// Creates a Cupertino HeroController.
 HeroController createCupertinoHeroController() =>

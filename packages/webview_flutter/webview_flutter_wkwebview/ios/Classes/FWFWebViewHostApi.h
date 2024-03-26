@@ -11,18 +11,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * A set of Flutter and Dart assets used by a `FlutterEngine` to initialize execution.
- *
- * Default implementation delegates methods to FlutterDartProject.
- */
+/// A set of Flutter and Dart assets used by a `FlutterEngine` to initialize execution.
+///
+/// Default implementation delegates methods to FlutterDartProject.
 @interface FWFAssetManager : NSObject
 - (NSString *)lookupKeyForAsset:(NSString *)asset;
 @end
 
-/**
- * Implementation of WKWebView that can be used as a FlutterPlatformView.
- */
+/// Implementation of WKWebView that can be used as a FlutterPlatformView.
 @interface FWFWebView : WKWebView <FlutterPlatformView>
 @property(readonly, nonnull, nonatomic) FWFObjectFlutterApiImpl *objectApi;
 
@@ -32,11 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
               instanceManager:(FWFInstanceManager *)instanceManager;
 @end
 
-/**
- * Host api implementation for WKWebView.
- *
- * Handles creating WKWebViews that intercommunicate with a paired Dart object.
- */
+/// Host api implementation for WKWebView.
+///
+/// Handles creating WKWebViews that intercommunicate with a paired Dart object.
 @interface FWFWebViewHostApiImpl : NSObject <FWFWKWebViewHostApi>
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;

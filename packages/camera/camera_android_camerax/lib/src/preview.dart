@@ -20,21 +20,21 @@ class Preview extends UseCase {
   Preview(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetRotation,
+      this.initialTargetRotation,
       this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = PreviewHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, targetRotation, resolutionSelector);
+    _api.createFromInstance(this, initialTargetRotation, resolutionSelector);
   }
 
   /// Constructs a [Preview] that is not automatically attached to a native object.
   Preview.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetRotation,
+      this.initialTargetRotation,
       this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
@@ -46,13 +46,27 @@ class Preview extends UseCase {
   late final PreviewHostApiImpl _api;
 
   /// Target rotation of the camera used for the preview stream.
-  final int? targetRotation;
+  ///
+  /// Should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
+  ///
+  // TODO(camsim99): Remove this parameter. https://github.com/flutter/flutter/issues/140664
+  final int? initialTargetRotation;
 
   /// Target resolution of the camera preview stream.
   ///
   /// If not set, this [UseCase] will default to the behavior described in:
   /// https://developer.android.com/reference/androidx/camera/core/Preview.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
   final ResolutionSelector? resolutionSelector;
+
+  /// Dynamically sets the target rotation of this instance.
+  ///
+  /// [rotation] should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
+  Future<void> setTargetRotation(int rotation) =>
+      _api.setTargetRotationFromInstances(this, rotation);
 
   /// Sets the surface provider for the preview stream.
   ///
@@ -103,7 +117,7 @@ class PreviewHostApiImpl extends PreviewHostApi {
       return Preview.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
-          targetRotation: original.targetRotation,
+          initialTargetRotation: original.initialTargetRotation,
           resolutionSelector: original.resolutionSelector);
     });
     create(
@@ -112,6 +126,12 @@ class PreviewHostApiImpl extends PreviewHostApi {
         resolutionSelector == null
             ? null
             : instanceManager.getIdentifier(resolutionSelector));
+  }
+
+  /// Dynamically sets the target rotation of [instance] to [rotation].
+  Future<void> setTargetRotationFromInstances(Preview instance, int rotation) {
+    return setTargetRotation(
+        instanceManager.getIdentifier(instance)!, rotation);
   }
 
   /// Sets the surface provider of the specified [Preview] instance and returns

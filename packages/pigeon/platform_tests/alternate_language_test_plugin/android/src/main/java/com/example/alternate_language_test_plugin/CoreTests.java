@@ -77,7 +77,9 @@ public class CoreTests {
   public enum AnEnum {
     ONE(0),
     TWO(1),
-    THREE(2);
+    THREE(2),
+    FORTY_TWO(3),
+    FOUR_HUNDRED_TWENTY_TWO(4);
 
     final int index;
 
@@ -610,6 +612,16 @@ public class CoreTests {
       this.aNullableObject = setterArg;
     }
 
+    private @Nullable AllNullableTypes allNullableTypes;
+
+    public @Nullable AllNullableTypes getAllNullableTypes() {
+      return allNullableTypes;
+    }
+
+    public void setAllNullableTypes(@Nullable AllNullableTypes setterArg) {
+      this.allNullableTypes = setterArg;
+    }
+
     public static final class Builder {
 
       private @Nullable Boolean aNullableBool;
@@ -741,8 +753,412 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AllNullableTypes allNullableTypes;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAllNullableTypes(@Nullable AllNullableTypes setterArg) {
+        this.allNullableTypes = setterArg;
+        return this;
+      }
+
       public @NonNull AllNullableTypes build() {
         AllNullableTypes pigeonReturn = new AllNullableTypes();
+        pigeonReturn.setANullableBool(aNullableBool);
+        pigeonReturn.setANullableInt(aNullableInt);
+        pigeonReturn.setANullableInt64(aNullableInt64);
+        pigeonReturn.setANullableDouble(aNullableDouble);
+        pigeonReturn.setANullableByteArray(aNullableByteArray);
+        pigeonReturn.setANullable4ByteArray(aNullable4ByteArray);
+        pigeonReturn.setANullable8ByteArray(aNullable8ByteArray);
+        pigeonReturn.setANullableFloatArray(aNullableFloatArray);
+        pigeonReturn.setANullableList(aNullableList);
+        pigeonReturn.setANullableMap(aNullableMap);
+        pigeonReturn.setNullableNestedList(nullableNestedList);
+        pigeonReturn.setNullableMapWithAnnotations(nullableMapWithAnnotations);
+        pigeonReturn.setNullableMapWithObject(nullableMapWithObject);
+        pigeonReturn.setANullableEnum(aNullableEnum);
+        pigeonReturn.setANullableString(aNullableString);
+        pigeonReturn.setANullableObject(aNullableObject);
+        pigeonReturn.setAllNullableTypes(allNullableTypes);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(17);
+      toListResult.add(aNullableBool);
+      toListResult.add(aNullableInt);
+      toListResult.add(aNullableInt64);
+      toListResult.add(aNullableDouble);
+      toListResult.add(aNullableByteArray);
+      toListResult.add(aNullable4ByteArray);
+      toListResult.add(aNullable8ByteArray);
+      toListResult.add(aNullableFloatArray);
+      toListResult.add(aNullableList);
+      toListResult.add(aNullableMap);
+      toListResult.add(nullableNestedList);
+      toListResult.add(nullableMapWithAnnotations);
+      toListResult.add(nullableMapWithObject);
+      toListResult.add(aNullableEnum == null ? null : aNullableEnum.index);
+      toListResult.add(aNullableString);
+      toListResult.add(aNullableObject);
+      toListResult.add((allNullableTypes == null) ? null : allNullableTypes.toList());
+      return toListResult;
+    }
+
+    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> list) {
+      AllNullableTypes pigeonResult = new AllNullableTypes();
+      Object aNullableBool = list.get(0);
+      pigeonResult.setANullableBool((Boolean) aNullableBool);
+      Object aNullableInt = list.get(1);
+      pigeonResult.setANullableInt(
+          (aNullableInt == null)
+              ? null
+              : ((aNullableInt instanceof Integer) ? (Integer) aNullableInt : (Long) aNullableInt));
+      Object aNullableInt64 = list.get(2);
+      pigeonResult.setANullableInt64(
+          (aNullableInt64 == null)
+              ? null
+              : ((aNullableInt64 instanceof Integer)
+                  ? (Integer) aNullableInt64
+                  : (Long) aNullableInt64));
+      Object aNullableDouble = list.get(3);
+      pigeonResult.setANullableDouble((Double) aNullableDouble);
+      Object aNullableByteArray = list.get(4);
+      pigeonResult.setANullableByteArray((byte[]) aNullableByteArray);
+      Object aNullable4ByteArray = list.get(5);
+      pigeonResult.setANullable4ByteArray((int[]) aNullable4ByteArray);
+      Object aNullable8ByteArray = list.get(6);
+      pigeonResult.setANullable8ByteArray((long[]) aNullable8ByteArray);
+      Object aNullableFloatArray = list.get(7);
+      pigeonResult.setANullableFloatArray((double[]) aNullableFloatArray);
+      Object aNullableList = list.get(8);
+      pigeonResult.setANullableList((List<Object>) aNullableList);
+      Object aNullableMap = list.get(9);
+      pigeonResult.setANullableMap((Map<Object, Object>) aNullableMap);
+      Object nullableNestedList = list.get(10);
+      pigeonResult.setNullableNestedList((List<List<Boolean>>) nullableNestedList);
+      Object nullableMapWithAnnotations = list.get(11);
+      pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
+      Object nullableMapWithObject = list.get(12);
+      pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
+      Object aNullableEnum = list.get(13);
+      pigeonResult.setANullableEnum(
+          aNullableEnum == null ? null : AnEnum.values()[(int) aNullableEnum]);
+      Object aNullableString = list.get(14);
+      pigeonResult.setANullableString((String) aNullableString);
+      Object aNullableObject = list.get(15);
+      pigeonResult.setANullableObject(aNullableObject);
+      Object allNullableTypes = list.get(16);
+      pigeonResult.setAllNullableTypes(
+          (allNullableTypes == null)
+              ? null
+              : AllNullableTypes.fromList((ArrayList<Object>) allNullableTypes));
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * The primary purpose for this class is to ensure coverage of Swift structs with nullable items,
+   * as the primary [AllNullableTypes] class is being used to test Swift classes.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class AllNullableTypesWithoutRecursion {
+    private @Nullable Boolean aNullableBool;
+
+    public @Nullable Boolean getANullableBool() {
+      return aNullableBool;
+    }
+
+    public void setANullableBool(@Nullable Boolean setterArg) {
+      this.aNullableBool = setterArg;
+    }
+
+    private @Nullable Long aNullableInt;
+
+    public @Nullable Long getANullableInt() {
+      return aNullableInt;
+    }
+
+    public void setANullableInt(@Nullable Long setterArg) {
+      this.aNullableInt = setterArg;
+    }
+
+    private @Nullable Long aNullableInt64;
+
+    public @Nullable Long getANullableInt64() {
+      return aNullableInt64;
+    }
+
+    public void setANullableInt64(@Nullable Long setterArg) {
+      this.aNullableInt64 = setterArg;
+    }
+
+    private @Nullable Double aNullableDouble;
+
+    public @Nullable Double getANullableDouble() {
+      return aNullableDouble;
+    }
+
+    public void setANullableDouble(@Nullable Double setterArg) {
+      this.aNullableDouble = setterArg;
+    }
+
+    private @Nullable byte[] aNullableByteArray;
+
+    public @Nullable byte[] getANullableByteArray() {
+      return aNullableByteArray;
+    }
+
+    public void setANullableByteArray(@Nullable byte[] setterArg) {
+      this.aNullableByteArray = setterArg;
+    }
+
+    private @Nullable int[] aNullable4ByteArray;
+
+    public @Nullable int[] getANullable4ByteArray() {
+      return aNullable4ByteArray;
+    }
+
+    public void setANullable4ByteArray(@Nullable int[] setterArg) {
+      this.aNullable4ByteArray = setterArg;
+    }
+
+    private @Nullable long[] aNullable8ByteArray;
+
+    public @Nullable long[] getANullable8ByteArray() {
+      return aNullable8ByteArray;
+    }
+
+    public void setANullable8ByteArray(@Nullable long[] setterArg) {
+      this.aNullable8ByteArray = setterArg;
+    }
+
+    private @Nullable double[] aNullableFloatArray;
+
+    public @Nullable double[] getANullableFloatArray() {
+      return aNullableFloatArray;
+    }
+
+    public void setANullableFloatArray(@Nullable double[] setterArg) {
+      this.aNullableFloatArray = setterArg;
+    }
+
+    private @Nullable List<Object> aNullableList;
+
+    public @Nullable List<Object> getANullableList() {
+      return aNullableList;
+    }
+
+    public void setANullableList(@Nullable List<Object> setterArg) {
+      this.aNullableList = setterArg;
+    }
+
+    private @Nullable Map<Object, Object> aNullableMap;
+
+    public @Nullable Map<Object, Object> getANullableMap() {
+      return aNullableMap;
+    }
+
+    public void setANullableMap(@Nullable Map<Object, Object> setterArg) {
+      this.aNullableMap = setterArg;
+    }
+
+    private @Nullable List<List<Boolean>> nullableNestedList;
+
+    public @Nullable List<List<Boolean>> getNullableNestedList() {
+      return nullableNestedList;
+    }
+
+    public void setNullableNestedList(@Nullable List<List<Boolean>> setterArg) {
+      this.nullableNestedList = setterArg;
+    }
+
+    private @Nullable Map<String, String> nullableMapWithAnnotations;
+
+    public @Nullable Map<String, String> getNullableMapWithAnnotations() {
+      return nullableMapWithAnnotations;
+    }
+
+    public void setNullableMapWithAnnotations(@Nullable Map<String, String> setterArg) {
+      this.nullableMapWithAnnotations = setterArg;
+    }
+
+    private @Nullable Map<String, Object> nullableMapWithObject;
+
+    public @Nullable Map<String, Object> getNullableMapWithObject() {
+      return nullableMapWithObject;
+    }
+
+    public void setNullableMapWithObject(@Nullable Map<String, Object> setterArg) {
+      this.nullableMapWithObject = setterArg;
+    }
+
+    private @Nullable AnEnum aNullableEnum;
+
+    public @Nullable AnEnum getANullableEnum() {
+      return aNullableEnum;
+    }
+
+    public void setANullableEnum(@Nullable AnEnum setterArg) {
+      this.aNullableEnum = setterArg;
+    }
+
+    private @Nullable String aNullableString;
+
+    public @Nullable String getANullableString() {
+      return aNullableString;
+    }
+
+    public void setANullableString(@Nullable String setterArg) {
+      this.aNullableString = setterArg;
+    }
+
+    private @Nullable Object aNullableObject;
+
+    public @Nullable Object getANullableObject() {
+      return aNullableObject;
+    }
+
+    public void setANullableObject(@Nullable Object setterArg) {
+      this.aNullableObject = setterArg;
+    }
+
+    public static final class Builder {
+
+      private @Nullable Boolean aNullableBool;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableBool(@Nullable Boolean setterArg) {
+        this.aNullableBool = setterArg;
+        return this;
+      }
+
+      private @Nullable Long aNullableInt;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableInt(@Nullable Long setterArg) {
+        this.aNullableInt = setterArg;
+        return this;
+      }
+
+      private @Nullable Long aNullableInt64;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableInt64(@Nullable Long setterArg) {
+        this.aNullableInt64 = setterArg;
+        return this;
+      }
+
+      private @Nullable Double aNullableDouble;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableDouble(@Nullable Double setterArg) {
+        this.aNullableDouble = setterArg;
+        return this;
+      }
+
+      private @Nullable byte[] aNullableByteArray;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableByteArray(@Nullable byte[] setterArg) {
+        this.aNullableByteArray = setterArg;
+        return this;
+      }
+
+      private @Nullable int[] aNullable4ByteArray;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullable4ByteArray(@Nullable int[] setterArg) {
+        this.aNullable4ByteArray = setterArg;
+        return this;
+      }
+
+      private @Nullable long[] aNullable8ByteArray;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullable8ByteArray(@Nullable long[] setterArg) {
+        this.aNullable8ByteArray = setterArg;
+        return this;
+      }
+
+      private @Nullable double[] aNullableFloatArray;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableFloatArray(@Nullable double[] setterArg) {
+        this.aNullableFloatArray = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Object> aNullableList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableList(@Nullable List<Object> setterArg) {
+        this.aNullableList = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<Object, Object> aNullableMap;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableMap(@Nullable Map<Object, Object> setterArg) {
+        this.aNullableMap = setterArg;
+        return this;
+      }
+
+      private @Nullable List<List<Boolean>> nullableNestedList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setNullableNestedList(@Nullable List<List<Boolean>> setterArg) {
+        this.nullableNestedList = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<String, String> nullableMapWithAnnotations;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setNullableMapWithAnnotations(
+          @Nullable Map<String, String> setterArg) {
+        this.nullableMapWithAnnotations = setterArg;
+        return this;
+      }
+
+      private @Nullable Map<String, Object> nullableMapWithObject;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setNullableMapWithObject(@Nullable Map<String, Object> setterArg) {
+        this.nullableMapWithObject = setterArg;
+        return this;
+      }
+
+      private @Nullable AnEnum aNullableEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableEnum(@Nullable AnEnum setterArg) {
+        this.aNullableEnum = setterArg;
+        return this;
+      }
+
+      private @Nullable String aNullableString;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableString(@Nullable String setterArg) {
+        this.aNullableString = setterArg;
+        return this;
+      }
+
+      private @Nullable Object aNullableObject;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableObject(@Nullable Object setterArg) {
+        this.aNullableObject = setterArg;
+        return this;
+      }
+
+      public @NonNull AllNullableTypesWithoutRecursion build() {
+        AllNullableTypesWithoutRecursion pigeonReturn = new AllNullableTypesWithoutRecursion();
         pigeonReturn.setANullableBool(aNullableBool);
         pigeonReturn.setANullableInt(aNullableInt);
         pigeonReturn.setANullableInt64(aNullableInt64);
@@ -785,8 +1201,8 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> list) {
-      AllNullableTypes pigeonResult = new AllNullableTypes();
+    static @NonNull AllNullableTypesWithoutRecursion fromList(@NonNull ArrayList<Object> list) {
+      AllNullableTypesWithoutRecursion pigeonResult = new AllNullableTypesWithoutRecursion();
       Object aNullableBool = list.get(0);
       pigeonResult.setANullableBool((Boolean) aNullableBool);
       Object aNullableInt = list.get(1);
@@ -855,6 +1271,17 @@ public class CoreTests {
       this.allNullableTypes = setterArg;
     }
 
+    private @Nullable AllNullableTypesWithoutRecursion allNullableTypesWithoutRecursion;
+
+    public @Nullable AllNullableTypesWithoutRecursion getAllNullableTypesWithoutRecursion() {
+      return allNullableTypesWithoutRecursion;
+    }
+
+    public void setAllNullableTypesWithoutRecursion(
+        @Nullable AllNullableTypesWithoutRecursion setterArg) {
+      this.allNullableTypesWithoutRecursion = setterArg;
+    }
+
     private @Nullable AllTypes allTypes;
 
     public @Nullable AllTypes getAllTypes() {
@@ -878,6 +1305,15 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AllNullableTypesWithoutRecursion allNullableTypesWithoutRecursion;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAllNullableTypesWithoutRecursion(
+          @Nullable AllNullableTypesWithoutRecursion setterArg) {
+        this.allNullableTypesWithoutRecursion = setterArg;
+        return this;
+      }
+
       private @Nullable AllTypes allTypes;
 
       @CanIgnoreReturnValue
@@ -889,6 +1325,7 @@ public class CoreTests {
       public @NonNull AllClassesWrapper build() {
         AllClassesWrapper pigeonReturn = new AllClassesWrapper();
         pigeonReturn.setAllNullableTypes(allNullableTypes);
+        pigeonReturn.setAllNullableTypesWithoutRecursion(allNullableTypesWithoutRecursion);
         pigeonReturn.setAllTypes(allTypes);
         return pigeonReturn;
       }
@@ -896,8 +1333,12 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
       toListResult.add((allNullableTypes == null) ? null : allNullableTypes.toList());
+      toListResult.add(
+          (allNullableTypesWithoutRecursion == null)
+              ? null
+              : allNullableTypesWithoutRecursion.toList());
       toListResult.add((allTypes == null) ? null : allTypes.toList());
       return toListResult;
     }
@@ -909,7 +1350,13 @@ public class CoreTests {
           (allNullableTypes == null)
               ? null
               : AllNullableTypes.fromList((ArrayList<Object>) allNullableTypes));
-      Object allTypes = list.get(1);
+      Object allNullableTypesWithoutRecursion = list.get(1);
+      pigeonResult.setAllNullableTypesWithoutRecursion(
+          (allNullableTypesWithoutRecursion == null)
+              ? null
+              : AllNullableTypesWithoutRecursion.fromList(
+                  (ArrayList<Object>) allNullableTypesWithoutRecursion));
+      Object allTypes = list.get(2);
       pigeonResult.setAllTypes(
           (allTypes == null) ? null : AllTypes.fromList((ArrayList<Object>) allTypes));
       return pigeonResult;
@@ -980,6 +1427,14 @@ public class CoreTests {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+  /** Asynchronous error handling return type for void API method returns. */
+  public interface VoidResult {
+    /** Success case callback method for handling returns. */
+    void success();
+
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
 
   private static class HostIntegrationCoreApiCodec extends StandardMessageCodec {
     public static final HostIntegrationCoreApiCodec INSTANCE = new HostIntegrationCoreApiCodec();
@@ -994,8 +1449,10 @@ public class CoreTests {
         case (byte) 129:
           return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -1010,11 +1467,14 @@ public class CoreTests {
       } else if (value instanceof AllNullableTypes) {
         stream.write(129);
         writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllTypes) {
+      } else if (value instanceof AllNullableTypesWithoutRecursion) {
         stream.write(130);
+        writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
+      } else if (value instanceof AllTypes) {
+        stream.write(131);
         writeValue(stream, ((AllTypes) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -1086,6 +1546,10 @@ public class CoreTests {
     /** Returns the passed object, to test serialization and deserialization. */
     @Nullable
     AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
+    /** Returns the passed object, to test serialization and deserialization. */
+    @Nullable
+    AllNullableTypesWithoutRecursion echoAllNullableTypesWithoutRecursion(
+        @Nullable AllNullableTypesWithoutRecursion everything);
     /**
      * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
      */
@@ -1099,6 +1563,12 @@ public class CoreTests {
     /** Returns passed in arguments of multiple types. */
     @NonNull
     AllNullableTypes sendMultipleNullableTypes(
+        @Nullable Boolean aNullableBool,
+        @Nullable Long aNullableInt,
+        @Nullable String aNullableString);
+    /** Returns passed in arguments of multiple types. */
+    @NonNull
+    AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
         @Nullable Boolean aNullableBool,
         @Nullable Long aNullableInt,
         @Nullable String aNullableString);
@@ -1139,7 +1609,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    void noopAsync(@NonNull Result<Void> result);
+    void noopAsync(@NonNull VoidResult result);
     /** Returns passed in int asynchronously. */
     void echoAsyncInt(@NonNull Long anInt, @NonNull Result<Long> result);
     /** Returns passed in double asynchronously. */
@@ -1162,7 +1632,7 @@ public class CoreTests {
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(@NonNull NullableResult<Object> result);
     /** Responds with an error from an async void function. */
-    void throwAsyncErrorFromVoid(@NonNull Result<Void> result);
+    void throwAsyncErrorFromVoid(@NonNull VoidResult result);
     /** Responds with a Flutter error from an async function returning a value. */
     void throwAsyncFlutterError(@NonNull NullableResult<Object> result);
     /** Returns the passed object, to test async serialization and deserialization. */
@@ -1170,6 +1640,10 @@ public class CoreTests {
     /** Returns the passed object, to test serialization and deserialization. */
     void echoAsyncNullableAllNullableTypes(
         @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result);
+    /** Returns the passed object, to test serialization and deserialization. */
+    void echoAsyncNullableAllNullableTypesWithoutRecursion(
+        @Nullable AllNullableTypesWithoutRecursion everything,
+        @NonNull NullableResult<AllNullableTypesWithoutRecursion> result);
     /** Returns passed in int asynchronously. */
     void echoAsyncNullableInt(@Nullable Long anInt, @NonNull NullableResult<Long> result);
     /** Returns passed in double asynchronously. */
@@ -1192,11 +1666,11 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
 
-    void callFlutterNoop(@NonNull Result<Void> result);
+    void callFlutterNoop(@NonNull VoidResult result);
 
     void callFlutterThrowError(@NonNull NullableResult<Object> result);
 
-    void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result);
+    void callFlutterThrowErrorFromVoid(@NonNull VoidResult result);
 
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
 
@@ -1208,6 +1682,16 @@ public class CoreTests {
         @Nullable Long aNullableInt,
         @Nullable String aNullableString,
         @NonNull Result<AllNullableTypes> result);
+
+    void callFlutterEchoAllNullableTypesWithoutRecursion(
+        @Nullable AllNullableTypesWithoutRecursion everything,
+        @NonNull NullableResult<AllNullableTypesWithoutRecursion> result);
+
+    void callFlutterSendMultipleNullableTypesWithoutRecursion(
+        @Nullable Boolean aNullableBool,
+        @Nullable Long aNullableInt,
+        @Nullable String aNullableString,
+        @NonNull Result<AllNullableTypesWithoutRecursion> result);
 
     void callFlutterEchoBool(@NonNull Boolean aBool, @NonNull Result<Boolean> result);
 
@@ -1731,6 +2215,33 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypesWithoutRecursion everythingArg =
+                    (AllNullableTypesWithoutRecursion) args.get(0);
+                try {
+                  AllNullableTypesWithoutRecursion output =
+                      api.echoAllNullableTypesWithoutRecursion(everythingArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString",
                 getCodec());
         if (api != null) {
@@ -1794,6 +2305,37 @@ public class CoreTests {
                 try {
                   AllNullableTypes output =
                       api.sendMultipleNullableTypes(
+                          aNullableBoolArg,
+                          (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
+                          aNullableStringArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Boolean aNullableBoolArg = (Boolean) args.get(0);
+                Number aNullableIntArg = (Number) args.get(1);
+                String aNullableStringArg = (String) args.get(2);
+                try {
+                  AllNullableTypesWithoutRecursion output =
+                      api.sendMultipleNullableTypesWithoutRecursion(
                           aNullableBoolArg,
                           (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
                           aNullableStringArg);
@@ -2097,9 +2639,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2434,9 +2976,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2539,6 +3081,39 @@ public class CoreTests {
                     };
 
                 api.echoAsyncNullableAllNullableTypes(everythingArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypesWithoutRecursion everythingArg =
+                    (AllNullableTypesWithoutRecursion) args.get(0);
+                NullableResult<AllNullableTypesWithoutRecursion> resultCallback =
+                    new NullableResult<AllNullableTypesWithoutRecursion>() {
+                      public void success(AllNullableTypesWithoutRecursion result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncNullableAllNullableTypesWithoutRecursion(
+                    everythingArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -2834,9 +3409,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -2892,9 +3467,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }
@@ -3001,6 +3576,75 @@ public class CoreTests {
                     };
 
                 api.callFlutterSendMultipleNullableTypes(
+                    aNullableBoolArg,
+                    (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
+                    aNullableStringArg,
+                    resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypesWithoutRecursion everythingArg =
+                    (AllNullableTypesWithoutRecursion) args.get(0);
+                NullableResult<AllNullableTypesWithoutRecursion> resultCallback =
+                    new NullableResult<AllNullableTypesWithoutRecursion>() {
+                      public void success(AllNullableTypesWithoutRecursion result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoAllNullableTypesWithoutRecursion(everythingArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Boolean aNullableBoolArg = (Boolean) args.get(0);
+                Number aNullableIntArg = (Number) args.get(1);
+                String aNullableStringArg = (String) args.get(2);
+                Result<AllNullableTypesWithoutRecursion> resultCallback =
+                    new Result<AllNullableTypesWithoutRecursion>() {
+                      public void success(AllNullableTypesWithoutRecursion result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterSendMultipleNullableTypesWithoutRecursion(
                     aNullableBoolArg,
                     (aNullableIntArg == null) ? null : aNullableIntArg.longValue(),
                     aNullableStringArg,
@@ -3525,8 +4169,10 @@ public class CoreTests {
         case (byte) 129:
           return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -3541,11 +4187,14 @@ public class CoreTests {
       } else if (value instanceof AllNullableTypes) {
         stream.write(129);
         writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllTypes) {
+      } else if (value instanceof AllNullableTypesWithoutRecursion) {
         stream.write(130);
+        writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
+      } else if (value instanceof AllTypes) {
+        stream.write(131);
         writeValue(stream, ((AllTypes) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -3574,7 +4223,7 @@ public class CoreTests {
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic calling.
      */
-    public void noop(@NonNull Result<Void> result) {
+    public void noop(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop";
       BasicMessageChannel<Object> channel =
@@ -3591,7 +4240,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -3626,7 +4275,7 @@ public class CoreTests {
           });
     }
     /** Responds with an error from an async void function. */
-    public void throwErrorFromVoid(@NonNull Result<Void> result) {
+    public void throwErrorFromVoid(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid";
       BasicMessageChannel<Object> channel =
@@ -3643,7 +4292,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -3747,6 +4396,79 @@ public class CoreTests {
               } else {
                 @SuppressWarnings("ConstantConditions")
                 AllNullableTypes output = (AllNullableTypes) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Returns the passed object, to test serialization and deserialization. */
+    public void echoAllNullableTypesWithoutRecursion(
+        @Nullable AllNullableTypesWithoutRecursion everythingArg,
+        @NonNull NullableResult<AllNullableTypesWithoutRecursion> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion";
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(everythingArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AllNullableTypesWithoutRecursion output =
+                    (AllNullableTypesWithoutRecursion) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /**
+     * Returns passed in arguments of multiple types.
+     *
+     * <p>Tests multiple-arity FlutterApi handling.
+     */
+    public void sendMultipleNullableTypesWithoutRecursion(
+        @Nullable Boolean aNullableBoolArg,
+        @Nullable Long aNullableIntArg,
+        @Nullable String aNullableStringArg,
+        @NonNull Result<AllNullableTypesWithoutRecursion> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion";
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Arrays.asList(aNullableBoolArg, aNullableIntArg, aNullableStringArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AllNullableTypesWithoutRecursion output =
+                    (AllNullableTypesWithoutRecursion) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -4251,7 +4973,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    public void noopAsync(@NonNull Result<Void> result) {
+    public void noopAsync(@NonNull VoidResult result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync";
       BasicMessageChannel<Object> channel =
@@ -4268,7 +4990,7 @@ public class CoreTests {
                         (String) listReply.get(1),
                         (String) listReply.get(2)));
               } else {
-                result.success(null);
+                result.success();
               }
             } else {
               result.error(createConnectionError(channelName));
@@ -4358,7 +5080,7 @@ public class CoreTests {
 
     void echo(@NonNull String aString, @NonNull Result<String> result);
 
-    void voidVoid(@NonNull Result<Void> result);
+    void voidVoid(@NonNull VoidResult result);
 
     /** The codec used by HostSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -4407,9 +5129,9 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
                       }

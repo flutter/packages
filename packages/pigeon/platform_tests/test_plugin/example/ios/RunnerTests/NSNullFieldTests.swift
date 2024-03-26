@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import XCTest
+
 @testable import test_plugin
 
 /// Tests NSNull is correctly handled by `nilOrValue` helper, by manually setting nullable fields to NSNull.

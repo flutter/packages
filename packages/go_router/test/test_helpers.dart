@@ -188,6 +188,7 @@ Future<GoRouter> createRouter(
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
   );
+  addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
       restorationScopeId:
@@ -221,6 +222,7 @@ Future<GoRouter> createRouterWithRoutingConfig(
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
   );
+  addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
       restorationScopeId:
@@ -336,6 +338,12 @@ class DummyRestorableStatefulWidgetState
   }
 
   @override
+  void dispose() {
+    _counter.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Container();
 }
 
@@ -355,14 +363,6 @@ StatefulShellRouteBuilder mockStackedShellBuilder = (BuildContext context,
     GoRouterState state, StatefulNavigationShell navigationShell) {
   return navigationShell;
 };
-
-RouteMatch createRouteMatch(RouteBase route, String location) {
-  return RouteMatch(
-    route: route,
-    matchedLocation: location,
-    pageKey: ValueKey<String>(location),
-  );
-}
 
 /// A routing config that is never going to change.
 class ConstantRoutingConfig extends ValueListenable<RoutingConfig> {

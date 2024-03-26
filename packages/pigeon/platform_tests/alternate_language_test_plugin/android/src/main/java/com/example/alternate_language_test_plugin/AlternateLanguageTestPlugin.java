@@ -8,12 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.alternate_language_test_plugin.CoreTests.AllClassesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWithoutRecursion;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AnEnum;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.NullableResult;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
+import com.example.alternate_language_test_plugin.CoreTests.VoidResult;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public @Nullable AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything) {
+    return everything;
+  }
+
+  @Override
+  public @Nullable AllNullableTypesWithoutRecursion echoAllNullableTypesWithoutRecursion(
+      @Nullable AllNullableTypesWithoutRecursion everything) {
     return everything;
   }
 
@@ -153,6 +161,20 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+      @Nullable Boolean aNullableBool,
+      @Nullable Long aNullableInt,
+      @Nullable String aNullableString) {
+    AllNullableTypesWithoutRecursion someThings =
+        new AllNullableTypesWithoutRecursion.Builder()
+            .setANullableBool(aNullableBool)
+            .setANullableInt(aNullableInt)
+            .setANullableString(aNullableString)
+            .build();
+    return someThings;
+  }
+
+  @Override
   public @Nullable Long echoNullableInt(@Nullable Long aNullableInt) {
     return aNullableInt;
   }
@@ -208,8 +230,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void noopAsync(@NonNull Result<Void> result) {
-    result.success(null);
+  public void noopAsync(@NonNull VoidResult result) {
+    result.success();
   }
 
   @Override
@@ -218,7 +240,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void throwAsyncErrorFromVoid(@NonNull Result<Void> result) {
+  public void throwAsyncErrorFromVoid(@NonNull VoidResult result) {
     result.error(new RuntimeException("An error"));
   }
 
@@ -235,6 +257,13 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void echoAsyncNullableAllNullableTypes(
       @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoAsyncNullableAllNullableTypesWithoutRecursion(
+      @Nullable AllNullableTypesWithoutRecursion everything,
+      @NonNull NullableResult<AllNullableTypesWithoutRecursion> result) {
     result.success(everything);
   }
 
@@ -338,7 +367,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterNoop(@NonNull Result<Void> result) {
+  public void callFlutterNoop(@NonNull VoidResult result) {
     flutterApi.noop(result);
   }
 
@@ -348,7 +377,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result) {
+  public void callFlutterThrowErrorFromVoid(@NonNull VoidResult result) {
     flutterApi.throwErrorFromVoid(result);
   }
 
@@ -371,6 +400,23 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable String aNullableString,
       @NonNull Result<AllNullableTypes> result) {
     flutterApi.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString, result);
+  }
+
+  @Override
+  public void callFlutterEchoAllNullableTypesWithoutRecursion(
+      @Nullable AllNullableTypesWithoutRecursion everything,
+      @NonNull NullableResult<AllNullableTypesWithoutRecursion> result) {
+    flutterApi.echoAllNullableTypesWithoutRecursion(everything, result);
+  }
+
+  @Override
+  public void callFlutterSendMultipleNullableTypesWithoutRecursion(
+      @Nullable Boolean aNullableBool,
+      @Nullable Long aNullableInt,
+      @Nullable String aNullableString,
+      @NonNull Result<AllNullableTypesWithoutRecursion> result) {
+    flutterApi.sendMultipleNullableTypesWithoutRecursion(
+        aNullableBool, aNullableInt, aNullableString, result);
   }
 
   @Override

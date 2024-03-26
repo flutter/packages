@@ -127,11 +127,11 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
     if (input == null) {
       return null;
     }
-    switch (input.runtimeType) {
-      case ComplexData1:
-        return <Object?>['ComplexData1', (input as ComplexData1).data];
-      case ComplexData2:
-        return <Object?>['ComplexData2', (input as ComplexData2).data];
+    switch (input) {
+      case ComplexData1 _:
+        return <Object?>['ComplexData1', input.data];
+      case ComplexData2 _:
+        return <Object?>['ComplexData2', input.data];
       default:
         throw FormatException('Cannot encode type ${input.runtimeType}');
     }

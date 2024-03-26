@@ -1,3 +1,16 @@
+## 1.2.1
+
+* Removes a few deprecated API usages.
+
+## 1.2.0
+
+* Updates to web code to package `web: ^0.5.0`.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+
+## 1.1.1
+
+* Fixes new lint warnings.
+
 ## 1.1.0
 
 * Adds `computeAverage` and `computeDelta` methods to support analysis of benchmark results.

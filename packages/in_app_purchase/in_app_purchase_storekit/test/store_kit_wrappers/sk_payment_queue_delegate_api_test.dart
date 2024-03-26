@@ -4,8 +4,10 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:in_app_purchase_storekit/src/channel.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+
+import '../fakes/fake_storekit_platform.dart';
+import '../test_api.g.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -13,10 +15,7 @@ void main() {
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(
-            SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
+    TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
   });
 
   test(
@@ -147,32 +146,3 @@ class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {
     return false;
   }
 }
-
-class FakeStoreKitPlatform {
-  FakeStoreKitPlatform() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, onMethodCall);
-  }
-
-  // indicate if the payment queue delegate is registered
-  bool isPaymentQueueDelegateRegistered = false;
-
-  Future<dynamic> onMethodCall(MethodCall call) {
-    switch (call.method) {
-      case '-[SKPaymentQueue registerDelegate]':
-        isPaymentQueueDelegateRegistered = true;
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue removeDelegate]':
-        isPaymentQueueDelegateRegistered = false;
-        return Future<void>.sync(() {});
-    }
-    return Future<dynamic>.error('method not mocked');
-  }
-}
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

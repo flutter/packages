@@ -1,3 +1,38 @@
+## 2.5.1
+
+* Makes the tile overlay callback invoke the platform channel on the platform thread.
+
+## 2.5.0
+
+* Adds support for `MapConfiguration.style`.
+* Adds support for `getStyleError`.
+
+## 2.4.2
+
+* Fixes a bug in "takeSnapshot" function that incorrectly returns a blank image on iOS 17.
+
+## 2.4.1
+
+* Restores the workaround to exclude arm64 simulator builds, as it is still necessary for applications targeting iOS 12.
+
+## 2.4.0
+
+* Adds support for arm64 simulators.
+* Updates minimum supported SDK version to Flutter 3.16.6.
+* Removes support for iOS 11.
+
+## 2.3.6
+
+* Adds privacy manifest.
+
+## 2.3.5
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.3.4
+
+* Fixes new lint warnings.
+
 ## 2.3.3
 
 * Adds support for version 8 of the Google Maps SDK in apps targeting iOS 14+.

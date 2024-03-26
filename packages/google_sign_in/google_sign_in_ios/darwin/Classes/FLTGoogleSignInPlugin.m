@@ -111,9 +111,9 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (void)initializeSignInWithParameters:(nonnull FSIInitParams *)params
                                  error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  GIDConfiguration *configuration = [self configurationWithClientIdArgument:params.clientId
-                                                     serverClientIdArgument:params.serverClientId
-                                                       hostedDomainArgument:params.hostedDomain];
+  GIDConfiguration *configuration = [self configurationWithClientIdentifier:params.clientId
+                                                     serverClientIdentifier:params.serverClientId
+                                                               hostedDomain:params.hostedDomain];
   self.requestedScopes = [NSSet setWithArray:params.scopes];
   if (configuration != nil) {
     self.configuration = configuration;
@@ -141,9 +141,9 @@ static FlutterError *getFlutterError(NSError *error) {
     // If neither are available, do not set the configuration - GIDSignIn will automatically use
     // settings from the Info.plist (which is the recommended method).
     if (!self.configuration && self.googleServiceProperties) {
-      self.configuration = [self configurationWithClientIdArgument:nil
-                                            serverClientIdArgument:nil
-                                              hostedDomainArgument:nil];
+      self.configuration = [self configurationWithClientIdentifier:nil
+                                            serverClientIdentifier:nil
+                                                      hostedDomain:nil];
     }
     if (self.configuration) {
       self.signIn.configuration = self.configuration;
@@ -270,30 +270,19 @@ static FlutterError *getFlutterError(NSError *error) {
 #endif
 }
 
-/// @return @c nil if GoogleService-Info.plist not found and clientId is not provided.
-- (GIDConfiguration *)configurationWithClientIdArgument:(id)clientIDArg
-                                 serverClientIdArgument:(id)serverClientIDArg
-                                   hostedDomainArgument:(id)hostedDomainArg {
-  NSString *clientID;
-  BOOL hasDynamicClientId = [clientIDArg isKindOfClass:[NSString class]];
-  if (hasDynamicClientId) {
-    clientID = clientIDArg;
-  } else if (self.googleServiceProperties) {
-    clientID = self.googleServiceProperties[kClientIdKey];
-  } else {
-    // We couldn't resolve a clientId, without which we cannot create a GIDConfiguration.
+/// @return @c nil if GoogleService-Info.plist not found and runtimeClientIdentifier is not
+/// provided.
+- (GIDConfiguration *)configurationWithClientIdentifier:(NSString *)runtimeClientIdentifier
+                                 serverClientIdentifier:(NSString *)runtimeServerClientIdentifier
+                                           hostedDomain:(NSString *)hostedDomain {
+  NSString *clientID = runtimeClientIdentifier ?: self.googleServiceProperties[kClientIdKey];
+  if (!clientID) {
+    // Creating a GIDConfiguration requires a client identifier.
     return nil;
   }
+  NSString *serverClientID =
+      runtimeServerClientIdentifier ?: self.googleServiceProperties[kServerClientIdKey];
 
-  BOOL hasDynamicServerClientId = [serverClientIDArg isKindOfClass:[NSString class]];
-  NSString *serverClientID = hasDynamicServerClientId
-                                 ? serverClientIDArg
-                                 : self.googleServiceProperties[kServerClientIdKey];
-
-  NSString *hostedDomain = nil;
-  if (hostedDomainArg != [NSNull null]) {
-    hostedDomain = hostedDomainArg;
-  }
   return [[GIDConfiguration alloc] initWithClientID:clientID
                                      serverClientID:serverClientID
                                        hostedDomain:hostedDomain
@@ -340,18 +329,16 @@ static FlutterError *getFlutterError(NSError *error) {
 #pragma clang diagnostic pop
 }
 
-/**
- * This method recursively iterate through the view hierarchy
- * to return the top most view controller.
- *
- * It supports the following scenarios:
- *
- * - The view controller is presenting another view.
- * - The view controller is a UINavigationController.
- * - The view controller is a UITabBarController.
- *
- * @return The top most view controller.
- */
+/// This method recursively iterate through the view hierarchy
+/// to return the top most view controller.
+///
+/// It supports the following scenarios:
+///
+/// - The view controller is presenting another view.
+/// - The view controller is a UINavigationController.
+/// - The view controller is a UITabBarController.
+///
+/// @return The top most view controller.
 - (UIViewController *)topViewControllerFromViewController:(UIViewController *)viewController {
   if ([viewController isKindOfClass:[UINavigationController class]]) {
     UINavigationController *navigationController = (UINavigationController *)viewController;
