@@ -1,3 +1,7 @@
+## 17.3.0
+
+* Adds Linux support
+
 ## 17.2.0
 
 * [dart] Adds implementation for `@ProxyApi`.

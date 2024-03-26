@@ -69,6 +69,7 @@ Future<void> _validateGeneratedFiles(
       GeneratorLanguage.dart,
       GeneratorLanguage.java,
       GeneratorLanguage.kotlin,
+      GeneratorLanguage.linux,
       GeneratorLanguage.objc,
     };
   } else if (Platform.isMacOS) {
@@ -142,6 +143,7 @@ Set<String> _extensionsForLanguage(GeneratorLanguage language) {
     GeneratorLanguage.dart => <String>{'dart'},
     GeneratorLanguage.java => <String>{'java'},
     GeneratorLanguage.kotlin => <String>{'kt'},
+    GeneratorLanguage.linux => <String>{'linux'},
     GeneratorLanguage.swift => <String>{'swift'},
     GeneratorLanguage.objc => <String>{'h', 'm', 'mm'},
   };

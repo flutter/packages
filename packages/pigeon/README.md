@@ -17,6 +17,7 @@ Currently pigeon supports generating:
 * Kotlin and Java code for Android
 * Swift and Objective-C code for iOS and macOS
 * C++ code for Windows
+* C++ code for Linux
 
 ### Supported Datatypes
 
@@ -126,6 +127,13 @@ the threading model for handling HostApi methods can be selected with the
    (e.g. `macos/Runner.xcworkspace` or `.podspec`).
 1) Implement the generated protocol for handling the calls on macOS, set it up
    as the handler for the messages.
+
+### Flutter calling into Linux steps
+
+1) Add the generated C++ code to your `./linux` directory for compilation, and
+   to your `linux/CMakeLists.txt` file.
+1) Implement the generated protocol for handling the calls on Linux, set it up
+   as the vtable for the API object.
 
 ### Calling into Flutter from the host platform
 
