@@ -43,13 +43,13 @@ public class ResolutionSelectorTest {
     final long resolutionStrategyIdentifier = 14;
     instanceManager.addDartCreatedInstance(mockResolutionStrategy, resolutionStrategyIdentifier);
 
-    final ResolutionFilter mockResolutionFilter = mock(ResolutionFilter.class);
-    final long resolutionFilterIdentifier = 33;
-    instanceManager.addDartCreatedInstance(mockResolutionFilter, resolutionFilterIdentifier);
-
     final AspectRatioStrategy mockAspectRatioStrategy = mock(AspectRatioStrategy.class);
     final long aspectRatioStrategyIdentifier = 15;
     instanceManager.addDartCreatedInstance(mockAspectRatioStrategy, aspectRatioStrategyIdentifier);
+
+    final ResolutionFilter mockResolutionFilter = mock(ResolutionFilter.class);
+    final long resolutionFilterIdentifier = 33;
+    instanceManager.addDartCreatedInstance(mockResolutionFilter, resolutionFilterIdentifier);
 
     when(mockProxy.create(mockResolutionStrategy, mockAspectRatioStrategy, mockResolutionFilter))
         .thenReturn(mockResolutionSelector);

@@ -179,7 +179,7 @@ class CameraXProxy {
   AspectRatioStrategy Function(int aspectRatio, int fallbackRule)
       createAspectRatioStrategy;
 
-  /// Creates [ResolutionFilter] that prioritizes specified resolution.
+  /// Creates a [ResolutionFilter] that prioritizes specified resolution.
   ResolutionFilter Function(Size preferredResolution)
       createResolutionFilterWithOnePreferredSize;
 

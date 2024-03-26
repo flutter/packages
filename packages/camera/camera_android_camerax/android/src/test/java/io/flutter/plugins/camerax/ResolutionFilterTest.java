@@ -24,7 +24,6 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class ResolutionFilterTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  @Mock public ResolutionFilter mockResolutionFilter;
 
   InstanceManager instanceManager;
 
@@ -40,7 +39,6 @@ public class ResolutionFilterTest {
 
   @Test
   public void hostApiCreateWithOnePreferredSize_createsExpectedResolutionFilterInstance() {
-    final android.util.Size lala = new android.util.Size(720, 480);
     final ResolutionFilterHostApiImpl hostApi = new ResolutionFilterHostApiImpl(instanceManager);
     final long instanceIdentifier = 50;
     final long preferredResolutionWidth = 20;
@@ -53,7 +51,7 @@ public class ResolutionFilterTest {
 
     hostApi.createWithOnePreferredSize(instanceIdentifier, preferredResolution);
 
-    // Test instance filters supported resolutions as expected.
+    // Test that instance filters supported resolutions as expected.
     final ResolutionFilter resolutionFilter = instanceManager.getInstance(instanceIdentifier);
     final Size fakeSupportedSize1 = new Size(720, 480);
     final Size fakeSupportedSize2 = new Size(20, 80);
@@ -67,11 +65,11 @@ public class ResolutionFilterTest {
     fakeSupportedSizes.add(preferredSize);
     fakeSupportedSizes.add(fakeSupportedSize3);
 
-    // Test case where preferred resolution is supported.
+    // Test the case where preferred resolution is supported.
     List<Size> filteredSizes = resolutionFilter.filter(fakeSupportedSizes, 90);
     assertEquals(filteredSizes.get(0), preferredSize);
 
-    // Test case where preferred resolution is not supported.
+    // Test the case where preferred resolution is not supported.
     fakeSupportedSizes.remove(0);
     filteredSizes = resolutionFilter.filter(fakeSupportedSizes, 90);
     assertEquals(filteredSizes, fakeSupportedSizes);

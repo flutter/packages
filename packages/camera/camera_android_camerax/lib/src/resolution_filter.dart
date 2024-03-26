@@ -9,24 +9,27 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// Filter/sorter for applications to specify preferred resolutions.
+/// Filter for applications to specify preferred resolutions.
 ///
 /// This is an indirect wrapping of the native Android `ResolutionFilter`,
-/// which is an interface that requires a synchronous response, which is not
-/// possible through pigeon. Thus, constructing a [ResolutionFilter] will create
-/// a native `ResolutionFilter` with the characteristics as described below. If
-/// these constructors do not meet your needs, feel free to add a new
+/// an interface that requires a synchronous response. Achieving such is not
+/// possible through pigeon. Thus, constructing a [ResolutionFilter] with a
+/// particular constructor will create a native `ResolutionFilter` with the
+/// characteristics described in the documentation for that constructor,
+/// respectively.
+///
+/// If the provided constructors do not meet your needs, feel free to add a new
 /// constructor; see CONTRIBUTING.MD for more information on how to do so.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ResolutionFilter/ResolutionFilter.
 @immutable
 class ResolutionFilter extends JavaObject {
-  /// Construct a [ResolutionFilter].
+  /// Constructs a [ResolutionFilter].
   ///
-  /// Because this is an indirect wrapping of the native `ResolutionFilter`,
-  /// this will construct a filter that will only prioritize the specified
-  /// [preferredResolution] over the other resolutions, whose order of
-  /// preference (according to CameraX) will remain the same.
+  /// This will construct a native `ResolutionFilter` that will prioritize the
+  /// specified [preferredResolution] (if supported) over other supported
+  /// resolutions, whose priorities (as determined by CameraX) will remain the
+  /// same.
   ResolutionFilter.onePreferredSize({
     required this.preferredResolution,
     super.binaryMessenger,
@@ -53,7 +56,7 @@ class ResolutionFilter extends JavaObject {
 
   final _ResolutionFilterHostApiImpl _api;
 
-  /// The resolution for the filter to prioritize.
+  /// The resolution for a [ResolutionFilter.onePreferredSize] to prioritize.
   final Size preferredResolution;
 }
 

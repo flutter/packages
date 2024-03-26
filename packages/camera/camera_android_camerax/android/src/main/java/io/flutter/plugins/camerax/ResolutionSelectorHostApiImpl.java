@@ -37,11 +37,11 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
       if (resolutionStrategy != null) {
         builder.setResolutionStrategy(resolutionStrategy);
       }
-      if (resolutionFilter != null) {
-        builder.setResolutionFilter(resolutionFilter);
-      }
       if (aspectRatioStrategy != null) {
         builder.setAspectRatioStrategy(aspectRatioStrategy);
+      }
+      if (resolutionFilter != null) {
+        builder.setResolutionFilter(resolutionFilter);
       }
       return builder.build();
     }

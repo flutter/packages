@@ -27,7 +27,7 @@ public class ResolutionFilterHostApiImpl implements ResolutionFilterHostApi {
   public static class ResolutionFilterProxy {
     /**
      * Creates an instance of {@link ResolutionFilter} that moves the {@code preferredSize} to the
-     * front of the list of supported resolutions such that it can be prioritized by CameraX.
+     * front of the list of supported resolutions so that it can be prioritized by CameraX.
      */
     @NonNull
     public ResolutionFilter createWithOnePreferredSize(@NonNull Size preferredSize) {

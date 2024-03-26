@@ -58,8 +58,7 @@ void main() {
       ));
     });
 
-    test(
-        'HostApi createWithOnePreferredSize creates expected ResolutionStrategy',
+    test('HostApi createWithOnePreferredSize creates expected ResolutionFilter',
         () {
       final MockTestResolutionFilterHostApi mockApi =
           MockTestResolutionFilterHostApi();
