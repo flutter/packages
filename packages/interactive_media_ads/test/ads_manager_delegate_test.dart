@@ -15,6 +15,13 @@ void main() {
           (PlatformAdsManagerDelegateCreationParams params) {
         return TestPlatformAdsManagerDelegate(params);
       },
+      onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
+        throw UnimplementedError();
+      },
+      onCreatePlatformAdDisplayContainer:
+          (PlatformAdDisplayContainerCreationParams params) {
+        throw UnimplementedError();
+      },
     );
 
     void onAdEvent(AdEvent event) {}

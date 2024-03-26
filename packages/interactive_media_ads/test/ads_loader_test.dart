@@ -18,6 +18,7 @@ void main() {
         onAdsLoadError: (AdsLoadErrorData data) {},
       ),
       onContentComplete: expectAsync0(() async {}),
+      onRequestAds: (AdsRequest request) async {},
     );
 
     final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
@@ -32,6 +33,7 @@ void main() {
         onAdsLoadError: (AdsLoadErrorData data) {},
       ),
       onRequestAds: expectAsync1((AdsRequest request) async {}),
+      onContentComplete: () async {},
     );
 
     final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);

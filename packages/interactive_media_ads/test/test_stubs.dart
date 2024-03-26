@@ -8,44 +8,41 @@ import 'package:interactive_media_ads/src/platform_interface/platform_interface.
 final class TestInteractiveMediaAdsPlatform
     extends InteractiveMediaAdsPlatform {
   TestInteractiveMediaAdsPlatform({
-    this.onCreatePlatformAdsLoader,
-    this.onCreatePlatformAdsManagerDelegate,
-    this.onCreatePlatformAdDisplayContainer,
+    required this.onCreatePlatformAdsLoader,
+    required this.onCreatePlatformAdsManagerDelegate,
+    required this.onCreatePlatformAdDisplayContainer,
   });
 
-  PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)?
+  PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
       onCreatePlatformAdsLoader;
 
   PlatformAdsManagerDelegate Function(
     PlatformAdsManagerDelegateCreationParams params,
-  )? onCreatePlatformAdsManagerDelegate;
+  ) onCreatePlatformAdsManagerDelegate;
 
   PlatformAdDisplayContainer Function(
     PlatformAdDisplayContainerCreationParams params,
-  )? onCreatePlatformAdDisplayContainer;
+  ) onCreatePlatformAdDisplayContainer;
 
   @override
   PlatformAdsLoader createPlatformAdsLoader(
     PlatformAdsLoaderCreationParams params,
   ) {
-    return onCreatePlatformAdsLoader?.call(params) ??
-        super.createPlatformAdsLoader(params);
+    return onCreatePlatformAdsLoader(params);
   }
 
   @override
   PlatformAdsManagerDelegate createPlatformAdsManagerDelegate(
     PlatformAdsManagerDelegateCreationParams params,
   ) {
-    return onCreatePlatformAdsManagerDelegate?.call(params) ??
-        super.createPlatformAdsManagerDelegate(params);
+    return onCreatePlatformAdsManagerDelegate(params);
   }
 
   @override
   PlatformAdDisplayContainer createPlatformAdDisplayContainer(
     PlatformAdDisplayContainerCreationParams params,
   ) {
-    return onCreatePlatformAdDisplayContainer?.call(params) ??
-        super.createPlatformAdDisplayContainer(params);
+    return onCreatePlatformAdDisplayContainer(params);
   }
 }
 
@@ -66,22 +63,22 @@ final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
 final class TestPlatformAdsLoader extends PlatformAdsLoader {
   TestPlatformAdsLoader(
     super.params, {
-    this.onContentComplete,
-    this.onRequestAds,
+    required this.onContentComplete,
+    required this.onRequestAds,
   }) : super.implementation();
 
-  Future<void> Function()? onContentComplete;
+  Future<void> Function() onContentComplete;
 
-  Future<void> Function(AdsRequest request)? onRequestAds;
+  Future<void> Function(AdsRequest request) onRequestAds;
 
   @override
   Future<void> contentComplete() async {
-    return onContentComplete?.call();
+    return onContentComplete();
   }
 
   @override
   Future<void> requestAds(AdsRequest request) async {
-    return onRequestAds?.call(request);
+    return onRequestAds(request);
   }
 }
 

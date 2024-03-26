@@ -46,4 +46,14 @@ void main() {
 
 final class ExtendsPlatformAdsLoader extends PlatformAdsLoader {
   ExtendsPlatformAdsLoader(super.params) : super.implementation();
+
+  @override
+  Future<void> contentComplete() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> requestAds(AdsRequest request) {
+    throw UnimplementedError();
+  }
 }

@@ -31,16 +31,21 @@ void main() {
 
   testWidgets('constructor parameters are correctly passed to creation params',
       (WidgetTester tester) async {
-    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
-      onCreatePlatformAdDisplayContainer: (
-        PlatformAdDisplayContainerCreationParams params,
-      ) {
-        return TestPlatformAdDisplayContainer(
-          params,
-          onBuild: (_) => Container(),
-        );
-      },
-    );
+    InteractiveMediaAdsPlatform.instance =
+        TestInteractiveMediaAdsPlatform(onCreatePlatformAdDisplayContainer: (
+      PlatformAdDisplayContainerCreationParams params,
+    ) {
+      return TestPlatformAdDisplayContainer(
+        params,
+        onBuild: (_) => Container(),
+      );
+    }, onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
+      throw UnimplementedError();
+    }, onCreatePlatformAdsManagerDelegate: (
+      PlatformAdsManagerDelegateCreationParams params,
+    ) {
+      throw UnimplementedError();
+    });
 
     final AdDisplayContainer adDisplayContainer = AdDisplayContainer(
       key: GlobalKey(),

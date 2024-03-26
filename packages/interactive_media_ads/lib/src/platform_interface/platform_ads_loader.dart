@@ -91,18 +91,10 @@ abstract base class PlatformAdsLoader {
   final PlatformAdsLoaderCreationParams params;
 
   /// Signal to the SDK that the content has completed.
-  Future<void> contentComplete() {
-    throw UnimplementedError(
-      '`contentComplete` is not implemented on the current platform',
-    );
-  }
+  Future<void> contentComplete();
 
   /// Requests ads from a server.
-  Future<void> requestAds(AdsRequest request) {
-    throw UnimplementedError(
-      '`requestAds` is not implemented on the current platform',
-    );
-  }
+  Future<void> requestAds(AdsRequest request);
 }
 
 /// Data when ads are successfully loaded from the ad server through an

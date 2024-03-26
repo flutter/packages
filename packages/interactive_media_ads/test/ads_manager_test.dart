@@ -54,7 +54,17 @@ void main() {
 AdsManager createAdsManager(PlatformAdsManager platformManager) {
   InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
     onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
-      return TestPlatformAdsLoader(params);
+      return TestPlatformAdsLoader(params,
+          onContentComplete: () async {},
+          onRequestAds: (AdsRequest request) async {});
+    },
+    onCreatePlatformAdsManagerDelegate:
+        (PlatformAdsManagerDelegateCreationParams params) {
+      throw UnimplementedError();
+    },
+    onCreatePlatformAdDisplayContainer:
+        (PlatformAdDisplayContainerCreationParams params) {
+      throw UnimplementedError();
     },
   );
 

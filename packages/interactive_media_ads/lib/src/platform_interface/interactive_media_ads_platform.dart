@@ -18,27 +18,15 @@ abstract base class InteractiveMediaAdsPlatform {
   /// Creates a new [PlatformAdsLoader].
   PlatformAdsLoader createPlatformAdsLoader(
     PlatformAdsLoaderCreationParams params,
-  ) {
-    throw UnimplementedError(
-      'createPlatformAdsLoader is not implemented on the current platform.',
-    );
-  }
+  );
 
   /// Creates a new [PlatformAdsManagerDelegate].
   PlatformAdsManagerDelegate createPlatformAdsManagerDelegate(
     PlatformAdsManagerDelegateCreationParams params,
-  ) {
-    throw UnimplementedError(
-      'createPlatformAdsManagerDelegate is not implemented on the current platform.',
-    );
-  }
+  );
 
   /// Creates a new [PlatformAdDisplayContainer].
   PlatformAdDisplayContainer createPlatformAdDisplayContainer(
     PlatformAdDisplayContainerCreationParams params,
-  ) {
-    throw UnimplementedError(
-      'createPlatformAdDisplayContainer is not implemented on the current platform.',
-    );
-  }
+  );
 }
