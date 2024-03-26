@@ -1249,16 +1249,6 @@ return EncodableValue(EncodableList{
     });
   }
 
-  /*
-  
-      final String className = classDefinition.name;
-      _writeFunctionDeclaration(indent, className,
-          isConstructor: true, parameters: <String>['const $className& other']);
-      _writeFunctionDeclaration(indent, 'operator=',
-          returnType: '$className&',
-          parameters: <String>['const $className& other']);
-          */
-
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
       Indent indent, Class classDefinition, NamedType field) {
     final HostDatatype hostDatatype =

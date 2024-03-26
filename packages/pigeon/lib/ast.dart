@@ -639,7 +639,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
-    this.isSwiftObjcInteropClass = false,
+    this.isNSObjectSubclass = false,
     this.isSwiftClass = false,
     this.documentationComments = const <String>[],
   });
@@ -653,7 +653,7 @@ class Class extends Node {
   /// Determines whether the defined class should inherit from NSObject in Swift.
   ///
   /// Defaults to false.
-  bool isSwiftObjcInteropClass;
+  bool isNSObjectSubclass;
 
   /// Determines whether the defined class should be represented as a struct or
   /// a class in Swift generation.

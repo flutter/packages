@@ -127,7 +127,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
 
     if (classDefinition.isSwiftClass) {
       String inheritNSObject = '';
-      if (classDefinition.isSwiftObjcInteropClass) {
+      if (classDefinition.isNSObjectSubclass) {
         inheritNSObject = ': NSObject';
         indent.writeln('@objc');
       }

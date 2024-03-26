@@ -1560,7 +1560,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         name: node.name.lexeme,
         fields: <NamedType>[],
         isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
-        isSwiftObjcInteropClass: _findMetadata(node.metadata, 'SwiftClass')
+        isNSObjectSubclass: _findMetadata(node.metadata, 'SwiftClass')
                 ?.arguments
                 ?.arguments
                 .first
