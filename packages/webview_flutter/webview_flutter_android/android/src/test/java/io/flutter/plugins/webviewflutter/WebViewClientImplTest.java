@@ -11,7 +11,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import android.net.Uri;
@@ -125,7 +124,8 @@ public class WebViewClientImplTest {
     when(mockRequest.isForMainFrame()).thenReturn(false);
 
     assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
-    verifyNoInteractions(mockFlutterApi);
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
   }
 
   @Test
@@ -136,7 +136,8 @@ public class WebViewClientImplTest {
     when(mockRequest.isForMainFrame()).thenReturn(false);
 
     assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
-    verifyNoInteractions(mockFlutterApi);
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
   }
 
   @Test

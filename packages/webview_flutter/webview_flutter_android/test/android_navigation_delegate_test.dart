@@ -164,6 +164,66 @@ void main() {
     });
 
     test(
+        'onNavigationRequest from requestLoading should be called when request is for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        android_webview.WebView.detached(),
+        android_webview.WebResourceRequest(
+          url: 'https://www.google.com',
+          isForMainFrame: true,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNotNull);
+    });
+
+    test(
+        'onNavigationRequest from requestLoading should not be called when request is not for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        android_webview.WebView.detached(),
+        android_webview.WebResourceRequest(
+          url: 'https://www.google.com',
+          isForMainFrame: false,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNull);
+    });
+
+    test(
         'onLoadRequest from requestLoading should not be called when navigationRequestCallback is not specified',
         () {
       final Completer<void> completer = Completer<void>();
@@ -598,6 +658,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
+
   static CapturingWebChromeClient lastCreatedDelegate =
       CapturingWebChromeClient();
 }
@@ -611,6 +672,7 @@ class CapturingDownloadListener extends android_webview.DownloadListener {
   }) : super.detached() {
     lastCreatedListener = this;
   }
+
   static CapturingDownloadListener lastCreatedListener =
       CapturingDownloadListener(onDownloadStart: (_, __, ___, ____, _____) {});
 }
