@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.MeteringPoint;
@@ -29,7 +30,9 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
   public static class FocusMeteringActionProxy {
     /** Creates an instance of {@link FocusMeteringAction}. */
     public @NonNull FocusMeteringAction create(
-        @NonNull List<MeteringPoint> meteringPoints, @NonNull List<Integer> meteringPointModes) {
+        @NonNull List<MeteringPoint> meteringPoints,
+        @NonNull List<Integer> meteringPointModes,
+        @Nullable Boolean disableAutoCancel) {
       if (meteringPoints.size() >= 1 && meteringPoints.size() != meteringPointModes.size()) {
         throw new IllegalArgumentException(
             "One metering point must be specified and the number of specified metering points must match the number of specified metering point modes.");
@@ -57,6 +60,10 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
         } else {
           focusMeteringActionBuilder.addPoint(meteringPoint, meteringMode);
         }
+      }
+
+      if (disableAutoCancel != null && disableAutoCancel == true) {
+        focusMeteringActionBuilder.disableAutoCancel();
       }
 
       return focusMeteringActionBuilder.build();
@@ -100,7 +107,9 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
 
   @Override
   public void create(
-      @NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos) {
+      @NonNull Long identifier,
+      @NonNull List<MeteringPointInfo> meteringPointInfos,
+      @Nullable Boolean disableAutoCancel) {
     final List<MeteringPoint> meteringPoints = new ArrayList<MeteringPoint>();
     final List<Integer> meteringPointModes = new ArrayList<Integer>();
     for (MeteringPointInfo meteringPointInfo : meteringPointInfos) {
@@ -110,6 +119,6 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
     }
 
     instanceManager.addDartCreatedInstance(
-        proxy.create(meteringPoints, meteringPointModes), identifier);
+        proxy.create(meteringPoints, meteringPointModes, disableAutoCancel), identifier);
   }
 }

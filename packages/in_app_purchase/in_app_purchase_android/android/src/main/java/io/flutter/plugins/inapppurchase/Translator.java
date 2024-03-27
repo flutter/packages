@@ -14,6 +14,8 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.UserChoiceDetails;
+import com.android.billingclient.api.UserChoiceDetails.Product;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -230,6 +232,34 @@ import java.util.Map;
     HashMap<String, Object> info = new HashMap<>();
     info.put("responseCode", billingResult.getResponseCode());
     info.put("debugMessage", billingResult.getDebugMessage());
+    return info;
+  }
+
+  static HashMap<String, Object> fromUserChoiceDetails(UserChoiceDetails userChoiceDetails) {
+    HashMap<String, Object> info = new HashMap<>();
+    info.put("externalTransactionToken", userChoiceDetails.getExternalTransactionToken());
+    info.put("originalExternalTransactionId", userChoiceDetails.getOriginalExternalTransactionId());
+    info.put("products", fromProductsList(userChoiceDetails.getProducts()));
+    return info;
+  }
+
+  static List<HashMap<String, Object>> fromProductsList(List<Product> productsList) {
+    if (productsList.isEmpty()) {
+      return Collections.emptyList();
+    }
+    ArrayList<HashMap<String, Object>> output = new ArrayList<>();
+    for (Product product : productsList) {
+      output.add(fromProduct(product));
+    }
+    return output;
+  }
+
+  static HashMap<String, Object> fromProduct(Product product) {
+    HashMap<String, Object> info = new HashMap<>();
+    info.put("id", product.getId());
+    info.put("offerToken", product.getOfferToken());
+    info.put("productType", product.getType());
+
     return info;
   }
 
