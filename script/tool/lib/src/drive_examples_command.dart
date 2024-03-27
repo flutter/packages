@@ -378,6 +378,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             getRelativePosixPath(driver, from: example.directory),
             '--target',
             getRelativePosixPath(target, from: example.directory),
+            '--debug-logs-dir',
+            Platform.environment['FLUTTER_LOGS_DIR'] ?? '',
           ],
           workingDir: example.directory);
       if (exitCode != 0) {

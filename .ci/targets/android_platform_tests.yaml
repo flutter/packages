@@ -23,5 +23,5 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["native-test", "--android", "--no-unit", "--exclude=script/configs/still_requires_api_33_avd.yaml"]
   - name: drive examples
-    script: .ci/scripts/tool_runner2.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml,script/configs/still_requires_api_33_avd.yaml"]
