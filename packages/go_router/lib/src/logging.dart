@@ -28,7 +28,7 @@ StreamSubscription<LogRecord>? _subscription;
 void setLogging({bool enabled = false}) {
   _subscription?.cancel();
   _enabled = enabled;
-  if (!enabled) {
+  if (!enabled || hierarchicalLoggingEnabled) {
     return;
   }
 

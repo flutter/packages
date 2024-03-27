@@ -1,3 +1,7 @@
+## 13.2.2
+
+- Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
 ## 13.2.1
 
 - Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
@@ -14,7 +18,7 @@
 
 ## 13.0.1
 
-* Fixes new lint warnings.
+- Fixes new lint warnings.
 
 ## 13.0.0
 
@@ -25,12 +29,12 @@
 
 ## 12.1.3
 
-* Fixes a typo in `navigation.md`.
+- Fixes a typo in `navigation.md`.
 
 ## 12.1.2
 
-* Fixes an incorrect use of `extends` for Dart 3 compatibility.
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+- Fixes an incorrect use of `extends` for Dart 3 compatibility.
+- Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 12.1.1
 
@@ -105,7 +109,7 @@
 
 ## 10.1.2
 
-* Adds pub topics to package metadata.
+- Adds pub topics to package metadata.
 
 ## 10.1.1
 
@@ -436,7 +440,7 @@
 
 - Fixes a bug where intermediate route redirect methods are not called.
 - GoRouter implements the RouterConfig interface, allowing you to call
-  MaterialApp.router(routerConfig: _myGoRouter) instead of passing
+  MaterialApp.router(routerConfig: \_myGoRouter) instead of passing
   the RouterDelegate, RouteInformationParser, and RouteInformationProvider
   fields.
 - **BREAKING CHANGE**
