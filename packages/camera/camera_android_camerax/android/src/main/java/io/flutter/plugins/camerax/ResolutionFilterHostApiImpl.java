@@ -20,14 +20,20 @@ import java.util.List;
  */
 public class ResolutionFilterHostApiImpl implements ResolutionFilterHostApi {
   private final InstanceManager instanceManager;
-  private final ResolutionFilterProxy proxy;
+  private final ResolutionFilterFactory resolutionFilterFactory;
 
-  /** Proxy for constructor of {@link ResolutionFilter}. */
+  /**
+   * Proxy for constructing {@link ResolutionFilter}s with particular attributes, as detailed by
+   * documentation below.
+   */
   @VisibleForTesting
-  public static class ResolutionFilterProxy {
+  public static class ResolutionFilterFactory {
     /**
      * Creates an instance of {@link ResolutionFilter} that moves the {@code preferredSize} to the
      * front of the list of supported resolutions so that it can be prioritized by CameraX.
+     *
+     * <p>If the preferred {@code Size} is not found, then this creates a {@link ResolutionFilter}
+     * that leaves the priority of supported resolutions unadjusted.
      */
     @NonNull
     public ResolutionFilter createWithOnePreferredSize(@NonNull Size preferredSize) {
@@ -54,20 +60,22 @@ public class ResolutionFilterHostApiImpl implements ResolutionFilterHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public ResolutionFilterHostApiImpl(@NonNull InstanceManager instanceManager) {
-    this(instanceManager, new ResolutionFilterProxy());
+    this(instanceManager, new ResolutionFilterFactory());
   }
 
   /**
    * Constructs a {@link ResolutionFilterHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructor of {@link ResolutionFilter}
+   * @param resolutionFilterFactory proxy for constructing different kinds of {@link
+   *     ResolutionFilter}s
    */
   @VisibleForTesting
   ResolutionFilterHostApiImpl(
-      @NonNull InstanceManager instanceManager, @NonNull ResolutionFilterProxy proxy) {
+      @NonNull InstanceManager instanceManager,
+      @NonNull ResolutionFilterFactory resolutionFilterFactory) {
     this.instanceManager = instanceManager;
-    this.proxy = proxy;
+    this.resolutionFilterFactory = resolutionFilterFactory;
   }
 
   /**
@@ -81,6 +89,6 @@ public class ResolutionFilterHostApiImpl implements ResolutionFilterHostApi {
         new Size(
             preferredResolution.getWidth().intValue(), preferredResolution.getHeight().intValue());
     instanceManager.addDartCreatedInstance(
-        proxy.createWithOnePreferredSize(preferredSize), identifier);
+        resolutionFilterFactory.createWithOnePreferredSize(preferredSize), identifier);
   }
 }

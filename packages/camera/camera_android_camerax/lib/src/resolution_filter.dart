@@ -9,7 +9,7 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// Filter for applications to specify preferred resolutions.
+/// Filterer for applications to specify preferred resolutions.
 ///
 /// This is an indirect wrapping of the native Android `ResolutionFilter`,
 /// an interface that requires a synchronous response. Achieving such is not
