@@ -288,6 +288,20 @@ CameraType mapFacingModeToCameraType(String facingMode) {
   }
 }
 
+/// Maps the given [lensDirection] to [CameraType].
+///
+/// See [CameraMetadata.facingMode] for more details.
+CameraType mapLensDirectionToCameraType(CameraLensDirection lensDirection) {
+  switch (lensDirection) {
+    case CameraLensDirection.front:
+      return CameraType.user;
+    case CameraLensDirection.back:
+      return CameraType.environment;
+    case CameraLensDirection.external:
+      return CameraType.user;
+  }
+}
+
 /// Maps the given [resolutionPreset] to [Size].
 Size mapResolutionPresetToSize(ResolutionPreset resolutionPreset) {
   switch (resolutionPreset) {
