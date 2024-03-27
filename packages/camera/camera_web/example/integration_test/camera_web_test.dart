@@ -64,7 +64,7 @@ void main() {
       when(
         () => cameraService.getMediaStreamForOptions(
           any(),
-          cameraId: any(named: 'cameraId'),
+          cameraId: any(),
         ),
       ).thenAnswer(
         (_) async => videoElement.captureStream(),
