@@ -317,6 +317,58 @@ public class GeneratedAndroidWebView {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class WebResourceResponseData {
+    private @NonNull Long statusCode;
+
+    public @NonNull Long getStatusCode() {
+      return statusCode;
+    }
+
+    public void setStatusCode(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"statusCode\" is null.");
+      }
+      this.statusCode = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    WebResourceResponseData() {}
+
+    public static final class Builder {
+
+      private @Nullable Long statusCode;
+
+      public @NonNull Builder setStatusCode(@NonNull Long setterArg) {
+        this.statusCode = setterArg;
+        return this;
+      }
+
+      public @NonNull WebResourceResponseData build() {
+        WebResourceResponseData pigeonReturn = new WebResourceResponseData();
+        pigeonReturn.setStatusCode(statusCode);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(statusCode);
+      return toListResult;
+    }
+
+    static @NonNull WebResourceResponseData fromList(@NonNull ArrayList<Object> list) {
+      WebResourceResponseData pigeonResult = new WebResourceResponseData();
+      Object statusCode = list.get(0);
+      pigeonResult.setStatusCode(
+          (statusCode == null)
+              ? null
+              : ((statusCode instanceof Integer) ? (Integer) statusCode : (Long) statusCode));
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
   public static final class WebResourceErrorData {
     private @NonNull Long errorCode;
 
@@ -1758,6 +1810,24 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(Collections.singletonList(identifierArg)),
           channelReply -> callback.reply(null));
     }
+
+    public void onScrollChanged(
+        @NonNull Long webViewInstanceIdArg,
+        @NonNull Long leftArg,
+        @NonNull Long topArg,
+        @NonNull Long oldLeftArg,
+        @NonNull Long oldTopArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebViewFlutterApi.onScrollChanged",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Arrays.asList(webViewInstanceIdArg, leftArg, topArg, oldLeftArg, oldTopArg)),
+          channelReply -> callback.reply(null));
+    }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebSettingsHostApi {
@@ -2370,6 +2440,8 @@ public class GeneratedAndroidWebView {
           return WebResourceErrorData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
           return WebResourceRequestData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
+          return WebResourceResponseData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2383,6 +2455,9 @@ public class GeneratedAndroidWebView {
       } else if (value instanceof WebResourceRequestData) {
         stream.write(129);
         writeValue(stream, ((WebResourceRequestData) value).toList());
+      } else if (value instanceof WebResourceResponseData) {
+        stream.write(130);
+        writeValue(stream, ((WebResourceResponseData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -2434,6 +2509,23 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, urlArg)),
+          channelReply -> callback.reply(null));
+    }
+
+    public void onReceivedHttpError(
+        @NonNull Long instanceIdArg,
+        @NonNull Long webViewInstanceIdArg,
+        @NonNull WebResourceRequestData requestArg,
+        @NonNull WebResourceResponseData responseArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Arrays.asList(instanceIdArg, webViewInstanceIdArg, requestArg, responseArg)),
           channelReply -> callback.reply(null));
     }
 
@@ -2643,6 +2735,12 @@ public class GeneratedAndroidWebView {
     void setSynchronousReturnValueForOnConsoleMessage(
         @NonNull Long instanceId, @NonNull Boolean value);
 
+    void setSynchronousReturnValueForOnJsAlert(@NonNull Long instanceId, @NonNull Boolean value);
+
+    void setSynchronousReturnValueForOnJsConfirm(@NonNull Long instanceId, @NonNull Boolean value);
+
+    void setSynchronousReturnValueForOnJsPrompt(@NonNull Long instanceId, @NonNull Boolean value);
+
     /** The codec used by WebChromeClientHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2720,6 +2818,87 @@ public class GeneratedAndroidWebView {
                 Boolean valueArg = (Boolean) args.get(1);
                 try {
                   api.setSynchronousReturnValueForOnConsoleMessage(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnJsAlert",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                Boolean valueArg = (Boolean) args.get(1);
+                try {
+                  api.setSynchronousReturnValueForOnJsAlert(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnJsConfirm",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                Boolean valueArg = (Boolean) args.get(1);
+                try {
+                  api.setSynchronousReturnValueForOnJsConfirm(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnJsPrompt",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                Boolean valueArg = (Boolean) args.get(1);
+                try {
+                  api.setSynchronousReturnValueForOnJsPrompt(
                       (instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
@@ -2966,6 +3145,60 @@ public class GeneratedAndroidWebView {
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, messageArg)),
           channelReply -> callback.reply(null));
+    }
+
+    public void onJsAlert(
+        @NonNull Long instanceIdArg,
+        @NonNull String urlArg,
+        @NonNull String messageArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsAlert",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, urlArg, messageArg)),
+          channelReply -> callback.reply(null));
+    }
+
+    public void onJsConfirm(
+        @NonNull Long instanceIdArg,
+        @NonNull String urlArg,
+        @NonNull String messageArg,
+        @NonNull Reply<Boolean> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsConfirm",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, urlArg, messageArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Boolean output = (Boolean) channelReply;
+            callback.reply(output);
+          });
+    }
+
+    public void onJsPrompt(
+        @NonNull Long instanceIdArg,
+        @NonNull String urlArg,
+        @NonNull String messageArg,
+        @NonNull String defaultValueArg,
+        @NonNull Reply<String> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onJsPrompt",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, urlArg, messageArg, defaultValueArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            String output = (String) channelReply;
+            callback.reply(output);
+          });
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */

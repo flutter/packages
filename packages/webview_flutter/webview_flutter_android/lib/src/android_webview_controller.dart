@@ -99,7 +99,15 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// The native [android_webview.WebView] being controlled.
   late final android_webview.WebView _webView =
-      _androidWebViewParams.androidWebViewProxy.createAndroidWebView();
+      _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
+          onScrollChanged: withWeakReferenceTo(this,
+              (WeakReference<AndroidWebViewController> weakReference) {
+    return (int left, int top, int oldLeft, int oldTop) async {
+      final void Function(ScrollPositionChange)? callback =
+          weakReference.target?._onScrollPositionChangedCallback;
+      callback?.call(ScrollPositionChange(left.toDouble(), top.toDouble()));
+    };
+  }));
 
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(
@@ -264,6 +272,49 @@ class AndroidWebViewController extends PlatformWebViewController {
         };
       },
     ),
+    onJsAlert: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message) async {
+        final Future<void> Function(JavaScriptAlertDialogRequest)? callback =
+            weakReference.target?._onJavaScriptAlert;
+        if (callback != null) {
+          final JavaScriptAlertDialogRequest request =
+              JavaScriptAlertDialogRequest(message: message, url: url);
+
+          await callback.call(request);
+        }
+        return;
+      };
+    }),
+    onJsConfirm: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message) async {
+        final Future<bool> Function(JavaScriptConfirmDialogRequest)? callback =
+            weakReference.target?._onJavaScriptConfirm;
+        if (callback != null) {
+          final JavaScriptConfirmDialogRequest request =
+              JavaScriptConfirmDialogRequest(message: message, url: url);
+          final bool result = await callback.call(request);
+          return result;
+        }
+        return false;
+      };
+    }),
+    onJsPrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String url, String message, String defaultValue) async {
+        final Future<String> Function(JavaScriptTextInputDialogRequest)?
+            callback = weakReference.target?._onJavaScriptPrompt;
+        if (callback != null) {
+          final JavaScriptTextInputDialogRequest request =
+              JavaScriptTextInputDialogRequest(
+                  message: message, url: url, defaultText: defaultValue);
+          final String result = await callback.call(request);
+          return result;
+        }
+        return '';
+      };
+    }),
   );
 
   /// The native [android_webview.FlutterAssetManager] allows managing assets.
@@ -289,6 +340,16 @@ class AndroidWebViewController extends PlatformWebViewController {
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
+
+  Future<void> Function(JavaScriptAlertDialogRequest request)?
+      _onJavaScriptAlert;
+  Future<bool> Function(JavaScriptConfirmDialogRequest request)?
+      _onJavaScriptConfirm;
+  Future<String> Function(JavaScriptTextInputDialogRequest request)?
+      _onJavaScriptPrompt;
+
+  void Function(ScrollPositionChange scrollPositionChange)?
+      _onScrollPositionChangedCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -509,6 +570,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setUserAgent(String? userAgent) =>
       _webView.settings.setUserAgentString(userAgent);
 
+  @override
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) async {
+    _onScrollPositionChangedCallback = onScrollPositionChange;
+  }
+
   /// Sets the restrictions that apply on automatic media playback.
   Future<void> setMediaPlaybackRequiresUserGesture(bool require) {
     return _webView.settings.setMediaPlaybackRequiresUserGesture(require);
@@ -616,6 +684,30 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<String?> getUserAgent() => _webView.settings.getUserAgentString();
+
+  @override
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(JavaScriptAlertDialogRequest request)
+          onJavaScriptAlertDialog) async {
+    _onJavaScriptAlert = onJavaScriptAlertDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsAlert(true);
+  }
+
+  @override
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(JavaScriptConfirmDialogRequest request)
+          onJavaScriptConfirmDialog) async {
+    _onJavaScriptConfirm = onJavaScriptConfirmDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsConfirm(true);
+  }
+
+  @override
+  Future<void> setOnJavaScriptTextInputDialog(
+      Future<String> Function(JavaScriptTextInputDialogRequest request)
+          onJavaScriptTextInputDialog) async {
+    _onJavaScriptPrompt = onJavaScriptTextInputDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
@@ -1205,6 +1297,25 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(url);
         }
       },
+      onReceivedHttpError: (
+        android_webview.WebView webView,
+        android_webview.WebResourceRequest request,
+        android_webview.WebResourceResponse response,
+      ) {
+        if (weakThis.target?._onHttpError != null) {
+          weakThis.target!._onHttpError!(
+            HttpResponseError(
+              request: WebResourceRequest(
+                uri: Uri.parse(request.url),
+              ),
+              response: WebResourceResponse(
+                uri: null,
+                statusCode: response.statusCode,
+              ),
+            ),
+          );
+        }
+      },
       onReceivedRequestError: (
         android_webview.WebView webView,
         android_webview.WebResourceRequest request,
@@ -1337,6 +1448,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
 
   PageEventCallback? _onPageFinished;
   PageEventCallback? _onPageStarted;
+  HttpResponseErrorCallback? _onHttpError;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
@@ -1409,6 +1521,13 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     PageEventCallback onPageFinished,
   ) async {
     _onPageFinished = onPageFinished;
+  }
+
+  @override
+  Future<void> setOnHttpError(
+    HttpResponseErrorCallback onHttpError,
+  ) async {
+    _onHttpError = onHttpError;
   }
 
   @override

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import UIKit
 import Flutter
+import UIKit
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -13,12 +13,12 @@ import Flutter
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
 
-    weak var registrar = self.registrar(forPlugin: "DummyPlatform");
+    weak var registrar = self.registrar(forPlugin: "DummyPlatform")
 
     let factory = DummyPlatformViewFactory(messenger: registrar!.messenger())
     self.registrar(forPlugin: "<DummyPlatform>")!.register(
-        factory,
-        withId: "dummy_platform_view")
+      factory,
+      withId: "dummy_platform_view")
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

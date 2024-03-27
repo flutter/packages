@@ -523,6 +523,17 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
+  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
+    return _channel.invokeMethod<void>(
+      'setImageFileFormat',
+      <String, dynamic>{
+        'cameraId': cameraId,
+        'fileFormat': format.name,
+      },
+    );
+  }
+
+  @override
   Widget buildPreview(int cameraId) {
     return Texture(textureId: cameraId);
   }

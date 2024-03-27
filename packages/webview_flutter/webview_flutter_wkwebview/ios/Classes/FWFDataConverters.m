@@ -167,7 +167,7 @@ FWFWKNavigationActionData *FWFWKNavigationActionDataFromNativeWKNavigationAction
 
 FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *request) {
   return [FWFNSUrlRequestData
-              makeWithUrl:request.URL.absoluteString
+              makeWithUrl:request.URL.absoluteString == nil ? @"" : request.URL.absoluteString
                httpMethod:request.HTTPMethod
                  httpBody:request.HTTPBody
                               ? [FlutterStandardTypedData typedDataWithBytes:request.HTTPBody]
@@ -176,7 +176,27 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *req
 }
 
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *info) {
-  return [FWFWKFrameInfoData makeWithIsMainFrame:info.isMainFrame];
+  return [FWFWKFrameInfoData
+      makeWithIsMainFrame:info.isMainFrame
+                  request:FWFNSUrlRequestDataFromNativeNSURLRequest(info.request)];
+}
+
+FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNativeNavigationResponse(
+    WKNavigationResponse *response) {
+  return [FWFWKNavigationResponseData
+      makeWithResponse:FWFNSHttpUrlResponseDataFromNativeNSURLResponse(response.response)
+          forMainFrame:response.forMainFrame];
+}
+
+/// Cast the NSURLResponse object to NSHTTPURLResponse.
+///
+/// NSURLResponse doesn't contain the status code so it must be cast to NSHTTPURLResponse.
+/// This cast will always succeed because the NSURLResponse object actually is an instance of
+/// NSHTTPURLResponse. See:
+/// https://developer.apple.com/documentation/foundation/nsurlresponse#overview
+FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNativeNSURLResponse(NSURLResponse *response) {
+  NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+  return [FWFNSHttpUrlResponseData makeWithStatusCode:httpResponse.statusCode];
 }
 
 WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
@@ -205,6 +225,18 @@ FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
     }
   }
   return [FWFNSErrorData makeWithCode:error.code domain:error.domain userInfo:userInfo];
+}
+
+WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnum(
+    FWFWKNavigationResponsePolicyEnum policy) {
+  switch (policy) {
+    case FWFWKNavigationResponsePolicyEnumAllow:
+      return WKNavigationResponsePolicyAllow;
+    case FWFWKNavigationResponsePolicyEnumCancel:
+      return WKNavigationResponsePolicyCancel;
+  }
+
+  return -1;
 }
 
 FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(
