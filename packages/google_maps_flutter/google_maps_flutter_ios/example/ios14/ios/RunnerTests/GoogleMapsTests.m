@@ -66,7 +66,7 @@
   XCTAssertEqual(factory1.sharedMapServices, factory2.sharedMapServices);
 }
 
-- (void)testWideGamutImagesProperlyHandled {
+- (void)testHandleResultTileDownsamplesWideGamutImages {
   FLTTileProviderController *controller = [[FLTTileProviderController alloc] init];
 
   NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"widegamut" ofType:@"png" inDirectory:@"assets"];
