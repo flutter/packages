@@ -376,7 +376,13 @@ class CameraController extends ValueNotifier<CameraValue> {
             .then((CameraInitializedEvent event) => event.focusPointSupported),
       );
     } on PlatformException catch (e) {
+      _unawaited(_deviceOrientationSubscription?.cancel());
+      _cameraId = kUninitializedCameraId;
       throw CameraException(e.code, e.message);
+    } catch (e) {
+      _unawaited(_deviceOrientationSubscription?.cancel());
+      _cameraId = kUninitializedCameraId;
+      rethrow;
     } finally {
       initializeCompleter.complete();
     }
@@ -880,8 +886,10 @@ class CameraController extends ValueNotifier<CameraValue> {
     _unawaited(_deviceOrientationSubscription?.cancel());
     _isDisposed = true;
     super.dispose();
-    if (_initializeFuture != null) {
-      await _initializeFuture;
+    if (_initializeFuture == null) {
+      return;
+    }
+    if (_cameraId != kUninitializedCameraId) {
       await CameraPlatform.instance.dispose(_cameraId);
     }
   }
