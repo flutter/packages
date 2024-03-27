@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:local_auth_darwin/src/messages.g.dart';
+import 'package:local_auth_darwin/types/auth_messages_macos.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -129,7 +131,79 @@ void main() {
         expect(strings.localizedFallbackTitle, null);
       });
 
-      test('passes all non-default values correctly', () async {
+      test(
+          'passes default values when only MacOSAuthMessages platform values are provided',
+          () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultDetails(result: AuthResult.success));
+
+        const String reason = 'test reason';
+        await plugin.authenticate(
+            localizedReason: reason,
+            authMessages: <AuthMessages>[const MacOSAuthMessages()]);
+
+        final VerificationResult result =
+            verify(api.authenticate(any, captureAny));
+        final AuthStrings strings = result.captured[0] as AuthStrings;
+        expect(strings.reason, reason);
+        // These should all be the default values from
+        // auth_messages_ios.dart
+        expect(strings.lockOut, macOSLockOut);
+        expect(strings.goToSettingsButton, macOSGoToSettings);
+        expect(strings.goToSettingsDescription, macOSGoToSettingsDescription);
+        expect(strings.cancelButton, macOSOkButton);
+        expect(strings.localizedFallbackTitle, null);
+
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      test(
+        'passes all non-default values correctly with IOSAuthMessages',
+        () async {
+          when(api.authenticate(any, any)).thenAnswer(
+              (_) async => AuthResultDetails(result: AuthResult.success));
+
+          // These are arbitrary values; all that matters is that:
+          // - they are different from the defaults, and
+          // - they are different from each other.
+          const String reason = 'A';
+          const String lockOut = 'B';
+          const String goToSettingsButton = 'C';
+          const String gotToSettingsDescription = 'D';
+          const String cancel = 'E';
+          const String localizedFallbackTitle = 'F';
+
+          await plugin.authenticate(
+              localizedReason: reason,
+              authMessages: <AuthMessages>[
+                const IOSAuthMessages(
+                  lockOut: lockOut,
+                  goToSettingsButton: goToSettingsButton,
+                  goToSettingsDescription: gotToSettingsDescription,
+                  cancelButton: cancel,
+                  localizedFallbackTitle: localizedFallbackTitle,
+                ),
+                AnotherPlatformAuthMessages(),
+              ]);
+
+          final VerificationResult result =
+              verify(api.authenticate(any, captureAny));
+          final AuthStrings strings = result.captured[0] as AuthStrings;
+          expect(strings.reason, reason);
+          expect(strings.lockOut, lockOut);
+          expect(strings.goToSettingsButton, goToSettingsButton);
+          expect(strings.goToSettingsDescription, gotToSettingsDescription);
+          expect(strings.cancelButton, cancel);
+          expect(strings.localizedFallbackTitle, localizedFallbackTitle);
+        },
+      );
+
+      test('passes all non-default values correctly with MacOSAuthMessages',
+          () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
 
@@ -144,7 +218,7 @@ void main() {
         const String localizedFallbackTitle = 'F';
         await plugin
             .authenticate(localizedReason: reason, authMessages: <AuthMessages>[
-          const IOSAuthMessages(
+          const MacOSAuthMessages(
             lockOut: lockOut,
             goToSettingsButton: goToSettingsButton,
             goToSettingsDescription: gotToSettingsDescription,
@@ -163,6 +237,8 @@ void main() {
         expect(strings.goToSettingsDescription, gotToSettingsDescription);
         expect(strings.cancelButton, cancel);
         expect(strings.localizedFallbackTitle, localizedFallbackTitle);
+
+        debugDefaultTargetPlatformOverride = null;
       });
 
       test('passes provided messages with default fallbacks', () async {

@@ -2,9 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#else
 #import <Flutter/Flutter.h>
+#endif
 
 #import "messages.g.h"
 
 @interface FLALocalAuthPlugin : NSObject <FlutterPlugin, FLADLocalAuthApi>
+
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+    NS_DESIGNATED_INITIALIZER;
 @end

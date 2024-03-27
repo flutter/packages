@@ -1,3 +1,7 @@
+## 1.3.0
+
+* Adds macOS support.
+
 ## 1.2.2
 
 * Adds compatibility with `intl` 0.19.0.

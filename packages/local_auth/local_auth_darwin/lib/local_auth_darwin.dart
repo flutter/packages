@@ -2,19 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
 import 'src/messages.g.dart';
 import 'types/auth_messages_ios.dart';
+import 'types/auth_messages_macos.dart';
 
 export 'package:local_auth_darwin/types/auth_messages_ios.dart';
 export 'package:local_auth_platform_interface/types/auth_messages.dart';
 export 'package:local_auth_platform_interface/types/auth_options.dart';
 export 'package:local_auth_platform_interface/types/biometric_type.dart';
 
-/// The implementation of [LocalAuthPlatform] for iOS.
+/// The implementation of [LocalAuthPlatform] for iOS and macOS.
 class LocalAuthDarwin extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
   LocalAuthDarwin({
@@ -40,7 +42,9 @@ class LocalAuthDarwin extends LocalAuthPlatform {
             biometricOnly: options.biometricOnly,
             sticky: options.stickyAuth,
             useErrorDialogs: options.useErrorDialogs),
-        _pigeonStringsFromAuthMessages(localizedReason, authMessages));
+        defaultTargetPlatform == TargetPlatform.macOS
+            ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
+            : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages));
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
     // across all platform implementations, per
     // https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#platform-exception-handling
@@ -93,11 +97,11 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   @override
   Future<bool> isDeviceSupported() async => _api.isDeviceSupported();
 
-  /// Always returns false as this method is not supported on iOS.
+  /// Always returns false as this method is not supported on iOS or macOS.
   @override
   Future<bool> stopAuthentication() async => false;
 
-  AuthStrings _pigeonStringsFromAuthMessages(
+  AuthStrings _pigeonStringsFromiOSAuthMessages(
       String localizedReason, Iterable<AuthMessages> messagesList) {
     IOSAuthMessages? messages;
     for (final AuthMessages entry in messagesList) {
@@ -115,6 +119,28 @@ class LocalAuthDarwin extends LocalAuthPlatform {
       // TODO(stuartmorgan): The default's name is confusing here for legacy
       // reasons; this should be fixed as part of some future breaking change.
       cancelButton: messages?.cancelButton ?? iOSOkButton,
+      localizedFallbackTitle: messages?.localizedFallbackTitle,
+    );
+  }
+
+  AuthStrings _pigeonStringsFromMacOSAuthMessages(
+      String localizedReason, Iterable<AuthMessages> messagesList) {
+    MacOSAuthMessages? messages;
+    for (final AuthMessages entry in messagesList) {
+      if (entry is MacOSAuthMessages) {
+        messages = entry;
+        break;
+      }
+    }
+    return AuthStrings(
+      reason: localizedReason,
+      lockOut: messages?.lockOut ?? macOSLockOut,
+      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
+      goToSettingsDescription:
+          messages?.goToSettingsDescription ?? macOSGoToSettingsDescription,
+      // TODO(stuartmorgan): The default's name is confusing here for legacy
+      // reasons; this should be fixed as part of some future breaking change.
+      cancelButton: messages?.cancelButton ?? macOSOkButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
   }
