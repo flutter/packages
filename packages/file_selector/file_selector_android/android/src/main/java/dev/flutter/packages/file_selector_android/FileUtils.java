@@ -1,148 +1,181 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-/*
- * Copyright (C) 2007-2008 OpenIntents.org
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * This file was modified by the Flutter authors from the following original file:
- * https://raw.githubusercontent.com/iPaulPro/aFileChooser/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
- */
-
-// TODO(camsim99): Copied from image picker; verify fix and refactor as necessary.
+// TODO(camsim99): copied from https://gist.github.com/r0b0t3d/492f375ec6267a033c23b4ab8ab11e6a.
 package dev.flutter.packages.file_selector_android;
 
+
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.webkit.MimeTypeMap;
-import io.flutter.Log;
+import android.text.TextUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.UUID;
+import	android.content.ContentValues;
 
-class FileUtils {
-  /**
-   * Copies the file from the given content URI to a temporary directory, retaining the original
-   * file name if possible.
-   *
-   * <p>Each file is placed in its own directory to avoid conflicts according to the following
-   * scheme: {cacheDir}/{randomUuid}/{fileName}
-   *
-   * <p>File extension is changed to match MIME type of the file, if known. Otherwise, the extension
-   * is left unchanged.
-   *
-   * <p>If the original file name is unknown, a predefined "image_picker" filename is used and the
-   * file extension is deduced from the mime type (with fallback to ".jpg" in case of failure).
-   */
-  String getPathFromUri(final Context context, final Uri uri) {
-    try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
-      String uuid = UUID.randomUUID().toString();
-      File targetDirectory = new File(context.getCacheDir(), uuid);
-      targetDirectory.mkdir();
-      // TODO(SynSzakala) according to the docs, `deleteOnExit` does not work reliably on Android; we should preferably
-      //  just clear the picked files after the app startup.
-      targetDirectory.deleteOnExit();
-      String fileName = getImageName(context, uri);
-      String extension = getImageExtension(context, uri);
+public class FileUtils {
+	/**
+	 * To get URI from Path
+	 *
+	 * @param context context
+	 * @param file    file
+	 * @return Uri
+	 */
+	public static Uri getUriFromPath(Context context, File file) {
+		String filePath = file.getAbsolutePath();
+		Cursor cursor = context.getContentResolver().query(
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+				new String[]{MediaStore.Images.Media._ID},
+				MediaStore.Images.Media.DATA + "=? ",
+				new String[]{filePath}, null);
+		if (cursor != null && cursor.moveToFirst()) {
+			int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+			cursor.close();
+			return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+		} else {
+			if (file.exists()) {
+				ContentValues values = new ContentValues();
+				values.put(MediaStore.Images.Media.DATA, filePath);
+				return context.getContentResolver().insert(
+						MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+			} else {
+				return null;
+			}
+		}
+	}
 
-      if (fileName == null) {
-        Log.w("FileUtils", "Cannot get file name for " + uri);
-        if (extension == null) extension = ".jpg";
-        fileName = "image_picker" + extension;
-      } else if (extension != null) {
-        fileName = getBaseName(fileName) + extension;
-      }
-      File file = new File(targetDirectory, fileName);
-      try (OutputStream outputStream = new FileOutputStream(file)) {
-        copy(inputStream, outputStream);
-        return file.getPath();
-      }
-    } catch (IOException e) {
-      // If closing the output stream fails, we cannot be sure that the
-      // target file was written in full. Flushing the stream merely moves
-      // the bytes into the OS, not necessarily to the file.
-      return null;
-    } catch (SecurityException e) {
-      // Calling `ContentResolver#openInputStream()` has been reported to throw a
-      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
-      // return `null`.
-      //
-      // See https://github.com/flutter/flutter/issues/100025 for more details.
-      return null;
-    }
-  }
+	/**
+	 * Get Path from URI
+	 *
+	 * @param context context
+	 * @param uri     uri
+	 * @return String
+	 */
+	public static String getPathFromUri(final Context context, final Uri uri) {
 
-  /** @return extension of image with dot, or null if it's empty. */
-  private static String getImageExtension(Context context, Uri uriImage) {
-    String extension;
+		final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
-    try {
-      if (uriImage.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-        final MimeTypeMap mime = MimeTypeMap.getSingleton();
-        extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uriImage));
-      } else {
-        extension =
-            MimeTypeMap.getFileExtensionFromUrl(
-                Uri.fromFile(new File(uriImage.getPath())).toString());
-      }
-    } catch (Exception e) {
-      return null;
-    }
+		// DocumentProvider
+		if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+			// ExternalStorageProvider
+			if (isExternalStorageDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
 
-    if (extension == null || extension.isEmpty()) {
-      return null;
-    }
+				if ("primary".equalsIgnoreCase(type)) {
+					return Environment.getExternalStorageDirectory() + "/" + split[1];
+				}
 
-    return "." + extension;
-  }
+				// TODO handle non-primary volumes
+			}
+			// DownloadsProvider
+			else if (isDownloadsDocument(uri)) {
 
-  /** @return name of the image provided by ContentResolver; this may be null. */
-  private static String getImageName(Context context, Uri uriImage) {
-    try (Cursor cursor = queryImageName(context, uriImage)) {
-      if (cursor == null || !cursor.moveToFirst() || cursor.getColumnCount() < 1) return null;
-      return cursor.getString(0);
-    }
-  }
+				final String id = DocumentsContract.getDocumentId(uri);
+				final Uri contentUri = ContentUris.withAppendedId(
+						Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
-  private static Cursor queryImageName(Context context, Uri uriImage) {
-    return context
-        .getContentResolver()
-        .query(uriImage, new String[] {MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null);
-  }
+				return getDataColumn(context, contentUri, null, null);
+			}
+			// MediaProvider
+			else if (isMediaDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
 
-  private static void copy(InputStream in, OutputStream out) throws IOException {
-    final byte[] buffer = new byte[4 * 1024];
-    int bytesRead;
-    while ((bytesRead = in.read(buffer)) != -1) {
-      out.write(buffer, 0, bytesRead);
-    }
-    out.flush();
-  }
+				Uri contentUri = null;
+				if ("image".equals(type)) {
+					contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+				} else if ("video".equals(type)) {
+					contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+				} else if ("audio".equals(type)) {
+					contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+				}
 
-  private static String getBaseName(String fileName) {
-    int lastDotIndex = fileName.lastIndexOf('.');
-    if (lastDotIndex < 0) {
-      return fileName;
-    }
-    // Basename is everything before the last '.'.
-    return fileName.substring(0, lastDotIndex);
-  }
+				final String selection = "_id=?";
+				final String[] selectionArgs = new String[]{
+						split[1]
+				};
+
+				return getDataColumn(context, contentUri, selection, selectionArgs);
+			}
+		}
+		// MediaStore (and general)
+		else if ("content".equalsIgnoreCase(uri.getScheme())) {
+
+			// Return the remote address
+			if (isGooglePhotosUri(uri))
+				return uri.getLastPathSegment();
+
+			return getDataColumn(context, uri, null, null);
+		}
+		// File
+		else if ("file".equalsIgnoreCase(uri.getScheme())) {
+			return uri.getPath();
+		}
+
+		return null;
+	}
+
+	private static String getDataColumn(Context context, Uri uri, String selection,
+	                                    String[] selectionArgs) {
+
+		final String column = "_data";
+		final String[] projection = {
+				column
+		};
+
+		try (Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+				null)) {
+			if (cursor != null && cursor.moveToFirst()) {
+				final int index = cursor.getColumnIndexOrThrow(column);
+				return cursor.getString(index);
+			}
+		}
+		return null;
+	}
+
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is ExternalStorageProvider.
+	 */
+	private static boolean isExternalStorageDocument(Uri uri) {
+		return "com.android.externalstorage.documents".equals(uri.getAuthority());
+	}
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is DownloadsProvider.
+	 */
+	private static boolean isDownloadsDocument(Uri uri) {
+		return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+	}
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is MediaProvider.
+	 */
+	private static boolean isMediaDocument(Uri uri) {
+		return "com.android.providers.media.documents".equals(uri.getAuthority());
+	}
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is Google Photos.
+	 */
+	private static boolean isGooglePhotosUri(Uri uri) {
+		return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+	}
+
+	public static String getFileName(String url) {
+		return url.substring(url.lastIndexOf('/') + 1);
+	}
 }

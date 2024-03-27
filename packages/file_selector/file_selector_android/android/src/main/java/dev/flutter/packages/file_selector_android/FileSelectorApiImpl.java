@@ -203,26 +203,37 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             @Override
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
-                final Uri uri = data.getData();
-                System.out.println("CAMILLE: " + uri.isRelative());
+                    final Uri uri = data.getData();
+                System.out.println("CAMILLE: " + uri.getAuthority());
+                    // final FileUtils fileUtils =  new FileUtils();
+                    String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), uri);
+                System.out.println("CAMILLE: " + path);
                 
-                final String path = uri.getPath();
+                // final String path = uri.getPath();
+                System.out.println("CAMILLE 5");
                 if (path != null) {
+                  System.out.println("CAMILLE 6");
                   result.success(path);
                 } else {
-                  final FileUtils fileUtils =  new FileUtils();
+                  System.out.println("CAMILLE 4");
+                  // final FileUtils fileUtils2 =  new FileUtils();
                   try {
-                    fileUtils.getPathFromUri(activityPluginBinding.getActivity(), uri);
+                    FileUtils.getPathFromUri(activityPluginBinding.getActivity(), uri);
                   } catch (Exception exception) {
+                    System.out.println("CAMILLE 1");
                     result.error(exception);
                   }
                 }
               } else {
+                                    System.out.println("CAMILLE 3");
+
                 result.success(null);
               }
             }
           });
     } catch (Exception exception) {
+                          System.out.println("CAMILLE 2");
+
       result.error(exception);
     }
   }
