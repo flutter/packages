@@ -422,7 +422,7 @@ class Camera {
         defaultVideoTrackSettings['facingMode'] as String?;
 
     if (facingMode != null) {
-      return _cameraService.mapFacingModeToLensDirection(facingMode);
+      return mapFacingModeToLensDirection(facingMode);
     } else {
       return null;
     }
