@@ -76,6 +76,7 @@ public class TestProvider extends ITestProvider.Stub {
             webView.setText("HELLO WORLD");
             webView.setTextSize(40);
             webView.setLayoutParams(new FrameLayout.LayoutParams(initialWidth, initialHeight));
+            webView.setBackgroundColor(Color.RED);
             //webView.loadUrl("https://www.google.com");
             sessionClientExecutor.execute(
                 () -> {

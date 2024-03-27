@@ -59,77 +59,72 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   bool show = false;
 
   @override
   Widget build(BuildContext context) {
-    if (!show) {
-      return Container(
-        color: Colors.yellow,
-        child: Center(
-          child: SizedBox(
-            width: 100,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  show = !show;
-                });
-              },
-              child: const Text('CLICK'),
-            ),
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: show ? Colors.green : Colors.yellow,
+        appBar: AppBar(
+          title: const Text('AdMob Plugin example app'),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Text('Drawer Header'),
+              ),
+              ListTile(title: const Text('Item 1'), onTap: () {}),
+              ListTile(title: const Text('Item 2'), onTap: () {}),
+            ],
           ),
         ),
-      );
-    } else {
-      return Container(
-        color: Colors.green,
-        child: Center(
-          child: SizedBox(
-            height: 300,
-            width: 300,
-            child: PlatformViewLink(
-              viewType: 'myPlatformView',
-              surfaceFactory: (
-                BuildContext context,
-                PlatformViewController controller,
-              ) {
-                return AndroidViewSurface(
-                  controller: controller as AndroidViewController,
-                  hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-                  gestureRecognizers: const <Factory<
-                      OneSequenceGestureRecognizer>>{},
-                );
-              },
-              onCreatePlatformView: (PlatformViewCreationParams params) {
-                return PlatformViewsService.initSurfaceAndroidView(
-                  id: params.id,
-                  viewType: 'myPlatformView',
-                  layoutDirection: TextDirection.ltr,
-                  creationParams: null,
-                  creationParamsCodec: const StandardMessageCodec(),
+        body: Center(
+          child: show
+              ? SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: PlatformViewLink(
+                    viewType: 'myPlatformView',
+                    surfaceFactory: (
+                      BuildContext context,
+                      PlatformViewController controller,
+                    ) {
+                      return AndroidViewSurface(
+                        controller: controller as AndroidViewController,
+                        hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                        gestureRecognizers: const <Factory<
+                            OneSequenceGestureRecognizer>>{},
+                      );
+                    },
+                    onCreatePlatformView: (PlatformViewCreationParams params) {
+                      return PlatformViewsService.initSurfaceAndroidView(
+                        id: params.id,
+                        viewType: 'myPlatformView',
+                        layoutDirection: TextDirection.ltr,
+                        creationParams: null,
+                        creationParamsCodec: const StandardMessageCodec(),
+                      )
+                        ..addOnPlatformViewCreatedListener(
+                            params.onPlatformViewCreated)
+                        ..create();
+                    },
+                  ),
                 )
-                  ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
-                  ..create();
-              },
-            ),
-          ),
+              : SizedBox(
+                  width: 100,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () => setState(() => show = !show),
+                    child: const Text('CLICK'),
+                  ),
+                ),
         ),
-      );
-    }
+      ),
+    );
   }
   //   // This method is rerun every time setState is called, for instance as done
   //   // by the _incrementCounter method above.
