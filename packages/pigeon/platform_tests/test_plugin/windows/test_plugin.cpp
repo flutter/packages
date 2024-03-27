@@ -18,6 +18,7 @@ namespace test_plugin {
 
 using core_tests_pigeontest::AllClassesWrapper;
 using core_tests_pigeontest::AllNullableTypes;
+using core_tests_pigeontest::AllNullableTypesWithoutRecursion;
 using core_tests_pigeontest::AllTypes;
 using core_tests_pigeontest::AnEnum;
 using core_tests_pigeontest::ErrorOr;
@@ -87,6 +88,15 @@ ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
 
 ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(
     const AllNullableTypes* everything) {
+  if (!everything) {
+    return std::nullopt;
+  }
+  return *everything;
+}
+
+ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>
+TestPlugin::EchoAllNullableTypesWithoutRecursion(
+    const AllNullableTypesWithoutRecursion* everything) {
   if (!everything) {
     return std::nullopt;
   }
@@ -179,6 +189,24 @@ ErrorOr<AllNullableTypes> TestPlugin::SendMultipleNullableTypes(
     const bool* a_nullable_bool, const int64_t* a_nullable_int,
     const std::string* a_nullable_string) {
   AllNullableTypes someTypes;
+  someTypes.set_a_nullable_bool(a_nullable_bool);
+  someTypes.set_a_nullable_int(a_nullable_int);
+  // The string pointer can't be passed through directly since the setter for
+  // a string takes a std::string_view rather than std::string so the pointer
+  // types don't match.
+  if (a_nullable_string) {
+    someTypes.set_a_nullable_string(*a_nullable_string);
+  } else {
+    someTypes.set_a_nullable_string(nullptr);
+  }
+  return someTypes;
+};
+
+ErrorOr<AllNullableTypesWithoutRecursion>
+TestPlugin::SendMultipleNullableTypesWithoutRecursion(
+    const bool* a_nullable_bool, const int64_t* a_nullable_int,
+    const std::string* a_nullable_string) {
+  AllNullableTypesWithoutRecursion someTypes;
   someTypes.set_a_nullable_bool(a_nullable_bool);
   someTypes.set_a_nullable_int(a_nullable_int);
   // The string pointer can't be passed through directly since the setter for
@@ -363,6 +391,16 @@ void TestPlugin::EchoAsyncNullableAllNullableTypes(
                     : std::nullopt);
 }
 
+void TestPlugin::EchoAsyncNullableAllNullableTypesWithoutRecursion(
+    const AllNullableTypesWithoutRecursion* everything,
+    std::function<
+        void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+        result) {
+  result(everything
+             ? std::optional<AllNullableTypesWithoutRecursion>(*everything)
+             : std::nullopt);
+}
+
 void TestPlugin::EchoAsyncNullableInt(
     const int64_t* an_int,
     std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) {
@@ -469,6 +507,31 @@ void TestPlugin::CallFlutterSendMultipleNullableTypes(
   flutter_api_->SendMultipleNullableTypes(
       a_nullable_bool, a_nullable_int, a_nullable_string,
       [result](const AllNullableTypes& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoAllNullableTypesWithoutRecursion(
+    const AllNullableTypesWithoutRecursion* everything,
+    std::function<
+        void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+        result) {
+  flutter_api_->EchoAllNullableTypesWithoutRecursion(
+      everything,
+      [result](const AllNullableTypesWithoutRecursion* echo) {
+        result(echo ? std::optional<AllNullableTypesWithoutRecursion>(*echo)
+                    : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterSendMultipleNullableTypesWithoutRecursion(
+    const bool* a_nullable_bool, const int64_t* a_nullable_int,
+    const std::string* a_nullable_string,
+    std::function<void(ErrorOr<AllNullableTypesWithoutRecursion> reply)>
+        result) {
+  flutter_api_->SendMultipleNullableTypesWithoutRecursion(
+      a_nullable_bool, a_nullable_int, a_nullable_string,
+      [result](const AllNullableTypesWithoutRecursion& echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
 }
 

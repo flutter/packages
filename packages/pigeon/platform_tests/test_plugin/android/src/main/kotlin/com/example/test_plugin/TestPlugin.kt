@@ -38,6 +38,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
+  override fun echoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?
+  ): AllNullableTypesWithoutRecursion? {
+    return everything
+  }
+
   override fun throwError(): Any? {
     throw Exception("An error")
   }
@@ -121,6 +127,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
         aNullableString = aNullableString)
   }
 
+  override fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): AllNullableTypesWithoutRecursion {
+    return AllNullableTypesWithoutRecursion(
+        aNullableBool = aNullableBool,
+        aNullableInt = aNullableInt,
+        aNullableString = aNullableString)
+  }
+
   override fun echoNullableInt(aNullableInt: Long?): Long? {
     return aNullableInt
   }
@@ -188,6 +205,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   override fun echoAsyncNullableAllNullableTypes(
       everything: AllNullableTypes?,
       callback: (Result<AllNullableTypes?>) -> Unit
+  ) {
+    callback(Result.success(everything))
+  }
+
+  override fun echoAsyncNullableAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
   ) {
     callback(Result.success(everything))
   }
@@ -298,6 +322,25 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString) { echo ->
       callback(echo)
     }
+  }
+
+  override fun callFlutterEchoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  ) {
+    flutterApi!!.echoAllNullableTypesWithoutRecursion(everything) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?,
+      callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit
+  ) {
+    flutterApi!!.sendMultipleNullableTypesWithoutRecursion(
+        aNullableBool, aNullableInt, aNullableString) { echo ->
+          callback(echo)
+        }
   }
 
   override fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit) {

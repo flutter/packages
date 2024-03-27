@@ -584,11 +584,12 @@ void main() {
           contains('void set_nullable_string(std::string_view value_arg)'));
       expect(
           code, contains('void set_nullable_nested(const Nested& value_arg)'));
-      // Instance variables should be std::optionals.
+      // Most instance variables should be std::optionals.
       expect(code, contains('std::optional<bool> nullable_bool_'));
       expect(code, contains('std::optional<int64_t> nullable_int_'));
       expect(code, contains('std::optional<std::string> nullable_string_'));
-      expect(code, contains('std::optional<Nested> nullable_nested_'));
+      // Custom classes are the exception, to avoid inline storage.
+      expect(code, contains('std::unique_ptr<Nested> nullable_nested_'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -624,10 +625,7 @@ void main() {
           code,
           contains(
               'return nullable_string_ ? &(*nullable_string_) : nullptr;'));
-      expect(
-          code,
-          contains(
-              'return nullable_nested_ ? &(*nullable_nested_) : nullptr;'));
+      expect(code, contains('return nullable_nested_.get();'));
       // Setters convert to optionals.
       expect(
           code,
@@ -643,8 +641,8 @@ void main() {
               'std::optional<std::string>(*value_arg) : std::nullopt;'));
       expect(
           code,
-          contains('nullable_nested_ = value_arg ? '
-              'std::optional<Nested>(*value_arg) : std::nullopt;'));
+          contains(
+              'nullable_nested_ = value_arg ? std::make_unique<Nested>(*value_arg) : nullptr;'));
       // Serialization handles optionals.
       expect(
           code,
@@ -763,7 +761,8 @@ void main() {
       expect(code, contains('bool non_nullable_bool_;'));
       expect(code, contains('int64_t non_nullable_int_;'));
       expect(code, contains('std::string non_nullable_string_;'));
-      expect(code, contains('Nested non_nullable_nested_;'));
+      // Except for custom classes.
+      expect(code, contains('std::unique_ptr<Nested> non_nullable_nested_;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -793,15 +792,20 @@ void main() {
       expect(code, contains('return non_nullable_bool_;'));
       expect(code, contains('return non_nullable_int_;'));
       expect(code, contains('return non_nullable_string_;'));
-      expect(code, contains('return non_nullable_nested_;'));
+      // Unless it's a custom class.
+      expect(code, contains('return *non_nullable_nested_;'));
       // Setters just assign the value.
       expect(code, contains('non_nullable_bool_ = value_arg;'));
       expect(code, contains('non_nullable_int_ = value_arg;'));
       expect(code, contains('non_nullable_string_ = value_arg;'));
-      expect(code, contains('non_nullable_nested_ = value_arg;'));
+      // Unless it's a custom class.
+      expect(
+          code,
+          contains(
+              'non_nullable_nested_ = std::make_unique<Nested>(value_arg);'));
       // Serialization uses the value directly.
       expect(code, contains('EncodableValue(non_nullable_bool_)'));
-      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
+      expect(code, contains('non_nullable_nested_->ToEncodableList()'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.

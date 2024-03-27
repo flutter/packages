@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
+import androidx.camera.core.resolutionselector.ResolutionFilter;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionSelectorHostApi;
@@ -30,13 +31,17 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
     @NonNull
     public ResolutionSelector create(
         @Nullable ResolutionStrategy resolutionStrategy,
-        @Nullable AspectRatioStrategy aspectRatioStrategy) {
+        @Nullable AspectRatioStrategy aspectRatioStrategy,
+        @Nullable ResolutionFilter resolutionFilter) {
       final ResolutionSelector.Builder builder = new ResolutionSelector.Builder();
       if (resolutionStrategy != null) {
         builder.setResolutionStrategy(resolutionStrategy);
       }
       if (aspectRatioStrategy != null) {
         builder.setAspectRatioStrategy(aspectRatioStrategy);
+      }
+      if (resolutionFilter != null) {
+        builder.setResolutionFilter(resolutionFilter);
       }
       return builder.build();
     }
@@ -65,13 +70,14 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
   }
 
   /**
-   * Creates a {@link ResolutionSelector} instance with the {@link ResolutionStrategy} and {@link
-   * AspectRatio} that have the identifiers specified if provided.
+   * Creates a {@link ResolutionSelector} instance with the {@link ResolutionStrategy}, {@link
+   * ResolutionFilter}, and {@link AspectRatio} that have the identifiers specified if provided.
    */
   @Override
   public void create(
       @NonNull Long identifier,
       @Nullable Long resolutionStrategyIdentifier,
+      @Nullable Long resolutionFilterIdentifier,
       @Nullable Long aspectRatioStrategyIdentifier) {
     instanceManager.addDartCreatedInstance(
         proxy.create(
@@ -81,7 +87,10 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
             aspectRatioStrategyIdentifier == null
                 ? null
                 : Objects.requireNonNull(
-                    instanceManager.getInstance(aspectRatioStrategyIdentifier))),
+                    instanceManager.getInstance(aspectRatioStrategyIdentifier)),
+            resolutionFilterIdentifier == null
+                ? null
+                : Objects.requireNonNull(instanceManager.getInstance(resolutionFilterIdentifier))),
         identifier);
   }
 }

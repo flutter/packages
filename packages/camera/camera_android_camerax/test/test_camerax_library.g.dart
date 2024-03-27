@@ -1321,7 +1321,7 @@ abstract class TestResolutionSelectorHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   void create(int identifier, int? resolutionStrategyIdentifier,
-      int? aspectRatioStrategyIdentifier);
+      int? resolutionSelectorIdentifier, int? aspectRatioStrategyIdentifier);
 
   static void setup(TestResolutionSelectorHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1343,8 +1343,12 @@ abstract class TestResolutionSelectorHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ResolutionSelectorHostApi.create was null, expected non-null int.');
           final int? arg_resolutionStrategyIdentifier = (args[1] as int?);
-          final int? arg_aspectRatioStrategyIdentifier = (args[2] as int?);
-          api.create(arg_identifier!, arg_resolutionStrategyIdentifier,
+          final int? arg_resolutionSelectorIdentifier = (args[2] as int?);
+          final int? arg_aspectRatioStrategyIdentifier = (args[3] as int?);
+          api.create(
+              arg_identifier!,
+              arg_resolutionStrategyIdentifier,
+              arg_resolutionSelectorIdentifier,
               arg_aspectRatioStrategyIdentifier);
           return <Object?>[];
         });
@@ -2353,6 +2357,71 @@ abstract class TestCamera2CameraControlHostApi {
               'Argument for dev.flutter.pigeon.Camera2CameraControlHostApi.addCaptureRequestOptions was null, expected non-null int.');
           await api.addCaptureRequestOptions(
               arg_identifier!, arg_captureRequestOptionsIdentifier!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+class _TestResolutionFilterHostApiCodec extends StandardMessageCodec {
+  const _TestResolutionFilterHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ResolutionInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return ResolutionInfo.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class TestResolutionFilterHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec =
+      _TestResolutionFilterHostApiCodec();
+
+  void createWithOnePreferredSize(
+      int identifier, ResolutionInfo preferredResolution);
+
+  static void setup(TestResolutionFilterHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize was null, expected non-null int.');
+          final ResolutionInfo? arg_preferredResolution =
+              (args[1] as ResolutionInfo?);
+          assert(arg_preferredResolution != null,
+              'Argument for dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize was null, expected non-null ResolutionInfo.');
+          api.createWithOnePreferredSize(
+              arg_identifier!, arg_preferredResolution!);
           return <Object?>[];
         });
       }

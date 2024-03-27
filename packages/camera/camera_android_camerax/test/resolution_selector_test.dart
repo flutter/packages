@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:camera_android_camerax/src/aspect_ratio_strategy.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_android_camerax/src/resolution_filter.dart';
 import 'package:camera_android_camerax/src/resolution_selector.dart';
 import 'package:camera_android_camerax/src/resolution_strategy.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +18,7 @@ import 'test_camerax_library.g.dart';
 
 @GenerateMocks(<Type>[
   AspectRatioStrategy,
+  ResolutionFilter,
   ResolutionStrategy,
   TestResolutionSelectorHostApi,
   TestInstanceManagerHostApi,
@@ -54,15 +56,13 @@ void main() {
 
       ResolutionSelector.detached(
         resolutionStrategy: MockResolutionStrategy(),
+        resolutionFilter: MockResolutionFilter(),
         aspectRatioStrategy: MockAspectRatioStrategy(),
         instanceManager: instanceManager,
       );
 
-      verifyNever(mockApi.create(
-        argThat(isA<int>()),
-        argThat(isA<int>()),
-        argThat(isA<int>()),
-      ));
+      verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
+          argThat(isA<int>()), argThat(isA<int>())));
     });
 
     test('HostApi create creates expected ResolutionSelector instance', () {
@@ -91,6 +91,20 @@ void main() {
         ),
       );
 
+      final ResolutionFilter resolutionFilter =
+          ResolutionFilter.onePreferredSizeDetached(
+              preferredResolution: const Size(30, 40));
+      const int resolutionFilterIdentifier = 54;
+      instanceManager.addHostCreatedInstance(
+        resolutionFilter,
+        resolutionFilterIdentifier,
+        onCopy: (ResolutionFilter original) =>
+            ResolutionFilter.onePreferredSizeDetached(
+          preferredResolution: original.preferredResolution,
+          instanceManager: instanceManager,
+        ),
+      );
+
       final AspectRatioStrategy aspectRatioStrategy =
           AspectRatioStrategy.detached(
         preferredAspectRatio: AspectRatio.ratio4To3,
@@ -110,6 +124,7 @@ void main() {
 
       final ResolutionSelector instance = ResolutionSelector(
         resolutionStrategy: resolutionStrategy,
+        resolutionFilter: resolutionFilter,
         aspectRatioStrategy: aspectRatioStrategy,
         instanceManager: instanceManager,
       );
@@ -117,6 +132,7 @@ void main() {
       verify(mockApi.create(
         instanceManager.getIdentifier(instance),
         resolutionStrategyIdentifier,
+        resolutionFilterIdentifier,
         aspectRatioStrategyIdentifier,
       ));
     });

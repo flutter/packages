@@ -118,6 +118,29 @@
 
 #pragma mark - GMSTileLayer method
 
+- (UIImage *)handleResultTile:(nullable UIImage *)tile {
+  CGImageRef imageRef = tile.CGImage;
+  CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+  BOOL isFloat = bitmapInfo && kCGBitmapFloatComponents;
+  size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+
+  // Engine use f16 pixel format for wide gamut images
+  // If it is wide gamut, we want to downsample it
+  if (isFloat & (bitsPerComponent == 16)) {
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0,
+                                                 colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextDrawImage(context, CGRectMake(0, 0, tile.size.width, tile.size.height), tile.CGImage);
+    CGImageRef image = CGBitmapContextCreateImage(context);
+    tile = [UIImage imageWithCGImage:image];
+
+    CGImageRelease(image);
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+  }
+  return tile;
+}
+
 - (void)requestTileForX:(NSUInteger)x
                       y:(NSUInteger)y
                    zoom:(NSUInteger)zoom
@@ -137,7 +160,7 @@
             if (typedData == nil) {
               tileImage = kGMSTileLayerNoTile;
             } else {
-              tileImage = [UIImage imageWithData:typedData.data];
+              tileImage = [self handleResultTile:[UIImage imageWithData:typedData.data]];
             }
           } else {
             if ([result isKindOfClass:[FlutterError class]]) {
@@ -150,7 +173,6 @@
             }
             tileImage = kGMSTileLayerNoTile;
           }
-
           [receiver receiveTileWithX:x y:y zoom:zoom image:tileImage];
         }];
   });

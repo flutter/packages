@@ -17,6 +17,10 @@
 @interface GoogleMapsTests : XCTestCase
 @end
 
+@interface FLTTileProviderController (Testing)
+- (UIImage *)handleResultTile:(nullable UIImage *)tileImage;
+@end
+
 @implementation GoogleMapsTests
 
 - (void)testPlugin {
@@ -60,6 +64,25 @@
   // but don't test the internals of the GoogleMaps API. Assume that it does what is documented.
   // https://developers.google.com/maps/documentation/ios-sdk/reference/interface_g_m_s_services#a436e03c32b1c0be74e072310a7158831
   XCTAssertEqual(factory1.sharedMapServices, factory2.sharedMapServices);
+}
+
+- (void)testHandleResultTileDownsamplesWideGamutImages {
+  FLTTileProviderController *controller = [[FLTTileProviderController alloc] init];
+
+  NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"widegamut"
+                                                                         ofType:@"png"
+                                                                    inDirectory:@"assets"];
+  UIImage *wideGamutImage = [UIImage imageWithContentsOfFile:imagePath];
+
+  XCTAssertNotNil(wideGamutImage, @"The image should be loaded.");
+
+  UIImage *downsampledImage = [controller handleResultTile:wideGamutImage];
+
+  CGImageRef imageRef = downsampledImage.CGImage;
+  size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+
+  // non wide gamut images use 8 bit format
+  XCTAssert(bitsPerComponent == 8);
 }
 
 @end
