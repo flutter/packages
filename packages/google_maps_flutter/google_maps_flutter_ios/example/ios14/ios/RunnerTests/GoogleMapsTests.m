@@ -18,7 +18,7 @@
 @end
 
 @interface FLTTileProviderController (Testing)
-- (UIImage*)handleResultTile:(nullable UIImage*)tileImage;
+- (UIImage *)handleResultTile:(nullable UIImage *)tileImage;
 @end
 
 @implementation GoogleMapsTests
@@ -69,7 +69,9 @@
 - (void)testHandleResultTileDownsamplesWideGamutImages {
   FLTTileProviderController *controller = [[FLTTileProviderController alloc] init];
 
-  NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"widegamut" ofType:@"png" inDirectory:@"assets"];
+  NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"widegamut"
+                                                                         ofType:@"png"
+                                                                    inDirectory:@"assets"];
   UIImage *wideGamutImage = [UIImage imageWithContentsOfFile:imagePath];
 
   XCTAssertNotNil(wideGamutImage, @"The image should be loaded.");

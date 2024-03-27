@@ -118,29 +118,26 @@
 
 #pragma mark - GMSTileLayer method
 
-- (UIImage *)handleResultTile:(nullable UIImage*)tile {
-    CGImageRef imageRef = tile.CGImage;
-    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
-    BOOL isFloat = bitmapInfo && kCGBitmapFloatComponents;
-    size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+- (UIImage *)handleResultTile:(nullable UIImage *)tile {
+  CGImageRef imageRef = tile.CGImage;
+  CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+  BOOL isFloat = bitmapInfo && kCGBitmapFloatComponents;
+  size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
 
-    // Engine use f16 pixel format for wide gamut images
-    // If it is wide gamut, we want to downsample it
-    if (isFloat & (bitsPerComponent == 16)) {
-      CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-      CGContextRef context =
-          CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0,
-                                colorSpace, kCGImageAlphaPremultipliedLast);
-      CGContextDrawImage(context,
-                         CGRectMake(0, 0, tile.size.width, tile.size.height),
-                         tile.CGImage);
-      CGImageRef image = CGBitmapContextCreateImage(context);
-      tile = [UIImage imageWithCGImage:image];
+  // Engine use f16 pixel format for wide gamut images
+  // If it is wide gamut, we want to downsample it
+  if (isFloat & (bitsPerComponent == 16)) {
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0,
+                                                 colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextDrawImage(context, CGRectMake(0, 0, tile.size.width, tile.size.height), tile.CGImage);
+    CGImageRef image = CGBitmapContextCreateImage(context);
+    tile = [UIImage imageWithCGImage:image];
 
-      CGImageRelease(image);
-      CGContextRelease(context);
-      CGColorSpaceRelease(colorSpace);
-    }
+    CGImageRelease(image);
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+  }
   return tile;
 }
 
