@@ -1,3 +1,7 @@
+## 0.8.9+5
+
+* Bumps androidx.exifinterface:exifinterface from 1.3.6 to 1.3.7.
+
 ## 0.8.9+4
 
 * Minimizes scope of deprecation warning suppression to only the versions where it is required.
