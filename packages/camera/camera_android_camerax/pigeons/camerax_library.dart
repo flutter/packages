@@ -366,6 +366,7 @@ abstract class ResolutionSelectorHostApi {
   void create(
     int identifier,
     int? resolutionStrategyIdentifier,
+    int? resolutionSelectorIdentifier,
     int? aspectRatioStrategyIdentifier,
   );
 }
@@ -535,4 +536,10 @@ abstract class Camera2CameraControlHostApi {
   @async
   void addCaptureRequestOptions(
       int identifier, int captureRequestOptionsIdentifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestResolutionFilterHostApi')
+abstract class ResolutionFilterHostApi {
+  void createWithOnePreferredSize(
+      int identifier, ResolutionInfo preferredResolution);
 }
