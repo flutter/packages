@@ -79,7 +79,6 @@
   UIImage *downsampledImage = [controller handleResultTile:wideGamutImage];
 
   CGImageRef imageRef = downsampledImage.CGImage;
-  CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
   size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
 
   // non wide gamut images use 8 bit format
