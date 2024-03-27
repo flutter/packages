@@ -69,17 +69,19 @@
 - (void)testWideGamutImagesProperlyHandled {
   FLTTileProviderController *controller = [[FLTTileProviderController alloc] init];
 
-  UIImage *wideGamutImage = [UIImage imageWithContentsOfFile:@"assets/widegamut.png"];
+  NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"widegamut" ofType:@"png" inDirectory:@"assets"];
+  UIImage *wideGamutImage = [UIImage imageWithContentsOfFile:imagePath];
+
+  XCTAssertNotNil(wideGamutImage, @"The image should be loaded.");
 
   UIImage *downsampledImage = [controller handleResultTile:wideGamutImage];
 
   CGImageRef imageRef = downsampledImage.CGImage;
   CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
-  bool isFloat = (bitmapInfo && kCGBitmapFloatComponents);
   size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
 
-  XCTAssert(isFloat == false);
-  XCTAssert(bitsPerComponent != 16);
+  // non wide gamut images use 8 bit format
+  XCTAssert(bitsPerComponent == 8);
 }
 
 @end

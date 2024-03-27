@@ -121,7 +121,7 @@
 - (UIImage *)handleResultTile:(nullable UIImage*)tile {
     CGImageRef imageRef = tile.CGImage;
     CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
-    bool isFloat = (bitmapInfo && kCGBitmapFloatComponents);
+    BOOL isFloat = bitmapInfo && kCGBitmapFloatComponents;
     size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
 
     // Engine use f16 pixel format for wide gamut images
@@ -136,6 +136,7 @@
                          tile.CGImage);
       CGImageRef image = CGBitmapContextCreateImage(context);
       tile = [UIImage imageWithCGImage:image];
+
       CGImageRelease(image);
       CGContextRelease(context);
       CGColorSpaceRelease(colorSpace);
