@@ -229,7 +229,7 @@ void main() {
         );
       }
 
-      testWidgets('infinte rows, columns are finite',
+      testWidgets('infinite rows, columns are finite',
           (WidgetTester tester) async {
         // Nothing pinned ---
         await tester.pumpWidget(MaterialApp(
@@ -252,7 +252,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         verticalController.jumpTo(1000.0);
         await tester.pump();
         expect(verticalController.position.pixels, 1000.0);
@@ -299,7 +299,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         verticalController.jumpTo(1000.0);
         await tester.pump();
         expect(verticalController.position.pixels, 1000.0);
@@ -346,7 +346,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         verticalController.jumpTo(1000.0);
         await tester.pump();
         expect(verticalController.position.pixels, 1000.0);
@@ -363,7 +363,8 @@ void main() {
           tester.getRect(find.text('R9:C4')),
           const Rect.fromLTRB(800.0, 800.0, 1000.0, 1000.0),
         );
-        // No rows laid out before row 5, or after row 9, except for pinned row 0.
+        // No rows laid out before row 5, or after row 9, except for pinned row
+        // 0.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R1:C0'), findsNothing);
         expect(find.text('R10:C0'), findsNothing);
@@ -395,7 +396,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         verticalController.jumpTo(1000.0);
         await tester.pump();
         expect(verticalController.position.pixels, 1000.0);
@@ -412,7 +413,8 @@ void main() {
           tester.getRect(find.text('R9:C4')),
           const Rect.fromLTRB(800.0, 800.0, 1000.0, 1000.0),
         );
-        // No rows laid out before row 5, or after row 9, except for pinned row 0.
+        // No rows laid out before row 5, or after row 9, except for pinned row
+        // 0.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R1:C0'), findsNothing);
         expect(find.text('R10:C0'), findsNothing);
@@ -441,7 +443,8 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, validate more columns were populated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated.
         horizontalController.jumpTo(1200.0);
         await tester.pump();
         expect(verticalController.position.pixels, 0.0);
@@ -485,7 +488,8 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, validate more columns were populated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated.
         horizontalController.jumpTo(1200.0);
         await tester.pump();
         expect(verticalController.position.pixels, 0.0);
@@ -502,7 +506,8 @@ void main() {
           tester.getRect(find.text('R4:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12, except for pinned column.
+        // No columns laid out before column 5, or after column 12, except for
+        // pinned column.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R0:C4'), findsNothing);
         expect(find.text('R0:C12'), findsNothing);
@@ -530,7 +535,8 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, validate more columns were populated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated.
         horizontalController.jumpTo(1200.0);
         await tester.pump();
         expect(verticalController.position.pixels, 0.0);
@@ -578,7 +584,8 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, validate more columns were populated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated.
         horizontalController.jumpTo(1200.0);
         await tester.pump();
         expect(verticalController.position.pixels, 0.0);
@@ -595,7 +602,8 @@ void main() {
           tester.getRect(find.text('R4:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12, except for pinned column.
+        // No columns laid out before column 5, or after column 12, except for
+        // pinned column.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R0:C4'), findsNothing);
         expect(find.text('R0:C12'), findsNothing);
@@ -624,7 +632,8 @@ void main() {
         // No columns laid out beyond column 5, no rows beyond row 4.
         expect(find.text('R0:C6'), findsNothing);
         expect(find.text('R5:C0'), findsNothing);
-        // Change both scroll offsets, validate more columns and rows were populated.
+        // Change both scroll offsets, validate more columns and rows were
+        // populated.
         horizontalController.jumpTo(1200.0);
         verticalController.jumpTo(1000.0);
         await tester.pump();
@@ -673,7 +682,8 @@ void main() {
         // No columns laid out beyond column 5, no rows beyond row 4.
         expect(find.text('R0:C6'), findsNothing);
         expect(find.text('R5:C0'), findsNothing);
-        // Change both scroll offsets, validate more columns and rows were populated.
+        // Change both scroll offsets, validate more columns and rows were
+        // populated.
         horizontalController.jumpTo(1200.0);
         verticalController.jumpTo(1000.0);
         await tester.pump();
@@ -691,7 +701,8 @@ void main() {
           tester.getRect(find.text('R9:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12, except for pinned first column.
+        // No columns laid out before column 5, or after column 12, except for
+        // pinned first column.
         expect(find.text('R5:C0'), findsOneWidget);
         expect(find.text('R5:C4'), findsNothing);
         expect(find.text('R5:C12'), findsNothing);
@@ -723,7 +734,8 @@ void main() {
         // No columns laid out beyond column 5, no rows beyond row 4.
         expect(find.text('R0:C6'), findsNothing);
         expect(find.text('R5:C0'), findsNothing);
-        // Change both scroll offsets, validate more columns and rows were populated.
+        // Change both scroll offsets, validate more columns and rows were
+        // populated.
         horizontalController.jumpTo(1200.0);
         verticalController.jumpTo(1000.0);
         await tester.pump();
@@ -744,7 +756,8 @@ void main() {
         // No columns laid out before column 5, or after column 12.
         expect(find.text('R5:C4'), findsNothing);
         expect(find.text('R5:C12'), findsNothing);
-        // No rows laid out before row 4, or after row 9, except for pinned first row.
+        // No rows laid out before row 4, or after row 9, except for pinned
+        // first row.
         expect(find.text('R0:C6'), findsOneWidget);
         expect(find.text('R3:C6'), findsNothing);
         expect(find.text('R10:C6'), findsNothing);
@@ -776,7 +789,8 @@ void main() {
         // No columns laid out beyond column 5, no rows beyond row 4.
         expect(find.text('R0:C6'), findsNothing);
         expect(find.text('R5:C0'), findsNothing);
-        // Change both scroll offsets, validate more columns and rows were populated.
+        // Change both scroll offsets, validate more columns and rows were
+        // populated.
         horizontalController.jumpTo(1200.0);
         verticalController.jumpTo(1000.0);
         await tester.pump();
@@ -794,11 +808,13 @@ void main() {
           tester.getRect(find.text('R9:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12, except for pinned first column.
+        // No columns laid out before column 5, or after column 12, except for
+        // pinned first column.
         expect(find.text('R5:C0'), findsOneWidget);
         expect(find.text('R5:C4'), findsNothing);
         expect(find.text('R5:C12'), findsNothing);
-        // No rows laid out before row 4, or after row 9, except for pinned first row.
+        // No rows laid out before row 4, or after row 9, except for pinned
+        // first row.
         expect(find.text('R0:C6'), findsOneWidget);
         expect(find.text('R3:C6'), findsNothing);
         expect(find.text('R10:C6'), findsNothing);
@@ -840,7 +856,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         // This exceeds the bounds of the scroll view once the rows have been
         // null terminated.
         verticalController.jumpTo(1200.0);
@@ -901,7 +917,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         // This exceeds the bounds of the scroll view once the rows have been
         // null terminated.
         verticalController.jumpTo(1200.0);
@@ -960,7 +976,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         // This exceeds the bounds of the scroll view once the rows have been
         // null terminated.
         verticalController.jumpTo(1200.0);
@@ -982,7 +998,8 @@ void main() {
           tester.getRect(find.text('R7:C4')),
           const Rect.fromLTRB(800.0, 400.0, 1000.0, 600.0),
         );
-        // No rows laid out before row 5, or after row 7, except for the first pinned row.
+        // No rows laid out before row 5, or after row 7, except for the first
+        // pinned row.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R1:C0'), findsNothing);
         expect(find.text('R8:C0'), findsNothing);
@@ -1021,7 +1038,7 @@ void main() {
         );
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the vetical scroll offset, valdiate more rows were populated.
+        // Change the vertical scroll offset, validate more rows were populated.
         // This exceeds the bounds of the scroll view once the rows have been
         // null terminated.
         verticalController.jumpTo(1200.0);
@@ -1043,7 +1060,8 @@ void main() {
           tester.getRect(find.text('R7:C4')),
           const Rect.fromLTRB(800.0, 400.0, 1000.0, 600.0),
         );
-        // No rows laid out before row 5, or after row 7, except for the first pinned row.
+        // No rows laid out before row 5, or after row 7, except for the first
+        // pinned row.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R1:C0'), findsNothing);
         expect(find.text('R8:C0'), findsNothing);
@@ -1085,9 +1103,9 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, valdiate more columns were populated.
-        // This exceeds the bounds of the scroll view once the columns have been
-        // null terminated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated. This exceeds the bounds of the scroll view once the
+        // columns have been null terminated.
         horizontalController.jumpTo(1400.0);
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
@@ -1109,7 +1127,7 @@ void main() {
           tester.getRect(find.text('R4:C9')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No rows laid out before column 5, or after column 9.
+        // No columns laid out before column 5, or after column 9.
         expect(find.text('R0:C4'), findsNothing);
         expect(find.text('R0:C10'), findsNothing);
 
@@ -1146,9 +1164,9 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, valdiate more columns were populated.
-        // This exceeds the bounds of the scroll view once the columns have been
-        // null terminated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated. This exceeds the bounds of the scroll view once the
+        // columns have been null terminated.
         horizontalController.jumpTo(1400.0);
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
@@ -1168,7 +1186,8 @@ void main() {
           tester.getRect(find.text('R4:C9')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No rows laid out before column 5, or after column 9, except for the pinned first column.
+        // No columns laid out before column 5, or after column 9, except for
+        // the pinned first column.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R0:C4'), findsNothing);
         expect(find.text('R0:C10'), findsNothing);
@@ -1206,9 +1225,9 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, valdiate more columns were populated.
-        // This exceeds the bounds of the scroll view once the columns have been
-        // null terminated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated. This exceeds the bounds of the scroll view once the
+        // columns have been null terminated.
         horizontalController.jumpTo(1400.0);
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
@@ -1228,7 +1247,7 @@ void main() {
           tester.getRect(find.text('R4:C9')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No rows laid out before column 5, or after column 9.
+        // No columns laid out before column 5, or after column 9.
         expect(find.text('R0:C4'), findsNothing);
         expect(find.text('R0:C10'), findsNothing);
 
@@ -1266,9 +1285,9 @@ void main() {
         );
         // No columns laid out beyond column 5.
         expect(find.text('R0:C6'), findsNothing);
-        // Change the horizontal scroll offset, valdiate more columns were populated.
-        // This exceeds the bounds of the scroll view once the columns have been
-        // null terminated.
+        // Change the horizontal scroll offset, validate more columns were
+        // populated. This exceeds the bounds of the scroll view once the
+        // columns have been null terminated.
         horizontalController.jumpTo(1400.0);
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
@@ -1288,7 +1307,8 @@ void main() {
           tester.getRect(find.text('R4:C9')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No rows laid out before column 5, or after column 9, except for the pinned first column.
+        // No columns laid out before column 5, or after column 9, except for
+        // the pinned first column.
         expect(find.text('R0:C0'), findsOneWidget);
         expect(find.text('R0:C4'), findsNothing);
         expect(find.text('R0:C10'), findsNothing);
@@ -1341,7 +1361,7 @@ void main() {
         expect(find.text('R0:C6'), findsNothing);
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the scroll offsets, valdiate more columns and rows were
+        // Change the scroll offsets, validate more columns and rows were
         // populated.
         // These exceed the bounds of the scroll view once the column and row
         // builders have null terminated.
@@ -1416,7 +1436,7 @@ void main() {
         expect(find.text('R0:C6'), findsNothing);
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the scroll offsets, valdiate more columns and rows were
+        // Change the scroll offsets, validate more columns and rows were
         // populated.
         // These exceed the bounds of the scroll view once the column and row
         // builders have null terminated.
@@ -1490,7 +1510,7 @@ void main() {
         expect(find.text('R0:C6'), findsNothing);
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the scroll offsets, valdiate more columns and rows were
+        // Change the scroll offsets, validate more columns and rows were
         // populated.
         // These exceed the bounds of the scroll view once the column and row
         // builders have null terminated.
@@ -1565,7 +1585,7 @@ void main() {
         expect(find.text('R0:C6'), findsNothing);
         // No rows laid out beyond row 4.
         expect(find.text('R5:C0'), findsNothing);
-        // Change the scroll offsets, valdiate more columns and rows were
+        // Change the scroll offsets, validate more columns and rows were
         // populated.
         // These exceed the bounds of the scroll view once the column and row
         // builders have null terminated.
@@ -1604,9 +1624,10 @@ void main() {
           (WidgetTester tester) async {
         // When columns and rows are finite, the layout is eagerly computed and
         // the children are lazily laid out. This makes computing merged cell
-        // layouts easy. In an infinite world, not all of the information may be
-        // available for a merged cell if it extends into an area we have not
-        // computed the layout for yet.
+        // layouts easy. In an infinite world, the layout is also lazily
+        // computed, so not all of the information may be available for a merged
+        // cell if it extends into an area we have not computed the layout for
+        // yet.
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
         final List<int> mergedRows = List<int>.generate(
           10,
@@ -2165,7 +2186,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Even columns and rows are set up for taps, mainAxis is vertical by
-      // default, mening row major order. Rows should take precedence where they
+      // default, meaning row major order. Rows should take precedence where they
       // intersect at even indices.
       expect(columnTapCounter, 0);
       expect(rowTapCounter, 0);

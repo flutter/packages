@@ -41,8 +41,9 @@ import 'table_span.dart';
 /// the [TableCellDelegateMixin]. The [TableView.builder] and [TableView.list]
 /// constructors create their own delegate.
 ///
-/// Using a [TableCellBuilderDelegate], or the [TableView.builder] constructor
-/// will allow for infinite rows and columns. Returning null from the
+/// A table with infinite rows and columns can be made by using a
+/// [TableCellBuilderDelegate], or the [TableView.builder] constructor, and
+/// omitting the row or column count. Returning null from the
 /// [columnBuilder] or [rowBuilder] in this case will terminate
 /// the row or column at that index, representing the end of the table in that
 /// axis. In this scenario, until the potential end of the table in either
@@ -456,22 +457,19 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       }
       return true;
     }());
-    double startOfRegularColumn = 0;
-    double startOfPinnedColumn = 0;
+    double startOfRegularColumn = 0.0;
+    double startOfPinnedColumn = 0.0;
     if (appendColumns) {
-      // If fromColumnIndex is provided, we are only adding to the metrics we
-      // already know, since we lazily compile metrics. Copy over cached column
-      // metrics we aren't updating. This should only be the case when the
+      // We are only adding to the metrics we already know, since we are lazily
+      // compiling metrics. This should only be the case when the
       // number of columns is infinite, and saves us going through all the
       // columns we already know about.
       assert(_columnsAreInfinite);
       assert(_columnMetrics.isNotEmpty);
-      if (_firstNonPinnedColumn != 0) {
-        startOfPinnedColumn =
-            _columnMetrics[_firstNonPinnedColumn]!.trailingOffset;
-      }
+      startOfPinnedColumn =
+          _columnMetrics[_firstNonPinnedColumn]?.trailingOffset ?? 0.0;
       startOfRegularColumn =
-          _columnMetrics[_lastNonPinnedColumn]!.trailingOffset;
+          _columnMetrics[_lastNonPinnedColumn]?.trailingOffset ?? 0.0;
     }
     _firstNonPinnedColumn =
         toColumnIndex == null ? null : _firstNonPinnedColumn;
@@ -504,13 +502,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       final double leadingOffset =
           isPinned ? startOfPinnedColumn : startOfRegularColumn;
       _Span? span = _columnMetrics.remove(column);
-      final TableSpan? configuration = needsDelegateRebuild || span == null
-          ? delegate.buildColumn(column)
-          : span.configuration;
+      final TableSpan? configuration =
+          span?.configuration ?? delegate.buildColumn(column);
       if (configuration == null) {
-        // We have reached the end of rows based on a null termination. This
-        // This happens when a row count has not been specified, but we have
-        // reached the end.
+        // We have reached the end of columns based on a null termination. This
+        // This happens when a column count has not been specified.
         assert(_columnsAreInfinite);
         _columnNullTerminated = column;
         _updateScrollBounds();
@@ -557,19 +553,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       }
       return true;
     }());
-    double startOfRegularRow = 0;
-    double startOfPinnedRow = 0;
+    double startOfRegularRow = 0.0;
+    double startOfPinnedRow = 0.0;
     if (appendRows) {
-      // We are only adding to the metrics we already know, since we lazily
-      // compile metrics when we can. Copy over cached row metrics we aren't
-      // updating. This should only be the case when the number of rows is
-      // infinite.
+      // We are only adding to the metrics we already know, since we are lazily
+      // compiling metrics. This should only be the case when the
+      // number of rows is infinite, and saves us going through all the
+      // rows we already know about.
       assert(_rowsAreInfinite);
       assert(_rowMetrics.isNotEmpty);
-      if (_firstNonPinnedRow != 0) {
-        startOfPinnedRow = _rowMetrics[_firstNonPinnedRow]!.trailingOffset;
-      }
-      startOfRegularRow = _rowMetrics[_lastNonPinnedRow]!.trailingOffset;
+      startOfPinnedRow = _rowMetrics[_firstNonPinnedRow]?.trailingOffset ?? 0.0;
+      startOfRegularRow = _rowMetrics[_lastNonPinnedRow]?.trailingOffset ?? 0.0;
     }
     _firstNonPinnedRow = toRowIndex == null ? null : _firstNonPinnedRow;
     _lastNonPinnedRow = toRowIndex == null ? null : _lastNonPinnedRow;
@@ -601,9 +595,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       final double leadingOffset =
           isPinned ? startOfPinnedRow : startOfRegularRow;
       _Span? span = _rowMetrics.remove(row);
-      final TableSpan? configuration = needsDelegateRebuild || span == null
-          ? delegate.buildRow(row)
-          : span.configuration;
+      final TableSpan? configuration =
+          span?.configuration ?? delegate.buildRow(row);
       if (configuration == null) {
         // We have reached the end of rows based on a null termination. This
         // This happens when a row count has not been specified, but we have
@@ -694,7 +687,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
   }
 
-  // Uses the cached metrics to update the currently visible cells.
+  // Uses the cached metrics to update the currently visible cells. If the
+  // number of rows or columns are infinte, the layout is computed lazily, so
+  // this will call for an update to the metrics if we have scrolled beyond the
+  // layout portion we know about.
   void _updateFirstAndLastVisibleCell() {
     if (_columnMetrics.isNotEmpty) {
       _Span lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
@@ -770,7 +766,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     if (needsDelegateRebuild || didResize) {
       // Recomputes the table metrics, invalidates any cached information.
+      for (final _Span span in _columnMetrics.values) {
+        span.dispose();
+      }
       _columnMetrics.clear();
+      for (final _Span span in _rowMetrics.values) {
+        span.dispose();
+      }
       _rowMetrics.clear();
       _updateColumnMetrics();
       _updateRowMetrics();
