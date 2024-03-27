@@ -2,12 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:math' show min;
-import 'dart:ui' show lerpDouble;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 
 /// Signature for `action` callback function provided to [OpenContainer.openBuilder].
 ///
@@ -724,160 +721,155 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     Navigator.of(subtreeContext!).pop(returnValue);
   }
 
-  // TODO(justinmc): Make it transition from the pback transition into the opencontainer transition.
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    /*
-    return AndroidBackGestureDetector(
-      backGestureController:
-          TransitionRoute.createDefaultGestureTransitionController(this),
-      enabledCallback: () => popGestureEnabled,
-      builder: (BuildContext context, AndroidBackEvent? startBackEvent, AndroidBackEvent? currentBackEvent) {
-        final bool linearTransition = popGestureInProgress;
-        if (linearTransition) {
-          return defaultBackGestureTransitionBuilder(
-            this,
-            context,
-            animation,
-            secondaryAnimation,
-            child,
+  Widget _defaultTransition(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: AnimatedBuilder(
+        animation: animation,
+        child: child,
+        builder: (BuildContext context, Widget? child) {
+          if (animation.isCompleted) {
+            return child!;
+          }
+
+          final Animation<double> curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: Curves.fastOutSlowIn,
+            reverseCurve:
+                _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
           );
-        }
-
-        return child;
-      },
-    );
-    */
-    return AndroidBackGestureDetector(
-      backGestureController: TransitionRoute.createDefaultGestureTransitionController(this),
-      enabledCallback: () => popGestureEnabled,
-      builder: (BuildContext context, AndroidBackEvent? startBackEvent, AndroidBackEvent? currentBackEvent) {
-        // TODO(justinmc): Name? And should be in buildPage or no?
-        final Widget backlessChild = Align(
-          alignment: Alignment.topLeft,
-          child: AnimatedBuilder(
-            animation: animation,
-            child: child,
-            builder: (BuildContext context, Widget? child) {
-              if (animation.isCompleted) {
-                return child!;
+          TweenSequence<Color?>? colorTween;
+          TweenSequence<double>? closedOpacityTween, openOpacityTween;
+          Animatable<Color?>? scrimTween;
+          switch (animation.status) {
+            case AnimationStatus.dismissed:
+            case AnimationStatus.forward:
+              closedOpacityTween = _closedOpacityTween;
+              openOpacityTween = _openOpacityTween;
+              colorTween = _colorTween;
+              scrimTween = _scrimFadeInTween;
+            case AnimationStatus.reverse:
+              if (_transitionWasInterrupted) {
+                closedOpacityTween = _closedOpacityTween;
+                openOpacityTween = _openOpacityTween;
+                colorTween = _colorTween;
+                scrimTween = _scrimFadeInTween;
+                break;
               }
+              closedOpacityTween = _closedOpacityTween.flipped;
+              openOpacityTween = _openOpacityTween.flipped;
+              colorTween = _colorTween.flipped;
+              scrimTween = _scrimFadeOutTween;
+            case AnimationStatus.completed:
+              assert(false); // Unreachable.
+          }
+          assert(colorTween != null);
+          assert(closedOpacityTween != null);
+          assert(openOpacityTween != null);
+          assert(scrimTween != null);
 
-              final Animation<double> curvedAnimation = CurvedAnimation(
-                parent: animation,
-                curve: Curves.fastOutSlowIn,
-                reverseCurve:
-                    _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
-              );
-              TweenSequence<Color?>? colorTween;
-              TweenSequence<double>? closedOpacityTween, openOpacityTween;
-              Animatable<Color?>? scrimTween;
-              switch (animation.status) {
-                case AnimationStatus.dismissed:
-                case AnimationStatus.forward:
-                  closedOpacityTween = _closedOpacityTween;
-                  openOpacityTween = _openOpacityTween;
-                  colorTween = _colorTween;
-                  scrimTween = _scrimFadeInTween;
-                case AnimationStatus.reverse:
-                  if (_transitionWasInterrupted) {
-                    closedOpacityTween = _closedOpacityTween;
-                    openOpacityTween = _openOpacityTween;
-                    colorTween = _colorTween;
-                    scrimTween = _scrimFadeInTween;
-                    break;
-                  }
-                  closedOpacityTween = _closedOpacityTween.flipped;
-                  openOpacityTween = _openOpacityTween.flipped;
-                  colorTween = _colorTween.flipped;
-                  scrimTween = _scrimFadeOutTween;
-                case AnimationStatus.completed:
-                  assert(false); // Unreachable.
-              }
-              assert(colorTween != null);
-              assert(closedOpacityTween != null);
-              assert(openOpacityTween != null);
-              assert(scrimTween != null);
-
-              final Rect rect = _rectTween.evaluate(curvedAnimation)!;
-              return SizedBox.expand(
-                child: Container(
-                  color: scrimTween!.evaluate(curvedAnimation),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Transform.translate(
-                      offset: Offset(rect.left, rect.top),
-                      child: SizedBox(
-                        width: rect.width,
-                        height: rect.height,
-                        child: Material(
-                          clipBehavior: Clip.antiAlias,
-                          animationDuration: Duration.zero,
-                          color: colorTween!.evaluate(animation),
-                          shape: _shapeTween.evaluate(curvedAnimation),
-                          elevation: _elevationTween.evaluate(curvedAnimation),
-                          child: Stack(
-                            fit: StackFit.passthrough,
-                            children: <Widget>[
-                              // Closed child fading out.
-                              FittedBox(
-                                fit: BoxFit.fitWidth,
-                                alignment: Alignment.topLeft,
-                                child: SizedBox(
-                                  width: _rectTween.begin!.width,
-                                  height: _rectTween.begin!.height,
-                                  child: (hideableKey.currentState?.isInTree ??
-                                          false)
-                                      ? null
-                                      : FadeTransition(
-                                          opacity: closedOpacityTween!
-                                              .animate(animation),
-                                          child: Builder(
-                                            key: closedBuilderKey,
-                                            builder: (BuildContext context) {
-                                              // Use dummy "open container" callback
-                                              // since we are in the process of opening.
-                                              return closedBuilder(context, () {});
-                                            },
-                                          ),
-                                        ),
-                                ),
-                              ),
-
-                              // Open child fading in.
-                              FittedBox(
-                                fit: BoxFit.fitWidth,
-                                alignment: Alignment.topLeft,
-                                child: SizedBox(
-                                  width: _rectTween.end!.width,
-                                  height: _rectTween.end!.height,
-                                  child: FadeTransition(
-                                    opacity: openOpacityTween!.animate(animation),
-                                    child: Builder(
-                                      key: _openBuilderKey,
-                                      builder: (BuildContext context) {
-                                        return openBuilder(context, closeContainer);
-                                      },
+          final Rect rect = _rectTween.evaluate(curvedAnimation)!;
+          return SizedBox.expand(
+            child: Container(
+              color: scrimTween!.evaluate(curvedAnimation),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Transform.translate(
+                  offset: Offset(rect.left, rect.top),
+                  child: SizedBox(
+                    width: rect.width,
+                    height: rect.height,
+                    child: Material(
+                      clipBehavior: Clip.antiAlias,
+                      animationDuration: Duration.zero,
+                      color: colorTween!.evaluate(animation),
+                      shape: _shapeTween.evaluate(curvedAnimation),
+                      elevation: _elevationTween.evaluate(curvedAnimation),
+                      child: Stack(
+                        fit: StackFit.passthrough,
+                        children: <Widget>[
+                          // Closed child fading out.
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            alignment: Alignment.topLeft,
+                            child: SizedBox(
+                              width: _rectTween.begin!.width,
+                              height: _rectTween.begin!.height,
+                              child: (hideableKey.currentState?.isInTree ??
+                                      false)
+                                  ? null
+                                  : FadeTransition(
+                                      opacity: closedOpacityTween!
+                                          .animate(animation),
+                                      child: Builder(
+                                        key: closedBuilderKey,
+                                        builder: (BuildContext context) {
+                                          // Use dummy "open container" callback
+                                          // since we are in the process of opening.
+                                          return closedBuilder(context, () {});
+                                        },
+                                      ),
                                     ),
-                                  ),
+                            ),
+                          ),
+
+                          // Open child fading in.
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            alignment: Alignment.topLeft,
+                            child: SizedBox(
+                              width: _rectTween.end!.width,
+                              height: _rectTween.end!.height,
+                              child: FadeTransition(
+                                opacity: openOpacityTween!.animate(animation),
+                                child: Builder(
+                                  key: _openBuilderKey,
+                                  builder: (BuildContext context) {
+                                    return openBuilder(context, closeContainer);
+                                  },
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // TODO(justinmc): Make it transition from the pback transition into the opencontainer transition.
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    // TODO(justinmc): This does the normal open container transition.
+    /*
+    return _defaultTransition(
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+    */
+    return _PredictiveBackGestureDetector(
+      route: this,
+      builder: (BuildContext context) {
+        // TODO(justinmc): Name? And should be in buildPage or no?
+        final Widget backlessChild = _defaultTransition(
+          context,
+          animation,
+          secondaryAnimation,
+          child,
         );
 
-        if (popGestureInProgress) {
-          // TODO(justinmc): This should be a combination of AndroidBackGestureTransition
-          // and backlessChild's transition from above.
-          return _OpenContainerAndroidBackGestureTransition(
+        print('justin buildTransitions popInProgress? $popGestureInProgress. isAnimating? ${animation.status} ${secondaryAnimation.status}');
+        if (popGestureInProgress && animation.status == AnimationStatus.forward) {
+          return _PredictiveBackOpenContainerPageTransition(
             animation: animation,
             secondaryAnimation: secondaryAnimation,
             getIsCurrent: () => isCurrent,
@@ -1060,8 +1052,125 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   String? get barrierLabel => null;
 }
 
-class _OpenContainerAndroidBackGestureTransition extends StatelessWidget {
-  const _OpenContainerAndroidBackGestureTransition({
+// TODO(justinmc): This is copied from the framework, but should be made public.
+// Definitely think through the API before making it public, though.
+class _PredictiveBackGestureDetector extends StatefulWidget {
+  const _PredictiveBackGestureDetector({
+    required this.route,
+    required this.builder,
+  });
+
+  final WidgetBuilder builder;
+  final PredictiveBackRoute route;
+
+  @override
+  State<_PredictiveBackGestureDetector> createState() =>
+      _PredictiveBackGestureDetectorState();
+}
+
+class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDetector>
+    with WidgetsBindingObserver {
+  bool _gestureInProgress = false;
+
+  /// True when the predictive back gesture is enabled.
+  bool get _isEnabled {
+    return widget.route.isCurrent
+        && widget.route.popGestureEnabled;
+  }
+
+  /// The back event when the gesture first started.
+  PredictiveBackEvent? get startBackEvent => _startBackEvent;
+  PredictiveBackEvent? _startBackEvent;
+  set startBackEvent(PredictiveBackEvent? startBackEvent) {
+    if (_startBackEvent != startBackEvent && mounted) {
+      setState(() {
+        _startBackEvent = startBackEvent;
+      });
+    }
+  }
+
+  /// The most recent back event during the gesture.
+  PredictiveBackEvent? get currentBackEvent => _currentBackEvent;
+  PredictiveBackEvent? _currentBackEvent;
+  set currentBackEvent(PredictiveBackEvent? currentBackEvent) {
+    if (_currentBackEvent != currentBackEvent && mounted) {
+      setState(() {
+        _currentBackEvent = currentBackEvent;
+      });
+    }
+  }
+
+  // Begin WidgetsBindingObserver.
+
+  @override
+  bool handleStartBackGesture(PredictiveBackEvent backEvent) {
+    _gestureInProgress = !backEvent.isButtonEvent && _isEnabled;
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleStartBackGesture(progress: 1 - backEvent.progress);
+    startBackEvent = currentBackEvent = backEvent;
+    return true;
+  }
+
+  @override
+  bool handleUpdateBackGestureProgress(PredictiveBackEvent backEvent) {
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
+    currentBackEvent = backEvent;
+    return true;
+  }
+
+  @override
+  bool handleCancelBackGesture() {
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleCancelBackGesture();
+    _gestureInProgress = false;
+    startBackEvent = currentBackEvent = null;
+    return true;
+  }
+
+  @override
+  bool handleCommitBackGesture() {
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleCommitBackGesture();
+    _gestureInProgress = false;
+    startBackEvent = currentBackEvent = null;
+    return true;
+  }
+
+  // End WidgetsBindingObserver.
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context);
+  }
+}
+
+class _PredictiveBackOpenContainerPageTransition extends StatelessWidget {
+  const _PredictiveBackOpenContainerPageTransition({
     required this.animation,
     required this.secondaryAnimation,
     required this.getIsCurrent,
@@ -1073,160 +1182,30 @@ class _OpenContainerAndroidBackGestureTransition extends StatelessWidget {
   final ValueGetter<bool> getIsCurrent;
   final Widget child;
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: secondaryAnimation,
-      builder: _secondaryAnimatedBuilder,
-      child: AnimatedBuilder(
-        animation: animation,
-        builder: _primaryAnimatedBuilder,
-        child: child,
-      ),
-    );
-  }
-
-  Widget _secondaryAnimatedBuilder(BuildContext context, Widget? child) {
-    final Size size = MediaQuery.sizeOf(context);
-    final double screenWidth = size.width;
-    final double xShift = (screenWidth / 20) - 8;
-
-    final bool isCurrent = getIsCurrent();
-    final Tween<double> xShiftTween = isCurrent
-        ? ConstantTween<double>(0)
-        : Tween<double>(begin: xShift, end: 0);
-    final Animatable<double> scaleTween = isCurrent
-        ? ConstantTween<double>(1)
-        : TweenSequence<double>(<TweenSequenceItem<double>>[
-            TweenSequenceItem<double>(
-                tween: Tween<double>(begin: 0.95, end: 1), weight: 65.0),
-            TweenSequenceItem<double>(
-                tween: Tween<double>(begin: 1, end: 1), weight: 35.0),
-          ]);
-    final Animatable<double> fadeTween = isCurrent
-        ? ConstantTween<double>(1)
-        : TweenSequence<double>(<TweenSequenceItem<double>>[
-            TweenSequenceItem<double>(
-                tween: Tween<double>(begin: 1.0, end: 0.8), weight: 65.0),
-            TweenSequenceItem<double>(
-                tween: Tween<double>(begin: 1, end: 1), weight: 35.0),
-          ]);
-
-    return Transform.translate(
-      offset: Offset(xShiftTween.animate(secondaryAnimation).value, 0),
-      child: Transform.scale(
-        scale: scaleTween.animate(secondaryAnimation).value,
-        child: Opacity(
-          opacity: fadeTween.animate(secondaryAnimation).value,
-          child: child,
-        ),
-      ),
-    );
-  }
-
   Widget _primaryAnimatedBuilder(BuildContext context, Widget? child) {
     final Size size = MediaQuery.sizeOf(context);
     final double screenWidth = size.width;
     final double xShift = (screenWidth / 20) - 8;
 
-    final Animatable<double> xShiftTween =
-        TweenSequence<double>(<TweenSequenceItem<double>>[
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 0.0, end: 0.0), weight: 65.0),
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: xShift, end: 0.0), weight: 35.0),
-    ]);
-    final Animatable<double> scaleTween =
-        TweenSequence<double>(<TweenSequenceItem<double>>[
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 1.0, end: 1.0), weight: 65.0),
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 0.95, end: 1.0), weight: 35.0),
-    ]);
-    final Animatable<double> fadeTween =
-        TweenSequence<double>(<TweenSequenceItem<double>>[
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 0.0, end: 0.0), weight: 65.0),
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 0.95, end: 1.0), weight: 35.0),
-    ]);
+    final Animatable<double> xShiftTween = Tween<double>(begin: xShift, end: 0.0);
+    final Animatable<double> scaleTween = Tween<double>(begin: 0.95, end: 1.0);
 
     return Transform.translate(
       offset: Offset(xShiftTween.animate(animation).value, 0),
       child: Transform.scale(
         scale: scaleTween.animate(animation).value,
-        child: Opacity(
-          opacity: fadeTween.animate(animation).value,
-          child: child,
-        ),
+        child: child,
       ),
     );
   }
-}
-
-// TODO(justinmc): Actually probably don't need this, need a custom AndroidBackGestureTransition instead.
-class _OpenContainerBackGestureTransitionController extends GestureTransitionController {
-  _OpenContainerBackGestureTransitionController({
-    required this.controller,
-    required this.navigator,
-  });
-
-  final NavigatorState navigator;
-  final AnimationController controller;
 
   @override
-  void dragStart({double progress = 0}) {
-    controller.value = progress;
-    navigator.didStartUserGesture();
-  }
-
-  @override
-  void dragUpdate({required double progress}) {
-    controller.value = progress;
-  }
-
-  @override
-  void dragEnd({required bool animateForward}) {
-    if (animateForward) {
-      // The closer the panel is to dismissing, the shorter the animation is.
-      // We want to cap the animation time, but we want to use a linear curve
-      // to determine it.
-      final int droppedPageForwardAnimationTime = min(
-        lerpDouble(800, 0, controller.value)!.floor(),
-        300,
-      );
-      controller.animateTo(
-        1.0,
-        duration: Duration(milliseconds: droppedPageForwardAnimationTime),
-        curve: Curves.fastLinearToSlowEaseIn,
-      );
-    } else {
-      // This route is destined to pop at this point. Reuse navigator's pop.
-      navigator.pop();
-
-      // The popping may have finished inline if already at the target destination.
-      if (controller.isAnimating) {
-        // Otherwise, use a custom popping animation duration and curve.
-        final int droppedPageBackAnimationTime =
-            lerpDouble(0, 800, controller.value)!.floor();
-        controller.animateBack(0.0,
-            duration: Duration(milliseconds: droppedPageBackAnimationTime),
-            curve: Curves.fastLinearToSlowEaseIn);
-      }
-    }
-
-    if (controller.isAnimating) {
-      // Keep the userGestureInProgress in true state since AndroidBackGesturePageTransitionsBuilder
-      // depends on userGestureInProgress
-      late AnimationStatusListener animationStatusCallback;
-      animationStatusCallback = (AnimationStatus status) {
-        navigator.didStopUserGesture();
-        controller.removeStatusListener(animationStatusCallback);
-      };
-      controller.addStatusListener(animationStatusCallback);
-    } else {
-      navigator.didStopUserGesture();
-    }
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: _primaryAnimatedBuilder,
+      child: child,
+    );
   }
 }
 
