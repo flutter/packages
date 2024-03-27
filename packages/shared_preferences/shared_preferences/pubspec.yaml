@@ -3,11 +3,11 @@ description: Flutter plugin for reading and writing simple key-value pairs.
   Wraps NSUserDefaults on iOS and SharedPreferences on Android.
 repository: https://github.com/flutter/packages/tree/main/packages/shared_preferences/shared_preferences
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+shared_preferences%22
-version: 2.2.2
+version: 2.3.0
 
 environment:
   sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  flutter: ">=3.16.6"
 
 flutter:
   plugin:
@@ -45,3 +45,8 @@ topics:
   - persistence
   - shared-preferences
   - storage
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {shared_preferences_android: {path: ../../shared_preferences/shared_preferences_android}, shared_preferences_foundation: {path: ../../shared_preferences/shared_preferences_foundation}, shared_preferences_linux: {path: ../../shared_preferences/shared_preferences_linux}, shared_preferences_platform_interface: {path: ../../shared_preferences/shared_preferences_platform_interface}, shared_preferences_web: {path: ../../shared_preferences/shared_preferences_web}, shared_preferences_windows: {path: ../../shared_preferences/shared_preferences_windows}}

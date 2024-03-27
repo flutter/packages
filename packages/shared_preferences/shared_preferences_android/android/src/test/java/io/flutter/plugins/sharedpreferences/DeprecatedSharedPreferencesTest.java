@@ -6,6 +6,7 @@ package io.flutter.plugins.sharedpreferences;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
 
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +26,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-public class SharedPreferencesTest {
+public class DeprecatedSharedPreferencesTest {
 
-  SharedPreferencesPlugin plugin;
+  DeprecatedSharedPreferencesPlugin plugin;
 
   @Mock BinaryMessenger mockMessenger;
   @Mock FlutterPlugin.FlutterPluginBinding flutterPluginBinding;
@@ -42,7 +44,7 @@ public class SharedPreferencesTest {
     Mockito.when(flutterPluginBinding.getApplicationContext()).thenReturn(context);
     Mockito.when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPrefs);
 
-    plugin = new SharedPreferencesPlugin(new ListEncoder());
+    plugin = new DeprecatedSharedPreferencesPlugin(new ListEncoder());
     plugin.onAttachedToEngine(flutterPluginBinding);
   }
 
@@ -92,24 +94,24 @@ public class SharedPreferencesTest {
 
     addData();
 
-    final List<String> allowList = Arrays.asList("flutter.Language");
+    final List<String> allowList = Collections.singletonList("flutter.Language");
 
     Map<String, Object> allData = plugin.getAll("flutter.", allowList);
 
     assertEquals(allData.size(), 1);
     assertEquals(allData.get("flutter.Language"), "Java");
-    assertEquals(allData.get("flutter.Counter"), null);
+    assertNull(allData.get("flutter.Counter"));
 
     allData = plugin.getAll("", allowList);
 
     assertEquals(allData.size(), 1);
     assertEquals(allData.get("flutter.Language"), "Java");
-    assertEquals(allData.get("flutter.Counter"), null);
+    assertNull(allData.get("flutter.Counter"));
 
     allData = plugin.getAll("prefix.", allowList);
 
     assertEquals(allData.size(), 0);
-    assertEquals(allData.get("flutter.Language"), null);
+    assertNull(allData.get("flutter.Language"));
   }
 
   @Test
@@ -174,7 +176,7 @@ public class SharedPreferencesTest {
 
     assertEquals(plugin.getAll("", null).size(), 15);
 
-    plugin.clear("flutter.", Arrays.asList("flutter.Language"));
+    plugin.clear("flutter.", Collections.singletonList("flutter.Language"));
 
     assertEquals(plugin.getAll("", null).size(), 14);
   }
@@ -240,26 +242,25 @@ public class SharedPreferencesTest {
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putBoolean(
-        @NonNull String key, @NonNull boolean value) {
+    public @NonNull SharedPreferences.Editor putBoolean(@NonNull String key, boolean value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putInt(@NonNull String key, @NonNull int value) {
+    public @NonNull SharedPreferences.Editor putInt(@NonNull String key, int value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putLong(@NonNull String key, @NonNull long value) {
+    public @NonNull SharedPreferences.Editor putLong(@NonNull String key, long value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putFloat(@NonNull String key, @NonNull float value) {
+    public @NonNull SharedPreferences.Editor putFloat(@NonNull String key, float value) {
       sharedPrefData.put(key, value);
       return this;
     }
@@ -271,7 +272,7 @@ public class SharedPreferencesTest {
     }
 
     @Override
-    public @NonNull boolean commit() {
+    public boolean commit() {
       return true;
     }
 
@@ -303,27 +304,27 @@ public class SharedPreferencesTest {
 
     // All methods below are not implemented.
     @Override
-    public @NonNull boolean contains(@NonNull String key) {
+    public boolean contains(@NonNull String key) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull boolean getBoolean(@NonNull String key, @NonNull boolean defValue) {
+    public boolean getBoolean(@NonNull String key, boolean defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull float getFloat(@NonNull String key, @NonNull float defValue) {
+    public float getFloat(@NonNull String key, float defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull int getInt(@NonNull String key, @NonNull int defValue) {
+    public int getInt(@NonNull String key, int defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull long getLong(@NonNull String key, @NonNull long defValue) {
+    public long getLong(@NonNull String key, long defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
