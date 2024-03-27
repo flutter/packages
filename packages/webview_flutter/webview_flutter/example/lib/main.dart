@@ -170,6 +170,9 @@ Page resource error:
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
+          onHttpError: (HttpResponseError error) {
+            debugPrint('Error occurred on page: ${error.response?.statusCode}');
+          },
           onUrlChange: (UrlChange change) {
             debugPrint('url change to ${change.url}');
           },
