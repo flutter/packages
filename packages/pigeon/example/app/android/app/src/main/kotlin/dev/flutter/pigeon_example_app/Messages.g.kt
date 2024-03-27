@@ -124,9 +124,9 @@ interface ExampleHostApi {
         api: ExampleHostApi?,
         messageChannelSuffix: String = ""
     ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -147,8 +147,6 @@ interface ExampleHostApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -172,8 +170,6 @@ interface ExampleHostApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,

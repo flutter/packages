@@ -1278,8 +1278,8 @@ public class CoreTests {
         @NonNull BinaryMessenger binaryMessenger,
         @NonNull String messageChannelSuffix,
         @Nullable HostIntegrationCoreApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1304,7 +1304,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1331,7 +1330,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1356,7 +1354,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1381,7 +1378,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1406,7 +1402,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1433,7 +1428,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1460,7 +1454,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1487,7 +1480,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1514,7 +1506,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1541,7 +1532,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1568,7 +1558,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1595,7 +1584,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1622,7 +1610,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1649,7 +1636,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1676,7 +1662,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1703,7 +1688,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1730,7 +1714,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1758,7 +1741,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1785,7 +1767,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1812,7 +1793,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1839,7 +1819,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1872,7 +1851,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1901,7 +1879,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1928,7 +1905,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1955,7 +1931,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -1982,7 +1957,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2009,7 +1983,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2036,7 +2009,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2063,7 +2035,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2090,7 +2061,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2117,7 +2087,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2146,7 +2115,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2173,7 +2141,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2204,7 +2171,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2237,7 +2203,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2270,7 +2235,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2303,7 +2267,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2336,7 +2299,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2369,7 +2331,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2402,7 +2363,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2435,7 +2395,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2468,7 +2427,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2501,7 +2459,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2532,7 +2489,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2563,7 +2519,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2594,7 +2549,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2627,7 +2581,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2660,7 +2613,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2694,7 +2646,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2727,7 +2678,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2760,7 +2710,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2793,7 +2742,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2826,7 +2774,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2859,7 +2806,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2892,7 +2838,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2925,7 +2870,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2958,7 +2902,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -2989,7 +2932,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3020,7 +2962,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3051,7 +2992,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3084,7 +3024,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3117,7 +3056,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3156,7 +3094,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3189,7 +3126,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3223,7 +3159,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3256,7 +3191,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3289,7 +3223,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3322,7 +3255,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3355,7 +3287,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3388,7 +3319,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3421,7 +3351,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3454,7 +3383,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3488,7 +3416,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3521,7 +3448,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3554,7 +3480,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3587,7 +3512,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3620,7 +3544,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3653,7 +3576,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -3686,7 +3608,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -4572,8 +4493,8 @@ public class CoreTests {
         @NonNull BinaryMessenger binaryMessenger,
         @NonNull String messageChannelSuffix,
         @Nullable HostTrivialApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -4623,8 +4544,8 @@ public class CoreTests {
         @NonNull BinaryMessenger binaryMessenger,
         @NonNull String messageChannelSuffix,
         @Nullable HostSmallApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -4657,7 +4578,6 @@ public class CoreTests {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,

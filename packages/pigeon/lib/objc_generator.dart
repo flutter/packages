@@ -670,6 +670,8 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.write(
         'void SetUp${apiName}WithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api, NSString *messageChannelSuffix) ');
     indent.addScoped('{', '}', () {
+      indent.writeln(
+          'messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";');
       for (final Method func in api.methods) {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
@@ -901,8 +903,6 @@ static FlutterError *createConnectionError(NSString *channelName) {
     String? taskQueue, {
     required String dartPackageName,
   }) {
-    indent.writeln(
-        'messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";');
     indent.writeln('FlutterBasicMessageChannel *$varName =');
     indent.nest(1, () {
       indent.writeln('[[FlutterBasicMessageChannel alloc]');

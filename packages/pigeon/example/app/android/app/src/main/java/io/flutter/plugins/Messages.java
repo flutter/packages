@@ -275,8 +275,8 @@ public class Messages {
         @NonNull BinaryMessenger binaryMessenger,
         @NonNull String messageChannelSuffix,
         @Nullable ExampleHostApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -301,7 +301,6 @@ public class Messages {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
@@ -332,7 +331,6 @@ public class Messages {
         }
       }
       {
-        messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,

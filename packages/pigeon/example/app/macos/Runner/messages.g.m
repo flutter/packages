@@ -144,10 +144,10 @@ void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
 void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                       NSObject<PGNExampleHostApi> *api,
                                       NSString *messageChannelSuffix) {
+  messageChannelSuffix = messageChannelSuffix.length > 0
+                             ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
+                             : @"";
   {
-    messageChannelSuffix = messageChannelSuffix.length > 0
-                               ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
-                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_example_package."
@@ -170,9 +170,6 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
     }
   }
   {
-    messageChannelSuffix = messageChannelSuffix.length > 0
-                               ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
-                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
                [NSString
@@ -199,9 +196,6 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
     }
   }
   {
-    messageChannelSuffix = messageChannelSuffix.length > 0
-                               ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
-                               : @"";
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.pigeon_example_package."

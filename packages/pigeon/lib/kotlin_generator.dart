@@ -446,6 +446,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.write(
             'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
         indent.addScoped('{', '}', () {
+          indent.writeln(
+              r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
@@ -675,8 +677,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
       }
-      indent.writeln(
-          r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
       indent.write(
           'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName\$separatedMessageChannelSuffix", codec');
 

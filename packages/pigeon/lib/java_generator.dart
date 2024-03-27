@@ -624,6 +624,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.write(
           'static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ${api.name} api) ');
       indent.addScoped('{', '}', () {
+        indent.writeln(
+            'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
         for (final Method method in api.methods) {
           _writeMethodSetUp(
             generatorOptions,
@@ -696,8 +698,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln(
             'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
       }
-      indent.writeln(
-          'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
       indent.writeln('BasicMessageChannel<Object> channel =');
       indent.nest(2, () {
         indent.writeln('new BasicMessageChannel<>(');

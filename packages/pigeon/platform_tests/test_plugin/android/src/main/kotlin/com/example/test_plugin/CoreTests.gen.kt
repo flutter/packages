@@ -509,9 +509,9 @@ interface HostIntegrationCoreApi {
         api: HostIntegrationCoreApi?,
         messageChannelSuffix: String = ""
     ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -533,8 +533,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -557,8 +555,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -579,8 +575,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -602,8 +596,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -624,8 +616,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -648,8 +638,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -672,8 +660,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -696,8 +682,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -720,8 +704,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -744,8 +726,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -768,8 +748,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -792,8 +770,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -816,8 +792,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -840,8 +814,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -864,8 +836,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -888,8 +858,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -912,8 +880,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -936,8 +902,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -960,8 +924,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -984,8 +946,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1008,8 +968,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1037,8 +995,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1061,8 +1017,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1085,8 +1039,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1109,8 +1061,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1133,8 +1083,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1157,8 +1105,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1181,8 +1127,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1205,8 +1149,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1229,8 +1171,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1253,8 +1193,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1277,8 +1215,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1301,8 +1237,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1324,8 +1258,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1350,8 +1282,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1376,8 +1306,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1402,8 +1330,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1428,8 +1354,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1454,8 +1378,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1480,8 +1402,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1506,8 +1426,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1532,8 +1450,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1558,8 +1474,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1582,8 +1496,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1605,8 +1517,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1629,8 +1539,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1655,8 +1563,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1682,8 +1588,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1708,8 +1612,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1734,8 +1636,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1760,8 +1660,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1786,8 +1684,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1812,8 +1708,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1838,8 +1732,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1864,8 +1756,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1890,8 +1780,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1916,8 +1804,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1939,8 +1825,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1963,8 +1847,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -1986,8 +1868,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2012,8 +1892,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2039,8 +1917,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2069,8 +1945,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2095,8 +1969,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2121,8 +1993,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2147,8 +2017,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2173,8 +2041,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2199,8 +2065,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2225,8 +2089,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2251,8 +2113,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2277,8 +2137,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2303,8 +2161,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2329,8 +2185,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2355,8 +2209,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2381,8 +2233,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2407,8 +2257,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2433,8 +2281,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2459,8 +2305,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -2485,8 +2329,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -3163,9 +3005,9 @@ interface HostTrivialApi {
         api: HostTrivialApi?,
         messageChannelSuffix: String = ""
     ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -3209,9 +3051,9 @@ interface HostSmallApi {
         api: HostSmallApi?,
         messageChannelSuffix: String = ""
     ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
@@ -3236,8 +3078,6 @@ interface HostSmallApi {
         }
       }
       run {
-        val separatedMessageChannelSuffix =
-            if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
