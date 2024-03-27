@@ -452,6 +452,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
           returnType: func.returnType,
           documentationComments: func.documentationComments,
           channelName: makeChannelName(api, func, dartPackageName),
+          addSuffixVariable: true,
         );
       }
     });
@@ -751,7 +752,7 @@ PlatformException _createConnectionError(String channelName) {
     required TypeDeclaration returnType,
     required List<String> documentationComments,
     required String channelName,
-    bool isProxyApi = false,
+    required bool addSuffixVariable,
   }) {
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     final String argSignature = _getMethodParameterSignature(parameters);
@@ -764,7 +765,7 @@ PlatformException _createConnectionError(String channelName) {
         channelName: channelName,
         parameters: parameters,
         returnType: returnType,
-        isProxyApi: isProxyApi,
+        addSuffixVariable: addSuffixVariable,
       );
     });
   }
@@ -774,7 +775,7 @@ PlatformException _createConnectionError(String channelName) {
     required String channelName,
     required Iterable<Parameter> parameters,
     required TypeDeclaration returnType,
-    bool isProxyApi = false,
+    required bool addSuffixVariable,
   }) {
     String sendArgument = 'null';
     if (parameters.isNotEmpty) {
@@ -789,8 +790,8 @@ PlatformException _createConnectionError(String channelName) {
       });
       sendArgument = '<Object?>[${argExpressions.join(', ')}]';
     }
-    final String channelSuffix = isProxyApi ? '' : '\$$_suffixVarName';
-    final String constOrFinal = isProxyApi ? 'const' : 'final';
+    final String channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
+    final String constOrFinal = addSuffixVariable ? 'final' : 'const';
     indent.writeln(
         "$constOrFinal String ${_varNamePrefix}channelName = '$channelName$channelSuffix';");
     indent.writeScoped(
@@ -860,7 +861,7 @@ if (${_varNamePrefix}replyList == null) {
     required String channelName,
     required bool isMockHandler,
     required bool isAsynchronous,
-    bool isProxyApi = false,
+    bool addSuffixVariable = false,
     String nullHandlerExpression = 'api == null',
     String Function(String methodName, Iterable<Parameter> parameters,
             Iterable<String> safeArgumentNames)
@@ -872,7 +873,8 @@ if (${_varNamePrefix}replyList == null) {
         'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
-        final String channelSuffix = isProxyApi ? '' : r'$messageChannelSuffix';
+        final String channelSuffix =
+            addSuffixVariable ? '' : r'$messageChannelSuffix';
         indent.writeln("'$channelName$channelSuffix', $_pigeonChannelCodec,");
         indent.writeln(
           'binaryMessenger: binaryMessenger);',
@@ -1073,7 +1075,7 @@ if (${_varNamePrefix}replyList == null) {
                 final StringBuffer messageCallSink = StringBuffer();
                 _writeHostMethodMessageCall(
                   Indent(messageCallSink),
-                  isProxyApi: true,
+                  addSuffixVariable: false,
                   channelName: channelName,
                   parameters: <Parameter>[
                     Parameter(
@@ -1464,7 +1466,7 @@ if (${_varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: methodName,
-                isProxyApi: true,
+                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instanceIdentifier',
@@ -1520,7 +1522,7 @@ if (${_varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: method.name,
-                isProxyApi: true,
+                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instance',
@@ -1591,7 +1593,7 @@ if (${_varNamePrefix}replyList == null) {
                 final StringBuffer messageCallSink = StringBuffer();
                 _writeHostMethodMessageCall(
                   Indent(messageCallSink),
-                  isProxyApi: true,
+                  addSuffixVariable: false,
                   channelName: makeChannelNameWithStrings(
                     apiName: apiName,
                     methodName: field.name,
@@ -1713,7 +1715,7 @@ if (${_varNamePrefix}replyList == null) {
               final StringBuffer messageCallSink = StringBuffer();
               _writeHostMethodMessageCall(
                 Indent(messageCallSink),
-                isProxyApi: true,
+                addSuffixVariable: false,
                 channelName: makeChannelNameWithStrings(
                   apiName: apiName,
                   methodName: method.name,
