@@ -82,11 +82,13 @@ final class GoogleMapController
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
+  private final HeatmapsController heatmapsController;
   private final TileOverlaysController tileOverlaysController;
   private List<Object> initialMarkers;
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
+  private List<Object> initialHeatmaps;
   private List<Map<String, ?>> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
@@ -112,6 +114,7 @@ final class GoogleMapController
     this.polygonsController = new PolygonsController(methodChannel, density);
     this.polylinesController = new PolylinesController(methodChannel, density);
     this.circlesController = new CirclesController(methodChannel, density);
+    this.heatmapsController = new HeatmapsController();
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
   }
 
@@ -160,11 +163,13 @@ final class GoogleMapController
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
+    heatmapsController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
     updateInitialMarkers();
     updateInitialPolygons();
     updateInitialPolylines();
     updateInitialCircles();
+    updateInitialHeatmaps();
     updateInitialTileOverlays();
     if (initialPadding != null && initialPadding.size() == 4) {
       setPadding(
@@ -397,6 +402,17 @@ final class GoogleMapController
           result.success(null);
           break;
         }
+      case "heatmaps#update":
+        {
+          List<Object> heatmapsToAdd = call.argument("heatmapsToAdd");
+          heatmapsController.addHeatmaps(heatmapsToAdd);
+          List<Object> heatmapsToChange = call.argument("heatmapsToChange");
+          heatmapsController.changeHeatmaps(heatmapsToChange);
+          List<String> heatmapIdsToRemove = call.argument("heatmapIdsToRemove");
+          heatmapsController.removeHeatmaps(heatmapIdsToRemove);
+          result.success(null);
+          break;
+        }
       case "map#isCompassEnabled":
         {
           result.success(googleMap.getUiSettings().isCompassEnabled());
@@ -505,6 +521,12 @@ final class GoogleMapController
         {
           String tileOverlayId = call.argument("tileOverlayId");
           result.success(tileOverlaysController.getTileOverlayInfo(tileOverlayId));
+          break;
+        }
+      case "map#getHeatmapInfo":
+        {
+          String heatmapId = call.argument("heatmapId");
+          result.success(heatmapsController.getHeatmapInfo(heatmapId));
           break;
         }
       default:
@@ -859,8 +881,21 @@ final class GoogleMapController
     }
   }
 
+  @Override
+  public void setInitialHeatmaps(Object initialHeatmaps) {
+    ArrayList<?> heatmaps = (ArrayList<?>) initialHeatmaps;
+    this.initialHeatmaps = heatmaps != null ? new ArrayList<>(heatmaps) : null;
+    if (googleMap != null) {
+      updateInitialHeatmaps();
+    }
+  }
+
   private void updateInitialCircles() {
     circlesController.addCircles(initialCircles);
+  }
+
+  private void updateInitialHeatmaps() {
+    heatmapsController.addHeatmaps(initialHeatmaps);
   }
 
   @Override

@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds support for heatmap layers.
+
 ## 2.6.0
 
 * Adds `style` to the GoogleMap widget constructor. This allows setting the map
