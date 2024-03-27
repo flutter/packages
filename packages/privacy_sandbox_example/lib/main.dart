@@ -61,6 +61,53 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool show = false;
 
+  Widget platformView() {
+    return Center(
+      child: SizedBox(
+        height: 50,
+        width: 150,
+        child: PlatformViewLink(
+          viewType: 'myPlatformView',
+          surfaceFactory: (
+            BuildContext context,
+            PlatformViewController controller,
+          ) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+              gestureRecognizers: const <Factory<
+                  OneSequenceGestureRecognizer>>{},
+            );
+          },
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            return PlatformViewsService.initSurfaceAndroidView(
+              id: params.id,
+              viewType: 'myPlatformView',
+              layoutDirection: TextDirection.ltr,
+              creationParams: null,
+              creationParamsCodec: const StandardMessageCodec(),
+            )
+              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+              ..create();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget button() {
+    return Center(
+      child: SizedBox(
+        width: 100,
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () => setState(() => show = !show),
+          child: const Text('CLICK'),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -82,47 +129,41 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: Center(
-          child: show
-              ? SizedBox(
-                  height: 300,
-                  width: 300,
-                  child: PlatformViewLink(
-                    viewType: 'myPlatformView',
-                    surfaceFactory: (
-                      BuildContext context,
-                      PlatformViewController controller,
-                    ) {
-                      return AndroidViewSurface(
-                        controller: controller as AndroidViewController,
-                        hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-                        gestureRecognizers: const <Factory<
-                            OneSequenceGestureRecognizer>>{},
-                      );
-                    },
-                    onCreatePlatformView: (PlatformViewCreationParams params) {
-                      return PlatformViewsService.initSurfaceAndroidView(
-                        id: params.id,
-                        viewType: 'myPlatformView',
-                        layoutDirection: TextDirection.ltr,
-                        creationParams: null,
-                        creationParamsCodec: const StandardMessageCodec(),
-                      )
-                        ..addOnPlatformViewCreatedListener(
-                            params.onPlatformViewCreated)
-                        ..create();
-                    },
+        body: show
+            ? Stack(
+                children: [
+                  ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      ListTile(title: const Text('Item 1'), onTap: () {}),
+                      ListTile(title: const Text('Item 2'), onTap: () {}),
+                      ListTile(title: const Text('Item 3'), onTap: () {}),
+                      platformView(),
+                      ListTile(title: const Text('Item 4'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                      ListTile(title: const Text('Item 5'), onTap: () {}),
+                    ],
                   ),
-                )
-              : SizedBox(
-                  width: 100,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () => setState(() => show = !show),
-                    child: const Text('CLICK'),
-                  ),
-                ),
-        ),
+                ],
+              )
+            : button(),
       ),
     );
   }
