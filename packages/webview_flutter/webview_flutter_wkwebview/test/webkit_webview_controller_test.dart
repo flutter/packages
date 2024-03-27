@@ -1378,9 +1378,26 @@ void main() {
         expect(overrideConsoleScript.injectionTime,
             WKUserScriptInjectionTime.atDocumentStart);
         expect(overrideConsoleScript.source, '''
+function removeCyclicObject() {
+  const levelObjects = [];
+  return function (k, v) {
+    if (typeof v !== "object" || v === null) { return v; }
+    const currentParentObj = this;
+    while (
+      levelObjects.length > 0 &&
+      levelObjects[levelObjects.length - 1] !== currentParentObj
+    ) {
+      levelObjects.pop();
+    }
+    if (levelObjects.includes(v)) { return; }
+    levelObjects.push(v);
+    return v;
+  };
+}
+
 function log(type, args) {
   var message =  Object.values(args)
-      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, removeCyclicObject()) : v.toString())
       .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
       .join(", ");
 
