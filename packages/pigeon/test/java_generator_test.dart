@@ -575,7 +575,6 @@ void main() {
     expect(code, contains('public static final class Outer'));
     expect(code, contains('public static final class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    ;
     expect(code, contains('add(nested);'));
   });
 

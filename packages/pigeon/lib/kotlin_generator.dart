@@ -97,6 +97,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
+    indent.writeln(
+        '@file:Suppress("UNCHECKED_CAST", "LocalVariableName", "ArrayInDataClass")');
   }
 
   @override
@@ -247,7 +249,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
-      indent.writeln('@Suppress("UNCHECKED_CAST")');
       indent
           .write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 
@@ -343,7 +344,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         generatorComments: generatedMessages);
 
     final String apiName = api.name;
-    indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent
         .write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
     indent.addScoped('{', '}', () {
@@ -432,7 +432,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
         indent.writeln(
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
-        indent.writeln('@Suppress("UNCHECKED_CAST")');
         indent.write(
             'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?) ');
         indent.addScoped('{', '}', () {
@@ -460,7 +459,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     assert(getCodecClasses(api, root).isNotEmpty);
     final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
     final String codecName = _getCodecName(api);
-    indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent.write('private object $codecName : StandardMessageCodec() ');
     indent.addScoped('{', '}', () {
       indent.write(
@@ -512,19 +510,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
-      indent
-          .write('if (exception is ${_getErrorClassName(generatorOptions)}) ');
+      indent.write(
+          'return if (exception is ${_getErrorClassName(generatorOptions)}) ');
       indent.addScoped('{', '}', () {
-        indent.write('return ');
-        indent.addScoped('listOf(', ')', () {
+        indent.writeScoped('listOf(', ')', () {
           indent.writeln('exception.code,');
           indent.writeln('exception.message,');
           indent.writeln('exception.details');
         });
       }, addTrailingNewline: false);
       indent.addScoped(' else {', '}', () {
-        indent.write('return ');
-        indent.addScoped('listOf(', ')', () {
+        indent.writeScoped('listOf(', ')', () {
           indent.writeln('exception.javaClass.simpleName,');
           indent.writeln('exception.toString(),');
           indent.writeln(
