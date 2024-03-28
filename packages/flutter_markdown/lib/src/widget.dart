@@ -46,7 +46,11 @@ typedef MarkdownCheckboxBuilder = Widget Function(bool value);
 /// Signature for custom bullet widget.
 ///
 /// Used by [MarkdownWidget.bulletBuilder]
-typedef MarkdownBulletBuilder = Widget Function(int index, BulletStyle style);
+typedef MarkdownBulletBuilder = Widget Function(
+  int index,
+  BulletStyle style,
+  int nestLevel,
+);
 
 /// Enumeration sent to the user when calling [MarkdownBulletBuilder]
 ///

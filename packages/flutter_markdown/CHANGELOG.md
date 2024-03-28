@@ -1,3 +1,7 @@
+## 0.6.23
+
+* Adds the `nestLevel` parameter at `bulletBuilder` on `Markdown` and `MarkdownBody`.
+
 ## 0.6.22
 
 * Introduces a new `MarkdownElementBuilder.isBlockElement()` method to specify if custom element
