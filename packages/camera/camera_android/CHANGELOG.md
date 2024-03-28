@@ -1,3 +1,7 @@
+## 0.10.8+18
+
+* Updates annotations lib to 1.7.1.
+
 ## 0.10.8+17
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
