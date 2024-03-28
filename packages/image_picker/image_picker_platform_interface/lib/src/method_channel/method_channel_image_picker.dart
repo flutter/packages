@@ -58,6 +58,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
     bool requestFullMetadata = true,
+    int? limit,
   }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
@@ -72,6 +73,10 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+    }
+
     return _channel.invokeMethod<List<dynamic>?>(
       'pickMultiImage',
       <String, dynamic>{
@@ -79,6 +84,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
         'maxHeight': maxHeight,
         'imageQuality': imageQuality,
         'requestFullMetadata': requestFullMetadata,
+        'limit': limit,
       },
     );
   }
@@ -244,6 +250,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
       maxHeight: options.imageOptions.maxHeight,
       imageQuality: options.imageOptions.imageQuality,
       requestFullMetadata: options.imageOptions.requestFullMetadata,
+      limit: options.limit,
     );
     if (paths == null) {
       return <XFile>[];
@@ -263,6 +270,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
       'maxImageHeight': imageOptions.maxHeight,
       'imageQuality': imageOptions.imageQuality,
       'allowMultiple': options.allowMultiple,
+      'limit': options.limit,
     };
 
     final List<XFile>? paths = await _channel

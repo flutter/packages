@@ -26,12 +26,14 @@ class MediaSelectionOptions {
     this.imageQuality,
     required this.requestFullMetadata,
     required this.allowMultiple,
+    this.limit,
   });
 
   MaxSize maxSize;
   int? imageQuality;
   bool requestFullMetadata;
   bool allowMultiple;
+  int? limit;
 }
 
 // Corresponds to `CameraDevice` from the platform interface package.
@@ -53,9 +55,9 @@ abstract class ImagePickerApi {
   String? pickImage(SourceSpecification source, MaxSize maxSize,
       int? imageQuality, bool requestFullMetadata);
   @async
-  @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:')
+  @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
   List<String?> pickMultiImage(
-      MaxSize maxSize, int? imageQuality, bool requestFullMetadata);
+      MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit);
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
