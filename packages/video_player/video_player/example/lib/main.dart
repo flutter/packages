@@ -213,6 +213,11 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late VideoPlayerController _controller;
 
+  final GlobalKey<State<StatefulWidget>> _playerKey =
+      GlobalKey<State<StatefulWidget>>();
+  final Key _pictureInPictureKey = UniqueKey();
+  bool _enableStartPictureInPictureAutomaticallyFromInline = false;
+
   Future<ClosedCaptionFile> _loadCaptions() async {
     final String fileContents = await DefaultAssetBundle.of(context)
         .loadString('assets/bumble_bee_captions.vtt');
@@ -250,17 +255,97 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
         children: <Widget>[
           Container(padding: const EdgeInsets.only(top: 20.0)),
           const Text('With remote mp4'),
+          FutureBuilder<bool>(
+            key: _pictureInPictureKey,
+            future: _controller.isPictureInPictureSupported(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+                Text(snapshot.data ?? false
+                    ? 'Picture-in-picture is supported'
+                    : 'Picture-in-picture is not supported'),
+          ),
+          Row(
+            children: <Widget>[
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Text(
+                    'Start picture-in-picture automatically when going to background'),
+              ),
+              Switch(
+                value: _enableStartPictureInPictureAutomaticallyFromInline,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    _enableStartPictureInPictureAutomaticallyFromInline =
+                        newValue;
+                  });
+                  _controller.setAutomaticallyStartsPictureInPicture(
+                      enableStartPictureInPictureAutomaticallyFromInline:
+                          _enableStartPictureInPictureAutomaticallyFromInline);
+                },
+              ),
+              const SizedBox(width: 16),
+            ],
+          ),
+          MaterialButton(
+            color: Colors.blue,
+            onPressed: () {
+              final RenderBox? box =
+                  _playerKey.currentContext?.findRenderObject() as RenderBox?;
+              if (box == null) {
+                return;
+              }
+              final Offset offset = box.localToGlobal(Offset.zero);
+              _controller.setPictureInPictureOverlaySettings(
+                settings: PictureInPictureOverlaySettings(
+                  rect: Rect.fromLTWH(
+                    offset.dx,
+                    offset.dy,
+                    box.size.width,
+                    box.size.height,
+                  ),
+                ),
+              );
+            },
+            child: const Text('Set picture-in-picture overlay rect'),
+          ),
+          MaterialButton(
+            color: Colors.blue,
+            onPressed: () {
+              if (_controller.value.isPictureInPictureActive) {
+                _controller.stopPictureInPicture();
+              } else {
+                _controller.startPictureInPicture();
+              }
+            },
+            child: Text(_controller.value.isPictureInPictureActive
+                ? 'Stop picture-in-picture'
+                : 'Start picture-in-picture'),
+          ),
           Container(
             padding: const EdgeInsets.all(20),
             child: AspectRatio(
               aspectRatio: _controller.value.aspectRatio,
               child: Stack(
+                key: _playerKey,
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
                   ClosedCaption(text: _controller.value.caption.text),
-                  _ControlsOverlay(controller: _controller),
-                  VideoProgressIndicator(_controller, allowScrubbing: true),
+                  if (_controller.value.isPictureInPictureActive) ...<Widget>[
+                    Container(color: Colors.white),
+                    // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+                    // ignore: prefer_const_constructors
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const <Widget>[
+                        Icon(Icons.picture_in_picture),
+                        SizedBox(height: 8),
+                        Text('This video is playing in picture-in-picture.'),
+                      ],
+                    ),
+                  ] else ...<Widget>[
+                    VideoProgressIndicator(_controller, allowScrubbing: true),
+                    _ControlsOverlay(controller: _controller),
+                  ],
                 ],
               ),
             ),

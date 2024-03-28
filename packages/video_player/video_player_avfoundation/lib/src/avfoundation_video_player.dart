@@ -142,6 +142,10 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
           return VideoEvent(eventType: VideoEventType.bufferingStart);
         case 'bufferingEnd':
           return VideoEvent(eventType: VideoEventType.bufferingEnd);
+        case 'stoppedPictureInPicture':
+          return VideoEvent(eventType: VideoEventType.stoppedPictureInPicture);
+        case 'startedPictureInPicture':
+          return VideoEvent(eventType: VideoEventType.startedPictureInPicture);
         case 'isPlayingStateUpdate':
           return VideoEvent(
             eventType: VideoEventType.isPlayingStateUpdate,
@@ -162,6 +166,57 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   Future<void> setMixWithOthers(bool mixWithOthers) {
     return _api
         .setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
+  }
+
+  @override
+  Future<bool> isPictureInPictureSupported() {
+    return _api.isPictureInPictureSupported();
+  }
+
+  @override
+  Future<void> setAutomaticallyStartsPictureInPicture({
+    required int textureId,
+    required bool enableStartPictureInPictureAutomaticallyFromInline,
+  }) {
+    return _api.setAutomaticallyStartsPictureInPicture(
+      AutomaticallyStartsPictureInPictureMessage(
+        textureId: textureId,
+        enableStartPictureInPictureAutomaticallyFromInline:
+            enableStartPictureInPictureAutomaticallyFromInline,
+      ),
+    );
+  }
+
+  @override
+  Future<void> setPictureInPictureOverlaySettings({
+    required int textureId,
+    required PictureInPictureOverlaySettings settings,
+  }) {
+    return _api.setPictureInPictureOverlaySettings(
+      SetPictureInPictureOverlaySettingsMessage(
+        textureId: textureId,
+        settings: PictureInPictureOverlaySettingsMessage(
+          top: settings.rect.top,
+          left: settings.rect.left,
+          width: settings.rect.width,
+          height: settings.rect.height,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Future<void> startPictureInPicture(int textureId) {
+    return _api.startPictureInPicture(StartPictureInPictureMessage(
+      textureId: textureId,
+    ));
+  }
+
+  @override
+  Future<void> stopPictureInPicture(int textureId) {
+    return _api.stopPictureInPicture(StopPictureInPictureMessage(
+      textureId: textureId,
+    ));
   }
 
   EventChannel _eventChannelFor(int textureId) {

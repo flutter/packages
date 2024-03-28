@@ -103,6 +103,39 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
+  /// Returns true if picture-in-picture is supported on the device.
+  Future<bool> isPictureInPictureSupported() async => false;
+
+  /// Enable/disable starting picture-in-picture automatically when the app goes to the background.
+  Future<void> setAutomaticallyStartsPictureInPicture({
+    required int textureId,
+    required bool enableStartPictureInPictureAutomaticallyFromInline,
+  }) {
+    throw UnimplementedError(
+        'setAutomaticallyStartsPictureInPicture() has not been implemented.');
+  }
+
+  /// Set the location of the video player view, so that picture-in-picture can use it for animating.
+  Future<void> setPictureInPictureOverlaySettings({
+    required int textureId,
+    required PictureInPictureOverlaySettings settings,
+  }) {
+    throw UnimplementedError(
+        'setPictureInPictureOverlayRect() has not been implemented.');
+  }
+
+  /// Starts picture-in-picture mode.
+  Future<void> startPictureInPicture(int textureId) {
+    throw UnimplementedError(
+        'startPictureInPicture() has not been implemented.');
+  }
+
+  /// Stops picture-in-picture mode.
+  Future<void> stopPictureInPicture(int textureId) {
+    throw UnimplementedError(
+        'stopPictureInPicture() has not been implemented.');
+  }
+
   /// Sets additional options on web
   Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
@@ -292,6 +325,12 @@ enum VideoEventType {
   /// The video stopped to buffer.
   bufferingEnd,
 
+  /// The video is started picture-in-picture mode.
+  startedPictureInPicture,
+
+  /// The video is exited picture-in-picture mode.
+  stoppedPictureInPicture,
+
   /// The playback state of the video has changed.
   ///
   /// This event is fired when the video starts or pauses due to user actions or
@@ -473,4 +512,16 @@ class VideoPlayerWebOptionsControls {
 
     return controlsList.join(' ');
   }
+}
+
+/// [PictureInPictureOverlaySettings] can be optionally used to set the position and size of the picture-in-picture overlay.
+@immutable
+class PictureInPictureOverlaySettings {
+  /// Set the position and size of the picture-in-picture overlay using [rect].
+  const PictureInPictureOverlaySettings({
+    required this.rect,
+  });
+
+  /// The rect represents the global Flutter coordinates using logic pixels of the picture-in-picture overlay.
+  final Rect rect;
 }

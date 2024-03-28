@@ -37,6 +37,7 @@ class VideoPlayerValue {
     this.isInitialized = false,
     this.isPlaying = false,
     this.isBuffering = false,
+    this.isPictureInPictureActive = false,
     this.playbackSpeed = 1.0,
     this.errorDescription,
   });
@@ -71,6 +72,9 @@ class VideoPlayerValue {
 
   /// The current speed of the playback.
   final double playbackSpeed;
+
+  /// True if picture-in-picture is currently active.
+  final bool isPictureInPictureActive;
 
   /// A description of the error if present.
   ///
@@ -114,6 +118,7 @@ class VideoPlayerValue {
     bool? isInitialized,
     bool? isPlaying,
     bool? isBuffering,
+    bool? isPictureInPictureActive,
     double? playbackSpeed,
     String? errorDescription,
   }) {
@@ -125,6 +130,8 @@ class VideoPlayerValue {
       isInitialized: isInitialized ?? this.isInitialized,
       isPlaying: isPlaying ?? this.isPlaying,
       isBuffering: isBuffering ?? this.isBuffering,
+      isPictureInPictureActive:
+          isPictureInPictureActive ?? this.isPictureInPictureActive,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       errorDescription: errorDescription ?? this.errorDescription,
     );
@@ -140,6 +147,7 @@ class VideoPlayerValue {
           listEquals(buffered, other.buffered) &&
           isPlaying == other.isPlaying &&
           isBuffering == other.isBuffering &&
+          isPictureInPictureActive == other.isPictureInPictureActive &&
           playbackSpeed == other.playbackSpeed &&
           errorDescription == other.errorDescription &&
           size == other.size &&
@@ -152,6 +160,7 @@ class VideoPlayerValue {
         buffered,
         isPlaying,
         isBuffering,
+        isPictureInPictureActive,
         playbackSpeed,
         errorDescription,
         size,
@@ -264,6 +273,10 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: true);
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
+        case VideoEventType.startedPictureInPicture:
+          value = value.copyWith(isPictureInPictureActive: true);
+        case VideoEventType.stoppedPictureInPicture:
+          value = value.copyWith(isPictureInPictureActive: false);
         case VideoEventType.isPlayingStateUpdate:
           value = value.copyWith(isPlaying: event.isPlaying);
         case VideoEventType.unknown:
@@ -359,6 +372,42 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setPlaybackSpeed(double speed) async {
     value = value.copyWith(playbackSpeed: speed);
     await _applyPlaybackSpeed();
+  }
+
+  /// Returns true if picture-in-picture is supported on the device.
+  Future<bool> isPictureInPictureSupported() {
+    return _platform.isPictureInPictureSupported();
+  }
+
+  /// Enable/disable starting picture-in-picture automatically when the app goes to the background.
+  Future<void> setAutomaticallyStartsPictureInPicture({
+    required bool enableStartPictureInPictureAutomaticallyFromInline,
+  }) {
+    return _platform.setAutomaticallyStartsPictureInPicture(
+      textureId: textureId,
+      enableStartPictureInPictureAutomaticallyFromInline:
+          enableStartPictureInPictureAutomaticallyFromInline,
+    );
+  }
+
+  /// Set the location of the video player view, so that picture-in-picture can use it for animating
+  Future<void> setPictureInPictureOverlaySettings({
+    required PictureInPictureOverlaySettings settings,
+  }) {
+    return _platform.setPictureInPictureOverlaySettings(
+      textureId: textureId,
+      settings: settings,
+    );
+  }
+
+  /// Starts picture-in-picture mode.
+  Future<void> startPictureInPicture() {
+    return _platform.startPictureInPicture(textureId);
+  }
+
+  /// Stops picture-in-picture mode.
+  Future<void> stopPictureInPicture() {
+    return _platform.stopPictureInPicture(textureId);
   }
 
   void _updatePosition(Duration position) {

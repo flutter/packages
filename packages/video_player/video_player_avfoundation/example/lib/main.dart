@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'mini_controller.dart';
 
@@ -36,7 +37,10 @@ class _App extends StatelessWidget {
                 icon: Icon(Icons.favorite),
                 text: 'Remote enc m3u8',
               ),
-              Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset mp4'),
+              Tab(
+                icon: Icon(Icons.insert_drive_file),
+                text: 'Asset mp4',
+              ),
             ],
           ),
         ),
@@ -115,6 +119,11 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
 
+  final GlobalKey<State<StatefulWidget>> _playerKey =
+      GlobalKey<State<StatefulWidget>>();
+  final Key _pictureInPictureKey = UniqueKey();
+  bool _enableStartPictureInPictureAutomaticallyFromInline = false;
+
   @override
   void initState() {
     super.initState();
@@ -141,9 +150,75 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
         children: <Widget>[
           Container(padding: const EdgeInsets.only(top: 20.0)),
           const Text('With remote mp4'),
+          FutureBuilder<bool>(
+            key: _pictureInPictureKey,
+            future: _controller.isPictureInPictureSupported(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+                Text(snapshot.data ?? false
+                    ? 'Picture-in-picture is supported'
+                    : 'Picture-in-picture is not supported'),
+          ),
+          Row(
+            children: <Widget>[
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Text(
+                    'Start picture-in-picture automatically when going to background'),
+              ),
+              Switch(
+                value: _enableStartPictureInPictureAutomaticallyFromInline,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    _enableStartPictureInPictureAutomaticallyFromInline =
+                        newValue;
+                  });
+                  _controller.setAutomaticallyStartsPictureInPicture(
+                      enableStartPictureInPictureAutomaticallyFromInline:
+                          _enableStartPictureInPictureAutomaticallyFromInline);
+                },
+              ),
+              const SizedBox(width: 16),
+            ],
+          ),
+          MaterialButton(
+            color: Colors.blue,
+            onPressed: () {
+              final RenderBox? box =
+                  _playerKey.currentContext?.findRenderObject() as RenderBox?;
+              if (box == null) {
+                return;
+              }
+              final Offset offset = box.localToGlobal(Offset.zero);
+              _controller.setPictureInPictureOverlaySettings(
+                settings: PictureInPictureOverlaySettings(
+                  rect: Rect.fromLTWH(
+                    offset.dx,
+                    offset.dy,
+                    box.size.width,
+                    box.size.height,
+                  ),
+                ),
+              );
+            },
+            child: const Text('Set picture-in-picture overlay rect'),
+          ),
+          MaterialButton(
+            color: Colors.blue,
+            onPressed: () {
+              if (_controller.value.isPictureInPictureActive) {
+                _controller.stopPictureInPicture();
+              } else {
+                _controller.startPictureInPicture();
+              }
+            },
+            child: Text(_controller.value.isPictureInPictureActive
+                ? 'Stop picture-in-picture'
+                : 'Start picture-in-picture'),
+          ),
           Container(
             padding: const EdgeInsets.all(20),
             child: AspectRatio(
+              key: _playerKey,
               aspectRatio: _controller.value.aspectRatio,
               child: Stack(
                 alignment: Alignment.bottomCenter,
