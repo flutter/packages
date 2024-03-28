@@ -720,7 +720,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               });
             });
           } else {
-            indent.addScoped('val wrapped: List<Any?> = try {', '}', () {
+            indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
               if (returnType.isVoid) {
                 indent.writeln(call);
                 indent.writeln('listOf<Any?>(null)');

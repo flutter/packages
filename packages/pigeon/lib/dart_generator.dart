@@ -251,17 +251,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
       final String nullableTag = field.type.isNullable ? '?' : '';
-      if (field.type.isClass) {
-        final String nonNullValue = '$resultAt! as ${field.type.baseName}';
-        if (field.type.isNullable) {
-          indent.format('''
-$resultAt != null
-\t\t? $nonNullValue
-\t\t: null''', leadingSpace: false, trailingNewline: false);
-        } else {
-          indent.add(nonNullValue);
-        }
-      } else if (field.type.isEnum) {
+      if (field.type.isEnum) {
         final String nonNullValue =
             '${field.type.baseName}.values[$resultAt! as int]';
         if (field.type.isNullable) {

@@ -50,7 +50,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int64? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
+    expect(code,
+        contains('static func fromList(_ __pigeon_list: [Any?]) -> Foobar?'));
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
   });
@@ -572,8 +573,9 @@ void main() {
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
-    expect(code, contains('nested = Nested.fromList(nestedList)'));
+    expect(code,
+        contains('static func fromList(_ __pigeon_list: [Any?]) -> Outer?'));
+    expect(code, contains('nested = nestedList as Nested'));
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
     // Single-element list serializations should not have a trailing comma.

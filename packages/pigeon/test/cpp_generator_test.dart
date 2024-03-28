@@ -651,8 +651,7 @@ void main() {
       expect(
           code,
           contains(
-              'nullable_nested_ ? EncodableValue(nullable_nested_->ToEncodableList()) '
-              ': EncodableValue()'));
+              'nullable_nested_ ? CustomEncodableValue(*nullable_nested_) : EncodableValue())'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
@@ -805,13 +804,15 @@ void main() {
               'non_nullable_nested_ = std::make_unique<Nested>(value_arg);'));
       // Serialization uses the value directly.
       expect(code, contains('EncodableValue(non_nullable_bool_)'));
-      expect(code, contains('non_nullable_nested_->ToEncodableList()'));
+      expect(code, contains('CustomEncodableValue(non_nullable_nested_)'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
       expect(code, contains('list.reserve(4)'));
       expect(
-          code, contains('list.push_back(EncodableValue(non_nullable_bool_))'));
+          code,
+          contains(
+              'list.push_back(CustomEncodableValue(non_nullable_nested_))'));
     }
   });
 

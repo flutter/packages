@@ -96,7 +96,7 @@ class NullFieldsSearchReply {
       result: result[0] as String?,
       error: result[1] as String?,
       indices: (result[2] as List<Object?>?)?.cast<int?>(),
-      request: result[3] != null ? result[3]! as NullFieldsSearchRequest : null,
+      request: result[3] as NullFieldsSearchRequest?,
       type: result[4] != null
           ? NullFieldsSearchReplyType.values[result[4]! as int]
           : null,

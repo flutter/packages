@@ -220,8 +220,7 @@ class AllNullableTypes {
           result[13] != null ? AnEnum.values[result[13]! as int] : null,
       aNullableString: result[14] as String?,
       aNullableObject: result[15],
-      allNullableTypes:
-          result[16] != null ? result[16]! as AllNullableTypes : null,
+      allNullableTypes: result[16] as AllNullableTypes?,
     );
   }
 }
@@ -358,10 +357,9 @@ class AllClassesWrapper {
     result as List<Object?>;
     return AllClassesWrapper(
       allNullableTypes: result[0]! as AllNullableTypes,
-      allNullableTypesWithoutRecursion: result[1] != null
-          ? result[1]! as AllNullableTypesWithoutRecursion
-          : null,
-      allTypes: result[2] != null ? result[2]! as AllTypes : null,
+      allNullableTypesWithoutRecursion:
+          result[1] as AllNullableTypesWithoutRecursion?,
+      allTypes: result[2] as AllTypes?,
     );
   }
 }

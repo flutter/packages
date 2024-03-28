@@ -137,7 +137,7 @@ class MessageNested {
   static MessageNested decode(Object result) {
     result as List<Object?>;
     return MessageNested(
-      request: result[0] != null ? result[0]! as MessageSearchRequest : null,
+      request: result[0] as MessageSearchRequest?,
     );
   }
 }
