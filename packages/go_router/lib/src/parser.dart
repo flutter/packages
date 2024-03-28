@@ -125,18 +125,27 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
-    final String location;
+    String? location;
     if (GoRouter.optionURLReflectsImperativeAPIs &&
-        configuration.matches.last is ImperativeRouteMatch) {
-      location = (configuration.matches.last as ImperativeRouteMatch)
-          .matches
-          .uri
-          .toString();
-    } else {
-      location = configuration.uri.toString();
+        (configuration.matches.last is ImperativeRouteMatch ||
+            configuration.matches.last is ShellRouteMatch)) {
+      RouteMatchBase route = configuration.matches.last;
+
+      while (route is! ImperativeRouteMatch) {
+        if (route is ShellRouteMatch && route.matches.isNotEmpty) {
+          route = route.matches.last;
+        } else {
+          break;
+        }
+      }
+
+      if (route case final ImperativeRouteMatch safeRoute) {
+        location = safeRoute.matches.uri.toString();
+      }
     }
+
     return RouteInformation(
-      uri: Uri.parse(location),
+      uri: Uri.parse(location ?? configuration.uri.toString()),
       state: _routeMatchListCodec.encode(configuration),
     );
   }
