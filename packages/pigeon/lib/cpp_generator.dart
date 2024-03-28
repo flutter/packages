@@ -773,8 +773,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         final HostDatatype hostDatatype =
             getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
         final String encodableValue = _wrappedHostApiArgumentExpression(
-            root, _makeInstanceVariableName(field), field.type, hostDatatype,
-            preSerializeClasses: true);
+          root,
+          _makeInstanceVariableName(field),
+          field.type,
+          hostDatatype,
+        );
         indent.writeln('list.push_back($encodableValue);');
       }
       indent.writeln('return list;');
@@ -801,21 +804,15 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       } else {
         final HostDatatype hostDatatype =
             getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
-        if (!hostDatatype.isBuiltin &&
-            root.classes
-                .map((Class x) => x.name)
-                .contains(field.type.baseName)) {
-          return '${hostDatatype.datatype}::FromEncodableList(std::get<EncodableList>($encodable))';
-        } else {
-          return 'std::get<${hostDatatype.datatype}>($encodable)';
-        }
+        return 'std::get<${hostDatatype.datatype}>($encodable)';
       }
     }
 
     _writeFunctionDefinition(indent, 'FromEncodableList',
         scope: classDefinition.name,
         returnType: classDefinition.name,
-        parameters: <String>['const EncodableList& list'], body: () {
+        parameters: <String>['const EncodableList& ${varNamePrefix}list'],
+        body: () {
       const String instanceVariable = 'decoded';
       final Iterable<_IndexedField> indexedFields = indexMap(
           getFieldsInSerializationOrder(classDefinition),
@@ -827,8 +824,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
       // Non-nullable fields must be set via the constructor.
       String constructorArgs = nonNullableFields
-          .map((_IndexedField param) =>
-              getValueExpression(param.field, 'list[${param.index}]'))
+          .map((_IndexedField param) => getValueExpression(
+              param.field, '${varNamePrefix}list[${param.index}]'))
           .join(',\n\t');
       if (constructorArgs.isNotEmpty) {
         constructorArgs = '(\n\t$constructorArgs)';
@@ -844,7 +841,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         final String setterName = _makeSetterName(field);
         final String encodableFieldName =
             '${_encodablePrefix}_${_makeVariableName(field)}';
-        indent.writeln('auto& $encodableFieldName = list[${entry.index}];');
+        indent.writeln(
+            'auto& $encodableFieldName = ${varNamePrefix}list[${entry.index}];');
 
         final String valueExpression =
             getValueExpression(field, encodableFieldName);
@@ -921,8 +919,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           indent.addScoped('EncodableValue(EncodableList{', '});', () {
             for (final _HostNamedType param in hostParameters) {
               final String encodedArgument = _wrappedHostApiArgumentExpression(
-                  root, param.name, param.originalType, param.hostType,
-                  preSerializeClasses: false);
+                root,
+                param.name,
+                param.originalType,
+                param.hostType,
+              );
               indent.writeln('$encodedArgument,');
             }
           });
@@ -1402,22 +1403,18 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
   /// encodable lists rather than CustomEncodableValues; see
   /// https://github.com/flutter/flutter/issues/119351 for why this is currently
   /// needed.
-  String _wrappedHostApiArgumentExpression(Root root, String variableName,
-      TypeDeclaration dartType, HostDatatype hostType,
-      {required bool preSerializeClasses}) {
+  String _wrappedHostApiArgumentExpression(
+    Root root,
+    String variableName,
+    TypeDeclaration dartType,
+    HostDatatype hostType,
+  ) {
     final String encodableValue;
     if (!hostType.isBuiltin &&
         root.classes.any((Class c) => c.name == dartType.baseName)) {
-      if (preSerializeClasses) {
-        final String operator =
-            hostType.isNullable || _isPointerField(hostType) ? '->' : '.';
-        encodableValue =
-            'EncodableValue($variableName${operator}ToEncodableList())';
-      } else {
-        final String nonNullValue =
-            hostType.isNullable ? '*$variableName' : variableName;
-        encodableValue = 'CustomEncodableValue($nonNullValue)';
-      }
+      final String nonNullValue =
+          hostType.isNullable ? '*$variableName' : variableName;
+      encodableValue = 'CustomEncodableValue($nonNullValue)';
     } else if (!hostType.isBuiltin &&
         root.enums.any((Enum e) => e.name == dartType.baseName)) {
       final String nonNullValue =

@@ -214,7 +214,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           final String fieldName = field.name;
           final String nullsafe = field.type.isNullable ? '?' : '';
           if (field.type.isClass) {
-            toWriteValue = '$fieldName$nullsafe.toList()';
+            toWriteValue = fieldName;
           } else if (field.type.isEnum) {
             toWriteValue = '$fieldName$nullsafe.rawValue';
           } else {
@@ -236,12 +236,14 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     required String dartPackageName,
   }) {
     final String className = classDefinition.name;
-    indent.write('static func fromList(_ list: [Any?]) -> $className? ');
+    indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    indent.write(
+        'static func fromList(_ ${varNamePrefix}list: [Any?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
-        final String listValue = 'list[$index]';
+        final String listValue = '${varNamePrefix}list[$index]';
 
         _writeDecodeCasting(
           indent: indent,
@@ -576,11 +578,10 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     if (type.isNullable) {
       if (type.isClass) {
         indent.writeln('var $variableName: $fieldType? = nil');
-        indent
-            .write('if let ${variableName}List: [Any?] = nilOrValue($value) ');
+        indent.write(
+            'if let ${variableName}List: $fieldType = nilOrValue($value) ');
         indent.addScoped('{', '}', () {
-          indent.writeln(
-              '$variableName = $fieldType.fromList(${variableName}List)');
+          indent.writeln('$variableName = ${variableName}List as $fieldType');
         });
       } else if (type.isEnum) {
         indent.writeln('var $variableName: $fieldType? = nil');
@@ -603,8 +604,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       }
     } else {
       if (type.isClass) {
-        indent.writeln(
-            'let $variableName = $fieldType.fromList($value as! [Any?])!');
+        indent.writeln('let $variableName = $value as! $fieldType');
       } else {
         _writeGenericCasting(
           indent: indent,
@@ -917,7 +917,8 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 }
 
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
-  if (type.typeArguments.isEmpty) {
+  if (type.typeArguments.isEmpty ||
+      (type.typeArguments.first.baseName == 'Object')) {
     if (type.baseName == 'List') {
       return '[Any?]';
     } else if (type.baseName == 'Map') {
@@ -965,6 +966,9 @@ String _swiftTypeForDartType(TypeDeclaration type) {
 
 String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
+  if (type.baseName == 'Map') {
+    return '${_swiftTypeForBuiltinGenericDartType(type)}$nullSafe';
+  }
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 

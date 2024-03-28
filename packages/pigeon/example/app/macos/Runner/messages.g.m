@@ -50,8 +50,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @interface PGNMessageData ()
-+ (PGNMessageData *)fromList:(NSArray *)list;
-+ (nullable PGNMessageData *)nullableFromList:(NSArray *)list;
++ (PGNMessageData *)fromList:(NSArray *)__pigeon_list;
++ (nullable PGNMessageData *)nullableFromList:(NSArray *)__pigeon_list;
 - (NSArray *)toList;
 @end
 
@@ -67,16 +67,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.data = data;
   return pigeonResult;
 }
-+ (PGNMessageData *)fromList:(NSArray *)list {
++ (PGNMessageData *)fromList:(NSArray *)__pigeon_list {
   PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
-  pigeonResult.name = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.description = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.code = [GetNullableObjectAtIndex(list, 2) integerValue];
-  pigeonResult.data = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.name = GetNullableObjectAtIndex(__pigeon_list, 0);
+  pigeonResult.description = GetNullableObjectAtIndex(__pigeon_list, 1);
+  pigeonResult.code = [GetNullableObjectAtIndex(__pigeon_list, 2) integerValue];
+  pigeonResult.data = GetNullableObjectAtIndex(__pigeon_list, 3);
   return pigeonResult;
 }
-+ (nullable PGNMessageData *)nullableFromList:(NSArray *)list {
-  return (list) ? [PGNMessageData fromList:list] : nil;
++ (nullable PGNMessageData *)nullableFromList:(NSArray *)__pigeon_list {
+  return (__pigeon_list) ? [PGNMessageData fromList:__pigeon_list] : nil;
 }
 - (NSArray *)toList {
   return @[

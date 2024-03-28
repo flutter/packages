@@ -65,11 +65,11 @@ data class MessageData(
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): MessageData {
-      val name = list[0] as String?
-      val description = list[1] as String?
-      val code = Code.ofRaw(list[2] as Int)!!
-      val data = list[3] as Map<String?, String?>
+    fun fromList(__pigeon_list: List<Any?>): MessageData {
+      val name = __pigeon_list[0] as String?
+      val description = __pigeon_list[1] as String?
+      val code = Code.ofRaw(__pigeon_list[2] as Int)!!
+      val data = __pigeon_list[3] as Map<String?, String?>
       return MessageData(name, description, code, data)
     }
   }
@@ -128,12 +128,12 @@ interface ExampleHostApi {
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.getHostLanguage())
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf<Any?>(api.getHostLanguage())
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -151,12 +151,12 @@ interface ExampleHostApi {
             val args = message as List<Any?>
             val aArg = args[0].let { if (it is Int) it.toLong() else it as Long }
             val bArg = args[1].let { if (it is Int) it.toLong() else it as Long }
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.add(aArg, bArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf<Any?>(api.add(aArg, bArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {

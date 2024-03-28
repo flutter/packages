@@ -224,9 +224,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           String toWriteValue = '';
           final String fieldName = field.name;
           final String safeCall = field.type.isNullable ? '?' : '';
-          if (field.type.isClass) {
-            toWriteValue = '$fieldName$safeCall.toList()';
-          } else if (!hostDatatype.isBuiltin && field.type.isEnum) {
+          if (!hostDatatype.isBuiltin && field.type.isEnum) {
             toWriteValue = '$fieldName$safeCall.raw';
           } else {
             toWriteValue = fieldName;
@@ -250,22 +248,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
       indent.writeln('@Suppress("UNCHECKED_CAST")');
-      indent.write('fun fromList(list: List<Any?>): $className ');
+      indent
+          .write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 
       indent.addScoped('{', '}', () {
         enumerate(getFieldsInSerializationOrder(classDefinition),
             (int index, final NamedType field) {
-          final String listValue = 'list[$index]';
+          final String listValue = '${varNamePrefix}list[$index]';
           final String fieldType = _kotlinTypeForDartType(field.type);
 
           if (field.type.isNullable) {
-            if (field.type.isClass) {
-              indent.write('val ${field.name}: $fieldType? = ');
-              indent.add('($listValue as List<Any?>?)?.let ');
-              indent.addScoped('{', '}', () {
-                indent.writeln('$fieldType.fromList(it)');
-              });
-            } else if (field.type.isEnum) {
+            if (field.type.isEnum) {
               indent.write('val ${field.name}: $fieldType? = ');
               indent.add('($listValue as Int?)?.let ');
               indent.addScoped('{', '}', () {
@@ -276,10 +269,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   'val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
             }
           } else {
-            if (field.type.isClass) {
-              indent.writeln(
-                  'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
-            } else if (field.type.isEnum) {
+            if (field.type.isEnum) {
               indent.writeln(
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
             } else {
@@ -730,24 +720,22 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               });
             });
           } else {
-            indent.writeln('var wrapped: List<Any?>');
-            indent.write('try ');
-            indent.addScoped('{', '}', () {
+            indent.addScoped('val wrapped: List<Any?> = try {', '}', () {
               if (returnType.isVoid) {
                 indent.writeln(call);
-                indent.writeln('wrapped = listOf<Any?>(null)');
+                indent.writeln('listOf<Any?>(null)');
               } else {
                 String enumTag = '';
                 if (returnType.isEnum) {
                   final String safeUnwrap = returnType.isNullable ? '?' : '';
                   enumTag = '$safeUnwrap.raw';
                 }
-                indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
+                indent.writeln('listOf<Any?>($call$enumTag)');
               }
             }, addTrailingNewline: false);
             indent.add(' catch (exception: Throwable) ');
             indent.addScoped('{', '}', () {
-              indent.writeln('wrapped = wrapError(exception)');
+              indent.writeln('wrapError(exception)');
             });
             indent.writeln('reply.reply(wrapped)');
           }

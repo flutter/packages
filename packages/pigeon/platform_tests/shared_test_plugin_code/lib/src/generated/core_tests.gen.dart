@@ -194,7 +194,7 @@ class AllNullableTypes {
       aNullableEnum?.index,
       aNullableString,
       aNullableObject,
-      allNullableTypes?.encode(),
+      allNullableTypes,
     ];
   }
 
@@ -220,9 +220,8 @@ class AllNullableTypes {
           result[13] != null ? AnEnum.values[result[13]! as int] : null,
       aNullableString: result[14] as String?,
       aNullableObject: result[15],
-      allNullableTypes: result[16] != null
-          ? AllNullableTypes.decode(result[16]! as List<Object?>)
-          : null,
+      allNullableTypes:
+          result[16] != null ? result[16]! as AllNullableTypes : null,
     );
   }
 }
@@ -349,22 +348,20 @@ class AllClassesWrapper {
 
   Object encode() {
     return <Object?>[
-      allNullableTypes.encode(),
-      allNullableTypesWithoutRecursion?.encode(),
-      allTypes?.encode(),
+      allNullableTypes,
+      allNullableTypesWithoutRecursion,
+      allTypes,
     ];
   }
 
   static AllClassesWrapper decode(Object result) {
     result as List<Object?>;
     return AllClassesWrapper(
-      allNullableTypes: AllNullableTypes.decode(result[0]! as List<Object?>),
+      allNullableTypes: result[0]! as AllNullableTypes,
       allNullableTypesWithoutRecursion: result[1] != null
-          ? AllNullableTypesWithoutRecursion.decode(result[1]! as List<Object?>)
+          ? result[1]! as AllNullableTypesWithoutRecursion
           : null,
-      allTypes: result[2] != null
-          ? AllTypes.decode(result[2]! as List<Object?>)
-          : null,
+      allTypes: result[2] != null ? result[2]! as AllTypes : null,
     );
   }
 }

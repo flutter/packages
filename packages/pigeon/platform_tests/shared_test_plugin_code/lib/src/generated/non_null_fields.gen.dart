@@ -106,7 +106,7 @@ class NonNullFieldSearchReply {
       result,
       error,
       indices,
-      extraData.encode(),
+      extraData,
       type.index,
     ];
   }
@@ -117,7 +117,7 @@ class NonNullFieldSearchReply {
       result: result[0]! as String,
       error: result[1]! as String,
       indices: (result[2] as List<Object?>?)!.cast<int?>(),
-      extraData: ExtraData.decode(result[3]! as List<Object?>),
+      extraData: result[3]! as ExtraData,
       type: ReplyType.values[result[4]! as int],
     );
   }

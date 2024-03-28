@@ -149,15 +149,18 @@ EncodableList AllTypes::ToEncodableList() const {
   return list;
 }
 
-AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
-  AllTypes decoded(
-      std::get<bool>(list[0]), list[1].LongValue(), list[2].LongValue(),
-      std::get<double>(list[3]), std::get<std::vector<uint8_t>>(list[4]),
-      std::get<std::vector<int32_t>>(list[5]),
-      std::get<std::vector<int64_t>>(list[6]),
-      std::get<std::vector<double>>(list[7]), std::get<EncodableList>(list[8]),
-      std::get<EncodableMap>(list[9]), (AnEnum)(std::get<int32_t>(list[10])),
-      std::get<std::string>(list[11]), list[12]);
+AllTypes AllTypes::FromEncodableList(const EncodableList& __pigeon_list) {
+  AllTypes decoded(std::get<bool>(__pigeon_list[0]),
+                   __pigeon_list[1].LongValue(), __pigeon_list[2].LongValue(),
+                   std::get<double>(__pigeon_list[3]),
+                   std::get<std::vector<uint8_t>>(__pigeon_list[4]),
+                   std::get<std::vector<int32_t>>(__pigeon_list[5]),
+                   std::get<std::vector<int64_t>>(__pigeon_list[6]),
+                   std::get<std::vector<double>>(__pigeon_list[7]),
+                   std::get<EncodableList>(__pigeon_list[8]),
+                   std::get<EncodableMap>(__pigeon_list[9]),
+                   (AnEnum)(std::get<int32_t>(__pigeon_list[10])),
+                   std::get<std::string>(__pigeon_list[11]), __pigeon_list[12]);
   return decoded;
 }
 
@@ -605,94 +608,94 @@ EncodableList AllNullableTypes::ToEncodableList() const {
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
   list.push_back(all_nullable_types_
-                     ? EncodableValue(all_nullable_types_->ToEncodableList())
+                     ? CustomEncodableValue(*all_nullable_types_)
                      : EncodableValue());
   return list;
 }
 
 AllNullableTypes AllNullableTypes::FromEncodableList(
-    const EncodableList& list) {
+    const EncodableList& __pigeon_list) {
   AllNullableTypes decoded;
-  auto& encodable_a_nullable_bool = list[0];
+  auto& encodable_a_nullable_bool = __pigeon_list[0];
   if (!encodable_a_nullable_bool.IsNull()) {
     decoded.set_a_nullable_bool(std::get<bool>(encodable_a_nullable_bool));
   }
-  auto& encodable_a_nullable_int = list[1];
+  auto& encodable_a_nullable_int = __pigeon_list[1];
   if (!encodable_a_nullable_int.IsNull()) {
     decoded.set_a_nullable_int(encodable_a_nullable_int.LongValue());
   }
-  auto& encodable_a_nullable_int64 = list[2];
+  auto& encodable_a_nullable_int64 = __pigeon_list[2];
   if (!encodable_a_nullable_int64.IsNull()) {
     decoded.set_a_nullable_int64(encodable_a_nullable_int64.LongValue());
   }
-  auto& encodable_a_nullable_double = list[3];
+  auto& encodable_a_nullable_double = __pigeon_list[3];
   if (!encodable_a_nullable_double.IsNull()) {
     decoded.set_a_nullable_double(
         std::get<double>(encodable_a_nullable_double));
   }
-  auto& encodable_a_nullable_byte_array = list[4];
+  auto& encodable_a_nullable_byte_array = __pigeon_list[4];
   if (!encodable_a_nullable_byte_array.IsNull()) {
     decoded.set_a_nullable_byte_array(
         std::get<std::vector<uint8_t>>(encodable_a_nullable_byte_array));
   }
-  auto& encodable_a_nullable4_byte_array = list[5];
+  auto& encodable_a_nullable4_byte_array = __pigeon_list[5];
   if (!encodable_a_nullable4_byte_array.IsNull()) {
     decoded.set_a_nullable4_byte_array(
         std::get<std::vector<int32_t>>(encodable_a_nullable4_byte_array));
   }
-  auto& encodable_a_nullable8_byte_array = list[6];
+  auto& encodable_a_nullable8_byte_array = __pigeon_list[6];
   if (!encodable_a_nullable8_byte_array.IsNull()) {
     decoded.set_a_nullable8_byte_array(
         std::get<std::vector<int64_t>>(encodable_a_nullable8_byte_array));
   }
-  auto& encodable_a_nullable_float_array = list[7];
+  auto& encodable_a_nullable_float_array = __pigeon_list[7];
   if (!encodable_a_nullable_float_array.IsNull()) {
     decoded.set_a_nullable_float_array(
         std::get<std::vector<double>>(encodable_a_nullable_float_array));
   }
-  auto& encodable_a_nullable_list = list[8];
+  auto& encodable_a_nullable_list = __pigeon_list[8];
   if (!encodable_a_nullable_list.IsNull()) {
     decoded.set_a_nullable_list(
         std::get<EncodableList>(encodable_a_nullable_list));
   }
-  auto& encodable_a_nullable_map = list[9];
+  auto& encodable_a_nullable_map = __pigeon_list[9];
   if (!encodable_a_nullable_map.IsNull()) {
     decoded.set_a_nullable_map(
         std::get<EncodableMap>(encodable_a_nullable_map));
   }
-  auto& encodable_nullable_nested_list = list[10];
+  auto& encodable_nullable_nested_list = __pigeon_list[10];
   if (!encodable_nullable_nested_list.IsNull()) {
     decoded.set_nullable_nested_list(
         std::get<EncodableList>(encodable_nullable_nested_list));
   }
-  auto& encodable_nullable_map_with_annotations = list[11];
+  auto& encodable_nullable_map_with_annotations = __pigeon_list[11];
   if (!encodable_nullable_map_with_annotations.IsNull()) {
     decoded.set_nullable_map_with_annotations(
         std::get<EncodableMap>(encodable_nullable_map_with_annotations));
   }
-  auto& encodable_nullable_map_with_object = list[12];
+  auto& encodable_nullable_map_with_object = __pigeon_list[12];
   if (!encodable_nullable_map_with_object.IsNull()) {
     decoded.set_nullable_map_with_object(
         std::get<EncodableMap>(encodable_nullable_map_with_object));
   }
-  auto& encodable_a_nullable_enum = list[13];
+  auto& encodable_a_nullable_enum = __pigeon_list[13];
   if (!encodable_a_nullable_enum.IsNull()) {
     decoded.set_a_nullable_enum(
         (AnEnum)(std::get<int32_t>(encodable_a_nullable_enum)));
   }
-  auto& encodable_a_nullable_string = list[14];
+  auto& encodable_a_nullable_string = __pigeon_list[14];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[15];
+  auto& encodable_a_nullable_object = __pigeon_list[15];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_all_nullable_types = list[16];
+  auto& encodable_all_nullable_types = __pigeon_list[16];
   if (!encodable_all_nullable_types.IsNull()) {
-    decoded.set_all_nullable_types(AllNullableTypes::FromEncodableList(
-        std::get<EncodableList>(encodable_all_nullable_types)));
+    decoded.set_all_nullable_types(
+        std::get<AllNullableTypes>(encodable_all_nullable_types));
   }
   return decoded;
 }
@@ -1057,81 +1060,82 @@ EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
 }
 
 AllNullableTypesWithoutRecursion
-AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
+AllNullableTypesWithoutRecursion::FromEncodableList(
+    const EncodableList& __pigeon_list) {
   AllNullableTypesWithoutRecursion decoded;
-  auto& encodable_a_nullable_bool = list[0];
+  auto& encodable_a_nullable_bool = __pigeon_list[0];
   if (!encodable_a_nullable_bool.IsNull()) {
     decoded.set_a_nullable_bool(std::get<bool>(encodable_a_nullable_bool));
   }
-  auto& encodable_a_nullable_int = list[1];
+  auto& encodable_a_nullable_int = __pigeon_list[1];
   if (!encodable_a_nullable_int.IsNull()) {
     decoded.set_a_nullable_int(encodable_a_nullable_int.LongValue());
   }
-  auto& encodable_a_nullable_int64 = list[2];
+  auto& encodable_a_nullable_int64 = __pigeon_list[2];
   if (!encodable_a_nullable_int64.IsNull()) {
     decoded.set_a_nullable_int64(encodable_a_nullable_int64.LongValue());
   }
-  auto& encodable_a_nullable_double = list[3];
+  auto& encodable_a_nullable_double = __pigeon_list[3];
   if (!encodable_a_nullable_double.IsNull()) {
     decoded.set_a_nullable_double(
         std::get<double>(encodable_a_nullable_double));
   }
-  auto& encodable_a_nullable_byte_array = list[4];
+  auto& encodable_a_nullable_byte_array = __pigeon_list[4];
   if (!encodable_a_nullable_byte_array.IsNull()) {
     decoded.set_a_nullable_byte_array(
         std::get<std::vector<uint8_t>>(encodable_a_nullable_byte_array));
   }
-  auto& encodable_a_nullable4_byte_array = list[5];
+  auto& encodable_a_nullable4_byte_array = __pigeon_list[5];
   if (!encodable_a_nullable4_byte_array.IsNull()) {
     decoded.set_a_nullable4_byte_array(
         std::get<std::vector<int32_t>>(encodable_a_nullable4_byte_array));
   }
-  auto& encodable_a_nullable8_byte_array = list[6];
+  auto& encodable_a_nullable8_byte_array = __pigeon_list[6];
   if (!encodable_a_nullable8_byte_array.IsNull()) {
     decoded.set_a_nullable8_byte_array(
         std::get<std::vector<int64_t>>(encodable_a_nullable8_byte_array));
   }
-  auto& encodable_a_nullable_float_array = list[7];
+  auto& encodable_a_nullable_float_array = __pigeon_list[7];
   if (!encodable_a_nullable_float_array.IsNull()) {
     decoded.set_a_nullable_float_array(
         std::get<std::vector<double>>(encodable_a_nullable_float_array));
   }
-  auto& encodable_a_nullable_list = list[8];
+  auto& encodable_a_nullable_list = __pigeon_list[8];
   if (!encodable_a_nullable_list.IsNull()) {
     decoded.set_a_nullable_list(
         std::get<EncodableList>(encodable_a_nullable_list));
   }
-  auto& encodable_a_nullable_map = list[9];
+  auto& encodable_a_nullable_map = __pigeon_list[9];
   if (!encodable_a_nullable_map.IsNull()) {
     decoded.set_a_nullable_map(
         std::get<EncodableMap>(encodable_a_nullable_map));
   }
-  auto& encodable_nullable_nested_list = list[10];
+  auto& encodable_nullable_nested_list = __pigeon_list[10];
   if (!encodable_nullable_nested_list.IsNull()) {
     decoded.set_nullable_nested_list(
         std::get<EncodableList>(encodable_nullable_nested_list));
   }
-  auto& encodable_nullable_map_with_annotations = list[11];
+  auto& encodable_nullable_map_with_annotations = __pigeon_list[11];
   if (!encodable_nullable_map_with_annotations.IsNull()) {
     decoded.set_nullable_map_with_annotations(
         std::get<EncodableMap>(encodable_nullable_map_with_annotations));
   }
-  auto& encodable_nullable_map_with_object = list[12];
+  auto& encodable_nullable_map_with_object = __pigeon_list[12];
   if (!encodable_nullable_map_with_object.IsNull()) {
     decoded.set_nullable_map_with_object(
         std::get<EncodableMap>(encodable_nullable_map_with_object));
   }
-  auto& encodable_a_nullable_enum = list[13];
+  auto& encodable_a_nullable_enum = __pigeon_list[13];
   if (!encodable_a_nullable_enum.IsNull()) {
     decoded.set_a_nullable_enum(
         (AnEnum)(std::get<int32_t>(encodable_a_nullable_enum)));
   }
-  auto& encodable_a_nullable_string = list[14];
+  auto& encodable_a_nullable_string = __pigeon_list[14];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[15];
+  auto& encodable_a_nullable_object = __pigeon_list[15];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
@@ -1226,32 +1230,28 @@ void AllClassesWrapper::set_all_types(const AllTypes& value_arg) {
 EncodableList AllClassesWrapper::ToEncodableList() const {
   EncodableList list;
   list.reserve(3);
-  list.push_back(EncodableValue(all_nullable_types_->ToEncodableList()));
+  list.push_back(CustomEncodableValue(all_nullable_types_));
   list.push_back(
       all_nullable_types_without_recursion_
-          ? EncodableValue(
-                all_nullable_types_without_recursion_->ToEncodableList())
+          ? CustomEncodableValue(*all_nullable_types_without_recursion_)
           : EncodableValue());
-  list.push_back(all_types_ ? EncodableValue(all_types_->ToEncodableList())
+  list.push_back(all_types_ ? CustomEncodableValue(*all_types_)
                             : EncodableValue());
   return list;
 }
 
 AllClassesWrapper AllClassesWrapper::FromEncodableList(
-    const EncodableList& list) {
-  AllClassesWrapper decoded(
-      AllNullableTypes::FromEncodableList(std::get<EncodableList>(list[0])));
-  auto& encodable_all_nullable_types_without_recursion = list[1];
+    const EncodableList& __pigeon_list) {
+  AllClassesWrapper decoded(std::get<AllNullableTypes>(__pigeon_list[0]));
+  auto& encodable_all_nullable_types_without_recursion = __pigeon_list[1];
   if (!encodable_all_nullable_types_without_recursion.IsNull()) {
     decoded.set_all_nullable_types_without_recursion(
-        AllNullableTypesWithoutRecursion::FromEncodableList(
-            std::get<EncodableList>(
-                encodable_all_nullable_types_without_recursion)));
+        std::get<AllNullableTypesWithoutRecursion>(
+            encodable_all_nullable_types_without_recursion));
   }
-  auto& encodable_all_types = list[2];
+  auto& encodable_all_types = __pigeon_list[2];
   if (!encodable_all_types.IsNull()) {
-    decoded.set_all_types(AllTypes::FromEncodableList(
-        std::get<EncodableList>(encodable_all_types)));
+    decoded.set_all_types(std::get<AllTypes>(encodable_all_types));
   }
   return decoded;
 }
@@ -1284,9 +1284,9 @@ EncodableList TestMessage::ToEncodableList() const {
   return list;
 }
 
-TestMessage TestMessage::FromEncodableList(const EncodableList& list) {
+TestMessage TestMessage::FromEncodableList(const EncodableList& __pigeon_list) {
   TestMessage decoded;
-  auto& encodable_test_list = list[0];
+  auto& encodable_test_list = __pigeon_list[0];
   if (!encodable_test_list.IsNull()) {
     decoded.set_test_list(std::get<EncodableList>(encodable_test_list));
   }

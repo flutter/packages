@@ -410,37 +410,37 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull AllTypes fromList(@NonNull ArrayList<Object> list) {
+    static @NonNull AllTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
       AllTypes pigeonResult = new AllTypes();
-      Object aBool = list.get(0);
+      Object aBool = __pigeon_list.get(0);
       pigeonResult.setABool((Boolean) aBool);
-      Object anInt = list.get(1);
+      Object anInt = __pigeon_list.get(1);
       pigeonResult.setAnInt(
           (anInt == null) ? null : ((anInt instanceof Integer) ? (Integer) anInt : (Long) anInt));
-      Object anInt64 = list.get(2);
+      Object anInt64 = __pigeon_list.get(2);
       pigeonResult.setAnInt64(
           (anInt64 == null)
               ? null
               : ((anInt64 instanceof Integer) ? (Integer) anInt64 : (Long) anInt64));
-      Object aDouble = list.get(3);
+      Object aDouble = __pigeon_list.get(3);
       pigeonResult.setADouble((Double) aDouble);
-      Object aByteArray = list.get(4);
+      Object aByteArray = __pigeon_list.get(4);
       pigeonResult.setAByteArray((byte[]) aByteArray);
-      Object a4ByteArray = list.get(5);
+      Object a4ByteArray = __pigeon_list.get(5);
       pigeonResult.setA4ByteArray((int[]) a4ByteArray);
-      Object a8ByteArray = list.get(6);
+      Object a8ByteArray = __pigeon_list.get(6);
       pigeonResult.setA8ByteArray((long[]) a8ByteArray);
-      Object aFloatArray = list.get(7);
+      Object aFloatArray = __pigeon_list.get(7);
       pigeonResult.setAFloatArray((double[]) aFloatArray);
-      Object aList = list.get(8);
+      Object aList = __pigeon_list.get(8);
       pigeonResult.setAList((List<Object>) aList);
-      Object aMap = list.get(9);
+      Object aMap = __pigeon_list.get(9);
       pigeonResult.setAMap((Map<Object, Object>) aMap);
-      Object anEnum = list.get(10);
+      Object anEnum = __pigeon_list.get(10);
       pigeonResult.setAnEnum(AnEnum.values()[(int) anEnum]);
-      Object aString = list.get(11);
+      Object aString = __pigeon_list.get(11);
       pigeonResult.setAString((String) aString);
-      Object anObject = list.get(12);
+      Object anObject = __pigeon_list.get(12);
       pigeonResult.setAnObject(anObject);
       return pigeonResult;
     }
@@ -803,58 +803,55 @@ public class CoreTests {
       toListResult.add(aNullableEnum == null ? null : aNullableEnum.index);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
-      toListResult.add((allNullableTypes == null) ? null : allNullableTypes.toList());
+      toListResult.add(allNullableTypes);
       return toListResult;
     }
 
-    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> list) {
+    static @NonNull AllNullableTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
       AllNullableTypes pigeonResult = new AllNullableTypes();
-      Object aNullableBool = list.get(0);
+      Object aNullableBool = __pigeon_list.get(0);
       pigeonResult.setANullableBool((Boolean) aNullableBool);
-      Object aNullableInt = list.get(1);
+      Object aNullableInt = __pigeon_list.get(1);
       pigeonResult.setANullableInt(
           (aNullableInt == null)
               ? null
               : ((aNullableInt instanceof Integer) ? (Integer) aNullableInt : (Long) aNullableInt));
-      Object aNullableInt64 = list.get(2);
+      Object aNullableInt64 = __pigeon_list.get(2);
       pigeonResult.setANullableInt64(
           (aNullableInt64 == null)
               ? null
               : ((aNullableInt64 instanceof Integer)
                   ? (Integer) aNullableInt64
                   : (Long) aNullableInt64));
-      Object aNullableDouble = list.get(3);
+      Object aNullableDouble = __pigeon_list.get(3);
       pigeonResult.setANullableDouble((Double) aNullableDouble);
-      Object aNullableByteArray = list.get(4);
+      Object aNullableByteArray = __pigeon_list.get(4);
       pigeonResult.setANullableByteArray((byte[]) aNullableByteArray);
-      Object aNullable4ByteArray = list.get(5);
+      Object aNullable4ByteArray = __pigeon_list.get(5);
       pigeonResult.setANullable4ByteArray((int[]) aNullable4ByteArray);
-      Object aNullable8ByteArray = list.get(6);
+      Object aNullable8ByteArray = __pigeon_list.get(6);
       pigeonResult.setANullable8ByteArray((long[]) aNullable8ByteArray);
-      Object aNullableFloatArray = list.get(7);
+      Object aNullableFloatArray = __pigeon_list.get(7);
       pigeonResult.setANullableFloatArray((double[]) aNullableFloatArray);
-      Object aNullableList = list.get(8);
+      Object aNullableList = __pigeon_list.get(8);
       pigeonResult.setANullableList((List<Object>) aNullableList);
-      Object aNullableMap = list.get(9);
+      Object aNullableMap = __pigeon_list.get(9);
       pigeonResult.setANullableMap((Map<Object, Object>) aNullableMap);
-      Object nullableNestedList = list.get(10);
+      Object nullableNestedList = __pigeon_list.get(10);
       pigeonResult.setNullableNestedList((List<List<Boolean>>) nullableNestedList);
-      Object nullableMapWithAnnotations = list.get(11);
+      Object nullableMapWithAnnotations = __pigeon_list.get(11);
       pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
-      Object nullableMapWithObject = list.get(12);
+      Object nullableMapWithObject = __pigeon_list.get(12);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableEnum = list.get(13);
+      Object aNullableEnum = __pigeon_list.get(13);
       pigeonResult.setANullableEnum(
           aNullableEnum == null ? null : AnEnum.values()[(int) aNullableEnum]);
-      Object aNullableString = list.get(14);
+      Object aNullableString = __pigeon_list.get(14);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = list.get(15);
+      Object aNullableObject = __pigeon_list.get(15);
       pigeonResult.setANullableObject(aNullableObject);
-      Object allNullableTypes = list.get(16);
-      pigeonResult.setAllNullableTypes(
-          (allNullableTypes == null)
-              ? null
-              : AllNullableTypes.fromList((ArrayList<Object>) allNullableTypes));
+      Object allNullableTypes = __pigeon_list.get(16);
+      pigeonResult.setAllNullableTypes((AllNullableTypes) allNullableTypes);
       return pigeonResult;
     }
   }
@@ -1201,48 +1198,49 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull AllNullableTypesWithoutRecursion fromList(@NonNull ArrayList<Object> list) {
+    static @NonNull AllNullableTypesWithoutRecursion fromList(
+        @NonNull ArrayList<Object> __pigeon_list) {
       AllNullableTypesWithoutRecursion pigeonResult = new AllNullableTypesWithoutRecursion();
-      Object aNullableBool = list.get(0);
+      Object aNullableBool = __pigeon_list.get(0);
       pigeonResult.setANullableBool((Boolean) aNullableBool);
-      Object aNullableInt = list.get(1);
+      Object aNullableInt = __pigeon_list.get(1);
       pigeonResult.setANullableInt(
           (aNullableInt == null)
               ? null
               : ((aNullableInt instanceof Integer) ? (Integer) aNullableInt : (Long) aNullableInt));
-      Object aNullableInt64 = list.get(2);
+      Object aNullableInt64 = __pigeon_list.get(2);
       pigeonResult.setANullableInt64(
           (aNullableInt64 == null)
               ? null
               : ((aNullableInt64 instanceof Integer)
                   ? (Integer) aNullableInt64
                   : (Long) aNullableInt64));
-      Object aNullableDouble = list.get(3);
+      Object aNullableDouble = __pigeon_list.get(3);
       pigeonResult.setANullableDouble((Double) aNullableDouble);
-      Object aNullableByteArray = list.get(4);
+      Object aNullableByteArray = __pigeon_list.get(4);
       pigeonResult.setANullableByteArray((byte[]) aNullableByteArray);
-      Object aNullable4ByteArray = list.get(5);
+      Object aNullable4ByteArray = __pigeon_list.get(5);
       pigeonResult.setANullable4ByteArray((int[]) aNullable4ByteArray);
-      Object aNullable8ByteArray = list.get(6);
+      Object aNullable8ByteArray = __pigeon_list.get(6);
       pigeonResult.setANullable8ByteArray((long[]) aNullable8ByteArray);
-      Object aNullableFloatArray = list.get(7);
+      Object aNullableFloatArray = __pigeon_list.get(7);
       pigeonResult.setANullableFloatArray((double[]) aNullableFloatArray);
-      Object aNullableList = list.get(8);
+      Object aNullableList = __pigeon_list.get(8);
       pigeonResult.setANullableList((List<Object>) aNullableList);
-      Object aNullableMap = list.get(9);
+      Object aNullableMap = __pigeon_list.get(9);
       pigeonResult.setANullableMap((Map<Object, Object>) aNullableMap);
-      Object nullableNestedList = list.get(10);
+      Object nullableNestedList = __pigeon_list.get(10);
       pigeonResult.setNullableNestedList((List<List<Boolean>>) nullableNestedList);
-      Object nullableMapWithAnnotations = list.get(11);
+      Object nullableMapWithAnnotations = __pigeon_list.get(11);
       pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
-      Object nullableMapWithObject = list.get(12);
+      Object nullableMapWithObject = __pigeon_list.get(12);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableEnum = list.get(13);
+      Object aNullableEnum = __pigeon_list.get(13);
       pigeonResult.setANullableEnum(
           aNullableEnum == null ? null : AnEnum.values()[(int) aNullableEnum]);
-      Object aNullableString = list.get(14);
+      Object aNullableString = __pigeon_list.get(14);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = list.get(15);
+      Object aNullableObject = __pigeon_list.get(15);
       pigeonResult.setANullableObject(aNullableObject);
       return pigeonResult;
     }
@@ -1334,31 +1332,21 @@ public class CoreTests {
     @NonNull
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<Object>(3);
-      toListResult.add((allNullableTypes == null) ? null : allNullableTypes.toList());
-      toListResult.add(
-          (allNullableTypesWithoutRecursion == null)
-              ? null
-              : allNullableTypesWithoutRecursion.toList());
-      toListResult.add((allTypes == null) ? null : allTypes.toList());
+      toListResult.add(allNullableTypes);
+      toListResult.add(allNullableTypesWithoutRecursion);
+      toListResult.add(allTypes);
       return toListResult;
     }
 
-    static @NonNull AllClassesWrapper fromList(@NonNull ArrayList<Object> list) {
+    static @NonNull AllClassesWrapper fromList(@NonNull ArrayList<Object> __pigeon_list) {
       AllClassesWrapper pigeonResult = new AllClassesWrapper();
-      Object allNullableTypes = list.get(0);
-      pigeonResult.setAllNullableTypes(
-          (allNullableTypes == null)
-              ? null
-              : AllNullableTypes.fromList((ArrayList<Object>) allNullableTypes));
-      Object allNullableTypesWithoutRecursion = list.get(1);
+      Object allNullableTypes = __pigeon_list.get(0);
+      pigeonResult.setAllNullableTypes((AllNullableTypes) allNullableTypes);
+      Object allNullableTypesWithoutRecursion = __pigeon_list.get(1);
       pigeonResult.setAllNullableTypesWithoutRecursion(
-          (allNullableTypesWithoutRecursion == null)
-              ? null
-              : AllNullableTypesWithoutRecursion.fromList(
-                  (ArrayList<Object>) allNullableTypesWithoutRecursion));
-      Object allTypes = list.get(2);
-      pigeonResult.setAllTypes(
-          (allTypes == null) ? null : AllTypes.fromList((ArrayList<Object>) allTypes));
+          (AllNullableTypesWithoutRecursion) allNullableTypesWithoutRecursion);
+      Object allTypes = __pigeon_list.get(2);
+      pigeonResult.setAllTypes((AllTypes) allTypes);
       return pigeonResult;
     }
   }
@@ -1403,9 +1391,9 @@ public class CoreTests {
       return toListResult;
     }
 
-    static @NonNull TestMessage fromList(@NonNull ArrayList<Object> list) {
+    static @NonNull TestMessage fromList(@NonNull ArrayList<Object> __pigeon_list) {
       TestMessage pigeonResult = new TestMessage();
-      Object testList = list.get(0);
+      Object testList = __pigeon_list.get(0);
       pigeonResult.setTestList((List<Object>) testList);
       return pigeonResult;
     }

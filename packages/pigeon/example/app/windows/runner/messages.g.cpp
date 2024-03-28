@@ -87,14 +87,14 @@ EncodableList MessageData::ToEncodableList() const {
   return list;
 }
 
-MessageData MessageData::FromEncodableList(const EncodableList& list) {
-  MessageData decoded((Code)(std::get<int32_t>(list[2])),
-                      std::get<EncodableMap>(list[3]));
-  auto& encodable_name = list[0];
+MessageData MessageData::FromEncodableList(const EncodableList& __pigeon_list) {
+  MessageData decoded((Code)(std::get<int32_t>(__pigeon_list[2])),
+                      std::get<EncodableMap>(__pigeon_list[3]));
+  auto& encodable_name = __pigeon_list[0];
   if (!encodable_name.IsNull()) {
     decoded.set_name(std::get<std::string>(encodable_name));
   }
-  auto& encodable_description = list[1];
+  auto& encodable_description = __pigeon_list[1];
   if (!encodable_description.IsNull()) {
     decoded.set_description(std::get<std::string>(encodable_description));
   }
