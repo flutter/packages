@@ -156,7 +156,6 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
-                '--allow-warnings',
                 '--use-modular-headers',
                 '--use-libraries'
               ],
@@ -172,7 +171,6 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
-                '--allow-warnings',
                 '--use-modular-headers',
               ],
               packagesDir.path),
@@ -214,7 +212,6 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
-                '--allow-warnings',
                 '--use-modular-headers',
                 '--use-libraries'
               ],
@@ -230,7 +227,6 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
-                '--allow-warnings',
                 '--use-modular-headers',
               ],
               packagesDir.path),
