@@ -1,3 +1,6 @@
+## 0.3.3
+* Replaces deprecated ProrationMode in Android's billing client with ReplacementMode
+
 ## 0.3.2
 
 * Adds UserChoiceBilling APIs to platform addition.

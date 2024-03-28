@@ -814,7 +814,7 @@ void main() {
             oldPurchaseDetails: GooglePlayPurchaseDetails.fromPurchase(
                     dummyUnacknowledgedPurchase)
                 .first,
-            prorationMode: ProrationMode.deferred,
+            replacementMode: ReplacementMode.deferred,
           ));
       await iapAndroidPlatform.buyNonConsumable(purchaseParam: purchaseParam);
 

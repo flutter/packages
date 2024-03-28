@@ -5,6 +5,10 @@
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
 
+## 3.1.14
+
+* Replaces deprecated ProrationMode in Android's billing client with ReplacementMode
+
 ## 3.1.13
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.
