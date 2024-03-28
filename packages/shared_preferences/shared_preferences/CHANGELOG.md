@@ -1,10 +1,11 @@
-## NEXT
+## 2.2.3
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates minimum iOS implementation version to include a privacy manifest.
 
 ## 2.2.2
 
