@@ -151,7 +151,6 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       podspecPath,
       '--configuration=Debug', // Release targets unsupported arm64 simulators. Use Debug to only build against targeted x86_64 simulator devices.
       '--skip-tests',
-      '--allow-warnings',
       '--use-modular-headers', // Flutter sets use_modular_headers! in its templates.
       if (libraryLint) '--use-libraries'
     ];
