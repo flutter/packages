@@ -96,16 +96,21 @@ class EnumApi2Host {
   /// Constructor for [EnumApi2Host].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  EnumApi2Host({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  EnumApi2Host(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _EnumApi2HostCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   /// This comment is to test method documentation comments.
   Future<DataWithEnum> echo(DataWithEnum data) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -164,11 +169,17 @@ abstract class EnumApi2Flutter {
   /// This comment is to test method documentation comments.
   DataWithEnum echo(DataWithEnum data);
 
-  static void setup(EnumApi2Flutter? api, {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    EnumApi2Flutter? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo',
+          'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
