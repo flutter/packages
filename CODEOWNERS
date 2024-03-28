@@ -23,7 +23,6 @@ packages/google_identity_services_web/**                 @ditman
 packages/google_maps_flutter/**                          @stuartmorgan
 packages/google_sign_in/**                               @stuartmorgan
 packages/image_picker/**                                 @tarrinneal
-packages/interactive_media_ads/**                        @bparrishMines
 packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan
 packages/metrics_center/**                               @keyonghan
