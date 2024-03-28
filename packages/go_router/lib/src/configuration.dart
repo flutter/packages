@@ -394,14 +394,13 @@ class RouteConfiguration {
           return prevMatchList;
         }
 
-        final List<RouteMatch> routeMatches = <RouteMatch>[];
+        final List<RouteMatchBase> routeMatches = <RouteMatchBase>[];
         prevMatchList.visitRouteMatches((RouteMatchBase match) {
-          if (match is RouteMatch) {
+          if (match.route.redirect != null) {
             routeMatches.add(match);
           }
           return true;
         });
-
         final FutureOr<String?> routeLevelRedirectResult =
             _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
 
@@ -434,18 +433,18 @@ class RouteConfiguration {
   FutureOr<String?> _getRouteLevelRedirect(
     BuildContext context,
     RouteMatchList matchList,
-    List<RouteMatch> routeMatches,
+    List<RouteMatchBase> routeMatches,
     int currentCheckIndex,
   ) {
     if (currentCheckIndex >= routeMatches.length) {
       return null;
     }
-    final RouteMatch match = routeMatches[currentCheckIndex];
+    final RouteMatchBase match = routeMatches[currentCheckIndex];
     FutureOr<String?> processRouteRedirect(String? newLocation) =>
         newLocation ??
         _getRouteLevelRedirect(
             context, matchList, routeMatches, currentCheckIndex + 1);
-    final GoRoute route = match.route;
+    final RouteBase route = match.route;
     FutureOr<String?> routeRedirectResult;
     if (route.redirect != null) {
       routeRedirectResult = route.redirect!(
