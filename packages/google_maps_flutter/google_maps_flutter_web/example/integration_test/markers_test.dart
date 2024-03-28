@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+import 'package:google_maps_flutter_web/src/marker_clustering.dart';
 // ignore: implementation_imports
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:http/http.dart' as http;
@@ -25,12 +26,17 @@ void main() {
   group('MarkersController', () {
     late StreamController<MapEvent<Object?>> events;
     late MarkersController controller;
+    late ClusterManagersController clusterManagersController;
     late gmaps.GMap map;
 
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
-      controller = MarkersController(stream: events);
+
+      clusterManagersController = ClusterManagersController(stream: events);
+      controller = MarkersController(
+          stream: events, clusterManagersController: clusterManagersController);
       map = gmaps.GMap(createDivElement());
+      clusterManagersController.bindToMap(123, map);
       controller.bindToMap(123, map);
     });
 

@@ -361,9 +361,9 @@ void main() {
       });
 
       testWidgets('isMarkerInfoWindowShown', (WidgetTester tester) async {
-        when(controller.isInfoWindowShown(any)).thenReturn(true);
-
         const MarkerId markerId = MarkerId('testing-123');
+
+        when(controller.isInfoWindowShown(markerId)).thenReturn(true);
 
         await plugin.isMarkerInfoWindowShown(markerId, mapId: mapId);
 
