@@ -485,7 +485,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     bool reachedColumnEnd() {
       if (_columnsAreInfinite) {
         if (_columnNullTerminatedIndex != null) {
-          _lastNonPinnedColumn ??= _columnMetrics.length - 1;
           return true;
         }
         if (toColumnIndex != null) {
@@ -513,6 +512,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         // We have reached the end of columns based on a null termination. This
         // This happens when a column count has not been specified.
         assert(_columnsAreInfinite);
+        _lastNonPinnedColumn ??= column - 1;
         _columnNullTerminatedIndex = column;
         final bool acceptedDimension = _updateHorizontalScrollBounds();
         if (!acceptedDimension) {
@@ -586,7 +586,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     bool reachedRowEnd() {
       if (_rowsAreInfinite) {
         if (_rowNullTerminatedIndex != null) {
-          _lastNonPinnedRow ??= _rowMetrics.length - 1;
           return true;
         }
         if (toRowIndex != null) {
@@ -615,6 +614,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         // This happens when a row count has not been specified, but we have
         // reached the end.
         assert(_rowsAreInfinite);
+        _lastNonPinnedRow ??= row - 1;
         _rowNullTerminatedIndex = row;
         final bool acceptedDimension = _updateVerticalScrollBounds();
         if (!acceptedDimension) {
