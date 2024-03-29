@@ -37,7 +37,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// The [buildColumn] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
   /// particular column. If null, the table will have an infinite number of
-  /// columns.
+  /// columns, unless [buildColumn] returns null to signify the end.
   ///
   /// The value returned by this getter may be an estimate of the total
   /// available columns, but [buildColumn] method must provide a valid
@@ -58,7 +58,8 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// The [buildRow] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
-  /// particular row. If null, the table will have an infinite number of rows.
+  /// particular row. If null, the table will have an infinite number of rows,
+  /// unless [buildColumn] returns null to signify the end.
   ///
   /// The value returned by this getter may be an estimate of the total
   /// available rows, but [buildRow] method must provide a valid
@@ -169,19 +170,11 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
         );
 
   @override
-  int? get columnCount {
-    return switch (maxXIndex) {
-      null => maxXIndex,
-      _ => maxXIndex! + 1,
-    };
-  }
+  int? get columnCount => maxXIndex == null ? null : maxXIndex! + 1;
 
   set columnCount(int? value) {
     assert(value == null || pinnedColumnCount <= value);
-    maxXIndex = switch (value) {
-      null => value,
-      _ => value - 1,
-    };
+    maxXIndex = value == null ? null : value - 1;
   }
 
   /// Builds the [TableSpan] that describes the column at the provided index.
@@ -208,19 +201,11 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   }
 
   @override
-  int? get rowCount {
-    return switch (maxYIndex) {
-      null => maxYIndex,
-      _ => maxYIndex! + 1,
-    };
-  }
+  int? get rowCount  => maxYIndex == null ? null : maxYIndex! + 1;
 
   set rowCount(int? value) {
     assert(value == null || pinnedRowCount <= value);
-    maxYIndex = switch (value) {
-      null => value,
-      _ => value - 1,
-    };
+    maxYIndex = value == null ? null : value - 1;
   }
 
   /// Builds the [TableSpan] that describes the row at the provided index.

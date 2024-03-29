@@ -1067,6 +1067,256 @@ void main() {
         expect(find.text('R8:C0'), findsNothing);
       });
 
+      testWidgets('Null terminated rows will update',
+          (WidgetTester tester) async {
+        await tester.pumpWidget(MaterialApp(
+          home: getTableView(
+            columnCount: 10,
+            rowBuilder: (int index) {
+              // There will only be 8 rows.
+              if (index == 8) {
+                return null;
+              }
+              return largeSpan;
+            },
+          ),
+        ));
+        await tester.pumpAndSettle();
+        // Change the vertical scroll offset, validate more rows were populated.
+        // This exceeds the bounds of the scroll view once the rows have been
+        // null terminated.
+        verticalController.jumpTo(1200.0);
+        await tester.pumpAndSettle();
+        // Position was corrected.
+        expect(verticalController.position.pixels, 1000.0);
+        expect(horizontalController.position.pixels, 0.0);
+        // Max scroll extent was updated to reflect reaching the end of the rows
+        // after returning null.
+        expect(verticalController.position.maxScrollExtent, 1000.0);
+        expect(horizontalController.position.maxScrollExtent, 1200.0);
+        expect(find.text('R5:C0'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R5:C0')),
+          const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0),
+        );
+        expect(find.text('R7:C4'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R7:C4')),
+          const Rect.fromLTRB(800.0, 400.0, 1000.0, 600.0),
+        );
+        // No rows laid out before row 5, or after row 7.
+        expect(find.text('R0:C0'), findsNothing);
+        expect(find.text('R8:C0'), findsNothing);
+
+        // Increase the number of rows
+        await tester.pumpWidget(MaterialApp(
+          home: getTableView(
+            columnCount: 10,
+            rowBuilder: (int index) {
+              // There will only be 16 rows.
+              if (index == 16) {
+                return null;
+              }
+              return largeSpan;
+            },
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        // The position should not have changed.
+        expect(verticalController.position.pixels, 1000.0);
+        expect(horizontalController.position.pixels, 0.0);
+        // Max scroll extent was updated to reflect we no longer know where the
+        // end is, until the rowBuilder returns null again.
+        expect(verticalController.position.maxScrollExtent, double.infinity);
+        expect(horizontalController.position.maxScrollExtent, 1200.0);
+        // The layout should not have changed.
+        expect(find.text('R5:C0'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R5:C0')),
+          const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0),
+        );
+        expect(find.text('R7:C4'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R7:C4')),
+          const Rect.fromLTRB(800.0, 400.0, 1000.0, 600.0),
+        );
+        // No rows laid out before row 5, but more rows were laid out into the
+        // newly updated cacheExtent (row 8).
+        expect(find.text('R0:C0'), findsNothing);
+        expect(find.text('R8:C0'), findsOneWidget);
+        // This exceeds the new bounds.
+        verticalController.jumpTo(3200.0);
+        await tester.pumpAndSettle();
+        // Position was corrected.
+        expect(verticalController.position.pixels, 2600.0);
+        expect(horizontalController.position.pixels, 0.0);
+        // Max scroll extent was updated to reflect reaching the end of the rows
+        // after returning null again at the new index.
+        expect(verticalController.position.maxScrollExtent, 2600.0);
+        expect(horizontalController.position.maxScrollExtent, 1200.0);
+
+        // Decrease the number of rows
+        await tester.pumpWidget(MaterialApp(
+          home: getTableView(
+            columnCount: 10,
+            rowBuilder: (int index) {
+              // There will only be 5 rows.
+              if (index == 5) {
+                return null;
+              }
+              return largeSpan;
+            },
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        // The position should have changed.
+        expect(verticalController.position.pixels, 400.0);
+        expect(horizontalController.position.pixels, 0.0);
+        // Max scroll extent was updated to the new end we have corrected to.
+        expect(verticalController.position.maxScrollExtent, 400.0);
+        expect(horizontalController.position.maxScrollExtent, 1200.0);
+        // The layout updated.
+        expect(find.text('R2:C0'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R2:C0')),
+          const Rect.fromLTRB(0.0, 0.0, 200.0, 200.0),
+        );
+        expect(find.text('R4:C4'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R4:C4')),
+          const Rect.fromLTRB(800.0, 400.0, 1000.0, 600.0),
+        );
+        // No rows laid out after row 5.
+        expect(find.text('R5:C0'), findsNothing);
+      });
+
+      testWidgets('Null terminated columns will update',
+          (WidgetTester tester) async {
+        await tester.pumpWidget(MaterialApp(
+          home: getTableView(
+            rowCount: 10,
+            columnBuilder: (int index) {
+              // There will only be 8 columns.
+              if (index == 8) {
+                return null;
+              }
+              return largeSpan;
+            },
+          ),
+        ));
+        await tester.pumpAndSettle();
+        // Change the horizontal scroll offset, validate more columns were
+        // populated. This exceeds the bounds of the scroll view once the
+        // columns have been null terminated.
+        horizontalController.jumpTo(1400.0);
+        await tester.pumpAndSettle();
+        // Position was corrected.
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 800.0);
+        // Max scroll extent was updated to reflect reaching the end of the
+        // columns after returning null.
+        expect(verticalController.position.maxScrollExtent, 1400.0);
+        expect(horizontalController.position.maxScrollExtent, 800.0);
+        expect(find.text('R0:C5'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R0:C5')),
+          const Rect.fromLTRB(200.0, 0.0, 400.0, 200.0),
+        );
+        expect(find.text('R4:C7'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R4:C7')),
+          const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
+        );
+        // No columns laid out before column 3, or after column 7.
+        expect(find.text('R0:C2'), findsNothing);
+        expect(find.text('R0:C8'), findsNothing);
+
+        // Increase the number of rows
+        await tester.pumpWidget(MaterialApp(
+          home: getTableView(
+            rowCount: 10,
+            columnBuilder: (int index) {
+              // There will only be 16 column.
+              if (index == 16) {
+                return null;
+              }
+              return largeSpan;
+            },
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        // The position should not have changed.
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 800.0);
+        // Max scroll extent was updated to reflect we no longer know where the
+        // end is, until the rowBuilder returns null again.
+        expect(verticalController.position.maxScrollExtent, 1400.0);
+        expect(horizontalController.position.maxScrollExtent, double.infinity);
+        // The layout should not have changed.
+        expect(find.text('R0:C5'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R0:C5')),
+          const Rect.fromLTRB(200.0, 0.0, 400.0, 200.0),
+        );
+        expect(find.text('R4:C7'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R4:C7')),
+          const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
+        );
+        // No columns laid out before column 3, but after column 7 we have added
+        // new columns.
+        expect(find.text('R0:C2'), findsNothing);
+        expect(find.text('R0:C8'), findsOneWidget);
+        // This exceeds the new bounds.
+        horizontalController.jumpTo(3200.0);
+        await tester.pumpAndSettle();
+        // Position was corrected.
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 2400.0);
+        // Max scroll extent was updated to reflect reaching the end of the
+        // columns after returning null again at the new index.
+        expect(verticalController.position.maxScrollExtent, 1400.0);
+        expect(horizontalController.position.maxScrollExtent, 2400.0);
+
+        // Decrease the number of columns
+        await tester.pumpWidget(MaterialApp(
+          home: getTableView(
+            rowCount: 10,
+            columnBuilder: (int index) {
+              // There will only be 5 columns.
+              if (index == 5) {
+                return null;
+              }
+              return largeSpan;
+            },
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        // The position should have changed.
+        expect(verticalController.position.pixels, 0.0);
+        expect(horizontalController.position.pixels, 200.0);
+        // Max scroll extent was updated to the new end we have corrected to.
+        expect(verticalController.position.maxScrollExtent, 1400.0);
+        expect(horizontalController.position.maxScrollExtent, 200.0);
+        // The layout updated.
+        expect(find.text('R0:C2'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R0:C2')),
+          const Rect.fromLTRB(200.0, 0.0, 400.0, 200.0),
+        );
+        expect(find.text('R4:C4'), findsOneWidget);
+        expect(
+          tester.getRect(find.text('R4:C4')),
+          const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
+        );
+        // No columns laid out after column 5.
+        expect(find.text('R0:C5'), findsNothing);
+      });
+
       testWidgets('infinite columns can null terminate',
           (WidgetTester tester) async {
         // Nothing pinned ---
