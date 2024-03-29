@@ -777,6 +777,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           _makeInstanceVariableName(field),
           field.type,
           hostDatatype,
+          true,
         );
         indent.writeln('list.push_back($encodableValue);');
       }
@@ -923,6 +924,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                 param.name,
                 param.originalType,
                 param.hostType,
+                false,
               );
               indent.writeln('$encodedArgument,');
             }
@@ -1398,22 +1400,19 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
 
   /// Returns the expression to create an EncodableValue from a host API argument
   /// with the given [variableName] and types.
-  ///
-  /// If [preSerializeClasses] is true, custom classes will be returned as
-  /// encodable lists rather than CustomEncodableValues; see
-  /// https://github.com/flutter/flutter/issues/119351 for why this is currently
-  /// needed.
   String _wrappedHostApiArgumentExpression(
     Root root,
     String variableName,
     TypeDeclaration dartType,
     HostDatatype hostType,
+    bool isNestedClass,
   ) {
     final String encodableValue;
     if (!hostType.isBuiltin &&
         root.classes.any((Class c) => c.name == dartType.baseName)) {
-      final String nonNullValue =
-          hostType.isNullable ? '*$variableName' : variableName;
+      final String nonNullValue = hostType.isNullable || isNestedClass
+          ? '*$variableName'
+          : variableName;
       encodableValue = 'CustomEncodableValue($nonNullValue)';
     } else if (!hostType.isBuiltin &&
         root.enums.any((Enum e) => e.name == dartType.baseName)) {
