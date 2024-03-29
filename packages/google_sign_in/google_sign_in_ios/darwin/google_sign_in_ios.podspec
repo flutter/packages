@@ -22,5 +22,10 @@ Enables Google Sign-In in Flutter apps.
   s.ios.deployment_target = '12.0'
   s.osx.deployment_target = '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+
+  # google_sign_in_ios does not contain Swift files. GoogleSignIn has a dependency on
+  # Swift pod GTMAppAuth. When built statically, there is a "pod lib lint" error unless
+  # swift_version is set.
+  s.swift_version = '5.0'
   s.resource_bundles = {'google_sign_in_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
