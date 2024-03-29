@@ -1,3 +1,18 @@
+## 0.6.1
+
+* Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios supported by CameraX.
+* Adds `ResolutionFilter` to resolution selection logic to prioritize resolutions that match
+  the defined `ResolutionPreset`s.
+
+## 0.6.0+1
+
+* Updates `README.md` to encourage developers to opt into this implementation of the camera plugin.
+
+## 0.6.0
+
+* Implements `setFocusMode`, which makes this plugin reach feature parity with camera_android.
+* Fixes `setExposureCompensationIndex` return value to use index returned by CameraX.
+
 ## 0.5.0+36
 
 * Implements `setExposureMode`.

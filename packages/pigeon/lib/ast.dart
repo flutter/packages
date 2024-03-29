@@ -177,6 +177,133 @@ class AstProxyApi extends Api {
         (ApiField field) => !field.isAttached,
       );
 
+  /// A list of AstProxyApis where each `extends` the API that follows it.
+  ///
+  /// Returns an empty list if this api does not extend a ProxyApi.
+  ///
+  /// This method assumes the super classes of each ProxyApi doesn't create a
+  /// loop. Throws a [ArgumentError] if a loop is found.
+  ///
+  /// This method also assumes that all super classes are ProxyApis. Otherwise,
+  /// throws an [ArgumentError].
+  Iterable<AstProxyApi> allSuperClasses() {
+    final List<AstProxyApi> superClassChain = <AstProxyApi>[];
+
+    if (superClass != null && !superClass!.isProxyApi) {
+      throw ArgumentError(
+        'Could not find a ProxyApi for super class: ${superClass!.baseName}',
+      );
+    }
+
+    AstProxyApi? currentProxyApi = superClass?.associatedProxyApi;
+    while (currentProxyApi != null) {
+      if (superClassChain.contains(currentProxyApi)) {
+        throw ArgumentError(
+          'Loop found when processing super classes for a ProxyApi: '
+          '$name, ${superClassChain.map((AstProxyApi api) => api.name)}',
+        );
+      }
+
+      superClassChain.add(currentProxyApi);
+
+      if (currentProxyApi.superClass != null &&
+          !currentProxyApi.superClass!.isProxyApi) {
+        throw ArgumentError(
+          'Could not find a ProxyApi for super class: '
+          '${currentProxyApi.superClass!.baseName}',
+        );
+      }
+
+      currentProxyApi = currentProxyApi.superClass?.associatedProxyApi;
+    }
+
+    return superClassChain;
+  }
+
+  /// All ProxyApis this API `implements` and all the interfaces those APIs
+  /// `implements`.
+  Iterable<AstProxyApi> apisOfInterfaces() => _recursiveFindAllInterfaceApis();
+
+  /// All methods inherited from interfaces and the interfaces of interfaces.
+  Iterable<Method> flutterMethodsFromInterfaces() sync* {
+    for (final AstProxyApi proxyApi in apisOfInterfaces()) {
+      yield* proxyApi.methods;
+    }
+  }
+
+  /// A list of Flutter methods inherited from the ProxyApi that this ProxyApi
+  /// `extends`.
+  ///
+  /// This also recursively checks the ProxyApi that the super class `extends`
+  /// and so on.
+  ///
+  /// This also includes methods that super classes inherited from interfaces
+  /// with `implements`.
+  Iterable<Method> flutterMethodsFromSuperClasses() sync* {
+    for (final AstProxyApi proxyApi in allSuperClasses().toList().reversed) {
+      yield* proxyApi.flutterMethods;
+    }
+    if (superClass != null) {
+      final Set<AstProxyApi> interfaceApisFromSuperClasses =
+          superClass!.associatedProxyApi!._recursiveFindAllInterfaceApis();
+      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
+        yield* proxyApi.methods;
+      }
+    }
+  }
+
+  /// Whether the api has a method that callbacks to Dart to add a new instance
+  /// to the InstanceManager.
+  ///
+  /// This is possible as long as no callback methods are required to
+  /// instantiate the class.
+  bool hasCallbackConstructor() {
+    return flutterMethods
+        .followedBy(flutterMethodsFromSuperClasses())
+        .followedBy(flutterMethodsFromInterfaces())
+        .every((Method method) => !method.isRequired);
+  }
+
+  // Recursively search for all the interfaces apis from a list of names of
+  // interfaces.
+  //
+  // This method assumes that all interfaces are ProxyApis and an api doesn't
+  // contains itself as an interface. Otherwise, throws an [ArgumentError].
+  Set<AstProxyApi> _recursiveFindAllInterfaceApis([
+    Set<AstProxyApi> seenApis = const <AstProxyApi>{},
+  ]) {
+    final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
+
+    allInterfaces.addAll(
+      interfaces.map(
+        (TypeDeclaration type) {
+          if (!type.isProxyApi) {
+            throw ArgumentError(
+              'Could not find a valid ProxyApi for an interface: $type',
+            );
+          } else if (seenApis.contains(type.associatedProxyApi)) {
+            throw ArgumentError(
+              'A ProxyApi cannot be a super class of itself: ${type.baseName}',
+            );
+          }
+          return type.associatedProxyApi!;
+        },
+      ),
+    );
+
+    // Adds the current api since it would be invalid for it to be an interface
+    // of itself.
+    final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, this};
+
+    for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
+      allInterfaces.addAll(
+        interfaceApi._recursiveFindAllInterfaceApis(newSeenApis),
+      );
+    }
+
+    return allInterfaces;
+  }
+
   @override
   String toString() {
     return '(ProxyApi name:$name methods:$methods field:$fields '
@@ -512,6 +639,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.isSwiftClass = false,
     this.documentationComments = const <String>[],
   });
 
@@ -520,6 +648,12 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<NamedType> fields;
+
+  /// Determines whether the defined class should be represented as a struct or
+  /// a class in Swift generation.
+  ///
+  /// Defaults to false, which would represent a struct.
+  bool isSwiftClass;
 
   /// List of documentation comments, separated by line.
   ///
