@@ -64,7 +64,7 @@ data class AllTypes(
     val a4ByteArray: IntArray,
     val a8ByteArray: LongArray,
     val aFloatArray: DoubleArray,
-    val aList: List<Any?>,
+    val list: List<Any?>,
     val aMap: Map<Any, Any?>,
     val anEnum: AnEnum,
     val aString: String,
@@ -80,7 +80,7 @@ data class AllTypes(
       val a4ByteArray = __pigeon_list[5] as IntArray
       val a8ByteArray = __pigeon_list[6] as LongArray
       val aFloatArray = __pigeon_list[7] as DoubleArray
-      val aList = __pigeon_list[8] as List<Any?>
+      val list = __pigeon_list[8] as List<Any?>
       val aMap = __pigeon_list[9] as Map<Any, Any?>
       val anEnum = AnEnum.ofRaw(__pigeon_list[10] as Int)!!
       val aString = __pigeon_list[11] as String
@@ -94,7 +94,7 @@ data class AllTypes(
           a4ByteArray,
           a8ByteArray,
           aFloatArray,
-          aList,
+          list,
           aMap,
           anEnum,
           aString,
@@ -112,7 +112,7 @@ data class AllTypes(
         a4ByteArray,
         a8ByteArray,
         aFloatArray,
-        aList,
+        list,
         aMap,
         anEnum.raw,
         aString,
@@ -426,7 +426,7 @@ interface HostIntegrationCoreApi {
   /** Returns the passed in generic Object. */
   fun echoObject(anObject: Any): Any
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoList(aList: List<Any?>): List<Any?>
+  fun echoList(list: List<Any?>): List<Any?>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?>
   /** Returns the passed map to test nested class serialization and deserialization. */
@@ -505,7 +505,7 @@ interface HostIntegrationCoreApi {
   /** Returns the passed in generic Object asynchronously. */
   fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit)
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  fun echoAsyncList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
+  fun echoAsyncList(list: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
@@ -541,7 +541,7 @@ interface HostIntegrationCoreApi {
   /** Returns the passed in generic Object asynchronously. */
   fun echoAsyncNullableObject(anObject: Any?, callback: (Result<Any?>) -> Unit)
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
+  fun echoAsyncNullableList(list: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableMap(
       aMap: Map<String?, Any?>?,
@@ -590,9 +590,9 @@ interface HostIntegrationCoreApi {
 
   fun callFlutterEchoString(aString: String, callback: (Result<String>) -> Unit)
 
-  fun callFlutterEchoUint8List(aList: ByteArray, callback: (Result<ByteArray>) -> Unit)
+  fun callFlutterEchoUint8List(list: ByteArray, callback: (Result<ByteArray>) -> Unit)
 
-  fun callFlutterEchoList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
+  fun callFlutterEchoList(list: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
 
   fun callFlutterEchoMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
 
@@ -606,9 +606,9 @@ interface HostIntegrationCoreApi {
 
   fun callFlutterEchoNullableString(aString: String?, callback: (Result<String?>) -> Unit)
 
-  fun callFlutterEchoNullableUint8List(aList: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
+  fun callFlutterEchoNullableUint8List(list: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
 
-  fun callFlutterEchoNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
+  fun callFlutterEchoNullableList(list: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
 
   fun callFlutterEchoNullableMap(
       aMap: Map<String?, Any?>?,
@@ -870,10 +870,10 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aListArg = args[0] as List<Any?>
+            val listArg = args[0] as List<Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoList(aListArg))
+                  listOf<Any?>(api.echoList(listArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1571,8 +1571,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aListArg = args[0] as List<Any?>
-            api.echoAsyncList(aListArg) { result: Result<List<Any?>> ->
+            val listArg = args[0] as List<Any?>
+            api.echoAsyncList(listArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1926,8 +1926,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aListArg = args[0] as List<Any?>?
-            api.echoAsyncNullableList(aListArg) { result: Result<List<Any?>?> ->
+            val listArg = args[0] as List<Any?>?
+            api.echoAsyncNullableList(listArg) { result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2288,8 +2288,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aListArg = args[0] as ByteArray
-            api.callFlutterEchoUint8List(aListArg) { result: Result<ByteArray> ->
+            val listArg = args[0] as ByteArray
+            api.callFlutterEchoUint8List(listArg) { result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2312,8 +2312,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aListArg = args[0] as List<Any?>
-            api.callFlutterEchoList(aListArg) { result: Result<List<Any?>> ->
+            val listArg = args[0] as List<Any?>
+            api.callFlutterEchoList(listArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2480,8 +2480,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aListArg = args[0] as ByteArray?
-            api.callFlutterEchoNullableUint8List(aListArg) { result: Result<ByteArray?> ->
+            val listArg = args[0] as ByteArray?
+            api.callFlutterEchoNullableUint8List(listArg) { result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2504,8 +2504,8 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aListArg = args[0] as List<Any?>?
-            api.callFlutterEchoNullableList(aListArg) { result: Result<List<Any?>?> ->
+            val listArg = args[0] as List<Any?>?
+            api.callFlutterEchoNullableList(listArg) { result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2920,11 +2920,11 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-  fun echoUint8List(aListArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+  fun echoUint8List(listArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(aListArg)) {
+    channel.send(listOf(listArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -2945,11 +2945,11 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoList(aListArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+  fun echoList(listArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(aListArg)) {
+    channel.send(listOf(listArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -3092,11 +3092,11 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-  fun echoNullableUint8List(aListArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
+  fun echoNullableUint8List(listArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(aListArg)) {
+    channel.send(listOf(listArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -3110,11 +3110,11 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableList(aListArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+  fun echoNullableList(listArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(aListArg)) {
+    channel.send(listOf(listArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))

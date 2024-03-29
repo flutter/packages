@@ -198,17 +198,17 @@ public class CoreTests {
       this.aFloatArray = setterArg;
     }
 
-    private @NonNull List<Object> aList;
+    private @NonNull List<Object> list;
 
-    public @NonNull List<Object> getAList() {
-      return aList;
+    public @NonNull List<Object> getList() {
+      return list;
     }
 
-    public void setAList(@NonNull List<Object> setterArg) {
+    public void setList(@NonNull List<Object> setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"aList\" is null.");
+        throw new IllegalStateException("Nonnull field \"list\" is null.");
       }
-      this.aList = setterArg;
+      this.list = setterArg;
     }
 
     private @NonNull Map<Object, Object> aMap;
@@ -332,11 +332,11 @@ public class CoreTests {
         return this;
       }
 
-      private @Nullable List<Object> aList;
+      private @Nullable List<Object> list;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setAList(@NonNull List<Object> setterArg) {
-        this.aList = setterArg;
+      public @NonNull Builder setList(@NonNull List<Object> setterArg) {
+        this.list = setterArg;
         return this;
       }
 
@@ -382,7 +382,7 @@ public class CoreTests {
         pigeonReturn.setA4ByteArray(a4ByteArray);
         pigeonReturn.setA8ByteArray(a8ByteArray);
         pigeonReturn.setAFloatArray(aFloatArray);
-        pigeonReturn.setAList(aList);
+        pigeonReturn.setList(list);
         pigeonReturn.setAMap(aMap);
         pigeonReturn.setAnEnum(anEnum);
         pigeonReturn.setAString(aString);
@@ -402,7 +402,7 @@ public class CoreTests {
       toListResult.add(a4ByteArray);
       toListResult.add(a8ByteArray);
       toListResult.add(aFloatArray);
-      toListResult.add(aList);
+      toListResult.add(list);
       toListResult.add(aMap);
       toListResult.add(anEnum == null ? null : anEnum.index);
       toListResult.add(aString);
@@ -432,8 +432,8 @@ public class CoreTests {
       pigeonResult.setA8ByteArray((long[]) a8ByteArray);
       Object aFloatArray = __pigeon_list.get(7);
       pigeonResult.setAFloatArray((double[]) aFloatArray);
-      Object aList = __pigeon_list.get(8);
-      pigeonResult.setAList((List<Object>) aList);
+      Object list = __pigeon_list.get(8);
+      pigeonResult.setList((List<Object>) list);
       Object aMap = __pigeon_list.get(9);
       pigeonResult.setAMap((Map<Object, Object>) aMap);
       Object anEnum = __pigeon_list.get(10);
@@ -1512,7 +1512,7 @@ public class CoreTests {
     Object echoObject(@NonNull Object anObject);
     /** Returns the passed list, to test serialization and deserialization. */
     @NonNull
-    List<Object> echoList(@NonNull List<Object> aList);
+    List<Object> echoList(@NonNull List<Object> list);
     /** Returns the passed map, to test serialization and deserialization. */
     @NonNull
     Map<String, Object> echoMap(@NonNull Map<String, Object> aMap);
@@ -1611,7 +1611,7 @@ public class CoreTests {
     /** Returns the passed in generic Object asynchronously. */
     void echoAsyncObject(@NonNull Object anObject, @NonNull Result<Object> result);
     /** Returns the passed list, to test asynchronous serialization and deserialization. */
-    void echoAsyncList(@NonNull List<Object> aList, @NonNull Result<List<Object>> result);
+    void echoAsyncList(@NonNull List<Object> list, @NonNull Result<List<Object>> result);
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncMap(
         @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
@@ -1647,7 +1647,7 @@ public class CoreTests {
     void echoAsyncNullableObject(@Nullable Object anObject, @NonNull NullableResult<Object> result);
     /** Returns the passed list, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableList(
-        @Nullable List<Object> aList, @NonNull NullableResult<List<Object>> result);
+        @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result);
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableMap(
         @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
@@ -1689,9 +1689,9 @@ public class CoreTests {
 
     void callFlutterEchoString(@NonNull String aString, @NonNull Result<String> result);
 
-    void callFlutterEchoUint8List(@NonNull byte[] aList, @NonNull Result<byte[]> result);
+    void callFlutterEchoUint8List(@NonNull byte[] list, @NonNull Result<byte[]> result);
 
-    void callFlutterEchoList(@NonNull List<Object> aList, @NonNull Result<List<Object>> result);
+    void callFlutterEchoList(@NonNull List<Object> list, @NonNull Result<List<Object>> result);
 
     void callFlutterEchoMap(
         @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
@@ -1710,10 +1710,10 @@ public class CoreTests {
         @Nullable String aString, @NonNull NullableResult<String> result);
 
     void callFlutterEchoNullableUint8List(
-        @Nullable byte[] aList, @NonNull NullableResult<byte[]> result);
+        @Nullable byte[] list, @NonNull NullableResult<byte[]> result);
 
     void callFlutterEchoNullableList(
-        @Nullable List<Object> aList, @NonNull NullableResult<List<Object>> result);
+        @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result);
 
     void callFlutterEchoNullableMap(
         @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
@@ -2009,9 +2009,9 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                List<Object> aListArg = (List<Object>) args.get(0);
+                List<Object> listArg = (List<Object>) args.get(0);
                 try {
-                  List<Object> output = api.echoList(aListArg);
+                  List<Object> output = api.echoList(listArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -2843,7 +2843,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                List<Object> aListArg = (List<Object>) args.get(0);
+                List<Object> listArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
                       public void success(List<Object> result) {
@@ -2857,7 +2857,7 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncList(aListArg, resultCallback);
+                api.echoAsyncList(listArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3305,7 +3305,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                List<Object> aListArg = (List<Object>) args.get(0);
+                List<Object> listArg = (List<Object>) args.get(0);
                 NullableResult<List<Object>> resultCallback =
                     new NullableResult<List<Object>>() {
                       public void success(List<Object> result) {
@@ -3319,7 +3319,7 @@ public class CoreTests {
                       }
                     };
 
-                api.echoAsyncNullableList(aListArg, resultCallback);
+                api.echoAsyncNullableList(listArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3778,7 +3778,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                byte[] aListArg = (byte[]) args.get(0);
+                byte[] listArg = (byte[]) args.get(0);
                 Result<byte[]> resultCallback =
                     new Result<byte[]>() {
                       public void success(byte[] result) {
@@ -3792,7 +3792,7 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoUint8List(aListArg, resultCallback);
+                api.callFlutterEchoUint8List(listArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3809,7 +3809,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                List<Object> aListArg = (List<Object>) args.get(0);
+                List<Object> listArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
                       public void success(List<Object> result) {
@@ -3823,7 +3823,7 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoList(aListArg, resultCallback);
+                api.callFlutterEchoList(listArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4027,7 +4027,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                byte[] aListArg = (byte[]) args.get(0);
+                byte[] listArg = (byte[]) args.get(0);
                 NullableResult<byte[]> resultCallback =
                     new NullableResult<byte[]>() {
                       public void success(byte[] result) {
@@ -4041,7 +4041,7 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoNullableUint8List(aListArg, resultCallback);
+                api.callFlutterEchoNullableUint8List(listArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4058,7 +4058,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                List<Object> aListArg = (List<Object>) args.get(0);
+                List<Object> listArg = (List<Object>) args.get(0);
                 NullableResult<List<Object>> resultCallback =
                     new NullableResult<List<Object>>() {
                       public void success(List<Object> result) {
@@ -4072,7 +4072,7 @@ public class CoreTests {
                       }
                     };
 
-                api.callFlutterEchoNullableList(aListArg, resultCallback);
+                api.callFlutterEchoNullableList(listArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4598,13 +4598,13 @@ public class CoreTests {
           });
     }
     /** Returns the passed byte list, to test serialization and deserialization. */
-    public void echoUint8List(@NonNull byte[] aListArg, @NonNull Result<byte[]> result) {
+    public void echoUint8List(@NonNull byte[] listArg, @NonNull Result<byte[]> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List";
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          new ArrayList<Object>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
@@ -4631,13 +4631,13 @@ public class CoreTests {
           });
     }
     /** Returns the passed list, to test serialization and deserialization. */
-    public void echoList(@NonNull List<Object> aListArg, @NonNull Result<List<Object>> result) {
+    public void echoList(@NonNull List<Object> listArg, @NonNull Result<List<Object>> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList";
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          new ArrayList<Object>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
@@ -4844,13 +4844,13 @@ public class CoreTests {
     }
     /** Returns the passed byte list, to test serialization and deserialization. */
     public void echoNullableUint8List(
-        @Nullable byte[] aListArg, @NonNull NullableResult<byte[]> result) {
+        @Nullable byte[] listArg, @NonNull NullableResult<byte[]> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List";
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          new ArrayList<Object>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
@@ -4872,13 +4872,13 @@ public class CoreTests {
     }
     /** Returns the passed list, to test serialization and deserialization. */
     public void echoNullableList(
-        @Nullable List<Object> aListArg, @NonNull NullableResult<List<Object>> result) {
+        @Nullable List<Object> listArg, @NonNull NullableResult<List<Object>> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList";
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(aListArg)),
+          new ArrayList<Object>(Collections.singletonList(listArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;

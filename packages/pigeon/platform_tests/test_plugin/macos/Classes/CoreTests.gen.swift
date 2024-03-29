@@ -69,7 +69,7 @@ struct AllTypes {
   var a4ByteArray: FlutterStandardTypedData
   var a8ByteArray: FlutterStandardTypedData
   var aFloatArray: FlutterStandardTypedData
-  var aList: [Any?]
+  var list: [Any?]
   var aMap: [AnyHashable: Any?]
   var anEnum: AnEnum
   var aString: String
@@ -87,7 +87,7 @@ struct AllTypes {
     let a4ByteArray = __pigeon_list[5] as! FlutterStandardTypedData
     let a8ByteArray = __pigeon_list[6] as! FlutterStandardTypedData
     let aFloatArray = __pigeon_list[7] as! FlutterStandardTypedData
-    let aList = __pigeon_list[8] as! [Any?]
+    let list = __pigeon_list[8] as! [Any?]
     let aMap = __pigeon_list[9] as! [AnyHashable: Any?]
     let anEnum = AnEnum(rawValue: __pigeon_list[10] as! Int)!
     let aString = __pigeon_list[11] as! String
@@ -102,7 +102,7 @@ struct AllTypes {
       a4ByteArray: a4ByteArray,
       a8ByteArray: a8ByteArray,
       aFloatArray: aFloatArray,
-      aList: aList,
+      list: list,
       aMap: aMap,
       anEnum: anEnum,
       aString: aString,
@@ -119,7 +119,7 @@ struct AllTypes {
       a4ByteArray,
       a8ByteArray,
       aFloatArray,
-      aList,
+      list,
       aMap,
       anEnum.rawValue,
       aString,
@@ -509,7 +509,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed in generic Object.
   func echo(_ anObject: Any) throws -> Any
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ aList: [Any?]) throws -> [Any?]
+  func echo(_ list: [Any?]) throws -> [Any?]
   /// Returns the passed map, to test serialization and deserialization.
   func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?]
   /// Returns the passed map to test nested class serialization and deserialization.
@@ -580,7 +580,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
+  func echoAsync(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsync(
     _ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
@@ -617,7 +617,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncNullable(_ anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
+  func echoAsyncNullable(_ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncNullable(
     _ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
@@ -645,9 +645,9 @@ protocol HostIntegrationCoreApi {
   func callFlutterEcho(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void)
   func callFlutterEcho(_ aString: String, completion: @escaping (Result<String, Error>) -> Void)
   func callFlutterEcho(
-    _ aList: FlutterStandardTypedData,
+    _ list: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
-  func callFlutterEcho(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
+  func callFlutterEcho(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
   func callFlutterEcho(
     _ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
   func callFlutterEcho(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void)
@@ -659,10 +659,10 @@ protocol HostIntegrationCoreApi {
   func callFlutterEchoNullable(
     _ aString: String?, completion: @escaping (Result<String?, Error>) -> Void)
   func callFlutterEchoNullable(
-    _ aList: FlutterStandardTypedData?,
+    _ list: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   func callFlutterEchoNullable(
-    _ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    _ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   func callFlutterEchoNullable(
     _ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterNullableEcho(
@@ -873,9 +873,9 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! [Any?]
+        let listArg = args[0] as! [Any?]
         do {
-          let result = try api.echo(aListArg)
+          let result = try api.echo(listArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -1470,8 +1470,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! [Any?]
-        api.echoAsync(aListArg) { result in
+        let listArg = args[0] as! [Any?]
+        api.echoAsync(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -1777,8 +1777,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg: [Any?]? = nilOrValue(args[0])
-        api.echoAsyncNullable(aListArg) { result in
+        let listArg: [Any?]? = nilOrValue(args[0])
+        api.echoAsyncNullable(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2084,8 +2084,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! FlutterStandardTypedData
-        api.callFlutterEcho(aListArg) { result in
+        let listArg = args[0] as! FlutterStandardTypedData
+        api.callFlutterEcho(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2104,8 +2104,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! [Any?]
-        api.callFlutterEcho(aListArg) { result in
+        let listArg = args[0] as! [Any?]
+        api.callFlutterEcho(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2245,8 +2245,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg: FlutterStandardTypedData? = nilOrValue(args[0])
-        api.callFlutterEchoNullable(aListArg) { result in
+        let listArg: FlutterStandardTypedData? = nilOrValue(args[0])
+        api.callFlutterEchoNullable(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2265,8 +2265,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg: [Any?]? = nilOrValue(args[0])
-        api.callFlutterEchoNullable(aListArg) { result in
+        let listArg: [Any?]? = nilOrValue(args[0])
+        api.callFlutterEchoNullable(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2424,10 +2424,10 @@ protocol FlutterIntegrationCoreApiProtocol {
   func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
   /// Returns the passed byte list, to test serialization and deserialization.
   func echo(
-    _ aListArg: FlutterStandardTypedData,
+    _ listArg: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, FlutterError>) -> Void)
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ aListArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void)
+  func echo(_ listArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func echo(
     _ aMapArg: [String?: Any?],
@@ -2447,11 +2447,11 @@ protocol FlutterIntegrationCoreApiProtocol {
     _ aStringArg: String?, completion: @escaping (Result<String?, FlutterError>) -> Void)
   /// Returns the passed byte list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: FlutterStandardTypedData?,
+    _ listArg: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, FlutterError>) -> Void)
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void)
+    _ listArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(
     _ aMapArg: [String?: Any?]?,
@@ -2803,14 +2803,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed byte list, to test serialization and deserialization.
   func echo(
-    _ aListArg: FlutterStandardTypedData,
+    _ listArg: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, FlutterError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -2833,12 +2833,12 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ aListArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void) {
+  func echo(_ listArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3020,14 +3020,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed byte list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: FlutterStandardTypedData?,
+    _ listArg: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, FlutterError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3045,13 +3045,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void
+    _ listArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

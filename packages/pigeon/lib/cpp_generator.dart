@@ -812,8 +812,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     _writeFunctionDefinition(indent, 'FromEncodableList',
         scope: classDefinition.name,
         returnType: classDefinition.name,
-        parameters: <String>['const EncodableList& ${varNamePrefix}list'],
-        body: () {
+        parameters: <String>['const EncodableList& list'], body: () {
       const String instanceVariable = 'decoded';
       final Iterable<_IndexedField> indexedFields = indexMap(
           getFieldsInSerializationOrder(classDefinition),
@@ -825,8 +824,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
       // Non-nullable fields must be set via the constructor.
       String constructorArgs = nonNullableFields
-          .map((_IndexedField param) => getValueExpression(
-              param.field, '${varNamePrefix}list[${param.index}]'))
+          .map((_IndexedField param) =>
+              getValueExpression(param.field, 'list[${param.index}]'))
           .join(',\n\t');
       if (constructorArgs.isNotEmpty) {
         constructorArgs = '(\n\t$constructorArgs)';
@@ -842,8 +841,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         final String setterName = _makeSetterName(field);
         final String encodableFieldName =
             '${_encodablePrefix}_${_makeVariableName(field)}';
-        indent.writeln(
-            'auto& $encodableFieldName = ${varNamePrefix}list[${entry.index}];');
+        indent.writeln('auto& $encodableFieldName = list[${entry.index}];');
 
         final String valueExpression =
             getValueExpression(field, encodableFieldName);

@@ -568,15 +568,15 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   }) {
     final String className =
         _className(generatorOptions.prefix, classDefinition.name);
-    indent.write('+ ($className *)fromList:(NSArray *)${varNamePrefix}list ');
+    indent.write('+ ($className *)fromList:(NSArray *)list ');
     indent.addScoped('{', '}', () {
       const String resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
       enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final bool isEnumType = field.type.isEnum;
-        final String valueGetter = _listGetter(
-            '${varNamePrefix}list', field, index, generatorOptions.prefix);
+        final String valueGetter =
+            _listGetter('list', field, index, generatorOptions.prefix);
         final String? primitiveExtractionMethod =
             _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
@@ -595,11 +595,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       indent.writeln('return $resultName;');
     });
 
-    indent.write(
-        '+ (nullable $className *)nullableFromList:(NSArray *)${varNamePrefix}list ');
+    indent.write('+ (nullable $className *)nullableFromList:(NSArray *)list ');
     indent.addScoped('{', '}', () {
-      indent.writeln(
-          'return (${varNamePrefix}list) ? [$className fromList:${varNamePrefix}list] : nil;');
+      indent.writeln('return (list) ? [$className fromList:list] : nil;');
     });
   }
 
@@ -919,9 +917,9 @@ static FlutterError *createConnectionError(NSString *channelName) {
         _className(languageOptions.prefix, classDefinition.name);
     indent.newln();
     indent.writeln('@interface $className ()');
-    indent.writeln('+ ($className *)fromList:(NSArray *)${varNamePrefix}list;');
-    indent.writeln(
-        '+ (nullable $className *)nullableFromList:(NSArray *)${varNamePrefix}list;');
+    indent.writeln('+ ($className *)fromList:(NSArray *)list;');
+    indent
+        .writeln('+ (nullable $className *)nullableFromList:(NSArray *)list;');
     indent.writeln('- (NSArray *)toList;');
     indent.writeln('@end');
   }

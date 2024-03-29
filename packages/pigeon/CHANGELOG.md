@@ -1,3 +1,9 @@
+## 17.3.1
+
+* Fixes double encode/decode of classes.
+* [kotlin] Changes to some code to make it more idiomatic.
+* Removes collision with the word `list`.
+
 ## 17.3.0
 
 * [swift] Adds `@SwiftClass` annotation to allow choice between `struct` and `class` for data classes.

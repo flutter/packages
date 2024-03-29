@@ -27,7 +27,7 @@ internal class AllDatatypesTest : TestCase() {
     assertTrue(firstTypes.a4ByteArray.contentEquals(secondTypes.a4ByteArray))
     assertTrue(firstTypes.a8ByteArray.contentEquals(secondTypes.a8ByteArray))
     assertTrue(firstTypes.aFloatArray.contentEquals(secondTypes.aFloatArray))
-    assertEquals(firstTypes.aList, secondTypes.aList)
+    assertEquals(firstTypes.list, secondTypes.list)
     assertEquals(firstTypes.aMap, secondTypes.aMap)
     assertEquals(firstTypes.anEnum, secondTypes.anEnum)
     assertEquals(firstTypes.anObject, secondTypes.anObject)
