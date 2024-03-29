@@ -59,7 +59,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// The [buildRow] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
   /// particular row. If null, the table will have an infinite number of rows,
-  /// unless [buildColumn] returns null to signify the end.
+  /// unless [buildRow] returns null to signify the end.
   ///
   /// The value returned by this getter may be an estimate of the total
   /// available rows, but [buildRow] method must provide a valid
