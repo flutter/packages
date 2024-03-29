@@ -409,6 +409,11 @@ void main() {
               <String>['precache', '--ios'],
               null,
             ),
+            const ProcessCall(
+              'pod',
+              <String>['repo', 'update'],
+              null,
+            ),
             for (final Directory directory in exampleDirs)
               ProcessCall(
                 'flutter',
@@ -436,6 +441,7 @@ void main() {
                 .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['precache']),
+          FakeProcessInfo(MockProcess(), <String>['repo', 'update']),
           FakeProcessInfo(MockProcess(exitCode: 1),
               <String>['build', 'ios', '--config-only']),
         ];
@@ -516,6 +522,11 @@ void main() {
               <String>['precache', '--macos'],
               null,
             ),
+            const ProcessCall(
+              'pod',
+              <String>['repo', 'update'],
+              null,
+            ),
             for (final Directory directory in exampleDirs)
               ProcessCall(
                 'flutter',
@@ -543,6 +554,7 @@ void main() {
                 .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['precache']),
+          FakeProcessInfo(MockProcess(), <String>['repo', 'update']),
           FakeProcessInfo(MockProcess(exitCode: 1),
               <String>['build', 'macos', '--config-only']),
         ];
