@@ -204,7 +204,13 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
-                result.success(uri.toString());
+                Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
+                try {
+                  String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
+                  result.success(path);
+                } catch (UnsupportedOperationException exception) {
+                  result.error(exception)
+                }
               } else {
                 result.success(null);
               }
