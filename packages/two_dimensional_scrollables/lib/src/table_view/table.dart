@@ -495,7 +495,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         // There are infinite columns, and no target index, compute metrics
         // up to what is visible and in the cache extent, or the index that null
         // terminates.
-        return _lastNonPinnedColumn != null || _columnNullTerminatedIndex != null;
+        return _lastNonPinnedColumn != null ||
+            _columnNullTerminatedIndex != null;
       }
       // Compute all the metrics if the columns are finite.
       return column == delegate.columnCount!;
@@ -655,8 +656,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   void _updateScrollBounds() {
-    final bool acceptedDimension = _updateHorizontalScrollBounds() &&
-        _updateVerticalScrollBounds();
+    final bool acceptedDimension =
+        _updateHorizontalScrollBounds() && _updateVerticalScrollBounds();
     if (!acceptedDimension) {
       _updateFirstAndLastVisibleCell();
     }
@@ -683,7 +684,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       );
     }
     return horizontalOffset.applyContentDimensions(
-            0.0, maxHorizontalScrollExtent,);
+      0.0,
+      maxHorizontalScrollExtent,
+    );
   }
 
   bool _updateVerticalScrollBounds() {
@@ -706,7 +709,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             _pinnedRowsExtent,
       );
     }
-    return verticalOffset.applyContentDimensions(0.0, maxVerticalScrollExtent,);
+    return verticalOffset.applyContentDimensions(
+      0.0,
+      maxVerticalScrollExtent,
+    );
   }
 
   // Uses the cached metrics to update the currently visible cells. If the

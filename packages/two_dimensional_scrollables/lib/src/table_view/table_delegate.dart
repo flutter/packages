@@ -201,7 +201,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   }
 
   @override
-  int? get rowCount  => maxYIndex == null ? null : maxYIndex! + 1;
+  int? get rowCount => maxYIndex == null ? null : maxYIndex! + 1;
 
   set rowCount(int? value) {
     assert(value == null || pinnedRowCount <= value);
