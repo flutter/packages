@@ -477,6 +477,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       startOfRegularColumn =
           _columnMetrics[_lastNonPinnedColumn]?.trailingOffset ?? 0.0;
     }
+    // If we are computing up to a specific index, we are getting info for a
+    // merged cell, do not change the visible cells.
     _firstNonPinnedColumn =
         toColumnIndex == null ? null : _firstNonPinnedColumn;
     _lastNonPinnedColumn = toColumnIndex == null ? null : _lastNonPinnedColumn;
@@ -484,9 +486,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     bool reachedColumnEnd() {
       if (_columnsAreInfinite) {
-        if (_columnNullTerminatedIndex != null) {
-          return true;
-        }
         if (toColumnIndex != null) {
           // Column metrics should be computed up to the provided index.
           // Only relevant when we are filling in missing column metrics in an
@@ -494,8 +493,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           return _columnMetrics.length > toColumnIndex;
         }
         // There are infinite columns, and no target index, compute metrics
-        // up to what is visible and in the cache extent.
-        return _lastNonPinnedColumn != null;
+        // up to what is visible and in the cache extent, or the index that null
+        // terminates.
+        return _lastNonPinnedColumn != null || _columnNullTerminatedIndex != null;
       }
       // Compute all the metrics if the columns are finite.
       return column == delegate.columnCount!;
@@ -579,15 +579,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       startOfPinnedRow = _rowMetrics[_firstNonPinnedRow]?.trailingOffset ?? 0.0;
       startOfRegularRow = _rowMetrics[_lastNonPinnedRow]?.trailingOffset ?? 0.0;
     }
+    // If we are computing up to a specific index, we are getting info for a
+    // merged cell, do not change the visible cells.
     _firstNonPinnedRow = toRowIndex == null ? null : _firstNonPinnedRow;
     _lastNonPinnedRow = toRowIndex == null ? null : _lastNonPinnedRow;
     int row = appendRows ? _rowMetrics.length : 0;
 
     bool reachedRowEnd() {
       if (_rowsAreInfinite) {
-        if (_rowNullTerminatedIndex != null) {
-          return true;
-        }
         if (toRowIndex != null) {
           // Row metrics should be computed up to the provided index.
           // Only relevant when we are filling in missing column metrics in an
@@ -595,8 +594,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           return _rowMetrics.length > toRowIndex;
         }
         // There are infinite row, and no target index, compute metrics
-        // up to what is visible and in the cache extent.
-        return _lastNonPinnedRow != null;
+        // up to what is visible and in the cache extent, or the index that null
+        // terminates.
+        return _lastNonPinnedRow != null || _rowNullTerminatedIndex != null;
       }
       // Compute all the metrics if the rows are finite.
       return row == delegate.rowCount!;
