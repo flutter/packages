@@ -41,42 +41,54 @@ class TableExample extends StatefulWidget {
 }
 
 class _TableExampleState extends State<TableExample> {
-  int counter = 0;
-  int get _columnCount {
-    return switch (counter % 3) {
-      0 => 20,
-      1 => 30,
-      2 => 10,
-      _ => 500,
-    };
-  }
+  late final ScrollController _verticalController = ScrollController();
+  int _rowCount = 20;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Row count $_columnCount'),
+        title: const Text('Table Example'),
       ),
-      body: TableView.builder(
-        cellBuilder: _buildCell,
-        // columnCount: 20,
-        columnBuilder: _buildColumnSpan,
-        // rowCount: _rowCount,
-        rowBuilder: _buildRowSpan,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: TableView.builder(
+          verticalDetails:
+              ScrollableDetails.vertical(controller: _verticalController),
+          cellBuilder: _buildCell,
+          columnCount: 20,
+          columnBuilder: _buildColumnSpan,
+          rowCount: _rowCount,
+          rowBuilder: _buildRowSpan,
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            print('press');
-            counter++;
-          });
-        },
-      ),
+      persistentFooterButtons: <Widget>[
+        TextButton(
+          onPressed: () {
+            _verticalController.jumpTo(0);
+          },
+          child: const Text('Jump to Top'),
+        ),
+        TextButton(
+          onPressed: () {
+            _verticalController
+                .jumpTo(_verticalController.position.maxScrollExtent);
+          },
+          child: const Text('Jump to Bottom'),
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              _rowCount += 10;
+            });
+          },
+          child: const Text('Add 10 Rows'),
+        ),
+      ],
     );
   }
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    print(vicinity);
     return TableViewCell(
       child: Center(
         child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
@@ -84,24 +96,59 @@ class _TableExampleState extends State<TableExample> {
     );
   }
 
-  TableSpan? _buildColumnSpan(int index) {
-    if (index > _columnCount) {
-      return null;
-    }
+  TableSpan _buildColumnSpan(int index) {
     const TableSpanDecoration decoration = TableSpanDecoration(
       border: TableSpanBorder(
         trailing: BorderSide(),
       ),
     );
 
-    return const TableSpan(
+    switch (index % 5) {
+      case 0:
+        return TableSpan(
           foregroundDecoration: decoration,
-          extent: FixedTableSpanExtent(100),
+          extent: const FixedTableSpanExtent(100),
+          onEnter: (_) => print('Entered column $index'),
+          recognizerFactories: <Type, GestureRecognizerFactory>{
+            TapGestureRecognizer:
+                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+              () => TapGestureRecognizer(),
+              (TapGestureRecognizer t) =>
+                  t.onTap = () => print('Tap column $index'),
+            ),
+          },
         );
+      case 1:
+        return TableSpan(
+          foregroundDecoration: decoration,
+          extent: const FractionalTableSpanExtent(0.5),
+          onEnter: (_) => print('Entered column $index'),
+          cursor: SystemMouseCursors.contextMenu,
+        );
+      case 2:
+        return TableSpan(
+          foregroundDecoration: decoration,
+          extent: const FixedTableSpanExtent(120),
+          onEnter: (_) => print('Entered column $index'),
+        );
+      case 3:
+        return TableSpan(
+          foregroundDecoration: decoration,
+          extent: const FixedTableSpanExtent(145),
+          onEnter: (_) => print('Entered column $index'),
+        );
+      case 4:
+        return TableSpan(
+          foregroundDecoration: decoration,
+          extent: const FixedTableSpanExtent(200),
+          onEnter: (_) => print('Entered column $index'),
+        );
+    }
+    throw AssertionError(
+        'This should be unreachable, as every index is accounted for in the switch clauses.');
   }
 
-  TableSpan? _buildRowSpan(int index) {
-
+  TableSpan _buildRowSpan(int index) {
     final TableSpanDecoration decoration = TableSpanDecoration(
       color: index.isEven ? Colors.purple[100] : null,
       border: const TableSpanBorder(
@@ -110,9 +157,34 @@ class _TableExampleState extends State<TableExample> {
         ),
       ),
     );
-    return TableSpan(
+
+    switch (index % 3) {
+      case 0:
+        return TableSpan(
           backgroundDecoration: decoration,
           extent: const FixedTableSpanExtent(50),
+          recognizerFactories: <Type, GestureRecognizerFactory>{
+            TapGestureRecognizer:
+                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+              () => TapGestureRecognizer(),
+              (TapGestureRecognizer t) =>
+                  t.onTap = () => print('Tap row $index'),
+            ),
+          },
         );
+      case 1:
+        return TableSpan(
+          backgroundDecoration: decoration,
+          extent: const FixedTableSpanExtent(65),
+          cursor: SystemMouseCursors.click,
+        );
+      case 2:
+        return TableSpan(
+          backgroundDecoration: decoration,
+          extent: const FractionalTableSpanExtent(0.15),
+        );
+    }
+    throw AssertionError(
+        'This should be unreachable, as every index is accounted for in the switch clauses.');
   }
 }
