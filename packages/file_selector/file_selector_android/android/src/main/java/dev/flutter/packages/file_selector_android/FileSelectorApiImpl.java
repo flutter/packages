@@ -341,7 +341,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     return new GeneratedFileSelectorApi.FileResponse.Builder()
         .setName(name)
         .setBytes(bytes)
-        .setPath(uri.toString())
+        .setPath(uri.toString()) // TODO(camsim99): Test getDirectoryPath fix for getting actual path here.
         .setMimeType(contentResolver.getType(uri))
         .setSize(size.longValue())
         .build();
