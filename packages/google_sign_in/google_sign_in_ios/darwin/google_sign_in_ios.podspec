@@ -23,9 +23,10 @@ Enables Google Sign-In in Flutter apps.
   s.osx.deployment_target = '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
-  # google_sign_in_ios does not contain Swift files. GoogleSignIn has a dependency on
-  # Swift pod GTMAppAuth. When built statically, there is a "pod lib lint" error unless
-  # swift_version is set.
+  # google_sign_in_ios does not contain Swift files. For some reason, there
+  # is a "pod lib lint" warning unless swift_version is set. This seems related to
+  # GoogleSignIn depending a Swift pod (GTMAppAuth).
   s.swift_version = '5.0'
+
   s.resource_bundles = {'google_sign_in_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
