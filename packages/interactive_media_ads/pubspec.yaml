@@ -1,0 +1,31 @@
+name: interactive_media_ads
+description: A Flutter plugin for using the Interactive Media Ads SDKs on Android and iOS.
+repository: https://github.com/flutter/packages/tree/main/packages/interactive_media_ads
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+interactive_media_ads%22
+version: 0.0.1
+
+environment:
+  sdk: ^3.2.3
+  flutter: ">=3.16.6"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: dev.flutter.packages.interactive_media_ads
+        pluginClass: InteractiveMediaAdsPlugin
+      ios:
+        pluginClass: InteractiveMediaAdsPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  build_runner: ^2.1.4
+  flutter_test:
+    sdk: flutter
+  mockito: 5.4.4
+
+topics:
+  - ads

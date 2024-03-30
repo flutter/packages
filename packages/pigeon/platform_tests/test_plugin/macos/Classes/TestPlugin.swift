@@ -34,6 +34,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func echo(_ everything: AllNullableTypes?) -> AllNullableTypes? {
     return everything
   }
+  func echo(_ everything: AllNullableTypesWithoutRecursion?) throws
+    -> AllNullableTypesWithoutRecursion?
+  {
+    return everything
+  }
 
   func throwError() throws -> Any? {
     throw FlutterError(code: "code", message: "message", details: "details")
@@ -87,18 +92,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anEnum
   }
 
-  func echoNamedDefault(_ aString: String) throws -> String {
-    return aString
-  }
-
-  func echoOptionalDefault(_ aDouble: Double) throws -> Double {
-    return aDouble
-  }
-
-  func echoRequired(_ anInt: Int64) throws -> Int64 {
-    return anInt
-  }
-
   func extractNestedNullableString(from wrapper: AllClassesWrapper) -> String? {
     return wrapper.allNullableTypes.aNullableString
   }
@@ -111,6 +104,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) -> AllNullableTypes {
     let someThings = AllNullableTypes(
+      aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
+    return someThings
+  }
+
+  func sendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
+  ) throws -> AllNullableTypesWithoutRecursion {
+    let someThings = AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
     return someThings
   }
@@ -137,6 +138,18 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echo(_ aNullableObject: Any?) -> Any? {
     return aNullableObject
+  }
+
+  func echoNamedDefault(_ aString: String) throws -> String {
+    return aString
+  }
+
+  func echoOptionalDefault(_ aDouble: Double) throws -> Double {
+    return aDouble
+  }
+
+  func echoRequired(_ anInt: Int64) throws -> Int64 {
+    return anInt
   }
 
   func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]? {
@@ -182,6 +195,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func echoAsync(
     _ everything: AllNullableTypes?,
     completion: @escaping (Result<AllNullableTypes?, Error>) -> Void
+  ) {
+    completion(.success(everything))
+  }
+
+  func echoAsync(
+    _ everything: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, Error>) -> Void
   ) {
     completion(.success(everything))
   }
@@ -331,6 +351,20 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
+  func callFlutterEcho(
+    _ everything: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullable(everything) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?,
     anInt aNullableInt: Int64?,
@@ -338,6 +372,24 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion: @escaping (Result<AllNullableTypes, Error>) -> Void
   ) {
     flutterAPI.sendMultipleNullableTypes(
+      aBool: aNullableBool,
+      anInt: aNullableInt,
+      aString: aNullableString
+    ) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterSendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion, Error>) -> Void
+  ) {
+    flutterAPI.sendMultipleNullableTypesWithoutRecursion(
       aBool: aNullableBool,
       anInt: aNullableInt,
       aString: aNullableString
