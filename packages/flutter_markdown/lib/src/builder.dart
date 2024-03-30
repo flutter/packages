@@ -612,9 +612,13 @@ class MarkdownBuilder implements md.NodeVisitor {
       return Padding(
         padding: styleSheet.listBulletPadding!,
         child: bulletBuilder!(
-          index,
-          isUnordered ? BulletStyle.unorderedList : BulletStyle.orderedList,
-          _listIndents.length - 1,
+          MarkdownBulletParameters(
+            index: index,
+            style: isUnordered
+                ? BulletStyle.unorderedList
+                : BulletStyle.orderedList,
+            nestLevel: _listIndents.length - 1,
+          ),
         ),
       );
     }

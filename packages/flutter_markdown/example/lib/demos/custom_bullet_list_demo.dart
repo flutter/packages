@@ -69,12 +69,12 @@ class CustomBulletListDemo extends StatelessWidget
       body: SafeArea(
         child: Markdown(
           data: _markdownData,
-          bulletBuilder: (int index, BulletStyle style, int nestLevel) =>
-              FittedBox(
+          bulletBuilder: (MarkdownBulletParameters parameters) => FittedBox(
             fit: BoxFit.scaleDown,
-            child: switch (style) {
+            child: switch (parameters.style) {
               BulletStyle.unorderedList => const Text('・'),
-              BulletStyle.orderedList => Text('$nestLevel-${index + 1}.'),
+              BulletStyle.orderedList =>
+                Text('${parameters.nestLevel}-${parameters.index + 1}.'),
             },
           ),
         ),

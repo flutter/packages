@@ -98,8 +98,8 @@ void defineTests() {
     testWidgets('custom bullet builder', (WidgetTester tester) async {
       const String data =
           '* Item 1\n   * Item 2\n      * Item 3\n   * Item 4\n* Item 5';
-      Widget builder(int index, BulletStyle style, int nestLevel) => Text(
-            '$index ${style == BulletStyle.orderedList ? 'ordered' : 'unordered'} $nestLevel',
+      Widget builder(MarkdownBulletParameters parameters) => Text(
+            '${parameters.index} ${parameters.style == BulletStyle.orderedList ? 'ordered' : 'unordered'} ${parameters.nestLevel}',
           );
 
       await tester.pumpWidget(
@@ -168,8 +168,8 @@ void defineTests() {
     testWidgets('custom bullet builder', (WidgetTester tester) async {
       const String data =
           '1. Item 1\n   1. Item 2\n      1. Item 3\n   1. Item 4\n1. Item 5';
-      Widget builder(int index, BulletStyle style, int nestLevel) => Text(
-            '$index ${style == BulletStyle.orderedList ? 'ordered' : 'unordered'} $nestLevel',
+      Widget builder(MarkdownBulletParameters parameters) => Text(
+            '${parameters.index} ${parameters.style == BulletStyle.orderedList ? 'ordered' : 'unordered'} ${parameters.nestLevel}',
           );
 
       await tester.pumpWidget(
@@ -219,8 +219,8 @@ void defineTests() {
 
     testWidgets('custom bullet builder', (WidgetTester tester) async {
       const String data = '* Item 1\n* Item 2\n1) Item 3\n2) Item 4';
-      Widget builder(int index, BulletStyle style, _) => Text(
-          '$index ${style == BulletStyle.orderedList ? 'ordered' : 'unordered'}');
+      Widget builder(MarkdownBulletParameters parameters) => Text(
+          '${parameters.index} ${parameters.style == BulletStyle.orderedList ? 'ordered' : 'unordered'}');
 
       await tester.pumpWidget(
         boilerplate(
