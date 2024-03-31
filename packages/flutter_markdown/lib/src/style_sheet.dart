@@ -603,7 +603,7 @@ class MarkdownStyleSheet {
   /// The [TableCellVerticalAlignment] to use for `th` and `td` elements.
   final TableCellVerticalAlignment tableVerticalAlignment;
 
-  ///
+  /// The alignment is used as the horizontal alignment for table cells
   final WrapAlignment tableCellsHorizontalAlignment;
 
   /// The padding to use for `blockquote` elements.
