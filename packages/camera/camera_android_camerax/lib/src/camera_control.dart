@@ -56,6 +56,10 @@ class CameraControl extends JavaObject {
   /// Will trigger an auto focus action and enable auto focus/auto exposure/
   /// auto white balance metering regions.
   ///
+  /// Only one [FocusMeteringAction] is allowed to run at a time; if multiple
+  /// are executed in a row, only the latest one will work and other actions
+  /// will be canceled.
+  ///
   /// Returns null if focus and metering could not be started.
   Future<FocusMeteringResult?> startFocusAndMetering(
       FocusMeteringAction action) {
@@ -73,6 +77,10 @@ class CameraControl extends JavaObject {
   /// The exposure compensation value set on the camera must be within the range
   /// of the current [ExposureState]'s `exposureCompensationRange` for the call
   /// to succeed.
+  ///
+  /// Only one [setExposureCompensationIndex] is allowed to run at a time; if
+  /// multiple are executed in a row, only the latest setting will be kept in
+  /// the camera.
   ///
   /// Returns null if the exposure compensation index failed to be set.
   Future<int?> setExposureCompensationIndex(int index) async {
@@ -133,14 +141,21 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
         instanceManager.getIdentifier(instance)!;
     final int actionIdentifier = instanceManager.getIdentifier(action)!;
     try {
-      final int focusMeteringResultId = await startFocusAndMetering(
+      final int? focusMeteringResultId = await startFocusAndMetering(
           cameraControlIdentifier, actionIdentifier);
+      if (focusMeteringResultId == null) {
+        SystemServices.cameraErrorStreamController.add(
+            'Starting focus and metering was canceled due to the camera being closed or a new request being submitted.');
+        return Future<FocusMeteringResult?>.value();
+      }
       return instanceManager.getInstanceWithWeakReference<FocusMeteringResult>(
           focusMeteringResultId);
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController
           .add(e.message ?? 'Starting focus and metering failed.');
-      return Future<FocusMeteringResult?>.value();
+      // Surfacing error to differentiate an operation cancellation from an
+      // illegal argument exception at a plugin layer.
+      rethrow;
     }
   }
 
@@ -158,11 +173,20 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
       CameraControl instance, int index) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
     try {
-      return setExposureCompensationIndex(identifier, index);
+      final int? exposureCompensationIndex =
+          await setExposureCompensationIndex(identifier, index);
+      if (exposureCompensationIndex == null) {
+        SystemServices.cameraErrorStreamController.add(
+            'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.');
+        return Future<int?>.value();
+      }
+      return exposureCompensationIndex;
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController.add(e.message ??
           'Setting the camera exposure compensation index failed.');
-      return Future<int?>.value();
+      // Surfacing error to plugin layer to maintain consistency of
+      // setExposureOffset implementation across platform implementations.
+      rethrow;
     }
   }
 }

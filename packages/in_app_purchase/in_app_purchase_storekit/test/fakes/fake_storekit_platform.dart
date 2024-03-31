@@ -2,12 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-import 'package:in_app_purchase_storekit/src/channel.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
@@ -15,11 +12,6 @@ import '../store_kit_wrappers/sk_test_stub_objects.dart';
 import '../test_api.g.dart';
 
 class FakeStoreKitPlatform implements TestInAppPurchaseApi {
-  FakeStoreKitPlatform() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, onMethodCall);
-  }
-
   // pre-configured store information
   String? receiptData;
   late Set<String> validProductIDs;
@@ -34,6 +26,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   SKError? testRestoredError;
   bool queueIsActive = false;
   Map<String, dynamic> discountReceived = <String, dynamic>{};
+  bool isPaymentQueueDelegateRegistered = false;
 
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
@@ -59,6 +52,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     testRestoredError = null;
     queueIsActive = false;
     discountReceived = <String, dynamic>{};
+    isPaymentQueueDelegateRegistered = false;
   }
 
   SKPaymentTransactionWrapper createPendingTransaction(String id,
@@ -122,116 +116,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         transactionIdentifier: transactionId);
   }
 
-  Future<dynamic> onMethodCall(MethodCall call) {
-    switch (call.method) {
-      case '-[InAppPurchasePlugin startProductRequest:result:]':
-        if (queryProductException != null) {
-          throw queryProductException!;
-        }
-        final List<String> productIDS =
-            List.castFrom<dynamic, String>(call.arguments as List<dynamic>);
-        final List<String> invalidFound = <String>[];
-        final List<SKProductWrapper> products = <SKProductWrapper>[];
-        for (final String productID in productIDS) {
-          if (!validProductIDs.contains(productID)) {
-            invalidFound.add(productID);
-          } else {
-            products.add(validProducts[productID]!);
-          }
-        }
-        final SkProductResponseWrapper response = SkProductResponseWrapper(
-            products: products, invalidProductIdentifiers: invalidFound);
-        return Future<Map<String, dynamic>>.value(
-            buildProductResponseMap(response));
-      case '-[InAppPurchasePlugin restoreTransactions:result:]':
-        if (restoreException != null) {
-          throw restoreException!;
-        }
-        if (testRestoredError != null) {
-          InAppPurchaseStoreKitPlatform.observer
-              .restoreCompletedTransactionsFailed(error: testRestoredError!);
-          return Future<void>.sync(() {});
-        }
-        if (!testRestoredTransactionsNull) {
-          InAppPurchaseStoreKitPlatform.observer
-              .updatedTransactions(transactions: transactionList);
-        }
-        InAppPurchaseStoreKitPlatform.observer
-            .paymentQueueRestoreCompletedTransactionsFinished();
-
-        return Future<void>.sync(() {});
-      case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
-        if (receiptData != null) {
-          return Future<String>.value(receiptData!);
-        } else {
-          throw PlatformException(code: 'no_receipt_data');
-        }
-      case '-[InAppPurchasePlugin refreshReceipt:result:]':
-        receiptData = 'refreshed receipt data';
-        return Future<void>.sync(() {});
-      case '-[InAppPurchasePlugin addPayment:result:]':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        final String id = arguments['productIdentifier']! as String;
-        final int quantity = arguments['quantity']! as int;
-
-        // Keep the received paymentDiscount parameter when testing payment with discount.
-        if (arguments['applicationUsername']! == 'userWithDiscount') {
-          final Map<dynamic, dynamic>? discountArgument =
-              arguments['paymentDiscount'] as Map<dynamic, dynamic>?;
-          if (discountArgument != null) {
-            discountReceived = discountArgument.cast<String, dynamic>();
-          } else {
-            discountReceived = <String, dynamic>{};
-          }
-        }
-
-        final SKPaymentTransactionWrapper transaction =
-            createPendingTransaction(id, quantity: quantity);
-        transactionList.add(transaction);
-        InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
-            transactions: <SKPaymentTransactionWrapper>[transaction]);
-        sleep(const Duration(milliseconds: 30));
-        if (testTransactionFail) {
-          final SKPaymentTransactionWrapper transactionFailed =
-              createFailedTransaction(id, quantity: quantity);
-          InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
-              transactions: <SKPaymentTransactionWrapper>[transactionFailed]);
-        } else if (testTransactionCancel > 0) {
-          final SKPaymentTransactionWrapper transactionCanceled =
-              createCanceledTransaction(id, testTransactionCancel,
-                  quantity: quantity);
-          InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
-              transactions: <SKPaymentTransactionWrapper>[transactionCanceled]);
-        } else {
-          final SKPaymentTransactionWrapper transactionFinished =
-              createPurchasedTransaction(
-                  id, transaction.transactionIdentifier ?? '',
-                  quantity: quantity);
-          InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
-              transactions: <SKPaymentTransactionWrapper>[transactionFinished]);
-        }
-      case '-[InAppPurchasePlugin finishTransaction:result:]':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        finishedTransactions.add(createPurchasedTransaction(
-            arguments['productIdentifier']! as String,
-            arguments['transactionIdentifier']! as String,
-            quantity: transactionList.first.payment.quantity));
-      case '-[SKPaymentQueue startObservingTransactionQueue]':
-        queueIsActive = true;
-      case '-[SKPaymentQueue stopObservingTransactionQueue]':
-        queueIsActive = false;
-    }
-    return Future<void>.sync(() {});
-  }
-
-  /// Returns the arguments of [call] as typed string-keyed Map.
-  ///
-  /// This does not do any type validation, so is only safe to call if the
-  /// arguments are known to be a map.
-  Map<String, Object?> _getArgumentDictionary(MethodCall call) {
-    return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
-  }
-
   @override
   bool canMakePayments() {
     return true;
@@ -287,5 +171,94 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   List<SKPaymentTransactionMessage?> transactions() {
     throw UnimplementedError();
+  }
+
+  @override
+  void finishTransaction(Map<String?, String?> finishMap) {
+    finishedTransactions.add(createPurchasedTransaction(
+        finishMap['productIdentifier']!, finishMap['transactionIdentifier']!,
+        quantity: transactionList.first.payment.quantity));
+  }
+
+  @override
+  void presentCodeRedemptionSheet() {}
+
+  @override
+  void restoreTransactions(String? applicationUserName) {
+    if (restoreException != null) {
+      throw restoreException!;
+    }
+    if (testRestoredError != null) {
+      InAppPurchaseStoreKitPlatform.observer
+          .restoreCompletedTransactionsFailed(error: testRestoredError!);
+      return;
+    }
+    if (!testRestoredTransactionsNull) {
+      InAppPurchaseStoreKitPlatform.observer
+          .updatedTransactions(transactions: transactionList);
+    }
+    InAppPurchaseStoreKitPlatform.observer
+        .paymentQueueRestoreCompletedTransactionsFinished();
+  }
+
+  @override
+  Future<SKProductsResponseMessage> startProductRequest(
+      List<String?> productIdentifiers) {
+    if (queryProductException != null) {
+      throw queryProductException!;
+    }
+    final List<String?> productIDS = productIdentifiers;
+    final List<String> invalidFound = <String>[];
+    final List<SKProductWrapper> products = <SKProductWrapper>[];
+    for (final String? productID in productIDS) {
+      if (!validProductIDs.contains(productID)) {
+        invalidFound.add(productID!);
+      } else {
+        products.add(validProducts[productID]!);
+      }
+    }
+    final SkProductResponseWrapper response = SkProductResponseWrapper(
+        products: products, invalidProductIdentifiers: invalidFound);
+
+    return Future<SKProductsResponseMessage>.value(
+        SkProductResponseWrapper.convertToPigeon(response));
+  }
+
+  @override
+  Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
+    receiptData = 'refreshed receipt data';
+    return Future<void>.sync(() {});
+  }
+
+  @override
+  void registerPaymentQueueDelegate() {
+    isPaymentQueueDelegateRegistered = true;
+  }
+
+  @override
+  void removePaymentQueueDelegate() {
+    isPaymentQueueDelegateRegistered = false;
+  }
+
+  @override
+  String retrieveReceiptData() {
+    if (receiptData != null) {
+      return receiptData!;
+    } else {
+      throw PlatformException(code: 'no_receipt_data');
+    }
+  }
+
+  @override
+  void showPriceConsentIfNeeded() {}
+
+  @override
+  void startObservingPaymentQueue() {
+    queueIsActive = true;
+  }
+
+  @override
+  void stopObservingPaymentQueue() {
+    queueIsActive = false;
   }
 }

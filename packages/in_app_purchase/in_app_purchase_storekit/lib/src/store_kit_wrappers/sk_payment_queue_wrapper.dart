@@ -86,16 +86,16 @@ class SKPaymentQueueWrapper {
   ///
   /// Call this method when the first listener is subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> startObservingTransactionQueue() => channel
-      .invokeMethod<void>('-[SKPaymentQueue startObservingTransactionQueue]');
+  Future<void> startObservingTransactionQueue() =>
+      _hostApi.startObservingPaymentQueue();
 
   /// Instructs the iOS implementation to remove the transaction observer and
   /// stop listening to it.
   ///
   /// Call this when there are no longer any listeners subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> stopObservingTransactionQueue() => channel
-      .invokeMethod<void>('-[SKPaymentQueue stopObservingTransactionQueue]');
+  Future<void> stopObservingTransactionQueue() =>
+      _hostApi.stopObservingPaymentQueue();
 
   /// Sets an implementation of the [SKPaymentQueueDelegateWrapper].
   ///
@@ -109,10 +109,10 @@ class SKPaymentQueueWrapper {
   /// default behaviour will apply (see [documentation](https://developer.apple.com/documentation/storekit/skpaymentqueue/3182429-delegate?language=objc)).
   Future<void> setDelegate(SKPaymentQueueDelegateWrapper? delegate) async {
     if (delegate == null) {
-      await channel.invokeMethod<void>('-[SKPaymentQueue removeDelegate]');
+      await _hostApi.removePaymentQueueDelegate();
       paymentQueueDelegateChannel.setMethodCallHandler(null);
     } else {
-      await channel.invokeMethod<void>('-[SKPaymentQueue registerDelegate]');
+      await _hostApi.registerPaymentQueueDelegate();
       paymentQueueDelegateChannel
           .setMethodCallHandler(handlePaymentQueueDelegateCallbacks);
     }
@@ -161,10 +161,7 @@ class SKPaymentQueueWrapper {
   Future<void> finishTransaction(
       SKPaymentTransactionWrapper transaction) async {
     final Map<String, String?> requestMap = transaction.toFinishMap();
-    await channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin finishTransaction:result:]',
-      requestMap,
-    );
+    await _hostApi.finishTransaction(requestMap);
   }
 
   /// Restore previously purchased transactions.
@@ -188,9 +185,7 @@ class SKPaymentQueueWrapper {
   /// or [`-[SKPayment restoreCompletedTransactionsWithApplicationUsername:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1505992-restorecompletedtransactionswith?language=objc)
   /// depending on whether the `applicationUserName` is set.
   Future<void> restoreTransactions({String? applicationUserName}) async {
-    await channel.invokeMethod<void>(
-        '-[InAppPurchasePlugin restoreTransactions:result:]',
-        applicationUserName);
+    await _hostApi.restoreTransactions(applicationUserName);
   }
 
   /// Present Code Redemption Sheet
@@ -200,8 +195,7 @@ class SKPaymentQueueWrapper {
   /// This method triggers [`-[SKPayment
   /// presentCodeRedemptionSheet]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3566726-presentcoderedemptionsheet?language=objc)
   Future<void> presentCodeRedemptionSheet() async {
-    await channel.invokeMethod<void>(
-        '-[InAppPurchasePlugin presentCodeRedemptionSheet:result:]');
+    await _hostApi.presentCodeRedemptionSheet();
   }
 
   /// Shows the price consent sheet if the user has not yet responded to a
@@ -213,8 +207,7 @@ class SKPaymentQueueWrapper {
   ///
   /// See documentation of StoreKit's [`-[SKPaymentQueue showPriceConsentIfNeeded]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3521327-showpriceconsentifneeded?language=objc).
   Future<void> showPriceConsentIfNeeded() async {
-    await channel
-        .invokeMethod<void>('-[SKPaymentQueue showPriceConsentIfNeeded]');
+    await _hostApi.showPriceConsentIfNeeded();
   }
 
   /// Triage a method channel call from the platform and triggers the correct observer method.
@@ -360,7 +353,7 @@ class SKError {
   ///
   /// Any key of the map must be a valid [NSErrorUserInfoKey](https://developer.apple.com/documentation/foundation/nserroruserinfokey?language=objc).
   @JsonKey(defaultValue: <String, dynamic>{})
-  final Map<String?, Object?> userInfo;
+  final Map<String?, Object?>? userInfo;
 
   @override
   bool operator ==(Object other) {
@@ -386,7 +379,10 @@ class SKError {
 
   /// Converts [SKErrorMessage] into the dart equivalent
   static SKError convertFromPigeon(SKErrorMessage msg) {
-    return SKError(code: msg.code, domain: msg.domain, userInfo: msg.userInfo);
+    return SKError(
+        code: msg.code,
+        domain: msg.domain,
+        userInfo: msg.userInfo ?? <String, Object>{});
   }
 }
 

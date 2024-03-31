@@ -1,7 +1,5 @@
-## 6.3.0
+## NEXT
 
-* Adds support for `BrowserConfiguration`.
-* Implements `showTitle` functionality for Android Custom Tabs.
 * Updates compileSdk version to 34.
 
 ## 6.2.3

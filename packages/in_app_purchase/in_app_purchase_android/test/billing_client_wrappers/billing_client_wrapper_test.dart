@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
@@ -37,7 +39,8 @@ void main() {
       .setMockMethodCallHandler(channel, stubPlatform.fakeMethodCallHandler));
 
   setUp(() {
-    billingClient = BillingClient((PurchasesResultWrapper _) {});
+    billingClient = BillingClient(
+        (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {});
     stubPlatform.reset();
   });
 
@@ -106,7 +109,119 @@ void main() {
       );
       await billingClient.startConnection(onBillingServiceDisconnected: () {});
       final MethodCall call = stubPlatform.previousCallMatching(methodName);
-      expect(call.arguments, equals(<dynamic, dynamic>{'handle': 0}));
+      expect(
+          call.arguments,
+          equals(<dynamic, dynamic>{
+            'handle': 0,
+            'billingChoiceMode': 0,
+          }));
+    });
+
+    test('passes billingChoiceMode alternativeBillingOnly when set', () async {
+      const String debugMessage = 'dummy message';
+      const BillingResponse responseCode = BillingResponse.developerError;
+      stubPlatform.addResponse(
+        name: methodName,
+        value: <String, dynamic>{
+          'responseCode': const BillingResponseConverter().toJson(responseCode),
+          'debugMessage': debugMessage,
+        },
+      );
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
+      final MethodCall call = stubPlatform.previousCallMatching(methodName);
+      expect(
+          call.arguments,
+          equals(<dynamic, dynamic>{
+            'handle': 0,
+            'billingChoiceMode': 1,
+          }));
+    });
+
+    test('passes billingChoiceMode userChoiceBilling when set', () async {
+      const String debugMessage = 'dummy message';
+      const BillingResponse responseCode = BillingResponse.ok;
+      stubPlatform.addResponse(
+        name: methodName,
+        value: <String, dynamic>{
+          'responseCode': const BillingResponseConverter().toJson(responseCode),
+          'debugMessage': debugMessage,
+        },
+      );
+      final Completer<UserChoiceDetailsWrapper> completer =
+          Completer<UserChoiceDetailsWrapper>();
+
+      billingClient = BillingClient((PurchasesResultWrapper _) {},
+          (UserChoiceDetailsWrapper details) => completer.complete(details));
+      stubPlatform.reset();
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.userChoiceBilling);
+      final MethodCall call = stubPlatform.previousCallMatching(methodName);
+      expect(
+          call.arguments,
+          equals(<dynamic, dynamic>{
+            'handle': 0,
+            'billingChoiceMode': 2,
+          }));
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp),
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp),
+        ],
+      );
+      await billingClient.callHandler(
+          MethodCall(kUserSelectedAlternativeBilling, expected.toJson()));
+      expect(completer.isCompleted, isTrue);
+      expect(await completer.future, expected);
+    });
+
+    test('UserChoiceDetailsWrapper searilization check', () async {
+      // Test ensures that changes to UserChoiceDetailsWrapper#toJson are
+      // compatible with code in Translator.java.
+      const String transactionIdKey = 'originalExternalTransactionId';
+      const String transactionTokenKey = 'externalTransactionToken';
+      const String productsKey = 'products';
+      const String productIdKey = 'id';
+      const String productOfferTokenKey = 'offerToken';
+      const String productTypeKey = 'productType';
+
+      const UserChoiceDetailsProductWrapper expectedProduct1 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id1',
+              offerToken: 'offerToken1',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsProductWrapper expectedProduct2 =
+          UserChoiceDetailsProductWrapper(
+              id: 'id2',
+              offerToken: 'offerToken2',
+              productType: ProductType.inapp);
+      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          expectedProduct1,
+          expectedProduct2,
+        ],
+      );
+      final Map<String, dynamic> detailsJson = expected.toJson();
+      expect(detailsJson.keys, contains(transactionIdKey));
+      expect(detailsJson.keys, contains(transactionTokenKey));
+      expect(detailsJson.keys, contains(productsKey));
+
+      final Map<String, dynamic> productJson = expectedProduct1.toJson();
+      expect(productJson, contains(productIdKey));
+      expect(productJson, contains(productOfferTokenKey));
+      expect(productJson, contains(productTypeKey));
     });
 
     test('handles method channel returning null', () async {
@@ -644,14 +759,13 @@ void main() {
   });
 
   group('billingConfig', () {
-    const String billingConfigMethodName = 'BillingClient#getBillingConfig()';
     test('billingConfig returns object', () async {
       const BillingConfigWrapper expected = BillingConfigWrapper(
           countryCode: 'US',
           responseCode: BillingResponse.ok,
           debugMessage: '');
       stubPlatform.addResponse(
-        name: billingConfigMethodName,
+        name: BillingClient.getBillingConfigMethodString,
         value: buildBillingConfigMap(expected),
       );
       final BillingConfigWrapper result =
@@ -662,7 +776,7 @@ void main() {
 
     test('handles method channel returning null', () async {
       stubPlatform.addResponse(
-        name: billingConfigMethodName,
+        name: BillingClient.getBillingConfigMethodString,
       );
       final BillingConfigWrapper result =
           await billingClient.getBillingConfig();
@@ -674,6 +788,79 @@ void main() {
           )));
     });
   });
+
+  group('isAlternativeBillingOnlyAvailable', () {
+    test('returns object', () async {
+      const BillingResultWrapper expected =
+          BillingResultWrapper(responseCode: BillingResponse.ok);
+      stubPlatform.addResponse(
+          name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
+          value: buildBillingResultMap(expected));
+      final BillingResultWrapper result =
+          await billingClient.isAlternativeBillingOnlyAvailable();
+      expect(result, expected);
+    });
+
+    test('handles method channel returning null', () async {
+      stubPlatform.addResponse(
+        name: BillingClient.isAlternativeBillingOnlyAvailableMethodString,
+      );
+      final BillingResultWrapper result =
+          await billingClient.isAlternativeBillingOnlyAvailable();
+      expect(result.responseCode, BillingResponse.error);
+    });
+  });
+
+  group('createAlternativeBillingOnlyReportingDetails', () {
+    test('returns object', () async {
+      const AlternativeBillingOnlyReportingDetailsWrapper expected =
+          AlternativeBillingOnlyReportingDetailsWrapper(
+              responseCode: BillingResponse.ok,
+              debugMessage: 'debug',
+              externalTransactionToken: 'abc123youandme');
+      stubPlatform.addResponse(
+          name: BillingClient
+              .createAlternativeBillingOnlyReportingDetailsMethodString,
+          value: buildAlternativeBillingOnlyReportingDetailsMap(expected));
+      final AlternativeBillingOnlyReportingDetailsWrapper result =
+          await billingClient.createAlternativeBillingOnlyReportingDetails();
+      expect(result, equals(expected));
+    });
+
+    test('handles method channel returning null', () async {
+      stubPlatform.addResponse(
+        name: BillingClient
+            .createAlternativeBillingOnlyReportingDetailsMethodString,
+      );
+      final AlternativeBillingOnlyReportingDetailsWrapper result =
+          await billingClient.createAlternativeBillingOnlyReportingDetails();
+      expect(result.responseCode, BillingResponse.error);
+    });
+  });
+
+  group('showAlternativeBillingOnlyInformationDialog', () {
+    test('returns object', () async {
+      const BillingResultWrapper expected =
+          BillingResultWrapper(responseCode: BillingResponse.ok);
+      stubPlatform.addResponse(
+          name: BillingClient
+              .showAlternativeBillingOnlyInformationDialogMethodString,
+          value: buildBillingResultMap(expected));
+      final BillingResultWrapper result =
+          await billingClient.showAlternativeBillingOnlyInformationDialog();
+      expect(result, expected);
+    });
+
+    test('handles method channel returning null', () async {
+      stubPlatform.addResponse(
+        name: BillingClient
+            .showAlternativeBillingOnlyInformationDialogMethodString,
+      );
+      final BillingResultWrapper result =
+          await billingClient.showAlternativeBillingOnlyInformationDialog();
+      expect(result.responseCode, BillingResponse.error);
+    });
+  });
 }
 
 Map<String, dynamic> buildBillingConfigMap(BillingConfigWrapper original) {
@@ -682,5 +869,16 @@ Map<String, dynamic> buildBillingConfigMap(BillingConfigWrapper original) {
         const BillingResponseConverter().toJson(original.responseCode),
     'debugMessage': original.debugMessage,
     'countryCode': original.countryCode,
+  };
+}
+
+Map<String, dynamic> buildAlternativeBillingOnlyReportingDetailsMap(
+    AlternativeBillingOnlyReportingDetailsWrapper original) {
+  return <String, dynamic>{
+    'responseCode':
+        const BillingResponseConverter().toJson(original.responseCode),
+    'debugMessage': original.debugMessage,
+    // from: io/flutter/plugins/inapppurchase/Translator.java
+    'externalTransactionToken': original.externalTransactionToken,
   };
 }

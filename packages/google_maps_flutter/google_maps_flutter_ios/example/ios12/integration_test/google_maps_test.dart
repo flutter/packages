@@ -583,7 +583,8 @@ void main() {
         await controllerCompleter.future;
     const String mapStyle =
         '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
-    await controller.setMapStyle(mapStyle);
+    await GoogleMapsFlutterPlatform.instance
+        .setMapStyle(mapStyle, mapId: controller.mapId);
   });
 
   testWidgets('testSetMapStyle invalid Json String',
@@ -607,10 +608,12 @@ void main() {
         await controllerCompleter.future;
 
     try {
-      await controller.setMapStyle('invalid_value');
+      await GoogleMapsFlutterPlatform.instance
+          .setMapStyle('invalid_value', mapId: controller.mapId);
       fail('expected MapStyleException');
     } on MapStyleException catch (e) {
       expect(e.cause, isNotNull);
+      expect(await controller.getStyleError(), isNotNull);
     }
   });
 
@@ -632,7 +635,8 @@ void main() {
 
     final ExampleGoogleMapController controller =
         await controllerCompleter.future;
-    await controller.setMapStyle(null);
+    await GoogleMapsFlutterPlatform.instance
+        .setMapStyle(null, mapId: controller.mapId);
   });
 
   testWidgets('testGetLatLng', (WidgetTester tester) async {
@@ -1047,6 +1051,54 @@ void main() {
         cloudMapId: _kCloudMapId,
       ),
     ));
+  });
+
+  testWidgets('getStyleError reports last error', (WidgetTester tester) async {
+    final Key key = GlobalKey();
+    final Completer<ExampleGoogleMapController> controllerCompleter =
+        Completer<ExampleGoogleMapController>();
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        key: key,
+        initialCameraPosition: _kInitialCameraPosition,
+        style: '[[[this is an invalid style',
+        onMapCreated: (ExampleGoogleMapController controller) {
+          controllerCompleter.complete(controller);
+        },
+      ),
+    ));
+
+    final ExampleGoogleMapController controller =
+        await controllerCompleter.future;
+    final String? error = await controller.getStyleError();
+    expect(error, isNotNull);
+  });
+
+  testWidgets('getStyleError returns null for a valid style',
+      (WidgetTester tester) async {
+    final Key key = GlobalKey();
+    final Completer<ExampleGoogleMapController> controllerCompleter =
+        Completer<ExampleGoogleMapController>();
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        key: key,
+        initialCameraPosition: _kInitialCameraPosition,
+        // An empty array is the simplest valid style.
+        style: '[]',
+        onMapCreated: (ExampleGoogleMapController controller) {
+          controllerCompleter.complete(controller);
+        },
+      ),
+    ));
+
+    final ExampleGoogleMapController controller =
+        await controllerCompleter.future;
+    final String? error = await controller.getStyleError();
+    expect(error, isNull);
   });
 }
 

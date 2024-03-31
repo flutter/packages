@@ -25,6 +25,13 @@ WebResourceRequest _toWebResourceRequest(WebResourceRequestData data) {
   );
 }
 
+/// Converts [WebResourceResponseData] to [WebResourceResponse]
+WebResourceResponse _toWebResourceResponse(WebResourceResponseData data) {
+  return WebResourceResponse(
+    statusCode: data.statusCode,
+  );
+}
+
 /// Converts [WebResourceErrorData] to [WebResourceError].
 WebResourceError _toWebResourceError(WebResourceErrorData data) {
   return WebResourceError(
@@ -701,6 +708,34 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   @override
+  void onReceivedHttpError(
+    int instanceId,
+    int webViewInstanceId,
+    WebResourceRequestData request,
+    WebResourceResponseData response,
+  ) {
+    final WebViewClient? instance = instanceManager
+        .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      instance != null,
+      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+    );
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+    );
+    if (instance!.onReceivedHttpError != null) {
+      instance.onReceivedHttpError!(
+        webViewInstance!,
+        _toWebResourceRequest(request),
+        _toWebResourceResponse(response),
+      );
+    }
+  }
+
+  @override
   void onReceivedError(
     int instanceId,
     int webViewInstanceId,
@@ -720,7 +755,6 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    // ignore: deprecated_member_use_from_same_package
     if (instance!.onReceivedError != null) {
       instance.onReceivedError!(
         webViewInstance!,

@@ -1,3 +1,28 @@
+## 0.3.13+1
+
+* Handle translation of errors nested in dictionaries.
+
+## 0.3.13
+
+* Added new native tests for more complete test coverage.
+
+## 0.3.12+1
+
+* Fixes type of error code returned from native code in SKReceiptManager.retrieveReceiptData.
+
+## 0.3.12
+
+* Converts `refreshReceipt()`, `startObservingPaymentQueue()`, `stopObservingPaymentQueue()`, 
+`registerPaymentQueueDelegate()`, `removePaymentQueueDelegate()`, `showPriceConsentIfNeeded()` to pigeon.
+
+## 0.3.11
+
+* Fixes SKError.userInfo not being nullable.
+
+## 0.3.10
+
+* Converts `startProductRequest()`, `finishTransaction()`, `restoreTransactions()`, `presentCodeRedemptionSheet()` to pigeon.
+
 ## 0.3.9
 
 * Converts `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.

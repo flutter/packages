@@ -1,3 +1,20 @@
+## 1.0.26
+* Supports overriding the error widget builder.
+
+## 1.0.25
+* Adds support for wildget builders.
+
+## 1.0.24
+
+* Adds `InkResponse` material widget.
+* Adds `Material` material widget.
+* Adds the `child` to `Opacity` core widget.
+* Implements more `InkWell` parameters.
+
+## 1.0.23
+
+* Replaces usage of deprecated Flutter APIs.
+
 ## 1.0.22
 
 * Adds more testing to restore coverage to 100%.

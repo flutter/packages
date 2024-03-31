@@ -1,3 +1,12 @@
+## 13.2.2
+
+- Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch
+
+## 13.2.1
+
+- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+- Fixes memory leaks.
+
 ## 13.2.0
 
 - Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`

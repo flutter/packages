@@ -191,6 +191,26 @@
   XCTAssertEqualObjects(expectedMap, map);
 }
 
+- (void)testErrorWithNestedUnderlyingError {
+  NSError *underlyingError = [NSError errorWithDomain:SKErrorDomain code:2 userInfo:nil];
+  NSError *mainError =
+      [NSError errorWithDomain:SKErrorDomain
+                          code:3
+                      userInfo:@{@"nesting" : @{@"underlyingError" : underlyingError}}];
+  NSDictionary *expectedMap = @{
+    @"domain" : SKErrorDomain,
+    @"code" : @3,
+    @"userInfo" : @{
+      @"nesting" : @{
+        @"underlyingError" : @{@"domain" : SKErrorDomain, @"code" : @2, @"userInfo" : @{}},
+
+      }
+    }
+  };
+  NSDictionary *map = [FIAObjectTranslator getMapFromNSError:mainError];
+  XCTAssertEqualObjects(expectedMap, map);
+}
+
 - (void)testErrorWithUnsupportedUserInfo {
   NSError *error = [NSError errorWithDomain:SKErrorDomain
                                        code:3
@@ -456,6 +476,43 @@
   XCTAssertEqual(paymentTransaction.transactionDate,
                  [NSDate dateWithTimeIntervalSince1970:[msg.transactionTimeStamp doubleValue]]);
   XCTAssertEqual(paymentTransaction.transactionIdentifier, msg.transactionIdentifier);
+}
+
+- (void)testSKProductResponseCovertToPigeon {
+  SKProductsResponseStub *response =
+      [[SKProductsResponseStub alloc] initWithMap:self.productResponseMap];
+  SKProductsResponseMessage *responseMsg =
+      [FIAObjectTranslator convertProductsResponseToPigeon:response];
+
+  XCTAssertEqual(responseMsg.products.count, 1);
+  XCTAssertEqual(responseMsg.invalidProductIdentifiers.count, 0);
+
+  SKProductMessage *productMsg = responseMsg.products[0];
+
+  // These values are being set in productResponseMap in setUp()
+  XCTAssertEqualObjects(productMsg.price, @"1");
+  XCTAssertEqualObjects(productMsg.productIdentifier, @"123");
+  XCTAssertEqualObjects(productMsg.localizedTitle, @"title");
+  XCTAssertEqualObjects(productMsg.localizedDescription, @"des");
+  XCTAssertEqualObjects(productMsg.subscriptionGroupIdentifier, @"com.group");
+
+  SKPriceLocaleMessage *localeMsg = productMsg.priceLocale;
+  SKProductSubscriptionPeriodMessage *subPeriod = productMsg.subscriptionPeriod;
+  SKProductDiscountMessage *introDiscount = productMsg.introductoryPrice;
+  NSArray<SKProductDiscountMessage *> *discounts = productMsg.discounts;
+
+  XCTAssertEqualObjects(localeMsg.countryCode, nil);
+  XCTAssertEqualObjects(localeMsg.currencyCode, nil);
+  XCTAssertEqualObjects(localeMsg.currencySymbol, @"\u00a4");
+
+  XCTAssertEqual(subPeriod.unit, SKSubscriptionPeriodUnitMessageDay);
+  XCTAssertEqual(subPeriod.numberOfUnits, 0);
+
+  XCTAssertEqualObjects(introDiscount.price, @"1");
+  XCTAssertEqual(introDiscount.numberOfPeriods, 1);
+  XCTAssertEqual(introDiscount.paymentMode, SKProductDiscountPaymentModeMessagePayUpFront);
+
+  XCTAssertEqual(discounts.count, 1);
 }
 
 @end
