@@ -638,4 +638,30 @@ class Camera {
       ..height = '100%'
       ..objectFit = 'cover';
   }
+
+  late final StreamController<CameraImageData> _cameraFrameStreamController =
+      StreamController<CameraImageData>.broadcast();
+
+  /// Returns a stream of camera frames.
+  ///
+  /// To stop listening to new animation frames close all listening streams.
+  Stream<CameraImageData> cameraFrameStream({
+    CameraImageStreamOptions? options,
+  }) {
+    final Stream<CameraImageData> stream = _cameraFrameStreamController.stream;
+    window!.requestAnimationFrame(_onAnimationFrame);
+    return stream;
+  }
+
+  /// Called when a new animation frame is available.
+  Future<void> _onAnimationFrame([num? _]) async {
+    final CameraImageData? image = await _cameraService.takeFrame(videoElement);
+    if (image != null) {
+      _cameraFrameStreamController.add(image);
+    }
+
+    if (_cameraFrameStreamController.hasListener) {
+      window!.requestAnimationFrame(_onAnimationFrame);
+    }
+  }
 }

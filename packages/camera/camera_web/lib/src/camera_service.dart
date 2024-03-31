@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -362,5 +363,79 @@ class CameraService {
       default:
         return DeviceOrientation.portraitUp;
     }
+  }
+
+  /// Maps a [Uint] to a [CameraImageData].
+  CameraImageData getCameraImageDataFromBytes(
+    Uint8List bytes, {
+    required int height,
+    required int width,
+  }) {
+    return CameraImageData(
+      format: const CameraImageFormat(
+        ImageFormatGroup.jpeg,
+        raw: '',
+      ),
+      planes: <CameraImagePlane>[
+        CameraImagePlane(
+          bytes: bytes,
+          bytesPerRow: 0,
+        ),
+      ],
+      height: height,
+      width: width,
+    );
+  }
+
+  ///Returns frame at a specific time using video element
+  Future<CameraImageData?> takeFrame(html.VideoElement videoElement) async {
+    if (!(videoElement.isConnected ?? false)) {
+      return null;
+    }
+
+    final int videoWidth = videoElement.videoWidth;
+    final int videoHeight = videoElement.videoHeight;
+    final List<String> widthPx = videoElement.style.width.split('px');
+    final List<String> heightPx = videoElement.style.height.split('px');
+    final String widthString =
+        widthPx.isNotEmpty ? widthPx.first : '$videoWidth';
+    final String heightString =
+        heightPx.isNotEmpty ? heightPx.first : '$videoHeight';
+    final int width = int.tryParse(widthString) ?? videoWidth;
+    final int height = int.tryParse(heightString) ?? videoHeight;
+
+    final bool canUseOffscreenCanvas =
+        JsUtil().hasProperty(html.window, 'OffscreenCanvas');
+    late html.ImageData imageData;
+    if (canUseOffscreenCanvas) {
+      final html.OffscreenCanvas canvas = html.OffscreenCanvas(width, height);
+      final html.OffscreenCanvasRenderingContext2D context =
+          canvas.getContext('2d')! as html.OffscreenCanvasRenderingContext2D;
+      context.drawImage(videoElement, 0, 0, width, height);
+      imageData = context.getImageData(0, 0, width, height);
+    } else {
+      final html.CanvasElement canvas =
+          html.CanvasElement(width: width, height: height);
+      final html.CanvasRenderingContext2D context = canvas.context2D;
+      context.drawImageScaled(videoElement, 0, 0, width, height);
+      imageData = context.getImageData(0, 0, width, height);
+      canvas.remove();
+    }
+    final ByteBuffer byteBuffer = imageData.data.buffer;
+
+    return CameraImageData(
+      format: const CameraImageFormat(
+        ImageFormatGroup.jpeg,
+        raw: '',
+      ),
+      planes: <CameraImagePlane>[
+        CameraImagePlane(
+          bytes: byteBuffer.asUint8List(),
+          bytesPerRow: 0,
+        ),
+      ],
+      height: imageData.height,
+      width: imageData.width,
+    );
   }
 }
