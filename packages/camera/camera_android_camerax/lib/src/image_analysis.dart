@@ -25,7 +25,8 @@ class ImageAnalysis extends UseCase {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.initialTargetRotation,
-      this.resolutionSelector})
+      this.resolutionSelector,
+      this.imageQueueDepth})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -41,7 +42,8 @@ class ImageAnalysis extends UseCase {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.initialTargetRotation,
-      this.resolutionSelector})
+      this.resolutionSelector,
+      this.imageQueueDepth})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -65,6 +67,9 @@ class ImageAnalysis extends UseCase {
   /// If not set, this [UseCase] will default to the behavior described in:
   /// https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
   final ResolutionSelector? resolutionSelector;
+
+  /// The number of images
+  final int? imageQueueDepth;
 
   /// Dynamically sets the target rotation of this instance.
   ///
