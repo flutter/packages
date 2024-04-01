@@ -14,7 +14,7 @@ public protocol PenguinFinalizerDelegate: AnyObject {
 }
 
 // Attaches to an object to receive a callback when the object is deallocated.
-private final class PenguinFinalizer {
+internal final class PenguinFinalizer {
   private static let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
@@ -27,7 +27,7 @@ private final class PenguinFinalizer {
     self.delegate = delegate
   }
 
-  static func attach(to instance: AnyObject, identifier: Int64, delegate: PenguinFinalizerDelegate)
+  internal static func attach(to instance: AnyObject, identifier: Int64, delegate: PenguinFinalizerDelegate)
   {
     let finalizer = PenguinFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
@@ -43,7 +43,7 @@ private final class PenguinFinalizer {
 }
 
 public class PenguinInstanceManager {
-  private static let FWFMinHostCreatedIdentifier: Int64 = 65536
+  private static let minHostCreatedIdentifier: Int64 = 65536
 
   private let lockQueue = DispatchQueue(label: "FWFInstanceManager")
   private let identifiers: NSMapTable<AnyObject, NSNumber> = NSMapTable(
@@ -53,20 +53,20 @@ public class PenguinInstanceManager {
   private let strongInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
   private let finalizerDelegate: PenguinFinalizerDelegate
-  private var nextIdentifier: Int64 = FWFMinHostCreatedIdentifier
+  private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
   public init(finalizerDelegate: PenguinFinalizerDelegate) {
     self.finalizerDelegate = finalizerDelegate
   }
 
   func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
-    assert(identifier >= 0)
     lockQueue.async {
       self.addInstance(instance, withIdentifier: identifier)
     }
   }
 
   func addHostCreatedInstance(_ instance: AnyObject) -> Int64 {
+    precondition(!containsInstance(instance), "Instance of \(instance) has already been added.")
     var identifier: Int64 = -1
     lockQueue.sync {
       identifier = nextIdentifier
@@ -94,6 +94,8 @@ public class PenguinInstanceManager {
   }
 
   private func addInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
+    assert(identifier >= 0)
+    precondition(weakInstances.object(forKey: identifier as NSNumber) == nil, "Identifier has already been added: \(identifier)")
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
@@ -117,6 +119,15 @@ public class PenguinInstanceManager {
       containsInstance = identifiers.object(forKey: instance) != nil
     }
     return containsInstance
+  }
+  
+  func removeAllObjects() {
+    lockQueue.sync {
+      identifiers.removeAllObjects()
+      weakInstances.removeAllObjects()
+      strongInstances.removeAllObjects()
+      nextIdentifier = PenguinInstanceManager.minHostCreatedIdentifier
+    }
   }
 
   internal var strongInstanceCount: Int {
