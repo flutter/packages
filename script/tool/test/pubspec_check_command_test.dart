@@ -1734,6 +1734,39 @@ ${_topicsSection()}
           ]),
         );
       });
+
+      test('fails when integration_test is used in non dev dependency',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['integration_test: \n    sdk: flutter'])}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  integration_test\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
     });
   });
 
