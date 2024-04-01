@@ -356,7 +356,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
             'a topic. Add "$topicName" to the "topics" section.';
       }
     }
-    
+
     // Validates topic names according to https://dart.dev/tools/pub/pubspec#topics
     final RegExp expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
     final Iterable<String> invalidTopics = topics.where((String topic) =>
@@ -542,17 +542,25 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   // there are any that aren't allowed.
   String? _checkDependencies(Pubspec pubspec) {
     final Set<String> badDependencies = <String>{};
+    // Shipped dependencies.
     for (final Map<String, Dependency> dependencies
-        in <Map<String, Dependency>>[
-      pubspec.dependencies,
-      pubspec.devDependencies
-    ]) {
+        in <Map<String, Dependency>>[pubspec.dependencies]) {
       dependencies.forEach((String name, Dependency dependency) {
         if (!_shouldAllowDependency(name, dependency)) {
           badDependencies.add(name);
         }
       });
     }
+    // Dev dependencies
+    for (final Map<String, Dependency> dependencies
+        in <Map<String, Dependency>>[pubspec.devDependencies]) {
+      dependencies.forEach((String name, Dependency dependency) {
+        if (!_shouldAllowDevDependency(name, dependency)) {
+          badDependencies.add(name);
+        }
+      });
+    }
+
     if (badDependencies.isEmpty) {
       return null;
     }
@@ -563,7 +571,23 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   }
 
   // Checks whether a given dependency is allowed.
+  // Defaults to false.
   bool _shouldAllowDependency(String name, Dependency dependency) {
+    const List<String> disallowedSdkDependencies = <String>['integration_test'];
+    if (dependency is SdkDependency &&
+        disallowedSdkDependencies.contains(name)) {
+      return false;
+    }
+    return _shouldAllowBaselineDependency(name, dependency);
+  }
+
+  // Checks whether a given dependency is allowed as a dev dependency.
+  bool _shouldAllowDevDependency(String name, Dependency dependency) {
+    return _shouldAllowBaselineDependency(name, dependency);
+  }
+
+  // Shared enforcement between dev and non dev dependencies.
+  bool _shouldAllowBaselineDependency(String name, Dependency dependency) {
     if (dependency is PathDependency || dependency is SdkDependency) {
       return true;
     }
