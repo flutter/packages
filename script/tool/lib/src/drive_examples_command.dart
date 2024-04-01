@@ -427,6 +427,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
             target,
+            '--verbose',
           ],
           workingDir: example.directory);
       passed = passed && (exitCode == 0);
