@@ -7,32 +7,29 @@
 
 import Foundation
 
-typealias PenguinOnDeallocCallback = (Int64) -> Void
-
-// Only classes can have a weak reference, so the callback is wrapped here.
-// TODO: better name or combine?
-final class PenguinCallbackHolder {
-  let callback: PenguinOnDeallocCallback
-  
-  init(callback: @escaping PenguinOnDeallocCallback) {
-    self.callback = callback
-  }
+/// Handles the callback when an object is deallocated.
+public protocol PenguinFinalizerDelegate: AnyObject {
+  /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
+  func onDeinit(identifier: Int64)
 }
 
 // Attaches to an object to receive a callback when the object is deallocated.
-final class PenguinFinalizer {
+private final class PenguinFinalizer {
   private static let associatedObjectKey = malloc(1)!
-  
+
   private let identifier: Int64
-  private weak var callbackHolder: PenguinCallbackHolder?
-  
-  init(identifier: Int64, callbackHolder: PenguinCallbackHolder) {
+  // Reference to the delegate is weak because the callback should be ignored if the
+  // `InstanceManager` is deallocated.
+  private weak var delegate: PenguinFinalizerDelegate?
+
+  private init(identifier: Int64, delegate: PenguinFinalizerDelegate) {
     self.identifier = identifier
-    self.callbackHolder = callbackHolder
+    self.delegate = delegate
   }
-  
-  static func attach(to instance: AnyObject, identifier: Int64, callbackHolder: PenguinCallbackHolder) {
-    let finalizer = PenguinFinalizer(identifier: identifier, callbackHolder: callbackHolder)
+
+  static func attach(to instance: AnyObject, identifier: Int64, delegate: PenguinFinalizerDelegate)
+  {
+    let finalizer = PenguinFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
@@ -41,11 +38,11 @@ final class PenguinFinalizer {
   }
 
   deinit {
-    callbackHolder?.callback(identifier)
+    delegate?.onDeinit(identifier: identifier)
   }
 }
 
-class PenguinInstanceManager {
+public class PenguinInstanceManager {
   private static let FWFMinHostCreatedIdentifier: Int64 = 65536
 
   private let lockQueue = DispatchQueue(label: "FWFInstanceManager")
@@ -55,11 +52,11 @@ class PenguinInstanceManager {
     keyOptions: .strongMemory, valueOptions: [.weakMemory, .objectPointerPersonality])
   private let strongInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
-  private let deallocCallbackHolder: PenguinCallbackHolder  // Provide a default implementation
+  private let finalizerDelegate: PenguinFinalizerDelegate
   private var nextIdentifier: Int64 = FWFMinHostCreatedIdentifier
 
-  init(deallocCallbackHolder: PenguinCallbackHolder) {
-    self.deallocCallbackHolder = deallocCallbackHolder
+  public init(finalizerDelegate: PenguinFinalizerDelegate) {
+    self.finalizerDelegate = finalizerDelegate
   }
 
   func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
@@ -100,11 +97,11 @@ class PenguinInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    PenguinFinalizer.attach(to: instance, identifier: identifier, callbackHolder: deallocCallbackHolder)
+    PenguinFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
-  func identifierWithStrongReference(forInstance instance: AnyObject) -> Int64 {
-    var identifier: Int64 = Int64(NSNotFound)
+  func identifierWithStrongReference(forInstance instance: AnyObject) -> Int64? {
+    var identifier: Int64? = nil
     lockQueue.sync {
       if let existingIdentifier = identifiers.object(forKey: instance)?.int64Value {
         strongInstances.setObject(instance, forKey: NSNumber(value: existingIdentifier))
@@ -121,8 +118,8 @@ class PenguinInstanceManager {
     }
     return containsInstance
   }
-  
-  var strongInstanceCount: Int {
+
+  internal var strongInstanceCount: Int {
     var count: Int = 0
     lockQueue.sync {
       count = strongInstances.count
@@ -130,7 +127,7 @@ class PenguinInstanceManager {
     return count
   }
 
-  var weakInstanceCount: Int {
+  internal var weakInstanceCount: Int {
     var count: Int = 0
     lockQueue.sync {
       count = weakInstances.count
