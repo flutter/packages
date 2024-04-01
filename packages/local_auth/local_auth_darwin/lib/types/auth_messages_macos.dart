@@ -87,8 +87,7 @@ String get macOSGoToSettings => Intl.message('Go to settings',
 /// Message advising the user to re-enable biometrics on their device.
 /// It shows in a dialog on macOS.
 String get macOSLockOut => Intl.message(
-    'Biometric authentication is disabled. Please lock and unlock your screen to '
-    'enable it.',
+    'Biometric authentication is disabled. Please restart your computer and try again.',
     desc: 'Message advising the user to re-enable biometrics on their device.');
 
 /// Message advising the user to go to the settings and configure Biometrics
