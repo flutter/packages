@@ -1,3 +1,7 @@
+## 0.6.2
+
+* Move integration_test dependency to test.
+
 ## 0.6.1
 
 * Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios supported by CameraX.
