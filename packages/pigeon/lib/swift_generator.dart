@@ -125,11 +125,26 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    indent.write('struct ${classDefinition.name} ');
+    if (classDefinition.isSwiftClass) {
+      indent.write('class ${classDefinition.name} ');
+    } else {
+      indent.write('struct ${classDefinition.name} ');
+    }
     indent.addScoped('{', '}', () {
-      getFieldsInSerializationOrder(classDefinition).forEach((NamedType field) {
-        _writeClassField(indent, field);
-      });
+      final Iterable<NamedType> fields =
+          getFieldsInSerializationOrder(classDefinition);
+
+      if (classDefinition.isSwiftClass) {
+        _writeClassInit(indent, fields.toList());
+      }
+
+      for (final NamedType field in fields) {
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentSpec);
+        indent.write('var ');
+        _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
+        indent.newln();
+      }
 
       indent.newln();
       writeClassDecode(
@@ -147,6 +162,35 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         dartPackageName: dartPackageName,
       );
     });
+  }
+
+  void _writeClassInit(Indent indent, List<NamedType> fields) {
+    indent.writeScoped('init(', ')', () {
+      for (int i = 0; i < fields.length; i++) {
+        indent.write('');
+        _writeClassField(indent, fields[i]);
+        if (i == fields.length - 1) {
+          indent.newln();
+        } else {
+          indent.addln(',');
+        }
+      }
+    }, addTrailingNewline: false);
+    indent.addScoped(' {', '}', () {
+      for (final NamedType field in fields) {
+        _writeClassFieldInit(indent, field);
+      }
+    });
+  }
+
+  void _writeClassField(Indent indent, NamedType field, {bool addNil = true}) {
+    indent.add('${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
+    final String defaultNil = field.type.isNullable && addNil ? ' = nil' : '';
+    indent.add(defaultNil);
+  }
+
+  void _writeClassFieldInit(Indent indent, NamedType field) {
+    indent.writeln('self.${field.name} = ${field.name}');
   }
 
   @override
@@ -220,16 +264,6 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         }
       });
     });
-  }
-
-  void _writeClassField(Indent indent, NamedType field) {
-    addDocumentationComments(
-        indent, field.documentationComments, _docCommentSpec);
-
-    indent.write(
-        'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
-    final String defaultNil = field.type.isNullable ? ' = nil' : '';
-    indent.addln(defaultNil);
   }
 
   @override
