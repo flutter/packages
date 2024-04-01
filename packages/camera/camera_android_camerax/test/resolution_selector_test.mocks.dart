@@ -3,11 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:camera_android_camerax/src/aspect_ratio_strategy.dart' as _i2;
-import 'package:camera_android_camerax/src/resolution_strategy.dart' as _i3;
+import 'dart:ui' as _i2;
+
+import 'package:camera_android_camerax/src/aspect_ratio_strategy.dart' as _i3;
+import 'package:camera_android_camerax/src/resolution_filter.dart' as _i4;
+import 'package:camera_android_camerax/src/resolution_strategy.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i4;
+import 'test_camerax_library.g.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -22,12 +25,22 @@ import 'test_camerax_library.g.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeSize_0 extends _i1.SmartFake implements _i2.Size {
+  _FakeSize_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AspectRatioStrategy].
 ///
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
 class MockAspectRatioStrategy extends _i1.Mock
-    implements _i2.AspectRatioStrategy {
+    implements _i3.AspectRatioStrategy {
   MockAspectRatioStrategy() {
     _i1.throwOnMissingStub(this);
   }
@@ -45,12 +58,31 @@ class MockAspectRatioStrategy extends _i1.Mock
       ) as int);
 }
 
+/// A class which mocks [ResolutionFilter].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockResolutionFilter extends _i1.Mock implements _i4.ResolutionFilter {
+  MockResolutionFilter() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Size get preferredResolution => (super.noSuchMethod(
+        Invocation.getter(#preferredResolution),
+        returnValue: _FakeSize_0(
+          this,
+          Invocation.getter(#preferredResolution),
+        ),
+      ) as _i2.Size);
+}
+
 /// A class which mocks [ResolutionStrategy].
 ///
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
 class MockResolutionStrategy extends _i1.Mock
-    implements _i3.ResolutionStrategy {
+    implements _i5.ResolutionStrategy {
   MockResolutionStrategy() {
     _i1.throwOnMissingStub(this);
   }
@@ -60,7 +92,7 @@ class MockResolutionStrategy extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestResolutionSelectorHostApi extends _i1.Mock
-    implements _i4.TestResolutionSelectorHostApi {
+    implements _i6.TestResolutionSelectorHostApi {
   MockTestResolutionSelectorHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -69,6 +101,7 @@ class MockTestResolutionSelectorHostApi extends _i1.Mock
   void create(
     int? identifier,
     int? resolutionStrategyIdentifier,
+    int? resolutionSelectorIdentifier,
     int? aspectRatioStrategyIdentifier,
   ) =>
       super.noSuchMethod(
@@ -77,6 +110,7 @@ class MockTestResolutionSelectorHostApi extends _i1.Mock
           [
             identifier,
             resolutionStrategyIdentifier,
+            resolutionSelectorIdentifier,
             aspectRatioStrategyIdentifier,
           ],
         ),
@@ -88,7 +122,7 @@ class MockTestResolutionSelectorHostApi extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i4.TestInstanceManagerHostApi {
+    implements _i6.TestInstanceManagerHostApi {
   MockTestInstanceManagerHostApi() {
     _i1.throwOnMissingStub(this);
   }

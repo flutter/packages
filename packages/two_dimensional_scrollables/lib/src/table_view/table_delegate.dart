@@ -14,7 +14,10 @@ import 'table_span.dart';
 /// Used by the [TableCellDelegateMixin.buildColumn] and
 /// [TableCellDelegateMixin.buildRow] to configure rows and columns in the
 /// [TableView].
-typedef TableSpanBuilder = TableSpan Function(int index);
+///
+/// Returning null from this builder signifies the end of rows or columns being
+/// built if a row or column count has not been specified for the table.
+typedef TableSpanBuilder = TableSpan? Function(int index);
 
 /// Signature for a function that creates a child [TableViewCell] for a given
 /// [TableVicinity] in a [TableView], but may return null.
@@ -33,9 +36,8 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// The [buildColumn] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
-  /// particular column.
-  // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
-  // If null, the table will have an infinite number of columns.
+  /// particular column. If null, the table will have an infinite number of
+  /// columns, unless [buildColumn] returns null to signify the end.
   ///
   /// The value returned by this getter may be an estimate of the total
   /// available columns, but [buildColumn] method must provide a valid
@@ -46,15 +48,18 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
-  int get columnCount;
+  ///
+  /// When null, the number of columns will be infinite in number, unless null
+  /// is returned from [TableCellBuilderDelegate.columnBuilder]. The
+  /// [TableCellListDelegate] does not support an infinite number of columns.
+  int? get columnCount;
 
   /// The number of rows that the table has content for.
   ///
   /// The [buildRow] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
-  /// particular row.
-  // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
-  // If null, the table will have an infinite number of rows.
+  /// particular row. If null, the table will have an infinite number of rows,
+  /// unless [buildRow] returns null to signify the end.
   ///
   /// The value returned by this getter may be an estimate of the total
   /// available rows, but [buildRow] method must provide a valid
@@ -65,7 +70,11 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
-  int get rowCount;
+  ///
+  /// When null, the number of rows will be infinite in number, unless null
+  /// is returned from [TableCellBuilderDelegate.rowBuilder]. The
+  /// [TableCellListDelegate] does not support an infinite number of rows.
+  int? get rowCount;
 
   /// The number of columns that are permanently shown on the leading vertical
   /// edge of the viewport.
@@ -104,14 +113,18 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// Builds the [TableSpan] that describes the column at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [columnCount].
-  TableSpan buildColumn(int index);
+  /// [columnCount]. If [columnCount] is null, the number of columns will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// columns.
+  TableSpan? buildColumn(int index);
 
   /// Builds the [TableSpan] that describe the row at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [rowCount].
-  TableSpan buildRow(int index);
+  /// [rowCount]. If [rowCount] is null, the number of rows will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// columns.
+  TableSpan? buildRow(int index);
 }
 
 /// A delegate that supplies children for a [TableViewport] on demand using a
@@ -120,12 +133,17 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
 /// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
 /// automatically insert repaint boundaries. Instead, repaint boundaries are
 /// controlled by [TableViewCell.addRepaintBoundaries].
+///
+/// If the [rowCount] or [columnCount] is not provided, the number of rows
+/// and/or columns will be infinite. Returning null from the [columnBuilder]
+/// and/or [rowBuilder] in this case can terminate the number of rows and
+/// columns at the given index.
 class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     with TableCellDelegateMixin {
   /// Creates a lazy building delegate to use with a [TableView].
   TableCellBuilderDelegate({
-    required int columnCount,
-    required int rowCount,
+    int? columnCount,
+    int? rowCount,
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
     super.addAutomaticKeepAlives,
@@ -134,10 +152,10 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
         assert(pinnedRowCount >= 0),
-        assert(rowCount >= 0),
-        assert(columnCount >= 0),
-        assert(pinnedColumnCount <= columnCount),
-        assert(pinnedRowCount <= rowCount),
+        assert(rowCount == null || rowCount >= 0),
+        assert(columnCount == null || columnCount >= 0),
+        assert(columnCount == null || pinnedColumnCount <= columnCount),
+        assert(rowCount == null || pinnedRowCount <= rowCount),
         _rowBuilder = rowBuilder,
         _columnBuilder = columnBuilder,
         _pinnedColumnCount = pinnedColumnCount,
@@ -145,33 +163,36 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
         super(
           builder: (BuildContext context, ChildVicinity vicinity) =>
               cellBuilder(context, vicinity as TableVicinity),
-          maxXIndex: columnCount - 1,
-          maxYIndex: rowCount - 1,
+          maxXIndex: columnCount == null ? columnCount : columnCount - 1,
+          maxYIndex: rowCount == null ? rowCount : rowCount - 1,
           // repaintBoundaries handled by TableViewCell
           addRepaintBoundaries: false,
         );
 
   @override
-  int get columnCount => maxXIndex! + 1;
-  set columnCount(int value) {
-    assert(pinnedColumnCount <= value);
-    maxXIndex = value - 1;
+  int? get columnCount => maxXIndex == null ? null : maxXIndex! + 1;
+
+  set columnCount(int? value) {
+    assert(value == null || pinnedColumnCount <= value);
+    maxXIndex = value == null ? null : value - 1;
   }
 
   /// Builds the [TableSpan] that describes the column at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [columnCount].
+  /// [columnCount]. If [columnCount] is null, the number of columns will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// columns.
   final TableSpanBuilder _columnBuilder;
   @override
-  TableSpan buildColumn(int index) => _columnBuilder(index);
+  TableSpan? buildColumn(int index) => _columnBuilder(index);
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
-    assert(value <= columnCount);
+    assert(columnCount == null || value <= columnCount!);
     if (pinnedColumnCount == value) {
       return;
     }
@@ -180,26 +201,29 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   }
 
   @override
-  int get rowCount => maxYIndex! + 1;
-  set rowCount(int value) {
-    assert(pinnedRowCount <= value);
-    maxYIndex = value - 1;
+  int? get rowCount => maxYIndex == null ? null : maxYIndex! + 1;
+
+  set rowCount(int? value) {
+    assert(value == null || pinnedRowCount <= value);
+    maxYIndex = value == null ? null : value - 1;
   }
 
   /// Builds the [TableSpan] that describes the row at the provided index.
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
-  /// [rowCount].
+  /// [rowCount]. If [rowCount] is null, the number of rows will be
+  /// infinite, unless this builder returns null to signal the end of the
+  /// rows.
   final TableSpanBuilder _rowBuilder;
   @override
-  TableSpan buildRow(int index) => _rowBuilder(index);
+  TableSpan? buildRow(int index) => _rowBuilder(index);
 
   @override
   int get pinnedRowCount => _pinnedRowCount;
   int _pinnedRowCount;
   set pinnedRowCount(int value) {
     assert(value >= 0);
-    assert(value <= rowCount);
+    assert(rowCount == null || value <= rowCount!);
     if (pinnedRowCount == value) {
       return;
     }
@@ -261,7 +285,13 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   /// [columnCount].
   final TableSpanBuilder _columnBuilder;
   @override
-  TableSpan buildColumn(int index) => _columnBuilder(index);
+  TableSpan? buildColumn(int index) {
+    if (index >= columnCount) {
+      // The list delegate has a finite number of columns.
+      return null;
+    }
+    return _columnBuilder(index);
+  }
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
@@ -285,7 +315,13 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   /// [rowCount].
   final TableSpanBuilder _rowBuilder;
   @override
-  TableSpan buildRow(int index) => _rowBuilder(index);
+  TableSpan? buildRow(int index) {
+    if (index >= rowCount) {
+      // The list deleagte has a finite number of rows.
+      return null;
+    }
+    return _rowBuilder(index);
+  }
 
   @override
   int get pinnedRowCount => _pinnedRowCount;

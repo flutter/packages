@@ -1,6 +1,10 @@
-## 13.2.2
+## 13.2.3
 
 - Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
+## 13.2.2
+
+- Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch
 
 ## 13.2.1
 
