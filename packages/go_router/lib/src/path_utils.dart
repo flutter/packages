@@ -125,20 +125,20 @@ String canonicalUri(String loc) {
     throw GoException('Location cannot be empty.');
   }
   String canon = Uri.parse(loc).toString();
+  final Uri uri = Uri.parse(canon);
   canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
 
   // remove trailing slash except for when you shouldn't, e.g.
   // /profile/ => /profile
   // / => /
   // /login?from=/ => login?from=/
-  canon = canon.endsWith('/') && canon != '/' && !canon.contains('?')
+  canon = uri.path.endsWith('/') && uri.path != '/' && !uri.hasQuery
       ? canon.substring(0, canon.length - 1)
       : canon;
 
   // replace '/?', except for first occurrence, from path only
   // /login/?from=/ => /login?from=/
   // /?from=/ => /?from=/
-  final Uri uri = Uri.parse(canon);
   final int pathStartIndex = uri.host.isNotEmpty
       ? uri.toString().indexOf(uri.host) + uri.host.length
       : uri.hasScheme
