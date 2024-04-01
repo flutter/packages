@@ -9,19 +9,13 @@
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
+#import "InAppPurchasePlugin+TestOnly.h"
 
 @interface InAppPurchasePlugin ()
-
-// Holding strong references to FIAPRequestHandlers. Remove the handlers from the set after
-// the request is finished.
-@property(strong, nonatomic, readonly) NSMutableSet *requestHandlers;
 
 // After querying the product, the available products will be saved in the map to be used
 // for purchase.
 @property(strong, nonatomic, readonly) NSMutableDictionary *productsCache;
-
-// Callback channel to dart used for when a function from the transaction observer is triggered.
-@property(strong, nonatomic, readonly) FlutterMethodChannel *transactionObserverCallbackChannel;
 
 // Callback channel to dart used for when a function from the payment queue delegate is triggered.
 @property(strong, nonatomic, readonly) FlutterMethodChannel *paymentQueueDelegateCallbackChannel;
@@ -52,6 +46,16 @@
   _receiptManager = receiptManager;
   _requestHandlers = [NSMutableSet new];
   _productsCache = [NSMutableDictionary new];
+  _handlerFactory = ^FIAPRequestHandler *(SKRequest *request) {
+    return [[FIAPRequestHandler alloc] initWithRequest:request];
+  };
+  return self;
+}
+
+- (instancetype)initWithReceiptManager:(FIAPReceiptManager *)receiptManager
+                        handlerFactory:(FIAPRequestHandler * (^)(SKRequest *))handlerFactory {
+  self = [self initWithReceiptManager:receiptManager];
+  _handlerFactory = [handlerFactory copy];
   return self;
 }
 
@@ -117,7 +121,7 @@
                                                         FlutterError *_Nullable))completion {
   SKProductsRequest *request =
       [self getProductRequestWithIdentifiers:[NSSet setWithArray:productIdentifiers]];
-  FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
+  FIAPRequestHandler *handler = self.handlerFactory(request);
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
 
@@ -271,7 +275,7 @@
     request = [self getRefreshReceiptRequest:nil];
   }
 
-  FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
+  FIAPRequestHandler *handler = self.handlerFactory(request);
   [self.requestHandlers addObject:handler];
   __weak typeof(self) weakSelf = self;
   [handler startProductRequestWithCompletionHandler:^(SKProductsResponse *_Nullable response,
@@ -282,6 +286,7 @@
                                          message:error.localizedDescription
                                          details:error.description];
       completion(requestError);
+      return;
     }
     completion(nil);
     [weakSelf.requestHandlers removeObject:handler];

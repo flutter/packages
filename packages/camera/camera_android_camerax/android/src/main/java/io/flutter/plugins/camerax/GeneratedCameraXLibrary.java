@@ -2507,6 +2507,7 @@ public class GeneratedCameraXLibrary {
     void create(
         @NonNull Long identifier,
         @Nullable Long resolutionStrategyIdentifier,
+        @Nullable Long resolutionSelectorIdentifier,
         @Nullable Long aspectRatioStrategyIdentifier);
 
     /** The codec used by ResolutionSelectorHostApi. */
@@ -2530,13 +2531,17 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
                 Number resolutionStrategyIdentifierArg = (Number) args.get(1);
-                Number aspectRatioStrategyIdentifierArg = (Number) args.get(2);
+                Number resolutionSelectorIdentifierArg = (Number) args.get(2);
+                Number aspectRatioStrategyIdentifierArg = (Number) args.get(3);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       (resolutionStrategyIdentifierArg == null)
                           ? null
                           : resolutionStrategyIdentifierArg.longValue(),
+                      (resolutionSelectorIdentifierArg == null)
+                          ? null
+                          : resolutionSelectorIdentifierArg.longValue(),
                       (aspectRatioStrategyIdentifierArg == null)
                           ? null
                           : aspectRatioStrategyIdentifierArg.longValue());
@@ -3796,7 +3801,10 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface FocusMeteringActionHostApi {
 
-    void create(@NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos);
+    void create(
+        @NonNull Long identifier,
+        @NonNull List<MeteringPointInfo> meteringPointInfos,
+        @Nullable Boolean disableAutoCancel);
 
     /** The codec used by FocusMeteringActionHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -3822,10 +3830,12 @@ public class GeneratedCameraXLibrary {
                 Number identifierArg = (Number) args.get(0);
                 List<MeteringPointInfo> meteringPointInfosArg =
                     (List<MeteringPointInfo>) args.get(1);
+                Boolean disableAutoCancelArg = (Boolean) args.get(2);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
-                      meteringPointInfosArg);
+                      meteringPointInfosArg,
+                      disableAutoCancelArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -4177,6 +4187,79 @@ public class GeneratedCameraXLibrary {
                         ? null
                         : captureRequestOptionsIdentifierArg.longValue(),
                     resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+
+  private static class ResolutionFilterHostApiCodec extends StandardMessageCodec {
+    public static final ResolutionFilterHostApiCodec INSTANCE = new ResolutionFilterHostApiCodec();
+
+    private ResolutionFilterHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof ResolutionInfo) {
+        stream.write(128);
+        writeValue(stream, ((ResolutionInfo) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface ResolutionFilterHostApi {
+
+    void createWithOnePreferredSize(
+        @NonNull Long identifier, @NonNull ResolutionInfo preferredResolution);
+
+    /** The codec used by ResolutionFilterHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return ResolutionFilterHostApiCodec.INSTANCE;
+    }
+    /**
+     * Sets up an instance of `ResolutionFilterHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable ResolutionFilterHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                ResolutionInfo preferredResolutionArg = (ResolutionInfo) args.get(1);
+                try {
+                  api.createWithOnePreferredSize(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      preferredResolutionArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

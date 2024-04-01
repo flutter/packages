@@ -118,41 +118,64 @@
 
 #pragma mark - GMSTileLayer method
 
+- (UIImage *)handleResultTile:(nullable UIImage *)tile {
+  CGImageRef imageRef = tile.CGImage;
+  CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+  BOOL isFloat = bitmapInfo && kCGBitmapFloatComponents;
+  size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+
+  // Engine use f16 pixel format for wide gamut images
+  // If it is wide gamut, we want to downsample it
+  if (isFloat & (bitsPerComponent == 16)) {
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0,
+                                                 colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextDrawImage(context, CGRectMake(0, 0, tile.size.width, tile.size.height), tile.CGImage);
+    CGImageRef image = CGBitmapContextCreateImage(context);
+    tile = [UIImage imageWithCGImage:image];
+
+    CGImageRelease(image);
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+  }
+  return tile;
+}
+
 - (void)requestTileForX:(NSUInteger)x
                       y:(NSUInteger)y
                    zoom:(NSUInteger)zoom
                receiver:(id<GMSTileReceiver>)receiver {
-  [self.methodChannel
-      invokeMethod:@"tileOverlay#getTile"
-         arguments:@{
-           @"tileOverlayId" : self.tileOverlayIdentifier,
-           @"x" : @(x),
-           @"y" : @(y),
-           @"zoom" : @(zoom)
-         }
-            result:^(id _Nullable result) {
-              UIImage *tileImage;
-              if ([result isKindOfClass:[NSDictionary class]]) {
-                FlutterStandardTypedData *typedData = (FlutterStandardTypedData *)result[@"data"];
-                if (typedData == nil) {
-                  tileImage = kGMSTileLayerNoTile;
-                } else {
-                  tileImage = [UIImage imageWithData:typedData.data];
-                }
-              } else {
-                if ([result isKindOfClass:[FlutterError class]]) {
-                  FlutterError *error = (FlutterError *)result;
-                  NSLog(@"Can't get tile: errorCode = %@, errorMessage = %@, details = %@",
-                        [error code], [error message], [error details]);
-                }
-                if ([result isKindOfClass:[FlutterMethodNotImplemented class]]) {
-                  NSLog(@"Can't get tile: notImplemented");
-                }
-                tileImage = kGMSTileLayerNoTile;
-              }
-
-              [receiver receiveTileWithX:x y:y zoom:zoom image:tileImage];
-            }];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.methodChannel invokeMethod:@"tileOverlay#getTile"
+        arguments:@{
+          @"tileOverlayId" : self.tileOverlayIdentifier,
+          @"x" : @(x),
+          @"y" : @(y),
+          @"zoom" : @(zoom)
+        }
+        result:^(id _Nullable result) {
+          UIImage *tileImage;
+          if ([result isKindOfClass:[NSDictionary class]]) {
+            FlutterStandardTypedData *typedData = (FlutterStandardTypedData *)result[@"data"];
+            if (typedData == nil) {
+              tileImage = kGMSTileLayerNoTile;
+            } else {
+              tileImage = [self handleResultTile:[UIImage imageWithData:typedData.data]];
+            }
+          } else {
+            if ([result isKindOfClass:[FlutterError class]]) {
+              FlutterError *error = (FlutterError *)result;
+              NSLog(@"Can't get tile: errorCode = %@, errorMessage = %@, details = %@",
+                    [error code], [error message], [error details]);
+            }
+            if ([result isKindOfClass:[FlutterMethodNotImplemented class]]) {
+              NSLog(@"Can't get tile: notImplemented");
+            }
+            tileImage = kGMSTileLayerNoTile;
+          }
+          [receiver receiveTileWithX:x y:y zoom:zoom image:tileImage];
+        }];
+  });
 }
 
 @end

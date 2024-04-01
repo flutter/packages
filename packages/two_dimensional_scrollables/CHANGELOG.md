@@ -1,3 +1,12 @@
+## 0.2.0
+
+* Adds support for infinite rows and columns in TableView.
+
+## 0.1.2
+
+* Fixes a layout issue for unpinned merged cells that follow pinned table spans.
+* Updates outdated sample code.
+
 ## 0.1.1
 
 * Fixes a layout issue when pinned cells are merged.

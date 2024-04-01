@@ -5,6 +5,7 @@
 import 'dart:ui' show Size;
 
 import 'analyzer.dart';
+import 'aspect_ratio_strategy.dart';
 import 'camera2_camera_control.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
@@ -24,6 +25,7 @@ import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'quality_selector.dart';
 import 'recorder.dart';
+import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
 import 'system_services.dart';
@@ -56,9 +58,12 @@ class CameraXProxy {
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
     this.getDefaultDisplayRotation = _getDefaultDisplayRotation,
     this.getCamera2CameraControl = _getCamera2CameraControl,
-    this.createCaptureRequestOptions = _createCaptureRequestOptions,
-    this.createMeteringPoint = _createMeteringPoint,
-    this.createFocusMeteringAction = _createFocusMeteringAction,
+    this.createCaptureRequestOptions = _createAttachedCaptureRequestOptions,
+    this.createMeteringPoint = _createAttachedMeteringPoint,
+    this.createFocusMeteringAction = _createAttachedFocusMeteringAction,
+    this.createAspectRatioStrategy = _createAttachedAspectRatioStrategy,
+    this.createResolutionFilterWithOnePreferredSize =
+        _createAttachedResolutionFilterWithOnePreferredSize,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -115,9 +120,11 @@ class CameraXProxy {
       int? fallbackRule}) createResolutionStrategy;
 
   /// Returns a [ResolutionSelector] configured with the specified
-  /// [ResolutionStrategy].
-  ResolutionSelector Function(ResolutionStrategy resolutionStrategy)
-      createResolutionSelector;
+  /// [ResolutionStrategy], [ResolutionFilter], and [AspectRatioStrategy].
+  ResolutionSelector Function(
+      ResolutionStrategy resolutionStrategy,
+      ResolutionFilter? resolutionFilter,
+      AspectRatioStrategy? aspectRatioStrategy) createResolutionSelector;
 
   /// Returns a [FallbackStrategy] configured with the specified [VideoQuality]
   /// and [VideoResolutionFallbackRule].
@@ -151,20 +158,30 @@ class CameraXProxy {
   Camera2CameraControl Function(CameraControl cameraControl)
       getCamera2CameraControl;
 
-  /// Create [CapureRequestOptions] with specified options.
+  /// Creates a [CaptureRequestOptions] with specified options.
   CaptureRequestOptions Function(
           List<(CaptureRequestKeySupportedType, Object?)> options)
       createCaptureRequestOptions;
 
   /// Returns a [MeteringPoint] with the specified coordinates based on
   /// [cameraInfo].
-  MeteringPoint Function(double x, double y, CameraInfo cameraInfo)
+  MeteringPoint Function(
+          double x, double y, double? size, CameraInfo cameraInfo)
       createMeteringPoint;
 
   /// Returns a [FocusMeteringAction] based on the specified metering points
   /// and their modes.
-  FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos)
-      createFocusMeteringAction;
+  FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos,
+      bool? disableAutoCancel) createFocusMeteringAction;
+
+  /// Creates an [AspectRatioStrategy] with specified aspect ratio and fallback
+  /// rule.
+  AspectRatioStrategy Function(int aspectRatio, int fallbackRule)
+      createAspectRatioStrategy;
+
+  /// Creates a [ResolutionFilter] that prioritizes specified resolution.
+  ResolutionFilter Function(Size preferredResolution)
+      createResolutionFilterWithOnePreferredSize;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -233,8 +250,13 @@ class CameraXProxy {
   }
 
   static ResolutionSelector _createAttachedResolutionSelector(
-      ResolutionStrategy resolutionStrategy) {
-    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+      ResolutionStrategy resolutionStrategy,
+      ResolutionFilter? resolutionFilter,
+      AspectRatioStrategy? aspectRatioStrategy) {
+    return ResolutionSelector(
+        resolutionStrategy: resolutionStrategy,
+        resolutionFilter: resolutionFilter,
+        aspectRatioStrategy: aspectRatioStrategy);
   }
 
   static FallbackStrategy _createAttachedFallbackStrategy(
@@ -274,18 +296,32 @@ class CameraXProxy {
     return Camera2CameraControl(cameraControl: cameraControl);
   }
 
-  static CaptureRequestOptions _createCaptureRequestOptions(
+  static CaptureRequestOptions _createAttachedCaptureRequestOptions(
       List<(CaptureRequestKeySupportedType, Object?)> options) {
     return CaptureRequestOptions(requestedOptions: options);
   }
 
-  static MeteringPoint _createMeteringPoint(
-      double x, double y, CameraInfo cameraInfo) {
-    return MeteringPoint(x: x, y: y, cameraInfo: cameraInfo);
+  static MeteringPoint _createAttachedMeteringPoint(
+      double x, double y, double? size, CameraInfo cameraInfo) {
+    return MeteringPoint(x: x, y: y, size: size, cameraInfo: cameraInfo);
   }
 
-  static FocusMeteringAction _createFocusMeteringAction(
-      List<(MeteringPoint, int?)> meteringPointInfos) {
-    return FocusMeteringAction(meteringPointInfos: meteringPointInfos);
+  static FocusMeteringAction _createAttachedFocusMeteringAction(
+      List<(MeteringPoint, int?)> meteringPointInfos, bool? disableAutoCancel) {
+    return FocusMeteringAction(
+        meteringPointInfos: meteringPointInfos,
+        disableAutoCancel: disableAutoCancel);
+  }
+
+  static AspectRatioStrategy _createAttachedAspectRatioStrategy(
+      int preferredAspectRatio, int fallbackRule) {
+    return AspectRatioStrategy(
+        preferredAspectRatio: preferredAspectRatio, fallbackRule: fallbackRule);
+  }
+
+  static ResolutionFilter _createAttachedResolutionFilterWithOnePreferredSize(
+      Size preferredSize) {
+    return ResolutionFilter.onePreferredSize(
+        preferredResolution: preferredSize);
   }
 }
