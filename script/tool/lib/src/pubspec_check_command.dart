@@ -544,22 +544,24 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     final Set<String> badDependencies = <String>{};
     // Shipped dependencies.
     for (final Map<String, Dependency> dependencies
-        in <Map<String, Dependency>>[pubspec.dependencies]) {
+        in <Map<String, Dependency>>[
+      pubspec.dependencies,
+      pubspec.devDependencies
+    ]) {
       dependencies.forEach((String name, Dependency dependency) {
         if (!_shouldAllowDependency(name, dependency)) {
           badDependencies.add(name);
         }
       });
     }
-    // Dev dependencies
-    for (final Map<String, Dependency> dependencies
-        in <Map<String, Dependency>>[pubspec.devDependencies]) {
-      dependencies.forEach((String name, Dependency dependency) {
-        if (!_shouldAllowDevDependency(name, dependency)) {
-          badDependencies.add(name);
-        }
-      });
-    }
+
+    // Ensure that dev-only dependencies aren't in `dependencies`.
+    const List<String> devOnlyDependencies = <String>['integration_test'];
+    pubspec.dependencies.forEach((String name, Dependency dependency) {
+      if (devOnlyDependencies.contains(name)) {
+        badDependencies.add(name);
+      }
+    });
 
     if (badDependencies.isEmpty) {
       return null;
@@ -573,21 +575,6 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   // Checks whether a given dependency is allowed.
   // Defaults to false.
   bool _shouldAllowDependency(String name, Dependency dependency) {
-    const List<String> disallowedSdkDependencies = <String>['integration_test'];
-    if (dependency is SdkDependency &&
-        disallowedSdkDependencies.contains(name)) {
-      return false;
-    }
-    return _shouldAllowBaselineDependency(name, dependency);
-  }
-
-  // Checks whether a given dependency is allowed as a dev dependency.
-  bool _shouldAllowDevDependency(String name, Dependency dependency) {
-    return _shouldAllowBaselineDependency(name, dependency);
-  }
-
-  // Shared enforcement between dev and non dev dependencies.
-  bool _shouldAllowBaselineDependency(String name, Dependency dependency) {
     if (dependency is PathDependency || dependency is SdkDependency) {
       return true;
     }
