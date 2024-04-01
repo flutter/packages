@@ -1,6 +1,6 @@
 ## 0.6.2
 
-* Moves integration_test dependency to test.
+* Moves integration_test dependency to dev_dependencies.
 
 ## 0.6.1
 
