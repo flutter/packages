@@ -1,6 +1,6 @@
 ## 13.2.3
 
-- Fixes an issue where links without path caused an exception
+- Fixes an issue where deep links without path caused an exception
 
 ## 13.2.2
 
