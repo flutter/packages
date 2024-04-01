@@ -204,12 +204,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
-                Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
+                final Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
                 try {
-                  String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
+                  final String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
                   result.success(path);
                 } catch (UnsupportedOperationException exception) {
-                  result.error(exception)
+                  result.error(exception);
                 }
               } else {
                 result.success(null);
@@ -338,10 +338,23 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
+    // try {
+    //         System.out.println("CAMILLE: " + uri.getPath());
+    //   System.out.println("CAMILLE: " + DocumentsContract.getDocumentId(uri));
+    // Uri newUri = DocumentsContract.buildDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
+    // System.out.println("CAMILLE: " + newUri.getPath());
+    // final String docUriPath2 = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), newUri);
+    // System.out.println("CAMILLE: " + docUriPath2);
+    // // System.out.println("CAMILLE: " + DocumentsContract.findDocumentPath(contentResolver, newUri));
+    // // System.out.println("CAMILLE: " + DocumentsContract.findDocumentPath(contentResolver, uri));
+    // } catch (Exception e) {System.out.println(" CAMILLE ERROR: " + e.toString());}
+    // final Uri docUri = DocumentsContract.buildDocumentUri(uri, DocumentsContract.getTreeDocumentId(uri));
+    final String docUrIPath = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), uri);
+
     return new GeneratedFileSelectorApi.FileResponse.Builder()
         .setName(name)
         .setBytes(bytes)
-        .setPath(uri.toString()) // TODO(camsim99): Test getDirectoryPath fix for getting actual path here.
+        .setPath(docUrIPath)
         .setMimeType(contentResolver.getType(uri))
         .setSize(size.longValue())
         .build();
