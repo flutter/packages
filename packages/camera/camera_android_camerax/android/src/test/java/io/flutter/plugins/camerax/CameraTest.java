@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.Camera;
+import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraInfo;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
@@ -57,6 +58,23 @@ public class CameraTest {
 
     assertEquals(cameraHostApiImpl.getCameraInfo(cameraIdentifier), mockCameraInfoIdentifier);
     verify(camera).getCameraInfo();
+  }
+
+  @Test
+  public void getCameraControl_retrievesExpectedCameraControlInstance() {
+    final CameraHostApiImpl cameraHostApiImpl =
+        new CameraHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final CameraControl mockCameraControl = mock(CameraControl.class);
+    final Long cameraIdentifier = 43L;
+    final Long mockCameraControlIdentifier = 79L;
+
+    testInstanceManager.addDartCreatedInstance(camera, cameraIdentifier);
+    testInstanceManager.addDartCreatedInstance(mockCameraControl, mockCameraControlIdentifier);
+
+    when(camera.getCameraControl()).thenReturn(mockCameraControl);
+
+    assertEquals(cameraHostApiImpl.getCameraControl(cameraIdentifier), mockCameraControlIdentifier);
+    verify(camera).getCameraControl();
   }
 
   @Test

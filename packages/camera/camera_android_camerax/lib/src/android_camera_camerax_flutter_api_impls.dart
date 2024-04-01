@@ -4,12 +4,15 @@
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camera_state_error.dart';
 import 'camerax_library.g.dart';
+import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
+import 'focus_metering_result.dart';
 import 'image_proxy.dart';
 import 'java_object.dart';
 import 'live_data.dart';
@@ -26,27 +29,30 @@ import 'zoom_state.dart';
 /// Handles initialization of Flutter APIs for the Android CameraX library.
 class AndroidCameraXCameraFlutterApis {
   /// Creates a [AndroidCameraXCameraFlutterApis].
-  AndroidCameraXCameraFlutterApis({
-    JavaObjectFlutterApiImpl? javaObjectFlutterApiImpl,
-    CameraFlutterApiImpl? cameraFlutterApiImpl,
-    CameraInfoFlutterApiImpl? cameraInfoFlutterApiImpl,
-    CameraSelectorFlutterApiImpl? cameraSelectorFlutterApiImpl,
-    ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApiImpl,
-    SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
-    CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
-    CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
-    PendingRecordingFlutterApiImpl? pendingRecordingFlutterApiImpl,
-    RecordingFlutterApiImpl? recordingFlutterApiImpl,
-    RecorderFlutterApiImpl? recorderFlutterApiImpl,
-    VideoCaptureFlutterApiImpl? videoCaptureFlutterApiImpl,
-    ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
-    ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
-    LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
-    ObserverFlutterApiImpl? observerFlutterApiImpl,
-    ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
-    PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
-    AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
-  }) {
+  AndroidCameraXCameraFlutterApis(
+      {JavaObjectFlutterApiImpl? javaObjectFlutterApiImpl,
+      CameraFlutterApiImpl? cameraFlutterApiImpl,
+      CameraInfoFlutterApiImpl? cameraInfoFlutterApiImpl,
+      CameraSelectorFlutterApiImpl? cameraSelectorFlutterApiImpl,
+      ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApiImpl,
+      SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
+      DeviceOrientationManagerFlutterApiImpl?
+          deviceOrientationManagerFlutterApiImpl,
+      CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
+      CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
+      PendingRecordingFlutterApiImpl? pendingRecordingFlutterApiImpl,
+      RecordingFlutterApiImpl? recordingFlutterApiImpl,
+      RecorderFlutterApiImpl? recorderFlutterApiImpl,
+      VideoCaptureFlutterApiImpl? videoCaptureFlutterApiImpl,
+      ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
+      ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
+      LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
+      ObserverFlutterApiImpl? observerFlutterApiImpl,
+      ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
+      PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
+      AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
+      CameraControlFlutterApiImpl? cameraControlFlutterApiImpl,
+      FocusMeteringResultFlutterApiImpl? focusMeteringResultFlutterApiImpl}) {
     this.javaObjectFlutterApiImpl =
         javaObjectFlutterApiImpl ?? JavaObjectFlutterApiImpl();
     this.cameraInfoFlutterApiImpl =
@@ -59,6 +65,9 @@ class AndroidCameraXCameraFlutterApis {
     this.cameraFlutterApiImpl = cameraFlutterApiImpl ?? CameraFlutterApiImpl();
     this.systemServicesFlutterApiImpl =
         systemServicesFlutterApiImpl ?? SystemServicesFlutterApiImpl();
+    this.deviceOrientationManagerFlutterApiImpl =
+        deviceOrientationManagerFlutterApiImpl ??
+            DeviceOrientationManagerFlutterApiImpl();
     this.cameraStateErrorFlutterApiImpl =
         cameraStateErrorFlutterApiImpl ?? CameraStateErrorFlutterApiImpl();
     this.cameraStateFlutterApiImpl =
@@ -85,6 +94,11 @@ class AndroidCameraXCameraFlutterApis {
         imageProxyFlutterApiImpl ?? ImageProxyFlutterApiImpl();
     this.planeProxyFlutterApiImpl =
         planeProxyFlutterApiImpl ?? PlaneProxyFlutterApiImpl();
+    this.cameraControlFlutterApiImpl =
+        cameraControlFlutterApiImpl ?? CameraControlFlutterApiImpl();
+    this.focusMeteringResultFlutterApiImpl =
+        focusMeteringResultFlutterApiImpl ??
+            FocusMeteringResultFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -113,6 +127,10 @@ class AndroidCameraXCameraFlutterApis {
 
   /// Flutter Api implementation for [SystemServices].
   late final SystemServicesFlutterApiImpl systemServicesFlutterApiImpl;
+
+  /// Flutter Api implementation for [DeviceOrientationManager].
+  late final DeviceOrientationManagerFlutterApiImpl
+      deviceOrientationManagerFlutterApiImpl;
 
   /// Flutter Api implementation for [CameraStateError].
   late final CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl;
@@ -153,6 +171,13 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api implementation for [PlaneProxy].
   late final PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
 
+  /// Flutter Api implementation for [CameraControl].
+  late final CameraControlFlutterApiImpl cameraControlFlutterApiImpl;
+
+  /// Flutter Api implementation for [FocusMeteringResult].
+  late final FocusMeteringResultFlutterApiImpl
+      focusMeteringResultFlutterApiImpl;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -163,6 +188,8 @@ class AndroidCameraXCameraFlutterApis {
           processCameraProviderFlutterApiImpl);
       CameraFlutterApi.setup(cameraFlutterApiImpl);
       SystemServicesFlutterApi.setup(systemServicesFlutterApiImpl);
+      DeviceOrientationManagerFlutterApi.setup(
+          deviceOrientationManagerFlutterApiImpl);
       CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
       CameraStateFlutterApi.setup(cameraStateFlutterApiImpl);
       PendingRecordingFlutterApi.setup(pendingRecordingFlutterApiImpl);
@@ -176,6 +203,8 @@ class AndroidCameraXCameraFlutterApis {
       PlaneProxyFlutterApi.setup(planeProxyFlutterApiImpl);
       LiveDataFlutterApi.setup(liveDataFlutterApiImpl);
       ObserverFlutterApi.setup(observerFlutterApiImpl);
+      CameraControlFlutterApi.setup(cameraControlFlutterApiImpl);
+      FocusMeteringResultFlutterApi.setup(focusMeteringResultFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }

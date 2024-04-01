@@ -17,6 +17,7 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 import 'package:mime/mime.dart';
 import 'package:video_player/video_player.dart';
 
+@pragma('vm:entry-point')
 void appMain() {
   enableFlutterDriverExtension();
   main();

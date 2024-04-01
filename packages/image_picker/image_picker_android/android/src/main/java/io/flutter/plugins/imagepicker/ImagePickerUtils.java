@@ -16,10 +16,15 @@ final class ImagePickerUtils {
   private static boolean isPermissionPresentInManifest(Context context, String permissionName) {
     try {
       PackageManager packageManager = context.getPackageManager();
-      // TODO(stuartmorgan): Add new codepath: https://github.com/flutter/flutter/issues/121816
-      @SuppressWarnings("deprecation")
-      PackageInfo packageInfo =
-          packageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+      PackageInfo packageInfo;
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        packageInfo =
+            packageManager.getPackageInfo(
+                context.getPackageName(),
+                PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS));
+      } else {
+        packageInfo = getPermissionsPackageInfoPreApi33(packageManager, context.getPackageName());
+      }
 
       String[] requestedPermissions = packageInfo.requestedPermissions;
       return Arrays.asList(requestedPermissions).contains(permissionName);
@@ -27,6 +32,13 @@ final class ImagePickerUtils {
       e.printStackTrace();
       return false;
     }
+  }
+
+  @SuppressWarnings("deprecation")
+  private static PackageInfo getPermissionsPackageInfoPreApi33(
+      PackageManager packageManager, String packageName)
+      throws PackageManager.NameNotFoundException {
+    return packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
   }
 
   /**

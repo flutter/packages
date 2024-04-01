@@ -1,3 +1,45 @@
+## 6.2.5
+
+* Removes use of deprecated `renderView` API.
+
+## 6.2.4
+
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+* Fixes a grammar error in the comments of `launchUrl` method.
+
+## 6.2.3
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 6.2.2
+
+* Adds a link about web limitations to the `url_launcher_web` package in the
+  `url_launcher` `README.md` and `launchUrl` method.
+
+## 6.2.1
+
+* Fixes incorrect types in `supportsLaunchMode` and
+  `supportsCloseForLaunchMode`.
+
+## 6.2.0
+
+_Retracted due to incorrect types in new APIs._
+
+* Adds `supportsLaunchMode` for checking whether the current platform supports a
+  given launch mode, to allow clients that will only work with specific modes
+  to avoid fallback to a different mode.
+* Adds `supportsCloseForLaunchMode` to allow checking programatically if a
+  launched URL will be able to be closed. Previously the documented behvaior was
+  that it worked only with the `inAppWebView` launch mode, but this is no longer
+  true on all platforms with the addition of `inAppBrowserView`.
+* Updates the documention for `launchUrl` to clarify that clients should not
+  rely on any specific behavior of the `platformDefault` launch mode. Changes
+  to the handling of `platformDefault`, such as Android's recent change from
+  `inAppWebView` to the new `inAppBrowserView`, are not considered breaking.
+* Updates minimum supported SDK version to Flutter 3.13.
+
 ## 6.1.14
 
 * Updates documentation to mention support for Android Custom Tabs.

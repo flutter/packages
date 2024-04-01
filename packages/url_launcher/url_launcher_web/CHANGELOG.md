@@ -1,3 +1,31 @@
+## 2.3.0
+
+* Updates web code to package `web: ^0.5.0`.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+
+## 2.2.3
+
+* Fixes new lint warnings.
+
+## 2.2.2
+
+* Adds documentation that a launch in a new window/tab needs to be triggered by
+  a user action.
+
+## 2.2.1
+
+* Supports Flutter Web + Wasm
+* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
+## 2.2.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
+
+## 2.1.0
+
+* Adds `launchUrl` implementation.
+* Prevents _Tabnabbing_ and disallows `javascript:` URLs on `launch` and `launchUrl`. 
+
 ## 2.0.20
 
 * Migrates to `dart:ui_web` APIs.

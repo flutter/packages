@@ -20,7 +20,7 @@
   [instanceManager addDartCreatedInstance:[[WKWebViewConfiguration alloc] init] withIdentifier:0];
 
   FlutterError *error;
-  [hostAPI createFromWebViewConfigurationWithIdentifier:@1 configurationIdentifier:@0 error:&error];
+  [hostAPI createFromWebViewConfigurationWithIdentifier:1 configurationIdentifier:0 error:&error];
   WKPreferences *preferences = (WKPreferences *)[instanceManager instanceForIdentifier:1];
   XCTAssertTrue([preferences isKindOfClass:[WKPreferences class]]);
   XCTAssertNil(error);
@@ -36,7 +36,7 @@
       [[FWFPreferencesHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setJavaScriptEnabledForPreferencesWithIdentifier:@0 isEnabled:@YES error:&error];
+  [hostAPI setJavaScriptEnabledForPreferencesWithIdentifier:0 isEnabled:YES error:&error];
   OCMVerify([mockPreferences setJavaScriptEnabled:YES]);
   XCTAssertNil(error);
 }

@@ -51,7 +51,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:0 error:&error];
   FWFNavigationDelegate *navigationDelegate =
       (FWFNavigationDelegate *)[instanceManager instanceForIdentifier:0];
 
@@ -74,8 +74,8 @@
   [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
 
   [mockDelegate webView:mockWebView didFinishNavigation:OCMClassMock([WKNavigation class])];
-  OCMVerify([mockFlutterAPI didFinishNavigationForDelegateWithIdentifier:@0
-                                                       webViewIdentifier:@1
+  OCMVerify([mockFlutterAPI didFinishNavigationForDelegateWithIdentifier:0
+                                                       webViewIdentifier:1
                                                                      URL:@"https://flutter.dev/"
                                                               completion:OCMOCK_ANY]);
 }
@@ -97,8 +97,8 @@
   [mockDelegate webView:mockWebView
       didStartProvisionalNavigation:OCMClassMock([WKNavigation class])];
   OCMVerify([mockFlutterAPI
-      didStartProvisionalNavigationForDelegateWithIdentifier:@0
-                                           webViewIdentifier:@1
+      didStartProvisionalNavigationForDelegateWithIdentifier:0
+                                           webViewIdentifier:1
                                                          URL:@"https://flutter.dev/"
                                                   completion:OCMOCK_ANY]);
 }
@@ -125,8 +125,8 @@
   OCMStub([mockNavigationAction targetFrame]).andReturn(mockFrameInfo);
 
   OCMStub([mockFlutterAPI
-      decidePolicyForNavigationActionForDelegateWithIdentifier:@0
-                                             webViewIdentifier:@1
+      decidePolicyForNavigationActionForDelegateWithIdentifier:0
+                                             webViewIdentifier:1
                                               navigationAction:
                                                   [OCMArg isKindOfClass:[FWFWKNavigationActionData
                                                                             class]]
@@ -164,8 +164,8 @@
       didFailNavigation:OCMClassMock([WKNavigation class])
               withError:[NSError errorWithDomain:@"domain" code:0 userInfo:nil]];
   OCMVerify([mockFlutterAPI
-      didFailNavigationForDelegateWithIdentifier:@0
-                               webViewIdentifier:@1
+      didFailNavigationForDelegateWithIdentifier:0
+                               webViewIdentifier:1
                                            error:[OCMArg isKindOfClass:[FWFNSErrorData class]]
                                       completion:OCMOCK_ANY]);
 }
@@ -187,8 +187,8 @@
       didFailProvisionalNavigation:OCMClassMock([WKNavigation class])
                          withError:[NSError errorWithDomain:@"domain" code:0 userInfo:nil]];
   OCMVerify([mockFlutterAPI
-      didFailProvisionalNavigationForDelegateWithIdentifier:@0
-                                          webViewIdentifier:@1
+      didFailProvisionalNavigationForDelegateWithIdentifier:0
+                                          webViewIdentifier:1
                                                       error:[OCMArg isKindOfClass:[FWFNSErrorData
                                                                                       class]]
                                                  completion:OCMOCK_ANY]);
@@ -209,8 +209,104 @@
 
   [mockDelegate webViewWebContentProcessDidTerminate:mockWebView];
   OCMVerify([mockFlutterAPI
-      webViewWebContentProcessDidTerminateForDelegateWithIdentifier:@0
-                                                  webViewIdentifier:@1
+      webViewWebContentProcessDidTerminateForDelegateWithIdentifier:0
+                                                  webViewIdentifier:1
                                                          completion:OCMOCK_ANY]);
+}
+
+- (void)testDidReceiveAuthenticationChallenge {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  FWFNavigationDelegate *mockDelegate = [self mockNavigationDelegateWithManager:instanceManager
+                                                                     identifier:0];
+  FWFNavigationDelegateFlutterApiImpl *mockFlutterAPI =
+      [self mockFlutterApiWithManager:instanceManager];
+
+  OCMStub([mockDelegate navigationDelegateAPI]).andReturn(mockFlutterAPI);
+
+  WKWebView *mockWebView = OCMClassMock([WKWebView class]);
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
+
+  NSURLAuthenticationChallenge *mockChallenge = OCMClassMock([NSURLAuthenticationChallenge class]);
+  NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc] initWithHost:@"host"
+                                                                                port:0
+                                                                            protocol:nil
+                                                                               realm:@"realm"
+                                                                authenticationMethod:nil];
+  OCMStub([mockChallenge protectionSpace]).andReturn(protectionSpace);
+  [instanceManager addDartCreatedInstance:mockChallenge withIdentifier:2];
+
+  NSURLCredential *credential = [NSURLCredential credentialWithUser:@"user"
+                                                           password:@"password"
+                                                        persistence:NSURLCredentialPersistenceNone];
+  [instanceManager addDartCreatedInstance:credential withIdentifier:5];
+
+  OCMStub([mockFlutterAPI
+      didReceiveAuthenticationChallengeForDelegateWithIdentifier:0
+                                               webViewIdentifier:1
+                                             challengeIdentifier:2
+                                                      completion:
+                                                          ([OCMArg
+                                                              invokeBlockWithArgs:
+                                                                  [FWFAuthenticationChallengeResponse
+                                                                       makeWithDisposition:
+                                                                           FWFNSUrlSessionAuthChallengeDispositionCancelAuthenticationChallenge
+                                                                      credentialIdentifier:@(5)],
+                                                                  [NSNull null], nil])]);
+
+  NSURLSessionAuthChallengeDisposition __block callbackDisposition = -1;
+  NSURLCredential *__block callbackCredential;
+  [mockDelegate webView:mockWebView
+      didReceiveAuthenticationChallenge:mockChallenge
+                      completionHandler:^(NSURLSessionAuthChallengeDisposition disposition,
+                                          NSURLCredential *credential) {
+                        callbackDisposition = disposition;
+                        callbackCredential = credential;
+                      }];
+
+  XCTAssertEqual(callbackDisposition, NSURLSessionAuthChallengeCancelAuthenticationChallenge);
+  XCTAssertEqualObjects(callbackCredential, credential);
+}
+
+- (void)testDecidePolicyForNavigationResponse {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  FWFNavigationDelegate *mockDelegate = [self mockNavigationDelegateWithManager:instanceManager
+                                                                     identifier:0];
+  FWFNavigationDelegateFlutterApiImpl *mockFlutterAPI =
+      [self mockFlutterApiWithManager:instanceManager];
+
+  OCMStub([mockDelegate navigationDelegateAPI]).andReturn(mockFlutterAPI);
+
+  WKWebView *mockWebView = OCMClassMock([WKWebView class]);
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
+
+  WKNavigationResponse *mockNavigationResponse = OCMClassMock([WKNavigationResponse class]);
+  OCMStub([mockNavigationResponse isForMainFrame]).andReturn(YES);
+
+  NSHTTPURLResponse *mockURLResponse = OCMClassMock([NSHTTPURLResponse class]);
+  OCMStub([mockURLResponse statusCode]).andReturn(1);
+  OCMStub([mockNavigationResponse response]).andReturn(mockURLResponse);
+
+  OCMStub([mockFlutterAPI
+      decidePolicyForNavigationResponseForDelegateWithIdentifier:0
+                                               webViewIdentifier:1
+                                              navigationResponse:OCMOCK_ANY
+                                                      completion:
+                                                          ([OCMArg
+                                                              invokeBlockWithArgs:
+                                                                  [[FWFWKNavigationResponsePolicyEnumBox
+                                                                      alloc]
+                                                                      initWithValue:
+                                                                          FWFWKNavigationResponsePolicyEnumAllow],
+                                                                  [NSNull null], nil])]);
+
+  WKNavigationResponsePolicy __block callbackPolicy = -1;
+  [mockDelegate webView:mockWebView
+      decidePolicyForNavigationResponse:mockNavigationResponse
+                        decisionHandler:^(WKNavigationResponsePolicy policy) {
+                          callbackPolicy = policy;
+                        }];
+  XCTAssertEqual(callbackPolicy, WKNavigationResponsePolicyAllow);
 }
 @end

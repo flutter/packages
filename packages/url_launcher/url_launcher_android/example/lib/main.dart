@@ -39,6 +39,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
   bool _hasCallSupport = false;
+  bool _hasCustomTabSupport = false;
   Future<void>? _launched;
   String _phone = '';
 
@@ -51,73 +52,77 @@ class _MyHomePageState extends State<MyHomePage> {
         _hasCallSupport = result;
       });
     });
+    // Check for Android Custom Tab support.
+    launcher
+        .supportsMode(PreferredLaunchMode.inAppBrowserView)
+        .then((bool result) {
+      setState(() {
+        _hasCustomTabSupport = result;
+      });
+    });
   }
 
   Future<void> _launchInBrowser(String url) async {
-    if (!await launcher.launch(
+    if (!await launcher.launchUrl(
       url,
-      useSafariVC: false,
-      useWebView: false,
-      enableJavaScript: false,
-      enableDomStorage: false,
-      universalLinksOnly: false,
-      headers: <String, String>{},
+      const LaunchOptions(mode: PreferredLaunchMode.externalApplication),
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<void> _launchInCustomTab(String url) async {
+    if (!await launcher.launchUrl(
+      url,
+      const LaunchOptions(mode: PreferredLaunchMode.inAppBrowserView),
     )) {
       throw Exception('Could not launch $url');
     }
   }
 
   Future<void> _launchInWebView(String url) async {
-    if (!await launcher.launch(
+    if (!await launcher.launchUrl(
       url,
-      useSafariVC: true,
-      useWebView: true,
-      enableJavaScript: false,
-      enableDomStorage: false,
-      universalLinksOnly: false,
-      headers: <String, String>{},
+      const LaunchOptions(mode: PreferredLaunchMode.inAppWebView),
     )) {
       throw Exception('Could not launch $url');
     }
   }
 
   Future<void> _launchInWebViewWithCustomHeaders(String url) async {
-    if (!await launcher.launch(
+    if (!await launcher.launchUrl(
       url,
-      useSafariVC: true,
-      useWebView: true,
-      enableJavaScript: false,
-      enableDomStorage: false,
-      universalLinksOnly: false,
-      headers: <String, String>{'my_header_key': 'my_header_value'},
+      const LaunchOptions(
+          mode: PreferredLaunchMode.inAppWebView,
+          webViewConfiguration: InAppWebViewConfiguration(
+            headers: <String, String>{'my_header_key': 'my_header_value'},
+          )),
     )) {
       throw Exception('Could not launch $url');
     }
   }
 
-  Future<void> _launchInWebViewWithJavaScript(String url) async {
-    if (!await launcher.launch(
+  Future<void> _launchInWebViewWithoutJavaScript(String url) async {
+    if (!await launcher.launchUrl(
       url,
-      useSafariVC: true,
-      useWebView: true,
-      enableJavaScript: true,
-      enableDomStorage: false,
-      universalLinksOnly: false,
-      headers: <String, String>{},
+      const LaunchOptions(
+          mode: PreferredLaunchMode.inAppWebView,
+          webViewConfiguration: InAppWebViewConfiguration(
+            enableJavaScript: false,
+          )),
     )) {
       throw Exception('Could not launch $url');
     }
   }
 
-  Future<void> _launchInWebViewWithDomStorage(String url) async {
-    if (!await launcher.launch(
+  Future<void> _launchInWebViewWithoutDomStorage(String url) async {
+    if (!await launcher.launchUrl(
       url,
-      useSafariVC: true,
-      useWebView: true,
-      enableJavaScript: false,
-      enableDomStorage: true,
-      universalLinksOnly: false,
-      headers: <String, String>{},
+      const LaunchOptions(
+          mode: PreferredLaunchMode.inAppWebView,
+          webViewConfiguration: InAppWebViewConfiguration(
+            enableDomStorage: false,
+          )),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -133,22 +138,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _makePhoneCall(String phoneNumber) async {
     // Use `Uri` to ensure that `phoneNumber` is properly URL-encoded.
-    // Just using 'tel:$phoneNumber' would create invalid URLs in some cases,
-    // such as spaces in the input, which would cause `launch` to fail on some
-    // platforms.
+    // Just using 'tel:$phoneNumber' would create invalid URLs in some cases.
     final Uri launchUri = Uri(
       scheme: 'tel',
       path: phoneNumber,
     );
-    await launcher.launch(
-      launchUri.toString(),
-      useSafariVC: false,
-      useWebView: false,
-      enableJavaScript: false,
-      enableDomStorage: false,
-      universalLinksOnly: true,
-      headers: <String, String>{},
-    );
+    await launcher.launchUrl(launchUri.toString(), const LaunchOptions());
   }
 
   @override
@@ -187,35 +182,44 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text(toLaunch),
               ),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInBrowser(toLaunch);
-                }),
+                onPressed: _hasCustomTabSupport
+                    ? () => setState(() {
+                          _launched = _launchInBrowser(toLaunch);
+                        })
+                    : null,
                 child: const Text('Launch in browser'),
+              ),
+              const Padding(padding: EdgeInsets.all(16.0)),
+              ElevatedButton(
+                onPressed: () => setState(() {
+                  _launched = _launchInCustomTab(toLaunch);
+                }),
+                child: const Text('Launch in Android Custom Tab'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
                 onPressed: () => setState(() {
                   _launched = _launchInWebView(toLaunch);
                 }),
-                child: const Text('Launch in app'),
+                child: const Text('Launch in web view'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
                   _launched = _launchInWebViewWithCustomHeaders(toLaunch);
                 }),
-                child: const Text('Launch in app (Custom headers)'),
+                child: const Text('Launch in web view (Custom headers)'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithJavaScript(toLaunch);
+                  _launched = _launchInWebViewWithoutJavaScript(toLaunch);
                 }),
-                child: const Text('Launch in app (JavaScript ON)'),
+                child: const Text('Launch in web view (JavaScript OFF)'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithDomStorage(toLaunch);
+                  _launched = _launchInWebViewWithoutDomStorage(toLaunch);
                 }),
-                child: const Text('Launch in app (DOM storage ON)'),
+                child: const Text('Launch in web view (DOM storage OFF)'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
@@ -225,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     launcher.closeWebView();
                   });
                 }),
-                child: const Text('Launch in app + close after 5 seconds'),
+                child: const Text('Launch in web view + close after 5 seconds'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               FutureBuilder<void>(future: _launched, builder: _launchStatus),
