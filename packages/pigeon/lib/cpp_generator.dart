@@ -255,6 +255,35 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         _writeClassConstructor(root, indent, classDefinition, orderedFields,
             'Constructs an object setting all fields.');
 
+        // If any fields are pointer type, then the class requires a custom
+        // copy constructor, so declare the rule-of-five group of functions.
+        if (orderedFields.any((NamedType field) => _isPointerField(
+            getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType)))) {
+          final String className = classDefinition.name;
+          // Add the default destructor, since unique_ptr destroys itself.
+          _writeFunctionDeclaration(indent, '~$className', defaultImpl: true);
+          // Declare custom copy/assign to deep-copy the pointer.
+          _writeFunctionDeclaration(indent, className,
+              isConstructor: true,
+              isCopy: true,
+              parameters: <String>['const $className& other']);
+          _writeFunctionDeclaration(indent, 'operator=',
+              returnType: '$className&',
+              parameters: <String>['const $className& other']);
+          // Re-add the default move operations, since they work fine with
+          // unique_ptr.
+          _writeFunctionDeclaration(indent, className,
+              isConstructor: true,
+              isCopy: true,
+              parameters: <String>['$className&& other'],
+              defaultImpl: true);
+          _writeFunctionDeclaration(indent, 'operator=',
+              returnType: '$className&',
+              parameters: <String>['$className&& other'],
+              defaultImpl: true,
+              noexcept: true);
+        }
+
         for (final NamedType field in orderedFields) {
           addDocumentationComments(
               indent, field.documentationComments, _docCommentSpec);
@@ -313,7 +342,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           final HostDatatype hostDatatype =
               getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType);
           indent.writeln(
-              '${_valueType(hostDatatype)} ${_makeInstanceVariableName(field)};');
+              '${_fieldType(hostDatatype)} ${_makeInstanceVariableName(field)};');
         }
       });
     }, nestCount: 0);
@@ -692,6 +721,13 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     }
     // All-field constructor.
     _writeClassConstructor(root, indent, classDefinition, orderedFields);
+
+    // Custom copy/assign to handle pointer fields, if necessary.
+    if (orderedFields.any((NamedType field) => _isPointerField(
+        getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType)))) {
+      _writeCopyConstructor(root, indent, classDefinition, orderedFields);
+      _writeAssignmentOperator(root, indent, classDefinition, orderedFields);
+    }
 
     // Getters and setters.
     for (final NamedType field in orderedFields) {
@@ -1169,15 +1205,69 @@ return EncodableValue(EncodableList{
         initializers: initializerStrings);
   }
 
+  void _writeCopyConstructor(Root root, Indent indent, Class classDefinition,
+      Iterable<NamedType> fields) {
+    final List<String> initializerStrings = fields.map((NamedType param) {
+      final String fieldName = _makeInstanceVariableName(param);
+      final HostDatatype hostType = getFieldHostDatatype(
+        param,
+        _shortBaseCppTypeForBuiltinDartType,
+      );
+      return '$fieldName(${_fieldValueExpression(hostType, 'other.$fieldName', sourceIsField: true)})';
+    }).toList();
+    _writeFunctionDefinition(indent, classDefinition.name,
+        scope: classDefinition.name,
+        parameters: <String>['const ${classDefinition.name}& other'],
+        initializers: initializerStrings);
+  }
+
+  void _writeAssignmentOperator(Root root, Indent indent, Class classDefinition,
+      Iterable<NamedType> fields) {
+    _writeFunctionDefinition(indent, 'operator=',
+        scope: classDefinition.name,
+        returnType: '${classDefinition.name}&',
+        parameters: <String>['const ${classDefinition.name}& other'], body: () {
+      for (final NamedType field in fields) {
+        final HostDatatype hostDatatype =
+            getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
+
+        final String ivarName = _makeInstanceVariableName(field);
+        final String otherIvar = 'other.$ivarName';
+        final String valueExpression;
+        if (_isPointerField(hostDatatype)) {
+          final String constructor =
+              'std::make_unique<${hostDatatype.datatype}>(*$otherIvar)';
+          valueExpression = hostDatatype.isNullable
+              ? '$otherIvar ? $constructor : nullptr'
+              : constructor;
+        } else {
+          valueExpression = otherIvar;
+        }
+        indent.writeln('$ivarName = $valueExpression;');
+      }
+      indent.writeln('return *this;');
+    });
+  }
+
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
       Indent indent, Class classDefinition, NamedType field) {
     final HostDatatype hostDatatype =
         getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
     final String instanceVariableName = _makeInstanceVariableName(field);
     final String setterName = _makeSetterName(field);
-    final String returnExpression = hostDatatype.isNullable
-        ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
-        : instanceVariableName;
+    final String returnExpression;
+    if (_isPointerField(hostDatatype)) {
+      // Convert std::unique_ptr<T> to either T* or const T&.
+      returnExpression = hostDatatype.isNullable
+          ? '$instanceVariableName.get()'
+          : '*$instanceVariableName';
+    } else if (hostDatatype.isNullable) {
+      // Convert std::optional<T> to T*.
+      returnExpression =
+          '$instanceVariableName ? &(*$instanceVariableName) : nullptr';
+    } else {
+      returnExpression = instanceVariableName;
+    }
 
     // Writes a setter treating the type as [type], to allow generating multiple
     // setter variants.
@@ -1220,10 +1310,20 @@ return EncodableValue(EncodableList{
   /// Returns the value to use when setting a field of the given type from
   /// an argument of that type.
   ///
-  /// For non-nullable values this is just the variable itself, but for nullable
-  /// values this handles the conversion between an argument type (a pointer)
-  /// and the field type (a std::optional).
-  String _fieldValueExpression(HostDatatype type, String variable) {
+  /// For non-nullable and non-custom-class values this is just the variable
+  /// itself, but for other values this handles the conversion between an
+  /// argument type (a pointer or value/reference) and the field type
+  /// (a std::optional or std::unique_ptr).
+  String _fieldValueExpression(HostDatatype type, String variable,
+      {bool sourceIsField = false}) {
+    if (_isPointerField(type)) {
+      final String constructor = 'std::make_unique<${type.datatype}>';
+      // If the source is a pointer field, it always needs dereferencing.
+      final String maybeDereference = sourceIsField ? '*' : '';
+      return type.isNullable
+          ? '$variable ? $constructor(*$variable) : nullptr'
+          : '$constructor($maybeDereference$variable)';
+    }
     return type.isNullable
         ? '$variable ? ${_valueType(type)}(*$variable) : std::nullopt'
         : variable;
@@ -1309,7 +1409,8 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
     if (!hostType.isBuiltin &&
         root.classes.any((Class c) => c.name == dartType.baseName)) {
       if (preSerializeClasses) {
-        final String operator = hostType.isNullable ? '->' : '.';
+        final String operator =
+            hostType.isNullable || _isPointerField(hostType) ? '->' : '.';
         encodableValue =
             'EncodableValue($variableName${operator}ToEncodableList())';
       } else {
@@ -1547,6 +1648,23 @@ String _valueType(HostDatatype type) {
   return type.isNullable ? 'std::optional<$baseType>' : baseType;
 }
 
+/// Returns the C++ type to use when declaring a data class field for the
+/// given type.
+String _fieldType(HostDatatype type) {
+  return _isPointerField(type)
+      ? 'std::unique_ptr<${type.datatype}>'
+      : _valueType(type);
+}
+
+/// Returns true if [type] should be stored as a pointer, rather than a
+/// value type, in a data class.
+bool _isPointerField(HostDatatype type) {
+  // Custom class types are stored as `unique_ptr`s since they can have
+  // arbitrary size, and can also be arbitrarily (including recursively)
+  // nested, so must be stored as pointers.
+  return !type.isBuiltin && !type.isEnum;
+}
+
 /// Returns the C++ type to use in an argument context without ownership
 /// transfer for the given base type.
 String _unownedArgumentType(HostDatatype type) {
@@ -1723,17 +1841,21 @@ void _writeFunctionDeclaration(
   bool isStatic = false,
   bool isVirtual = false,
   bool isConstructor = false,
+  bool isCopy = false,
   bool isPureVirtual = false,
   bool isConst = false,
   bool isOverride = false,
   bool deleted = false,
+  bool defaultImpl = false,
   bool inlineNoop = false,
+  bool noexcept = false,
   void Function()? inlineBody,
 }) {
   assert(!(isVirtual && isOverride), 'virtual is redundant with override');
   assert(isVirtual || !isPureVirtual, 'pure virtual methods must be virtual');
   assert(returnType == null || !isConstructor,
       'constructors cannot have return types');
+  assert(!(deleted && defaultImpl), 'a function cannot be deleted and default');
   _writeFunction(
     indent,
     inlineNoop || (inlineBody != null)
@@ -1746,12 +1868,14 @@ void _writeFunctionDeclaration(
       if (inlineBody != null) 'inline',
       if (isStatic) 'static',
       if (isVirtual) 'virtual',
-      if (isConstructor && parameters.isNotEmpty) 'explicit'
+      if (isConstructor && parameters.isNotEmpty && !isCopy) 'explicit'
     ],
     trailingAnnotations: <String>[
       if (isConst) 'const',
+      if (noexcept) 'noexcept',
       if (isOverride) 'override',
       if (deleted) '= delete',
+      if (defaultImpl) '= default',
       if (isPureVirtual) '= 0',
     ],
     body: inlineBody,
