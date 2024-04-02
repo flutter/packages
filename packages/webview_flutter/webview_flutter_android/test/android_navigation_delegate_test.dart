@@ -559,6 +559,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedError,
     super.onReceivedHttpAuthRequest,
     super.onReceivedRequestError,
+    super.onWebViewRenderProcessTerminated,
     super.requestLoading,
     super.urlLoading,
     super.doUpdateVisitedHistory,

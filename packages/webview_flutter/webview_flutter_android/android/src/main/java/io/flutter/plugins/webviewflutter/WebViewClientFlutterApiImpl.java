@@ -7,6 +7,7 @@ package io.flutter.plugins.webviewflutter;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.webkit.HttpAuthHandler;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -208,6 +209,35 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         descriptionArg,
         failingUrlArg,
         callback);
+  }
+
+  /**
+   * Passes arguments from {@link WebViewClient#onRenderProcessGone(WebView, RenderProcessGoneDetail)} to
+   * Dart.
+   */
+  public void onRenderProcessGone(
+          @NonNull WebViewClient webViewClient,
+          @NonNull WebView webView,
+          @NonNull RenderProcessGoneDetail details,
+          @NonNull Reply<Void> callback) {
+    webViewFlutterApi.create(webView, reply -> {});
+
+    GeneratedAndroidWebView.RenderProcessGoneDetailData detailsData = new GeneratedAndroidWebView.RenderProcessGoneDetailData();
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder requestData =
+              new GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder()
+                      .setDidCrash(details.didCrash())
+                      .setRendererPriorityAtExit((long) details.rendererPriorityAtExit());
+      detailsData = requestData.build();
+    }
+
+    final Long webViewIdentifier =
+            Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
+    onRenderProcessGone(
+            getIdentifierForClient(webViewClient),
+            webViewIdentifier,
+            detailsData,
+            callback);
   }
 
   /**

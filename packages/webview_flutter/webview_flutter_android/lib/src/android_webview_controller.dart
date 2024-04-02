@@ -1332,14 +1332,25 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           ));
         }
       },
+      onWebViewRenderProcessTerminated: (
+        android_webview.WebView webView,
+        android_webview.ProcessTerminationDetails details,
+      ) {
+        final WebViewRenderProcessTerminatedCallback? callback = weakThis.target?._onWebViewRenderProcessTerminated;
+        if (callback != null) {
+          callback(ProcessTerminationDetails(
+            didCrash: details.didCrash,
+            rendererPriorityAtExit: details.rendererPriorityAtExit,
+          ));
+        }
+      },
       onReceivedError: (
         android_webview.WebView webView,
         int errorCode,
         String description,
         String failingUrl,
       ) {
-        final WebResourceErrorCallback? callback =
-            weakThis.target?._onWebResourceError;
+        final WebResourceErrorCallback? callback = weakThis.target?._onWebResourceError;
         if (callback != null) {
           callback(AndroidWebResourceError._(
             errorCode: errorCode,
@@ -1451,6 +1462,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   HttpResponseErrorCallback? _onHttpError;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
+  WebViewRenderProcessTerminatedCallback? _onWebViewRenderProcessTerminated;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
@@ -1542,6 +1554,13 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     WebResourceErrorCallback onWebResourceError,
   ) async {
     _onWebResourceError = onWebResourceError;
+  }
+
+  @override
+  Future<void> setOnWebViewRenderProcessTerminated(
+    WebViewRenderProcessTerminatedCallback onWebViewRenderProcessTerminatedCallback,
+  ) async {
+    _onWebViewRenderProcessTerminated = onWebViewRenderProcessTerminatedCallback;
   }
 
   @override

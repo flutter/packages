@@ -22,6 +22,7 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         PlatformWebViewCookieManagerCreationParams,
         PlatformWebViewPermissionRequest,
         PlatformWebViewWidgetCreationParams,
+        ProcessTerminationDetails,
         ProgressCallback,
         ScrollPositionChange,
         UrlChange,

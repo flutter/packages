@@ -778,6 +778,7 @@ class WebViewClient extends JavaObject {
     this.onReceivedHttpError,
     this.onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
+    this.onWebViewRenderProcessTerminated,
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
@@ -800,6 +801,7 @@ class WebViewClient extends JavaObject {
     this.onReceivedHttpError,
     this.onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
+    this.onWebViewRenderProcessTerminated,
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
@@ -931,6 +933,24 @@ class WebViewClient extends JavaObject {
     WebResourceRequest request,
     WebResourceError error,
   )? onReceivedRequestError;
+
+  /// Notify host application that the given WebView's render process has exited.
+  ///
+  /// Multiple WebView instances may be associated with a single render process;
+  /// onRenderProcessGone will be called for each WebView that was affected.
+  /// The application's implementation of this callback should only attempt to clean up the specific WebView given as a parameter,
+  /// and should not assume that other WebView instances are affected.
+  /// The given WebView can't be used, and should be removed from the view hierarchy,
+  /// all references to it should be cleaned up,
+  /// e.g any references in the Activity or other classes saved using View.findViewById(int) and similar calls, etc.
+  /// To cause an render process crash for test purpose,
+  /// the application can call loadUrl("chrome://crash") on the WebView.
+  /// Note that multiple WebView instances may be affected if they share a render process,
+  /// not just the specific WebView which loaded chrome://crash..
+  final void Function(
+      WebView webView,
+      ProcessTerminationDetails details,
+      )? onWebViewRenderProcessTerminated;
 
   /// Report an error to the host application.
   ///
@@ -1510,6 +1530,23 @@ class WebResourceError {
 
   /// Describes the error.
   final String description;
+}
+
+/// This class provides more specific information about why the render process exited.
+/// The application may use this to decide how to handle the situation.
+/// See [WebViewClient.onWebViewRenderProcessTerminated].
+class ProcessTerminationDetails {
+  /// Creates a [ProcessTerminationDetails].
+  const ProcessTerminationDetails({
+    required this.didCrash,
+    required this.rendererPriorityAtExit,
+  });
+
+  /// Indicates whether the render process was observed to crash, or whether it was killed by the system.
+  final bool didCrash;
+
+  /// Returns the renderer priority that was set at the time that the renderer exited.
+  final int rendererPriorityAtExit;
 }
 
 /// Manages Flutter assets that are part of Android's app bundle.

@@ -126,6 +126,16 @@ class WebResourceErrorData {
   String description;
 }
 
+class RenderProcessGoneDetailData {
+  const RenderProcessGoneDetailData({
+    required this.didCrash,
+    required this.rendererPriorityAtExit,
+  });
+
+  final bool didCrash;
+  final int rendererPriorityAtExit;
+}
+
 class WebViewPoint {
   WebViewPoint(this.x, this.y);
 
@@ -365,6 +375,12 @@ abstract class WebViewClientFlutterApi {
     int errorCode,
     String description,
     String failingUrl,
+  );
+
+  void onRenderProcessGone(
+    int instanceId,
+    int webViewInstanceId,
+      RenderProcessGoneDetailData data,
   );
 
   void requestLoading(

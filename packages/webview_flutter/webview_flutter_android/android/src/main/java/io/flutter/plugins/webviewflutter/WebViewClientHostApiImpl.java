@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.view.KeyEvent;
 import android.webkit.HttpAuthHandler;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -36,6 +37,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
   public static class WebViewClientImpl extends WebViewClient {
     private final WebViewClientFlutterApiImpl flutterApi;
     private boolean returnValueForShouldOverrideUrlLoading = false;
+    private boolean applicationDidHandleWebViewRenderProcessCrash = true;
 
     /**
      * Creates a {@link WebViewClient} that passes arguments of callbacks methods to Dart.
@@ -82,6 +84,15 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
         @NonNull String failingUrl) {
       flutterApi.onReceivedError(
           this, view, (long) errorCode, description, failingUrl, reply -> {});
+    }
+
+    @Override
+    public boolean onRenderProcessGone(@NonNull WebView view,
+                                        RenderProcessGoneDetail detail) {
+      flutterApi.onRenderProcessGone(
+              this, view, detail, reply -> {});
+      // TODO: Implement passing boolean value from dart code to native webview indicating if render process crash has been handled or not
+      return applicationDidHandleWebViewRenderProcessCrash;
     }
 
     @Override

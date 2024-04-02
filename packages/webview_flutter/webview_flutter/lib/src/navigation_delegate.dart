@@ -37,17 +37,17 @@ import 'webview_controller.dart';
 class NavigationDelegate {
   /// Constructs a [NavigationDelegate].
   ///
-  /// {@template webview_fluttter.NavigationDelegate.constructor}
+  /// {@template webview_flutter.NavigationDelegate.constructor}
   /// `onUrlChange`: invoked when the underlying web view changes to a new url.
   /// `onHttpAuthRequest`: invoked when the web view is requesting authentication.
   /// {@endtemplate}
   NavigationDelegate({
-    FutureOr<NavigationDecision> Function(NavigationRequest request)?
-        onNavigationRequest,
+    FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
+    void Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatformCreationParams(
@@ -57,6 +57,7 @@ class NavigationDelegate {
           onPageFinished: onPageFinished,
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
+          onWebViewRenderProcessTerminated: onWebViewRenderProcessTerminated,
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
         );
@@ -64,7 +65,7 @@ class NavigationDelegate {
   /// Constructs a [NavigationDelegate] from creation params for a specific
   /// platform.
   ///
-  /// {@macro webview_fluttter.NavigationDelegate.constructor}
+  /// {@macro webview_flutter.NavigationDelegate.constructor}
   ///
   /// {@template webview_flutter.NavigationDelegate.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
@@ -94,12 +95,12 @@ class NavigationDelegate {
   /// {@endtemplate}
   NavigationDelegate.fromPlatformCreationParams(
     PlatformNavigationDelegateCreationParams params, {
-    FutureOr<NavigationDecision> Function(NavigationRequest request)?
-        onNavigationRequest,
+    FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
+    void Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatform(
@@ -109,13 +110,14 @@ class NavigationDelegate {
           onPageFinished: onPageFinished,
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
+          onWebViewRenderProcessTerminated: onWebViewRenderProcessTerminated,
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
         );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
   ///
-  /// {@macro webview_fluttter.NavigationDelegate.constructor}
+  /// {@macro webview_flutter.NavigationDelegate.constructor}
   NavigationDelegate.fromPlatform(
     this.platform, {
     this.onNavigationRequest,
@@ -123,6 +125,7 @@ class NavigationDelegate {
     this.onPageFinished,
     this.onProgress,
     this.onWebResourceError,
+    this.onWebViewRenderProcessTerminated,
     void Function(UrlChange change)? onUrlChange,
     HttpAuthRequestCallback? onHttpAuthRequest,
   }) {
@@ -140,6 +143,9 @@ class NavigationDelegate {
     }
     if (onWebResourceError != null) {
       platform.setOnWebResourceError(onWebResourceError!);
+    }
+    if (onWebViewRenderProcessTerminated != null) {
+      platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated!);
     }
     if (onUrlChange != null) {
       platform.setOnUrlChange(onUrlChange);
@@ -175,4 +181,7 @@ class NavigationDelegate {
 
   /// Invoked when a resource loading error occurred.
   final WebResourceErrorCallback? onWebResourceError;
+
+  /// Invoked when a the given WebView's render process has exited.
+  final WebViewRenderProcessTerminatedCallback? onWebViewRenderProcessTerminated;
 }

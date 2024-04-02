@@ -794,6 +794,29 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   @override
+  void onRenderProcessGone(int instanceId, int webViewInstanceId, RenderProcessGoneDetailData data) {
+    final WebViewClient? instance = instanceManager.getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager.getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      instance != null,
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
+    );
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+    );
+    if (instance!.onWebViewRenderProcessTerminated != null) {
+      instance.onWebViewRenderProcessTerminated!(
+        webViewInstance!,
+        ProcessTerminationDetails(
+          didCrash: data.didCrash,
+          rendererPriorityAtExit: data.rendererPriorityAtExit,
+        ),
+      );
+    }
+  }
+
+  @override
   void requestLoading(
     int instanceId,
     int webViewInstanceId,
