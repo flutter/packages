@@ -31,7 +31,7 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-TestSmallApi::TestSmallApi() {};
+TestSmallApi::TestSmallApi() {}
 
 TestSmallApi::~TestSmallApi() {}
 
@@ -76,7 +76,7 @@ TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
       host_small_api_one_(std::move(host_small_api_one)),
       host_small_api_two_(std::move(host_small_api_two)),
       flutter_api_(
-          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {};
+          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {}
 
 TestPlugin::~TestPlugin() {}
 
