@@ -1,3 +1,7 @@
+## 0.3.2+1
+
+* Bumps com.android.billingclient:billing from 6.1.0 to 6.2.0.
+
 ## 0.3.2
 
 * Adds UserChoiceBilling APIs to platform addition.
