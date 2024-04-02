@@ -7,6 +7,48 @@
 
 import Foundation
 
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
+
+private func wrapResult(_ result: Any?) -> [Any?] {
+  return [result]
+}
+
+private func wrapError(_ error: Any) -> [Any?] {
+  if let flutterError = error as? FlutterError {
+    return [
+      flutterError.code,
+      flutterError.message,
+      flutterError.details,
+    ]
+  }
+  return [
+    "\(error)",
+    "\(type(of: error))",
+    "Stacktrace: \(Thread.callStackSymbols)",
+  ]
+}
+
+private func createConnectionError(withChannelName channelName: String) -> FlutterError {
+  return FlutterError(
+    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
+    details: "")
+}
+
+private func isNullish(_ value: Any?) -> Bool {
+  return value is NSNull || value == nil
+}
+
+private func nilOrValue<T>(_ value: Any?) -> T? {
+  if value is NSNull { return nil }
+  return value as! T?
+}
+
 /// Handles the callback when an object is deallocated.
 public protocol PenguinFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
@@ -27,8 +69,9 @@ internal final class PenguinFinalizer {
     self.delegate = delegate
   }
 
-  internal static func attach(to instance: AnyObject, identifier: Int64, delegate: PenguinFinalizerDelegate)
-  {
+  internal static func attach(
+    to instance: AnyObject, identifier: Int64, delegate: PenguinFinalizerDelegate
+  ) {
     let finalizer = PenguinFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
@@ -139,7 +182,9 @@ public class PenguinInstanceManager {
 
   private func addInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
     assert(identifier >= 0)
-    assert(weakInstances.object(forKey: identifier as NSNumber) == nil, "Identifier has already been added: \(identifier)")
+    assert(
+      weakInstances.object(forKey: identifier as NSNumber) == nil,
+      "Identifier has already been added: \(identifier)")
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
@@ -183,7 +228,7 @@ public class PenguinInstanceManager {
     }
     return containsInstance
   }
-  
+
   /// Removes all of the instances from this manager.
   ///
   /// The manager will be empty after this call returns.
@@ -198,7 +243,7 @@ public class PenguinInstanceManager {
 
   /// The number of instances stored as a strong reference.
   ///
-  /// Added for debugging and testing purposes.
+  /// For debugging and testing purposes.
   internal var strongInstanceCount: Int {
     var count: Int = 0
     lockQueue.sync {
@@ -209,7 +254,7 @@ public class PenguinInstanceManager {
 
   /// The number of instances stored as a weak reference.
   ///
-  /// Added for debugging and testing purposes. NSMapTables that store keys or objects as weak
+  /// For debugging and testing purposes. NSMapTables that store keys or objects as weak
   /// reference will be reclaimed nondeterministically.
   internal var weakInstanceCount: Int {
     var count: Int = 0
@@ -217,5 +262,71 @@ public class PenguinInstanceManager {
       count = weakInstances.count
     }
     return count
+  }
+}
+
+class PigeonInstanceManagerApi {
+  /// The codec used for serializing messages.
+  static let codec = FlutterStandardMessageCodec.sharedInstance()
+
+  /// Handles sending and receiving messages with Dart.
+  let binaryMessenger: FlutterBinaryMessenger
+
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    self.binaryMessenger = binaryMessenger
+  }
+
+  /// Sets up an instance of `PigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, instanceManager: PenguinInstanceManager?
+  ) {
+    let removeStrongReferenceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let instanceManager = instanceManager {
+      removeStrongReferenceChannel.setMessageHandler { message, reply in
+        let identifier = message is Int64 ? message as! Int64 : Int64(message as! Int32)
+        let _: AnyObject? = instanceManager.removeInstance(withIdentifier: identifier)
+        reply(wrapResult(nil))
+      }
+    } else {
+      removeStrongReferenceChannel.setMessageHandler(nil)
+    }
+    let clearChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.clear",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let instanceManager = instanceManager {
+      clearChannel.setMessageHandler { _, reply in
+        instanceManager.removeAllObjects()
+        reply(wrapResult(nil))
+      }
+    } else {
+      removeStrongReferenceChannel.setMessageHandler(nil)
+    }
+  }
+
+  /// Send a messaage to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
+  func removeStrongReference(
+    withIdentifier identifier: Int64, completion: @escaping (Result<Void, FlutterError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: PigeonInstanceManagerApi.codec)
+    channel.sendMessage(identifier) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
   }
 }

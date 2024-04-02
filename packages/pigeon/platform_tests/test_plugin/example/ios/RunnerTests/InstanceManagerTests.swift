@@ -35,44 +35,44 @@ final class InstanceManagerTests: XCTestCase {
     XCTAssertEqual(instanceManager.removeInstance(withIdentifier: 0), object)
     XCTAssertEqual(instanceManager.strongInstanceCount, 0)
   }
-  
+
   func testFinalizerCallsDelegateMethod() {
     let finalizerDelegate = TestFinalizerDelegate()
-    
+
     var object: NSObject? = NSObject()
     PenguinFinalizer.attach(to: object!, identifier: 0, delegate: finalizerDelegate)
-    
+
     object = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
   }
-  
+
   func testRemoveAllObjects() {
     let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
     instanceManager.removeAllObjects()
-    
+
     XCTAssertEqual(instanceManager.strongInstanceCount, 0)
     XCTAssertEqual(instanceManager.weakInstanceCount, 0)
   }
-  
+
   func testCanAddSameObjectWithAddDartCreatedInstance() {
     let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
     let object = NSObject()
-    
+
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
     instanceManager.addDartCreatedInstance(object, withIdentifier: 1)
-    
+
     let instance1: NSObject? = instanceManager.instance(forIdentifier: 0)
     let instance2: NSObject? = instanceManager.instance(forIdentifier: 1)
-    
+
     XCTAssertEqual(instance1, instance2)
   }
 
   func testObjectsAreStoredWithPointerHashcode() {
     let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
-    
+
     class EquatableClass: Equatable {
       static func == (lhs: EquatableClass, rhs: EquatableClass) -> Bool {
         return true
@@ -95,13 +95,13 @@ final class InstanceManagerTests: XCTestCase {
 }
 
 class EmptyFinalizerDelegate: PenguinFinalizerDelegate {
-  func onDeinit(identifier: Int64) { }
+  func onDeinit(identifier: Int64) {}
 }
 
 class TestFinalizerDelegate: PenguinFinalizerDelegate {
   var lastHandledIdentifier: Int64?
-  
-  func onDeinit(identifier: Int64) { 
+
+  func onDeinit(identifier: Int64) {
     lastHandledIdentifier = identifier
   }
 }
