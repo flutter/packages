@@ -98,7 +98,7 @@ public class PenguinInstanceManager {
   ///   - instance: the instance to be stored. This must be unique to all other added instances.
   /// - Returns: the unique identifier (>= 0) stored with instance
   func addHostCreatedInstance(_ instance: AnyObject) -> Int64 {
-    precondition(!containsInstance(instance), "Instance of \(instance) has already been added.")
+    assert(!containsInstance(instance), "Instance of \(instance) has already been added.")
     var identifier: Int64 = -1
     lockQueue.sync {
       identifier = nextIdentifier
@@ -139,7 +139,7 @@ public class PenguinInstanceManager {
 
   private func addInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
     assert(identifier >= 0)
-    precondition(weakInstances.object(forKey: identifier as NSNumber) == nil, "Identifier has already been added: \(identifier)")
+    assert(weakInstances.object(forKey: identifier as NSNumber) == nil, "Identifier has already been added: \(identifier)")
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
