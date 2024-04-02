@@ -1782,12 +1782,9 @@ ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
 
-        Error? commandError;
         final List<String> output = await runCapturingPrint(runner, <String>[
           'pubspec-check',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
+        ]);
 
         expect(
           output,
