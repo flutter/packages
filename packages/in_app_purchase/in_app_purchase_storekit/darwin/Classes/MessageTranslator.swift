@@ -7,7 +7,7 @@
 
 import Foundation
 
-class MessageTranslator : NSObject {
+public class MessageTranslator : NSObject {
   @available(iOS 12.2, *)
   static func convertTransactionToPigeon(transaction: SKPaymentTransaction?) -> SKPaymentTransactionMessage? {
     guard let transaction = transaction else { return nil }

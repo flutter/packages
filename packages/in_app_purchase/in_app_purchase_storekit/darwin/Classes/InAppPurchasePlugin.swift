@@ -37,7 +37,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     let instance = InAppPurchasePlugin(registrar: registrar)
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
-    InAppPurchaseAPISetup.setUp(binaryMessenger: registrar.messenger(), api: instance);
+    InAppPurchaseAPISetup.setUp(binaryMessenger: registrar.messenger(), api: instance as InAppPurchaseAPI)
   }
 
   init(receiptManager: FIAPReceiptManager) {

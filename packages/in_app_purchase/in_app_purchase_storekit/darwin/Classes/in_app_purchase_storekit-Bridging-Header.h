@@ -8,5 +8,3 @@
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
-//#import "InAppPurchasePlugin-Swift.h"
-//#import "messages.g-Swift.h"

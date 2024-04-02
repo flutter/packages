@@ -12,6 +12,8 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
   swiftOut: 'darwin/Classes/messages.g.swift'
 ))
+
+@SwiftClass()
 class SKPaymentTransactionMessage {
   SKPaymentTransactionMessage({
     required this.payment,
@@ -67,6 +69,7 @@ enum SKPaymentTransactionStateMessage {
   unspecified,
 }
 
+@SwiftClass()
 class SKPaymentMessage {
   /// Creates a new [SKPaymentWrapper] with the provided information.
   const SKPaymentMessage({
@@ -86,6 +89,7 @@ class SKPaymentMessage {
   final SKPaymentDiscountMessage? paymentDiscount;
 }
 
+@SwiftClass()
 class SKErrorMessage {
   const SKErrorMessage(
       {required this.code, required this.domain, required this.userInfo});
@@ -95,6 +99,7 @@ class SKErrorMessage {
   final Map<String?, Object?>? userInfo;
 }
 
+@SwiftClass()
 class SKPaymentDiscountMessage {
   const SKPaymentDiscountMessage({
     required this.identifier,
@@ -111,6 +116,7 @@ class SKPaymentDiscountMessage {
   final int timestamp;
 }
 
+@SwiftClass()
 class SKStorefrontMessage {
   const SKStorefrontMessage({
     required this.countryCode,
@@ -121,6 +127,7 @@ class SKStorefrontMessage {
   final String identifier;
 }
 
+@SwiftClass()
 class SKProductsResponseMessage {
   const SKProductsResponseMessage(
       {required this.products, required this.invalidProductIdentifiers});
@@ -128,6 +135,7 @@ class SKProductsResponseMessage {
   final List<String?>? invalidProductIdentifiers;
 }
 
+@SwiftClass()
 class SKProductMessage {
   const SKProductMessage(
       {required this.productIdentifier,
@@ -151,6 +159,7 @@ class SKProductMessage {
   final List<SKProductDiscountMessage?>? discounts;
 }
 
+@SwiftClass()
 class SKPriceLocaleMessage {
   SKPriceLocaleMessage({
     required this.currencySymbol,
@@ -168,6 +177,7 @@ class SKPriceLocaleMessage {
   final String countryCode;
 }
 
+@SwiftClass()
 class SKProductDiscountMessage {
   const SKProductDiscountMessage(
       {required this.price,
@@ -209,6 +219,7 @@ enum SKProductDiscountPaymentModeMessage {
   unspecified,
 }
 
+@SwiftClass()
 class SKProductSubscriptionPeriodMessage {
   SKProductSubscriptionPeriodMessage(
       {required this.numberOfUnits, required this.unit});
