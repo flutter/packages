@@ -1,3 +1,7 @@
+## 0.6.22+1
+
+* Removes `_ambiguate` methods from code.
+
 ## 0.6.22
 
 * Introduces a new `MarkdownElementBuilder.isBlockElement()` method to specify if custom element
