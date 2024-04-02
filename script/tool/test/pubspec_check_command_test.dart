@@ -1767,6 +1767,37 @@ ${_topicsSection()}
           ]),
         );
       });
+
+      test('passes when integration_test is used in shared_test_plugin_code',
+          () async {
+        final RepositoryPackage package = createFakePackage(
+            'shared_test_plugin_code', packagesDir,
+            examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('shared_test_plugin_code')}
+${_environmentSection()}
+${_dependenciesSection(<String>['integration_test: \n    sdk: flutter'])}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for shared_test_plugin_code...'),
+            contains(
+                'Skipping dev-only dependencies check for shared_test_plugin_code'),
+          ]),
+        );
+      });
     });
   });
 
