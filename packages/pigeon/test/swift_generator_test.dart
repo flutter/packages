@@ -303,7 +303,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('init(binaryMessenger: FlutterBinaryMessenger)'));
+    expect(
+        code,
+        contains(
+            'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "")'));
     expect(code, matches('func doSomething.*Input.*Output'));
     expect(code, isNot(contains('if (')));
     expect(code, isNot(matches(RegExp(r';$', multiLine: true))));

@@ -138,16 +138,21 @@ class NullFieldsHostApi {
   /// Constructor for [NullFieldsHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NullFieldsHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  NullFieldsHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       _NullFieldsHostApiCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<NullFieldsSearchReply> search(NullFieldsSearchRequest nested) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -209,12 +214,17 @@ abstract class NullFieldsFlutterApi {
 
   NullFieldsSearchReply search(NullFieldsSearchRequest request);
 
-  static void setup(NullFieldsFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    NullFieldsFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search',
+          'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {

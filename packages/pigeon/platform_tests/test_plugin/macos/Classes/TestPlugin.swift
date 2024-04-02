@@ -11,14 +11,22 @@ extension FlutterError: Error {}
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
+  var flutterSmallApiOne: FlutterSmallApi
+  var flutterSmallApiTwo: FlutterSmallApi
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger)
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
+    flutterSmallApiOne = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -599,4 +607,50 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       }
     }
   }
+
+  func callFlutterSmallApiEcho(
+    _ aString: String, completion: @escaping (Result<String, Error>) -> Void
+  ) {
+    flutterSmallApiOne.echo(string: aString) { responseOne in
+      self.flutterSmallApiTwo.echo(string: aString) { responseTwo in
+        switch responseOne {
+        case .success(let resOne):
+          switch responseTwo {
+          case .success(let resTwo):
+            if resOne == resTwo {
+              completion(.success(resOne))
+            } else {
+              completion(
+                .failure(
+                  FlutterError(
+                    code: "",
+                    message: "Multi-instance responses were not matching: \(resOne), \(resTwo)",
+                    details: nil)))
+            }
+          case .failure(let error):
+            completion(.failure(error))
+          }
+        case .failure(let error):
+          completion(.failure(error))
+        }
+      }
+    }
+  }
+}
+
+public class TestPluginWithSuffix: HostSmallApi {
+  public static func register(with registrar: FlutterPluginRegistrar, suffix: String) {
+    let plugin = TestPluginWithSuffix()
+    HostSmallApiSetup.setUp(
+      binaryMessenger: registrar.messenger, api: plugin, messageChannelSuffix: suffix)
+  }
+
+  func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    completion(.success(aString))
+  }
+
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.success(Void()))
+  }
+
 }
