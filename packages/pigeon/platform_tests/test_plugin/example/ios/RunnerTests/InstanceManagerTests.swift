@@ -8,7 +8,7 @@ import XCTest
 
 final class InstanceManagerTests: XCTestCase {
   func testAddDartCreatedInstance() {
-    let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -17,7 +17,7 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testAddHostCreatedInstance() {
-    let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
     let object = NSObject()
     _ = instanceManager.addHostCreatedInstance(object)
 
@@ -27,7 +27,7 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testRemoveInstance() {
-    let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -40,14 +40,14 @@ final class InstanceManagerTests: XCTestCase {
     let finalizerDelegate = TestFinalizerDelegate()
 
     var object: NSObject? = NSObject()
-    PenguinFinalizer.attach(to: object!, identifier: 0, delegate: finalizerDelegate)
+    PigeonFinalizer.attach(to: object!, identifier: 0, delegate: finalizerDelegate)
 
     object = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
   }
 
   func testRemoveAllObjects() {
-    let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -58,7 +58,7 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testCanAddSameObjectWithAddDartCreatedInstance() {
-    let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -71,7 +71,7 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testObjectsAreStoredWithPointerHashcode() {
-    let instanceManager = PenguinInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
 
     class EquatableClass: Equatable {
       static func == (lhs: EquatableClass, rhs: EquatableClass) -> Bool {
@@ -94,11 +94,11 @@ final class InstanceManagerTests: XCTestCase {
   }
 }
 
-class EmptyFinalizerDelegate: PenguinFinalizerDelegate {
+class EmptyFinalizerDelegate: PigeonFinalizerDelegate {
   func onDeinit(identifier: Int64) {}
 }
 
-class TestFinalizerDelegate: PenguinFinalizerDelegate {
+class TestFinalizerDelegate: PigeonFinalizerDelegate {
   var lastHandledIdentifier: Int64?
 
   func onDeinit(identifier: Int64) {

@@ -50,29 +50,29 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 
 /// Handles the callback when an object is deallocated.
-public protocol PenguinFinalizerDelegate: AnyObject {
+public protocol PigeonFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
 
 // Attaches to an object to receive a callback when the object is deallocated.
-internal final class PenguinFinalizer {
+internal final class PigeonFinalizer {
   private static let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: PenguinFinalizerDelegate?
+  private weak var delegate: PigeonFinalizerDelegate?
 
-  private init(identifier: Int64, delegate: PenguinFinalizerDelegate) {
+  private init(identifier: Int64, delegate: PigeonFinalizerDelegate) {
     self.identifier = identifier
     self.delegate = delegate
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64, delegate: PenguinFinalizerDelegate
+    to instance: AnyObject, identifier: Int64, delegate: PigeonFinalizerDelegate
   ) {
-    let finalizer = PenguinFinalizer(identifier: identifier, delegate: delegate)
+    let finalizer = PigeonFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
@@ -93,31 +93,31 @@ internal final class PenguinFinalizer {
 /// When an instance is added with an identifier, either can be used to retrieve the other.
 ///
 /// Added instances are added as a weak reference and a strong reference. When the strong
-/// reference is removed and the weak reference is deallocated,`PenguinFinalizerDelegate.onDeinit`
+/// reference is removed and the weak reference is deallocated,`PigeonFinalizerDelegate.onDeinit`
 /// is called with the instance's identifier. However, if the strong reference is removed and then the identifier is
 /// retrieved with the intention to pass the identifier to Dart (e.g. by calling `identifierWithStrongReference`),
 /// the strong reference to the instance is readded. The strong reference will then need to be removed manually
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-public class PenguinInstanceManager {
+public class PigeonInstanceManager {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static let minHostCreatedIdentifier: Int64 = 65536
 
-  private let lockQueue = DispatchQueue(label: "FWFInstanceManager")
+  private let lockQueue = DispatchQueue(label: "PigeonInstanceManager")
   private let identifiers: NSMapTable<AnyObject, NSNumber> = NSMapTable(
     keyOptions: [.weakMemory, .objectPointerPersonality], valueOptions: .strongMemory)
   private let weakInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.weakMemory, .objectPointerPersonality])
   private let strongInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
-  private let finalizerDelegate: PenguinFinalizerDelegate
+  private let finalizerDelegate: PigeonFinalizerDelegate
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
-  public init(finalizerDelegate: PenguinFinalizerDelegate) {
+  public init(finalizerDelegate: PigeonFinalizerDelegate) {
     self.finalizerDelegate = finalizerDelegate
   }
 
@@ -188,7 +188,7 @@ public class PenguinInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    PenguinFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
+    PigeonFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
   /// Retrieves the identifier paired with an instance.
@@ -237,7 +237,7 @@ public class PenguinInstanceManager {
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
       strongInstances.removeAllObjects()
-      nextIdentifier = PenguinInstanceManager.minHostCreatedIdentifier
+      nextIdentifier = PigeonInstanceManager.minHostCreatedIdentifier
     }
   }
 
@@ -278,7 +278,7 @@ class PigeonInstanceManagerApi {
 
   /// Sets up an instance of `PigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
   static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, instanceManager: PenguinInstanceManager?
+    binaryMessenger: FlutterBinaryMessenger, instanceManager: PigeonInstanceManager?
   ) {
     let removeStrongReferenceChannel = FlutterBasicMessageChannel(
       name:
@@ -328,5 +328,80 @@ class PigeonInstanceManagerApi {
         completion(.success(Void()))
       }
     }
+  }
+}
+
+private class PigeonProxyApiBaseCodecReader: FlutterStandardReader {
+  let instanceManager: PigeonInstanceManager
+  
+  init(data: Data, instanceManager: PigeonInstanceManager) {
+    self.instanceManager = instanceManager
+    super.init(data: data)
+  }
+  
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 128:
+      let identifier = self.readValue()
+      let instance: AnyObject? = instanceManager.instance(forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+      return instance
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class PigeonProxyApiBaseCodecWriter: FlutterStandardWriter {
+  let instanceManager: PigeonInstanceManager
+  
+  init(data: NSMutableData, instanceManager: PigeonInstanceManager) {
+    self.instanceManager = instanceManager
+    super.init(data: data)
+  }
+  
+  override func writeValue(_ value: Any) {
+    if let instance = value as? AnyClass, instanceManager.containsInstance(instance) {
+      super.writeByte(128)
+      super.writeValue(instanceManager.identifierWithStrongReference(forInstance: instance)!)
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class PigeonProxyApiBaseCodecReaderWriter: FlutterStandardReaderWriter {
+  let instanceManager: PigeonInstanceManager
+  
+  init(instanceManager: PigeonInstanceManager) {
+    self.instanceManager = instanceManager
+  }
+  
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return PigeonProxyApiBaseCodecReader(data: data, instanceManager: instanceManager)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return PigeonProxyApiBaseCodecWriter(data: data, instanceManager: instanceManager)
+  }
+}
+
+protocol PigeonApiDelegate {
+  func getPiegonApiProxyApiTestClass()
+}
+
+public class PigeonProxyApiBaseCodec: FlutterStandardMessageCodec {
+  let binaryMessenger: FlutterBinaryMessenger
+  let instanceManager: PigeonInstanceManager
+  let apiDelegate: PigeonApiDelegate
+  
+  init(binaryMessenger: FlutterBinaryMessenger, instanceManager: PigeonInstanceManager, apiDelegate: PigeonApiDelegate) {
+    self.binaryMessenger = binaryMessenger
+    self.instanceManager = instanceManager
+    self.apiDelegate = apiDelegate
+    super.init(readerWriter: PigeonProxyApiBaseCodecReaderWriter(instanceManager: instanceManager))
+  }
+  
+  func setUpMessageHandlers() {
+    
   }
 }
