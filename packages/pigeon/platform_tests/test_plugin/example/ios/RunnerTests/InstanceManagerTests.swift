@@ -1,11 +1,7 @@
-//
-//  InstanceManagerTests.swift
-//  RunnerTests
-//
-//  Created by Maurice Parrish on 4/1/24.
-//
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-import Foundation
 import XCTest
 
 @testable import test_plugin
@@ -16,7 +12,7 @@ final class InstanceManagerTests: XCTestCase {
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
-    XCTAssertEqual(instanceManager.instance(forIdentifier: 0) as! NSObject, object)
+    XCTAssertEqual(instanceManager.instance(forIdentifier: 0), object)
     XCTAssertEqual(instanceManager.identifierWithStrongReference(forInstance: object), 0)
   }
 
@@ -27,7 +23,7 @@ final class InstanceManagerTests: XCTestCase {
 
     let identifier = instanceManager.identifierWithStrongReference(forInstance: object)
     XCTAssertNotNil(identifier)
-    XCTAssertEqual(instanceManager.instance(forIdentifier: identifier!) as! NSObject, object)
+    XCTAssertEqual(instanceManager.instance(forIdentifier: identifier!), object)
   }
 
   func testRemoveInstance() {
@@ -36,7 +32,7 @@ final class InstanceManagerTests: XCTestCase {
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
 
-    XCTAssertEqual(instanceManager.removeInstance(withIdentifier: 0) as? NSObject, object)
+    XCTAssertEqual(instanceManager.removeInstance(withIdentifier: 0), object)
     XCTAssertEqual(instanceManager.strongInstanceCount, 0)
   }
   
@@ -68,7 +64,10 @@ final class InstanceManagerTests: XCTestCase {
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
     instanceManager.addDartCreatedInstance(object, withIdentifier: 1)
     
-    XCTAssertEqual(instanceManager.instance(forIdentifier: 0) as! NSObject, instanceManager.instance(forIdentifier: 1) as! NSObject)
+    let instance1: NSObject? = instanceManager.instance(forIdentifier: 0)
+    let instance2: NSObject? = instanceManager.instance(forIdentifier: 1)
+    
+    XCTAssertEqual(instance1, instance2)
   }
 
   func testObjectsAreStoredWithPointerHashcode() {
