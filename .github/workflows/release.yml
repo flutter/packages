@@ -43,6 +43,13 @@ jobs:
       run: dart pub get
       working-directory: ${{ github.workspace }}/script/tool
 
+    # Give some time for LUCI checks to start becoming populated.
+    # Because of latency in Github Webhooks, we need to wait for a while
+    # before being able to look at checks scheduled by LUCI.
+    - name: Give webhooks a minute
+      run: sleep 60s
+      shell: bash
+
     # The next step waits for all tests, but when there are issues with the
     # hooks it can take a long time for the tests to even be registered. If
     # "Wait on all tests" runs before that happens, it will pass immediately
