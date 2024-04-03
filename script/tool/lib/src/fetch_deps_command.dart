@@ -80,12 +80,18 @@ class FetchDepsCommand extends PackageLoopingCommand {
     // `pod install` requires having the platform artifacts precached. See
     // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L47
     // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L130
-    final bool precacheIos = getBoolArg(platformIOS);
+    final bool precacheIOS = getBoolArg(platformIOS);
     final bool precacheMacOS = getBoolArg(platformMacOS);
-    if (precacheIos || precacheMacOS) {
+    if (precacheIOS || precacheMacOS) {
       final int precacheExitCode = await processRunner.runAndStream(
         flutterCommand,
-        <String>['precache', '--${precacheIos ? 'ios' : 'macos'}'],
+        <String>[
+          'precache',
+          if (precacheIOS)
+            '--ios',
+          if (precacheMacOS)
+            '--macos',
+        ],
       );
       if (precacheExitCode != 0) {
         throw ToolExit(_exitPrecacheFailed);
