@@ -12,6 +12,15 @@ protocol SKPaymentQueueProtocol {
 }
 extension SKPaymentQueue: SKPaymentQueueProtocol {}
 
+class MockSKPaymentQueue: SKPaymentQueueProtocol {
+  var storefront: SKStorefront?
+}
+
+
+
+
+
+
 protocol SKStorefrontProtocol {
 }
 
@@ -24,9 +33,7 @@ public protocol FIAReceiptManagerProtocol {
 extension FIAPReceiptManager: FIAReceiptManagerProtocol {}
 
 @available(iOS 13.0, *)
-class MockSKPaymentQueue: SKPaymentQueueProtocol {
-  var storefront: SKStorefront?
-}
+
 
 @available(iOS 13.0, *)
 class MockFIAPReceiptManager:FIAPReceiptManager {
@@ -47,7 +54,11 @@ final class InAppPurchasePluginTests: XCTestCase {
   var plugin:InAppPurchasePlugin!;
 
   override func setUp() async throws {
-    var receiptManager:FIAPReceiptManager = MockFIAPReceiptManager();
+    if #available(iOS 13.0, *) {
+      var receiptManager:FIAPReceiptManager = MockFIAPReceiptManager()
+    } else {
+      // Fallback on earlier versions
+    };
     plugin = InAppPurchasePlugin.init(receiptManager: receiptManager)
   }
 

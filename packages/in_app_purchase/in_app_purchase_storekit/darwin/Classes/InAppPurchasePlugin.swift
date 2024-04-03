@@ -10,6 +10,7 @@ import FlutterMacOS
 
 extension FlutterError: Error {}
 
+//@objc
 public final class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
   // Properties
@@ -21,7 +22,8 @@ public final class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAP
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   private var requestHandlers = Set<FIAPRequestHandler>()
   private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)?
-  var paymentQueueHandler: FIAPaymentQueueHandler?
+  @objc
+  public var paymentQueueHandler: FIAPaymentQueueHandler?
   private var transactionObserverCallbackChannel: FlutterMethodChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -33,6 +35,7 @@ public final class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAP
     InAppPurchaseAPISetup.setUp(binaryMessenger: registrar.messenger(), api: instance as InAppPurchaseAPI)
   }
 
+  @objc
   public init(receiptManager: FIAPReceiptManager) {
     self.receiptManager = receiptManager
     self.requestHandlers = Set<FIAPRequestHandler>();
@@ -43,12 +46,14 @@ public final class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAP
     super.init()
   }
 
-  convenience init(receiptManager: FIAPReceiptManager, handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler) {
+  @objc
+  public convenience init(receiptManager: FIAPReceiptManager, handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler) {
     self.init(receiptManager: receiptManager)
     self.handlerFactory = handlerFactory;
   }
 
-  convenience init(registrar: FlutterPluginRegistrar) {
+  @objc
+  public convenience init(registrar: FlutterPluginRegistrar) {
     self.init(receiptManager: FIAPReceiptManager());
     self.registrar = registrar;
 
@@ -69,6 +74,7 @@ public final class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAP
     self.transactionObserverCallbackChannel = FlutterMethodChannel(name: "plugins.flutter.io/in_app_purchase", binaryMessenger: registrar.messenger())
   }
 
+  @objc
   public func handleTransactionsUpdated(_ transactions: [SKPaymentTransaction]) {
     var maps: [[AnyHashable: Any]] = []
     for transaction in transactions {
@@ -110,7 +116,7 @@ public final class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAP
   }
 
   @objc
-  func canMakePayments() -> Bool {
+  public func canMakePayments() -> Bool {
     return SKPaymentQueue.canMakePayments() as Bool;
   }
 
@@ -129,7 +135,17 @@ public final class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAP
     return transactionMaps
   }
 
-  func storefront() throws -> SKStorefrontMessage? {
+  @objc
+  public func testableStorefront() -> SKStorefrontMessage? {
+    do {
+      let storefront = try self.storefront();
+      return storefront;
+      } catch {
+    }
+    return nil;
+  }
+
+  public func storefront() throws -> SKStorefrontMessage? {
     if #available(iOS 13.0, *) {
       let storefront = self.paymentQueueHandler?.storefront
       if (storefront == nil) {

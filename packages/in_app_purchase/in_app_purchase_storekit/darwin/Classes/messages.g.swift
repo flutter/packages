@@ -297,7 +297,8 @@ class SKPaymentDiscountMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-class SKStorefrontMessage: NSObject{
+@objc
+public class SKStorefrontMessage: NSObject{
   init(
     countryCode: String,
     identifier: String
@@ -305,8 +306,8 @@ class SKStorefrontMessage: NSObject{
     self.countryCode = countryCode
     self.identifier = identifier
   }
-  var countryCode: String
-  var identifier: String
+  public var countryCode: String
+  public var identifier: String
 
   static func fromList(_ list: [Any?]) -> SKStorefrontMessage? {
     let countryCode = list[0] as! String
