@@ -1,3 +1,7 @@
+## 13.2.3
+
+- Fixes leaked future from route that was replaced ([#141251](https://github.com/flutter/flutter/issues/141251))
+
 ## 13.2.2
 
 - Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch
