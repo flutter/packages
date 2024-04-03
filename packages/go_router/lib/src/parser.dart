@@ -171,25 +171,37 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         return baseRouteMatchList!.push(
           ImperativeRouteMatch(
             pageKey: _getUniqueValueKey(),
-            completer: completer!,
+            completers: <Completer<Object?>>[completer!],
             matches: newMatchList,
           ),
         );
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        final List<Completer<Object?>> completers = <Completer<Object?>>[
+          completer!
+        ];
+        if (routeMatch is ImperativeRouteMatch) {
+          completers.addAll(routeMatch.completers);
+        }
         return baseRouteMatchList.remove(routeMatch).push(
               ImperativeRouteMatch(
                 pageKey: _getUniqueValueKey(),
-                completer: completer!,
+                completers: completers,
                 matches: newMatchList,
               ),
             );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        final List<Completer<Object?>> completers = <Completer<Object?>>[
+          completer!
+        ];
+        if (routeMatch is ImperativeRouteMatch) {
+          completers.addAll(routeMatch.completers);
+        }
         return baseRouteMatchList.remove(routeMatch).push(
               ImperativeRouteMatch(
                 pageKey: routeMatch.pageKey,
-                completer: completer!,
+                completers: completers,
                 matches: newMatchList,
               ),
             );

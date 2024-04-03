@@ -324,7 +324,7 @@ class RouteConfiguration {
           pageKey: imperativeMatch.pageKey,
           matches: findMatch(imperativeMatch.matches.uri.toString(),
               extra: imperativeMatch.matches.extra),
-          completer: imperativeMatch.completer);
+          completers: imperativeMatch.completers);
       result = result.push(match);
     }
     return result;

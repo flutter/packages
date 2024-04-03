@@ -97,7 +97,7 @@ void main() {
     list1.push(ImperativeRouteMatch(
         pageKey: const ValueKey<String>('/b-p0'),
         matches: list2,
-        completer: Completer<Object?>()));
+        completers: <Completer<Object?>>[Completer<Object?>()]));
 
     final Map<Object?, Object?> encoded = codec.encode(list1);
     final RouteMatchList decoded = codec.decode(encoded);

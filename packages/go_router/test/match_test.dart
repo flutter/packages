@@ -223,30 +223,46 @@ void main() {
 
     test('can equal and has', () async {
       ImperativeRouteMatch match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+          pageKey: key1,
+          matches: matchList1,
+          completers: <Completer<Object?>>[completer1]);
       ImperativeRouteMatch match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+          pageKey: key1,
+          matches: matchList1,
+          completers: <Completer<Object?>>[completer1]);
       expect(match1 == match2, isTrue);
       expect(match1.hashCode == match2.hashCode, isTrue);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+          pageKey: key1,
+          matches: matchList1,
+          completers: <Completer<Object?>>[completer1]);
       match2 = ImperativeRouteMatch(
-          pageKey: key2, matches: matchList1, completer: completer1);
+          pageKey: key2,
+          matches: matchList1,
+          completers: <Completer<Object?>>[completer1]);
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+          pageKey: key1,
+          matches: matchList1,
+          completers: <Completer<Object?>>[completer1]);
       match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList2, completer: completer1);
+          pageKey: key1,
+          matches: matchList2,
+          completers: <Completer<Object?>>[completer1]);
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+          pageKey: key1,
+          matches: matchList1,
+          completers: <Completer<Object?>>[completer1]);
       match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer2);
+          pageKey: key1,
+          matches: matchList1,
+          completers: <Completer<Object?>>[completer2]);
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
     });

@@ -422,7 +422,7 @@ class ShellRouteMatch extends RouteMatchBase {
 class ImperativeRouteMatch extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
   ImperativeRouteMatch(
-      {required super.pageKey, required this.matches, required this.completer})
+      {required super.pageKey, required this.matches, required this.completers})
       : super(
           route: _getsLastRouteFromMatches(matches),
           matchedLocation: _getsMatchedLocationFromMatches(matches),
@@ -446,13 +446,15 @@ class ImperativeRouteMatch extends RouteMatch {
   /// The matches that produces this route match.
   final RouteMatchList matches;
 
-  /// The completer for the future returned by [GoRouter.push].
-  final Completer<Object?> completer;
+  /// The completers  for the future returned by [GoRouter.push].
+  final List<Completer<Object?>> completers;
 
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
   void complete([dynamic value]) {
-    completer.complete(value);
+    for (final Completer<Object?> completer in completers) {
+      completer.complete(value);
+    }
   }
 
   @override
@@ -464,13 +466,13 @@ class ImperativeRouteMatch extends RouteMatch {
   @override
   bool operator ==(Object other) {
     return other is ImperativeRouteMatch &&
-        completer == other.completer &&
+        const ListEquality<Object?>().equals(completers, other.completers) &&
         matches == other.matches &&
         super == other;
   }
 
   @override
-  int get hashCode => Object.hash(super.hashCode, completer, matches.hashCode);
+  int get hashCode => Object.hash(super.hashCode, Object.hashAll(completers), matches.hashCode);
 }
 
 /// The list of [RouteMatchBase] objects.
@@ -959,7 +961,7 @@ class _RouteMatchListDecoder
           pageKey: pageKey,
           // TODO(chunhtai): Figure out a way to preserve future.
           // https://github.com/flutter/flutter/issues/128122.
-          completer: Completer<Object?>(),
+          completers: <Completer<Object?>>[Completer<Object?>()],
           matches: imperativeMatchList,
         );
         matchList = matchList.push(imperativeMatch);

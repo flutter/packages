@@ -355,6 +355,27 @@ void main() {
         );
       },
     );
+
+    testWidgets('It should preserver source completer',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester);
+
+      goRouter.push('/page-0');
+      await tester.pumpAndSettle();
+
+      final Future<Object?> sourceFeature = goRouter.push('/page-1');
+      await tester.pumpAndSettle();
+
+      goRouter.pushReplacement('/page-2');
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
+      goRouter.routerDelegate.pop(true);
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
+      expect(await sourceFeature, true);
+    });
   });
 
   group('pushReplacementNamed', () {
@@ -516,6 +537,27 @@ void main() {
         );
       },
     );
+
+    testWidgets('It should preserver source completer',
+            (WidgetTester tester) async {
+          final GoRouter goRouter = await createGoRouter(tester);
+
+          goRouter.push('/page-0');
+          await tester.pumpAndSettle();
+
+          final Future<Object?> sourceFeature = goRouter.push('/page-1');
+          await tester.pumpAndSettle();
+
+          goRouter.replace<void>('/page-2');
+          await tester.pumpAndSettle();
+
+          expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
+          goRouter.routerDelegate.pop(true);
+          await tester.pumpAndSettle();
+
+          expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
+          expect(await sourceFeature, true);
+        });
   });
 
   group('replaceNamed', () {
