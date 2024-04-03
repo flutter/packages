@@ -365,8 +365,8 @@ private class PigeonProxyApiBaseCodecWriter: FlutterStandardWriter {
 
   override func writeValue(_ value: Any) {
     if value is ProxyApiTestClass {
-      apiDelegate.getPiegonApiProxyApiTestClass().pigeon_newInstance(
-        pigeon_instanceArg: value as! ProxyApiTestClass
+      apiDelegate.getPiegonApiProxyApiTestClass().pigeonNewInstance(
+        pigeonInstanceArg: value as! ProxyApiTestClass
       ) { _ in }
     }
 
@@ -431,9 +431,9 @@ class ProxyApiTestClass {}
 class ProxyApiSuperClass {}
 
 protocol PigeonDelegateProxyApiTestClass {
-  func pigeon_defaultConstructor() throws -> ProxyApiTestClass
-  func attachedField(pigeon_instance: ProxyApiTestClass) throws -> ProxyApiSuperClass
-  func echo(pigeon_instance: ProxyApiTestClass, aBool: Bool) throws -> Bool
+  func pigeonDefaultConstructor() throws -> ProxyApiTestClass
+  func attachedField(pigeonInstance: ProxyApiTestClass) throws -> ProxyApiSuperClass
+  func echo(pigeonInstance: ProxyApiTestClass, aBool: Bool) throws -> Bool
 }
 
 class PigeonApiProxyApiTestClass {
@@ -450,23 +450,23 @@ class PigeonApiProxyApiTestClass {
   ) {
     let codec: FlutterStandardMessageCodec =
       api != nil ? api!.codec : FlutterStandardMessageCodec.sharedInstance()
-    let pigeon_defaultConstructorChannel = FlutterBasicMessageChannel(
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      pigeon_defaultConstructorChannel.setMessageHandler { message, reply in
+      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeon_identifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
         do {
           api.codec.instanceManager.addDartCreatedInstance(
-            try api.delegate.pigeon_defaultConstructor(), withIdentifier: pigeon_identifierArg)
+            try api.delegate.pigeonDefaultConstructor(), withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
-      pigeon_defaultConstructorChannel.setMessageHandler(nil)
+      pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
     let attachedFieldChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
@@ -474,12 +474,12 @@ class PigeonApiProxyApiTestClass {
     if let api = api {
       attachedFieldChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeon_instanceArg = args[0] as! ProxyApiTestClass
-        let pigeon_identifierArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+        let pigeonInstanceArg = args[0] as! ProxyApiTestClass
+        let pigeonIdentifierArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
         do {
           api.codec.instanceManager.addDartCreatedInstance(
-            try api.delegate.attachedField(pigeon_instance: pigeon_instanceArg),
-            withIdentifier: pigeon_identifierArg)
+            try api.delegate.attachedField(pigeonInstance: pigeonInstanceArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -494,10 +494,10 @@ class PigeonApiProxyApiTestClass {
     if let api = api {
       echoBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeon_instanceArg = args[0] as! ProxyApiTestClass
+        let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
         do {
-          let result = try api.delegate.echo(pigeon_instance: pigeon_instanceArg, aBool: aBoolArg)
+          let result = try api.delegate.echo(pigeonInstance: pigeonInstanceArg, aBool: aBoolArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -508,22 +508,22 @@ class PigeonApiProxyApiTestClass {
     }
   }
 
-  func pigeon_newInstance(
-    pigeon_instanceArg: ProxyApiTestClass,
+  func pigeonNewInstance(
+    pigeonInstanceArg: ProxyApiTestClass,
     completion: @escaping (Result<Void, FlutterError>) -> Void
   ) {
-    if codec.instanceManager.containsInstance(pigeon_instanceArg) {
+    if codec.instanceManager.containsInstance(pigeonInstanceArg) {
       completion(.success(Void()))
       return
     }
-    let pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    let pigeonIdentifierArg = codec.instanceManager.addHostCreatedInstance(pigeonInstanceArg)
     let binaryMessenger = codec.binaryMessenger
 
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeon_identifierArg] as [Any?]) { response in
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
