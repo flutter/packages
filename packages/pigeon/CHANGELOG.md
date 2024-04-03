@@ -1,3 +1,8 @@
+## 18.0.0
+
+* Adds message channel suffix option to all APIs.
+* **Breaking Change** [dart] Changes `FlutterApi` `setup` to `setUp`.
+
 ## 17.3.0
 
 * [swift] Adds `@SwiftClass` annotation to allow choice between `struct` and `class` for data classes.
