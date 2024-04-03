@@ -116,9 +116,28 @@ public class PigeonInstanceManager {
     keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
   private let finalizerDelegate: PigeonFinalizerDelegate
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
-
+  
   public init(finalizerDelegate: PigeonFinalizerDelegate) {
     self.finalizerDelegate = finalizerDelegate
+  }
+  
+  private class ApiPigeonFinalizerDelegate: PigeonFinalizerDelegate {
+    unowned let api: PigeonInstanceManagerApi
+    
+    init(_ api: PigeonInstanceManagerApi) {
+      self.api = api
+    }
+    
+    func onDeinit(identifier: Int64) {
+      api.removeStrongReference(withIdentifier: identifier) {
+        _ in
+      }
+    }
+  }
+
+  convenience init(api: PigeonInstanceManagerApi) {
+    self.init(finalizerDelegate: ApiPigeonFinalizerDelegate(api))
+    PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: api.binaryMessenger, instanceManager: self)
   }
 
   /// Adds a new instance that was instantiated from Dart.
@@ -270,7 +289,7 @@ class PigeonInstanceManagerApi {
   static let codec = FlutterStandardMessageCodec.sharedInstance()
 
   /// Handles sending and receiving messages with Dart.
-  let binaryMessenger: FlutterBinaryMessenger
+  weak var binaryMessenger: FlutterBinaryMessenger?
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     self.binaryMessenger = binaryMessenger
@@ -332,7 +351,7 @@ class PigeonInstanceManagerApi {
 }
 
 private class PigeonProxyApiBaseCodecReader: FlutterStandardReader {
-  let instanceManager: PigeonInstanceManager
+  weak var instanceManager: PigeonInstanceManager?
 
   init(data: Data, instanceManager: PigeonInstanceManager) {
     self.instanceManager = instanceManager
@@ -353,7 +372,7 @@ private class PigeonProxyApiBaseCodecReader: FlutterStandardReader {
 }
 
 private class PigeonProxyApiBaseCodecWriter: FlutterStandardWriter {
-  let instanceManager: PigeonInstanceManager
+  weak var instanceManager: PigeonInstanceManager?
   let apiDelegate: PigeonApiDelegate
 
   init(data: NSMutableData, instanceManager: PigeonInstanceManager, apiDelegate: PigeonApiDelegate)
