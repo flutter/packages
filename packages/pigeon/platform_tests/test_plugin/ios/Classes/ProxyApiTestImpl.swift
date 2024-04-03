@@ -444,6 +444,11 @@ public class PigeonProxyApiBaseCodec: FlutterStandardMessageCodec {
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.getPiegonApiProxyApiTestClass())
   }
+  
+  func tearDownMessageHandlers() {
+    PigeonApiProxyApiTestClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
+  }
 }
 
 class ProxyApiTestClass {}
