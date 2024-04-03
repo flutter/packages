@@ -557,13 +557,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
 
     // Ensure that dev-only dependencies aren't in `dependencies`.
     const List<String> devOnlyDependencies = <String>['integration_test'];
-    // pigeon/platform_tests/shared_test_plugin_code is allowed to violate
-    // the dev only dependencies rule beause pidgeon has generated tests that
-    // are intended to ship to customers.
-    if (pubspec.name == 'shared_test_plugin_code') {
-      printWarning(
-          '    Skipping dev-only dependencies check for ${pubspec.name}');
-    } else {
+    // non published packages like pidgeon subpackages are allowed to violate
+    // the dev only dependencies rule.
+    if (pubspec.publishTo != 'none') {
       pubspec.dependencies.forEach((String name, Dependency dependency) {
         if (devOnlyDependencies.contains(name)) {
           badDependencies.add(name);

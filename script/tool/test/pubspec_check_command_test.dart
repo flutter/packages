@@ -1768,14 +1768,13 @@ ${_topicsSection()}
         );
       });
 
-      test('passes when integration_test is used in shared_test_plugin_code',
+      test('passes when integration_test is used in non published package',
           () async {
-        final RepositoryPackage package = createFakePackage(
-            'shared_test_plugin_code', packagesDir,
-            examples: <String>[]);
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
 
         package.pubspecFile.writeAsStringSync('''
-${_headerSection('shared_test_plugin_code')}
+${_headerSection('a_package', publishable: false)}
 ${_environmentSection()}
 ${_dependenciesSection(<String>['integration_test: \n    sdk: flutter'])}
 ${_devDependenciesSection()}
@@ -1789,9 +1788,8 @@ ${_topicsSection()}
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Running for shared_test_plugin_code...'),
-            contains(
-                'Skipping dev-only dependencies check for shared_test_plugin_code'),
+            contains('Running for a_package...'),
+            contains('Ran for'),
           ]),
         );
       });
