@@ -21,6 +21,8 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		A5279298219369C600FF69E6 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5279297219369C600FF69E6 /* StoreKit.framework */; };
 		A59001A721E69658004A3E5E /* InAppPurchasePluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A59001A621E69658004A3E5E /* InAppPurchasePluginTests.m */; };
+		F24DC4472BBC7C340023E8F1 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F24DC4462BBC7C340023E8F1 /* Tests.m */; };
+		F24DC44A2BBC988D0023E8F1 /* SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24DC4492BBC988D0023E8F1 /* SwiftTests.swift */; };
 		F67646F82681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F67646F72681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m */; };
 		F6995BDD27CF73000050EA78 /* FIATransactionCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */; };
 		F78AF3142342BC89008449C7 /* PaymentQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F78AF3132342BC89008449C7 /* PaymentQueueTests.m */; };
@@ -78,6 +80,9 @@
 		A59001A821E69658004A3E5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF60706F7AD2B35A0C11B3BD /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC213DDD014AF209983C4F11 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F24DC4462BBC7C340023E8F1 /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
+		F24DC4482BBC988D0023E8F1 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		F24DC4492BBC988D0023E8F1 /* SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTests.swift; sourceTree = "<group>"; };
 		F67646F72681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIAPPaymentQueueDeleteTests.m; sourceTree = "<group>"; };
 		F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIATransactionCacheTests.m; sourceTree = "<group>"; };
 		F6E5D5F926131C4800C68BED /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
@@ -193,6 +198,9 @@
 				688DE35021F2A5A100EA2684 /* TranslatorTests.m */,
 				F67646F72681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m */,
 				F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */,
+				F24DC4462BBC7C340023E8F1 /* Tests.m */,
+				F24DC4492BBC988D0023E8F1 /* SwiftTests.swift */,
+				F24DC4482BBC988D0023E8F1 /* RunnerTests-Bridging-Header.h */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -271,6 +279,7 @@
 					};
 					A59001A321E69658004A3E5E = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1530;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
@@ -432,6 +441,8 @@
 				6896B34621E9363700D37AEF /* ProductRequestHandlerTests.m in Sources */,
 				688DE35121F2A5A100EA2684 /* TranslatorTests.m in Sources */,
 				F6995BDD27CF73000050EA78 /* FIATransactionCacheTests.m in Sources */,
+				F24DC4472BBC7C340023E8F1 /* Tests.m in Sources */,
+				F24DC44A2BBC988D0023E8F1 /* SwiftTests.swift in Sources */,
 				A59001A721E69658004A3E5E /* InAppPurchasePluginTests.m in Sources */,
 				6896B34C21EEB4B800D37AEF /* Stubs.m in Sources */,
 			);
@@ -499,6 +510,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -555,6 +567,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -633,6 +646,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -650,6 +664,9 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
 			name = Debug;
@@ -660,6 +677,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -676,6 +694,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
 			name = Release;

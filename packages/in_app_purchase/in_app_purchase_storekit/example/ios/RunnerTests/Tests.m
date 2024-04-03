@@ -1,40 +1,41 @@
-//// Copyright 2013 The Flutter Authors. All rights reserved.
-//// Use of this source code is governed by a BSD-style license that can be
-//// found in the LICENSE file.
-//
-//#import <OCMock/OCMock.h>
-//#import <XCTest/XCTest.h>
-//#import "FIAPaymentQueueHandler.h"
-//#import "Stubs.h"
-//
-//@import in_app_purchase_storekit;
-//
-//@interface InAppPurchasePluginTest : XCTestCase
-//
-//@property(strong, nonatomic) FIAPReceiptManagerStub *receiptManagerStub;
-//@property(strong, nonatomic) InAppPurchasePlugin *plugin;
-//
-//@end
-//
-//@implementation InAppPurchasePluginTest
-//
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#import <OCMock/OCMock.h>
+#import <XCTest/XCTest.h>
+#import "FIAPaymentQueueHandler.h"
+#import "Stubs.h"
+//#import "InAppPurchasePlugin-Swift.h"
+
+
+@import in_app_purchase_storekit;
+
+@interface InAppPurchasePluginTest : XCTestCase
+
+@property(strong, nonatomic) FIAPReceiptManagerStub *receiptManagerStub;
+@property(strong, nonatomic) InAppPurchasePlugin *plugin;
+
+@end
+
+@implementation InAppPurchasePluginTest
+
 //- (void)setUp {
 //  self.receiptManagerStub = [FIAPReceiptManagerStub new];
-//  self.plugin = [[InAppPurchasePlugin alloc]
-//                 initReceiptManager:self.receiptManagerStub];
+//  self.plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
 //
 //}
-//
-//- (void)tearDown {
-//}
+
+- (void)tearDown {
+}
 //
 //- (void)testCanMakePayments {
 //  FlutterError *error;
-//  NSNumber *result = [self.plugin canMakePaymentsWithError:&error];
-//  XCTAssertTrue([result boolValue]);
+//  bool result = [self.plugin canMakePayments];
+//  XCTAssertTrue(result);
 //  XCTAssertNil(error);
 //}
-//
+////
 //- (void)testPaymentQueueStorefront {
 //  if (@available(iOS 13, macOS 10.15, *)) {
 //    SKPaymentQueue *mockQueue = OCMClassMock(SKPaymentQueue.class);
@@ -56,7 +57,7 @@
 //                                     transactionCache:OCMClassMock(FIATransactionCache.class)];
 //
 //    FlutterError *error;
-//    SKStorefrontMessage *result = [self.plugin storefrontWithError:&error];
+//    SKStorefrontMessage *result = [self.plugin store];
 //
 //    XCTAssertEqualObjects(result.countryCode, storefrontMap[@"countryCode"]);
 //    XCTAssertEqualObjects(result.identifier, storefrontMap[@"identifier"]);
@@ -824,4 +825,4 @@
 //    error.userInfo ?: [NSNull null],
 //  ];
 //}
-//@end
+@end

@@ -297,7 +297,7 @@ class SKPaymentDiscountMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-class SKStorefrontMessage {
+class SKStorefrontMessage: NSObject{
   init(
     countryCode: String,
     identifier: String
@@ -326,7 +326,7 @@ class SKStorefrontMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-class SKProductsResponseMessage {
+public class SKProductsResponseMessage {
   init(
     products: [SKProductMessage?]? = nil,
     invalidProductIdentifiers: [String?]? = nil
