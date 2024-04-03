@@ -557,7 +557,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
 
     // Ensure that dev-only dependencies aren't in `dependencies`.
     const List<String> devOnlyDependencies = <String>['integration_test'];
-    // non published packages like pidgeon subpackages are allowed to violate
+    // Non-published packages like pidgeon subpackages are allowed to violate
     // the dev only dependencies rule.
     if (pubspec.publishTo != 'none') {
       pubspec.dependencies.forEach((String name, Dependency dependency) {
