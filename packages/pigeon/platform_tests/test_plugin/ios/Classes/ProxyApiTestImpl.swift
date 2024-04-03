@@ -117,12 +117,8 @@ public class PigeonInstanceManager {
   private let finalizerDelegate: PigeonFinalizerDelegate
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
   
-  public init(finalizerDelegate: PigeonFinalizerDelegate) {
-    self.finalizerDelegate = finalizerDelegate
-  }
-  
   private class ApiPigeonFinalizerDelegate: PigeonFinalizerDelegate {
-    unowned let api: PigeonInstanceManagerApi
+    let api: PigeonInstanceManagerApi
     
     init(_ api: PigeonInstanceManagerApi) {
       self.api = api
@@ -133,6 +129,10 @@ public class PigeonInstanceManager {
         _ in
       }
     }
+  }
+  
+  public init(finalizerDelegate: PigeonFinalizerDelegate) {
+    self.finalizerDelegate = finalizerDelegate
   }
 
   convenience init(api: PigeonInstanceManagerApi) {
@@ -289,7 +289,7 @@ class PigeonInstanceManagerApi {
   static let codec = FlutterStandardMessageCodec.sharedInstance()
 
   /// Handles sending and receiving messages with Dart.
-  weak var binaryMessenger: FlutterBinaryMessenger?
+  let binaryMessenger: FlutterBinaryMessenger
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     self.binaryMessenger = binaryMessenger
@@ -351,7 +351,7 @@ class PigeonInstanceManagerApi {
 }
 
 private class PigeonProxyApiBaseCodecReader: FlutterStandardReader {
-  weak var instanceManager: PigeonInstanceManager?
+  let instanceManager: PigeonInstanceManager
 
   init(data: Data, instanceManager: PigeonInstanceManager) {
     self.instanceManager = instanceManager
@@ -372,7 +372,7 @@ private class PigeonProxyApiBaseCodecReader: FlutterStandardReader {
 }
 
 private class PigeonProxyApiBaseCodecWriter: FlutterStandardWriter {
-  weak var instanceManager: PigeonInstanceManager?
+  let instanceManager: PigeonInstanceManager
   let apiDelegate: PigeonApiDelegate
 
   init(data: NSMutableData, instanceManager: PigeonInstanceManager, apiDelegate: PigeonApiDelegate)
