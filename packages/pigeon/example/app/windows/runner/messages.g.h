@@ -132,6 +132,9 @@ class ExampleHostApi {
   // `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     ExampleHostApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    ExampleHostApi* api,
+                    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
@@ -143,6 +146,8 @@ class ExampleHostApi {
 class MessageFlutterApi {
  public:
   MessageFlutterApi(flutter::BinaryMessenger* binary_messenger);
+  MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
+                    const std::string& message_channel_suffix);
   static const flutter::StandardMessageCodec& GetCodec();
   void FlutterMethod(const std::string* a_string,
                      std::function<void(const std::string&)>&& on_success,
@@ -150,6 +155,7 @@ class MessageFlutterApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
+  std::string message_channel_suffix_;
 };
 
 }  // namespace pigeon_example

@@ -20,7 +20,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
 
 void main() {
 // #docregion main-dart-flutter
-  MessageFlutterApi.setup(_ExampleFlutterApi());
+  MessageFlutterApi.setUp(_ExampleFlutterApi());
 // #enddocregion main-dart-flutter
   runApp(const MyApp());
 }

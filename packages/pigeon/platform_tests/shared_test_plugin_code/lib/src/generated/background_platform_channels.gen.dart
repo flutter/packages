@@ -23,16 +23,21 @@ class BackgroundApi2Host {
   /// Constructor for [BackgroundApi2Host].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  BackgroundApi2Host({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  BackgroundApi2Host(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<int> add(int x, int y) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

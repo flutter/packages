@@ -34,16 +34,21 @@ class PrimitiveHostApi {
   /// Constructor for [PrimitiveHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  PrimitiveHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  PrimitiveHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<int> anInt(int value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -71,8 +76,8 @@ class PrimitiveHostApi {
   }
 
   Future<bool> aBool(bool value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -100,8 +105,8 @@ class PrimitiveHostApi {
   }
 
   Future<String> aString(String value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -129,8 +134,8 @@ class PrimitiveHostApi {
   }
 
   Future<double> aDouble(double value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -158,8 +163,8 @@ class PrimitiveHostApi {
   }
 
   Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -187,8 +192,8 @@ class PrimitiveHostApi {
   }
 
   Future<List<Object?>> aList(List<Object?> value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -216,8 +221,8 @@ class PrimitiveHostApi {
   }
 
   Future<Int32List> anInt32List(Int32List value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt32List';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt32List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -245,8 +250,8 @@ class PrimitiveHostApi {
   }
 
   Future<List<bool?>> aBoolList(List<bool?> value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -274,8 +279,8 @@ class PrimitiveHostApi {
   }
 
   Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> value) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -326,12 +331,17 @@ abstract class PrimitiveFlutterApi {
 
   Map<String?, int?> aStringIntMap(Map<String?, int?> value);
 
-  static void setup(PrimitiveFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    PrimitiveFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -359,7 +369,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -387,7 +397,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -415,7 +425,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -443,7 +453,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -472,7 +482,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -500,7 +510,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -528,7 +538,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -557,7 +567,7 @@ abstract class PrimitiveFlutterApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap',
+          'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
