@@ -472,7 +472,8 @@ class ImperativeRouteMatch extends RouteMatch {
   }
 
   @override
-  int get hashCode => Object.hash(super.hashCode, Object.hashAll(completers), matches.hashCode);
+  int get hashCode =>
+      Object.hash(super.hashCode, Object.hashAll(completers), matches.hashCode);
 }
 
 /// The list of [RouteMatchBase] objects.
