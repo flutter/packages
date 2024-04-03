@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
+import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
@@ -22,7 +23,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Handles serialization and deserialization of {@link com.android.billingclient.api.BillingClient}
@@ -58,32 +58,41 @@ import java.util.Map;
     return info;
   }
 
-  static List<QueryProductDetailsParams.Product> toProductList(List<Object> serialized) {
+  static List<QueryProductDetailsParams.Product> toProductList(
+      List<Messages.PlatformProduct> platformProducts) {
     List<QueryProductDetailsParams.Product> products = new ArrayList<>();
-    for (Object productSerialized : serialized) {
-      @SuppressWarnings(value = "unchecked")
-      Map<String, Object> productMap = (Map<String, Object>) productSerialized;
-      products.add(toProduct(productMap));
+    for (Messages.PlatformProduct platformProduct : platformProducts) {
+      products.add(toProduct(platformProduct));
     }
     return products;
   }
 
-  static QueryProductDetailsParams.Product toProduct(Map<String, Object> serialized) {
-    String productId = (String) serialized.get("productId");
-    String productType = (String) serialized.get("productType");
+  static QueryProductDetailsParams.Product toProduct(Messages.PlatformProduct platformProduct) {
+
     return QueryProductDetailsParams.Product.newBuilder()
-        .setProductId(productId)
-        .setProductType(productType)
+        .setProductId(platformProduct.getProductId())
+        .setProductType(toProductTypeString(platformProduct.getProductType()))
         .build();
   }
 
-  static List<HashMap<String, Object>> fromProductDetailsList(
-      @Nullable List<ProductDetails> productDetailsList) {
+  static String toProductTypeString(Messages.PlatformProductType type) {
+    switch (type) {
+      case INAPP:
+        return BillingClient.ProductType.INAPP;
+      case SUBS:
+        return BillingClient.ProductType.SUBS;
+    }
+    throw new Messages.FlutterError("UNKNOWN_TYPE", "Unknown product type: " + type, null);
+  }
+
+  static List<Object> fromProductDetailsList(@Nullable List<ProductDetails> productDetailsList) {
     if (productDetailsList == null) {
       return Collections.emptyList();
     }
 
-    ArrayList<HashMap<String, Object>> output = new ArrayList<>();
+    // This and the method are generically typed due to Pigeon limitations; see
+    // https://github.com/flutter/flutter/issues/116117.
+    ArrayList<Object> output = new ArrayList<>();
     for (ProductDetails detail : productDetailsList) {
       output.add(fromProductDetail(detail));
     }
@@ -203,51 +212,59 @@ import java.util.Map;
     return info;
   }
 
-  static List<HashMap<String, Object>> fromPurchasesList(@Nullable List<Purchase> purchases) {
+  static List<Object> fromPurchasesList(@Nullable List<Purchase> purchases) {
     if (purchases == null) {
       return Collections.emptyList();
     }
 
-    List<HashMap<String, Object>> serialized = new ArrayList<>();
+    // This and the method are generically typed due to Pigeon limitations; see
+    // https://github.com/flutter/flutter/issues/116117.
+    List<Object> serialized = new ArrayList<>();
     for (Purchase purchase : purchases) {
       serialized.add(fromPurchase(purchase));
     }
     return serialized;
   }
 
-  static List<HashMap<String, Object>> fromPurchaseHistoryRecordList(
+  static List<Object> fromPurchaseHistoryRecordList(
       @Nullable List<PurchaseHistoryRecord> purchaseHistoryRecords) {
     if (purchaseHistoryRecords == null) {
       return Collections.emptyList();
     }
 
-    List<HashMap<String, Object>> serialized = new ArrayList<>();
+    // This and the method are generically typed due to Pigeon limitations; see
+    // https://github.com/flutter/flutter/issues/116117.
+    List<Object> serialized = new ArrayList<>();
     for (PurchaseHistoryRecord purchaseHistoryRecord : purchaseHistoryRecords) {
       serialized.add(fromPurchaseHistoryRecord(purchaseHistoryRecord));
     }
     return serialized;
   }
 
-  static HashMap<String, Object> fromBillingResult(BillingResult billingResult) {
-    HashMap<String, Object> info = new HashMap<>();
-    info.put("responseCode", billingResult.getResponseCode());
-    info.put("debugMessage", billingResult.getDebugMessage());
-    return info;
+  static Messages.PlatformBillingResult fromBillingResult(BillingResult billingResult) {
+    return new Messages.PlatformBillingResult.Builder()
+        .setResponseCode((long) billingResult.getResponseCode())
+        .setDebugMessage(billingResult.getDebugMessage())
+        .build();
   }
 
-  static HashMap<String, Object> fromUserChoiceDetails(UserChoiceDetails userChoiceDetails) {
-    HashMap<String, Object> info = new HashMap<>();
-    info.put("externalTransactionToken", userChoiceDetails.getExternalTransactionToken());
-    info.put("originalExternalTransactionId", userChoiceDetails.getOriginalExternalTransactionId());
-    info.put("products", fromProductsList(userChoiceDetails.getProducts()));
-    return info;
+  static Messages.PlatformUserChoiceDetails fromUserChoiceDetails(
+      UserChoiceDetails userChoiceDetails) {
+    return new Messages.PlatformUserChoiceDetails.Builder()
+        .setExternalTransactionToken(userChoiceDetails.getExternalTransactionToken())
+        .setOriginalExternalTransactionId(userChoiceDetails.getOriginalExternalTransactionId())
+        .setProductsJsonList(fromProductsList(userChoiceDetails.getProducts()))
+        .build();
   }
 
-  static List<HashMap<String, Object>> fromProductsList(List<Product> productsList) {
+  static List<Object> fromProductsList(List<Product> productsList) {
     if (productsList.isEmpty()) {
       return Collections.emptyList();
     }
-    ArrayList<HashMap<String, Object>> output = new ArrayList<>();
+
+    // This and the method are generically typed due to Pigeon limitations; see
+    // https://github.com/flutter/flutter/issues/116117.
+    ArrayList<Object> output = new ArrayList<>();
     for (Product product : productsList) {
       output.add(fromProduct(product));
     }
@@ -264,23 +281,24 @@ import java.util.Map;
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
-  static HashMap<String, Object> fromBillingConfig(
+  static Messages.PlatformBillingConfigResponse fromBillingConfig(
       BillingResult result, BillingConfig billingConfig) {
-    HashMap<String, Object> info = fromBillingResult(result);
-    info.put("countryCode", billingConfig.getCountryCode());
-    return info;
+    return new Messages.PlatformBillingConfigResponse.Builder()
+        .setBillingResult(fromBillingResult(result))
+        .setCountryCode(billingConfig.getCountryCode())
+        .build();
   }
 
   /**
    * Converter from {@link BillingResult} and {@link AlternativeBillingOnlyReportingDetails} to map.
    */
-  static HashMap<String, Object> fromAlternativeBillingOnlyReportingDetails(
-      BillingResult result, AlternativeBillingOnlyReportingDetails details) {
-    HashMap<String, Object> info = fromBillingResult(result);
-    if (details != null) {
-      info.put("externalTransactionToken", details.getExternalTransactionToken());
-    }
-    return info;
+  static Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse
+      fromAlternativeBillingOnlyReportingDetails(
+          BillingResult result, AlternativeBillingOnlyReportingDetails details) {
+    return new Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse.Builder()
+        .setBillingResult(fromBillingResult(result))
+        .setExternalTransactionToken(details.getExternalTransactionToken())
+        .build();
   }
 
   /**
