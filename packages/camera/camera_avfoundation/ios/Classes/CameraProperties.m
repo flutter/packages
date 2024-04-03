@@ -16,13 +16,7 @@ FLTFlashMode FLTGetFLTFlashModeForString(NSString *mode) {
   } else if ([mode isEqualToString:@"torch"]) {
     return FLTFlashModeTorch;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown flash mode %@", mode]
-                                     }];
-    @throw error;
+    return FLTFlashModeInvalid;
   }
 }
 
@@ -48,14 +42,11 @@ NSString *FLTGetStringForFLTExposureMode(FLTExposureMode mode) {
       return @"auto";
     case FLTExposureModeLocked:
       return @"locked";
+    case FLTExposureModeInvalid:
+      // This value should never actually be used.
+      return nil;
   }
-  NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                       code:NSURLErrorUnknown
-                                   userInfo:@{
-                                     NSLocalizedDescriptionKey : [NSString
-                                         stringWithFormat:@"Unknown string for exposure mode"]
-                                   }];
-  @throw error;
+  return nil;
 }
 
 FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode) {
@@ -64,13 +55,7 @@ FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode) {
   } else if ([mode isEqualToString:@"locked"]) {
     return FLTExposureModeLocked;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown exposure mode %@", mode]
-                                     }];
-    @throw error;
+    return FLTExposureModeInvalid;
   }
 }
 
@@ -82,14 +67,11 @@ NSString *FLTGetStringForFLTFocusMode(FLTFocusMode mode) {
       return @"auto";
     case FLTFocusModeLocked:
       return @"locked";
+    case FLTFocusModeInvalid:
+      // This value should never actually be used.
+      return nil;
   }
-  NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                       code:NSURLErrorUnknown
-                                   userInfo:@{
-                                     NSLocalizedDescriptionKey : [NSString
-                                         stringWithFormat:@"Unknown string for focus mode"]
-                                   }];
-  @throw error;
+  return nil;
 }
 
 FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode) {
@@ -98,13 +80,7 @@ FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode) {
   } else if ([mode isEqualToString:@"locked"]) {
     return FLTFocusModeLocked;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown focus mode %@", mode]
-                                     }];
-    @throw error;
+    return FLTFocusModeInvalid;
   }
 }
 
@@ -114,20 +90,13 @@ UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation) {
   if ([orientation isEqualToString:@"portraitDown"]) {
     return UIDeviceOrientationPortraitUpsideDown;
   } else if ([orientation isEqualToString:@"landscapeLeft"]) {
-    return UIDeviceOrientationLandscapeRight;
-  } else if ([orientation isEqualToString:@"landscapeRight"]) {
     return UIDeviceOrientationLandscapeLeft;
+  } else if ([orientation isEqualToString:@"landscapeRight"]) {
+    return UIDeviceOrientationLandscapeRight;
   } else if ([orientation isEqualToString:@"portraitUp"]) {
     return UIDeviceOrientationPortrait;
   } else {
-    NSError *error = [NSError
-        errorWithDomain:NSCocoaErrorDomain
-                   code:NSURLErrorUnknown
-               userInfo:@{
-                 NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown device orientation %@", orientation]
-               }];
-    @throw error;
+    return UIDeviceOrientationUnknown;
   }
 }
 
@@ -135,9 +104,9 @@ NSString *FLTGetStringForUIDeviceOrientation(UIDeviceOrientation orientation) {
   switch (orientation) {
     case UIDeviceOrientationPortraitUpsideDown:
       return @"portraitDown";
-    case UIDeviceOrientationLandscapeRight:
-      return @"landscapeLeft";
     case UIDeviceOrientationLandscapeLeft:
+      return @"landscapeLeft";
+    case UIDeviceOrientationLandscapeRight:
       return @"landscapeRight";
     case UIDeviceOrientationPortrait:
     default:
@@ -163,13 +132,7 @@ FLTResolutionPreset FLTGetFLTResolutionPresetForString(NSString *preset) {
   } else if ([preset isEqualToString:@"max"]) {
     return FLTResolutionPresetMax;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown resolution preset %@", preset]
-                                     }];
-    @throw error;
+    return FLTResolutionPresetInvalid;
   }
 }
 
@@ -183,5 +146,17 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
   } else {
     NSLog(@"The selected imageFormatGroup is not supported by iOS. Defaulting to brga8888");
     return kCVPixelFormatType_32BGRA;
+  }
+}
+
+#pragma mark - file format
+
+FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString) {
+  if ([fileFormatString isEqualToString:@"jpg"]) {
+    return FCPFileFormatJPEG;
+  } else if ([fileFormatString isEqualToString:@"heif"]) {
+    return FCPFileFormatHEIF;
+  } else {
+    return FCPFileFormatInvalid;
   }
 }

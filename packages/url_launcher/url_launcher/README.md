@@ -8,7 +8,7 @@ A Flutter plugin for launching a URL.
 
 |             | Android | iOS   | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 11.0+ | Any   | 10.14+ | Any | Windows 10+ |
+| **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Windows 10+ |
 
 ## Usage
 
@@ -66,7 +66,9 @@ See [`-[UIApplication canOpenURL:]`](https://developer.apple.com/documentation/u
 
 Add any URL schemes passed to `canLaunchUrl` as `<queries>` entries in your
 `AndroidManifest.xml`, otherwise it will return false in most cases starting
-on Android 11 (API 30) or higher. A `<queries>`
+on Android 11 (API 30) or higher. Checking for
+`supportsLaunchMode(LaunchMode.inAppBrowserView)` also requires
+a `<queries>` entry to return anything but false. A `<queries>`
 element must be added to your manifest as a child of the root element.
 
 Example:
@@ -85,12 +87,23 @@ Example:
     <action android:name="android.intent.action.VIEW" />
     <data android:scheme="tel" />
   </intent>
+  <!-- If your application checks for inAppBrowserView launch mode support -->
+  <intent>
+    <action android:name="android.support.customtabs.action.CustomTabsService" />
+  </intent>
 </queries>
 ```
 
 See
 [the Android documentation](https://developer.android.com/training/package-visibility/use-cases)
 for examples of other queries.
+
+### Web
+
+Some web browsers may have limitations (e.g. a launch must be triggered by a
+user action). Check
+[package:url_launcher_web](https://pub.dev/packages/url_launcher_web#limitations-on-the-web-platform)
+for more web-specific information.
 
 ## Supported URL schemes
 
@@ -210,10 +223,16 @@ if (!await launchUrl(uri)) {
 If you need to access files outside of your application's sandbox, you will need to have the necessary
 [entitlements](https://docs.flutter.dev/desktop#entitlements-and-the-app-sandbox).
 
-## Browser vs in-app Handling
+## Browser vs in-app handling
 
 On some platforms, web URLs can be launched either in an in-app web view, or
 in the default browser. The default behavior depends on the platform (see
 [`launchUrl`](https://pub.dev/documentation/url_launcher/latest/url_launcher/launchUrl.html)
 for details), but a specific mode can be used on supported platforms by
 passing a `LaunchMode`.
+
+Platforms that do no support a requested `LaunchMode` will
+automatically fall back to a supported mode (usually `platformDefault`). If
+your application needs to avoid that fallback behavior, however, you can check
+if the current platform supports a given mode with `supportsLaunchMode` before
+calling `launchUrl`.

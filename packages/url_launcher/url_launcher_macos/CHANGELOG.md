@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 3.1.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
+
 ## 3.0.7
 
 * Adds pub topics to package metadata.

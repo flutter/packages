@@ -1,3 +1,9 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+* Updates mockito to 5.2.0.
+
 ## 2.2.1
 
 * Adds pub topics to package metadata.

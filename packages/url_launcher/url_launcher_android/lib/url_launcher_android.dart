@@ -49,8 +49,6 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     return _hostApi.closeWebView();
   }
 
-  // TODO(stuartmorgan): Implement launchUrl, and make this a passthrough
-  // to launchUrl. See also https://github.com/flutter/flutter/issues/66721
   @override
   Future<bool> launch(
     String url, {
@@ -62,17 +60,62 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    final bool succeeded;
-    if (useWebView) {
-      succeeded = await _hostApi.openUrlInWebView(
-          url,
-          WebViewOptions(
-              enableJavaScript: enableJavaScript,
-              enableDomStorage: enableDomStorage,
-              headers: headers));
-    } else {
-      succeeded = await _hostApi.launchUrl(url, headers);
+    return launchUrl(
+        url,
+        LaunchOptions(
+            mode: useWebView
+                ? PreferredLaunchMode.inAppWebView
+                : PreferredLaunchMode.externalApplication,
+            webViewConfiguration: InAppWebViewConfiguration(
+                enableDomStorage: enableDomStorage,
+                enableJavaScript: enableJavaScript,
+                headers: headers)));
+  }
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    final bool inApp;
+    switch (options.mode) {
+      case PreferredLaunchMode.inAppWebView:
+      case PreferredLaunchMode.inAppBrowserView:
+        inApp = true;
+      case PreferredLaunchMode.externalApplication:
+      case PreferredLaunchMode.externalNonBrowserApplication:
+        // TODO(stuartmorgan): Add full support for
+        // externalNonBrowsingApplication; see
+        // https://github.com/flutter/flutter/issues/66721.
+        // Currently it's treated the same as externalApplication.
+        inApp = false;
+      case PreferredLaunchMode.platformDefault:
+      // Intentionally treat any new values as platformDefault; see comment in
+      // supportsMode.
+      // ignore: no_default_cases
+      default:
+        // By default, open web URLs in the application.
+        inApp = url.startsWith('http:') || url.startsWith('https:');
+        break;
     }
+
+    final bool succeeded;
+    if (inApp) {
+      succeeded = await _hostApi.openUrlInApp(
+        url,
+        // Prefer custom tabs unless a webview was specifically requested.
+        options.mode != PreferredLaunchMode.inAppWebView,
+        WebViewOptions(
+          enableJavaScript: options.webViewConfiguration.enableJavaScript,
+          enableDomStorage: options.webViewConfiguration.enableDomStorage,
+          headers: options.webViewConfiguration.headers,
+        ),
+        BrowserOptions(
+          showTitle: options.browserConfiguration.showTitle,
+        ),
+      );
+    } else {
+      succeeded =
+          await _hostApi.launchUrl(url, options.webViewConfiguration.headers);
+    }
+
     // TODO(stuartmorgan): Remove this special handling as part of a
     // breaking change to rework failure handling across all platform. The
     // current behavior is backwards compatible with the previous Java error.
@@ -81,7 +124,31 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
           code: 'ACTIVITY_NOT_FOUND',
           message: 'No Activity found to handle intent { $url }');
     }
+
     return succeeded;
+  }
+
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    switch (mode) {
+      case PreferredLaunchMode.platformDefault:
+      case PreferredLaunchMode.inAppWebView:
+      case PreferredLaunchMode.externalApplication:
+        return true;
+      case PreferredLaunchMode.inAppBrowserView:
+        return _hostApi.supportsCustomTabs();
+      // Default is a desired behavior here since support for new modes is
+      // always opt-in, and the enum lives in a different package, so silently
+      // adding "false" for new values is the correct behavior.
+      // ignore: no_default_cases
+      default:
+        return false;
+    }
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    return mode == PreferredLaunchMode.inAppWebView;
   }
 
   // Returns the part of [url] up to the first ':', or an empty string if there

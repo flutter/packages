@@ -187,7 +187,7 @@ GSIButtonConfiguration _copyConfigWith(
 }
 
 /// Returns a function that modifies the `current` configuration with a `value`, then calls `fn` with it.
-Function(T?)? _onChanged<T>(
+void Function(T?)? _onChanged<T>(
     GSIButtonConfiguration? current, OnWebConfigChangeFn? fn) {
   if (fn == null) {
     return null;

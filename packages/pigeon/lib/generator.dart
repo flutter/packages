@@ -63,6 +63,24 @@ abstract class StructuredGenerator<T> extends Generator<T> {
       dartPackageName: dartPackageName,
     );
 
+    if (root.apis.any((Api api) => api is AstProxyApi)) {
+      writeInstanceManager(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
+
+      writeInstanceManagerApi(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
+
+      writeProxyApiBaseCodec(generatorOptions, root, indent);
+    }
+
     writeEnums(
       generatorOptions,
       root,
@@ -176,12 +194,12 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    for (final Class klass in root.classes) {
+    for (final Class classDefinition in root.classes) {
       writeDataClass(
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
     }
@@ -192,7 +210,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   });
 
@@ -201,9 +219,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {}
 
@@ -212,9 +228,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {}
 
@@ -228,22 +242,31 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     required String dartPackageName,
   }) {
     for (final Api api in root.apis) {
-      if (api.location == ApiLocation.host) {
-        writeHostApi(
-          generatorOptions,
-          root,
-          indent,
-          api,
-          dartPackageName: dartPackageName,
-        );
-      } else if (api.location == ApiLocation.flutter) {
-        writeFlutterApi(
-          generatorOptions,
-          root,
-          indent,
-          api,
-          dartPackageName: dartPackageName,
-        );
+      switch (api) {
+        case AstHostApi():
+          writeHostApi(
+            generatorOptions,
+            root,
+            indent,
+            api,
+            dartPackageName: dartPackageName,
+          );
+        case AstFlutterApi():
+          writeFlutterApi(
+            generatorOptions,
+            root,
+            indent,
+            api,
+            dartPackageName: dartPackageName,
+          );
+        case AstProxyApi():
+          writeProxyApi(
+            generatorOptions,
+            root,
+            indent,
+            api,
+            dartPackageName: dartPackageName,
+          );
       }
     }
   }
@@ -253,7 +276,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   });
 
@@ -262,7 +285,49 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   });
+
+  /// Writes the implementation of an `InstanceManager` to [indent].
+  void writeInstanceManager(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {}
+
+  /// Writes the implementation of the API for the `InstanceManager` to
+  /// [indent].
+  void writeInstanceManagerApi(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {}
+
+  /// Writes the base codec to be used by all ProxyApis.
+  ///
+  /// This codec should use `128` as the identifier for objects that exist in
+  /// an `InstanceManager`. The write implementation should convert an instance
+  /// to an identifier. The read implementation should covert the identifier
+  /// to an instance.
+  ///
+  /// This will serve as the default codec for all ProxyApis. If a ProxyApi
+  /// needs to create its own codec (it has methods/fields/constructor that use
+  /// a data class) it should extend this codec and not `StandardMessageCodec`.
+  void writeProxyApiBaseCodec(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+  ) {}
+
+  /// Writes a single Proxy Api to [indent].
+  void writeProxyApi(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+    AstProxyApi api, {
+    required String dartPackageName,
+  }) {}
 }

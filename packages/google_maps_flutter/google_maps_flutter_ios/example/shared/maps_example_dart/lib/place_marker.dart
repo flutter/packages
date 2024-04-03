@@ -43,6 +43,8 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   MarkerId? selectedMarker;
   int _markerIdCounter = 1;
   LatLng? markerPosition;
+  // A helper text for Xcode UITests.
+  String _onDragXcodeUITestHelperText = '';
 
   // ignore: use_setters_to_change_properties
   void _onMapCreated(ExampleGoogleMapController controller) {
@@ -80,6 +82,17 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   Future<void> _onMarkerDrag(MarkerId markerId, LatLng newPosition) async {
     setState(() {
       markerPosition = newPosition;
+      if (!_onDragXcodeUITestHelperText.contains('\n_onMarkerDrag called')) {
+        // _onMarkerDrag can be called multiple times during a single drag.
+        // Only log _onMarkerDrag once per dragging action to reduce noises in UI.
+        _onDragXcodeUITestHelperText += '\n_onMarkerDrag called';
+      }
+    });
+  }
+
+  Future<void> _onMarkerDragStart(MarkerId markerId, LatLng newPosition) async {
+    setState(() {
+      _onDragXcodeUITestHelperText += '\n_onMarkerDragStart';
     });
   }
 
@@ -87,6 +100,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     final Marker? tappedMarker = markers[markerId];
     if (tappedMarker != null) {
       setState(() {
+        _onDragXcodeUITestHelperText += '\n_onMarkerDragEnd';
         markerPosition = null;
       });
       await showDialog<void>(
@@ -95,15 +109,19 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
             return AlertDialog(
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('OK'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  )
+                      child: const Text('OK'),
+                      onPressed: () {
+                        _onDragXcodeUITestHelperText = '';
+                        Navigator.of(context).pop();
+                      })
                 ],
                 content: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 66),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
+                        Text(
+                            'iOS delegate called: \n $_onDragXcodeUITestHelperText'),
                         Text('Old position: ${tappedMarker.position}'),
                         Text('New position: $newPosition'),
                       ],
@@ -131,6 +149,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
       ),
       infoWindow: InfoWindow(title: markerIdVal, snippet: '*'),
       onTap: () => _onMarkerTapped(markerId),
+      onDragStart: (LatLng position) => _onMarkerDragStart(markerId, position),
       onDragEnd: (LatLng position) => _onMarkerDragEnd(markerId, position),
       onDrag: (LatLng position) => _onMarkerDrag(markerId, position),
     );

@@ -252,10 +252,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     switch (autoMediaPlaybackPolicy) {
       case AutoMediaPlaybackPolicy.require_user_action_for_all_media_types:
         requiresUserAction = true;
-        break;
       case AutoMediaPlaybackPolicy.always_allow:
         requiresUserAction = false;
-        break;
     }
 
     configuration
@@ -578,19 +576,14 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     switch (error.code) {
       case WKErrorCode.unknown:
         errorType = WebResourceErrorType.unknown;
-        break;
       case WKErrorCode.webContentProcessTerminated:
         errorType = WebResourceErrorType.webContentProcessTerminated;
-        break;
       case WKErrorCode.webViewInvalidated:
         errorType = WebResourceErrorType.webViewInvalidated;
-        break;
       case WKErrorCode.javaScriptExceptionOccurred:
         errorType = WebResourceErrorType.javaScriptExceptionOccurred;
-        break;
       case WKErrorCode.javaScriptResultTypeIsUnsupported:
         errorType = WebResourceErrorType.javaScriptResultTypeIsUnsupported;
-        break;
     }
 
     return WebResourceError(

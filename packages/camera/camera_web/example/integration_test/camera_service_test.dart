@@ -913,5 +913,3 @@ void main() {
     });
   });
 }
-
-class JSNoSuchMethodError implements Exception {}

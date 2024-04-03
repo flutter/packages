@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:camera_android_camerax/src/camera.dart';
+import 'package:camera_android_camerax/src/camera_control.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,6 +53,39 @@ void main() {
 
       expect(await camera.getCameraInfo(), equals(cameraInfo));
       verify(mockApi.getCameraInfo(cameraIdentifier));
+    });
+
+    test('getCameraControl makes call to retrieve expected CameraControl',
+        () async {
+      final MockTestCameraHostApi mockApi = MockTestCameraHostApi();
+      TestCameraHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final Camera camera = Camera.detached(
+        instanceManager: instanceManager,
+      );
+      const int cameraIdentifier = 42;
+      final CameraControl cameraControl = CameraControl.detached();
+      const int cameraControlIdentifier = 8;
+      instanceManager.addHostCreatedInstance(
+        camera,
+        cameraIdentifier,
+        onCopy: (_) => Camera.detached(instanceManager: instanceManager),
+      );
+      instanceManager.addHostCreatedInstance(
+        cameraControl,
+        cameraControlIdentifier,
+        onCopy: (_) => CameraControl.detached(instanceManager: instanceManager),
+      );
+
+      when(mockApi.getCameraControl(cameraIdentifier))
+          .thenAnswer((_) => cameraControlIdentifier);
+
+      expect(await camera.getCameraControl(), equals(cameraControl));
+      verify(mockApi.getCameraControl(cameraIdentifier));
     });
 
     test('flutterApiCreate makes call to add instance to instance manager', () {

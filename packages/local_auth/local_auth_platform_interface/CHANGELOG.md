@@ -1,3 +1,16 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 1.0.10
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 1.0.9
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
 ## 1.0.8
 
 * Adds pub topics to package metadata.

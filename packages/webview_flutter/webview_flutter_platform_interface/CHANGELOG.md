@@ -1,3 +1,28 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 2.10.0
+
+* Adds `WebResourceRequest` and `WebResourceResponse` to `HttpResponseError`.
+
+## 2.9.1
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.9.0
+
+* Adds support to show JavaScript dialog. See `PlatformWebViewController.setOnJavaScriptAlertDialog`, `PlatformWebViewController.setOnJavaScriptConfirmDialog` and `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
+
+## 2.8.0
+
+* Adds support to track scroll position changes. See `PlatformWebViewController.setOnScrollPositionChange`.
+
+## 2.7.0
+
+* Adds support for handling HTTP basic authentication requests. See `PlatformNavigationDelegate.setOnHttpAuthRequest`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 2.6.0
 
 * Adds support to register a callback to intercept messages that are written to

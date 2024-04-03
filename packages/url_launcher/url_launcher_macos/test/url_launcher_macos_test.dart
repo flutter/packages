@@ -106,6 +106,47 @@ void main() {
             throwsA(isA<PlatformException>()));
       });
     });
+
+    group('supportsMode', () {
+      test('returns true for platformDefault', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+            true);
+      });
+
+      test('returns true for external application', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        expect(
+            await launcher
+                .supportsMode(PreferredLaunchMode.externalApplication),
+            true);
+      });
+
+      test('returns false for other modes', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        expect(
+            await launcher.supportsMode(
+                PreferredLaunchMode.externalNonBrowserApplication),
+            false);
+        expect(
+            await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+            false);
+        expect(await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
+            false);
+      });
+    });
+
+    test('supportsCloseForMode returns false', () async {
+      final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.platformDefault),
+          false);
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.externalApplication),
+          false);
+    });
   });
 }
 

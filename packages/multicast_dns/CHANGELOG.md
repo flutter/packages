@@ -1,3 +1,16 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 0.3.2+6
+
+* Improves links in README.md.
+
+## 0.3.2+5
+
+* Updates `PendingRequest` to be a `base class` for Dart 3.0 compatibility.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 0.3.2+4
 
 * Adds pub topics to package metadata.

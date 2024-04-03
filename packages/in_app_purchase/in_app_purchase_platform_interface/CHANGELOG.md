@@ -1,3 +1,16 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 1.3.7
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 1.3.6
+
+* Updates documentation reference of `finishPurchase` to `completePurchase`.
+
 ## 1.3.5
 
 * Adds pub topics to package metadata.

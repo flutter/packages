@@ -4,6 +4,7 @@
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
 import '../util.dart';
@@ -102,6 +103,7 @@ void main() {
       final List<RepositoryPackage> examples = plugin.getExamples().toList();
 
       expect(examples.length, 1);
+      expect(examples[0].isExample, isTrue);
       expect(examples[0].path, getExampleDir(plugin).path);
     });
 
@@ -112,6 +114,8 @@ void main() {
       final List<RepositoryPackage> examples = plugin.getExamples().toList();
 
       expect(examples.length, 2);
+      expect(examples[0].isExample, isTrue);
+      expect(examples[1].isExample, isTrue);
       expect(examples[0].path,
           getExampleDir(plugin).childDirectory('example1').path);
       expect(examples[1].path,
@@ -125,6 +129,7 @@ void main() {
       final List<RepositoryPackage> examples = package.getExamples().toList();
 
       expect(examples.length, 1);
+      expect(examples[0].isExample, isTrue);
       expect(examples[0].path, getExampleDir(package).path);
     });
 
@@ -136,6 +141,8 @@ void main() {
       final List<RepositoryPackage> examples = package.getExamples().toList();
 
       expect(examples.length, 2);
+      expect(examples[0].isExample, isTrue);
+      expect(examples[1].isExample, isTrue);
       expect(examples[0].path,
           getExampleDir(package).childDirectory('example1').path);
       expect(examples[1].path,
@@ -151,6 +158,7 @@ void main() {
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, false);
       expect(plugin.isFederated, false);
+      expect(plugin.isExample, isFalse);
     });
 
     test('handle app-facing packages', () {
@@ -160,6 +168,7 @@ void main() {
       expect(plugin.isAppFacing, true);
       expect(plugin.isPlatformInterface, false);
       expect(plugin.isPlatformImplementation, false);
+      expect(plugin.isExample, isFalse);
     });
 
     test('handle platform interface packages', () {
@@ -170,6 +179,7 @@ void main() {
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, true);
       expect(plugin.isPlatformImplementation, false);
+      expect(plugin.isExample, isFalse);
     });
 
     test('handle platform implementation packages', () {
@@ -181,6 +191,7 @@ void main() {
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, false);
       expect(plugin.isPlatformImplementation, true);
+      expect(plugin.isExample, isFalse);
     });
   });
 
@@ -208,6 +219,17 @@ void main() {
     test('returns true for Flutter package', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, isFlutter: true);
+      expect(package.requiresFlutter(), true);
+    });
+
+    test('returns true for a dev dependency on Flutter', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      final File pubspecFile = package.pubspecFile;
+      final Pubspec pubspec = package.parsePubspec();
+      pubspec.devDependencies['flutter'] = SdkDependency('flutter');
+      pubspecFile.writeAsStringSync(pubspec.toString());
+
       expect(package.requiresFlutter(), true);
     });
 

@@ -21,11 +21,9 @@
 @property(strong, nonatomic) NSDictionary *localeMap;
 @property(strong, nonatomic) NSDictionary *storefrontMap;
 @property(strong, nonatomic) NSDictionary *storefrontAndPaymentTransactionMap;
-
 @end
 
 @implementation TranslatorTest
-
 - (void)setUp {
   self.periodMap = @{@"numberOfUnits" : @(0), @"unit" : @(0)};
 
@@ -57,17 +55,12 @@
     @"localizedTitle" : @"title",
     @"localizedDescription" : @"des",
   }];
-  if (@available(iOS 11.2, *)) {
-    self.productMap[@"subscriptionPeriod"] = self.periodMap;
-    self.productMap[@"introductoryPrice"] = self.discountMap;
-  }
+  self.productMap[@"subscriptionPeriod"] = self.periodMap;
+  self.productMap[@"introductoryPrice"] = self.discountMap;
   if (@available(iOS 12.2, *)) {
     self.productMap[@"discounts"] = @[ self.discountMap ];
   }
-
-  if (@available(iOS 12.0, *)) {
-    self.productMap[@"subscriptionGroupIdentifier"] = @"com.group";
-  }
+  self.productMap[@"subscriptionGroupIdentifier"] = @"com.group";
 
   self.productResponseMap =
       @{@"products" : @[ self.productMap ], @"invalidProductIdentifiers" : @[]};
@@ -124,20 +117,16 @@
 }
 
 - (void)testSKProductSubscriptionPeriodStubToMap {
-  if (@available(iOS 11.2, *)) {
-    SKProductSubscriptionPeriodStub *period =
-        [[SKProductSubscriptionPeriodStub alloc] initWithMap:self.periodMap];
-    NSDictionary *map = [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:period];
-    XCTAssertEqualObjects(map, self.periodMap);
-  }
+  SKProductSubscriptionPeriodStub *period =
+      [[SKProductSubscriptionPeriodStub alloc] initWithMap:self.periodMap];
+  NSDictionary *map = [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:period];
+  XCTAssertEqualObjects(map, self.periodMap);
 }
 
 - (void)testSKProductDiscountStubToMap {
-  if (@available(iOS 11.2, *)) {
-    SKProductDiscountStub *discount = [[SKProductDiscountStub alloc] initWithMap:self.discountMap];
-    NSDictionary *map = [FIAObjectTranslator getMapFromSKProductDiscount:discount];
-    XCTAssertEqualObjects(map, self.discountMap);
-  }
+  SKProductDiscountStub *discount = [[SKProductDiscountStub alloc] initWithMap:self.discountMap];
+  NSDictionary *map = [FIAObjectTranslator getMapFromSKProductDiscount:discount];
+  XCTAssertEqualObjects(map, self.discountMap);
 }
 
 - (void)testProductToMap {
@@ -196,6 +185,26 @@
         @{@"domain" : SKErrorDomain, @"code" : @2, @"userInfo" : @{}},
         @{@"domain" : SKErrorDomain, @"code" : @1, @"userInfo" : @{}}
       ]
+    }
+  };
+  NSDictionary *map = [FIAObjectTranslator getMapFromNSError:mainError];
+  XCTAssertEqualObjects(expectedMap, map);
+}
+
+- (void)testErrorWithNestedUnderlyingError {
+  NSError *underlyingError = [NSError errorWithDomain:SKErrorDomain code:2 userInfo:nil];
+  NSError *mainError =
+      [NSError errorWithDomain:SKErrorDomain
+                          code:3
+                      userInfo:@{@"nesting" : @{@"underlyingError" : underlyingError}}];
+  NSDictionary *expectedMap = @{
+    @"domain" : SKErrorDomain,
+    @"code" : @3,
+    @"userInfo" : @{
+      @"nesting" : @{
+        @"underlyingError" : @{@"domain" : SKErrorDomain, @"code" : @2, @"userInfo" : @{}},
+
+      }
     }
   };
   NSDictionary *map = [FIAObjectTranslator getMapFromNSError:mainError];
@@ -409,6 +418,101 @@
     XCTAssertEqual(paymentDiscount.signature, discountMap[@"signature"]);
     XCTAssertEqual(paymentDiscount.timestamp, discountMap[@"timestamp"]);
   }
+}
+
+- (void)testSKPaymentDiscountConvertToPigeon {
+  if (@available(iOS 12.2, *)) {
+    NSString *error = nil;
+    SKPaymentDiscount *paymentDiscount =
+        [FIAObjectTranslator getSKPaymentDiscountFromMap:self.paymentDiscountMap withError:&error];
+    SKPaymentDiscountMessage *paymentDiscountPigeon =
+        [FIAObjectTranslator convertPaymentDiscountToPigeon:paymentDiscount];
+
+    XCTAssertNotNil(paymentDiscountPigeon);
+    XCTAssertEqual(paymentDiscount.identifier, paymentDiscountPigeon.identifier);
+    XCTAssertEqual(paymentDiscount.keyIdentifier, paymentDiscount.keyIdentifier);
+    XCTAssertEqualObjects(paymentDiscount.nonce,
+                          [[NSUUID alloc] initWithUUIDString:paymentDiscountPigeon.nonce]);
+    XCTAssertEqual(paymentDiscount.signature, paymentDiscountPigeon.signature);
+    XCTAssertEqual([paymentDiscount.timestamp intValue], paymentDiscountPigeon.timestamp);
+  }
+}
+
+- (void)testSKErrorConvertToPigeon {
+  NSError *error = [NSError errorWithDomain:SKErrorDomain code:3 userInfo:@{@"key" : @42}];
+  SKErrorMessage *msg = [SKErrorMessage makeWithCode:3
+                                              domain:SKErrorDomain
+                                            userInfo:@{@"key" : @42}];
+
+  SKErrorMessage *skerror = [FIAObjectTranslator convertSKErrorToPigeon:error];
+  XCTAssertEqual(skerror.domain, msg.domain);
+  XCTAssertEqual(skerror.code, msg.code);
+  XCTAssertEqualObjects(skerror.userInfo, msg.userInfo);
+}
+
+- (void)testSKPaymentConvertToPigeon {
+  if (@available(iOS 12.2, *)) {
+    SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:self.paymentMap];
+    SKPaymentMessage *msg = [FIAObjectTranslator convertPaymentToPigeon:payment];
+
+    XCTAssertEqual(payment.productIdentifier, msg.productIdentifier);
+    XCTAssertEqualObjects(payment.requestData,
+                          [msg.requestData dataUsingEncoding:NSUTF8StringEncoding]);
+    XCTAssertEqual(payment.quantity, msg.quantity);
+    XCTAssertEqual(payment.applicationUsername, msg.applicationUsername);
+    XCTAssertEqual(payment.simulatesAskToBuyInSandbox, msg.simulatesAskToBuyInSandbox);
+  }
+}
+
+- (void)testSKPaymentTransactionConvertToPigeon {
+  SKPaymentTransactionStub *paymentTransaction =
+      [[SKPaymentTransactionStub alloc] initWithMap:self.transactionMap];
+
+  SKPaymentTransactionMessage *msg =
+      [FIAObjectTranslator convertTransactionToPigeon:paymentTransaction];
+
+  XCTAssertEqual(msg.payment, NULL);
+  XCTAssertEqual(msg.transactionState, SKPaymentTransactionStateMessagePurchasing);
+  XCTAssertEqual(paymentTransaction.transactionDate,
+                 [NSDate dateWithTimeIntervalSince1970:[msg.transactionTimeStamp doubleValue]]);
+  XCTAssertEqual(paymentTransaction.transactionIdentifier, msg.transactionIdentifier);
+}
+
+- (void)testSKProductResponseCovertToPigeon {
+  SKProductsResponseStub *response =
+      [[SKProductsResponseStub alloc] initWithMap:self.productResponseMap];
+  SKProductsResponseMessage *responseMsg =
+      [FIAObjectTranslator convertProductsResponseToPigeon:response];
+
+  XCTAssertEqual(responseMsg.products.count, 1);
+  XCTAssertEqual(responseMsg.invalidProductIdentifiers.count, 0);
+
+  SKProductMessage *productMsg = responseMsg.products[0];
+
+  // These values are being set in productResponseMap in setUp()
+  XCTAssertEqualObjects(productMsg.price, @"1");
+  XCTAssertEqualObjects(productMsg.productIdentifier, @"123");
+  XCTAssertEqualObjects(productMsg.localizedTitle, @"title");
+  XCTAssertEqualObjects(productMsg.localizedDescription, @"des");
+  XCTAssertEqualObjects(productMsg.subscriptionGroupIdentifier, @"com.group");
+
+  SKPriceLocaleMessage *localeMsg = productMsg.priceLocale;
+  SKProductSubscriptionPeriodMessage *subPeriod = productMsg.subscriptionPeriod;
+  SKProductDiscountMessage *introDiscount = productMsg.introductoryPrice;
+  NSArray<SKProductDiscountMessage *> *discounts = productMsg.discounts;
+
+  XCTAssertEqualObjects(localeMsg.countryCode, nil);
+  XCTAssertEqualObjects(localeMsg.currencyCode, nil);
+  XCTAssertEqualObjects(localeMsg.currencySymbol, @"\u00a4");
+
+  XCTAssertEqual(subPeriod.unit, SKSubscriptionPeriodUnitMessageDay);
+  XCTAssertEqual(subPeriod.numberOfUnits, 0);
+
+  XCTAssertEqualObjects(introDiscount.price, @"1");
+  XCTAssertEqual(introDiscount.numberOfPeriods, 1);
+  XCTAssertEqual(introDiscount.paymentMode, SKProductDiscountPaymentModeMessagePayUpFront);
+
+  XCTAssertEqual(discounts.count, 1);
 }
 
 @end
