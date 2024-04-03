@@ -136,6 +136,11 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public void setReturnValueForShouldOverrideUrlLoading(boolean value) {
       returnValueForShouldOverrideUrlLoading = value;
     }
+
+    /** Sets return value for {@link #shouldOverrideUrlLoading}. */
+    public void setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(boolean value) {
+      applicationDidHandleWebViewRenderProcessCrash = value;
+    }
   }
 
   /**
@@ -145,6 +150,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
   public static class WebViewClientCompatImpl extends WebViewClientCompat {
     private final WebViewClientFlutterApiImpl flutterApi;
     private boolean returnValueForShouldOverrideUrlLoading = false;
+
+    private boolean applicationDidHandleWebViewRenderProcessCrash = false;
 
     public WebViewClientCompatImpl(@NonNull WebViewClientFlutterApiImpl flutterApi) {
       this.flutterApi = flutterApi;
@@ -236,6 +243,10 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public void setReturnValueForShouldOverrideUrlLoading(boolean value) {
       returnValueForShouldOverrideUrlLoading = value;
     }
+
+    public void setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(boolean value) {
+      applicationDidHandleWebViewRenderProcessCrash = value;
+    }
   }
 
   /** Handles creating {@link WebViewClient}s for a {@link WebViewClientHostApiImpl}. */
@@ -299,6 +310,22 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     } else {
       throw new IllegalStateException(
           "This WebViewClient doesn't support setting the returnValueForShouldOverrideUrlLoading.");
+    }
+  }
+
+  @Override
+  public void setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+          @NonNull Long instanceId, @NonNull Boolean value) {
+    final WebViewClient webViewClient =
+            Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    if (webViewClient instanceof WebViewClientCompatImpl) {
+      ((WebViewClientCompatImpl) webViewClient).setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(value);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+            && webViewClient instanceof WebViewClientImpl) {
+      ((WebViewClientImpl) webViewClient).setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(value);
+    } else {
+      throw new IllegalStateException(
+              "This WebViewClient doesn't support setting the applicationDidHandleWebViewRenderProcessCrash.");
     }
   }
 }

@@ -1224,6 +1224,8 @@ abstract class TestWebViewClientHostApi {
 
   void setSynchronousReturnValueForShouldOverrideUrlLoading(int instanceId, bool value);
 
+  void setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(int instanceId, bool value);
+
   static void setup(TestWebViewClientHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -1262,6 +1264,28 @@ abstract class TestWebViewClientHostApi {
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientHostApi.setSynchronousReturnValueForShouldOverrideUrlLoading was null, expected non-null bool.');
           api.setSynchronousReturnValueForShouldOverrideUrlLoading(arg_instanceId!, arg_value!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebViewClientHostApi.setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientHostApi.setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientHostApi.setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash was null, expected non-null int.');
+          final bool? arg_value = (args[1] as bool?);
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientHostApi.setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash was null, expected non-null bool.');
+          api.setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(arg_instanceId!, arg_value!);
           return <Object?>[];
         });
       }

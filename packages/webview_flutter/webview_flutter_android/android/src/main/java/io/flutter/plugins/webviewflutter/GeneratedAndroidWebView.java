@@ -2245,6 +2245,8 @@ public class GeneratedAndroidWebView {
 
     void setSynchronousReturnValueForShouldOverrideUrlLoading(@NonNull Long instanceId, @NonNull Boolean value);
 
+    void setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(@NonNull Long instanceId, @NonNull Boolean value);
+
     /** The codec used by WebViewClientHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2288,6 +2290,31 @@ public class GeneratedAndroidWebView {
                 Boolean valueArg = (Boolean) args.get(1);
                 try {
                   api.setSynchronousReturnValueForShouldOverrideUrlLoading((instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebViewClientHostApi.setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                Boolean valueArg = (Boolean) args.get(1);
+                try {
+                  api.setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash((instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

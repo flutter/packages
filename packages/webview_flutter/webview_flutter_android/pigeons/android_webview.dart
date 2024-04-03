@@ -347,6 +347,11 @@ abstract class WebViewClientHostApi {
     int instanceId,
     bool value,
   );
+
+  void setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+      int instanceId,
+      bool value,
+      );
 }
 
 @FlutterApi()

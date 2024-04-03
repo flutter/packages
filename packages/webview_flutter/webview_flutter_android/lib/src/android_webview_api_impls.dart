@@ -658,6 +658,17 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
       value,
     );
   }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setShouldOverrideApplicationDidHandleWebViewRenderProcessCrashFromInstance(
+      WebViewClient instance,
+      bool value,
+      ) {
+    return setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+      instanceManager.getIdentifier(instance)!,
+      value,
+    );
+  }
 }
 
 /// Flutter api implementation for [WebViewClient].

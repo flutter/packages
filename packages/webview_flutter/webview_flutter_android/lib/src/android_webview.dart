@@ -1007,6 +1007,23 @@ class WebViewClient extends JavaObject {
     return api.setShouldOverrideUrlLoadingReturnValueFromInstance(this, value);
   }
 
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebViewClient.onRenderProcessGone(...)`.
+  ///
+  /// The Java method, `WebViewClient.onRenderProcessGone(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that the host application handled the situation
+  /// that process has exited for the current [WebView], otherwise application will crash
+  /// if render process crashed, or be killed if render process was killed by the system.
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+      bool value,
+      ) {
+    return api.setShouldOverrideApplicationDidHandleWebViewRenderProcessCrashFromInstance(this, value);
+  }
+
   @override
   WebViewClient copy() {
     return WebViewClient.detached(
