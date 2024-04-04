@@ -1123,15 +1123,10 @@ public class CameraTest {
     TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
     CaptureRequest.Builder mockPreviewRequestBuilder = mock(CaptureRequest.Builder.class);
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
-    CameraFeatures cameraFeatures =
-        (CameraFeatures) TestUtils.getPrivateField(camera, "cameraFeatures");
     ResolutionFeature resolutionFeature =
         (ResolutionFeature)
             TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(fakeCamera.createCaptureRequest(anyInt())).thenReturn(mockPreviewRequestBuilder);
     when(mockPictureImageReader.getSurface()).thenReturn(mockSurface);
