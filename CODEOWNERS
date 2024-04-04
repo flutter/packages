@@ -93,7 +93,7 @@ packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
 packages/ios_platform_images/**                          @jmagman
 packages/local_auth/local_auth_darwin/**                 @louisehsu
 packages/path_provider/path_provider_foundation/**       @jmagman
-packages/pigeon/**/ios/**/*                              @louisehsu
+packages/pigeon/**/ios/**/*                              @hellohuanlin @louisehsu
 packages/pointer_interceptor/pointer_interceptor_ios/**  @louisehsu
 packages/quick_actions/quick_actions_ios/**              @jmagman
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
