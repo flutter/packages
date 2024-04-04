@@ -87,7 +87,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       if (routeInformation.uri.hasFragment) {
         newUri += '#${routeInformation.uri.fragment}';
       }
-      initialMatches = configuration.findMatch(newUri, extra: state.extra);
+      initialMatches = configuration.findMatch(
+        newUri,
+        extra: state.extra,
+      );
     } else {
       initialMatches = configuration.findMatch(
         routeInformation.uri.toString(),
