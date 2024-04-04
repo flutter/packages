@@ -104,6 +104,11 @@ void main() {
     verify('https://www.example.com/a', 'https://www.example.com/a');
     verify('https://www.example.com/a/', 'https://www.example.com/a');
     verify('https://www.example.com/a/b/', 'https://www.example.com/a/b');
+    verify('https://www.example.com/?', 'https://www.example.com/');
+    verify('https://www.example.com/?a=b', 'https://www.example.com/?a=b');
+    verify('https://www.example.com/?a=/', 'https://www.example.com/?a=/');
+    verify('https://www.example.com/a/?b=c', 'https://www.example.com/a?b=c');
+    verify('https://www.example.com/#a/', 'https://www.example.com/#a/');
 
     expect(() => canonicalUri('::::'), throwsA(isA<FormatException>()));
     expect(() => canonicalUri(''), throwsA(anything));
