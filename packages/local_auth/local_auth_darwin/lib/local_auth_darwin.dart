@@ -135,7 +135,6 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     return AuthStrings(
       reason: localizedReason,
       lockOut: messages?.lockOut ?? macOSLockOut,
-      goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
       goToSettingsDescription:
           messages?.goToSettingsDescription ?? macOSGoToSettingsDescription,
       // TODO(stuartmorgan): The default's name is confusing here for legacy

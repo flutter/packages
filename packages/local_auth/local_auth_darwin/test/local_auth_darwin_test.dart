@@ -151,7 +151,6 @@ void main() {
         // These should all be the default values from
         // auth_messages_ios.dart
         expect(strings.lockOut, macOSLockOut);
-        expect(strings.goToSettingsButton, macOSGoToSettings);
         expect(strings.goToSettingsDescription, macOSGoToSettingsDescription);
         expect(strings.cancelButton, macOSOkButton);
         expect(strings.localizedFallbackTitle, null);
@@ -212,16 +211,12 @@ void main() {
         // - they are different from each other.
         const String reason = 'A';
         const String lockOut = 'B';
-        const String goToSettingsButton = 'C';
-        const String gotToSettingsDescription = 'D';
         const String cancel = 'E';
         const String localizedFallbackTitle = 'F';
         await plugin
             .authenticate(localizedReason: reason, authMessages: <AuthMessages>[
           const MacOSAuthMessages(
             lockOut: lockOut,
-            goToSettingsButton: goToSettingsButton,
-            goToSettingsDescription: gotToSettingsDescription,
             cancelButton: cancel,
             localizedFallbackTitle: localizedFallbackTitle,
           ),
@@ -233,8 +228,6 @@ void main() {
         final AuthStrings strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         expect(strings.lockOut, lockOut);
-        expect(strings.goToSettingsButton, goToSettingsButton);
-        expect(strings.goToSettingsDescription, gotToSettingsDescription);
         expect(strings.cancelButton, cancel);
         expect(strings.localizedFallbackTitle, localizedFallbackTitle);
 

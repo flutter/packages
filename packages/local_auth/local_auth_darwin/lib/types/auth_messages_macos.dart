@@ -13,7 +13,6 @@ class MacOSAuthMessages extends AuthMessages {
   /// Constructs a new instance.
   const MacOSAuthMessages({
     this.lockOut,
-    this.goToSettingsButton,
     this.goToSettingsDescription,
     this.cancelButton,
     this.localizedFallbackTitle,
@@ -21,11 +20,6 @@ class MacOSAuthMessages extends AuthMessages {
 
   /// Message advising the user to re-enable biometrics on their device.
   final String? lockOut;
-
-  /// Message shown on a button that the user can click to go to settings pages
-  /// from the current dialog.
-  /// Maximum 30 characters.
-  final String? goToSettingsButton;
 
   /// Message advising the user to go to the settings and configure Biometrics
   /// for their device.
@@ -44,9 +38,6 @@ class MacOSAuthMessages extends AuthMessages {
   Map<String, String> get args {
     return <String, String>{
       'lockOut': lockOut ?? macOSLockOut,
-      'goToSetting': goToSettingsButton ?? macOSGoToSettings,
-      'goToSettingDescriptionMacOS':
-          goToSettingsDescription ?? macOSGoToSettingsDescription,
       'okButton': cancelButton ?? macOSOkButton,
       if (localizedFallbackTitle != null)
         'localizedFallbackTitle': localizedFallbackTitle!,
@@ -59,8 +50,6 @@ class MacOSAuthMessages extends AuthMessages {
       other is MacOSAuthMessages &&
           runtimeType == other.runtimeType &&
           lockOut == other.lockOut &&
-          goToSettingsButton == other.goToSettingsButton &&
-          goToSettingsDescription == other.goToSettingsDescription &&
           cancelButton == other.cancelButton &&
           localizedFallbackTitle == other.localizedFallbackTitle;
 
@@ -68,8 +57,6 @@ class MacOSAuthMessages extends AuthMessages {
   int get hashCode => Object.hash(
         super.hashCode,
         lockOut,
-        goToSettingsButton,
-        goToSettingsDescription,
         cancelButton,
         localizedFallbackTitle,
       );
@@ -77,12 +64,6 @@ class MacOSAuthMessages extends AuthMessages {
 
 // Default Strings for MacOSAuthMessages plugin. Currently supports English.
 // Intl.message must be string literals.
-
-/// Message shown on a button that the user can click to go to settings pages
-/// from the current dialog.
-String get macOSGoToSettings => Intl.message('Go to settings',
-    desc: 'Message shown on a button that the user can click to go to '
-        'settings pages from the current dialog. Maximum 30 characters.');
 
 /// Message advising the user to re-enable biometrics on their device.
 /// It shows in a dialog on macOS.
