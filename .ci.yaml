@@ -1091,9 +1091,10 @@ targets:
   # TODO(stuartmorgan): Remove "- packages" from all task names once
   # flutter/plugins is merged into this repo and turned down; it's here only
   # because names must be unique across all flutter repositories.
-  - name: Mac_arm64 macos_platform_tests master - packages
+  - name: Mac_x64 macos_platform_tests master - packages
     recipe: packages/packages
     timeout: 60
+    bringup: true
     properties:
       channel: master
       add_recipes_cq: "true"
@@ -1104,10 +1105,11 @@ targets:
           "CHANNEL": "master"
         }
 
-  - name: Mac_arm64 macos_platform_tests stable - packages
+  - name: Mac_x64 macos_platform_tests stable - packages
     recipe: packages/packages
     presubmit: false
     timeout: 60
+    bringup: true
     properties:
       channel: stable
       version_file: flutter_stable.version
