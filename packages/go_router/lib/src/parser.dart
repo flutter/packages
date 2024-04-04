@@ -89,8 +89,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       }
       initialMatches = configuration.findMatch(newUri, extra: state.extra);
     } else {
-      initialMatches = configuration.findMatch(routeInformation.uri.toString(),
-          extra: state.extra);
+      initialMatches = configuration.findMatch(
+        routeInformation.uri.toString(),
+        extra: state.extra,
+      );
     }
     if (initialMatches.isError) {
       log('No initial matches: ${routeInformation.uri.path}');
