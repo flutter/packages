@@ -122,8 +122,8 @@ public class CameraTest {
     mockHandler = mock(Handler.class);
 
     final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
-        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
@@ -137,7 +137,7 @@ public class CameraTest {
     camera =
         new Camera(
             mockActivity,
-            mockFlutterTexture,
+            mockSurfaceProducer,
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
@@ -165,8 +165,8 @@ public class CameraTest {
   @Test
   public void shouldCreateCameraPluginAndSetAllFeatures() {
     final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
-        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final CameraFeatureFactory mockCameraFeatureFactory = mock(CameraFeatureFactory.class);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
@@ -180,7 +180,7 @@ public class CameraTest {
     Camera camera =
         new Camera(
             mockActivity,
-            mockFlutterTexture,
+            mockSurfaceProducer,
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,

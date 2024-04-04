@@ -389,11 +389,10 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     String preset = call.argument("resolutionPreset");
     boolean enableAudio = call.argument("enableAudio");
 
-    TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture =
-        textureRegistry.createSurfaceTexture();
+    TextureRegistry.SurfaceProducer surfaceProducer = textureRegistry.createSurfaceProducer();
     DartMessenger dartMessenger =
         new DartMessenger(
-            messenger, flutterSurfaceTexture.id(), new Handler(Looper.getMainLooper()));
+            messenger, surfaceProducer.id(), new Handler(Looper.getMainLooper()));
     CameraProperties cameraProperties =
         new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
     ResolutionPreset resolutionPreset = ResolutionPreset.valueOf(preset);
@@ -401,7 +400,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     camera =
         new Camera(
             activity,
-            flutterSurfaceTexture,
+            surfaceProducer,
             new CameraFeatureFactoryImpl(),
             dartMessenger,
             cameraProperties,
@@ -409,7 +408,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             enableAudio);
 
     Map<String, Object> reply = new HashMap<>();
-    reply.put("cameraId", flutterSurfaceTexture.id());
+    reply.put("cameraId", surfaceProducer.id());
     result.success(reply);
   }
 

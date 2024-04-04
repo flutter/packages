@@ -60,6 +60,7 @@ import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
+import io.flutter.view.TextureRegistry;
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry;
 import java.io.File;
 import java.io.IOException;
@@ -110,7 +111,7 @@ class Camera
    */
   private int initialCameraFacing;
 
-  private final SurfaceTextureEntry flutterTexture;
+  private final TextureRegistry.SurfaceProducer surfaceProducer;
   private final ResolutionPreset resolutionPreset;
   private final boolean enableAudio;
   private final Context applicationContext;
@@ -187,7 +188,7 @@ class Camera
 
   public Camera(
       final Activity activity,
-      final SurfaceTextureEntry flutterTexture,
+      final TextureRegistry.SurfaceProducer surfaceProducer,
       final CameraFeatureFactory cameraFeatureFactory,
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
@@ -199,7 +200,7 @@ class Camera
     }
     this.activity = activity;
     this.enableAudio = enableAudio;
-    this.flutterTexture = flutterTexture;
+    this.surfaceProducer = surfaceProducer;
     this.dartMessenger = dartMessenger;
     this.applicationContext = activity.getApplicationContext();
     this.cameraProperties = cameraProperties;
@@ -403,11 +404,10 @@ class Camera
 
     // Build Flutter surface to render to.
     ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
-    SurfaceTexture surfaceTexture = flutterTexture.surfaceTexture();
-    surfaceTexture.setDefaultBufferSize(
+    surfaceProducer.setSize(
         resolutionFeature.getPreviewSize().getWidth(),
         resolutionFeature.getPreviewSize().getHeight());
-    Surface flutterSurface = new Surface(surfaceTexture);
+    Surface flutterSurface = surfaceProducer.getSurface();
     previewRequestBuilder.addTarget(flutterSurface);
 
     List<Surface> remainingSurfaces = Arrays.asList(surfaces);
@@ -1329,7 +1329,7 @@ class Camera
     Log.i(TAG, "dispose");
 
     close();
-    flutterTexture.release();
+    surfaceProducer.release();
     getDeviceOrientationManager().stop();
   }
 
