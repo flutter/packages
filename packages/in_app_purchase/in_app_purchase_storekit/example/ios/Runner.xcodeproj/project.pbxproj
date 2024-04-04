@@ -77,6 +77,8 @@
 		A59001A821E69658004A3E5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C7ACA38043B514B6F58B53BB /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		DE80FAEE010F6D2ADAA8014E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		F24DC44F2BBE0FAF0023E8F1 /* Flutter-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Flutter-Bridging-Header.h"; path = ".symlinks/plugins/in_app_purchase_storekit/darwin/Classes/Flutter-Bridging-Header.h"; sourceTree = "<group>"; };
+		F24DC4512BBE0FE80023E8F1 /* in_app_purchase_storekit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "in_app_purchase_storekit-Bridging-Header.h"; path = ".symlinks/plugins/in_app_purchase_storekit/darwin/Classes/in_app_purchase_storekit-Bridging-Header.h"; sourceTree = "<group>"; };
 		F67646F72681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIAPPaymentQueueDeleteTests.m; sourceTree = "<group>"; };
 		F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIATransactionCacheTests.m; sourceTree = "<group>"; };
 		F6E5D5F926131C4800C68BED /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
@@ -137,6 +139,8 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				F24DC4512BBE0FE80023E8F1 /* in_app_purchase_storekit-Bridging-Header.h */,
+				F24DC44F2BBE0FAF0023E8F1 /* Flutter-Bridging-Header.h */,
 				334733E826680E5900DCC49E /* Temp */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
