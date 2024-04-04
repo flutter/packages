@@ -805,7 +805,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       } else {
         final HostDatatype hostDatatype =
             getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
-        return 'std::get<${hostDatatype.datatype}>($encodable)';
+        if (field.type.isClass) {
+          return _classReferenceFromEncodableValue(hostDatatype, encodable);
+        } else {
+          return 'std::get<${hostDatatype.datatype}>($encodable)';
+        }
       }
     }
 
@@ -1476,7 +1480,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
         }
       } else {
         indent.writeln(
-            'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName)));');
+            'const auto* $argName = &(${_classReferenceFromEncodableValue(hostType, encodableArgName)});');
       }
     } else {
       // Non-nullable arguments are either passed by value or reference, but the
@@ -1501,7 +1505,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
             'const ${hostType.datatype}& $argName = (${hostType.datatype})$encodableArgName.LongValue();');
       } else {
         indent.writeln(
-            'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName));');
+            'const auto& $argName = ${_classReferenceFromEncodableValue(hostType, encodableArgName)};');
       }
     }
   }
@@ -1511,6 +1515,13 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
   /// directives.
   String? _shortBaseCppTypeForBuiltinDartType(TypeDeclaration type) {
     return _baseCppTypeForBuiltinDartType(type, includeFlutterNamespace: false);
+  }
+
+  /// Returns the code to extract a `const {type.datatype}&` from an EncodableValue
+  /// variable [variableName] that contains an instance of [type].
+  String _classReferenceFromEncodableValue(
+      HostDatatype type, String variableName) {
+    return 'std::any_cast<const ${type.datatype}&>(std::get<CustomEncodableValue>($variableName))';
   }
 }
 
