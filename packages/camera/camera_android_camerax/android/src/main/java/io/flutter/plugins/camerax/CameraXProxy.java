@@ -16,6 +16,8 @@ import androidx.camera.core.Preview;
 import androidx.camera.video.Recorder;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
+import io.flutter.view.TextureRegistry;
+
 import java.io.File;
 
 /** Utility class used to create CameraX-related objects primarily for testing purposes. */
@@ -49,11 +51,6 @@ public class CameraXProxy {
   /** Creates a builder for an instance of the {@link Preview} use case. */
   public @NonNull Preview.Builder createPreviewBuilder() {
     return new Preview.Builder();
-  }
-
-  /** Creates a {@link Surface} instance from the specified {@link SurfaceTexture}. */
-  public @NonNull Surface createSurface(@NonNull SurfaceTexture surfaceTexture) {
-    return new Surface(surfaceTexture);
   }
 
   /**
