@@ -1,3 +1,7 @@
+## 2.8.4
+
+* Removes `_ambiguate` methods from code.
+
 ## 2.8.3
 
 * Fixes typo in `README.md`.

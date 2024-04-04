@@ -474,10 +474,17 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 - (void)callFlutterEchoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
                          completion:
                              (void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterSmallApiEchoString:(NSString *)aString
+                           completion:
+                               (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                            NSObject<FLTHostIntegrationCoreApi> *_Nullable api);
+
+extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
+    id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTHostIntegrationCoreApi> *_Nullable api,
+    NSString *messageChannelSuffix);
 
 /// The codec used by FLTFlutterIntegrationCoreApi.
 NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
@@ -486,6 +493,8 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
 /// integration tests to call into.
 @interface FLTFlutterIntegrationCoreApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
 - (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
@@ -594,6 +603,10 @@ NSObject<FlutterMessageCodec> *FLTHostTrivialApiGetCodec(void);
 extern void SetUpFLTHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
                                    NSObject<FLTHostTrivialApi> *_Nullable api);
 
+extern void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                             NSObject<FLTHostTrivialApi> *_Nullable api,
+                                             NSString *messageChannelSuffix);
+
 /// The codec used by FLTHostSmallApi.
 NSObject<FlutterMessageCodec> *FLTHostSmallApiGetCodec(void);
 
@@ -607,12 +620,18 @@ NSObject<FlutterMessageCodec> *FLTHostSmallApiGetCodec(void);
 extern void SetUpFLTHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
                                  NSObject<FLTHostSmallApi> *_Nullable api);
 
+extern void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                           NSObject<FLTHostSmallApi> *_Nullable api,
+                                           NSString *messageChannelSuffix);
+
 /// The codec used by FLTFlutterSmallApi.
 NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void);
 
 /// A simple API called in some unit tests.
 @interface FLTFlutterSmallApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 - (void)echoWrappedList:(FLTTestMessage *)msg
              completion:(void (^)(FLTTestMessage *_Nullable, FlutterError *_Nullable))completion;
 - (void)echoString:(NSString *)aString

@@ -24,23 +24,58 @@ using core_tests_pigeontest::AnEnum;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
+using core_tests_pigeontest::FlutterSmallApi;
 using core_tests_pigeontest::HostIntegrationCoreApi;
+using core_tests_pigeontest::HostSmallApi;
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
+TestSmallApi::TestSmallApi() {}
+
+TestSmallApi::~TestSmallApi() {}
+
+void TestSmallApi::Echo(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  result(a_string);
+}
+
+void TestSmallApi::VoidVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  result(std::nullopt);
+}
+
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
+  auto host_small_api_one = std::make_unique<TestSmallApi>();
+  auto host_small_api_two = std::make_unique<TestSmallApi>();
+
+  HostSmallApi::SetUp(registrar->messenger(), host_small_api_one.get(),
+                      "suffixOne");
+  HostSmallApi::SetUp(registrar->messenger(), host_small_api_two.get(),
+                      "suffixTwo");
+
+  auto plugin = std::make_unique<TestPlugin>(registrar->messenger(),
+                                             std::move(host_small_api_one),
+                                             std::move(host_small_api_two));
 
   HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
 }
 
-TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger)
-    : flutter_api_(
+TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
+                       std::unique_ptr<TestSmallApi> host_small_api_one,
+                       std::unique_ptr<TestSmallApi> host_small_api_two)
+    : flutter_small_api_one_(
+          std::make_unique<FlutterSmallApi>(binary_messenger, "suffixOne")),
+      flutter_small_api_two_(
+          std::make_unique<FlutterSmallApi>(binary_messenger, "suffixTwo")),
+      host_small_api_one_(std::move(host_small_api_one)),
+      host_small_api_two_(std::move(host_small_api_two)),
+      flutter_api_(
           std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {}
 
 TestPlugin::~TestPlugin() {}
@@ -646,6 +681,30 @@ void TestPlugin::CallFlutterEchoNullableEnum(
       an_enum,
       [result](const AnEnum* echo) {
         result(echo ? std::optional<AnEnum>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterSmallApiEchoString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  flutter_small_api_one_->EchoString(
+      a_string,
+      [this, result, a_string](const std::string& echoOne) {
+        flutter_small_api_two_->EchoString(
+            a_string,
+            [this, result, echoOne](const std::string& echoTwo) {
+              if (echoOne.compare(echoTwo) == 0) {
+                result(echoTwo);
+              } else {
+                result(FlutterError(
+                    "Responses do not match",
+                    "Multi-instance responses were not matching: " + echoOne +
+                        ", " + echoTwo,
+                    EncodableValue("")));
+              }
+            },
+            [result](const FlutterError& error) { result(error); });
       },
       [result](const FlutterError& error) { result(error); });
 }

@@ -19,7 +19,6 @@ part 'user_choice_details_wrapper.g.dart';
 @immutable
 class UserChoiceDetailsWrapper {
   /// Creates a purchase wrapper with the given purchase details.
-  @visibleForTesting
   const UserChoiceDetailsWrapper({
     required this.originalExternalTransactionId,
     required this.externalTransactionToken,

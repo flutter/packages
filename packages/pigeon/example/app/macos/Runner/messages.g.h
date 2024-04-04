@@ -56,11 +56,17 @@ NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void);
 extern void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
                                    NSObject<PGNExampleHostApi> *_Nullable api);
 
+extern void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                             NSObject<PGNExampleHostApi> *_Nullable api,
+                                             NSString *messageChannelSuffix);
+
 /// The codec used by PGNMessageFlutterApi.
 NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void);
 
 @interface PGNMessageFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 - (void)flutterMethodAString:(nullable NSString *)aString
                   completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
