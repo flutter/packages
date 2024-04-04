@@ -1638,14 +1638,14 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      // Standard types are wrapped an EncodableValues.
+      // Standard types are wrapped in EncodableValues.
       expect(code, contains('EncodableValue(a_bool_arg)'));
       expect(code, contains('EncodableValue(an_int_arg)'));
       expect(code, contains('EncodableValue(a_string_arg)'));
       expect(code, contains('EncodableValue(a_list_arg)'));
       expect(code, contains('EncodableValue(a_map_arg)'));
-      // Class types use ToEncodableList.
-      expect(code, contains('CustomEncodableValue(*an_object_arg)'));
+      // Class types are wrapped in CustomEncodableValues.
+      expect(code, contains('CustomEncodableValue(an_object_arg)'));
     }
   });
 
