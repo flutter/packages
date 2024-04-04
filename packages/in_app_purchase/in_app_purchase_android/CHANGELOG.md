@@ -1,3 +1,7 @@
+## 0.3.2+1
+
+* Converts internal platform communication to Pigeon.
+
 ## 0.3.2
 
 * Adds UserChoiceBilling APIs to platform addition.
