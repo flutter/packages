@@ -27,7 +27,7 @@ typedef HttpResponseErrorCallback = void Function(HttpResponseError error);
 typedef WebResourceErrorCallback = void Function(WebResourceError error);
 
 /// Signature for callbacks that report that the given WebView's render process has exited.
-typedef WebViewRenderProcessTerminatedCallback = void Function(ProcessTerminationDetails details);
+typedef WebViewRenderProcessTerminatedCallback = bool Function(ProcessTerminationDetails details);
 
 /// Signature for callbacks that notify the host application of a change to the
 /// url of the web view.

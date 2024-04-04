@@ -145,7 +145,7 @@ void main() {
                         android_webview.WebResourceRequest request,
                         android_webview.WebResourceResponse response)?
                     onReceivedHttpError,
-                void Function(
+                bool Function(
                       android_webview.WebView webView,
                       android_webview.ProcessTerminationDetails details)?
                   onWebViewRenderProcessTerminated,

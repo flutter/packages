@@ -2428,13 +2428,17 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, errorCodeArg, descriptionArg, failingUrlArg)),
           channelReply -> callback.reply(null));
     }
-    public void onRenderProcessGone(@NonNull Long instanceIdArg, @NonNull Long webViewInstanceIdArg, @NonNull RenderProcessGoneDetailData dataArg, @NonNull Reply<Void> callback) {
+    public void onRenderProcessGone(@NonNull Long instanceIdArg, @NonNull Long webViewInstanceIdArg, @NonNull RenderProcessGoneDetailData dataArg, @NonNull Reply<Boolean> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onRenderProcessGone", getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, dataArg)),
-          channelReply -> callback.reply(null));
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            Boolean output = (Boolean) channelReply;
+            callback.reply(output);
+          });
     }
     public void requestLoading(@NonNull Long instanceIdArg, @NonNull Long webViewInstanceIdArg, @NonNull WebResourceRequestData requestArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =

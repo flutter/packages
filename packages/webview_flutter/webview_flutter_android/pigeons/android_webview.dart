@@ -382,7 +382,7 @@ abstract class WebViewClientFlutterApi {
     String failingUrl,
   );
 
-  void onRenderProcessGone(
+  bool onRenderProcessGone(
     int instanceId,
     int webViewInstanceId,
       RenderProcessGoneDetailData data,

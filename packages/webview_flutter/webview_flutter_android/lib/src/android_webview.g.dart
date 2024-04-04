@@ -1702,7 +1702,7 @@ abstract class WebViewClientFlutterApi {
 
   void onReceivedError(int instanceId, int webViewInstanceId, int errorCode, String description, String failingUrl);
 
-  void onRenderProcessGone(int instanceId, int webViewInstanceId, RenderProcessGoneDetailData data);
+  bool onRenderProcessGone(int instanceId, int webViewInstanceId, RenderProcessGoneDetailData data);
 
   void requestLoading(int instanceId, int webViewInstanceId, WebResourceRequestData request);
 
@@ -1870,8 +1870,8 @@ abstract class WebViewClientFlutterApi {
           final RenderProcessGoneDetailData? arg_data = (args[2] as RenderProcessGoneDetailData?);
           assert(arg_data != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onRenderProcessGone was null, expected non-null RenderProcessGoneDetailData.');
-          api.onRenderProcessGone(arg_instanceId!, arg_webViewInstanceId!, arg_data!);
-          return;
+          final bool output = api.onRenderProcessGone(arg_instanceId!, arg_webViewInstanceId!, arg_data!);
+          return output;
         });
       }
     }

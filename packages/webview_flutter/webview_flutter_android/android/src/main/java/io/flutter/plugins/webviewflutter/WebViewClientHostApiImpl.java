@@ -91,7 +91,6 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
                                         RenderProcessGoneDetail detail) {
       flutterApi.onRenderProcessGone(
               this, view, detail, reply -> {});
-      // TODO: Implement passing boolean value from dart code to native webview indicating if render process crash has been handled or not
       return applicationDidHandleWebViewRenderProcessCrash;
     }
 

@@ -946,8 +946,8 @@ class WebViewClient extends JavaObject {
   /// To cause an render process crash for test purpose,
   /// the application can call loadUrl("chrome://crash") on the WebView.
   /// Note that multiple WebView instances may be affected if they share a render process,
-  /// not just the specific WebView which loaded chrome://crash..
-  final void Function(
+  /// not just the specific WebView which loaded chrome://crash.
+  final bool Function(
       WebView webView,
       ProcessTerminationDetails details,
       )? onWebViewRenderProcessTerminated;

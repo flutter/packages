@@ -82,7 +82,7 @@ class AndroidWebViewProxy {
       String description,
       String failingUrl,
     )? onReceivedError,
-    void Function(
+    bool Function(
       android_webview.WebView webView,
       android_webview.ProcessTerminationDetails details,
         )? onWebViewRenderProcessTerminated,

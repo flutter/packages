@@ -47,7 +47,7 @@ class NavigationDelegate {
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
-    void Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
+    bool Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatformCreationParams(
@@ -100,7 +100,7 @@ class NavigationDelegate {
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
-    void Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
+    bool Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatform(

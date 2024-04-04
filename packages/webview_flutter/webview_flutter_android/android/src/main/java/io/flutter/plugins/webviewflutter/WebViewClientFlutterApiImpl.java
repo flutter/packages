@@ -219,7 +219,7 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
           @NonNull WebViewClient webViewClient,
           @NonNull WebView webView,
           @NonNull RenderProcessGoneDetail details,
-          @NonNull Reply<Void> callback) {
+          @NonNull Reply<Boolean> callback) {
     webViewFlutterApi.create(webView, reply -> {});
 
     GeneratedAndroidWebView.RenderProcessGoneDetailData detailsData = new GeneratedAndroidWebView.RenderProcessGoneDetailData();
