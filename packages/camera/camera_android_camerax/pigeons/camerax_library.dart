@@ -455,7 +455,8 @@ abstract class ImageProxyHostApi {
 
 @FlutterApi()
 abstract class ImageProxyFlutterApi {
-  void create(int identifier, int format, int height, int width);
+  void create(
+      int identifier, int format, int height, int width, List<int> planes);
 }
 
 @FlutterApi()
