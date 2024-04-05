@@ -1,3 +1,7 @@
+## 0.9.14+2
+
+* Removes `_ambiguate` methods from example code.
+
 ## 0.9.14+1
 
 * Fixes bug where max resolution preset does not produce highest available resolution on iOS.
