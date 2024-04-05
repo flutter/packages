@@ -46,6 +46,7 @@ class Camera {
     required this.textureId,
     required CameraService cameraService,
     this.options = const CameraOptions(),
+    this.recorderOptions = const (audioBitrate: null, videoBitrate: null),
   }) : _cameraService = cameraService;
 
   // A torch mode constraint name.
@@ -57,6 +58,9 @@ class Camera {
 
   /// The camera options used to initialize a camera, empty by default.
   final CameraOptions options;
+
+  /// The options used to initialize a MediaRecorder.
+  final ({int? audioBitrate, int? videoBitrate}) recorderOptions;
 
   /// The video element that displays the camera stream.
   /// Initialized in [initialize].
@@ -449,6 +453,10 @@ class Camera {
     mediaRecorder ??=
         html.MediaRecorder(videoElement.srcObject!, <String, Object>{
       'mimeType': _videoMimeType,
+      if (recorderOptions.audioBitrate != null)
+        'audioBitsPerSecond': recorderOptions.audioBitrate!,
+      if (recorderOptions.videoBitrate != null)
+        'videoBitsPerSecond': recorderOptions.videoBitrate!,
     });
 
     _videoAvailableCompleter = Completer<XFile>();
@@ -608,6 +616,7 @@ class Camera {
   /// any of the available video mime types.
   String get _videoMimeType {
     const List<String> types = <String>[
+      'video/webm;codecs="vp9,opus"',
       'video/mp4',
       'video/webm',
     ];

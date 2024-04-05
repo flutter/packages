@@ -1,3 +1,7 @@
+## 0.9.15
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
 ## 0.9.14+2
 
 * Removes `_ambiguate` methods from example code.
