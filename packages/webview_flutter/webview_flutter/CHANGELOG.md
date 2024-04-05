@@ -1,3 +1,7 @@
+## 4.7.1
+
+* Fixes typo in JavascriptChannel documentation.
+
 ## 4.7.0
 
 * Adds support to track scroll position changes.

@@ -9,7 +9,7 @@ typedef JavascriptMessageHandler = void Function(JavascriptMessage message);
 
 final RegExp _validChannelNames = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*$');
 
-/// A named channel for receiving messaged from JavaScript code running inside a web view.
+/// A named channel for receiving messages from JavaScript code running inside a web view.
 class JavascriptChannel {
   /// Constructs a JavaScript channel.
   ///
