@@ -1,3 +1,7 @@
+## 1.2.1+1
+
+* Moves flutter_test and test dependencies to dev_dependencies.
+
 ## 1.2.1
 
 * Removes a few deprecated API usages.
