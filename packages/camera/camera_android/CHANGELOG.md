@@ -1,3 +1,7 @@
+## 0.10.9
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
 ## 0.10.8+18
 
 * Updates annotations lib to 1.7.1.

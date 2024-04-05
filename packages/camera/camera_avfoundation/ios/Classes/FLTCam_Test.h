@@ -56,7 +56,8 @@ typedef AVCaptureDevice * (^CaptureDeviceFactory)(void);
 /// Allows for injecting dependencies that are usually internal.
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
-                       enableAudio:(BOOL)enableAudio
+                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                videoCaptureSession:(AVCaptureSession *)videoCaptureSession
                audioCaptureSession:(AVCaptureSession *)audioCaptureSession
@@ -67,7 +68,8 @@ typedef AVCaptureDevice * (^CaptureDeviceFactory)(void);
 ///  Allows for testing with specified resolution, audio preference, orientation,
 ///  and direct access to capture sessions and blocks.
 - (instancetype)initWithResolutionPreset:(NSString *)resolutionPreset
-                             enableAudio:(BOOL)enableAudio
+                           mediaSettings:(FLTCamMediaSettings *)mediaSettings
+                  mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                              orientation:(UIDeviceOrientation)orientation
                      videoCaptureSession:(AVCaptureSession *)videoCaptureSession
                      audioCaptureSession:(AVCaptureSession *)audioCaptureSession
