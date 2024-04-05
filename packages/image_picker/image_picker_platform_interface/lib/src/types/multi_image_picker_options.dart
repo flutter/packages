@@ -28,6 +28,7 @@ class MultiImagePickerOptions {
   /// The maximum number of images to select.
   ///
   /// Default null value means no limit.
+  /// This value may be ignored by platforms that cannot support it.
   final int? limit;
 
   /// Validates that all values are within required ranges.

@@ -19,7 +19,7 @@ class MediaOptions {
   /// Construct a new MediaOptions instance.
   ///
   /// Throws if limit is lower than 2,
-  /// or allowMultiple is false and limit is not null
+  /// or allowMultiple is false and limit is not null.
   MediaOptions.createAndValidate({
     this.imageOptions = const ImageOptions(),
     required this.allowMultiple,
@@ -37,6 +37,7 @@ class MediaOptions {
   /// The maximum number of images to select.
   ///
   /// Default null value means no limit.
+  /// This value may be ignored by platforms that cannot support it.
   final int? limit;
 
   /// Validates that all values are within required ranges.
