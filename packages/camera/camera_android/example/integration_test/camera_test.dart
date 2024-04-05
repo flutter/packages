@@ -81,8 +81,8 @@ void main() {
       bool previousPresetExactlySupported = true;
       for (final MapEntry<ResolutionPreset, Size> preset
           in presetExpectedSizes.entries) {
-        final CameraController controller =
-            CameraController(cameraDescription, preset.key);
+        final CameraController controller = CameraController(cameraDescription,
+            mediaSettings: MediaSettings(resolutionPreset: preset.key));
         await controller.initialize();
         final bool presetExactlySupported =
             await testCaptureImageResolution(controller, preset.key);

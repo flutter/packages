@@ -135,51 +135,6 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
                          error:nil];
 }
 
-FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
-                                            NSString *resolutionPreset) {
-  id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
-  OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
-      .andReturn(inputMock);
-
-  id audioSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
-  OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
-
-  return [[FLTCam alloc] initWithCameraName:@"camera"
-                           resolutionPreset:resolutionPreset
-                                enableAudio:true
-                                orientation:UIDeviceOrientationPortrait
-                        videoCaptureSession:captureSession
-                        audioCaptureSession:audioSessionMock
-                        captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
-                                      error:nil];
-}
-
-FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
-    VideoDimensionsForFormat videoDimensionsForFormat) {
-  id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
-  OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
-      .andReturn(inputMock);
-
-  id audioSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
-  OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
-
-  return
-      [[FLTCam alloc] initWithResolutionPreset:resolutionPreset
-                                   enableAudio:true
-                                   orientation:UIDeviceOrientationPortrait
-                           videoCaptureSession:captureSession
-                           audioCaptureSession:audioSessionMock
-                           captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
-                          captureDeviceFactory:^AVCaptureDevice *(void) {
-                            return captureDevice;
-                          }
-                      videoDimensionsForFormat:videoDimensionsForFormat
-                                         error:nil];
-}
-
 CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
   CVPixelBufferRef pixelBuffer;
   CVPixelBufferCreate(kCFAllocatorDefault, 100, 100, kCVPixelFormatType_32BGRA, NULL, &pixelBuffer);

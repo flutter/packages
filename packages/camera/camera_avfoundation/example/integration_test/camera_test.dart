@@ -320,6 +320,27 @@ void main() {
     expect(await completer.future, isNotNull);
   });
 
+  // Test fileFormat is respected when taking a picture.
+  testWidgets('Capture specific image output formats',
+      (WidgetTester tester) async {
+    final List<CameraDescription> cameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+    for (final CameraDescription cameraDescription in cameras) {
+      for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
+        final CameraController controller =
+            CameraController(cameraDescription, ResolutionPreset.low);
+        await controller.initialize();
+        await controller.setImageFileFormat(fileFormat);
+        final XFile file = await controller.takePicture();
+        await controller.dispose();
+        expect(file.path.endsWith(fileFormat.name), true);
+      }
+    }
+  });
+
   group('Camera settings', () {
     testWidgets('Control FPS', (WidgetTester tester) async {
       final List<CameraDescription> cameras =
@@ -332,7 +353,10 @@ void main() {
       for (final int fps in <int>[10, 30]) {
         final CameraController controller = CameraController.withSettings(
           cameras.first,
-          mediaSettings: MediaSettings(fps: fps),
+          mediaSettings: MediaSettings(
+            resolutionPreset: ResolutionPreset.medium,
+            fps: fps,
+          ),
         );
         await controller.initialize();
         await controller.prepareForVideoRecording();
@@ -368,7 +392,10 @@ void main() {
       for (final int videoBitrate in <int>[100 * kiloBits, 1000 * kiloBits]) {
         final CameraController controller = CameraController.withSettings(
           cameras.first,
-          mediaSettings: MediaSettings(videoBitrate: videoBitrate),
+          mediaSettings: MediaSettings(
+            resolutionPreset: ResolutionPreset.medium,
+            videoBitrate: videoBitrate,
+          ),
         );
         await controller.initialize();
         await controller.prepareForVideoRecording();
@@ -435,26 +462,5 @@ void main() {
             reason: 'incrementing audio bitrate should increment file size');
       }
     });
-  });
-  
-  // Test fileFormat is respected when taking a picture.
-  testWidgets('Capture specific image output formats',
-      (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
-    if (cameras.isEmpty) {
-      return;
-    }
-    for (final CameraDescription cameraDescription in cameras) {
-      for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
-        final CameraController controller =
-            CameraController(cameraDescription, ResolutionPreset.low);
-        await controller.initialize();
-        await controller.setImageFileFormat(fileFormat);
-        final XFile file = await controller.takePicture();
-        await controller.dispose();
-        expect(file.path.endsWith(fileFormat.name), true);
-      }
-    }
   });
 }
