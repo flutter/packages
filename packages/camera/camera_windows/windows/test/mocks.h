@@ -205,8 +205,9 @@ class MockCamera : public Camera {
 
   MOCK_METHOD(bool, InitCamera,
               (flutter::TextureRegistrar * texture_registrar,
-               flutter::BinaryMessenger* messenger, bool record_audio,
-               ResolutionPreset resolution_preset),
+               flutter::BinaryMessenger* messenger,
+               ResolutionPreset resolution_preset,
+               const RecordSettings& record_settings),
               (override));
 
   std::unique_ptr<CaptureController> capture_controller_;
@@ -235,8 +236,8 @@ class MockCaptureController : public CaptureController {
 
   MOCK_METHOD(bool, InitCaptureDevice,
               (flutter::TextureRegistrar * texture_registrar,
-               const std::string& device_id, bool record_audio,
-               ResolutionPreset resolution_preset),
+               const std::string& device_id, ResolutionPreset resolution_preset,
+               const RecordSettings& record_settings),
               (override));
 
   MOCK_METHOD(uint32_t, GetPreviewWidth, (), (const override));
@@ -858,7 +859,20 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
       *value = (int64_t)width_ << 32 | (int64_t)height_;
       return S_OK;
     } else if (key == MF_MT_FRAME_RATE) {
-      *value = (int64_t)frame_rate_ << 32 | 1;
+      *value = frame_rate_;
+      return S_OK;
+    }
+    return E_FAIL;
+  };
+
+  // IMFAttributes
+  HRESULT GetUINT32(REFGUID key, UINT32* value) override {
+    if (key == MF_MT_AVG_BITRATE && video_bitrate_.has_value()) {
+      *value = video_bitrate_.value();
+      return S_OK;
+    } else if (key == MF_MT_AUDIO_AVG_BYTES_PER_SECOND &&
+               audio_bitrate_.has_value()) {
+      *value = audio_bitrate_.value();
       return S_OK;
     }
     return E_FAIL;
@@ -876,11 +890,42 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
     return E_FAIL;
   }
 
+  HRESULT SetUINT64(REFGUID key, UINT64 unValue) override {
+    if (key == MF_MT_FRAME_RATE) {
+      frame_rate_ = unValue;
+      return S_OK;
+    }
+
+    return S_OK;
+  }
+
+  HRESULT SetUINT32(REFGUID key, UINT32 unValue) override {
+    if (key == MF_MT_AVG_BITRATE) {
+      video_bitrate_ = unValue;
+      return S_OK;
+    } else if (key == MF_MT_AUDIO_AVG_BYTES_PER_SECOND) {
+      audio_bitrate_ = unValue;
+      return S_OK;
+    }
+
+    return S_OK;
+  }
+
   // IIMFAttributes
   HRESULT CopyAllItems(IMFAttributes* pDest) override {
     pDest->SetUINT64(MF_MT_FRAME_SIZE,
                      (int64_t)width_ << 32 | (int64_t)height_);
-    pDest->SetUINT64(MF_MT_FRAME_RATE, (int64_t)frame_rate_ << 32 | 1);
+    pDest->SetUINT64(MF_MT_FRAME_RATE, frame_rate_);
+
+    if (video_bitrate_.has_value()) {
+      pDest->SetUINT32(MF_MT_AVG_BITRATE, video_bitrate_.value());
+    }
+
+    if (audio_bitrate_.has_value()) {
+      pDest->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
+                       audio_bitrate_.value());
+    }
+
     pDest->SetGUID(MF_MT_MAJOR_TYPE, major_type_);
     pDest->SetGUID(MF_MT_SUBTYPE, sub_type_);
     return S_OK;
@@ -946,7 +991,9 @@ class FakeMediaType : public FakeIMFAttributesBase<IMFMediaType> {
   const GUID sub_type_;
   const int width_;
   const int height_;
-  const int frame_rate_ = 30;
+  UINT64 frame_rate_ = Pack2UINT32AsUINT64(30, 1);
+  std::optional<UINT32> video_bitrate_ = std::nullopt;
+  std::optional<UINT32> audio_bitrate_ = std::nullopt;
 };
 
 class MockCaptureEngine : public IMFCaptureEngine {
