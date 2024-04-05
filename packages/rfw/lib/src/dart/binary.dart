@@ -220,7 +220,7 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   For example, this switch:
 ///
-///   ```
+///   ```none
 ///   switch (args.a) {
 ///    0: 'z',
 ///    1: 'o',

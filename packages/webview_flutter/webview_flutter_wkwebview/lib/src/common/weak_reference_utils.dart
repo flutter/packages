@@ -5,7 +5,7 @@
 /// Helper method for creating callbacks methods with a weak reference.
 ///
 /// Example:
-/// ```
+/// ```dart
 /// final JavascriptChannelRegistry javascriptChannelRegistry = ...
 ///
 /// final WKScriptMessageHandler handler = WKScriptMessageHandler(
