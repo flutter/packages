@@ -1,3 +1,7 @@
+## 2.8.5
+
+* Updates example to call `super.dispose()` last.
+
 ## 2.8.4
 
 * Removes `_ambiguate` methods from code.
