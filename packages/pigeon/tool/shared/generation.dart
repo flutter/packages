@@ -94,6 +94,8 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
       dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
+      dartPackageName: 'pigeon_integration_tests',
+      suppressVersion: true,
       // Android
       kotlinOut: skipLanguages.contains(GeneratorLanguage.kotlin)
           ? null
@@ -105,14 +107,6 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
-      // Windows
-      cppHeaderOut: skipLanguages.contains(GeneratorLanguage.cpp)
-          ? null
-          : '$outputBase/windows/pigeon/$input.gen.h',
-      cppSourceOut: skipLanguages.contains(GeneratorLanguage.cpp)
-          ? null
-          : '$outputBase/windows/pigeon/$input.gen.cpp',
-      cppNamespace: '${input}_pigeontest',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -121,8 +115,14 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$outputBase/linux/pigeon/$input.gen.cc',
       gobjectModule: '${pascalCaseName}PigeonTest',
-      suppressVersion: true,
-      dartPackageName: 'pigeon_integration_tests',
+      // Windows
+      cppHeaderOut: skipLanguages.contains(GeneratorLanguage.cpp)
+          ? null
+          : '$outputBase/windows/pigeon/$input.gen.h',
+      cppSourceOut: skipLanguages.contains(GeneratorLanguage.cpp)
+          ? null
+          : '$outputBase/windows/pigeon/$input.gen.cpp',
+      cppNamespace: '${input}_pigeontest',
     );
     if (generateCode != 0) {
       return generateCode;

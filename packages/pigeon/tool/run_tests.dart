@@ -141,7 +141,7 @@ Set<String> _extensionsForLanguage(GeneratorLanguage language) {
   return switch (language) {
     GeneratorLanguage.cpp => <String>{'cc', 'cpp', 'h'},
     GeneratorLanguage.dart => <String>{'dart'},
-    GeneratorLanguage.gobject => <String>{'gobject'},
+    GeneratorLanguage.gobject => <String>{'cc', 'h'},
     GeneratorLanguage.java => <String>{'java'},
     GeneratorLanguage.kotlin => <String>{'kt'},
     GeneratorLanguage.swift => <String>{'swift'},
@@ -179,6 +179,8 @@ Future<void> main(List<String> args) async {
     androidKotlinUnitTests,
     androidJavaIntegrationTests,
     androidKotlinIntegrationTests,
+    linuxUnitTests,
+    linuxIntegrationTests,
   ];
   const List<String> macOSHostTests = <String>[
     iOSObjCUnitTests,

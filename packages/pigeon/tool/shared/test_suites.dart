@@ -43,6 +43,8 @@ const String iOSObjCUnitTests = 'ios_objc_unittests';
 const String iOSObjCIntegrationTests = 'ios_objc_integration_tests';
 const String iOSSwiftUnitTests = 'ios_swift_unittests';
 const String iOSSwiftIntegrationTests = 'ios_swift_integration_tests';
+const String linuxUnitTests = 'linux_unittests';
+const String linuxIntegrationTests = 'linux_integration_tests';
 const String macOSObjCIntegrationTests = 'macos_objc_integration_tests';
 const String macOSSwiftUnitTests = 'macos_swift_unittests';
 const String macOSSwiftIntegrationTests = 'macos_swift_integration_tests';
@@ -91,6 +93,12 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   iOSSwiftIntegrationTests: TestInfo(
       function: _runIOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code.'),
+  linuxUnitTests: TestInfo(
+      function: _runLinuxUnitTests,
+      description: 'Unit tests on generated Linux C code.'),
+  linuxIntegrationTests: TestInfo(
+      function: _runLinuxIntegrationTests,
+      description: 'Integration tests on generated Linux C code.'),
   macOSObjCIntegrationTests: TestInfo(
       function: _runMacOSObjCIntegrationTests,
       description: 'Integration tests on generated Objective-C code on macOS.'),
@@ -349,6 +357,33 @@ Future<int> _runIOSSwiftIntegrationTests() async {
   return _runMobileIntegrationTests('iOS', _testPluginRelativePath);
 }
 
+Future<int> _runLinuxUnitTests() async {
+  const String examplePath = './$_testPluginRelativePath/example';
+  final int compileCode = await runFlutterBuild(examplePath, 'linux');
+  if (compileCode != 0) {
+    return compileCode;
+  }
+
+  const String buildDirBase = '$examplePath/build/linux/plugins';
+  const String buildRelativeBinaryPath = 'debug/test_plugin/test_plugin_test';
+  const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
+  if (File(arm64Path).existsSync()) {
+    return runProcess(arm64Path, <String>[]);
+  } else {
+    return runProcess(x64Path, <String>[]);
+  }
+}
+
+Future<int> _runLinuxIntegrationTests() async {
+  const String examplePath = './$_testPluginRelativePath/example';
+  return runFlutterCommand(
+    examplePath,
+    'test',
+    <String>[_integrationTestFileRelativePath, '-d', 'linux'],
+  );
+}
+
 Future<int> _runWindowsUnitTests() async {
   const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'windows');
@@ -356,13 +391,11 @@ Future<int> _runWindowsUnitTests() async {
     return compileCode;
   }
 
-  // Depending on the Flutter version, the build output path is different. To
-  // handle both master and stable, and to future-proof against the changes
+  // Depending on the Flutter version, the build output path may be different.
+  // To handle both master and stable, and to future-proof against the changes
   // that will happen in https://github.com/flutter/flutter/issues/129807
   // - Try arm64, to future-proof against arm64 support.
-  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts
-  //   running newer versions of Flutter.
-  // - Fall back to the pre-arch path, to support running against stable.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts.
   // TODO(stuartmorgan): Remove all this when these tests no longer need to
   // support a version of Flutter without
   // https://github.com/flutter/flutter/issues/129807, and just construct the
@@ -372,13 +405,10 @@ Future<int> _runWindowsUnitTests() async {
       'plugins/test_plugin/Debug/test_plugin_test.exe';
   const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
   const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
-  const String oldPath = '$buildDirBase/$buildRelativeBinaryPath';
   if (File(arm64Path).existsSync()) {
     return runProcess(arm64Path, <String>[]);
-  } else if (File(x64Path).existsSync()) {
-    return runProcess(x64Path, <String>[]);
   } else {
-    return runProcess(oldPath, <String>[]);
+    return runProcess(x64Path, <String>[]);
   }
 }
 
