@@ -15,7 +15,6 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   camera_platform_interface: ^2.6.0
-
   flutter:
     sdk: flutter
   video_player: ^2.7.0

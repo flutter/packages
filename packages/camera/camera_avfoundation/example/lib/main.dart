@@ -593,10 +593,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged:
-                  controller != null && controller!.value.isRecordingVideo
-                      ? null
-                      : onChanged,
+              onChanged: (controller?.value.isRecordingVideo ?? false)
+                  ? null
+                  : onChanged,
             ),
           ),
         );

@@ -510,7 +510,7 @@ class Optional<T> extends IterableBase<T> {
   /// Gets the Optional value.
   ///
   /// Throws [StateError] if [value] is null.
-  T? get value {
+  T get value {
     if (_value == null) {
       throw StateError('value called on absent Optional.');
     }
