@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @TestOn('browser') // Uses package:web
+library;
 
 import 'package:google_identity_services_web/loader.dart';
 import 'package:test/test.dart';

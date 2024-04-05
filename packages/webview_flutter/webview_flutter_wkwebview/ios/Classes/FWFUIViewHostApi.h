@@ -9,11 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Host api implementation for UIView.
- *
- * Handles creating UIView that intercommunicate with a paired Dart object.
- */
+/// Host api implementation for UIView.
+///
+/// Handles creating UIView that intercommunicate with a paired Dart object.
 @interface FWFUIViewHostApiImpl : NSObject <FWFUIViewHostApi>
 - (instancetype)initWithInstanceManager:(FWFInstanceManager *)instanceManager;
 @end

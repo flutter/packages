@@ -7,7 +7,7 @@ import 'dart:convert' show json;
 import 'dart:js_interop';
 import 'dart:math' as math;
 
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 import 'src/common.dart';
 import 'src/recorder.dart';
@@ -53,15 +53,18 @@ Future<void> runBenchmarks(
   final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the current 'page' value set to [initialPage] to
   // ensure the benchmark app is reloaded at the proper location.
-  final Uri newUri = Uri(
+  final String newUri = Uri(
     scheme: currentUri.scheme,
     host: currentUri.host,
     port: currentUri.port,
     path: initialPage,
-  );
+  ).toString();
 
   // Reloading the window will trigger the next benchmark to run.
-  window.location.replace(newUri.toString());
+  await _client.printToConsole(
+    'Client preparing to reload the window to: "$newUri"',
+  );
+  window.location.replace(newUri);
 }
 
 Future<void> _runBenchmark(String? benchmarkName) async {
@@ -154,9 +157,7 @@ void _printResultsToScreen(Profile profile) {
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
     body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    // TODO(kevmoo): remove `NodeGlue` cast when we no longer need to support
-    // pkg:web 0.3.0
-    NodeGlue(body).append(TimeseriesVisualization(timeseries).render());
+    body.appendChild(TimeseriesVisualization(timeseries).render());
   });
 }
 
@@ -165,7 +166,7 @@ class TimeseriesVisualization {
   /// Creates a visualization for a [Timeseries].
   TimeseriesVisualization(this._timeseries) {
     _stats = _timeseries.computeStats();
-    _canvas = CanvasElement();
+    _canvas = HTMLCanvasElement();
     _screenWidth = window.screen.width;
     _canvas.width = _screenWidth;
     _canvas.height = (_kCanvasHeight * window.devicePixelRatio).round();
@@ -189,7 +190,7 @@ class TimeseriesVisualization {
 
   final Timeseries _timeseries;
   late TimeseriesStats _stats;
-  late CanvasElement _canvas;
+  late HTMLCanvasElement _canvas;
   late CanvasRenderingContext2D _ctx;
   late int _screenWidth;
 
@@ -212,7 +213,7 @@ class TimeseriesVisualization {
   }
 
   /// Renders the timeseries into a `<canvas>` and returns the canvas element.
-  CanvasElement render() {
+  HTMLCanvasElement render() {
     _ctx.translate(0, _kCanvasHeight * window.devicePixelRatio);
     _ctx.scale(1, -window.devicePixelRatio);
 
@@ -317,7 +318,7 @@ class LocalBenchmarkServerClient {
   /// DevTools Protocol.
   Future<void> startPerformanceTracing(String? benchmarkName) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/start-performance-tracing?label=$benchmarkName',
       method: 'POST',
       mimeType: 'application/json',
@@ -327,7 +328,7 @@ class LocalBenchmarkServerClient {
   /// Stops the performance tracing session started by [startPerformanceTracing].
   Future<void> stopPerformanceTracing() async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/stop-performance-tracing',
       method: 'POST',
       mimeType: 'application/json',
@@ -355,7 +356,7 @@ class LocalBenchmarkServerClient {
   /// The server will halt the devicelab task and log the error.
   Future<void> reportError(dynamic error, StackTrace stackTrace) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/on-error',
       method: 'POST',
       mimeType: 'application/json',
@@ -369,7 +370,7 @@ class LocalBenchmarkServerClient {
   /// Reports a message about the demo to the benchmark server.
   Future<void> printToConsole(String report) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/print-to-console',
       method: 'POST',
       mimeType: 'text/plain',
@@ -383,7 +384,7 @@ class LocalBenchmarkServerClient {
     String url, {
     required String method,
     required String mimeType,
-    required String sendData,
+    String? sendData,
   }) {
     final Completer<XMLHttpRequest> completer = Completer<XMLHttpRequest>();
     final XMLHttpRequest xhr = XMLHttpRequest();
@@ -393,7 +394,11 @@ class LocalBenchmarkServerClient {
       completer.complete(xhr);
     });
     xhr.onError.listen(completer.completeError);
-    xhr.send(sendData.toJS);
+    if (sendData != null) {
+      xhr.send(sendData.toJS);
+    } else {
+      xhr.send();
+    }
     return completer.future;
   }
 }

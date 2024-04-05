@@ -1,5 +1,14 @@
 ## NEXT
 
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 1.0.10
+
+* Adds privacy manifest.
+
+## 1.0.9
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 1.0.8

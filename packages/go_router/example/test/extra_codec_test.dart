@@ -20,4 +20,20 @@ void main() {
     expect(find.text('The extra for this page is: ComplexData2(data: data)'),
         findsOneWidget);
   });
+
+  test('invalid extra throws', () {
+    const example.MyExtraCodec extraCodec = example.MyExtraCodec();
+    const List<Object?> invalidValue = <Object?>['invalid'];
+
+    expect(
+      () => extraCodec.decode(invalidValue),
+      throwsA(
+        predicate(
+          (Object? exception) =>
+              exception is FormatException &&
+              exception.message == 'Unable to parse input: $invalidValue',
+        ),
+      ),
+    );
+  });
 }

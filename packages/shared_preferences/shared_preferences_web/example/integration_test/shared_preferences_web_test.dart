@@ -9,16 +9,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_platfor
 import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
 import 'package:shared_preferences_web/src/keys_extension.dart';
-
-import 'package:web/helpers.dart' as html;
-
-const Map<String, dynamic> kTestValues = <String, dynamic>{
-  'flutter.String': 'hello world',
-  'flutter.Bool': true,
-  'flutter.Int': 42,
-  'flutter.Double': 3.14159,
-  'flutter.StringList': <String>['foo', 'bar'],
-};
+import 'package:web/web.dart' as html;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

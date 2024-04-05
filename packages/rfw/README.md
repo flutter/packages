@@ -298,7 +298,7 @@ class _ExampleState extends State<Example> {
   static WidgetLibrary _createLocalWidgets() {
     return LocalWidgetLibrary(<String, LocalWidgetBuilder>{
       'GreenBox': (BuildContext context, DataSource source) {
-        return Container(
+        return ColoredBox(
           color: const Color(0xFF002211),
           child: source.child(<Object>['child']),
         );
@@ -522,7 +522,7 @@ to obtain the widget, in a manner similar to the `v` method:
 <?code-excerpt "test/readme_test.dart (child)"?>
 ```rfwtxt
 'GreenBox': (BuildContext context, DataSource source) {
-  return Container(color: const Color(0xFF002211), child: source.child(<Object>['child']));
+  return ColoredBox(color: const Color(0xFF002211), child: source.child(<Object>['child']));
 },
 ```
 
@@ -534,7 +534,7 @@ argument that isn't a widget, the `child` method returns an
 <?code-excerpt "test/readme_test.dart (optionalChild)"?>
 ```rfwtxt
 'GreenBox': (BuildContext context, DataSource source) {
-  return Container(color: const Color(0xFF002211), child: source.optionalChild(<Object>['child']));
+  return ColoredBox(color: const Color(0xFF002211), child: source.optionalChild(<Object>['child']));
 },
 ```
 

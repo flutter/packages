@@ -7,24 +7,18 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FWFInstanceManager ()
-/**
- * The next identifier that will be used for a host-created instance.
- */
+/// The next identifier that will be used for a host-created instance.
 @property long nextIdentifier;
 
-/**
- * The number of instances stored as a strong reference.
- *
- * Added for debugging purposes.
- */
+/// The number of instances stored as a strong reference.
+///
+/// Added for debugging purposes.
 - (NSUInteger)strongInstanceCount;
 
-/**
- * The number of instances stored as a weak reference.
- *
- * Added for debugging purposes. NSMapTables that store keys or objects as weak reference will be
- * reclaimed nondeterministically.
- */
+/// The number of instances stored as a weak reference.
+///
+/// Added for debugging purposes. NSMapTables that store keys or objects as weak reference will be
+/// reclaimed nondeterministically.
 - (NSUInteger)weakInstanceCount;
 @end
 

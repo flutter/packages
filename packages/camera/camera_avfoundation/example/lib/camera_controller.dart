@@ -314,7 +314,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Start streaming images from platform camera.
   Future<void> startImageStream(
-      Function(CameraImageData image) onAvailable) async {
+      void Function(CameraImageData image) onAvailable) async {
     _imageStreamSubscription = CameraPlatform.instance
         .onStreamedFrameAvailable(_cameraId)
         .listen((CameraImageData imageData) {
@@ -335,7 +335,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// The video is returned as a [XFile] after calling [stopVideoRecording].
   /// Throws a [CameraException] if the capture fails.
   Future<void> startVideoRecording(
-      {Function(CameraImageData image)? streamCallback}) async {
+      {void Function(CameraImageData image)? streamCallback}) async {
     await CameraPlatform.instance.startVideoCapturing(
         VideoCaptureOptions(_cameraId, streamCallback: streamCallback));
     value = value.copyWith(
@@ -445,6 +445,11 @@ class CameraController extends ValueNotifier<CameraValue> {
     value = value.copyWith(focusMode: mode);
   }
 
+  /// Sets the output format for taking pictures.
+  Future<void> setImageFileFormat(ImageFileFormat format) async {
+    await CameraPlatform.instance.setImageFileFormat(_cameraId, format);
+  }
+
   /// Releases the resources of this camera.
   @override
   Future<void> dispose() async {
@@ -509,7 +514,7 @@ class Optional<T> extends IterableBase<T> {
     if (_value == null) {
       throw StateError('value called on absent Optional.');
     }
-    return _value!;
+    return _value;
   }
 
   /// Executes a function if the Optional value is present.
@@ -546,7 +551,7 @@ class Optional<T> extends IterableBase<T> {
   Optional<S> transform<S>(S Function(T? value) transformer) {
     return _value == null
         ? Optional<S>.absent()
-        : Optional<S>.of(transformer(_value as T));
+        : Optional<S>.of(transformer(_value));
   }
 
   /// Transforms the Optional value.
@@ -557,7 +562,7 @@ class Optional<T> extends IterableBase<T> {
   Optional<S> transformNullable<S>(S? Function(T? value) transformer) {
     return _value == null
         ? Optional<S>.absent()
-        : Optional<S>.fromNullable(transformer(_value as T));
+        : Optional<S>.fromNullable(transformer(_value));
   }
 
   @override

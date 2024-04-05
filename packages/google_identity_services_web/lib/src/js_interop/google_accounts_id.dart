@@ -338,7 +338,7 @@ abstract class IdConfiguration {
     JSString? context,
     JSString? state_cookie_domain,
     JSString? ux_mode,
-    JSArray? allowed_parent_origin,
+    JSArray<JSString>? allowed_parent_origin,
     JSFunction? intermediate_iframe_close_callback,
     JSBoolean? itp_support,
     JSString? login_hint,

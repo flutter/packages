@@ -604,10 +604,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       switch (status) {
         case AnimationStatus.dismissed:
           _toggleHideable(hide: false);
-          break;
         case AnimationStatus.completed:
           _toggleHideable(hide: true);
-          break;
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
           break;
@@ -699,11 +697,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       case AnimationStatus.completed:
       case AnimationStatus.dismissed:
         isInProgress = false;
-        break;
       case AnimationStatus.forward:
       case AnimationStatus.reverse:
         isInProgress = true;
-        break;
       case null:
         break;
     }
@@ -711,11 +707,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       case AnimationStatus.completed:
       case AnimationStatus.dismissed:
         wasInProgress = false;
-        break;
       case AnimationStatus.forward:
       case AnimationStatus.reverse:
         wasInProgress = true;
-        break;
       case null:
         break;
     }
@@ -769,7 +763,6 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
               openOpacityTween = _openOpacityTween;
               colorTween = _colorTween;
               scrimTween = _scrimFadeInTween;
-              break;
             case AnimationStatus.reverse:
               if (_transitionWasInterrupted) {
                 closedOpacityTween = _closedOpacityTween;
@@ -782,10 +775,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
               openOpacityTween = _openOpacityTween.flipped;
               colorTween = _colorTween.flipped;
               scrimTween = _scrimFadeOutTween;
-              break;
             case AnimationStatus.completed:
               assert(false); // Unreachable.
-              break;
           }
           assert(colorTween != null);
           assert(closedOpacityTween != null);

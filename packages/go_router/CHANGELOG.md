@@ -1,3 +1,36 @@
+## 13.2.2
+
+- Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch
+
+## 13.2.1
+
+- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+- Fixes memory leaks.
+
+## 13.2.0
+
+- Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`
+
+## 13.1.0
+
+- Adds `topRoute` to `GoRouterState`
+- Adds `lastOrNull` to `RouteMatchList`
+
+## 13.0.1
+
+* Fixes new lint warnings.
+
+## 13.0.0
+
+- Refactors `RouteMatchList` and imperative APIs.
+- **BREAKING CHANGE**:
+  - RouteMatchList structure changed.
+  - Matching logic updated.
+
+## 12.1.3
+
+* Fixes a typo in `navigation.md`.
+
 ## 12.1.2
 
 * Fixes an incorrect use of `extends` for Dart 3 compatibility.

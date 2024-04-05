@@ -291,6 +291,9 @@ class MinTableSpanExtent extends CombiningTableSpanExtent {
 }
 
 /// A decoration for a [TableSpan].
+///
+/// When decorating merged cells in the [TableView], a merged cell will take its
+/// decoration from the leading cell of the merged span.
 class TableSpanDecoration {
   /// Creates a [TableSpanDecoration].
   const TableSpanDecoration({
@@ -444,7 +447,6 @@ class TableSpanBorder {
           details.rect,
           borderRadius: borderRadius,
         );
-        break;
       case Axis.vertical:
         final Border border = Border(
           left: axisDirection == AxisDirection.down ? leading : trailing,
@@ -455,7 +457,6 @@ class TableSpanBorder {
           details.rect,
           borderRadius: borderRadius,
         );
-        break;
     }
   }
 }

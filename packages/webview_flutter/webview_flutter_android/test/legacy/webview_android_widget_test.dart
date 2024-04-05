@@ -724,7 +724,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(android_webview.WebView, String);
+        )).captured.single as void Function(android_webview.WebView, String);
 
         onPageStarted(mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onPageStarted('https://google.com'));
@@ -741,7 +741,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(android_webview.WebView, String);
+        )).captured.single as void Function(android_webview.WebView, String);
 
         onPageFinished(mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onPageFinished('https://google.com'));
@@ -759,7 +759,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(
+        )).captured.single as void Function(
                 android_webview.WebView, int, String, String);
 
         onReceivedError(
@@ -795,7 +795,7 @@ void main() {
           onReceivedRequestError: captureAnyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(
+        )).captured.single as void Function(
           android_webview.WebView,
           android_webview.WebResourceRequest,
           android_webview.WebResourceError,
@@ -844,7 +844,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: captureAnyNamed('urlLoading'),
-        )).captured.single as Function(android_webview.WebView, String);
+        )).captured.single as void Function(android_webview.WebView, String);
 
         urlLoading(mockWebView, 'https://google.com');
         verify(mockCallbacksHandler.onNavigationRequest(
@@ -872,7 +872,7 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: captureAnyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
-        )).captured.single as Function(
+        )).captured.single as void Function(
           android_webview.WebView,
           android_webview.WebResourceRequest,
         );

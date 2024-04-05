@@ -8,17 +8,17 @@ import 'dart:js_interop';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 /// Class to manipulate the DOM with the intention of reading files from it.
 class DomHelper {
   /// Default constructor, initializes the container DOM element.
   DomHelper() {
-    final Element body = querySelector('body')!;
+    final Element body = document.querySelector('body')!;
     body.appendChild(_container);
   }
 
-  final Element _container = createElementTag('file-selector');
+  final Element _container = document.createElement('file-selector');
 
   /// Sets the <input /> attributes and waits for a file to be selected.
   Future<List<XFile>> getFiles({
@@ -28,7 +28,7 @@ class DomHelper {
   }) {
     final Completer<List<XFile>> completer = Completer<List<XFile>>();
     final HTMLInputElement inputElement =
-        input ?? (createElementTag('input') as HTMLInputElement)
+        input ?? (document.createElement('input') as HTMLInputElement)
           ..type = 'file';
 
     _container.appendChild(
@@ -72,10 +72,7 @@ class DomHelper {
   }
 
   XFile _convertFileToXFile(File file) => XFile(
-        // TODO(srujzs): This is necessary in order to support package:web 0.4.0.
-        // This was not needed with 0.3.0, hence the lint.
-        // ignore: unnecessary_cast
-        URL.createObjectURL(file as JSObject),
+        URL.createObjectURL(file),
         name: file.name,
         length: file.size,
         lastModified: DateTime.fromMillisecondsSinceEpoch(file.lastModified),

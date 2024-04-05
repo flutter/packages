@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @TestOn('chrome') // Uses web-only Flutter SDK
+library;
 
 import 'dart:convert';
 import 'dart:js_interop';
@@ -10,7 +11,7 @@ import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:test/test.dart';
-import 'package:web/helpers.dart' as html;
+import 'package:web/web.dart' as html;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
@@ -68,10 +69,10 @@ void main() {
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
       final html.Response response =
-          (await html.window.fetch(file.path.toJS).toDart)! as html.Response;
+          await html.window.fetch(file.path.toJS).toDart;
 
-      final JSAny? arrayBuffer = await response.arrayBuffer().toDart;
-      final ByteBuffer data = (arrayBuffer! as JSArrayBuffer).toDart;
+      final JSAny arrayBuffer = await response.arrayBuffer().toDart;
+      final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
       expect(data.asUint8List(), equals(bytes));
     });
 
@@ -94,7 +95,7 @@ void main() {
         await file.saveTo('');
 
         final html.Element? container =
-            html.querySelector('#$crossFileDomElementId');
+            html.document.querySelector('#$crossFileDomElementId');
 
         expect(container, isNotNull);
       });
@@ -105,7 +106,7 @@ void main() {
         await file.saveTo('path');
 
         final html.Element container =
-            html.querySelector('#$crossFileDomElementId')!;
+            html.document.querySelector('#$crossFileDomElementId')!;
 
         late html.HTMLAnchorElement element;
         for (int i = 0; i < container.childNodes.length; i++) {

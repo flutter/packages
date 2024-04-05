@@ -2,7 +2,7 @@ name: camera_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
+  sdk: ^3.1.0
   flutter: ">=3.13.0"
 
 dependencies:

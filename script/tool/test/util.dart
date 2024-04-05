@@ -306,13 +306,11 @@ String _pluginPlatformSection(
         if (support.hasDartCode) {
           lines.add('        dartPluginClass: FakeDartPlugin');
         }
-        break;
       case platformWeb:
         lines.addAll(<String>[
           '        pluginClass: FakePlugin',
           '        fileName: ${packageName}_web.dart',
         ]);
-        break;
       default:
         assert(false, 'Unrecognized platform: $platform');
         break;
@@ -329,8 +327,8 @@ String _pluginPlatformSection(
 Future<List<String>> runCapturingPrint(
   CommandRunner<void> runner,
   List<String> args, {
-  Function(Error error)? errorHandler,
-  Function(Exception error)? exceptionHandler,
+  void Function(Error error)? errorHandler,
+  void Function(Exception error)? exceptionHandler,
 }) async {
   final List<String> prints = <String>[];
   final ZoneSpecification spec = ZoneSpecification(

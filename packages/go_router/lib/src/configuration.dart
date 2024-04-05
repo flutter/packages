@@ -216,6 +216,7 @@ class RouteConfiguration {
       matchedLocation: matchList.uri.path,
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
+      topRoute: matchList.lastOrNull?.route,
     );
   }
 
@@ -295,9 +296,10 @@ class RouteConfiguration {
     final Uri uri = Uri.parse(canonicalUri(location));
 
     final Map<String, String> pathParameters = <String, String>{};
-    final List<RouteMatch>? matches = _getLocRouteMatches(uri, pathParameters);
+    final List<RouteMatchBase> matches =
+        _getLocRouteMatches(uri, pathParameters);
 
-    if (matches == null) {
+    if (matches.isEmpty) {
       return _errorRouteMatchList(
         uri,
         GoException('no routes for location: $uri'),
@@ -328,96 +330,20 @@ class RouteConfiguration {
     return result;
   }
 
-  List<RouteMatch>? _getLocRouteMatches(
+  List<RouteMatchBase> _getLocRouteMatches(
       Uri uri, Map<String, String> pathParameters) {
-    final List<RouteMatch>? result = _getLocRouteRecursively(
-      location: uri.path,
-      remainingLocation: uri.path,
-      matchedLocation: '',
-      matchedPath: '',
-      pathParameters: pathParameters,
-      routes: _routingConfig.value.routes,
-    );
-    return result;
-  }
-
-  List<RouteMatch>? _getLocRouteRecursively({
-    required String location,
-    required String remainingLocation,
-    required String matchedLocation,
-    required String matchedPath,
-    required Map<String, String> pathParameters,
-    required List<RouteBase> routes,
-  }) {
-    List<RouteMatch>? result;
-    late Map<String, String> subPathParameters;
-    // find the set of matches at this level of the tree
-    for (final RouteBase route in routes) {
-      subPathParameters = <String, String>{};
-
-      final RouteMatch? match = RouteMatch.match(
+    for (final RouteBase route in _routingConfig.value.routes) {
+      final List<RouteMatchBase> result = RouteMatchBase.match(
+        rootNavigatorKey: navigatorKey,
         route: route,
-        remainingLocation: remainingLocation,
-        matchedLocation: matchedLocation,
-        matchedPath: matchedPath,
-        pathParameters: subPathParameters,
+        uri: uri,
+        pathParameters: pathParameters,
       );
-
-      if (match == null) {
-        continue;
+      if (result.isNotEmpty) {
+        return result;
       }
-
-      if (match.route is GoRoute &&
-          match.matchedLocation.toLowerCase() == location.toLowerCase()) {
-        // If it is a complete match, then return the matched route
-        // NOTE: need a lower case match because matchedLocation is canonicalized to match
-        // the path case whereas the location can be of any case and still match
-        result = <RouteMatch>[match];
-      } else if (route.routes.isEmpty) {
-        // If it is partial match but no sub-routes, bail.
-        continue;
-      } else {
-        // Otherwise, recurse
-        final String childRestLoc;
-        final String newParentSubLoc;
-        final String newParentPath;
-        if (match.route is ShellRouteBase) {
-          childRestLoc = remainingLocation;
-          newParentSubLoc = matchedLocation;
-          newParentPath = matchedPath;
-        } else {
-          assert(location.startsWith(match.matchedLocation));
-          assert(remainingLocation.isNotEmpty);
-
-          childRestLoc = location.substring(match.matchedLocation.length +
-              (match.matchedLocation == '/' ? 0 : 1));
-          newParentSubLoc = match.matchedLocation;
-          newParentPath =
-              concatenatePaths(matchedPath, (match.route as GoRoute).path);
-        }
-
-        final List<RouteMatch>? subRouteMatch = _getLocRouteRecursively(
-          location: location,
-          remainingLocation: childRestLoc,
-          matchedLocation: newParentSubLoc,
-          matchedPath: newParentPath,
-          pathParameters: subPathParameters,
-          routes: route.routes,
-        );
-
-        // If there's no sub-route matches, there is no match for this location
-        if (subRouteMatch == null) {
-          continue;
-        }
-        result = <RouteMatch>[match, ...subRouteMatch];
-      }
-      // Should only reach here if there is a match.
-      break;
     }
-    if (result != null) {
-      pathParameters.addAll(subPathParameters);
-    }
-    return result;
+    return const <RouteMatchBase>[];
   }
 
   /// Processes redirects by returning a new [RouteMatchList] representing the new
@@ -468,8 +394,17 @@ class RouteConfiguration {
           return prevMatchList;
         }
 
+        final List<RouteMatch> routeMatches = <RouteMatch>[];
+        prevMatchList.visitRouteMatches((RouteMatchBase match) {
+          if (match is RouteMatch) {
+            routeMatches.add(match);
+          }
+          return true;
+        });
+
         final FutureOr<String?> routeLevelRedirectResult =
-            _getRouteLevelRedirect(context, prevMatchList, 0);
+            _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
+
         if (routeLevelRedirectResult is String?) {
           return processRouteLevelRedirect(routeLevelRedirectResult);
         }
@@ -499,33 +434,23 @@ class RouteConfiguration {
   FutureOr<String?> _getRouteLevelRedirect(
     BuildContext context,
     RouteMatchList matchList,
+    List<RouteMatch> routeMatches,
     int currentCheckIndex,
   ) {
-    if (currentCheckIndex >= matchList.matches.length) {
+    if (currentCheckIndex >= routeMatches.length) {
       return null;
     }
-    final RouteMatch match = matchList.matches[currentCheckIndex];
+    final RouteMatch match = routeMatches[currentCheckIndex];
     FutureOr<String?> processRouteRedirect(String? newLocation) =>
         newLocation ??
-        _getRouteLevelRedirect(context, matchList, currentCheckIndex + 1);
-    final RouteBase route = match.route;
+        _getRouteLevelRedirect(
+            context, matchList, routeMatches, currentCheckIndex + 1);
+    final GoRoute route = match.route;
     FutureOr<String?> routeRedirectResult;
-    if (route is GoRoute && route.redirect != null) {
-      final RouteMatchList effectiveMatchList =
-          match is ImperativeRouteMatch ? match.matches : matchList;
+    if (route.redirect != null) {
       routeRedirectResult = route.redirect!(
         context,
-        GoRouterState(
-          this,
-          uri: effectiveMatchList.uri,
-          matchedLocation: match.matchedLocation,
-          name: route.name,
-          path: route.path,
-          fullPath: effectiveMatchList.fullPath,
-          extra: effectiveMatchList.extra,
-          pathParameters: effectiveMatchList.pathParameters,
-          pageKey: match.pageKey,
-        ),
+        match.buildState(this, matchList),
       );
     }
     if (routeRedirectResult is String?) {

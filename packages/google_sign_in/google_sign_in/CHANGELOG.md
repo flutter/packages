@@ -1,6 +1,17 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+
+## 6.2.1
+
+* Improves README example and updates it to use code excerpts.
+
+## 6.2.0
+
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16.
 
 ## 6.1.6
 

@@ -7,7 +7,7 @@ which can be the App Store (on iOS and macOS) or Google Play (on Android).
 
 |             | Android | iOS   | macOS  |
 |-------------|---------|-------|--------|
-| **Support** | SDK 16+ | 11.0+ | 10.15+ |
+| **Support** | SDK 16+ | 12.0+ | 10.15+ |
 
 <p>
   <img src="https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/doc/iap_ios.gif?raw=true"

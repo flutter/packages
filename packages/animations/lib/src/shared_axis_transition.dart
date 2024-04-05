@@ -410,7 +410,7 @@ class _ExitTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Container(
+          child: ColoredBox(
             color: fillColor,
             child: AnimatedBuilder(
               animation: animation,
@@ -432,7 +432,7 @@ class _ExitTransition extends StatelessWidget {
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Container(
+          child: ColoredBox(
             color: fillColor,
             child: AnimatedBuilder(
               animation: animation,
@@ -449,7 +449,7 @@ class _ExitTransition extends StatelessWidget {
       case SharedAxisTransitionType.scaled:
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
-          child: Container(
+          child: ColoredBox(
             color: fillColor,
             child: ScaleTransition(
               scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)

@@ -1,3 +1,26 @@
+## 0.12.4
+
+* Updates dependencies to `web: ^0.5.0` and `google_identity_services_web: ^0.3.1`.
+
+## 0.12.3+3
+
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+* Prepares update to package `web: ^0.5.0`.
+
+## 0.12.3+2
+
+* Fixes new lint warnings.
+
+## 0.12.3+1
+
+* Updates `FlexHtmlElementView` (the widget backing `renderButton`) to not
+  rely on web engine knowledge (a platform view CSS selector) to operate.
+
+## 0.12.3
+
+* Migrates to `package:web`.
+* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
 ## 0.12.2+1
 
 * Re-publishes `0.12.2` with a small fix to the CodeClient initialization.

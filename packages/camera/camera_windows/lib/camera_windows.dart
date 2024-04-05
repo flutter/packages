@@ -414,7 +414,6 @@ class CameraWindows extends CameraPlatform {
             cameraId,
           ),
         );
-        break;
       case 'video_recorded':
         final Map<String, Object?> arguments =
             (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
@@ -427,7 +426,6 @@ class CameraWindows extends CameraPlatform {
             maxDuration != null ? Duration(milliseconds: maxDuration) : null,
           ),
         );
-        break;
       case 'error':
         final Map<String, Object?> arguments =
             (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
@@ -437,7 +435,6 @@ class CameraWindows extends CameraPlatform {
             arguments['description']! as String,
           ),
         );
-        break;
       default:
         throw UnimplementedError();
     }

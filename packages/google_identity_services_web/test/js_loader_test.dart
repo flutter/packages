@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @TestOn('browser') // Uses package:web
+library;
 
 import 'dart:async';
 import 'dart:js_interop';

@@ -332,7 +332,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         false;
   }
 
-  // Validates the "implements" keyword for a plugin, returning an error
+  // Validates the "topics" keyword for a plugin, returning an error
   // string if there are any issues.
   String? _checkTopics(
     Pubspec pubspec, {
@@ -343,6 +343,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       return 'A published package should include "topics". '
           'See https://dart.dev/tools/pub/pubspec#topics.';
     }
+    if (topics.length > 5) {
+      return 'A published package should have maximum 5 topics. '
+          'See https://dart.dev/tools/pub/pubspec#topics.';
+    }
     if (isFlutterPlugin(package) && package.isFederated) {
       final String pluginName = package.directory.parent.basename;
       // '_' isn't allowed in topics, so convert to '-'.
@@ -351,6 +355,19 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         return 'A federated plugin package should include its plugin name as '
             'a topic. Add "$topicName" to the "topics" section.';
       }
+    }
+
+    // Validates topic names according to https://dart.dev/tools/pub/pubspec#topics
+    final RegExp expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
+    final Iterable<String> invalidTopics = topics.where((String topic) =>
+        !expectedTopicFormat.hasMatch(topic) ||
+        topic.length < 2 ||
+        topic.length > 32);
+    if (invalidTopics.isNotEmpty) {
+      return 'Invalid topic(s): ${invalidTopics.join(', ')} in "topics" section. '
+          'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+          'start with a-z and ending with a-z or 0-9, have a minimum of 2 characters '
+          'and have a maximum of 32 characters.';
     }
     return null;
   }
@@ -525,6 +542,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   // there are any that aren't allowed.
   String? _checkDependencies(Pubspec pubspec) {
     final Set<String> badDependencies = <String>{};
+    // Shipped dependencies.
     for (final Map<String, Dependency> dependencies
         in <Map<String, Dependency>>[
       pubspec.dependencies,
@@ -536,6 +554,19 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         }
       });
     }
+
+    // Ensure that dev-only dependencies aren't in `dependencies`.
+    const List<String> devOnlyDependencies = <String>['integration_test'];
+    // Non-published packages like pidgeon subpackages are allowed to violate
+    // the dev only dependencies rule.
+    if (pubspec.publishTo != 'none') {
+      pubspec.dependencies.forEach((String name, Dependency dependency) {
+        if (devOnlyDependencies.contains(name)) {
+          badDependencies.add(name);
+        }
+      });
+    }
+
     if (badDependencies.isEmpty) {
       return null;
     }
@@ -546,6 +577,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   }
 
   // Checks whether a given dependency is allowed.
+  // Defaults to false.
   bool _shouldAllowDependency(String name, Dependency dependency) {
     if (dependency is PathDependency || dependency is SdkDependency) {
       return true;

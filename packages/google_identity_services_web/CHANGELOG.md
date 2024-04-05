@@ -1,6 +1,24 @@
+## 0.3.1+1
+
+* Uses `TrustedTypes` from `web: ^0.5.1`.
+
+## 0.3.1
+
+* Updates web code to package `web: ^0.5.0`.
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+
+## 0.3.0+2
+
+* Adds `fedcm_auto` to `CredentialSelectBy` enum.
+* Adds `unknown_reason` to all `Moment*Reason` enums.
+
+## 0.3.0+1
+
+* Corrects 0.3.0 changelog entry about the minimum Flutter/Dart dependencies.
+
 ## 0.3.0
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 * Migrates from `package:js`/`dart:html` to `package:web` so this package can
   compile to WASM.
 * Performs the following **breaking API changes (in bold)** and other fixes to
