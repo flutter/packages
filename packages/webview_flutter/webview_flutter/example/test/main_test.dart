@@ -116,4 +116,9 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
 
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {}
+
+  @override
+  Future<void> setOnHttpAuthRequest(
+    HttpAuthRequestCallback handler,
+  ) async {}
 }

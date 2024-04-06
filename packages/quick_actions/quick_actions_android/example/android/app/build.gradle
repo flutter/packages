@@ -28,7 +28,7 @@ def androidXTestVersion = '1.2.0'
 
 android {
     namespace 'io.flutter.plugins.quickactionsexample'
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
 
 
     defaultConfig {

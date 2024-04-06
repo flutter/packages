@@ -4,10 +4,13 @@
 
 // This file is hand-formatted.
 
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../dart/model.dart';
+import '../../formats.dart';
+
 import 'content.dart';
 
 /// Signature of builders for local widgets.
@@ -15,6 +18,9 @@ import 'content.dart';
 /// The [LocalWidgetLibrary] class wraps a map of widget names to
 /// [LocalWidgetBuilder] callbacks.
 typedef LocalWidgetBuilder = Widget Function(BuildContext context, DataSource source);
+
+/// Signature of builders for remote widgets.
+typedef _RemoteWidgetBuilder = _CurriedWidget Function(DynamicMap builderArg);
 
 /// Signature of the callback passed to a [RemoteWidget].
 ///
@@ -123,6 +129,25 @@ abstract class DataSource {
   /// non-widget nodes replaced by [ErrorWidget].
   List<Widget> childList(List<Object> argsKey);
 
+  /// Builds the widget builder at the given key.
+  ///
+  /// If the node is not a widget builder, returns an [ErrorWidget].
+  ///
+  /// See also:
+  ///
+  ///  * [optionalBuilder], which returns null if the widget builder is missing.
+  Widget builder(List<Object> argsKey, DynamicMap builderArg);
+
+  /// Builds the widget builder at the given key.
+  ///
+  /// If the node is not a widget builder, returns null.
+  ///
+  /// See also:
+  ///
+  ///  * [builder], which returns an [ErrorWidget] instead of null if the widget
+  ///    builder is missing.
+  Widget? optionalBuilder(List<Object> argsKey, DynamicMap builderArg);
+
   /// Gets a [VoidCallback] event handler at the given key.
   ///
   /// If the node specified is an [AnyEventHandler] or a [DynamicList] of
@@ -168,6 +193,22 @@ class LocalWidgetLibrary extends WidgetLibrary {
   @protected
   LocalWidgetBuilder? findConstructor(String name) {
     return _widgets[name];
+  }
+
+  /// The widgets defined by this [LocalWidgetLibrary].
+  ///
+  /// The returned map is an immutable view of the map provided to the constructor.
+  /// They keys are the unqualified widget names, and the values are the corresponding
+  /// [LocalWidgetBuilder]s.
+  ///
+  /// The map never changes during the lifetime of the [LocalWidgetLibrary], but a new
+  /// instance of an [UnmodifiableMapView] is returned each time this getter is used.
+  ///
+  /// See also:
+  ///
+  ///  * [createCoreWidgets], a function that creates a [Map] of local widgets.
+  UnmodifiableMapView<String, LocalWidgetBuilder> get widgets {
+    return UnmodifiableMapView<String, LocalWidgetBuilder>(_widgets);
   }
 }
 
@@ -226,6 +267,24 @@ class Runtime extends ChangeNotifier {
     _clearCache();
   }
 
+  /// The widget libraries imported in this [Runtime].
+  ///
+  /// The returned map is an immutable view of the map updated by calls to
+  /// [update] and [clearLibraries].
+  ///
+  /// The keys are instances [LibraryName] which encode fully qualified library
+  /// names, and the values are the corresponding [WidgetLibrary]s.
+  ///
+  /// The returned map is an immutable copy of the registered libraries
+  /// at the time of this call.
+  ///
+  /// See also:
+  ///
+  ///  * [update] and [clearLibraries], functions that populate this map.
+  UnmodifiableMapView<LibraryName, WidgetLibrary> get libraries {
+    return UnmodifiableMapView<LibraryName, WidgetLibrary>(Map<LibraryName, WidgetLibrary>.from(_libraries));
+  }
+
   final Map<FullyQualifiedWidgetName, _ResolvedConstructor?> _cachedConstructors = <FullyQualifiedWidgetName, _ResolvedConstructor?>{};
   final Map<FullyQualifiedWidgetName, _CurriedWidget> _widgets = <FullyQualifiedWidgetName, _CurriedWidget>{};
 
@@ -247,14 +306,54 @@ class Runtime extends ChangeNotifier {
   ///
   /// The `remoteEventTarget` argument is the callback that the RFW runtime will
   /// invoke whenever a remote widget event handler is triggered.
-  Widget build(BuildContext context, FullyQualifiedWidgetName widget, DynamicContent data, RemoteEventHandler remoteEventTarget) {
+  Widget build(
+    BuildContext context,
+    FullyQualifiedWidgetName widget,
+    DynamicContent data,
+    RemoteEventHandler remoteEventTarget,
+  ) {
     _CurriedWidget? boundWidget = _widgets[widget];
     if (boundWidget == null) {
       _checkForImportLoops(widget.library);
-      boundWidget = _applyConstructorAndBindArguments(widget, const <String, Object?>{}, -1, <FullyQualifiedWidgetName>{});
+      boundWidget = _applyConstructorAndBindArguments(
+        widget,
+        const <String, Object?>{},
+        const <String, Object?>{},
+        -1,
+        <FullyQualifiedWidgetName>{},
+        null,
+      );
       _widgets[widget] = boundWidget;
     }
     return boundWidget.build(context, data, remoteEventTarget, const <_WidgetState>[]);
+  }
+
+  /// Returns the [BlobNode] that most closely corresponds to a given [BuildContext].
+  ///
+  /// If the `context` is not a remote widget and has no ancestor remote widget,
+  /// then this function returns null.
+  ///
+  /// The [BlobNode] is typically either a [WidgetDeclaration] (whose
+  /// [WidgetDeclaration.root] argument is a [ConstructorCall] or a [Switch]
+  /// that resolves to a [ConstructorCall]), indicating the [BuildContext] maps
+  /// to a remote widget, or a [ConstructorCall] directly, in the case where it
+  /// maps to a local widget. Widgets that correspond to render objects (i.e.
+  /// anything that might be found by hit testing on the screen) are always
+  /// local widgets.
+  static BlobNode? blobNodeFor(BuildContext context) {
+    if (context.widget is! _Widget) {
+      context.visitAncestorElements((Element element) {
+        if (element.widget is _Widget) {
+          context = element;
+          return false;
+        }
+        return true;
+      });
+    }
+    if (context.widget is! _Widget) {
+      return null;
+    }
+    return (context.widget as _Widget).curriedWidget;
   }
 
   void _checkForImportLoops(LibraryName name, [ Set<LibraryName>? visited ]) {
@@ -339,12 +438,28 @@ class Runtime extends ChangeNotifier {
   ///
   /// Widgets can't reference each other recursively; this is enforced using the
   /// `usedWidgets` argument.
-  _CurriedWidget _applyConstructorAndBindArguments(FullyQualifiedWidgetName fullName, DynamicMap arguments, int stateDepth, Set<FullyQualifiedWidgetName> usedWidgets) {
+  ///
+  /// The `source` argument is the [BlobNode] that referenced the widget
+  /// constructor, in the event that the widget comes from a
+  /// [LocalWidgetBuilder] rather than a [WidgetDeclaration], and is used to
+  /// provide source information for local widgets (which otherwise could not be
+  /// associated with a part of the source). See also [Runtime.blobNodeFor].
+  _CurriedWidget _applyConstructorAndBindArguments(
+    FullyQualifiedWidgetName fullName,
+    DynamicMap arguments,
+    DynamicMap widgetBuilderScope,
+    int stateDepth,
+    Set<FullyQualifiedWidgetName> usedWidgets,
+    BlobNode? source,
+  ) {
     final _ResolvedConstructor? widget = _findConstructor(fullName);
     if (widget != null) {
       if (widget.constructor is WidgetDeclaration) {
         if (usedWidgets.contains(widget.fullName)) {
-          return _CurriedLocalWidget.error(fullName, 'Widget loop: Tried to call ${widget.fullName} constructor reentrantly.');
+          return _CurriedLocalWidget.error(
+            fullName,
+            'Widget loop: Tried to call ${widget.fullName} constructor reentrantly.',
+          )..propagateSource(source);
         }
         usedWidgets = usedWidgets.toSet()..add(widget.fullName);
         final WidgetDeclaration constructor = widget.constructor as WidgetDeclaration;
@@ -354,19 +469,43 @@ class Runtime extends ChangeNotifier {
         } else {
           newDepth = stateDepth;
         }
-        Object result = _bindArguments(widget.fullName, constructor.root, arguments, newDepth, usedWidgets);
+        Object result = _bindArguments(
+          widget.fullName,
+          constructor.root,
+          arguments,
+          widgetBuilderScope,
+          newDepth,
+          usedWidgets,
+        );
         if (result is Switch) {
-          result = _CurriedSwitch(widget.fullName, result, arguments, constructor.initialState);
+          result = _CurriedSwitch(
+            widget.fullName,
+            result,
+            arguments,
+            widgetBuilderScope,
+            constructor.initialState,
+          )..propagateSource(result);
         } else {
           result as _CurriedWidget;
           if (constructor.initialState != null) {
-            result = _CurriedRemoteWidget(widget.fullName, result, arguments, constructor.initialState);
+            result = _CurriedRemoteWidget(
+              widget.fullName,
+              result,
+              arguments,
+              widgetBuilderScope,
+              constructor.initialState,
+            )..propagateSource(result);
           }
         }
         return result as _CurriedWidget;
       }
       assert(widget.constructor is LocalWidgetBuilder);
-      return _CurriedLocalWidget(widget.fullName, widget.constructor as LocalWidgetBuilder, arguments);
+      return _CurriedLocalWidget(
+        widget.fullName,
+        widget.constructor as LocalWidgetBuilder,
+        arguments,
+        widgetBuilderScope,
+      )..propagateSource(source);
     }
     final Set<LibraryName> missingLibraries = _findMissingLibraries(fullName.library).toSet();
     if (missingLibraries.isNotEmpty) {
@@ -374,59 +513,130 @@ class Runtime extends ChangeNotifier {
         fullName,
         'Could not find remote widget named ${fullName.widget} in ${fullName.library}, '
         'possibly because some dependencies were missing: ${missingLibraries.join(", ")}',
-      );
+      )..propagateSource(source);
     }
-    return _CurriedLocalWidget.error(fullName, 'Could not find remote widget named ${fullName.widget} in ${fullName.library}.');
+    return _CurriedLocalWidget.error(fullName, 'Could not find remote widget named ${fullName.widget} in ${fullName.library}.')
+      ..propagateSource(source);
   }
 
-  Object _bindArguments(FullyQualifiedWidgetName context, Object node, Object arguments, int stateDepth, Set<FullyQualifiedWidgetName> usedWidgets) {
+  Object _bindArguments(
+    FullyQualifiedWidgetName context,
+    Object node, Object arguments,
+    DynamicMap widgetBuilderScope,
+    int stateDepth,
+    Set<FullyQualifiedWidgetName> usedWidgets,
+  ) {
     if (node is ConstructorCall) {
-      final DynamicMap subArguments = _bindArguments(context, node.arguments, arguments, stateDepth, usedWidgets) as DynamicMap;
-      return _applyConstructorAndBindArguments(FullyQualifiedWidgetName(context.library, node.name), subArguments, stateDepth, usedWidgets);
+      final DynamicMap subArguments = _bindArguments(
+        context,
+        node.arguments,
+        arguments,
+        widgetBuilderScope,
+        stateDepth,
+        usedWidgets,
+      ) as DynamicMap;
+      return _applyConstructorAndBindArguments(
+        FullyQualifiedWidgetName(context.library, node.name),
+        subArguments,
+        widgetBuilderScope,
+        stateDepth,
+        usedWidgets,
+        node,
+      );
     }
+    if (node is WidgetBuilderDeclaration) {
+      return (DynamicMap widgetBuilderArg) {
+        final DynamicMap newWidgetBuilderScope = <String, Object?> {
+          ...widgetBuilderScope,
+          node.argumentName: widgetBuilderArg,
+        };
+        final Object result = _bindArguments(
+          context,
+          node.widget,
+          arguments,
+          newWidgetBuilderScope,
+          stateDepth,
+          usedWidgets,
+        );
+        if (result is Switch) {
+          return _CurriedSwitch(
+            FullyQualifiedWidgetName(context.library, ''),
+            result,
+            arguments as DynamicMap,
+            newWidgetBuilderScope,
+            const <String, Object?>{},
+          )..propagateSource(result);
+        }
+        return result as _CurriedWidget;
+      };
+		}
     if (node is DynamicMap) {
       return node.map<String, Object?>(
-        (String name, Object? value) => MapEntry<String, Object?>(name, _bindArguments(context, value!, arguments, stateDepth, usedWidgets)),
+        (String name, Object? value) => MapEntry<String, Object?>(
+          name,
+          _bindArguments(context, value!, arguments, widgetBuilderScope, stateDepth, usedWidgets),
+        ),
       );
     }
     if (node is DynamicList) {
       return List<Object>.generate(
         node.length,
-        (int index) => _bindArguments(context, node[index]!, arguments, stateDepth, usedWidgets),
+        (int index) => _bindArguments(
+          context,
+          node[index]!,
+          arguments,
+          widgetBuilderScope,
+          stateDepth,
+          usedWidgets,
+        ),
         growable: false,
       );
     }
     if (node is Loop) {
-      final Object input = _bindArguments(context, node.input, arguments, stateDepth, usedWidgets);
-      final Object output = _bindArguments(context, node.output, arguments, stateDepth, usedWidgets);
-      return Loop(input, output);
+      final Object input = _bindArguments(context, node.input, arguments, widgetBuilderScope, stateDepth, usedWidgets);
+      final Object output = _bindArguments(context, node.output, arguments, widgetBuilderScope, stateDepth, usedWidgets);
+      return Loop(input, output)
+        ..propagateSource(node);
     }
     if (node is Switch) {
       return Switch(
-        _bindArguments(context, node.input, arguments, stateDepth, usedWidgets),
+        _bindArguments(context, node.input, arguments, widgetBuilderScope, stateDepth, usedWidgets),
         node.outputs.map<Object?, Object>(
           (Object? key, Object value) {
             return MapEntry<Object?, Object>(
-              key == null ? key : _bindArguments(context, key, arguments, stateDepth, usedWidgets),
-              _bindArguments(context, value, arguments, stateDepth, usedWidgets),
+              key == null ? key : _bindArguments(context, key, arguments, widgetBuilderScope, stateDepth, usedWidgets),
+              _bindArguments(context, value, arguments, widgetBuilderScope, stateDepth, usedWidgets),
             );
           },
         ),
-      );
+      )..propagateSource(node);
     }
     if (node is ArgsReference) {
-      return node.bind(arguments);
+      return node.bind(arguments)..propagateSource(node);
     }
     if (node is StateReference) {
-      return node.bind(stateDepth);
+      return node.bind(stateDepth)..propagateSource(node);
     }
     if (node is EventHandler) {
-      return EventHandler(node.eventName, _bindArguments(context, node.eventArguments, arguments, stateDepth, usedWidgets) as DynamicMap);
+      return EventHandler(
+        node.eventName,
+        _bindArguments(
+          context,
+          node.eventArguments,
+          arguments,
+          widgetBuilderScope,
+          stateDepth,
+          usedWidgets,
+        ) as DynamicMap,
+      )..propagateSource(node);
     }
     if (node is SetStateHandler) {
       assert(node.stateReference is StateReference);
       final BoundStateReference stateReference = (node.stateReference as StateReference).bind(stateDepth);
-      return SetStateHandler(stateReference, _bindArguments(context, node.value, arguments, stateDepth, usedWidgets));
+      return SetStateHandler(
+        stateReference,
+        _bindArguments(context, node.value, arguments, widgetBuilderScope, stateDepth, usedWidgets),
+      )..propagateSource(node);
     }
     assert(node is! WidgetDeclaration);
     return node;
@@ -449,12 +659,19 @@ class _ResolvedDynamicList {
 
 typedef _DataResolverCallback = Object Function(List<Object> dataKey);
 typedef _StateResolverCallback = Object Function(List<Object> stateKey, int depth);
+typedef _WidgetBuilderArgResolverCallback = Object Function(List<Object> argKey);
 
 abstract class _CurriedWidget extends BlobNode {
-  const _CurriedWidget(this.fullName, this.arguments, this.initialState);
+  const _CurriedWidget(
+    this.fullName,
+    this.arguments,
+    this.widgetBuilderScope,
+    this.initialState,
+  );
 
   final FullyQualifiedWidgetName fullName;
   final DynamicMap arguments;
+  final DynamicMap widgetBuilderScope;
   final DynamicMap? initialState;
 
   static Object _bindLoopVariable(Object node, Object argument, int depth) {
@@ -471,7 +688,8 @@ abstract class _CurriedWidget extends BlobNode {
       );
     }
     if (node is Loop) {
-      return Loop(_bindLoopVariable(node.input, argument, depth), _bindLoopVariable(node.output, argument, depth + 1));
+      return Loop(_bindLoopVariable(node.input, argument, depth), _bindLoopVariable(node.output, argument, depth + 1))
+        ..propagateSource(node);
     }
     if (node is Switch) {
       return Switch(
@@ -482,45 +700,51 @@ abstract class _CurriedWidget extends BlobNode {
             _bindLoopVariable(value, argument, depth),
           ),
         )
-      );
+      )..propagateSource(node);
     }
     if (node is _CurriedLocalWidget) {
       return _CurriedLocalWidget(
         node.fullName,
         node.child,
         _bindLoopVariable(node.arguments, argument, depth) as DynamicMap,
-      );
+        _bindLoopVariable(node.widgetBuilderScope, argument, depth) as DynamicMap,
+      )..propagateSource(node);
     }
     if (node is _CurriedRemoteWidget) {
       return _CurriedRemoteWidget(
         node.fullName,
         _bindLoopVariable(node.child, argument, depth) as _CurriedWidget,
         _bindLoopVariable(node.arguments, argument, depth) as DynamicMap,
+        _bindLoopVariable(node.widgetBuilderScope, argument, depth) as DynamicMap,
         node.initialState,
-      );
+      )..propagateSource(node);
     }
     if (node is _CurriedSwitch) {
       return _CurriedSwitch(
         node.fullName,
         _bindLoopVariable(node.root, argument, depth) as Switch,
         _bindLoopVariable(node.arguments, argument, depth) as DynamicMap,
+        _bindLoopVariable(node.widgetBuilderScope, argument, depth) as DynamicMap,
         node.initialState,
-      );
+      )..propagateSource(node);
     }
     if (node is LoopReference) {
       if (node.loop == depth) {
-        return node.bind(argument);
+        return node.bind(argument)..propagateSource(node);
       }
       return node;
     }
     if (node is BoundArgsReference) {
-      return BoundArgsReference(_bindLoopVariable(node.arguments, argument, depth), node.parts);
+      return BoundArgsReference(_bindLoopVariable(node.arguments, argument, depth), node.parts)
+        ..propagateSource(node);
     }
     if (node is EventHandler) {
-      return EventHandler(node.eventName, _bindLoopVariable(node.eventArguments, argument, depth) as DynamicMap);
+      return EventHandler(node.eventName, _bindLoopVariable(node.eventArguments, argument, depth) as DynamicMap)
+        ..propagateSource(node);
     }
     if (node is SetStateHandler) {
-      return SetStateHandler(node.stateReference, _bindLoopVariable(node.value, argument, depth));
+      return SetStateHandler(node.stateReference, _bindLoopVariable(node.value, argument, depth))
+        ..propagateSource(node);
     }
     return node;
   }
@@ -532,7 +756,13 @@ abstract class _CurriedWidget extends BlobNode {
   //
   // TODO(ianh): This really should have some sort of caching. Right now, evaluating a whole list
   // ends up being around O(N^2) since we have to walk the list from the start for every entry.
-  static _ResolvedDynamicList _listLookup(DynamicList list, int targetEffectiveIndex, _StateResolverCallback stateResolver, _DataResolverCallback dataResolver) {
+  static _ResolvedDynamicList _listLookup(
+    DynamicList list,
+    int targetEffectiveIndex,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
+  ) {
     int currentIndex = 0; // where we are in `list` (some entries of which might represent multiple values, because they are themselves loops)
     int effectiveIndex = 0; // where we are in the fully expanded list (the coordinate space in which we're aiming for `targetEffectiveIndex`)
     while ((effectiveIndex <= targetEffectiveIndex || targetEffectiveIndex < 0) && currentIndex < list.length) {
@@ -541,22 +771,46 @@ abstract class _CurriedWidget extends BlobNode {
         Object inputList = node.input;
         while (inputList is! DynamicList) {
           if (inputList is BoundArgsReference) {
-            inputList = _resolveFrom(inputList.arguments, inputList.parts, stateResolver, dataResolver);
+            inputList = _resolveFrom(
+              inputList.arguments,
+              inputList.parts,
+              stateResolver,
+              dataResolver,
+              widgetBuilderArgResolver,
+            );
           } else if (inputList is DataReference) {
             inputList = dataResolver(inputList.parts);
           } else if (inputList is BoundStateReference) {
             inputList = stateResolver(inputList.parts, inputList.depth);
           } else if (inputList is BoundLoopReference) {
-            inputList = _resolveFrom(inputList.value, inputList.parts, stateResolver, dataResolver);
+            inputList = _resolveFrom(
+              inputList.value,
+              inputList.parts,
+              stateResolver,
+              dataResolver,
+              widgetBuilderArgResolver,
+            );
           } else if (inputList is Switch) {
-            inputList = _resolveFrom(inputList, const <Object>[], stateResolver, dataResolver);
+            inputList = _resolveFrom(
+              inputList,
+              const <Object>[],
+              stateResolver,
+              dataResolver,
+              widgetBuilderArgResolver,
+            );
           } else {
             // e.g. it's a map or something else that isn't indexable
             inputList = DynamicList.empty();
           }
           assert(inputList is! _ResolvedDynamicList);
         }
-        final _ResolvedDynamicList entry = _listLookup(inputList, targetEffectiveIndex >= 0 ? targetEffectiveIndex - effectiveIndex : -1, stateResolver, dataResolver);
+        final _ResolvedDynamicList entry = _listLookup(
+          inputList,
+          targetEffectiveIndex >= 0 ? targetEffectiveIndex - effectiveIndex : -1,
+          stateResolver,
+          dataResolver,
+          widgetBuilderArgResolver,
+        );
         if (entry.result != null) {
           final Object boundResult = _bindLoopVariable(node.output, entry.result!, 0);
           return _ResolvedDynamicList(null, boundResult, null);
@@ -573,7 +827,13 @@ abstract class _CurriedWidget extends BlobNode {
     return _ResolvedDynamicList(list, null, effectiveIndex);
   }
 
-  static Object _resolveFrom(Object root, List<Object> parts, _StateResolverCallback stateResolver, _DataResolverCallback dataResolver) {
+  static Object _resolveFrom(
+    Object root,
+    List<Object> parts,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
+  ) {
     int index = 0;
     Object current = root;
     while (true) {
@@ -583,6 +843,9 @@ abstract class _CurriedWidget extends BlobNode {
           index = parts.length;
         }
         current = dataResolver(current.parts);
+        continue;
+      } else if (current is WidgetBuilderArgReference) {
+        current = widgetBuilderArgResolver(<Object>[current.argumentName, ...current.parts]);
         continue;
       } else if (current is BoundArgsReference) {
         List<Object> nextParts = current.parts;
@@ -610,7 +873,13 @@ abstract class _CurriedWidget extends BlobNode {
         index = 0;
         continue;
       } else if (current is Switch) {
-        final Object key = _resolveFrom(current.input, const <Object>[], stateResolver, dataResolver);
+        final Object key = _resolveFrom(
+          current.input,
+          const <Object>[],
+          stateResolver,
+          dataResolver,
+          widgetBuilderArgResolver,
+        );
         Object? value = current.outputs[key];
         if (value == null) {
           value = current.outputs[null];
@@ -624,9 +893,15 @@ abstract class _CurriedWidget extends BlobNode {
         // We've reached the end of the line.
         // We handle some special leaf cases that still need processing before we return.
         if (current is EventHandler) {
-          current = EventHandler(current.eventName, _fix(current.eventArguments, stateResolver, dataResolver) as DynamicMap);
+          current = EventHandler(
+            current.eventName,
+            _fix(current.eventArguments, stateResolver, dataResolver, widgetBuilderArgResolver) as DynamicMap,
+          );
         } else if (current is SetStateHandler) {
-          current = SetStateHandler(current.stateReference, _fix(current.value, stateResolver, dataResolver));
+          current = SetStateHandler(
+            current.stateReference,
+            _fix(current.value, stateResolver, dataResolver, widgetBuilderArgResolver),
+          );
         }
         // else `current` is nothing special, and we'll just return it below.
         break; // This is where the loop ends.
@@ -642,7 +917,13 @@ abstract class _CurriedWidget extends BlobNode {
         if (parts[index] is! int) {
           return missing;
         }
-        current = _listLookup(current, parts[index] as int, stateResolver, dataResolver).result ?? missing;
+        current = _listLookup(
+          current,
+          parts[index] as int,
+          stateResolver,
+          dataResolver,
+          widgetBuilderArgResolver,
+        ).result ?? missing;
       } else {
         assert(current is! ArgsReference);
         assert(current is! StateReference);
@@ -657,27 +938,60 @@ abstract class _CurriedWidget extends BlobNode {
     return current;
   }
 
-  static Object _fix(Object root, _StateResolverCallback stateResolver, _DataResolverCallback dataResolver) {
+  static Object _fix(
+    Object root,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
+  ) {
     if (root is DynamicMap) {
-      return root.map((String key, Object? value) => MapEntry<String, Object?>(key, _fix(root[key]!, stateResolver, dataResolver)));
+      return root.map((String key, Object? value) =>
+        MapEntry<String, Object?>(
+          key,
+          _fix(root[key]!, stateResolver, dataResolver, widgetBuilderArgResolver),
+        ),
+      );
     } else if (root is DynamicList) {
       if (root.any((Object? entry) => entry is Loop)) {
-        final int length = _listLookup(root, -1, stateResolver, dataResolver).length!;
-        return DynamicList.generate(length, (int index) => _fix(_listLookup(root, index, stateResolver, dataResolver).result!, stateResolver, dataResolver));
+        final int length = _listLookup(
+          root,
+          -1,
+          stateResolver,
+          dataResolver,
+          widgetBuilderArgResolver,
+        ).length!;
+        return DynamicList.generate(
+          length,
+          (int index) => _fix(
+            _listLookup(root, index, stateResolver, dataResolver, widgetBuilderArgResolver).result!, 
+            stateResolver,
+            dataResolver,
+            widgetBuilderArgResolver,
+          ),
+        );
       } else {
-        return DynamicList.generate(root.length, (int index) => _fix(root[index]!, stateResolver, dataResolver));
+        return DynamicList.generate(
+          root.length,
+          (int index) => _fix(root[index]!, stateResolver, dataResolver, widgetBuilderArgResolver),
+        );
       }
     } else if (root is BlobNode) {
-      return _resolveFrom(root, const <Object>[], stateResolver, dataResolver);
+      return _resolveFrom(root, const <Object>[], stateResolver, dataResolver, widgetBuilderArgResolver);
     } else {
       return root;
     }
   }
 
-  Object resolve(List<Object> parts, _StateResolverCallback stateResolver, _DataResolverCallback dataResolver, { required bool expandLists }) {
-    Object result = _resolveFrom(arguments, parts, stateResolver, dataResolver);
+  Object resolve(
+    List<Object> parts,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver, {
+    required bool expandLists,
+  }) {
+    Object result = _resolveFrom(arguments, parts, stateResolver, dataResolver, widgetBuilderArgResolver);
     if (result is DynamicList && expandLists) {
-      result = _listLookup(result, -1, stateResolver, dataResolver);
+      result = _listLookup(result, -1, stateResolver, dataResolver, widgetBuilderArgResolver);
     }
     assert(result is! Reference);
     assert(result is! Switch);
@@ -685,38 +999,92 @@ abstract class _CurriedWidget extends BlobNode {
     return result;
   }
 
-  Widget build(BuildContext context, DynamicContent data, RemoteEventHandler remoteEventTarget, List<_WidgetState> states) {
-    return _Widget(curriedWidget: this, data: data, remoteEventTarget: remoteEventTarget, states: states);
+  Widget build(
+    BuildContext context,
+    DynamicContent data,
+    RemoteEventHandler remoteEventTarget,
+    List<_WidgetState> states,
+  ) {
+    return _Widget(
+      curriedWidget: this,
+      data: data,
+      widgetBuilderScope: DynamicContent(widgetBuilderScope),
+      remoteEventTarget: remoteEventTarget,
+      states: states,
+    );
   }
 
-  Widget buildChild(BuildContext context, DataSource source, DynamicContent data, RemoteEventHandler remoteEventTarget, List<_WidgetState> states, _StateResolverCallback stateResolver, _DataResolverCallback dataResolver);
+  Widget buildChild(
+    BuildContext context,
+    DataSource source,
+    DynamicContent data,
+    RemoteEventHandler remoteEventTarget,
+    List<_WidgetState> states,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
+  );
 
   @override
   String toString() => '$fullName ${initialState ?? "{}"} $arguments';
 }
 
 class _CurriedLocalWidget extends _CurriedWidget {
-  const _CurriedLocalWidget(FullyQualifiedWidgetName fullName, this.child, DynamicMap arguments) : super(fullName, arguments, null);
+  const _CurriedLocalWidget(
+    FullyQualifiedWidgetName fullName,
+    this.child,
+    DynamicMap arguments,
+    DynamicMap widgetBuilderScope,
+ ) : super(fullName, arguments, widgetBuilderScope, null);
 
   factory _CurriedLocalWidget.error(FullyQualifiedWidgetName fullName, String message) {
-    return _CurriedLocalWidget(fullName, (BuildContext context, DataSource data) => _buildErrorWidget(message), const <String, Object?>{});
+    return _CurriedLocalWidget(
+      fullName,
+      (BuildContext context, DataSource data) => _buildErrorWidget(message),
+      const <String, Object?>{},
+      const <String, Object?>{},
+    );
   }
 
   final LocalWidgetBuilder child;
 
   @override
-  Widget buildChild(BuildContext context, DataSource source, DynamicContent data, RemoteEventHandler remoteEventTarget, List<_WidgetState> states,  _StateResolverCallback stateResolver, _DataResolverCallback dataResolver) {
+  Widget buildChild(
+    BuildContext context,
+    DataSource source,
+    DynamicContent data,
+    RemoteEventHandler remoteEventTarget,
+    List<_WidgetState> states,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
+   ) {
     return child(context, source);
   }
 }
 
 class _CurriedRemoteWidget extends _CurriedWidget {
-  const _CurriedRemoteWidget(FullyQualifiedWidgetName fullName, this.child, DynamicMap arguments, DynamicMap? initialState) : super(fullName, arguments, initialState);
+  const _CurriedRemoteWidget(
+    FullyQualifiedWidgetName fullName,
+    this.child,
+    DynamicMap arguments,
+    DynamicMap widgetBuilderScope,
+    DynamicMap? initialState,
+  ) : super(fullName, arguments, widgetBuilderScope, initialState);
 
   final _CurriedWidget child;
 
   @override
-  Widget buildChild(BuildContext context, DataSource source, DynamicContent data, RemoteEventHandler remoteEventTarget, List<_WidgetState> states,  _StateResolverCallback stateResolver, _DataResolverCallback dataResolver) {
+  Widget buildChild(
+    BuildContext context,
+    DataSource source,
+    DynamicContent data,
+    RemoteEventHandler remoteEventTarget,
+    List<_WidgetState> states,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
+  ) {
     return child.build(context, data, remoteEventTarget, states);
   }
 
@@ -725,13 +1093,34 @@ class _CurriedRemoteWidget extends _CurriedWidget {
 }
 
 class _CurriedSwitch extends _CurriedWidget {
-  const _CurriedSwitch(FullyQualifiedWidgetName fullName, this.root, DynamicMap arguments, DynamicMap? initialState) : super(fullName, arguments, initialState);
+  const _CurriedSwitch(
+    FullyQualifiedWidgetName fullName,
+    this.root,
+    DynamicMap arguments,
+    DynamicMap widgetBuilderScope,
+    DynamicMap? initialState,
+  ) : super(fullName, arguments, widgetBuilderScope, initialState);
 
   final Switch root;
 
   @override
-  Widget buildChild(BuildContext context, DataSource source, DynamicContent data, RemoteEventHandler remoteEventTarget, List<_WidgetState> states,  _StateResolverCallback stateResolver, _DataResolverCallback dataResolver) {
-    final Object resolvedWidget = _CurriedWidget._resolveFrom(root, const <Object>[], stateResolver, dataResolver);
+  Widget buildChild(
+    BuildContext context,
+    DataSource source,
+    DynamicContent data,
+    RemoteEventHandler remoteEventTarget,
+    List<_WidgetState> states,
+    _StateResolverCallback stateResolver,
+    _DataResolverCallback dataResolver,
+    _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
+  ) {
+    final Object resolvedWidget = _CurriedWidget._resolveFrom(
+      root,
+      const <Object>[],
+      stateResolver,
+      dataResolver,
+      widgetBuilderArgResolver,
+    );
     if (resolvedWidget is _CurriedWidget) {
       return resolvedWidget.build(context, data, remoteEventTarget, states);
     }
@@ -743,11 +1132,19 @@ class _CurriedSwitch extends _CurriedWidget {
 }
 
 class _Widget extends StatefulWidget {
-  const _Widget({ required this.curriedWidget, required this.data, required this.remoteEventTarget, required this.states });
+  const _Widget({
+    required this.curriedWidget,
+    required this.data,
+    required this.widgetBuilderScope,
+    required this.remoteEventTarget,
+    required this.states,
+ });
 
   final _CurriedWidget curriedWidget;
 
   final DynamicContent data;
+
+  final DynamicContent widgetBuilderScope;
 
   final RemoteEventHandler remoteEventTarget;
 
@@ -931,6 +1328,36 @@ class _WidgetState extends State<_Widget> implements DataSource {
     ];
   }
 
+	@override
+  Widget builder(List<Object> argsKey, DynamicMap builderArg) {
+    return _fetchBuilder(argsKey, builderArg, optional: false)!;
+  }
+
+  @override
+  Widget? optionalBuilder(List<Object> argsKey, DynamicMap builderArg) {
+    return _fetchBuilder(argsKey, builderArg);
+  }
+
+  Widget? _fetchBuilder(
+    List<Object> argsKey,
+    DynamicMap builderArg, {
+    bool optional = true,
+  }) {
+    final Object value = _fetch(argsKey, expandLists: false);
+    if (value is _RemoteWidgetBuilder) {
+      final _CurriedWidget curriedWidget = value(builderArg);
+      return curriedWidget.build(
+        context,
+        widget.data,
+        widget.remoteEventTarget,
+        widget.states,
+      );
+    }
+    return optional
+      ? null
+      : _buildErrorWidget('Not a builder at $argsKey (got $value) for ${widget.curriedWidget.fullName}.');
+  }
+
   @override
   VoidCallback? voidHandler(List<Object> argsKey, [ DynamicMap? extraArguments ]) {
     return handler<VoidCallback>(argsKey, (HandlerTrigger callback) => () => callback(extraArguments));
@@ -981,7 +1408,13 @@ class _WidgetState extends State<_Widget> implements DataSource {
     assert(!_debugFetching);
     try {
       _debugFetching = true;
-      final Object result = widget.curriedWidget.resolve(argsKey, _stateResolver, _dataResolver, expandLists: expandLists);
+      final Object result = widget.curriedWidget.resolve(
+        argsKey,
+        _stateResolver,
+        _dataResolver,
+        _widgetBuilderArgResolver,
+        expandLists: expandLists,
+      );
       for (final _Subscription subscription in _dependencies) {
         subscription.addClient(key);
       }
@@ -1008,6 +1441,17 @@ class _WidgetState extends State<_Widget> implements DataSource {
     } else {
       subscription = _subscriptions[dataKey]!;
     }
+    _dependencies.add(subscription);
+    return subscription.value;
+  }
+
+  Object _widgetBuilderArgResolver(List<Object> rawDataKey) {
+    final _Key widgetBuilderArgKey = _Key(_kWidgetBuilderArgSection, rawDataKey);
+    final _Subscription subscription = _subscriptions[widgetBuilderArgKey] ??= _Subscription(
+      widget.widgetBuilderScope,
+      this,
+      rawDataKey,
+    );
     _dependencies.add(subscription);
     return subscription.value;
   }
@@ -1043,7 +1487,16 @@ class _WidgetState extends State<_Widget> implements DataSource {
   @override
   Widget build(BuildContext context) {
     // TODO(ianh): what if this creates some _dependencies?
-    return widget.curriedWidget.buildChild(context, this, widget.data, widget.remoteEventTarget, _states, _stateResolver, _dataResolver);
+    return widget.curriedWidget.buildChild(
+      context,
+      this,
+      widget.data,
+      widget.remoteEventTarget,
+      _states,
+      _stateResolver,
+      _dataResolver,
+      _widgetBuilderArgResolver,
+    );
   }
 
   @override
@@ -1055,6 +1508,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
 
 const int _kDataSection = -1;
 const int _kArgsSection = -2;
+const int _kWidgetBuilderArgSection = -3;
 
 @immutable
 class _Key {
@@ -1105,11 +1559,12 @@ class _Subscription {
   }
 }
 
-ErrorWidget _buildErrorWidget(String message) {
-  FlutterError.reportError(FlutterErrorDetails(
+Widget _buildErrorWidget(String message) {
+  final FlutterErrorDetails detail = FlutterErrorDetails(
     exception: message,
     stack: StackTrace.current,
     library: 'Remote Flutter Widgets',
-  ));
-  return ErrorWidget(message);
+  );
+  FlutterError.reportError(detail);
+  return ErrorWidget.builder(detail);
 }

@@ -18,6 +18,7 @@ void main() {
         redirect: (_, __) => '/',
       ),
     );
+    addTearDown(config.dispose);
     final GoRouter router = await createRouterWithRoutingConfig(config, tester);
     expect(find.text('home'), findsOneWidget);
 
@@ -35,6 +36,7 @@ void main() {
         ],
       ),
     );
+    addTearDown(config.dispose);
     await createRouterWithRoutingConfig(config, tester);
     expect(find.text('home'), findsOneWidget);
 
@@ -56,6 +58,7 @@ void main() {
         ],
       ),
     );
+    addTearDown(config.dispose);
     final GoRouter router = await createRouterWithRoutingConfig(
       config,
       tester,
@@ -87,6 +90,7 @@ void main() {
         ],
       ),
     );
+    addTearDown(config.dispose);
     final GoRouter router = await createRouterWithRoutingConfig(
       config,
       tester,
@@ -105,5 +109,51 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('error'), findsOneWidget);
+  });
+
+  testWidgets('routing config works with named route',
+      (WidgetTester tester) async {
+    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+      RoutingConfig(
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, __) => const Text('home')),
+          GoRoute(
+              path: '/abc',
+              name: 'abc',
+              builder: (_, __) => const Text('/abc')),
+        ],
+      ),
+    );
+    addTearDown(config.dispose);
+    final GoRouter router = await createRouterWithRoutingConfig(
+      config,
+      tester,
+      errorBuilder: (_, __) => const Text('error'),
+    );
+
+    expect(find.text('home'), findsOneWidget);
+    // Sanity check.
+    router.goNamed('abc');
+    await tester.pumpAndSettle();
+    expect(find.text('/abc'), findsOneWidget);
+
+    config.value = RoutingConfig(
+      routes: <RouteBase>[
+        GoRoute(
+            path: '/', name: 'home', builder: (_, __) => const Text('home')),
+        GoRoute(
+            path: '/abc', name: 'def', builder: (_, __) => const Text('def')),
+      ],
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('def'), findsOneWidget);
+
+    router.goNamed('home');
+    await tester.pumpAndSettle();
+    expect(find.text('home'), findsOneWidget);
+
+    router.goNamed('def');
+    await tester.pumpAndSettle();
+    expect(find.text('def'), findsOneWidget);
   });
 }

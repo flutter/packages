@@ -84,9 +84,9 @@
 - (void)testFLTGetUIDeviceOrientationForString {
   XCTAssertEqual(UIDeviceOrientationPortraitUpsideDown,
                  FLTGetUIDeviceOrientationForString(@"portraitDown"));
-  XCTAssertEqual(UIDeviceOrientationLandscapeRight,
-                 FLTGetUIDeviceOrientationForString(@"landscapeLeft"));
   XCTAssertEqual(UIDeviceOrientationLandscapeLeft,
+                 FLTGetUIDeviceOrientationForString(@"landscapeLeft"));
+  XCTAssertEqual(UIDeviceOrientationLandscapeRight,
                  FLTGetUIDeviceOrientationForString(@"landscapeRight"));
   XCTAssertEqual(UIDeviceOrientationPortrait, FLTGetUIDeviceOrientationForString(@"portraitUp"));
   XCTAssertEqual(UIDeviceOrientationUnknown, FLTGetUIDeviceOrientationForString(@"unknown"));
@@ -96,12 +96,20 @@
   XCTAssertEqualObjects(@"portraitDown",
                         FLTGetStringForUIDeviceOrientation(UIDeviceOrientationPortraitUpsideDown));
   XCTAssertEqualObjects(@"landscapeLeft",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationLandscapeRight));
-  XCTAssertEqualObjects(@"landscapeRight",
                         FLTGetStringForUIDeviceOrientation(UIDeviceOrientationLandscapeLeft));
+  XCTAssertEqualObjects(@"landscapeRight",
+                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationLandscapeRight));
   XCTAssertEqualObjects(@"portraitUp",
                         FLTGetStringForUIDeviceOrientation(UIDeviceOrientationPortrait));
   XCTAssertEqualObjects(@"portraitUp", FLTGetStringForUIDeviceOrientation(-1));
+}
+
+#pragma mark - file format tests
+
+- (void)testFLTGetFileFormatForString {
+  XCTAssertEqual(FCPFileFormatJPEG, FCPGetFileFormatFromString(@"jpg"));
+  XCTAssertEqual(FCPFileFormatHEIF, FCPGetFileFormatFromString(@"heif"));
+  XCTAssertEqual(FCPFileFormatInvalid, FCPGetFileFormatFromString(@"unknown"));
 }
 
 @end

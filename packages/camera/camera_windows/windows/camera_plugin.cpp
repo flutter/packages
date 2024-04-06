@@ -402,19 +402,24 @@ void CameraPlugin::CreateMethodHandler(
     }
 
     const auto* fps_argument = std::get_if<int>(ValueOrNull(args, kFpsKey));
-    int fps = fps_argument ? *fps_argument : -1;
-
     const auto* video_bitrate_argument =
         std::get_if<int>(ValueOrNull(args, kVideoBitrateKey));
-    int video_bitrate = video_bitrate_argument ? *video_bitrate_argument : -1;
-
     const auto* audio_bitrate_argument =
         std::get_if<int>(ValueOrNull(args, kAudioBitrateKey));
-    int audio_bitrate = audio_bitrate_argument ? *audio_bitrate_argument : -1;
+
+    RecordSettings record_settings;
+    record_settings.record_audio = *record_audio;
+    record_settings.fps =
+        fps_argument ? std::make_optional(*fps_argument) : std::nullopt;
+    record_settings.video_bitrate =
+        video_bitrate_argument ? std::make_optional(*video_bitrate_argument)
+                               : std::nullopt;
+    record_settings.audio_bitrate =
+        audio_bitrate_argument ? std::make_optional(*audio_bitrate_argument)
+                               : std::nullopt;
 
     bool initialized = camera->InitCamera(texture_registrar_, messenger_,
-                                          *record_audio, resolution_preset, fps,
-                                          video_bitrate, audio_bitrate);
+                                          resolution_preset, record_settings);
     if (initialized) {
       cameras_.push_back(std::move(camera));
     }

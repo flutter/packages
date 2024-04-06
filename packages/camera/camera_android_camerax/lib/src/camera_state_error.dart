@@ -39,30 +39,23 @@ class CameraStateError extends JavaObject {
       case CameraState.errorCameraInUse:
         description =
             'The camera was already in use, possibly by a higher-priority camera client.';
-        break;
       case CameraState.errorMaxCamerasInUse:
         description =
             'The limit number of open cameras has been reached, and more cameras cannot be opened until other instances are closed.';
-        break;
       case CameraState.errorOtherRecoverableError:
         description =
             'The camera device has encountered a recoverable error. CameraX will attempt to recover from the error.';
-        break;
       case CameraState.errorStreamConfig:
         description = 'Configuring the camera has failed.';
-        break;
       case CameraState.errorCameraDisabled:
         description =
             'The camera device could not be opened due to a device policy. Thia may be caused by a client from a background process attempting to open the camera.';
-        break;
       case CameraState.errorCameraFatalError:
         description =
             'The camera was closed due to a fatal error. This may require the Android device be shut down and restarted to restore camera function or may indicate a persistent camera hardware problem.';
-        break;
       case CameraState.errorDoNotDisturbModeEnabled:
         description =
             'The camera could not be opened because "Do Not Disturb" mode is enabled. Please disable this mode, and try opening the camera again.';
-        break;
       default:
         description =
             'There was an unspecified issue with the current camera state.';

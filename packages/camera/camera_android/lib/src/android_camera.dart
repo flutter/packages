@@ -92,21 +92,37 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
+  Future<int> createCamera(
+    CameraDescription cameraDescription,
+    ResolutionPreset? resolutionPreset, {
+    bool enableAudio = false,
+  }) =>
+      createCameraWithSettings(
+          cameraDescription,
+          MediaSettings(
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+          ));
+
+  @override
   Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
     try {
+      final ResolutionPreset? resolutionPreset =
+          mediaSettings?.resolutionPreset;
+
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': null != mediaSettings?.resolutionPreset
-            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
+        'resolutionPreset': resolutionPreset != null
+            ? _serializeResolutionPreset(resolutionPreset)
             : null,
         'fps': mediaSettings?.fps,
         'videoBitrate': mediaSettings?.videoBitrate,
         'audioBitrate': mediaSettings?.audioBitrate,
-        'enableAudio': mediaSettings?.enableAudio ?? true,
+        'enableAudio': mediaSettings?.enableAudio ?? false,
       });
 
       return reply!['cameraId']! as int;
@@ -310,7 +326,7 @@ class AndroidCamera extends CameraPlatform {
   }
 
   StreamController<CameraImageData> _installStreamController(
-      {Function()? onListen}) {
+      {void Function()? onListen}) {
     _frameStreamController = StreamController<CameraImageData>(
       onListen: onListen ?? () {},
       onPause: _onFrameStreamPauseResume,
@@ -576,7 +592,6 @@ class AndroidCamera extends CameraPlatform {
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _deviceEventStreamController.add(DeviceOrientationChangedEvent(
             deserializeDeviceOrientation(arguments['orientation']! as String)));
-        break;
       default:
         throw MissingPluginException();
     }
@@ -600,7 +615,6 @@ class AndroidCamera extends CameraPlatform {
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
         ));
-        break;
       case 'resolution_changed':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         cameraEventStreamController.add(CameraResolutionChangedEvent(
@@ -608,12 +622,10 @@ class AndroidCamera extends CameraPlatform {
           arguments['captureWidth']! as double,
           arguments['captureHeight']! as double,
         ));
-        break;
       case 'camera_closing':
         cameraEventStreamController.add(CameraClosingEvent(
           cameraId,
         ));
-        break;
       case 'video_recorded':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         cameraEventStreamController.add(VideoRecordedEvent(
@@ -623,14 +635,12 @@ class AndroidCamera extends CameraPlatform {
               ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
               : null,
         ));
-        break;
       case 'error':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         cameraEventStreamController.add(CameraErrorEvent(
           cameraId,
           arguments['description']! as String,
         ));
-        break;
       default:
         throw MissingPluginException();
     }

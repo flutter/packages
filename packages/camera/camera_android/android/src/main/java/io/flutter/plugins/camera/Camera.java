@@ -36,6 +36,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import io.flutter.BuildConfig;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
@@ -54,7 +55,6 @@ import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
-import io.flutter.plugins.camera.features.intfeature.IntFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
@@ -114,8 +114,7 @@ class Camera
   private int initialCameraFacing;
 
   private final SurfaceTextureEntry flutterTexture;
-  private final ResolutionPreset resolutionPreset;
-  private final boolean enableAudio;
+  private final VideoCaptureSettings videoCaptureSettings;
   private final Context applicationContext;
   final DartMessenger dartMessenger;
   private CameraProperties cameraProperties;
@@ -188,47 +187,79 @@ class Camera
     }
   }
 
+  public static class VideoCaptureSettings {
+    @NonNull public final ResolutionPreset resolutionPreset;
+    public final boolean enableAudio;
+    @Nullable public final Integer fps;
+    @Nullable public final Integer videoBitrate;
+    @Nullable public final Integer audioBitrate;
+
+    public VideoCaptureSettings(
+        @NonNull ResolutionPreset resolutionPreset,
+        boolean enableAudio,
+        @Nullable Integer fps,
+        @Nullable Integer videoBitrate,
+        @Nullable Integer audioBitrate) {
+      this.resolutionPreset = resolutionPreset;
+      this.enableAudio = enableAudio;
+      this.fps = fps;
+      this.videoBitrate = videoBitrate;
+      this.audioBitrate = audioBitrate;
+    }
+
+    public VideoCaptureSettings(@NonNull ResolutionPreset resolutionPreset, boolean enableAudio) {
+      this(resolutionPreset, enableAudio, null, null, null);
+    }
+  }
+
   public Camera(
       final Activity activity,
       final SurfaceTextureEntry flutterTexture,
       final CameraFeatureFactory cameraFeatureFactory,
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
-      final ResolutionPreset resolutionPreset,
-      final boolean enableAudio,
-      final Integer fps,
-      final Integer videoBitrate,
-      final Integer audioBitrate) {
+      final VideoCaptureSettings videoCaptureSettings) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
     }
     this.activity = activity;
-    this.enableAudio = enableAudio;
     this.flutterTexture = flutterTexture;
     this.dartMessenger = dartMessenger;
     this.applicationContext = activity.getApplicationContext();
     this.cameraProperties = cameraProperties;
     this.cameraFeatureFactory = cameraFeatureFactory;
-    this.resolutionPreset = resolutionPreset;
+    this.videoCaptureSettings = videoCaptureSettings;
     this.cameraFeatures =
         CameraFeatures.init(
-            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
+            cameraFeatureFactory,
+            cameraProperties,
+            activity,
+            dartMessenger,
+            videoCaptureSettings.resolutionPreset);
 
-    if (null != fps && 0 < fps.intValue()) {
+    Integer recordingFps = null;
+
+    if (videoCaptureSettings.fps != null && videoCaptureSettings.fps.intValue() > 0) {
+      recordingFps = videoCaptureSettings.fps;
+    } else {
+
+      if (SdkCapabilityChecker.supportsEncoderProfiles()) {
+        EncoderProfiles encoderProfiles = getRecordingProfile();
+        if (encoderProfiles != null && encoderProfiles.getVideoProfiles().size() > 0) {
+          recordingFps = encoderProfiles.getVideoProfiles().get(0).getFrameRate();
+        }
+      } else {
+        CamcorderProfile camcorderProfile = getRecordingProfileLegacy();
+        recordingFps = null != camcorderProfile ? camcorderProfile.videoFrameRate : null;
+      }
+    }
+
+    if (recordingFps != null && recordingFps.intValue() > 0) {
+
       final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
-      fpsRange.setValue(new Range<>(fps, fps));
+      fpsRange.setValue(new Range<Integer>(recordingFps, recordingFps));
       this.cameraFeatures.setFpsRange(fpsRange);
-
-      this.cameraFeatures.setFps(new IntFeature(cameraProperties, fps));
-    }
-
-    if (null != videoBitrate && 0 < videoBitrate.intValue()) {
-      this.cameraFeatures.setVideoBitrate(new IntFeature(cameraProperties, videoBitrate));
-    }
-
-    if (null != audioBitrate && 0 < audioBitrate.intValue()) {
-      this.cameraFeatures.setAudioBitrate(new IntFeature(cameraProperties, audioBitrate));
     }
 
     // Create capture callback.
@@ -278,24 +309,29 @@ class Camera
 
     // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is null
     // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
-    EncoderProfiles recordingProfile = getRecordingProfile();
-    if (SdkCapabilityChecker.supportsEncoderProfiles() && recordingProfile != null) {
+    if (SdkCapabilityChecker.supportsEncoderProfiles() && getRecordingProfile() != null) {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
-              recordingProfile, outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate());
+              getRecordingProfile(),
+              new MediaRecorderBuilder.RecordingParameters(
+                  outputFilePath,
+                  videoCaptureSettings.fps,
+                  videoCaptureSettings.videoBitrate,
+                  videoCaptureSettings.audioBitrate));
     } else {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
               getRecordingProfileLegacy(),
-              outputFilePath,
-              getFps(),
-              getVideoBitrate(),
-              getAudioBitrate());
+              new MediaRecorderBuilder.RecordingParameters(
+                  outputFilePath,
+                  videoCaptureSettings.fps,
+                  videoCaptureSettings.videoBitrate,
+                  videoCaptureSettings.audioBitrate));
     }
 
     mediaRecorder =
         mediaRecorderBuilder
-            .setEnableAudio(enableAudio)
+            .setEnableAudio(videoCaptureSettings.enableAudio)
             .setMediaOrientation(
                 lockedOrientation == null
                     ? getDeviceOrientationManager().getVideoOrientation()
@@ -1056,21 +1092,6 @@ class Camera
     return cameraFeatures.getResolution().getRecordingProfile();
   }
 
-  Integer getFps() {
-    IntFeature fpsFeature = cameraFeatures.getFps();
-    return fpsFeature == null ? null : fpsFeature.getValue();
-  }
-
-  Integer getVideoBitrate() {
-    IntFeature videoBitrateFeature = cameraFeatures.getVideoBitrate();
-    return videoBitrateFeature == null ? null : videoBitrateFeature.getValue();
-  }
-
-  Integer getAudioBitrate() {
-    IntFeature audioBitrateFeature = cameraFeatures.getAudioBitrate();
-    return audioBitrateFeature == null ? null : audioBitrateFeature.getValue();
-  }
-
   /** Shortut to get deviceOrientationListener. */
   DeviceOrientationManager getDeviceOrientationManager() {
     return cameraFeatures.getSensorOrientation().getDeviceOrientationManager();
@@ -1125,7 +1146,7 @@ class Camera
     if (!this.pausedPreview) {
       this.pausedPreview = true;
 
-      if (null != this.captureSession) {
+      if (this.captureSession != null) {
         this.captureSession.stopRepeating();
       }
     }
@@ -1360,7 +1381,11 @@ class Camera
     cameraProperties = properties;
     cameraFeatures =
         CameraFeatures.init(
-            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
+            cameraFeatureFactory,
+            cameraProperties,
+            activity,
+            dartMessenger,
+            videoCaptureSettings.resolutionPreset);
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     try {

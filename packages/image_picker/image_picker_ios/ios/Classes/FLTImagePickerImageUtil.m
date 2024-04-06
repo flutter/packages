@@ -28,6 +28,20 @@
 
 @implementation FLTImagePickerImageUtil : NSObject
 
+static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double width, double height) {
+  UIGraphicsImageRenderer *imageRenderer =
+      [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(width, height)
+                                             format:imageToScale.imageRendererFormat];
+  return [imageRenderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    CGContextRef cgContext = rendererContext.CGContext;
+
+    // Flip vertically to translate between UIKit and Quartz.
+    CGContextTranslateCTM(cgContext, 0, height);
+    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextDrawImage(cgContext, CGRectMake(0, 0, width, height), imageToScale.CGImage);
+  }];
+}
+
 + (UIImage *)scaledImage:(UIImage *)image
                 maxWidth:(NSNumber *)maxWidth
                maxHeight:(NSNumber *)maxHeight
@@ -35,38 +49,33 @@
   double originalWidth = image.size.width;
   double originalHeight = image.size.height;
 
-  bool hasMaxWidth = maxWidth != nil;
-  bool hasMaxHeight = maxHeight != nil;
+  BOOL hasMaxWidth = maxWidth != nil;
+  BOOL hasMaxHeight = maxHeight != nil;
 
-  double width = hasMaxWidth ? MIN([maxWidth doubleValue], originalWidth) : originalWidth;
-  double height = hasMaxHeight ? MIN([maxHeight doubleValue], originalHeight) : originalHeight;
+  if ((originalWidth == maxWidth.doubleValue && originalHeight == maxHeight.doubleValue) ||
+      (!hasMaxWidth && !hasMaxHeight)) {
+    // Nothing to scale.
+    return image;
+  }
+
+  double aspectRatio = originalWidth / originalHeight;
+
+  double width = hasMaxWidth ? MIN(round([maxWidth doubleValue]), originalWidth) : originalWidth;
+  double height =
+      hasMaxHeight ? MIN(round([maxHeight doubleValue]), originalHeight) : originalHeight;
 
   bool shouldDownscaleWidth = hasMaxWidth && [maxWidth doubleValue] < originalWidth;
   bool shouldDownscaleHeight = hasMaxHeight && [maxHeight doubleValue] < originalHeight;
   bool shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight;
 
   if (shouldDownscale) {
-    double downscaledWidth = floor((height / originalHeight) * originalWidth);
-    double downscaledHeight = floor((width / originalWidth) * originalHeight);
+    double widthForMaxHeight = height * aspectRatio;
+    double heightForMaxWidth = width / aspectRatio;
 
-    if (width < height) {
-      if (!hasMaxWidth) {
-        width = downscaledWidth;
-      } else {
-        height = downscaledHeight;
-      }
-    } else if (height < width) {
-      if (!hasMaxHeight) {
-        height = downscaledHeight;
-      } else {
-        width = downscaledWidth;
-      }
+    if (heightForMaxWidth > height) {
+      width = round(widthForMaxHeight);
     } else {
-      if (originalWidth < originalHeight) {
-        width = downscaledWidth;
-      } else if (originalHeight < originalWidth) {
-        height = downscaledHeight;
-      }
+      height = round(heightForMaxWidth);
     }
   }
 
@@ -74,13 +83,7 @@
     UIImage *imageToScale = [UIImage imageWithCGImage:image.CGImage
                                                 scale:1
                                           orientation:image.imageOrientation];
-
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), NO, 1.0);
-    [imageToScale drawInRect:CGRectMake(0, 0, width, height)];
-
-    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return scaledImage;
+    return FLTImagePickerDrawScaledImage(imageToScale, width, height);
   }
 
   // Scaling the image always rotate itself based on the current imageOrientation of the original
@@ -103,13 +106,7 @@
     width = height;
     height = temp;
   }
-
-  UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), NO, 1.0);
-  [imageToScale drawInRect:CGRectMake(0, 0, width, height)];
-
-  UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-  UIGraphicsEndImageContext();
-  return scaledImage;
+  return FLTImagePickerDrawScaledImage(imageToScale, width, height);
 }
 
 + (GIFInfo *)scaledGIFImage:(NSData *)data

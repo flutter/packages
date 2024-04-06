@@ -20,49 +20,47 @@
   return self;
 }
 
-- (WKWebsiteDataStore *)websiteDataStoreForIdentifier:(NSNumber *)identifier {
-  return (WKWebsiteDataStore *)[self.instanceManager instanceForIdentifier:identifier.longValue];
+- (WKWebsiteDataStore *)websiteDataStoreForIdentifier:(NSInteger)identifier {
+  return (WKWebsiteDataStore *)[self.instanceManager instanceForIdentifier:identifier];
 }
 
-- (void)createFromWebViewConfigurationWithIdentifier:(nonnull NSNumber *)identifier
-                             configurationIdentifier:(nonnull NSNumber *)configurationIdentifier
+- (void)createFromWebViewConfigurationWithIdentifier:(NSInteger)identifier
+                             configurationIdentifier:(NSInteger)configurationIdentifier
                                                error:(FlutterError *_Nullable *_Nonnull)error {
   WKWebViewConfiguration *configuration = (WKWebViewConfiguration *)[self.instanceManager
-      instanceForIdentifier:configurationIdentifier.longValue];
+      instanceForIdentifier:configurationIdentifier];
   [self.instanceManager addDartCreatedInstance:configuration.websiteDataStore
-                                withIdentifier:identifier.longValue];
+                                withIdentifier:identifier];
 }
 
-- (void)createDefaultDataStoreWithIdentifier:(nonnull NSNumber *)identifier
+- (void)createDefaultDataStoreWithIdentifier:(NSInteger)identifier
                                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
                                                  error {
   [self.instanceManager addDartCreatedInstance:[WKWebsiteDataStore defaultDataStore]
-                                withIdentifier:identifier.longValue];
+                                withIdentifier:identifier];
 }
 
-- (void)
-    removeDataFromDataStoreWithIdentifier:(nonnull NSNumber *)identifier
-                                  ofTypes:
-                                      (nonnull NSArray<FWFWKWebsiteDataTypeEnumData *> *)dataTypes
-                            modifiedSince:(nonnull NSNumber *)modificationTimeInSecondsSinceEpoch
-                               completion:(nonnull void (^)(NSNumber *_Nullable,
-                                                            FlutterError *_Nullable))completion {
+- (void)removeDataFromDataStoreWithIdentifier:(NSInteger)identifier
+                                      ofTypes:(nonnull NSArray<FWFWKWebsiteDataTypeEnumData *> *)
+                                                  dataTypes
+                                modifiedSince:(double)modificationTimeInSecondsSinceEpoch
+                                   completion:
+                                       (nonnull void (^)(NSNumber *_Nullable,
+                                                         FlutterError *_Nullable))completion {
   NSMutableSet<NSString *> *stringDataTypes = [NSMutableSet set];
   for (FWFWKWebsiteDataTypeEnumData *type in dataTypes) {
     [stringDataTypes addObject:FWFNativeWKWebsiteDataTypeFromEnumData(type)];
   }
 
   WKWebsiteDataStore *dataStore = [self websiteDataStoreForIdentifier:identifier];
-  [dataStore
-      fetchDataRecordsOfTypes:stringDataTypes
-            completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-              [dataStore
-                  removeDataOfTypes:stringDataTypes
-                      modifiedSince:[NSDate dateWithTimeIntervalSince1970:
-                                                modificationTimeInSecondsSinceEpoch.doubleValue]
-                  completionHandler:^{
-                    completion([NSNumber numberWithBool:(records.count > 0)], nil);
-                  }];
-            }];
+  [dataStore fetchDataRecordsOfTypes:stringDataTypes
+                   completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+                     [dataStore removeDataOfTypes:stringDataTypes
+                                    modifiedSince:[NSDate dateWithTimeIntervalSince1970:
+                                                              modificationTimeInSecondsSinceEpoch]
+                                completionHandler:^{
+                                  completion([NSNumber numberWithBool:(records.count > 0)], nil);
+                                }];
+                   }];
 }
 @end

@@ -2,22 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html' as html;
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences_platform_interface/method_channel_shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
-
-const Map<String, dynamic> kTestValues = <String, dynamic>{
-  'flutter.String': 'hello world',
-  'flutter.Bool': true,
-  'flutter.Int': 42,
-  'flutter.Double': 3.14159,
-  'flutter.StringList': <String>['foo', 'bar'],
-};
+import 'package:shared_preferences_web/src/keys_extension.dart';
+import 'package:web/web.dart' as html;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -113,6 +105,15 @@ void main() {
     await preferences.setValue('StringList', 'flutter.StringList',
         allTestValues['flutter.StringList']!);
   }
+
+  testWidgets('keys', (WidgetTester _) async {
+    await addData();
+    final Iterable<String> keys = html.window.localStorage.keys;
+    final Iterable<String> expectedKeys = allTestValues.keys;
+
+    expect(keys, hasLength(expectedKeys.length));
+    expect(keys, containsAll(expectedKeys));
+  });
 
   testWidgets('clear', (WidgetTester _) async {
     await addData();

@@ -11,9 +11,9 @@ import 'package:xdg_directories_example/main.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('xdg_directories_demo', (WidgetTester _) async {
+  testWidgets('xdg_directories_demo', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await _.pumpWidget(const MyApp());
+    await tester.pumpWidget(const MyApp());
 
     expect(find.textContaining(dataHome.path), findsWidgets);
     expect(find.textContaining(configHome.path), findsWidgets);

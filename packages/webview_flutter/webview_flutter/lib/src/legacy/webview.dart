@@ -121,10 +121,8 @@ class WebView extends StatefulWidget {
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
           _platform = SurfaceAndroidWebView();
-          break;
         case TargetPlatform.iOS:
           _platform = CupertinoWebView();
-          break;
         // ignore: no_default_cases
         default:
           throw UnsupportedError(

@@ -408,11 +408,8 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             new CameraFeatureFactoryImpl(),
             dartMessenger,
             cameraProperties,
-            resolutionPreset,
-            enableAudio,
-            fps,
-            videoBitrate,
-            audioBitrate);
+            new Camera.VideoCaptureSettings(
+                resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate));
 
     Map<String, Object> reply = new HashMap<>();
     reply.put("cameraId", flutterSurfaceTexture.id());

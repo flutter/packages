@@ -7,8 +7,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 0.10.6
 
 environment:
-  sdk: ">=2.19.0 <4.0.0"
-  flutter: ">=3.7.0"
+  sdk: ^3.2.3
+  flutter: ">=3.16.6"
 
 flutter:
   plugin:
@@ -21,35 +21,19 @@ flutter:
         default_package: camera_web
 
 dependencies:
-  camera_android: ^0.10.8+2
-  camera_avfoundation: ^0.9.13+2
+  camera_android: ^0.10.9
+  camera_avfoundation: ^0.9.15
   camera_platform_interface: ^2.6.0
-  camera_web: ^0.3.1+4
-
+  camera_web: ^0.3.3
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
-  quiver: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 5.4.1
-  plugin_platform_interface: ^2.0.0
-  video_player: ^2.0.0
-
-# TODO: for PR
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-
-  camera_android:
-    path: ../../camera/camera_android
-  camera_avfoundation:
-    path: ../../camera/camera_avfoundation
-  camera_web:
-    path: ../../camera/camera_web
+  mockito: 5.4.4
+  plugin_platform_interface: ^2.1.7
 
 topics:
   - camera

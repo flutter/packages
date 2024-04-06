@@ -1,3 +1,13 @@
+## 3.0.3
+
+* Migrates package and tests to `package:web`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 3.0.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Removes input element after completion
+
 ## 3.0.1
 
 * Adds pub topics to package metadata.

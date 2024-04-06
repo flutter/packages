@@ -171,30 +171,35 @@ class CameraValue {
 /// outside of the overall example code.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
-  /// Deprecated, use [withSettings].
-  CameraController(
+  factory CameraController(
     CameraDescription cameraDescription,
     ResolutionPreset resolutionPreset, {
     bool enableAudio = true,
-    this.imageFormatGroup,
-  })  : _mediaSettings = MediaSettings(
+    ImageFormatGroup? imageFormatGroup,
+  }) =>
+      CameraController.withSettings(
+        cameraDescription,
+        mediaSettings: MediaSettings(
           resolutionPreset: resolutionPreset,
           enableAudio: enableAudio,
         ),
-        super(CameraValue.uninitialized(cameraDescription));
+        imageFormatGroup: imageFormatGroup,
+      );
 
-  /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
+  /// Creates a new camera controller in an uninitialized state, using specified media settings like FPS and bitrate.
   CameraController.withSettings(
     CameraDescription cameraDescription, {
-    MediaSettings? mediaSettings,
+    required this.mediaSettings,
     this.imageFormatGroup,
-  })  : _mediaSettings = mediaSettings,
+  })  : assert(mediaSettings.resolutionPreset != null,
+            'resolutionPreset should be provided in CameraController.withSettings'),
         super(CameraValue.uninitialized(cameraDescription));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
 
-  final MediaSettings? _mediaSettings;
+  /// Media settings for video recording.
+  final MediaSettings mediaSettings;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
@@ -229,7 +234,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
     _cameraId = await CameraPlatform.instance.createCameraWithSettings(
       description,
-      _mediaSettings ?? const MediaSettings(),
+      mediaSettings,
     );
 
     unawaited(CameraPlatform.instance
@@ -309,7 +314,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Start streaming images from platform camera.
   Future<void> startImageStream(
-      Function(CameraImageData image) onAvailable) async {
+      void Function(CameraImageData image) onAvailable) async {
     _imageStreamSubscription = CameraPlatform.instance
         .onStreamedFrameAvailable(_cameraId)
         .listen((CameraImageData imageData) {
@@ -330,7 +335,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// The video is returned as a [XFile] after calling [stopVideoRecording].
   /// Throws a [CameraException] if the capture fails.
   Future<void> startVideoRecording(
-      {Function(CameraImageData image)? streamCallback}) async {
+      {void Function(CameraImageData image)? streamCallback}) async {
     await CameraPlatform.instance.startVideoCapturing(
         VideoCaptureOptions(_cameraId, streamCallback: streamCallback));
     value = value.copyWith(
@@ -440,6 +445,11 @@ class CameraController extends ValueNotifier<CameraValue> {
     value = value.copyWith(focusMode: mode);
   }
 
+  /// Sets the output format for taking pictures.
+  Future<void> setImageFileFormat(ImageFileFormat format) async {
+    await CameraPlatform.instance.setImageFileFormat(_cameraId, format);
+  }
+
   /// Releases the resources of this camera.
   @override
   Future<void> dispose() async {
@@ -504,7 +514,7 @@ class Optional<T> extends IterableBase<T> {
     if (_value == null) {
       throw StateError('value called on absent Optional.');
     }
-    return _value!;
+    return _value;
   }
 
   /// Executes a function if the Optional value is present.
@@ -538,10 +548,10 @@ class Optional<T> extends IterableBase<T> {
   /// If the Optional is [absent()], returns [absent()] without applying the transformer.
   ///
   /// The transformer must not return `null`. If it does, an [ArgumentError] is thrown.
-  Optional<S> transform<S>(S Function(T value) transformer) {
+  Optional<S> transform<S>(S Function(T? value) transformer) {
     return _value == null
         ? Optional<S>.absent()
-        : Optional<S>.of(transformer(_value as T));
+        : Optional<S>.of(transformer(_value));
   }
 
   /// Transforms the Optional value.
@@ -549,10 +559,10 @@ class Optional<T> extends IterableBase<T> {
   /// If the Optional is [absent()], returns [absent()] without applying the transformer.
   ///
   /// Returns [absent()] if the transformer returns `null`.
-  Optional<S> transformNullable<S>(S? Function(T value) transformer) {
+  Optional<S> transformNullable<S>(S? Function(T? value) transformer) {
     return _value == null
         ? Optional<S>.absent()
-        : Optional<S>.fromNullable(transformer(_value as T));
+        : Optional<S>.fromNullable(transformer(_value));
   }
 
   @override

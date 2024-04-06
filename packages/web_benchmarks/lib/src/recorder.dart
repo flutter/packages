@@ -3,11 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
-import 'dart:js';
-import 'dart:js_util' as js_util;
+import 'dart:js_interop';
 import 'dart:math' as math;
 import 'dart:ui';
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -16,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
+import 'package:web/web.dart' as html;
 
 import 'common.dart';
 
@@ -248,6 +248,7 @@ abstract class SceneBuilderRecorder extends Recorder {
       }
     };
     PlatformDispatcher.instance.onDrawFrame = () {
+      final FlutterView? view = PlatformDispatcher.instance.implicitView;
       try {
         _profile.record('drawFrameDuration', () {
           final SceneBuilder sceneBuilder = SceneBuilder();
@@ -255,8 +256,9 @@ abstract class SceneBuilderRecorder extends Recorder {
           _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
             _profile.record('windowRenderDuration', () {
-              // TODO(goderbauer): Migrate to PlatformDispatcher.implicitView once v3.9.0 is the oldest supported Flutter version.
-              window.render(scene); // ignore: deprecated_member_use
+              assert(view != null,
+                  'Cannot profile windowRenderDuration on a null View.');
+              view!.render(scene);
             }, reported: false);
           }, reported: false);
         }, reported: true);
@@ -1189,7 +1191,7 @@ void endMeasureFrame() {
     html.window.performance.mark('measured_frame_end#$_currentFrameNumber');
     html.window.performance.measure(
       'measured_frame',
-      'measured_frame_start#$_currentFrameNumber',
+      'measured_frame_start#$_currentFrameNumber'.toJS,
       'measured_frame_end#$_currentFrameNumber',
     );
 
@@ -1211,19 +1213,21 @@ final Map<String, EngineBenchmarkValueListener> _engineBenchmarkListeners =
 ///
 /// If another listener is already registered, overrides it.
 void registerEngineBenchmarkValueListener(
-    String name, EngineBenchmarkValueListener listener) {
+  String name,
+  EngineBenchmarkValueListener listener,
+) {
   if (_engineBenchmarkListeners.containsKey(name)) {
-    throw StateError('A listener for "$name" is already registered.\n'
-        'Call `stopListeningToEngineBenchmarkValues` to unregister the previous '
-        'listener before registering a new one.');
+    throw StateError(
+      'A listener for "$name" is already registered.\n'
+      'Call `stopListeningToEngineBenchmarkValues` to unregister the previous '
+      'listener before registering a new one.',
+    );
   }
 
   if (_engineBenchmarkListeners.isEmpty) {
     // The first listener is being registered. Register the global listener.
-    js_util.setProperty(html.window, '_flutter_internal_on_benchmark',
-        allowInterop(_dispatchEngineBenchmarkValue));
+    ui_web.benchmarkValueCallback = _dispatchEngineBenchmarkValue;
   }
-
   _engineBenchmarkListeners[name] = listener;
 }
 
@@ -1232,7 +1236,7 @@ void stopListeningToEngineBenchmarkValues(String name) {
   _engineBenchmarkListeners.remove(name);
   if (_engineBenchmarkListeners.isEmpty) {
     // The last listener unregistered. Remove the global listener.
-    js_util.setProperty(html.window, '_flutter_internal_on_benchmark', null);
+    ui_web.benchmarkValueCallback = null;
   }
 }
 

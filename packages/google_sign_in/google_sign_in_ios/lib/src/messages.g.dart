@@ -60,6 +60,7 @@ class UserData {
     required this.userId,
     this.photoUrl,
     this.serverAuthCode,
+    this.idToken,
   });
 
   String? displayName;
@@ -72,6 +73,8 @@ class UserData {
 
   String? serverAuthCode;
 
+  String? idToken;
+
   Object encode() {
     return <Object?>[
       displayName,
@@ -79,6 +82,7 @@ class UserData {
       userId,
       photoUrl,
       serverAuthCode,
+      idToken,
     ];
   }
 
@@ -90,6 +94,7 @@ class UserData {
       userId: result[2]! as String,
       photoUrl: result[3] as String?,
       serverAuthCode: result[4] as String?,
+      idToken: result[5] as String?,
     );
   }
 }

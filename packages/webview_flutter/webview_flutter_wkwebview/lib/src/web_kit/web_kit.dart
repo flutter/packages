@@ -11,7 +11,7 @@ import '../ui_kit/ui_kit.dart';
 import 'web_kit_api_impls.dart';
 
 export 'web_kit_api_impls.dart'
-    show WKNavigationType, WKPermissionDecision, WKMediaCaptureType;
+    show WKMediaCaptureType, WKNavigationType, WKPermissionDecision;
 
 /// Times at which to inject script content into a webpage.
 ///
@@ -97,6 +97,21 @@ enum WKNavigationActionPolicy {
   cancel,
 }
 
+/// Indicate whether to allow or cancel navigation to a webpage.
+///
+/// Wraps [WKNavigationResponsePolicy](https://developer.apple.com/documentation/webkit/wknavigationresponsepolicy?language=objc).
+enum WKNavigationResponsePolicy {
+  /// Allow navigation to continue.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wknavigationresponsepolicy/wknavigationresponsepolicyallow?language=objc.
+  allow,
+
+  /// Cancel navigation.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wknavigationresponsepolicy/wknavigationresponsepolicycancel?language=objc.
+  cancel,
+}
+
 /// Possible error values that WebKit APIs can return.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkerrorcode.
@@ -163,6 +178,24 @@ class WKNavigationAction {
   final WKNavigationType navigationType;
 }
 
+/// An object that contains information about a response to a navigation request.
+///
+/// Wraps [WKNavigationResponse](https://developer.apple.com/documentation/webkit/wknavigationresponse?language=objc).
+@immutable
+class WKNavigationResponse {
+  /// Constructs a [WKNavigationResponse].
+  const WKNavigationResponse({
+    required this.response,
+    required this.forMainFrame,
+  });
+
+  /// The URL request object associated with the navigation action.
+  final NSHttpUrlResponse response;
+
+  /// The frame in which to display the new content.
+  final bool forMainFrame;
+}
+
 /// An object that contains information about a frame on a webpage.
 ///
 /// An instance of this class is a transient, data-only object; it does not
@@ -172,10 +205,16 @@ class WKNavigationAction {
 @immutable
 class WKFrameInfo {
   /// Construct a [WKFrameInfo].
-  const WKFrameInfo({required this.isMainFrame});
+  const WKFrameInfo({
+    required this.isMainFrame,
+    required this.request,
+  });
 
   /// Indicates whether the frame is the web site's main frame or a subframe.
   final bool isMainFrame;
+
+  /// The URL request object associated with the navigation action.
+  final NSUrlRequest request;
 }
 
 /// A script that the web view injects into a webpage.
@@ -728,6 +767,9 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptAlertDialog,
+    this.runJavaScriptConfirmDialog,
+    this.runJavaScriptTextInputDialog,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -749,6 +791,9 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate.detached({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptAlertDialog,
+    this.runJavaScriptConfirmDialog,
+    this.runJavaScriptTextInputDialog,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -780,11 +825,30 @@ class WKUIDelegate extends NSObject {
     WKMediaCaptureType type,
   )? requestMediaCapturePermission;
 
+  /// Notifies the host application that the web page
+  /// wants to display a JavaScript alert() dialog.
+  final Future<void> Function(String message, WKFrameInfo frame)?
+      runJavaScriptAlertDialog;
+
+  /// Notifies the host application that the web page
+  /// wants to display a JavaScript confirm() dialog.
+  final Future<bool> Function(String message, WKFrameInfo frame)?
+      runJavaScriptConfirmDialog;
+
+  /// Notifies the host application that the web page
+  /// wants to display a JavaScript prompt() dialog.
+  final Future<String> Function(
+          String prompt, String defaultText, WKFrameInfo frame)?
+      runJavaScriptTextInputDialog;
+
   @override
   WKUIDelegate copy() {
     return WKUIDelegate.detached(
       onCreateWebView: onCreateWebView,
       requestMediaCapturePermission: requestMediaCapturePermission,
+      runJavaScriptAlertDialog: runJavaScriptAlertDialog,
+      runJavaScriptConfirmDialog: runJavaScriptConfirmDialog,
+      runJavaScriptTextInputDialog: runJavaScriptTextInputDialog,
       observeValue: observeValue,
       binaryMessenger: _uiDelegateApi.binaryMessenger,
       instanceManager: _uiDelegateApi.instanceManager,
@@ -827,9 +891,11 @@ class WKNavigationDelegate extends NSObject {
     this.didFinishNavigation,
     this.didStartProvisionalNavigation,
     this.decidePolicyForNavigationAction,
+    this.decidePolicyForNavigationResponse,
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
+    this.didReceiveAuthenticationChallenge,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -852,9 +918,11 @@ class WKNavigationDelegate extends NSObject {
     this.didFinishNavigation,
     this.didStartProvisionalNavigation,
     this.decidePolicyForNavigationAction,
+    this.decidePolicyForNavigationResponse,
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
+    this.didReceiveAuthenticationChallenge,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -885,6 +953,14 @@ class WKNavigationDelegate extends NSObject {
     WKNavigationAction navigationAction,
   )? decidePolicyForNavigationAction;
 
+  /// Called when permission is needed to navigate to new content.
+  ///
+  /// {@macro webview_flutter_wkwebview.foundation.callbacks}
+  final Future<WKNavigationResponsePolicy> Function(
+    WKWebView webView,
+    WKNavigationResponse navigationResponse,
+  )? decidePolicyForNavigationResponse;
+
   /// Called when an error occurred during navigation.
   ///
   /// {@macro webview_flutter_wkwebview.foundation.callbacks}
@@ -901,16 +977,28 @@ class WKNavigationDelegate extends NSObject {
   /// {@macro webview_flutter_wkwebview.foundation.callbacks}
   final void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
+  /// Called when the delegate needs a response to an authentication challenge.
+  final void Function(
+    WKWebView webView,
+    NSUrlAuthenticationChallenge challenge,
+    void Function(
+      NSUrlSessionAuthChallengeDisposition disposition,
+      NSUrlCredential? credential,
+    ) completionHandler,
+  )? didReceiveAuthenticationChallenge;
+
   @override
   WKNavigationDelegate copy() {
     return WKNavigationDelegate.detached(
       didFinishNavigation: didFinishNavigation,
       didStartProvisionalNavigation: didStartProvisionalNavigation,
       decidePolicyForNavigationAction: decidePolicyForNavigationAction,
+      decidePolicyForNavigationResponse: decidePolicyForNavigationResponse,
       didFailNavigation: didFailNavigation,
       didFailProvisionalNavigation: didFailProvisionalNavigation,
       webViewWebContentProcessDidTerminate:
           webViewWebContentProcessDidTerminate,
+      didReceiveAuthenticationChallenge: didReceiveAuthenticationChallenge,
       observeValue: observeValue,
       binaryMessenger: _navigationDelegateApi.binaryMessenger,
       instanceManager: _navigationDelegateApi.instanceManager,

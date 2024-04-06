@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
@@ -28,7 +29,12 @@ const String kIAPSource = 'google_play';
 /// This translates various `BillingClient` calls and responses into the
 /// generic plugin API.
 class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
-  InAppPurchaseAndroidPlatform._() {
+  /// Creates a new InAppPurchaseAndroidPlatform instance, and configures it
+  /// for use.
+  @visibleForTesting
+  InAppPurchaseAndroidPlatform(
+      {@visibleForTesting BillingClientManager? manager})
+      : billingClientManager = manager ?? BillingClientManager() {
     // Register [InAppPurchaseAndroidPlatformAddition].
     InAppPurchasePlatformAddition.instance =
         InAppPurchaseAndroidPlatformAddition(billingClientManager);
@@ -42,7 +48,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
   static void registerPlatform() {
     // Register the platform instance with the plugin platform
     // interface.
-    InAppPurchasePlatform.instance = InAppPurchaseAndroidPlatform._();
+    InAppPurchasePlatform.instance = InAppPurchaseAndroidPlatform();
   }
 
   final StreamController<List<PurchaseDetails>> _purchaseUpdatedController =
@@ -56,7 +62,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
   ///
   /// This field should not be used out of test code.
   @visibleForTesting
-  final BillingClientManager billingClientManager = BillingClientManager();
+  final BillingClientManager billingClientManager;
 
   static final Set<String> _productIdsToConsume = <String>{};
 

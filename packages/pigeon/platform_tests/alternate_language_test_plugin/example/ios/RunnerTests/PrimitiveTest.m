@@ -21,7 +21,7 @@
       [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  [api anIntValue:@1
+  [api anIntValue:1
        completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(@1, result);
          [expectation fulfill];
@@ -34,10 +34,11 @@
       [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSNumber *arg = @YES;
+  BOOL arg = YES;
   [api aBoolValue:arg
        completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
-         XCTAssertEqualObjects(arg, result);
+         XCTAssertNotNil(result);
+         XCTAssertEqual(arg, result.boolValue);
          [expectation fulfill];
        }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
@@ -48,10 +49,11 @@
       [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSNumber *arg = @(1.5);
+  NSInteger arg = 1.5;
   [api aDoubleValue:arg
          completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
-           XCTAssertEqualObjects(arg, result);
+           XCTAssertNotNil(result);
+           XCTAssertEqual(arg, result.integerValue);
            [expectation fulfill];
          }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];

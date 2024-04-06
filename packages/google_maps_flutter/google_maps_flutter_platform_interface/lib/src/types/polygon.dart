@@ -4,7 +4,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart'
-    show immutable, listEquals, VoidCallback;
+    show VoidCallback, immutable, listEquals;
 import 'package:flutter/material.dart' show Color, Colors;
 
 import 'types.dart';

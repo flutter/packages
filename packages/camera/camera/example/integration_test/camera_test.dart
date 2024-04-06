@@ -96,8 +96,6 @@ void main() {
         }
       }
     },
-    // TODO(egarciad): Fix https://github.com/flutter/flutter/issues/93686.
-    skip: true,
   );
 
   // This tests that the capture is no bigger than the preset, since we have

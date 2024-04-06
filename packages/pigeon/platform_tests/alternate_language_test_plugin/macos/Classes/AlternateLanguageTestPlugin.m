@@ -8,17 +8,23 @@
 
 @interface AlternateLanguageTestPlugin ()
 @property(nonatomic) FlutterIntegrationCoreApi *flutterAPI;
+@property(nonatomic) FlutterSmallApi *flutterSmallApiOne;
+@property(nonatomic) FlutterSmallApi *flutterSmallApiTwo;
 @end
 
-/**
- * This plugin handles the native side of the integration tests in example/integration_test/.
- */
+/// This plugin handles the native side of the integration tests in example/integration_test/.
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
   SetUpHostIntegrationCoreApi(registrar.messenger, plugin);
+  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixOne"];
+  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixTwo"];
   plugin.flutterAPI =
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:registrar.messenger];
+  plugin.flutterSmallApiOne = [[FlutterSmallApi alloc] initWithBinaryMessenger:registrar.messenger
+                                                          messageChannelSuffix:@"suffixOne"];
+  plugin.flutterSmallApiTwo = [[FlutterSmallApi alloc] initWithBinaryMessenger:registrar.messenger
+                                                          messageChannelSuffix:@"suffixTwo"];
 }
 
 #pragma mark HostIntegrationCoreApi implementation
@@ -36,6 +42,12 @@
   return everything;
 }
 
+- (nullable AllNullableTypesWithoutRecursion *)
+    echoAllNullableTypesWithoutRecursion:(nullable AllNullableTypesWithoutRecursion *)everything
+                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return everything;
+}
+
 - (nullable id)throwErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
   return nil;
@@ -50,17 +62,16 @@
   return nil;
 }
 
-- (nullable NSNumber *)echoInt:(NSNumber *)anInt error:(FlutterError *_Nullable *_Nonnull)error {
-  return anInt;
+- (nullable NSNumber *)echoInt:(NSInteger)anInt error:(FlutterError *_Nullable *_Nonnull)error {
+  return @(anInt);
 }
 
-- (nullable NSNumber *)echoDouble:(NSNumber *)aDouble
-                            error:(FlutterError *_Nullable *_Nonnull)error {
-  return aDouble;
+- (nullable NSNumber *)echoDouble:(double)aDouble error:(FlutterError *_Nullable *_Nonnull)error {
+  return @(aDouble);
 }
 
-- (nullable NSNumber *)echoBool:(NSNumber *)aBool error:(FlutterError *_Nullable *_Nonnull)error {
-  return aBool;
+- (nullable NSNumber *)echoBool:(BOOL)aBool error:(FlutterError *_Nullable *_Nonnull)error {
+  return @(aBool);
 }
 
 - (nullable NSString *)echoString:(NSString *)aString
@@ -96,6 +107,21 @@
   return [[AnEnumBox alloc] initWithValue:anEnum];
 }
 
+- (nullable NSString *)echoNamedDefaultString:(NSString *)aString
+                                        error:(FlutterError *_Nullable *_Nonnull)error {
+  return aString;
+}
+
+- (nullable NSNumber *)echoOptionalDefaultDouble:(double)aDouble
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return @(aDouble);
+}
+
+- (nullable NSNumber *)echoRequiredInt:(NSInteger)anInt
+                                 error:(FlutterError *_Nullable *_Nonnull)error {
+  return @(anInt);
+}
+
 - (nullable NSString *)extractNestedNullableStringFrom:(AllClassesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper.allNullableTypes.aNullableString;
@@ -106,7 +132,9 @@
                                    error:(FlutterError *_Nullable *_Nonnull)error {
   AllNullableTypes *innerObject = [[AllNullableTypes alloc] init];
   innerObject.aNullableString = nullableString;
-  return [AllClassesWrapper makeWithAllNullableTypes:innerObject allTypes:nil];
+  return [AllClassesWrapper makeWithAllNullableTypes:innerObject
+                    allNullableTypesWithoutRecursion:nil
+                                            allTypes:nil];
 }
 
 - (nullable AllNullableTypes *)sendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
@@ -115,6 +143,20 @@
                                                         error:(FlutterError *_Nullable *_Nonnull)
                                                                   error {
   AllNullableTypes *someTypes = [[AllNullableTypes alloc] init];
+  someTypes.aNullableBool = aNullableBool;
+  someTypes.aNullableInt = aNullableInt;
+  someTypes.aNullableString = aNullableString;
+  return someTypes;
+}
+
+- (nullable AllNullableTypesWithoutRecursion *)
+    sendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
+                                             anInt:(nullable NSNumber *)aNullableInt
+                                           aString:(nullable NSString *)aNullableString
+                                             error:
+                                                 (FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                     error {
+  AllNullableTypesWithoutRecursion *someTypes = [[AllNullableTypesWithoutRecursion alloc] init];
   someTypes.aNullableBool = aNullableBool;
   someTypes.aNullableInt = aNullableInt;
   someTypes.aNullableString = aNullableString;
@@ -168,6 +210,16 @@
   return AnEnumBoxed;
 }
 
+- (nullable NSNumber *)echoOptionalNullableInt:(nullable NSNumber *)aNullableInt
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableInt;
+}
+
+- (nullable NSString *)echoNamedNullableString:(nullable NSString *)aNullableString
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+  return aNullableString;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }
@@ -196,19 +248,28 @@
   completion(everything, nil);
 }
 
-- (void)echoAsyncInt:(NSNumber *)anInt
+- (void)echoAsyncNullableAllNullableTypesWithoutRecursion:
+            (nullable AllNullableTypesWithoutRecursion *)everything
+                                               completion:
+                                                   (nonnull void (^)(
+                                                       AllNullableTypesWithoutRecursion *_Nullable,
+                                                       FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (void)echoAsyncInt:(NSInteger)anInt
           completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  completion(anInt, nil);
+  completion(@(anInt), nil);
 }
 
-- (void)echoAsyncDouble:(NSNumber *)aDouble
+- (void)echoAsyncDouble:(double)aDouble
              completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  completion(aDouble, nil);
+  completion(@(aDouble), nil);
 }
 
-- (void)echoAsyncBool:(NSNumber *)aBool
+- (void)echoAsyncBool:(BOOL)aBool
            completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  completion(aBool, nil);
+  completion(@(aBool), nil);
 }
 
 - (void)echoAsyncString:(NSString *)aString
@@ -331,7 +392,26 @@
                                        }];
 }
 
-- (void)callFlutterEchoBool:(NSNumber *)aBool
+- (void)callFlutterSendMultipleNullableTypesWithoutRecursionABool:(nullable NSNumber *)aNullableBool
+                                                            anInt:(nullable NSNumber *)aNullableInt
+                                                          aString:
+                                                              (nullable NSString *)aNullableString
+                                                       completion:
+                                                           (nonnull void (^)(
+                                                               AllNullableTypesWithoutRecursion
+                                                                   *_Nullable,
+                                                               FlutterError *_Nullable))completion {
+  [self.flutterAPI
+      sendMultipleNullableTypesWithoutRecursionABool:aNullableBool
+                                               anInt:aNullableInt
+                                             aString:aNullableString
+                                          completion:^(AllNullableTypesWithoutRecursion *value,
+                                                       FlutterError *error) {
+                                            completion(value, error);
+                                          }];
+}
+
+- (void)callFlutterEchoBool:(BOOL)aBool
                  completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoBool:aBool
                  completion:^(NSNumber *value, FlutterError *error) {
@@ -339,7 +419,7 @@
                  }];
 }
 
-- (void)callFlutterEchoInt:(NSNumber *)anInt
+- (void)callFlutterEchoInt:(NSInteger)anInt
                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoInt:anInt
                 completion:^(NSNumber *value, FlutterError *error) {
@@ -347,7 +427,7 @@
                 }];
 }
 
-- (void)callFlutterEchoDouble:(NSNumber *)aDouble
+- (void)callFlutterEchoDouble:(double)aDouble
                    completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoDouble:aDouble
                    completion:^(NSNumber *value, FlutterError *error) {
@@ -404,6 +484,19 @@
                              completion:^(AllNullableTypes *value, FlutterError *error) {
                                completion(value, error);
                              }];
+}
+
+- (void)callFlutterEchoAllNullableTypesWithoutRecursion:
+            (nullable AllNullableTypesWithoutRecursion *)everything
+                                             completion:
+                                                 (nonnull void (^)(
+                                                     AllNullableTypesWithoutRecursion *_Nullable,
+                                                     FlutterError *_Nullable))completion {
+  [self.flutterAPI echoAllNullableTypesWithoutRecursion:everything
+                                             completion:^(AllNullableTypesWithoutRecursion *value,
+                                                          FlutterError *error) {
+                                               completion(value, error);
+                                             }];
 }
 
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
@@ -476,6 +569,55 @@
                          completion:^(AnEnumBox *value, FlutterError *error) {
                            completion(value, error);
                          }];
+}
+
+- (void)callFlutterSmallApiEchoString:(nonnull NSString *)aString
+                           completion:(nonnull void (^)(NSString *_Nullable,
+                                                        FlutterError *_Nullable))completion {
+  [self.flutterSmallApiOne
+      echoString:aString
+      completion:^(NSString *valueOne, FlutterError *error) {
+        [self.flutterSmallApiTwo
+            echoString:aString
+            completion:^(NSString *valueTwo, FlutterError *error) {
+              if ([valueOne isEqualToString:valueTwo]) {
+                completion(valueTwo, error);
+              } else {
+                completion(
+                    nil,
+                    [FlutterError
+                        errorWithCode:@"Responses do not match"
+                              message:[NSString stringWithFormat:
+                                                    @"%@%@%@%@",
+                                                    @"Multi-instance responses were not matching: ",
+                                                    valueOne, @", ", valueTwo]
+                              details:nil]);
+              }
+            }];
+      }];
+}
+
+@end
+
+@interface AlternateLanguageTestAPIWithSuffix ()
+@end
+
+@implementation AlternateLanguageTestAPIWithSuffix
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                       suffix:(NSString *)suffix {
+  AlternateLanguageTestAPIWithSuffix *api = [[AlternateLanguageTestAPIWithSuffix alloc] init];
+  SetUpHostSmallApiWithSuffix(registrar.messenger, api, suffix);
+}
+
+#pragma mark HostSmallAPI implementation
+
+- (void)echoString:(nonnull NSString *)aString
+        completion:(nonnull void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)voidVoidWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  completion(nil);
 }
 
 @end

@@ -18,28 +18,64 @@ namespace test_plugin {
 
 using core_tests_pigeontest::AllClassesWrapper;
 using core_tests_pigeontest::AllNullableTypes;
+using core_tests_pigeontest::AllNullableTypesWithoutRecursion;
 using core_tests_pigeontest::AllTypes;
 using core_tests_pigeontest::AnEnum;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
+using core_tests_pigeontest::FlutterSmallApi;
 using core_tests_pigeontest::HostIntegrationCoreApi;
+using core_tests_pigeontest::HostSmallApi;
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
+TestSmallApi::TestSmallApi() {}
+
+TestSmallApi::~TestSmallApi() {}
+
+void TestSmallApi::Echo(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  result(a_string);
+}
+
+void TestSmallApi::VoidVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  result(std::nullopt);
+}
+
 // static
 void TestPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto plugin = std::make_unique<TestPlugin>(registrar->messenger());
+  auto host_small_api_one = std::make_unique<TestSmallApi>();
+  auto host_small_api_two = std::make_unique<TestSmallApi>();
+
+  HostSmallApi::SetUp(registrar->messenger(), host_small_api_one.get(),
+                      "suffixOne");
+  HostSmallApi::SetUp(registrar->messenger(), host_small_api_two.get(),
+                      "suffixTwo");
+
+  auto plugin = std::make_unique<TestPlugin>(registrar->messenger(),
+                                             std::move(host_small_api_one),
+                                             std::move(host_small_api_two));
 
   HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
 }
 
-TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger)
-    : flutter_api_(
+TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
+                       std::unique_ptr<TestSmallApi> host_small_api_one,
+                       std::unique_ptr<TestSmallApi> host_small_api_two)
+    : flutter_small_api_one_(
+          std::make_unique<FlutterSmallApi>(binary_messenger, "suffixOne")),
+      flutter_small_api_two_(
+          std::make_unique<FlutterSmallApi>(binary_messenger, "suffixTwo")),
+      host_small_api_one_(std::move(host_small_api_one)),
+      host_small_api_two_(std::move(host_small_api_two)),
+      flutter_api_(
           std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {}
 
 TestPlugin::~TestPlugin() {}
@@ -52,6 +88,15 @@ ErrorOr<AllTypes> TestPlugin::EchoAllTypes(const AllTypes& everything) {
 
 ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(
     const AllNullableTypes* everything) {
+  if (!everything) {
+    return std::nullopt;
+  }
+  return *everything;
+}
+
+ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>
+TestPlugin::EchoAllNullableTypesWithoutRecursion(
+    const AllNullableTypesWithoutRecursion* everything) {
   if (!everything) {
     return std::nullopt;
   }
@@ -106,6 +151,17 @@ ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
 
 ErrorOr<AnEnum> TestPlugin::EchoEnum(const AnEnum& an_enum) { return an_enum; }
 
+ErrorOr<std::string> TestPlugin::EchoNamedDefaultString(
+    const std::string& a_string) {
+  return a_string;
+}
+
+ErrorOr<double> TestPlugin::EchoOptionalDefaultDouble(double a_double) {
+  return a_double;
+}
+
+ErrorOr<int64_t> TestPlugin::EchoRequiredInt(int64_t an_int) { return an_int; }
+
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
     const AllClassesWrapper& wrapper) {
   const std::string* inner_string =
@@ -133,6 +189,24 @@ ErrorOr<AllNullableTypes> TestPlugin::SendMultipleNullableTypes(
     const bool* a_nullable_bool, const int64_t* a_nullable_int,
     const std::string* a_nullable_string) {
   AllNullableTypes someTypes;
+  someTypes.set_a_nullable_bool(a_nullable_bool);
+  someTypes.set_a_nullable_int(a_nullable_int);
+  // The string pointer can't be passed through directly since the setter for
+  // a string takes a std::string_view rather than std::string so the pointer
+  // types don't match.
+  if (a_nullable_string) {
+    someTypes.set_a_nullable_string(*a_nullable_string);
+  } else {
+    someTypes.set_a_nullable_string(nullptr);
+  }
+  return someTypes;
+};
+
+ErrorOr<AllNullableTypesWithoutRecursion>
+TestPlugin::SendMultipleNullableTypesWithoutRecursion(
+    const bool* a_nullable_bool, const int64_t* a_nullable_int,
+    const std::string* a_nullable_string) {
+  AllNullableTypesWithoutRecursion someTypes;
   someTypes.set_a_nullable_bool(a_nullable_bool);
   someTypes.set_a_nullable_int(a_nullable_int);
   // The string pointer can't be passed through directly since the setter for
@@ -218,6 +292,22 @@ ErrorOr<std::optional<AnEnum>> TestPlugin::EchoNullableEnum(
   return *an_enum;
 }
 
+ErrorOr<std::optional<int64_t>> TestPlugin::EchoOptionalNullableInt(
+    const int64_t* a_nullable_int) {
+  if (!a_nullable_int) {
+    return std::nullopt;
+  }
+  return *a_nullable_int;
+}
+
+ErrorOr<std::optional<std::string>> TestPlugin::EchoNamedNullableString(
+    const std::string* a_nullable_string) {
+  if (!a_nullable_string) {
+    return std::nullopt;
+  }
+  return *a_nullable_string;
+}
+
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);
@@ -299,6 +389,16 @@ void TestPlugin::EchoAsyncNullableAllNullableTypes(
         result) {
   result(everything ? std::optional<AllNullableTypes>(*everything)
                     : std::nullopt);
+}
+
+void TestPlugin::EchoAsyncNullableAllNullableTypesWithoutRecursion(
+    const AllNullableTypesWithoutRecursion* everything,
+    std::function<
+        void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+        result) {
+  result(everything
+             ? std::optional<AllNullableTypesWithoutRecursion>(*everything)
+             : std::nullopt);
 }
 
 void TestPlugin::EchoAsyncNullableInt(
@@ -407,6 +507,31 @@ void TestPlugin::CallFlutterSendMultipleNullableTypes(
   flutter_api_->SendMultipleNullableTypes(
       a_nullable_bool, a_nullable_int, a_nullable_string,
       [result](const AllNullableTypes& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoAllNullableTypesWithoutRecursion(
+    const AllNullableTypesWithoutRecursion* everything,
+    std::function<
+        void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+        result) {
+  flutter_api_->EchoAllNullableTypesWithoutRecursion(
+      everything,
+      [result](const AllNullableTypesWithoutRecursion* echo) {
+        result(echo ? std::optional<AllNullableTypesWithoutRecursion>(*echo)
+                    : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterSendMultipleNullableTypesWithoutRecursion(
+    const bool* a_nullable_bool, const int64_t* a_nullable_int,
+    const std::string* a_nullable_string,
+    std::function<void(ErrorOr<AllNullableTypesWithoutRecursion> reply)>
+        result) {
+  flutter_api_->SendMultipleNullableTypesWithoutRecursion(
+      a_nullable_bool, a_nullable_int, a_nullable_string,
+      [result](const AllNullableTypesWithoutRecursion& echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
 }
 
@@ -556,6 +681,30 @@ void TestPlugin::CallFlutterEchoNullableEnum(
       an_enum,
       [result](const AnEnum* echo) {
         result(echo ? std::optional<AnEnum>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterSmallApiEchoString(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  flutter_small_api_one_->EchoString(
+      a_string,
+      [this, result, a_string](const std::string& echoOne) {
+        flutter_small_api_two_->EchoString(
+            a_string,
+            [this, result, echoOne](const std::string& echoTwo) {
+              if (echoOne.compare(echoTwo) == 0) {
+                result(echoTwo);
+              } else {
+                result(FlutterError(
+                    "Responses do not match",
+                    "Multi-instance responses were not matching: " + echoOne +
+                        ", " + echoTwo,
+                    EncodableValue("")));
+              }
+            },
+            [result](const FlutterError& error) { result(error); });
       },
       [result](const FlutterError& error) { result(error); });
 }

@@ -82,6 +82,8 @@ class XFile extends XFileBase {
       await _file.copy(path);
     } else {
       final File fileToSave = File(path);
+      // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
+      // ignore: unnecessary_non_null_assertion
       await fileToSave.writeAsBytes(_bytes!);
     }
   }
@@ -106,6 +108,8 @@ class XFile extends XFileBase {
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
     if (_bytes != null) {
+      // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
+      // ignore: unnecessary_non_null_assertion
       return Future<String>.value(String.fromCharCodes(_bytes!));
     }
     return _file.readAsString(encoding: encoding);
