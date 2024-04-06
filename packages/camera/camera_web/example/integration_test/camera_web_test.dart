@@ -527,13 +527,10 @@ void main() {
                 .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
-          final int cameraId =
-              await CameraPlatform.instance.createCameraWithSettings(
+          final int cameraId = await CameraPlatform.instance.createCamera(
             cameraDescription,
-            const MediaSettings(
-              resolutionPreset: ResolutionPreset.ultraHigh,
-              enableAudio: true,
-            ),
+            ResolutionPreset.ultraHigh,
+            enableAudio: true,
           );
 
           final Camera? camera =
@@ -592,12 +589,9 @@ void main() {
             () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
-          final int cameraId =
-              await CameraPlatform.instance.createCameraWithSettings(
+          final int cameraId = await CameraPlatform.instance.createCamera(
             cameraDescription,
-            const MediaSettings(
-              resolutionPreset: ResolutionPreset.max,
-            ),
+            null,
           );
 
           final Camera? camera =
@@ -653,19 +647,13 @@ void main() {
           'if there is no metadata '
           'for the given camera description', (WidgetTester tester) async {
         expect(
-          () => CameraPlatform.instance.createCameraWithSettings(
+          () => CameraPlatform.instance.createCamera(
             const CameraDescription(
               name: 'name',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            const MediaSettings(
-              resolutionPreset: ResolutionPreset.low,
-              fps: 15,
-              videoBitrate: 200000,
-              audioBitrate: 32000,
-              enableAudio: true,
-            ),
+            ResolutionPreset.ultraHigh,
           ),
           throwsA(
             isA<CameraException>().having(
