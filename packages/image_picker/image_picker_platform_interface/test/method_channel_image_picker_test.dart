@@ -1701,7 +1701,7 @@ void main() {
         returnValue = <dynamic>['0', '1'];
         expect(
           () => picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
+            options: MultiImagePickerOptions.createAndValidate(
               limit: -1,
             ),
           ),
@@ -1710,7 +1710,7 @@ void main() {
 
         expect(
           () => picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
+            options: MultiImagePickerOptions.createAndValidate(
               limit: 0,
             ),
           ),
@@ -1719,7 +1719,7 @@ void main() {
 
         expect(
           () => picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
+            options: MultiImagePickerOptions.createAndValidate(
               limit: 1,
             ),
           ),
