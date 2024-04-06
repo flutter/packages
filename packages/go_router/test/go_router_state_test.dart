@@ -42,7 +42,7 @@ void main() {
             path: '/',
             builder: (_, __) {
               return Builder(builder: (BuildContext context) {
-                return Text('1 ${GoRouterState.of(context).uri}');
+                return Text('1 ${GoRouterState.of(context).uri.path}');
               });
             },
             routes: <GoRoute>[
@@ -50,7 +50,7 @@ void main() {
                   path: 'a',
                   builder: (_, __) {
                     return Builder(builder: (BuildContext context) {
-                      return Text('2 ${GoRouterState.of(context).uri}');
+                      return Text('2 ${GoRouterState.of(context).uri.path}');
                     });
                   }),
             ]),
@@ -74,7 +74,7 @@ void main() {
             path: '/',
             builder: (_, __) {
               return Builder(builder: (BuildContext context) {
-                return Text('1 ${GoRouterState.of(context).uri}');
+                return Text('1 ${GoRouterState.of(context).uri.path}');
               });
             },
             routes: <GoRoute>[
@@ -110,7 +110,7 @@ void main() {
             path: '/',
             builder: (_, __) {
               return Builder(builder: (BuildContext context) {
-                return Text(GoRouterState.of(context).uri.toString());
+                return Text(GoRouterState.of(context).uri.path);
               });
             },
             routes: <GoRoute>[
@@ -118,8 +118,7 @@ void main() {
                   path: 'a',
                   builder: (_, __) {
                     return Builder(builder: (BuildContext context) {
-                      return Text(
-                          key: key, GoRouterState.of(context).uri.toString());
+                      return Text(key: key, GoRouterState.of(context).uri.path);
                     });
                   }),
             ]),
@@ -153,7 +152,7 @@ void main() {
             path: '/',
             builder: (_, __) {
               return Builder(builder: (BuildContext context) {
-                return Text(GoRouterState.of(context).uri.toString());
+                return Text(GoRouterState.of(context).uri.path);
               });
             },
             routes: <GoRoute>[
@@ -161,8 +160,7 @@ void main() {
                   path: 'a',
                   builder: (_, __) {
                     return Builder(builder: (BuildContext context) {
-                      return Text(
-                          key: key, GoRouterState.of(context).uri.toString());
+                      return Text(key: key, GoRouterState.of(context).uri.path);
                     });
                   }),
             ]),
