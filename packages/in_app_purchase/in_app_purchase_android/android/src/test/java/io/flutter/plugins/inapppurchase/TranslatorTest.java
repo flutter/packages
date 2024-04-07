@@ -21,10 +21,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +78,7 @@ public class TranslatorTest {
             productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON),
             productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON));
 
-    final List<HashMap<String, Object>> serialized = Translator.fromProductDetailsList(expected);
+    final List<Object> serialized = Translator.fromProductDetailsList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -123,8 +123,7 @@ public class TranslatorTest {
             new PurchaseHistoryRecord(PURCHASE_EXAMPLE_JSON, signature),
             new PurchaseHistoryRecord(purchase2Json, signature));
 
-    final List<HashMap<String, Object>> serialized =
-        Translator.fromPurchaseHistoryRecordList(expected);
+    final List<Object> serialized = Translator.fromPurchaseHistoryRecordList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -145,7 +144,7 @@ public class TranslatorTest {
         Arrays.asList(
             new Purchase(PURCHASE_EXAMPLE_JSON, signature), new Purchase(purchase2Json, signature));
 
-    final List<HashMap<String, Object>> serialized = Translator.fromPurchasesList(expected);
+    final List<Object> serialized = Translator.fromPurchasesList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -164,20 +163,20 @@ public class TranslatorTest {
             .setDebugMessage("dummy debug message")
             .setResponseCode(BillingClient.BillingResponseCode.OK)
             .build();
-    Map<String, Object> billingResultMap = Translator.fromBillingResult(newBillingResult);
+    Messages.PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
 
-    assertEquals(billingResultMap.get("responseCode"), newBillingResult.getResponseCode());
-    assertEquals(billingResultMap.get("debugMessage"), newBillingResult.getDebugMessage());
+    assertEquals(platformResult.getResponseCode().longValue(), newBillingResult.getResponseCode());
+    assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
   }
 
   @Test
   public void fromBillingResult_debugMessageNull() {
     BillingResult newBillingResult =
         BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build();
-    Map<String, Object> billingResultMap = Translator.fromBillingResult(newBillingResult);
+    Messages.PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
 
-    assertEquals(billingResultMap.get("responseCode"), newBillingResult.getResponseCode());
-    assertEquals(billingResultMap.get("debugMessage"), newBillingResult.getDebugMessage());
+    assertEquals(platformResult.getResponseCode().longValue(), newBillingResult.getResponseCode());
+    assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
   }
 
   @Test
@@ -191,8 +190,9 @@ public class TranslatorTest {
     }
   }
 
-  private void assertSerialized(ProductDetails expected, Map<String, Object> serialized) {
-    assertEquals(expected.getDescription(), serialized.get("description"));
+  private void assertSerialized(ProductDetails expected, Object serializedGeneric) {
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
     assertEquals(expected.getTitle(), serialized.get("title"));
     assertEquals(expected.getName(), serialized.get("name"));
     assertEquals(expected.getProductId(), serialized.get("productId"));
@@ -275,7 +275,9 @@ public class TranslatorTest {
     assertEquals(expected.getRecurrenceMode(), serialized.get("recurrenceMode"));
   }
 
-  private void assertSerialized(Purchase expected, Map<String, Object> serialized) {
+  private void assertSerialized(Purchase expected, Object serializedGeneric) {
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
     assertEquals(expected.getOrderId(), serialized.get("orderId"));
     assertEquals(expected.getPackageName(), serialized.get("packageName"));
     assertEquals(expected.getPurchaseTime(), serialized.get("purchaseTime"));
@@ -286,7 +288,8 @@ public class TranslatorTest {
     assertEquals(expected.getDeveloperPayload(), serialized.get("developerPayload"));
     assertEquals(expected.isAcknowledged(), serialized.get("isAcknowledged"));
     assertEquals(expected.getPurchaseState(), serialized.get("purchaseState"));
-    assertNotNull(expected.getAccountIdentifiers().getObfuscatedAccountId());
+    assertNotNull(
+        Objects.requireNonNull(expected.getAccountIdentifiers()).getObfuscatedAccountId());
     assertEquals(
         expected.getAccountIdentifiers().getObfuscatedAccountId(),
         serialized.get("obfuscatedAccountId"));
@@ -296,7 +299,9 @@ public class TranslatorTest {
         serialized.get("obfuscatedProfileId"));
   }
 
-  private void assertSerialized(PurchaseHistoryRecord expected, Map<String, Object> serialized) {
+  private void assertSerialized(PurchaseHistoryRecord expected, Object serializedGeneric) {
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> serialized = (Map<String, Object>) serializedGeneric;
     assertEquals(expected.getPurchaseTime(), serialized.get("purchaseTime"));
     assertEquals(expected.getPurchaseToken(), serialized.get("purchaseToken"));
     assertEquals(expected.getSignature(), serialized.get("signature"));

@@ -48,12 +48,17 @@ TEST(Camera, InitCameraCreatesCaptureController) {
 
   EXPECT_TRUE(camera->GetCaptureController() == nullptr);
 
+  RecordSettings record_settings(false);
+  record_settings.fps = 5;
+  record_settings.video_bitrate = 200000;
+  record_settings.audio_bitrate = 32000;
+
   // Init camera with mock capture controller factory
   bool result =
       camera->InitCamera(std::move(capture_controller_factory),
                          std::make_unique<MockTextureRegistrar>().get(),
-                         std::make_unique<MockBinaryMessenger>().get(), false,
-                         ResolutionPreset::kAuto);
+                         std::make_unique<MockBinaryMessenger>().get(),
+                         ResolutionPreset::kAuto, record_settings);
   EXPECT_TRUE(result);
   EXPECT_TRUE(camera->GetCaptureController() != nullptr);
 }
@@ -79,12 +84,17 @@ TEST(Camera, InitCameraReportsFailure) {
 
   EXPECT_TRUE(camera->GetCaptureController() == nullptr);
 
+  RecordSettings record_settings(false);
+  record_settings.fps = 5;
+  record_settings.video_bitrate = 200000;
+  record_settings.audio_bitrate = 32000;
+
   // Init camera with mock capture controller factory
   bool result =
       camera->InitCamera(std::move(capture_controller_factory),
                          std::make_unique<MockTextureRegistrar>().get(),
-                         std::make_unique<MockBinaryMessenger>().get(), false,
-                         ResolutionPreset::kAuto);
+                         std::make_unique<MockBinaryMessenger>().get(),
+                         ResolutionPreset::kAuto, record_settings);
   EXPECT_FALSE(result);
   EXPECT_TRUE(camera->GetCaptureController() != nullptr);
 }
@@ -487,10 +497,17 @@ TEST(Camera, OnVideoRecordSucceededInvokesCameraChannelEvent) {
   // and second is camera closing message.
   EXPECT_CALL(*binary_messenger, Send(Eq(camera_channel), _, _, _)).Times(2);
 
+  RecordSettings record_settings;
+  record_settings.record_audio = false;
+  record_settings.fps = 5;
+  record_settings.video_bitrate = 200000;
+  record_settings.audio_bitrate = 32000;
+
   // Init camera with mock capture controller factory
   camera->InitCamera(std::move(capture_controller_factory),
                      std::make_unique<MockTextureRegistrar>().get(),
-                     binary_messenger.get(), false, ResolutionPreset::kAuto);
+                     binary_messenger.get(), ResolutionPreset::kAuto,
+                     record_settings);
 
   // Pass camera id for camera
   camera->OnCreateCaptureEngineSucceeded(camera_id);
