@@ -32,6 +32,8 @@ class BillingConfigWrapper implements HasBillingResponse {
   ///
   /// The map needs to have named string keys with values matching the names and
   /// types of all of the members on this class.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory BillingConfigWrapper.fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) {
       return const BillingConfigWrapper(

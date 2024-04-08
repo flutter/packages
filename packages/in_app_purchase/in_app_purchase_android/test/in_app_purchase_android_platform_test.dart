@@ -104,7 +104,7 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[],
+                productDetails: <PlatformProductDetails>[],
               ));
 
       final ProductDetailsResponse response =
@@ -121,8 +121,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[
-                  buildProductMap(dummyOneTimeProductDetails)
+                productDetails: <PlatformProductDetails>[
+                  convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
               ));
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
@@ -149,8 +149,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[
-                  buildProductMap(dummyOneTimeProductDetails)
+                productDetails: <PlatformProductDetails>[
+                  convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
               ));
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
@@ -230,8 +230,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                purchasesJsonList: <Map<String, dynamic>>[
-                  buildPurchaseMap(dummyPurchase),
+                purchases: <PlatformPurchase>[
+                  convertToPigeonPurchase(dummyPurchase),
                 ],
               ));
 
@@ -274,20 +274,21 @@ void main() {
         iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
             .onPurchasesUpdated(PlatformPurchasesResponse(
           billingResult: convertToPigeonResult(expectedBillingResult),
-          purchasesJsonList: <Object?>[
-            <dynamic, dynamic>{
-              'orderId': 'orderID1',
-              'products': <String>[productDetails.productId],
-              'isAutoRenewing': false,
-              'packageName': 'package',
-              'purchaseTime': 1231231231,
-              'purchaseToken': 'token',
-              'signature': 'sign',
-              'originalJson': 'json',
-              'developerPayload': 'dummy payload',
-              'isAcknowledged': true,
-              'purchaseState': 1,
-            }
+          purchases: <PlatformPurchase>[
+            PlatformPurchase(
+              orderId: 'orderID1',
+              products: <String>[productDetails.productId],
+              isAutoRenewing: false,
+              packageName: 'package',
+              purchaseTime: 1231231231,
+              purchaseToken: 'token',
+              signature: 'sign',
+              originalJson: 'json',
+              developerPayload: 'dummy payload',
+              isAcknowledged: true,
+              purchaseState: PlatformPurchaseState.purchased,
+              quantity: 1,
+            )
           ],
         ));
 
@@ -330,7 +331,7 @@ void main() {
         iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
             .onPurchasesUpdated(PlatformPurchasesResponse(
           billingResult: convertToPigeonResult(expectedBillingResult),
-          purchasesJsonList: <Object?>[],
+          purchases: <PlatformPurchase>[],
         ));
 
         return convertToPigeonResult(expectedBillingResult);
@@ -372,20 +373,21 @@ void main() {
         iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
             .onPurchasesUpdated(PlatformPurchasesResponse(
           billingResult: convertToPigeonResult(expectedBillingResult),
-          purchasesJsonList: <Object?>[
-            <dynamic, dynamic>{
-              'orderId': 'orderID1',
-              'products': <String>[productDetails.productId],
-              'isAutoRenewing': false,
-              'packageName': 'package',
-              'purchaseTime': 1231231231,
-              'purchaseToken': 'token',
-              'signature': 'sign',
-              'originalJson': 'json',
-              'developerPayload': 'dummy payload',
-              'isAcknowledged': true,
-              'purchaseState': 1,
-            }
+          purchases: <PlatformPurchase>[
+            PlatformPurchase(
+              orderId: 'orderID1',
+              products: <String>[productDetails.productId],
+              isAutoRenewing: false,
+              packageName: 'package',
+              purchaseTime: 1231231231,
+              purchaseToken: 'token',
+              signature: 'sign',
+              originalJson: 'json',
+              developerPayload: 'dummy payload',
+              isAcknowledged: true,
+              purchaseState: PlatformPurchaseState.purchased,
+              quantity: 1,
+            )
           ],
         ));
 
@@ -482,20 +484,21 @@ void main() {
         iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
             .onPurchasesUpdated(PlatformPurchasesResponse(
           billingResult: convertToPigeonResult(expectedBillingResult),
-          purchasesJsonList: <Object?>[
-            <dynamic, dynamic>{
-              'orderId': 'orderID1',
-              'products': <String>[productDetails.productId],
-              'isAutoRenewing': false,
-              'packageName': 'package',
-              'purchaseTime': 1231231231,
-              'purchaseToken': 'token',
-              'signature': 'sign',
-              'originalJson': 'json',
-              'developerPayload': 'dummy payload',
-              'isAcknowledged': true,
-              'purchaseState': 1,
-            }
+          purchases: <PlatformPurchase>[
+            PlatformPurchase(
+              orderId: 'orderID1',
+              products: <String>[productDetails.productId],
+              isAutoRenewing: false,
+              packageName: 'package',
+              purchaseTime: 1231231231,
+              purchaseToken: 'token',
+              signature: 'sign',
+              originalJson: 'json',
+              developerPayload: 'dummy payload',
+              isAcknowledged: true,
+              purchaseState: PlatformPurchaseState.purchased,
+              quantity: 1,
+            )
           ],
         ));
 
@@ -556,20 +559,21 @@ void main() {
         iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
             .onPurchasesUpdated(PlatformPurchasesResponse(
           billingResult: convertToPigeonResult(expectedBillingResult),
-          purchasesJsonList: <Object?>[
-            <dynamic, dynamic>{
-              'orderId': 'orderID1',
-              'products': <String>[productDetails.productId],
-              'isAutoRenewing': false,
-              'packageName': 'package',
-              'purchaseTime': 1231231231,
-              'purchaseToken': 'token',
-              'signature': 'sign',
-              'originalJson': 'json',
-              'developerPayload': 'dummy payload',
-              'isAcknowledged': true,
-              'purchaseState': 1,
-            }
+          purchases: <PlatformPurchase>[
+            PlatformPurchase(
+              orderId: 'orderID1',
+              products: <String>[productDetails.productId],
+              isAutoRenewing: false,
+              packageName: 'package',
+              purchaseTime: 1231231231,
+              purchaseToken: 'token',
+              signature: 'sign',
+              originalJson: 'json',
+              developerPayload: 'dummy payload',
+              isAcknowledged: true,
+              purchaseState: PlatformPurchaseState.purchased,
+              quantity: 1,
+            )
           ],
         ));
 
@@ -618,20 +622,21 @@ void main() {
         iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
             .onPurchasesUpdated(PlatformPurchasesResponse(
           billingResult: convertToPigeonResult(expectedBillingResult),
-          purchasesJsonList: <Object?>[
-            <dynamic, dynamic>{
-              'orderId': 'orderID1',
-              'products': <String>[productDetails.productId],
-              'isAutoRenewing': false,
-              'packageName': 'package',
-              'purchaseTime': 1231231231,
-              'purchaseToken': 'token',
-              'signature': 'sign',
-              'originalJson': 'json',
-              'developerPayload': 'dummy payload',
-              'isAcknowledged': true,
-              'purchaseState': 1,
-            }
+          purchases: <PlatformPurchase>[
+            PlatformPurchase(
+              orderId: 'orderID1',
+              products: <String>[productDetails.productId],
+              isAutoRenewing: false,
+              packageName: 'package',
+              purchaseTime: 1231231231,
+              purchaseToken: 'token',
+              signature: 'sign',
+              originalJson: 'json',
+              developerPayload: 'dummy payload',
+              isAcknowledged: true,
+              purchaseState: PlatformPurchaseState.purchased,
+              quantity: 1,
+            )
           ],
         ));
 
@@ -686,7 +691,7 @@ void main() {
         iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
             .onPurchasesUpdated(PlatformPurchasesResponse(
           billingResult: convertToPigeonResult(expectedBillingResult),
-          purchasesJsonList: <Object?>[],
+          purchases: <PlatformPurchase>[],
         ));
 
         return convertToPigeonResult(expectedBillingResult);
