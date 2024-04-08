@@ -119,12 +119,18 @@ interface ExampleHostApi {
     val codec: MessageCodec<Any?> by lazy { ExampleHostApiCodec }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     @Suppress("UNCHECKED_CAST")
-    fun setUp(binaryMessenger: BinaryMessenger, api: ExampleHostApi?) {
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: ExampleHostApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -144,7 +150,7 @@ interface ExampleHostApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -167,7 +173,7 @@ interface ExampleHostApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -192,14 +198,20 @@ interface ExampleHostApi {
 }
 /** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
 @Suppress("UNCHECKED_CAST")
-class MessageFlutterApi(private val binaryMessenger: BinaryMessenger) {
+class MessageFlutterApi(
+    private val binaryMessenger: BinaryMessenger,
+    private val messageChannelSuffix: String = ""
+) {
   companion object {
     /** The codec used by MessageFlutterApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
   }
 
   fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {
-    val channelName = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {

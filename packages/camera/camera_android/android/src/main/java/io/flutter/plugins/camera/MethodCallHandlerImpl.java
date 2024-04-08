@@ -388,6 +388,9 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     String cameraName = call.argument("cameraName");
     String preset = call.argument("resolutionPreset");
     boolean enableAudio = call.argument("enableAudio");
+    Integer fps = call.argument("fps");
+    Integer videoBitrate = call.argument("videoBitrate");
+    Integer audioBitrate = call.argument("audioBitrate");
 
     TextureRegistry.SurfaceProducer surfaceProducer = textureRegistry.createSurfaceProducer();
     DartMessenger dartMessenger =
@@ -404,8 +407,8 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             new CameraFeatureFactoryImpl(),
             dartMessenger,
             cameraProperties,
-            resolutionPreset,
-            enableAudio);
+            new Camera.VideoCaptureSettings(
+                resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate));
 
     Map<String, Object> reply = new HashMap<>();
     reply.put("cameraId", surfaceProducer.id());
