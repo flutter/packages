@@ -272,6 +272,8 @@ class CameraController extends ValueNotifier<CameraValue> {
   StreamSubscription<DeviceOrientationChangedEvent>?
       _deviceOrientationSubscription;
 
+  bool get isDisposed => _isDisposed;
+
   /// Checks whether [CameraController.dispose] has completed successfully.
   ///
   /// This is a no-op when asserts are disabled.

@@ -16,14 +16,33 @@ class FakeController extends ValueNotifier<CameraValue>
   static const CameraDescription fakeDescription = CameraDescription(
       name: '', lensDirection: CameraLensDirection.back, sensorOrientation: 0);
 
+  bool _isDisposed = false;
+
   @override
   Future<void> dispose() async {
     super.dispose();
+    _isDisposed = true;
   }
 
   @override
   Widget buildPreview() {
+    _throwIfNotInitialized('buildPreview');
     return const Texture(textureId: CameraController.kUninitializedCameraId);
+  }
+
+  void _throwIfNotInitialized(String functionName) {
+    if (!value.isInitialized) {
+      throw CameraException(
+        'Uninitialized CameraController',
+        '$functionName() was called on an uninitialized CameraController.',
+      );
+    }
+    if (_isDisposed) {
+      throw CameraException(
+        'Disposed CameraController',
+        '$functionName() was called on a disposed CameraController.',
+      );
+    }
   }
 
   @override
@@ -122,6 +141,9 @@ class FakeController extends ValueNotifier<CameraValue>
 
   @override
   CameraDescription get description => value.description;
+
+  @override
+  bool get isDisposed => _isDisposed;
 }
 
 void main() {
@@ -193,6 +215,36 @@ void main() {
       expect(rotatedBox.quarterTurns, 1);
 
       debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets(
+        '''CameraPreview's build does not crash after camera controller's dispose''',
+        (
+      WidgetTester tester,
+    ) async {
+      final FakeController controller = FakeController();
+      controller.value = controller.value.copyWith(
+        isInitialized: true,
+        previewSize: const Size(320, 240),
+      );
+
+      final CameraPreview cameraPreview = CameraPreview(controller);
+
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: cameraPreview,
+      ));
+
+      final BuildContext context = tester.element(find.byType(Directionality));
+
+      final ValueListenableBuilder<CameraValue> valueListenableBuilder =
+          cameraPreview.build(context) as ValueListenableBuilder<CameraValue>;
+
+      await controller.dispose();
+
+      expect(
+          valueListenableBuilder.builder.call(context, controller.value, null),
+          isA<Widget>());
     });
 
     testWidgets(
