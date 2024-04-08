@@ -16,7 +16,6 @@ import androidx.lifecycle.LifecycleObserver;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugins.camera.utils.TestUtils;
 import io.flutter.view.TextureRegistry;
 import org.junit.Before;
 import org.junit.Test;
