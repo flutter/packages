@@ -1,3 +1,7 @@
+## 13.2.3
+
+- Fixes an issue where deep links without path caused an exception
+
 ## 13.2.2
 
 - Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch
