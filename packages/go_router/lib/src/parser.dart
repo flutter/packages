@@ -79,11 +79,24 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
 
     late final RouteMatchList initialMatches;
-    initialMatches = configuration.findMatch(
-        routeInformation.uri.path.isEmpty
-            ? '${routeInformation.uri}/'
-            : routeInformation.uri.toString(),
-        extra: state.extra);
+    if (routeInformation.uri.hasEmptyPath) {
+      String newUri = '${routeInformation.uri.origin}/';
+      if (routeInformation.uri.hasQuery) {
+        newUri += '?${routeInformation.uri.query}';
+      }
+      if (routeInformation.uri.hasFragment) {
+        newUri += '#${routeInformation.uri.fragment}';
+      }
+      initialMatches = configuration.findMatch(
+        newUri,
+        extra: state.extra,
+      );
+    } else {
+      initialMatches = configuration.findMatch(
+        routeInformation.uri.toString(),
+        extra: state.extra,
+      );
+    }
     if (initialMatches.isError) {
       log('No initial matches: ${routeInformation.uri.path}');
     }
