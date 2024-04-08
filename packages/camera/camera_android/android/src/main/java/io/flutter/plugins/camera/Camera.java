@@ -105,18 +105,15 @@ class Camera
    * Takes an input/output surface and orients the recording correctly. This is needed because
    * switching cameras while recording causes the wrong orientation.
    */
-  @VisibleForTesting
-  VideoRenderer videoRenderer;
+  @VisibleForTesting VideoRenderer videoRenderer;
 
   /**
    * Whether or not the camera aligns with the initial way the camera was facing if the camera was
    * flipped.
    */
-  @VisibleForTesting
-  int initialCameraFacing;
+  @VisibleForTesting int initialCameraFacing;
 
-  @VisibleForTesting
-  final SurfaceTextureEntry flutterTexture;
+  @VisibleForTesting final SurfaceTextureEntry flutterTexture;
   private final VideoCaptureSettings videoCaptureSettings;
   private final Context applicationContext;
   final DartMessenger dartMessenger;
@@ -133,19 +130,16 @@ class Camera
 
   CameraDeviceWrapper cameraDevice;
   CameraCaptureSession captureSession;
-  @VisibleForTesting
-  ImageReader pictureImageReader;
+  @VisibleForTesting ImageReader pictureImageReader;
   ImageStreamReader imageStreamReader;
   /** {@link CaptureRequest.Builder} for the camera preview */
   CaptureRequest.Builder previewRequestBuilder;
 
-  @VisibleForTesting
-  MediaRecorder mediaRecorder;
+  @VisibleForTesting MediaRecorder mediaRecorder;
   /** True when recording video. */
   boolean recordingVideo;
   /** True when the preview is paused. */
-  @VisibleForTesting
-  boolean pausedPreview;
+  @VisibleForTesting boolean pausedPreview;
 
   private File captureFile;
 
