@@ -232,8 +232,6 @@ class CameraValue {
 /// To show the camera preview on the screen use a [CameraPreview] widget.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
-  ///
-  /// Deprecated. Please use [withSettings].
   CameraController(
     CameraDescription description,
     ResolutionPreset resolutionPreset, {
@@ -245,15 +243,10 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
   CameraController.withSettings(
-    CameraDescription description, {
-    MediaSettings? mediaSettings,
+    CameraDescription description,
+    this.mediaSettings, {
     this.imageFormatGroup,
-  })  : mediaSettings = mediaSettings ??
-            const MediaSettings(
-                resolutionPreset:
-                    kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
-                enableAudio: true),
-        super(CameraValue.uninitialized(description));
+  }) : super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
@@ -265,8 +258,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// See also: [ResolutionPreset].
   ResolutionPreset get resolutionPreset =>
-      mediaSettings.resolutionPreset ??
-      (kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium);
+      mediaSettings.resolutionPreset ?? ResolutionPreset.max;
 
   /// Whether to include audio when recording a video.
   bool get enableAudio => mediaSettings.enableAudio;
@@ -291,6 +283,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   bool _isDisposed = false;
   StreamSubscription<CameraImageData>? _imageStreamSubscription;
+
   // A Future awaiting an attempt to initialize (e.g. after `initialize` was
   // just called). If the controller has not been initialized at least once,
   // this value is null.
@@ -400,7 +393,6 @@ class CameraController extends ValueNotifier<CameraValue> {
     if (value.isPreviewPaused || !value.isInitialized || _isDisposed) {
       return;
     }
-
     try {
       await CameraPlatform.instance.pausePreview(_cameraId);
       value = value.copyWith(
@@ -678,7 +670,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// The supplied [zoom] value should be between 1.0 and the maximum supported
   /// zoom level returned by the `getMaxZoomLevel`. Throws an `CameraException`
-  /// when an illegal zoom level is supplied.
+  /// when an illegal zoom level is suplied.
   Future<void> setZoomLevel(double zoom) {
     _throwIfNotInitialized('setZoomLevel');
     try {

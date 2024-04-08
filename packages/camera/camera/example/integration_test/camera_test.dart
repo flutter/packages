@@ -69,34 +69,28 @@ void main() {
         expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
   }
 
-  testWidgets(
-    'Capture specific image resolutions',
-    (WidgetTester tester) async {
-      final List<CameraDescription> cameras = await availableCameras();
-      if (cameras.isEmpty) {
-        return;
+  testWidgets('Capture specific image resolutions',
+      (WidgetTester tester) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+    for (final CameraDescription cameraDescription in cameras) {
+      bool previousPresetExactlySupported = true;
+      for (final MapEntry<ResolutionPreset, Size> preset
+          in presetExpectedSizes.entries) {
+        final CameraController controller =
+            CameraController(cameraDescription, preset.key);
+        await controller.initialize();
+        final bool presetExactlySupported =
+            await testCaptureImageResolution(controller, preset.key);
+        assert(!(!previousPresetExactlySupported && presetExactlySupported),
+            'The camera took higher resolution pictures at a lower resolution.');
+        previousPresetExactlySupported = presetExactlySupported;
+        await controller.dispose();
       }
-      for (final CameraDescription cameraDescription in cameras) {
-        bool previousPresetExactlySupported = true;
-        for (final MapEntry<ResolutionPreset, Size> preset
-            in presetExpectedSizes.entries) {
-          final CameraController controller = CameraController.withSettings(
-            cameraDescription,
-            mediaSettings: MediaSettings(
-              resolutionPreset: preset.key,
-            ),
-          );
-          await controller.initialize();
-          final bool presetExactlySupported =
-              await testCaptureImageResolution(controller, preset.key);
-          assert(!(!previousPresetExactlySupported && presetExactlySupported),
-              'The camera took higher resolution pictures at a lower resolution.');
-          previousPresetExactlySupported = presetExactlySupported;
-          await controller.dispose();
-        }
-      }
-    },
-  );
+    }
+  });
 
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
@@ -134,12 +128,8 @@ void main() {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller = CameraController.withSettings(
-            cameraDescription,
-            mediaSettings: MediaSettings(
-              resolutionPreset: preset.key,
-            ),
-          );
+          final CameraController controller =
+              CameraController(cameraDescription, preset.key);
           await controller.initialize();
           await controller.prepareForVideoRecording();
           final bool presetExactlySupported =
@@ -161,14 +151,10 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController.withSettings(
+    final CameraController controller = CameraController(
       cameras[0],
-      mediaSettings: const MediaSettings(
-        resolutionPreset: ResolutionPreset.low,
-        fps: 15,
-        videoBitrate: 200000,
-        audioBitrate: 32000,
-      ),
+      ResolutionPreset.low,
+      enableAudio: false,
     );
 
     await controller.initialize();
@@ -220,14 +206,10 @@ void main() {
         return;
       }
 
-      final CameraController controller = CameraController.withSettings(
+      final CameraController controller = CameraController(
         cameras[0],
-        mediaSettings: const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-        ),
+        ResolutionPreset.low,
+        enableAudio: false,
       );
 
       await controller.initialize();
@@ -256,14 +238,10 @@ void main() {
   /// Start streaming with specifying the ImageFormatGroup.
   Future<CameraImage> startStreaming(List<CameraDescription> cameras,
       ImageFormatGroup? imageFormatGroup) async {
-    final CameraController controller = CameraController.withSettings(
+    final CameraController controller = CameraController(
       cameras.first,
-      mediaSettings: const MediaSettings(
-        resolutionPreset: ResolutionPreset.low,
-        fps: 15,
-        videoBitrate: 200000,
-        audioBitrate: 32000,
-      ),
+      ResolutionPreset.low,
+      enableAudio: false,
       imageFormatGroup: imageFormatGroup,
     );
 
