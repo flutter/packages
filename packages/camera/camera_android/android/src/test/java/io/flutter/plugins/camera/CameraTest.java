@@ -27,7 +27,6 @@ import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LifecycleObserver;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.EventChannel;
@@ -52,7 +51,6 @@ import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationMan
 import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.ImageStreamReader;
-import io.flutter.plugins.camera.utils.TestUtils;
 import io.flutter.view.TextureRegistry;
 import java.io.Closeable;
 import java.io.File;
@@ -111,7 +109,7 @@ class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
 
 public class CameraTest {
   private CameraProperties mockCameraProperties;
-  private CameraFeatureFactory mockCameraFeatureFactory;
+  private TestCameraFeatureFactory mockCameraFeatureFactory;
   private DartMessenger mockDartMessenger;
   private Camera camera;
   private CameraCaptureSession mockCaptureSession;
@@ -693,9 +691,7 @@ public class CameraTest {
     camera.pictureImageReader = mockPictureImageReader;
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -719,9 +715,7 @@ public class CameraTest {
     camera.cameraDevice = fakeCamera;
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -748,9 +742,7 @@ public class CameraTest {
     camera.pictureImageReader = mockPictureImageReader;
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -776,9 +768,7 @@ public class CameraTest {
     camera.imageStreamReader = mockImageStreamReader;
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -909,9 +899,7 @@ public class CameraTest {
     MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = cameraSpy.flutterTexture;
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -1119,9 +1107,7 @@ public class CameraTest {
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
     CameraFeatures cameraFeatures = camera.cameraFeatures;
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -1149,9 +1135,7 @@ public class CameraTest {
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
     CameraFeatures cameraFeatures = camera.cameraFeatures;
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -1273,9 +1257,7 @@ public class CameraTest {
 
       TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
 
-      ResolutionFeature resolutionFeature =
-          (ResolutionFeature)
-              TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+      ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
       assertNotNull(cameraFlutterTexture);
       when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
