@@ -4,9 +4,10 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Translator.fromUserChoiceDetails;
+
 import android.content.Context;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.UserChoiceBillingListener;
 import io.flutter.Log;
@@ -19,8 +20,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
   public BillingClient createBillingClient(
       @NonNull Context context,
       @NonNull Messages.InAppPurchaseCallbackApi callbackApi,
-      PlatformBillingChoiceMode billingChoiceMode,
-      @Nullable UserChoiceBillingListener userChoiceBillingListener) {
+      PlatformBillingChoiceMode billingChoiceMode) {
     BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
     switch (billingChoiceMode) {
       case ALTERNATIVE_BILLING_ONLY:
@@ -28,14 +28,22 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         builder.enableAlternativeBillingOnly();
         break;
       case USER_CHOICE_BILLING:
-        if (userChoiceBillingListener != null) {
-          // https://developer.android.com/google/play/billing/alternative/alternative-billing-with-user-choice-in-app
-          builder.enableUserChoiceBilling(userChoiceBillingListener);
-        } else {
-          Log.e(
-              "BillingClientFactoryImpl",
-              "userChoiceBillingListener null when USER_CHOICE_BILLING set. Defaulting to PLAY_BILLING_ONLY");
-        }
+        final UserChoiceBillingListener userChoiceBillingListener =
+            userChoiceDetails ->
+                callbackApi.userSelectedalternativeBilling(
+                    fromUserChoiceDetails(userChoiceDetails),
+                    new Messages.VoidResult() {
+                      @Override
+                      public void success() {}
+
+                      @Override
+                      public void error(@NonNull Throwable error) {
+                        io.flutter.Log.e(
+                            "IN_APP_PURCHASE",
+                            "userSelectedalternativeBilling handler error: " + error);
+                      }
+                    });
+        builder.enableUserChoiceBilling(userChoiceBillingListener);
         break;
       case PLAY_BILLING_ONLY:
         // Do nothing.

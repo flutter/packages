@@ -437,10 +437,8 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       @NonNull PlatformBillingChoiceMode billingMode,
       @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
-      UserChoiceBillingListener listener = getUserChoiceBillingListener(billingMode);
       billingClient =
-          billingClientFactory.createBillingClient(
-              applicationContext, callbackApi, billingMode, listener);
+          billingClientFactory.createBillingClient(applicationContext, callbackApi, billingMode);
     }
 
     try {
