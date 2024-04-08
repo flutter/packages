@@ -1735,7 +1735,7 @@ ${_topicsSection()}
         );
       });
 
-      test('fails when integration_test is used in non dev dependency',
+      test('fails when integration_test, flutter_test or test are used in non dev dependency',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir, examples: <String>[]);

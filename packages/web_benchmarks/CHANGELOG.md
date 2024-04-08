@@ -1,4 +1,4 @@
-## 1.2.1+1
+## 1.2.2
 
 * Moves flutter_test and test dependencies to dev_dependencies.
 
