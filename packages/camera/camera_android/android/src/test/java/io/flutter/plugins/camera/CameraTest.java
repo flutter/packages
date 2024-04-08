@@ -1168,8 +1168,8 @@ public class CameraTest {
   public void startVideoRecording_shouldApplySettingsToMediaRecorder()
       throws InterruptedException, IOException, CameraAccessException {
     final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
-        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = true;
@@ -1207,7 +1207,7 @@ public class CameraTest {
 
       final FpsRangeFeature fpsRangeFeature = new FpsRangeFeature(mockCameraProperties);
 
-      final Camera camera = spy(new Camera(mockActivity, mockFlutterTexture,
+      final Camera camera = spy(new Camera(mockActivity, mockSurfaceProducer,
           mockCameraFeatureFactory, mockDartMessenger, mockCameraProperties, parameters));
 
       final CamcorderProfile mockProfileLegacy = mock(CamcorderProfile.class);
