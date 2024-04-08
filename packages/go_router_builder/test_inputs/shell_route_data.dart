@@ -15,3 +15,12 @@ class ShellRouteNoConstConstructor extends ShellRouteData {}
 class ShellRouteWithConstConstructor extends ShellRouteData {
   const ShellRouteWithConstConstructor();
 }
+
+@TypedShellRoute<ShellRouteWithRestorationScopeId>(
+  routes: <TypedRoute<RouteData>>[],
+)
+class ShellRouteWithRestorationScopeId extends ShellRouteData {
+  const ShellRouteWithRestorationScopeId();
+
+  static const String $restorationScopeId = 'shellRouteWithRestorationScopeId';
+}
