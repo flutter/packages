@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class MethodCallHandlerImplTest {
 
-  MethodChannel.MethodCallHandler handler;
+  MethodCallHandlerImpl handler;
   MethodChannel.Result mockResult;
   Camera mockCamera;
 
@@ -38,7 +38,7 @@ public class MethodCallHandlerImplTest {
             mock(TextureRegistry.class));
     mockResult = mock(MethodChannel.Result.class);
     mockCamera = mock(Camera.class);
-    TestUtils.setPrivateField(handler, "camera", mockCamera);
+    handler.camera = mockCamera;
   }
 
   @Test
