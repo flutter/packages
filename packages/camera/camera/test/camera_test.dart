@@ -1472,14 +1472,19 @@ class MockCameraPlatform extends Mock
       Future<List<CameraDescription>>.value(mockAvailableCameras);
 
   @override
+  Future<int> createCameraWithSettings(
+          CameraDescription cameraDescription, MediaSettings? mediaSettings) =>
+      mockPlatformException
+          ? throw PlatformException(code: 'foo', message: 'bar')
+          : Future<int>.value(mockInitializeCamera);
+
+  @override
   Future<int> createCamera(
     CameraDescription description,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
   }) =>
-      mockPlatformException
-          ? throw PlatformException(code: 'foo', message: 'bar')
-          : Future<int>.value(mockInitializeCamera);
+      createCameraWithSettings(description, null);
 
   @override
   Stream<CameraInitializedEvent> onCameraInitialized(int cameraId) =>
