@@ -199,6 +199,7 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(PlatformBillingChoiceMode.USER_CHOICE_BILLING);
     verify(platformBillingResult, never()).success(any());
+
     verify(factory, times(1))
         .createBillingClient(
             any(Context.class),
@@ -215,21 +216,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
         ArgumentCaptor.forClass(PlatformBillingResult.class);
     verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    UserChoiceDetails details = mock(UserChoiceDetails.class);
-    final String externalTransactionToken = "someLongTokenId1234";
-    final String originalTransactionId = "originalTransactionId123456";
-    when(details.getExternalTransactionToken()).thenReturn(externalTransactionToken);
-    when(details.getOriginalExternalTransactionId()).thenReturn(originalTransactionId);
-    when(details.getProducts()).thenReturn(Collections.emptyList());
-
-    ArgumentCaptor<PlatformUserChoiceDetails> callbackCaptor =
-        ArgumentCaptor.forClass(PlatformUserChoiceDetails.class);
-    verify(mockCallbackApi, times(1))
-        .userSelectedalternativeBilling(callbackCaptor.capture(), any());
-    assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
-    assertEquals(
-        callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
-    assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
   }
 
   @Test
@@ -279,21 +265,6 @@ public class MethodCallHandlerTest {
     captor2.getValue().onBillingSetupFinished(billingResult2);
 
     verify(platformBillingResult, times(1)).success(any());
-    UserChoiceDetails details = mock(UserChoiceDetails.class);
-    final String externalTransactionToken = "someLongTokenId1234";
-    final String originalTransactionId = "originalTransactionId123456";
-    when(details.getExternalTransactionToken()).thenReturn(externalTransactionToken);
-    when(details.getOriginalExternalTransactionId()).thenReturn(originalTransactionId);
-    when(details.getProducts()).thenReturn(Collections.emptyList());
-
-    ArgumentCaptor<PlatformUserChoiceDetails> callbackCaptor =
-        ArgumentCaptor.forClass(PlatformUserChoiceDetails.class);
-    verify(mockCallbackApi, times(1))
-        .userSelectedalternativeBilling(callbackCaptor.capture(), any());
-    assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
-    assertEquals(
-        callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
-    assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
   }
 
   @Test
