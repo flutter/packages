@@ -20,13 +20,14 @@ class FocusMeteringAction extends JavaObject {
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
     required this.meteringPointInfos,
+    this.disableAutoCancel,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
         ) {
     _api = _FocusMeteringActionHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, meteringPointInfos);
+    _api.createFromInstance(this, meteringPointInfos, disableAutoCancel);
   }
 
   /// Creates a [FocusMeteringAction] that is not automatically attached to a
@@ -35,6 +36,7 @@ class FocusMeteringAction extends JavaObject {
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
     required this.meteringPointInfos,
+    this.disableAutoCancel,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -49,6 +51,12 @@ class FocusMeteringAction extends JavaObject {
   /// points.
   final List<(MeteringPoint meteringPoint, int? meteringMode)>
       meteringPointInfos;
+
+  /// Disables the auto-cancel.
+  ///
+  /// By default (and if set to false), auto-cancel is enabled with 5 seconds
+  /// duration.
+  final bool? disableAutoCancel;
 
   /// Flag for metering mode that indicates the auto focus region is enabled.
   ///
@@ -97,8 +105,8 @@ class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
   /// [MeteringPoint]s and their modes in order of descending priority.
   void createFromInstance(
       FocusMeteringAction instance,
-      List<(MeteringPoint meteringPoint, int? meteringMode)>
-          meteringPointInfos) {
+      List<(MeteringPoint meteringPoint, int? meteringMode)> meteringPointInfos,
+      bool? disableAutoCancel) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (FocusMeteringAction original) {
       return FocusMeteringAction.detached(
@@ -118,6 +126,6 @@ class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
           meteringMode: meteringPointInfo.$2));
     }
 
-    create(identifier, meteringPointInfosWithIds);
+    create(identifier, meteringPointInfosWithIds, disableAutoCancel);
   }
 }

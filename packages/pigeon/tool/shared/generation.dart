@@ -68,6 +68,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     'null_fields',
     'nullable_returns',
     'primitive',
+    'proxy_api_tests',
   ];
 
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
@@ -151,6 +152,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
+      objcPrefix: input == 'core_tests' ? 'FLT' : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
     );

@@ -131,9 +131,13 @@ class ExampleHostApiSetup {
   /// The codec used by ExampleHostApi.
   static var codec: FlutterStandardMessageCodec { ExampleHostApiCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?) {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = ""
+  ) {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let getHostLanguageChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage",
+      name:
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
@@ -148,7 +152,7 @@ class ExampleHostApiSetup {
       getHostLanguageChannel.setMessageHandler(nil)
     }
     let addChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
@@ -166,7 +170,7 @@ class ExampleHostApiSetup {
       addChannel.setMessageHandler(nil)
     }
     let sendMessageChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
@@ -193,14 +197,16 @@ protocol MessageFlutterApiProtocol {
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
-  init(binaryMessenger: FlutterBinaryMessenger) {
+  private let messageChannelSuffix: String
+  init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") {
     self.binaryMessenger = binaryMessenger
+    self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
   func flutterMethod(
     aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void
   ) {
     let channelName: String =
-      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {

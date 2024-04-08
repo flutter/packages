@@ -1,3 +1,6 @@
+## 1.0.26
+* Supports overriding the error widget builder.
+
 ## 1.0.25
 * Adds support for wildget builders.
 

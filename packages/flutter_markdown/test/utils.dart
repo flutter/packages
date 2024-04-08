@@ -5,8 +5,10 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,6 +25,50 @@ Iterable<Widget> selfAndDescendantWidgetsOf(Finder start, WidgetTester tester) {
     startElement.widget,
     ...descendants,
   ];
+}
+
+// Returns the RenderEditable displaying the given text.
+RenderEditable findRenderEditableWithText(WidgetTester tester, String text) {
+  final Iterable<RenderObject> roots =
+      tester.renderObjectList(find.byType(EditableText));
+  expect(roots, isNotEmpty);
+
+  late RenderEditable renderEditable;
+  void recursiveFinder(RenderObject child) {
+    if (child is RenderEditable && child.plainText == text) {
+      renderEditable = child;
+      return;
+    }
+    child.visitChildren(recursiveFinder);
+  }
+
+  for (final RenderObject root in roots) {
+    root.visitChildren(recursiveFinder);
+  }
+
+  expect(renderEditable, isNotNull);
+  return renderEditable;
+}
+
+// Returns the [textOffset] position in rendered [text].
+Offset positionInRenderedText(
+    WidgetTester tester, String text, int textOffset) {
+  final RenderEditable renderEditable =
+      findRenderEditableWithText(tester, text);
+  final Iterable<TextSelectionPoint> textOffsetPoints =
+      renderEditable.getEndpointsForSelection(
+    TextSelection.collapsed(offset: textOffset),
+  );
+  // Map the points to global positions.
+  final List<TextSelectionPoint> endpoints =
+      textOffsetPoints.map<TextSelectionPoint>((TextSelectionPoint point) {
+    return TextSelectionPoint(
+      renderEditable.localToGlobal(point.point),
+      point.direction,
+    );
+  }).toList();
+  expect(endpoints.length, 1);
+  return endpoints[0].point + const Offset(kIsWeb ? 1.0 : 0.0, -2.0);
 }
 
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
@@ -158,7 +204,7 @@ void expectTableSize(int rows, int columns) {
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
-    expect(_ambiguate(table.children[index].children)!.length, columns);
+    expect(table.children[index].children.length, columns);
   }
 }
 
@@ -217,9 +263,3 @@ class TestAssetBundle extends CachingAssetBundle {
     }
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

@@ -1,3 +1,13 @@
+## 0.3.3
+
+* Converts data objects in internal platform communication to Pigeon.
+* Deprecates JSON serialization and deserialization for Billing Client wrapper
+  objects.
+
+## 0.3.2+1
+
+* Converts internal platform communication to Pigeon.
+
 ## 0.3.2
 
 * Adds UserChoiceBilling APIs to platform addition.

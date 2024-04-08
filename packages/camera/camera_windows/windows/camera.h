@@ -9,6 +9,7 @@
 #include <flutter/standard_method_codec.h>
 
 #include <functional>
+#include <optional>
 
 #include "capture_controller.h"
 
@@ -36,7 +37,7 @@ enum class PendingResultType {
 // to capture video or photo from the camera.
 class Camera : public CaptureControllerListener {
  public:
-  explicit Camera(const std::string& device_id) {}
+  explicit Camera([[maybe_unused]] const std::string& device_id) {}
   virtual ~Camera() = default;
 
   // Disallow copy and move.
@@ -67,8 +68,8 @@ class Camera : public CaptureControllerListener {
   // Returns false if initialization fails.
   virtual bool InitCamera(flutter::TextureRegistrar* texture_registrar,
                           flutter::BinaryMessenger* messenger,
-                          bool record_audio,
-                          ResolutionPreset resolution_preset) = 0;
+                          ResolutionPreset resolution_preset,
+                          const RecordSettings& record_settings) = 0;
 };
 
 // Concrete implementation of the |Camera| interface.
@@ -127,8 +128,9 @@ class CameraImpl : public Camera {
     return capture_controller_.get();
   }
   bool InitCamera(flutter::TextureRegistrar* texture_registrar,
-                  flutter::BinaryMessenger* messenger, bool record_audio,
-                  ResolutionPreset resolution_preset) override;
+                  flutter::BinaryMessenger* messenger,
+                  ResolutionPreset resolution_preset,
+                  const RecordSettings& record_settings) override;
 
   // Initializes the camera and its associated capture controller.
   //
@@ -139,8 +141,8 @@ class CameraImpl : public Camera {
   bool InitCamera(
       std::unique_ptr<CaptureControllerFactory> capture_controller_factory,
       flutter::TextureRegistrar* texture_registrar,
-      flutter::BinaryMessenger* messenger, bool record_audio,
-      ResolutionPreset resolution_preset);
+      flutter::BinaryMessenger* messenger, ResolutionPreset resolution_preset,
+      const RecordSettings& record_settings);
 
  private:
   // Loops through all pending results and calls their error handler with given
