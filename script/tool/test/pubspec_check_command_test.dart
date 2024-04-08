@@ -1774,7 +1774,7 @@ ${_topicsSection()}
         );
       });
 
-      test('passes when integration_test is used in non published package',
+      test('passes when integration_test or flutter_test are used in non published package',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir, examples: <String>[]);
