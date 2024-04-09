@@ -36,7 +36,7 @@ public class InstanceManager {
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static final long MIN_HOST_CREATED_IDENTIFIER = 65536;
-  private static long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 30000;
+  private static long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 3000;
   private static final String TAG = "InstanceManager";
 
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
