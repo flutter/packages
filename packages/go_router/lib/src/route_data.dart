@@ -63,11 +63,6 @@ abstract class GoRouteData extends RouteData {
   /// Corresponds to [GoRoute.redirect].
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) => null;
 
-  /// Called when this route is removed from GoRouter's route history.
-  ///
-  /// Corresponds to [GoRoute.onExit].
-  FutureOr<bool> onExit(BuildContext context) => true;
-
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
@@ -111,16 +106,12 @@ abstract class GoRouteData extends RouteData {
     FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state);
 
-    FutureOr<bool> onExit(BuildContext context) =>
-        factoryImpl(state).onExit(context);
-
     return GoRoute(
       path: path,
       name: name,
       builder: builder,
       pageBuilder: pageBuilder,
       redirect: redirect,
-      onExit: onExit,
       routes: routes,
       parentNavigatorKey: parentNavigatorKey,
     );
