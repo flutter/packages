@@ -28,7 +28,7 @@ class PluginPurchaseListener implements PurchasesUpdatedListener {
     Messages.PlatformPurchasesResponse.Builder builder =
         new Messages.PlatformPurchasesResponse.Builder()
             .setBillingResult(fromBillingResult(billingResult))
-            .setPurchasesJsonList(fromPurchasesList(purchases));
+            .setPurchases(fromPurchasesList(purchases));
     callbackApi.onPurchasesUpdated(
         builder.build(),
         new Messages.VoidResult() {

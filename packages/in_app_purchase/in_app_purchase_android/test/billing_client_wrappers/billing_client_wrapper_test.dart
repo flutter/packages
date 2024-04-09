@@ -203,7 +203,7 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[],
+                productDetails: <PlatformProductDetails>[],
               ));
 
       final ProductDetailsResponseWrapper response = await billingClient
@@ -227,8 +227,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(responseCode),
                     debugMessage: debugMessage),
-                productDetailsJsonList: <Map<String, dynamic>>[
-                  buildProductMap(dummyOneTimeProductDetails)
+                productDetails: <PlatformProductDetails>[
+                  convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
               ));
 
@@ -436,16 +436,17 @@ void main() {
       const String debugMessage = 'dummy message';
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: expectedCode, debugMessage: debugMessage);
-      when(mockApi.queryPurchasesAsync(any)).thenAnswer((_) async =>
-          PlatformPurchasesResponse(
-            billingResult: PlatformBillingResult(
-                responseCode:
-                    const BillingResponseConverter().toJson(expectedCode),
-                debugMessage: debugMessage),
-            purchasesJsonList: expectedList
-                .map((PurchaseWrapper purchase) => buildPurchaseMap(purchase))
-                .toList(),
-          ));
+      when(mockApi.queryPurchasesAsync(any))
+          .thenAnswer((_) async => PlatformPurchasesResponse(
+                billingResult: PlatformBillingResult(
+                    responseCode:
+                        const BillingResponseConverter().toJson(expectedCode),
+                    debugMessage: debugMessage),
+                purchases: expectedList
+                    .map((PurchaseWrapper purchase) =>
+                        convertToPigeonPurchase(purchase))
+                    .toList(),
+              ));
 
       final PurchasesResultWrapper response =
           await billingClient.queryPurchases(ProductType.inapp);
@@ -466,7 +467,7 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(expectedCode),
                     debugMessage: debugMessage),
-                purchasesJsonList: <Map<String, dynamic>>[],
+                purchases: <PlatformPurchase>[],
               ));
 
       final PurchasesResultWrapper response =
@@ -496,9 +497,8 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(expectedCode),
                     debugMessage: debugMessage),
-                purchaseHistoryRecordJsonList: expectedList
-                    .map((PurchaseHistoryRecordWrapper purchaseHistoryRecord) =>
-                        buildPurchaseHistoryRecordMap(purchaseHistoryRecord))
+                purchases: expectedList
+                    .map(platformPurchaseHistoryRecordFromWrapper)
                     .toList(),
               ));
 
@@ -519,7 +519,7 @@ void main() {
                     responseCode:
                         const BillingResponseConverter().toJson(expectedCode),
                     debugMessage: debugMessage),
-                purchaseHistoryRecordJsonList: <Map<String, dynamic>>[],
+                purchases: <PlatformPurchaseHistoryRecord>[],
               ));
 
       final PurchasesHistoryResult response =
@@ -662,4 +662,19 @@ PlatformAlternativeBillingOnlyReportingDetailsResponse
         debugMessage: original.debugMessage!,
       ),
       externalTransactionToken: original.externalTransactionToken);
+}
+
+PlatformPurchaseHistoryRecord platformPurchaseHistoryRecordFromWrapper(
+    PurchaseHistoryRecordWrapper wrapper) {
+  return PlatformPurchaseHistoryRecord(
+    // For some reason quantity is not currently exposed in
+    // PurchaseHistoryRecordWrapper.
+    quantity: 99,
+    purchaseTime: wrapper.purchaseTime,
+    originalJson: wrapper.originalJson,
+    purchaseToken: wrapper.purchaseToken,
+    signature: wrapper.signature,
+    products: wrapper.products,
+    developerPayload: wrapper.developerPayload,
+  );
 }
