@@ -36,7 +36,7 @@ public class InstanceManager {
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static final long MIN_HOST_CREATED_IDENTIFIER = 65536;
-  private static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 30000;
+  private static long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 30000;
   private static final String TAG = "InstanceManager";
 
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
@@ -217,11 +217,17 @@ public class InstanceManager {
     return hasFinalizationListenerStopped;
   }
 
-  private void releaseAllFinalizedInstances() {
+  public void setClearFinalizedWeakReferencesInterval(long interval) {
+    System.out.println("SET " + interval);
+    CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = interval;
+  }
+
+  public void releaseAllFinalizedInstances() {
     if (hasFinalizationListenerStopped()) {
       return;
     }
 
+    System.out.println("REMOVING WEAK REFERENCES");
     WeakReference<Object> reference;
     while ((reference = (WeakReference<Object>) referenceQueue.poll()) != null) {
       final Long identifier = weakReferencesToIdentifiers.remove(reference);

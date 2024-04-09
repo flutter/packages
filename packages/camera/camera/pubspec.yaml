@@ -21,7 +21,7 @@ flutter:
         default_package: camera_web
 
 dependencies:
-  camera_android: ^0.10.7
+  # camera_android: ^0.10.7
   camera_android_camerax:
     path: ../camera_android_camerax/
   camera_avfoundation: ^0.9.13

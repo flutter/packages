@@ -69,6 +69,8 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
       throw new IllegalStateException("Context must be set to set an Analyzer.");
     }
 
+    instanceManager.setClearFinalizedWeakReferencesInterval(1000);
+    instanceManager.releaseAllFinalizedInstances();
     getImageAnalysisInstance(identifier)
         .setAnalyzer(
             ContextCompat.getMainExecutor(context),
@@ -81,6 +83,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     ImageAnalysis imageAnalysis =
         (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
     imageAnalysis.clearAnalyzer();
+    instanceManager.setClearFinalizedWeakReferencesInterval(30000);
   }
 
   /** Dynamically sets the target rotation of the {@link ImageAnalysis}. */

@@ -63,7 +63,6 @@ public class ImageProxyFlutterApiImpl {
           planeIdentifiers,
           callback);
     }
-    System.out.println("CLOSING");
     instance.close();
   }
 
