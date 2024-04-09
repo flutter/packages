@@ -257,16 +257,16 @@ Future<void> main() async {
       WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
       print('camille: controller set up');
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
       print('camille: set javascript mode');
 
-      unawaited(controller.setNavigationDelegate(
+      await (controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       ));
       print('camille: set navigation delegate');
 
       if (controller.platform is AndroidWebViewController) {
-        unawaited((controller.platform as AndroidWebViewController)
+        await ((controller.platform as AndroidWebViewController)
             .setMediaPlaybackRequiresUserGesture(false));
         print('camille: set requires user gesture');
       }
