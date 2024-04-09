@@ -205,6 +205,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
                 final Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
+                System.out.println(docUri);
                 try {
                   final String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
                   result.success(path);
