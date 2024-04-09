@@ -10,7 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
   path_provider: ^2.0.6
-  webview_flutter_platform_interface: ^2.10.0
+  webview_flutter_platform_interface:
+    git:
+      url: https://github.com/Sinishisimus/packages.git
+      path: packages/webview_flutter/webview_flutter_platform_interface
+      ref: feature/android_web_view_render_process_terminated
   webview_flutter_wkwebview:
     # When depending on this package from a real application you should use:
     #   webview_flutter: ^x.y.z

@@ -17,7 +17,11 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  webview_flutter_platform_interface: ^2.10.0
+  webview_flutter_platform_interface:
+    git:
+      url: https://github.com/Sinishisimus/packages.git
+      path: packages/webview_flutter/webview_flutter_platform_interface
+      ref: feature/android_web_view_render_process_terminated
 
 dev_dependencies:
   espresso: ^0.2.0
