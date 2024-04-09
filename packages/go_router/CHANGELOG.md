@@ -1,3 +1,7 @@
+## 13.3.0
+
+- Feat add route redirect to ShellRoutes
+
 ## 13.2.3
 
 - Fixes an issue where deep links without path caused an exception
