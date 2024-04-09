@@ -1,7 +1,7 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
+import Flutter
 import XCTest
 
 @testable import test_plugin
@@ -91,6 +91,33 @@ final class InstanceManagerTests: XCTestCase {
     XCTAssertNotEqual(
       instanceManager.identifierWithStrongReference(forInstance: instance1),
       instanceManager.identifierWithStrongReference(forInstance: instance2))
+  }
+  
+  func testInstanceManagerCanBeDeallocated() {
+    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
+    
+    let instanceManager = PigeonInstanceManager(api: PigeonInstanceManagerApi(binaryMessenger: binaryMessenger))
+    
+    class ApiDel: PigeonApiDelegate {
+      func getPiegonApiProxyApiTestClass() -> test_plugin.PigeonApiProxyApiTestClass {
+        class ABC: PigeonDelegateProxyApiTestClass {
+          func pigeonDefaultConstructor() throws -> test_plugin.ProxyApiTestClass {
+            return nil
+          }
+          
+          func attachedField(pigeonInstance: test_plugin.ProxyApiTestClass) throws -> test_plugin.ProxyApiSuperClass {
+            return nil
+          }
+          
+          func echo(pigeonInstance: test_plugin.ProxyApiTestClass, aBool: Bool) throws -> Bool {
+            return nil
+          }
+        }
+        return PigeonApiProxyApiTestClass(codec: nil, delegate: ABC())
+      }
+    }
+    
+    let codec = PigeonProxyApiBaseCodec(binaryMessenger: binaryMessenger, instanceManager: instanceManager, apiDelegate: nil)
   }
 }
 
