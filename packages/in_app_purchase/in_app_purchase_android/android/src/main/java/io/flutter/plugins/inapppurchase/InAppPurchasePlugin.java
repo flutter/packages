@@ -26,16 +26,6 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
 
   private MethodCallHandlerImpl methodCallHandler;
 
-  /** Plugin registration. */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    InAppPurchasePlugin plugin = new InAppPurchasePlugin();
-    registrar.activity().getIntent().putExtra(PROXY_PACKAGE_KEY, PROXY_VALUE);
-    ((Application) registrar.context().getApplicationContext())
-        .registerActivityLifecycleCallbacks(plugin.methodCallHandler);
-  }
-
   @Override
   public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
     setUpMethodChannel(binding.getBinaryMessenger(), binding.getApplicationContext());
