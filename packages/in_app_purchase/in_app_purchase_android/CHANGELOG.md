@@ -1,3 +1,7 @@
+## 0.3.4
+
+* Moves alternative billing listener creation to BillingClientFactoryImpl.
+
 ## 0.3.3
 
 * Converts data objects in internal platform communication to Pigeon.
