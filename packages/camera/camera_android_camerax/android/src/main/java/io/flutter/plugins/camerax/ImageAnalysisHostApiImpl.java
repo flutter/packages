@@ -69,7 +69,6 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
       throw new IllegalStateException("Context must be set to set an Analyzer.");
     }
 
-
     instanceManager.setClearFinalizedWeakReferencesInterval(1000);
     instanceManager.releaseAllFinalizedInstances();
     getImageAnalysisInstance(identifier)
