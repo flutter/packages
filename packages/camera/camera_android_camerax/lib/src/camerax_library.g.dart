@@ -2576,7 +2576,7 @@ class ImageProxyHostApi {
 abstract class ImageProxyFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void create(int identifier, int format, int height, int width, List<int?> planes);
+  void create(int identifier, int format, int height, int width);
 
   static void setup(ImageProxyFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -2602,10 +2602,7 @@ abstract class ImageProxyFlutterApi {
           final int? arg_width = (args[3] as int?);
           assert(arg_width != null,
               'Argument for dev.flutter.pigeon.ImageProxyFlutterApi.create was null, expected non-null int.');
-          final List<int?>? arg_planes = (args[4] as List<Object?>?)?.cast<int?>();
-          assert(arg_planes != null,
-              'Argument for dev.flutter.pigeon.ImageProxyFlutterApi.create was null, expected non-null List<int?>.');
-          api.create(arg_identifier!, arg_format!, arg_height!, arg_width!, arg_planes!);
+          api.create(arg_identifier!, arg_format!, arg_height!, arg_width!);
           return;
         });
       }

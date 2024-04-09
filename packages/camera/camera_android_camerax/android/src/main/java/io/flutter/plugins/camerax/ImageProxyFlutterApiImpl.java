@@ -9,7 +9,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyFlutterApi;
-import java.util.List;
 
 /**
  * Flutter API implementation for {@link ImageProxy}.
@@ -45,25 +44,15 @@ public class ImageProxyFlutterApiImpl {
       @NonNull Long imageFormat,
       @NonNull Long imageHeight,
       @NonNull Long imageWidth,
-      @NonNull List<Long> planeIdentifiers,
-      // @NonNull List<PlaneProxy> planes,
       @NonNull ImageProxyFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      // List<Long> planeIdentifiers = new ArrayList<>();
-      // for (PlaneProxy plane : planes) {
-      //   Long planeId = instanceManager.getIdentifierForStrongReference(plane);
-      //   planeIdentifiers.add(plane);
-      // }
-
       api.create(
           instanceManager.addHostCreatedInstance(instance),
           imageFormat,
           imageHeight,
           imageWidth,
-          planeIdentifiers,
           callback);
     }
-    instance.close();
   }
 
   /**

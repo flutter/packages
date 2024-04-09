@@ -19,14 +19,13 @@ import 'plane_proxy.dart';
 @immutable
 class ImageProxy extends JavaObject {
   /// Constructs a [ImageProxy] that is not automatically attached to a native object.
-  ImageProxy.detached({
-    BinaryMessenger? binaryMessenger,
-    InstanceManager? instanceManager,
-    required this.format,
-    required this.height,
-    required this.width,
-    required this.planes,
-  }) : super.detached(
+  ImageProxy.detached(
+      {BinaryMessenger? binaryMessenger,
+      InstanceManager? instanceManager,
+      required this.format,
+      required this.height,
+      required this.width})
+      : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = _ImageProxyHostApiImpl(
@@ -43,10 +42,10 @@ class ImageProxy extends JavaObject {
   /// The image width.
   final int width;
 
-  /// The list of color planes of image data.
-  final List<PlaneProxy> planes;
-
   late final _ImageProxyHostApiImpl _api;
+
+  /// Returns the list of color planes of image data.
+  Future<List<PlaneProxy>> getPlanes() => _api.getPlanesFromInstances(this);
 
   /// Closes the underlying image.
   Future<void> close() => _api.closeFromInstances(this);
@@ -126,12 +125,7 @@ class ImageProxyFlutterApiImpl implements ImageProxyFlutterApi {
     int format,
     int height,
     int width,
-    List<int?> planeIds,
   ) {
-    final List<PlaneProxy> planes = planeIds
-        .map<PlaneProxy>((int? id) =>
-            _instanceManager.getInstanceWithWeakReference<PlaneProxy>(id!)!)
-        .toList();
     _instanceManager.addHostCreatedInstance(
       ImageProxy.detached(
         binaryMessenger: _binaryMessenger,
@@ -139,7 +133,6 @@ class ImageProxyFlutterApiImpl implements ImageProxyFlutterApi {
         format: format,
         height: height,
         width: width,
-        planes: planes,
       ),
       identifier,
       onCopy: (ImageProxy original) => ImageProxy.detached(
@@ -147,8 +140,7 @@ class ImageProxyFlutterApiImpl implements ImageProxyFlutterApi {
           instanceManager: _instanceManager,
           format: original.format,
           height: original.height,
-          width: original.width,
-          planes: original.planes),
+          width: original.width),
     );
   }
 }

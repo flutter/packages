@@ -10,9 +10,6 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerHostApi;
-import java.util.List;
-import java.util.ArrayList;
-import java.nio.ByteBuffer;
 
 /**
  * Host API implementation for {@link ImageAnalysis.Analyzer}.
@@ -48,10 +45,6 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
 
     @VisibleForTesting @NonNull public ImageProxyFlutterApiImpl imageProxyApi;
 
-    @VisibleForTesting @NonNull public PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
-
-      @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
-
     /**
      * Constructs an instance of {@link ImageAnalysis.Analyzer} that passes arguments of callbacks
      * methods to Dart.
@@ -63,7 +56,6 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
       this.instanceManager = instanceManager;
       api = new AnalyzerFlutterApiImpl(binaryMessenger, instanceManager);
       imageProxyApi = new ImageProxyFlutterApiImpl(binaryMessenger, instanceManager);
-      planeProxyFlutterApiImpl = new PlaneProxyFlutterApiImpl(binaryMessenger, instanceManager);
     }
 
     @Override
@@ -71,30 +63,10 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
       Long imageFormat = Long.valueOf(imageProxy.getFormat());
       Long imageHeight = Long.valueOf(imageProxy.getHeight());
       Long imageWidth = Long.valueOf(imageProxy.getWidth());
-      List<Long> planeIdentifiers = getPlaneIdentifiers(imageProxy);
-      imageProxyApi.create(imageProxy, imageFormat, imageHeight, imageWidth, planeIdentifiers, reply -> {});
+      imageProxyApi.create(imageProxy, imageFormat, imageHeight, imageWidth, reply -> {});
 
       api.analyze(this, imageProxy, reply -> {});
     }
-
-      @NonNull
-  public List<Long> getPlaneIdentifiers(@NonNull ImageProxy imageProxy) {
-    ImageProxy.PlaneProxy[] planes = imageProxy.getPlanes();
-    List<Long> planeIdentifiers = new ArrayList<Long>();
-
-    for (ImageProxy.PlaneProxy plane : planes) {
-      ByteBuffer byteBuffer = plane.getBuffer();
-      byte[] bytes = cameraXProxy.getBytesFromBuffer(byteBuffer.remaining());
-      byteBuffer.get(bytes, 0, bytes.length);
-      Long pixelStride = Long.valueOf(plane.getPixelStride());
-      Long rowStride = Long.valueOf(plane.getRowStride());
-
-      planeProxyFlutterApiImpl.create(plane, bytes, pixelStride, rowStride, reply -> {});
-      planeIdentifiers.add(instanceManager.getIdentifierForStrongReference(plane));
-    }
-
-    return planeIdentifiers;
-  }
 
     /**
      * Flutter API used to send messages back to Dart.

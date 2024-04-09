@@ -1002,7 +1002,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
     Future<void> analyze(ImageProxy imageProxy) async {
-      final List<PlaneProxy> planes = imageProxy.planes;
+      final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
       for (final PlaneProxy plane in planes) {
         cameraImagePlanes.add(CameraImagePlane(
@@ -1023,7 +1023,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           width: imageProxy.width);
 
       weakThis.target!.cameraImageDataStreamController!.add(cameraImageData);
-      // await imageProxy.close();
+      await imageProxy.close();
     }
 
     final Analyzer analyzer = proxy.createAnalyzer(analyze);

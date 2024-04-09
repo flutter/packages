@@ -3081,12 +3081,12 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
-    public void create(@NonNull Long identifierArg, @NonNull Long formatArg, @NonNull Long heightArg, @NonNull Long widthArg, @NonNull List<Long> planesArg, @NonNull Reply<Void> callback) {
+    public void create(@NonNull Long identifierArg, @NonNull Long formatArg, @NonNull Long heightArg, @NonNull Long widthArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger, "dev.flutter.pigeon.ImageProxyFlutterApi.create", getCodec());
       channel.send(
-          new ArrayList<Object>(Arrays.asList(identifierArg, formatArg, heightArg, widthArg, planesArg)),
+          new ArrayList<Object>(Arrays.asList(identifierArg, formatArg, heightArg, widthArg)),
           channelReply -> callback.reply(null));
     }
   }
