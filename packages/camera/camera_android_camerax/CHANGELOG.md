@@ -1,3 +1,11 @@
+## 0.6.2
+
+* Shortens default interval that internal Java `InstanceManager` uses to release garbage collected weak references to
+  native objects.
+* Dynamically shortens interval that internal Java `InstanceManager` uses to release garbage collected weak references to
+  native objects when an `ImageAnalysis.Analyzer` is set/removed to account for increased memory usage of analyzing
+  images.
+
 ## 0.6.1
 
 * Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios supported by CameraX.
