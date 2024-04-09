@@ -69,8 +69,12 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
       throw new IllegalStateException("Context must be set to set an Analyzer.");
     }
 
+    // Shorten time interval used to define how often the instanceManager removes garbage
+    // collected weak references to native Android objects that it manages in order to
+    // account for image streaming's increased memory usage.
     instanceManager.setClearFinalizedWeakReferencesInterval(1000);
     instanceManager.releaseAllFinalizedInstances();
+
     getImageAnalysisInstance(identifier)
         .setAnalyzer(
             ContextCompat.getMainExecutor(context),
@@ -83,7 +87,12 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     ImageAnalysis imageAnalysis =
         (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
     imageAnalysis.clearAnalyzer();
-    instanceManager.setClearFinalizedWeakReferencesInterval(30000);
+
+    // Restore the default time interval used to define how often the instanceManager
+    // removes garbage collected weak references to native Android objects that it
+    // manages since image streaming, which involves increased memory usage, is finished.
+    instanceManager.setClearFinalizedWeakReferencesInterval(
+        InstanceManager.DEFAULT_CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL);
   }
 
   /** Dynamically sets the target rotation of the {@link ImageAnalysis}. */
